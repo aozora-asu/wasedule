@@ -56,6 +56,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "file_saver",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/file_saver-0.2.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -70,6 +76,12 @@
     {
       "name": "flutter_test",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -92,8 +104,20 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "ical",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/ical-0.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "icalendar_parser",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/icalendar_parser-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "intl",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.18.1",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.17.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -118,6 +142,12 @@
     {
       "name": "meta",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/meta-1.9.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "nanoid",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/nanoid-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -213,7 +243,7 @@
     },
     {
       "name": "table_calendar",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.8",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -266,7 +296,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-10-23T16:30:21.224907Z",
+  "generated": "2023-10-24T12:39:02.681602Z",
   "generator": "pub",
   "generatorVersion": "3.1.0"
 }
