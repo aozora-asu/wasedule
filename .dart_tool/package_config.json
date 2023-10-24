@@ -92,6 +92,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.18.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "lints",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/lints-2.1.1",
       "packageUri": "lib/",
@@ -170,6 +176,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "simple_gesture_detector",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/simple_gesture_detector-0.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -198,6 +210,12 @@
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/string_scanner-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "table_calendar",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "term_glyph",
@@ -248,7 +266,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-10-23T06:58:24.556399Z",
+  "generated": "2023-10-23T16:30:21.224907Z",
   "generator": "pub",
   "generatorVersion": "3.1.0"
 }
