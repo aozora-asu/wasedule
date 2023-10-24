@@ -19,7 +19,7 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: BASE_COLOR,
+          backgroundColor: MAIN_COLOR,
           title: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -112,7 +112,7 @@ class TaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: BASE_COLOR,
+        backgroundColor: MAIN_COLOR,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
