@@ -63,9 +63,9 @@ class DatabaseHelper {
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY,
             $columnSammary TEXT NOT NULL,
-            $columnDescription TEXT NOT NULL,
+            $columnDescription  TEXT NOT NULL,
             $columnDTEnd DATE NOT NULL,
-            $columnCategories TEXT NOT NULL,
+            $columnCategories TEXT NUT NULL
           )
           ''');
   }
