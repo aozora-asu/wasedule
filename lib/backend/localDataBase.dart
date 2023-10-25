@@ -13,8 +13,10 @@ class DatabaseHelper {
   static final table = 'my_task'; // テーブル名
 
   static final columnId = '_id'; // カラム名：ID
-  static final columnSubjectName = 'subjectName'; // カラム名:Name
-  static final columnTimeLimit = 'timeLimit'; // カラム名：age
+  static final columnSammary = 'sammary'; // カラム名:subjectName
+  static final columnDescription = 'description';
+  static final columnDTEnd = 'DTEnd';
+  static final columnCategories = 'categories'; // カラム名：timeLimit
 
   // DatabaseHelper クラスを定義
   DatabaseHelper._privateConstructor();
@@ -60,8 +62,10 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY,
-            $columnSubjectName TEXT NOT NULL,
-            $columnTimeLimit INTEGER NOT NULL
+            $columnSammary TEXT NOT NULL,
+            $columnDescription TEXT NOT NULL,
+            $columnDTEnd DATE NOT NULL,
+            $columnCategories TEXT NOT NULL,
           )
           ''');
   }
