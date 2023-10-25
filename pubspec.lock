@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  file_saver:
+    dependency: "direct main"
+    description:
+      name: file_saver
+      sha256: "8ffd91ae9f543c5ebbfec71a814ee5aa9e21176d31335133308abf63f4c42e8a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.9"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -88,6 +96,11 @@ packages:
     version: "2.0.3"
   flutter_test:
     dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -115,14 +128,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  ical:
+    dependency: "direct main"
+    description:
+      name: ical
+      sha256: "49f7096a0ed9f1abb4ccc690c946e70a7c291d633eb1d09b296eef7877c1ecf3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
+  icalendar_parser:
+    dependency: "direct main"
+    description:
+      name: icalendar_parser
+      sha256: "64121bec198c01fcdd5d1247baf2042593f1a418c2dcf331099b662a8a462df4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   intl:
     dependency: transitive
     description:
       name: intl
-      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
       url: "https://pub.dev"
     source: hosted
-    version: "0.18.1"
+    version: "0.17.0"
   lints:
     dependency: transitive
     description:
@@ -155,6 +184,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  nanoid:
+    dependency: transitive
+    description:
+      name: nanoid
+      sha256: be3f8752d9046c825df2f3914195151eb876f3ad64b9d833dd0b799b77b8759e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -276,10 +313,10 @@ packages:
     dependency: "direct main"
     description:
       name: table_calendar
-      sha256: "1e3521a3e6d3fc7f645a58b135ab663d458ab12504f1ea7f9b4b81d47086c478"
+      sha256: "7f1270313c0cdb245b583ed8518982c01d4a7e95869b3c30abcbae3b642c45d0"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.9"
+    version: "3.0.8"
   term_glyph:
     dependency: transitive
     description:
