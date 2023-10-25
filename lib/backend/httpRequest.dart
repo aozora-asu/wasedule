@@ -1,18 +1,11 @@
-import 'dart:io';
-import 'dart:convert';
+//import 'dart:io';
+//import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:file_saver/file_saver.dart';
+import "./tempFile.dart";
 
-String userid = "135654";
-String authtoken = "9b0e0c9a3d8be79d1ed9211cfd6f1194a40ec330";
-String preset_what = "all";
-String preset_time = "weeknow";
-//var url=Uri.https("wsdmoodle.waseda.jp", "/calendar/export_execute.php?userid=$userid&authtoken=${authtoken}&preset_what=${preset_what}&preset_time=${preset_time}",{'q': 'Flutter'});
-//https:///
-var url_string =
-    "https://wsdmoodle.waseda.jp/calendar/export_execute.php?userid=135654&authtoken=9b0e0c9a3d8be79d1ed9211cfd6f1194a40ec330&preset_what=all&preset_time=monthnow";
+String url_string = url_y;
 
-void parseICalendarData(String iCalendarData) {
+Map<String, dynamic> parseICalendarData(String iCalendarData) {
   final lines = iCalendarData.split('\n'); // 行ごとに分割
 
   final iCalInfo = <String, dynamic>{
@@ -43,9 +36,10 @@ void parseICalendarData(String iCalendarData) {
   }
 
   // iCalInfoをJSONに変換
-  final jsonICalData = jsonEncode(iCalInfo);
 
-  print(jsonICalData);
+  final ICalData = _ICalpretter(iCalInfo);
+
+  return ICalData;
 }
 
 Future<String> getICalendarData(String url_string) async {
@@ -54,7 +48,36 @@ Future<String> getICalendarData(String url_string) async {
   return response.body;
 }
 
-void main() async {
-  final Task = await getICalendarData(url_string);
-  parseICalendarData(Task);
+Map<String, dynamic> _ICalpretter(Map<String, dynamic> events) {
+  for (int i = 0; i < events["events"].length; i++) {
+    events["events"][i].remove("UID");
+    events["events"][i].remove("CLASS");
+    events["events"][i].remove("LAST-MODIFIED");
+    events["events"][i].remove("DTSTAMP");
+    events["events"][i].remove("DTSTART");
+    events["events"][i]["DTEND"] = _StrToDt(events["events"][i]["DTEND"]);
+  }
+  return events;
+}
+
+DateTime _StrToDt(String dateStr) {
+  int year = int.parse(dateStr.substring(0, 4));
+  int month = int.parse(dateStr.substring(4, 6));
+  int day = int.parse(dateStr.substring(6, 8));
+  int hour = int.parse(dateStr.substring(9, 11));
+  int minute = int.parse(dateStr.substring(11, 13));
+  int second = int.parse(dateStr.substring(13, 15));
+
+  DateTime dateTime = DateTime.utc(year, month, day, hour, minute, second);
+  // 9時間を加えて日本時間に変換
+  DateTime japanTime = dateTime.add(Duration(hours: 9));
+
+  // 日本時間をフォーマット
+  return japanTime;
+}
+
+Future<Map<String, dynamic>> getEventInfo(url_string) async {
+  final Task_string = await getICalendarData(url_string);
+  Map<String, dynamic> TaskCalendar = parseICalendarData(Task_string);
+  return TaskCalendar;
 }
