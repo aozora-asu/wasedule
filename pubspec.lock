@@ -73,14 +73,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  file_saver:
-    dependency: "direct main"
-    description:
-      name: file_saver
-      sha256: "8ffd91ae9f543c5ebbfec71a814ee5aa9e21176d31335133308abf63f4c42e8a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.9"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -96,11 +88,6 @@ packages:
     version: "2.0.3"
   flutter_test:
     dependency: "direct dev"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -128,22 +115,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  ical:
-    dependency: "direct main"
-    description:
-      name: ical
-      sha256: "49f7096a0ed9f1abb4ccc690c946e70a7c291d633eb1d09b296eef7877c1ecf3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.2"
-  icalendar_parser:
-    dependency: "direct main"
-    description:
-      name: icalendar_parser
-      sha256: "64121bec198c01fcdd5d1247baf2042593f1a418c2dcf331099b662a8a462df4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   intl:
     dependency: transitive
     description:
@@ -184,14 +155,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
-  nanoid:
-    dependency: transitive
-    description:
-      name: nanoid
-      sha256: be3f8752d9046c825df2f3914195151eb876f3ad64b9d833dd0b799b77b8759e
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -285,6 +248,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sqflite:
+    dependency: "direct main"
+    description:
+      name: sqflite
+      sha256: "591f1602816e9c31377d5f008c2d9ef7b8aca8941c3f89cc5fd9d84da0c38a9a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
+  sqflite_common:
+    dependency: transitive
+    description:
+      name: sqflite_common
+      sha256: "1b92f368f44b0dee2425bb861cfa17b6f6cf3961f762ff6f941d20b33355660a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   stack_trace:
     dependency: transitive
     description:
@@ -309,6 +288,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      sha256: "5fcbd27688af6082f5abd611af56ee575342c30e87541d0245f7ff99faa02c60"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   table_calendar:
     dependency: "direct main"
     description:

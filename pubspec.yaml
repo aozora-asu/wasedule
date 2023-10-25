@@ -36,10 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   table_calendar: ^3.0.8
-  icalendar_parser: ^2.0.0
-  ical: ^0.2.2
-  file_saver: ^0.2.9
 
+  sqflite: ^2.3.0  #データベースをいじるパッケージ
   
 
 dev_dependencies:
