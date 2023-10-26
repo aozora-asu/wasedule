@@ -93,7 +93,7 @@
     },
     {
       "name": "intl",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.17.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.18.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -231,7 +231,7 @@
     },
     {
       "name": "table_calendar",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.8",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -284,7 +284,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-10-25T17:22:26.772898Z",
+  "generated": "2023-10-26T06:08:49.966828Z",
   "generator": "pub",
   "generatorVersion": "3.1.0"
 }
