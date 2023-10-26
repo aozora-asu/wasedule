@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import "./colors.dart";
 
 void main() async {
   await initializeDateFormatting(); // 初期化
@@ -19,7 +20,7 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 142, 23, 40),
+          backgroundColor: MAIN_COLOR,
           title:Row(
             crossAxisAlignment: CrossAxisAlignment.start,
              children: <Widget>[
@@ -47,7 +48,7 @@ class FirstPage extends StatelessWidget {
                 const SizedBox(height: 15),
                  ElevatedButton(
                    style: ElevatedButton.styleFrom(
-                   backgroundColor: const Color.fromARGB(255, 215, 196, 28), // 背景色を設定
+                   backgroundColor: ACCENT_COLOR, // 背景色を設定
                    ),
                    onPressed: () {
                    Navigator.push(
@@ -162,7 +163,7 @@ class TaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 142, 23, 40),
+          backgroundColor: MAIN_COLOR,
           title:Row(
             crossAxisAlignment: CrossAxisAlignment.start,
              children: <Widget>[
@@ -190,7 +191,7 @@ class TaskPage extends StatelessWidget {
                 const SizedBox(height: 15),
                  ElevatedButton(
                    style: ElevatedButton.styleFrom(
-                   backgroundColor: const Color.fromARGB(255, 215, 196, 28), // 背景色を設定
+                   backgroundColor: ACCENT_COLOR, // 背景色を設定
                    ),
                    onPressed: () {
                    Navigator.push(
