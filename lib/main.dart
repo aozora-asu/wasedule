@@ -4,7 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import "./colors.dart";
+import 'frontend/colors.dart';
 
 void main() async {
   await initializeDateFormatting(); // 初期化
