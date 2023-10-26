@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MyDatabase.db"; // DB名
+  static final _databaseName = "my_task.db"; // DB名
   static final _databaseVersion = 1; // スキーマのバージョン指定
 
   static final table = 'my_task'; // テーブル名
