@@ -55,23 +55,10 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
     events["events"][i].remove("DTSTART");
     events["events"][i]["DTEND"] =
         DateTime.parse(events["events"][i]["DTEND"]).millisecondsSinceEpoch;
+    events["events"][i]["MEMO"] = null;
   }
   return events;
 }
-
-/// @param dateStr 20231022035900000Z
-DateTime _strToDt(String dateStr) {
-  DateTime dateTime = DateTime.parse(dateStr);
-  // タイムゾーンオフセットを設定（日本時間はUTC+9）
-  Duration japanOffset = const Duration(hours: 9);
-// タイムゾーンオフセットを適用して日本時間に変換
-  DateTime japanTime = dateTime.toUtc().add(japanOffset);
-
-  // 日本時間をフォーマット
-  return japanTime;
-}
-
-/// @return DateTime(2023-10-22 03:59:00000Z)
 
 //リクエストurlを受け取って以下のようなMapとListのキメラを返す関数
 //@param String urlSttring
