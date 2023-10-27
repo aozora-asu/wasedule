@@ -4,7 +4,6 @@ import 'models/task_item.dart';
 
 class TaskDatabaseHelper {
   late Database _database;
-
   // データベースの初期化
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'task_items.db');
@@ -20,7 +19,8 @@ class TaskDatabaseHelper {
         description TEXT,
         dtEnd INTEGER,
         categories TEXT,
-        isDone INTEGER
+        isDone INTEGER,
+        memo TEXT
       )
     ''');
   }
@@ -35,12 +35,12 @@ class TaskDatabaseHelper {
     final List<Map<String, dynamic>> maps = await _database.query('items');
     return List.generate(maps.length, (i) {
       return TaskItem(
-        summary: maps[i]['summary'],
-        description: maps[i]['description'],
-        dtEnd: DateTime.parse(maps[i]['dtEnd']).millisecondsSinceEpoch,
-        categories: maps[i]['categories'],
-        isDone: maps[i]['isDone'], // データベースの1をtrueにマップ
-      );
+          summary: maps[i]['summary'],
+          description: maps[i]['description'],
+          dtEnd: DateTime.parse(maps[i]['dtEnd']).millisecondsSinceEpoch,
+          categories: maps[i]['categories'],
+          isDone: maps[i]['isDone'], // データベースの1をtrueにマップ
+          memo: maps[i]["memo"]);
     });
   }
 
@@ -51,5 +51,21 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // データベース内のすべてのデータを表示
+  Future<void> displayAllData() async {
+    final List<Map<String, dynamic>> data =
+        await _database.rawQuery('SELECT * FROM items');
+    data.forEach((row) {
+      print('ID: ${row['id']}');
+      print('Summary: ${row['summary']}');
+      print('Description: ${row['description']}');
+      print('DtEnd: ${row['dtEnd']}');
+      print('Categories: ${row['categories']}');
+      print('IsDone: ${row['isDone']}');
+      print('Memo: ${row['memo']}');
+      print('-----------------------');
+    });
   }
 }

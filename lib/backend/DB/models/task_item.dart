@@ -4,14 +4,15 @@ class TaskItem {
   int dtEnd;
   String categories;
   int isDone;
+  String? memo;
 
-  TaskItem({
-    required this.summary,
-    required this.description,
-    required this.dtEnd,
-    required this.categories,
-    required this.isDone,
-  });
+  TaskItem(
+      {required this.summary,
+      required this.description,
+      required this.dtEnd,
+      required this.categories,
+      required this.isDone,
+      this.memo});
 
   Map<String, dynamic> toMap() {
     return {
@@ -19,7 +20,8 @@ class TaskItem {
       'description': description,
       'dtEnd': dtEnd,
       'categories': categories,
-      "isDone": isDone
+      "isDone": isDone,
+      "memo": memo
     };
   }
 }
