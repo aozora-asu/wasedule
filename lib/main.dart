@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'frontend/colors.dart';
@@ -14,9 +13,29 @@ void main() async {
 }
 
 //以下はカレンダー関連です。
-class FirstPage extends StatelessWidget {
+class FirstPage extends StatefulWidget {
+  @override
+    _FirstPageState createState() => _FirstPageState();
+}
+
+class _FirstPageState extends State<FirstPage> {
+  int _currentIndex = 0;
+
+    void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+        Widget body;
+    if (_currentIndex == 0) {
+      body = Calendar();
+    } else {
+      body = TaskPage();
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: MAIN_COLOR,
@@ -40,31 +59,35 @@ class FirstPage extends StatelessWidget {
                 ),
               ]),
               const SizedBox(width: 10),
-              Column(
-                children: <Widget>[
-                  const SizedBox(height: 15),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ACCENT_COLOR, // 背景色を設定
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => TaskPage()),
-                      );
-                    },
-                    child: const Text('現在のタスク'),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
-        body: Calendar());
+        body: body,
+        bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        backgroundColor: MAIN_COLOR,
+        selectedItemColor: ACCENT_COLOR,
+        unselectedItemColor: Colors.white,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'カレンダー',           
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.splitscreen),
+            label: 'タスク',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'フレンド',
+          ),
+        ],
+      ),
+    );
   }
 }
 
-//aaaaa
 
 class Calendar extends StatefulWidget {
   @override
@@ -152,54 +175,13 @@ class _CalendarState extends State<Calendar> {
     );
   }
 }
-//以下はタスク管理画面関連の関数です。
 
+
+//以下はタスク管理画面関連の関数です。
 class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MAIN_COLOR,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Column(children: <Widget>[
-              Text(
-                'わせジュール',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              Text(
-                '早稲田生のためのスケジュールアプリ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ]),
-            const SizedBox(width: 10),
-            Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ACCENT_COLOR, // 背景色を設定
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FirstPage()),
-                    );
-                  },
-                  child: const Text('カレンダー'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
       body: Center(
         child: ListView(
           children: [
@@ -229,8 +211,9 @@ class TaskPage extends StatelessWidget {
                 variable3: DateTime(2023, 10, 28, 23, 59),
                 variable4: true),
           ],
-        ),
+       ),
       ),
+        //bottomNavigationBar:MyBottomNavigationBarApp()
     );
   }
 }
@@ -444,38 +427,50 @@ class _DataCardState extends State<DataCard> {
   }
 
   ButtonSwitching() {
-    if (widget.variable4 == true) {
-      return ElevatedButton(
+   if (widget.variable4 == true){
+    if (widget.variable3.isBefore(DateTime.now()) == false) {
+      return ElevatedButton(  //課題完了、期限内
         onPressed: () {
-          // ボタンが押された時の処理
+          setState(() {
+              widget.variable4 = false;
+            });
         },
-        child: Text('      削除      '),
+        child: Text('  元に戻す  '),
         style: TextButton.styleFrom(
-          backgroundColor: Colors.grey, // 背景色を透明に設定
+          backgroundColor: Colors.grey, 
           elevation: 0, // 影を消す
         ),
       );
-    } else {
-      if (widget.variable3.isBefore(DateTime.now()) == false) {
+    }else{
         return ElevatedButton(
+          onPressed: () {
+          },
+          child: Text('スワイプ→'),//完了、期限切れ
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.grey, // 背景色を透明に設定
+            elevation: 0, // 影を消す
+          ),
+        );
+    }
+    }else {
+      if (widget.variable3.isBefore(DateTime.now()) == false) {
+        return ElevatedButton(//未完了、期限内
           onPressed: () {
             setState(() {
               widget.variable4 = true;
             });
-            // ボタンが押された時の処理
           },
           child: Text('終わった！'),
           style: TextButton.styleFrom(
-            backgroundColor: Colors.brown, // 背景色を透明に設定
-            elevation: 0, // 影を消す
+            backgroundColor: Colors.brown, 
+            elevation: 0, 
           ),
         );
       } else {
         return ElevatedButton(
           onPressed: () {
-            // ボタンが押された時の処理
           },
-          child: Text('      削除      '),
+          child: Text('スワイプ→'),//未完了、期限切れ
           style: TextButton.styleFrom(
             backgroundColor: Colors.grey, // 背景色を透明に設定
             elevation: 0, // 影を消す
