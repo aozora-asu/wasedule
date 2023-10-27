@@ -22,6 +22,8 @@ Future<void> resisterTaskToDb(String urlString) async {
 
   if (result != 0) {
     print("新しいタスクがデータベースに登録されました。");
+    // データベース内のデータを表示
+    await databaseHelper.displayAllData();
   } else {
     print("タスクのデータベースへの登録に失敗しました.");
   }
@@ -29,10 +31,10 @@ Future<void> resisterTaskToDb(String urlString) async {
 
 TaskItem _makeTaskItem(Map<String, dynamic> taskMap) {
   return TaskItem(
-    summary: taskMap["SUMMARY"],
-    description: taskMap["DESCRIPTION"],
-    dtEnd: taskMap["DTEND"],
-    categories: taskMap["CATEGORIES"],
-    isDone: STATUS_YET,
-  );
+      summary: taskMap["SUMMARY"],
+      description: taskMap["DESCRIPTION"],
+      dtEnd: taskMap["DTEND"],
+      categories: taskMap["CATEGORIES"],
+      isDone: STATUS_YET,
+      memo: taskMap["MEMO"]);
 }
