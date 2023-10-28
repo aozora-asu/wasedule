@@ -13,13 +13,13 @@ import './colors.dart';
 //以下はカレンダー関連です。
 class FirstPage extends StatefulWidget {
   @override
-  _FirstPageState createState() => _FirstPageState();
+    _FirstPageState createState() => _FirstPageState();
 }
 
 class _FirstPageState extends State<FirstPage> {
   int _currentIndex = 0;
 
-  void _onItemTapped(int index) {
+    void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -27,7 +27,7 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
+        Widget body;
     if (_currentIndex == 0) {
       body = Calendar();
     } else {
@@ -35,42 +35,42 @@ class _FirstPageState extends State<FirstPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MAIN_COLOR,
-        title: const Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Column(children: <Widget>[
-              Text(
-                'わせジュール',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
+        appBar: AppBar(
+          backgroundColor: MAIN_COLOR,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Column(children: <Widget>[
+                Text(
+                  'わせジュール',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-              Text(
-                '早稲田生のためのスケジュールアプリ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
+                Text(
+                  '早稲田生のためのスケジュールアプリ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-            ]),
-            SizedBox(width: 10),
-          ],
+              ]),
+              const SizedBox(width: 10),
+            ],
+          ),
         ),
-      ),
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
+        body: body,
+        bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
         backgroundColor: MAIN_COLOR,
         selectedItemColor: ACCENT_COLOR,
         unselectedItemColor: Colors.white,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
-            label: 'カレンダー',
+            label: 'カレンダー',           
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.splitscreen),
@@ -85,6 +85,7 @@ class _FirstPageState extends State<FirstPage> {
     );
   }
 }
+
 
 class Calendar extends StatefulWidget {
   @override
@@ -119,7 +120,7 @@ class _CalendarState extends State<Calendar> {
               alignment: Alignment.topCenter,
               child: Text(
                 day.day.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black87,
                 ),
               ),
@@ -141,7 +142,7 @@ class _CalendarState extends State<Calendar> {
               alignment: Alignment.topCenter,
               child: Text(
                 day.day.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.grey,
                 ),
               ),
@@ -161,7 +162,7 @@ class _CalendarState extends State<Calendar> {
               alignment: Alignment.topCenter,
               child: Text(
                 day.day.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black87,
                 ),
               ),
@@ -173,8 +174,11 @@ class _CalendarState extends State<Calendar> {
   }
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
+
+
 
 //以下はタスク管理画面関連の関数です。
 class TaskPage extends StatelessWidget {
@@ -210,9 +214,9 @@ class TaskPage extends StatelessWidget {
                 variable3: DateTime(2023, 10, 28, 23, 59),
                 variable4: true),
           ],
-        ),
+       ),
       ),
-      //bottomNavigationBar:MyBottomNavigationBarApp()
+        //bottomNavigationBar:MyBottomNavigationBarApp()
     );
   }
 }
@@ -259,7 +263,7 @@ class _DataCardState extends State<DataCard> {
           child: Card(
             color: Color.fromARGB(255, 244, 237, 216),
             child: SizedBox(
-              height: SizeConfig.blockSizeVertical! * 35,
+              height: SizeConfig.blockSizeVertical!  *35,
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
                 children: <Widget>[
@@ -268,7 +272,7 @@ class _DataCardState extends State<DataCard> {
                       TaskData(),
                       SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                       SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 68,
+                        width: SizeConfig.blockSizeHorizontal!  *68,
                         child: TextField(
                           style: TextStyle(
                             fontSize: 24,
@@ -427,35 +431,34 @@ class _DataCardState extends State<DataCard> {
   }
 
   ButtonSwitching() {
-    if (widget.variable4 == true) {
-      if (widget.variable3.isBefore(DateTime.now()) == false) {
-        return ElevatedButton(
-          //課題完了、期限内
-          onPressed: () {
-            setState(() {
+   if (widget.variable4 == true){
+    if (widget.variable3.isBefore(DateTime.now()) == false) {
+      return ElevatedButton(  //課題完了、期限内
+        onPressed: () {
+          setState(() {
               widget.variable4 = false;
             });
-          },
-          child: Text('  元に戻す  '),
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.grey,
-            elevation: 0, // 影を消す
-          ),
-        );
-      } else {
+        },
+        child: Text('  元に戻す  '),
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.grey, 
+          elevation: 0, // 影を消す
+        ),
+      );
+    }else{
         return ElevatedButton(
-          onPressed: () {},
-          child: Text('スワイプ→'), //完了、期限切れ
+          onPressed: () {
+          },
+          child: Text('スワイプ→'),//完了、期限切れ
           style: TextButton.styleFrom(
             backgroundColor: Colors.grey, // 背景色を透明に設定
             elevation: 0, // 影を消す
           ),
         );
-      }
-    } else {
+    }
+    }else {
       if (widget.variable3.isBefore(DateTime.now()) == false) {
-        return ElevatedButton(
-          //未完了、期限内
+        return ElevatedButton(//未完了、期限内
           onPressed: () {
             setState(() {
               widget.variable4 = true;
@@ -463,14 +466,15 @@ class _DataCardState extends State<DataCard> {
           },
           child: Text('終わった！'),
           style: TextButton.styleFrom(
-            backgroundColor: Colors.brown,
-            elevation: 0,
+            backgroundColor: Colors.brown, 
+            elevation: 0, 
           ),
         );
       } else {
         return ElevatedButton(
-          onPressed: () {},
-          child: Text('スワイプ→'), //未完了、期限切れ
+          onPressed: () {
+          },
+          child: Text('スワイプ→'),//未完了、期限切れ
           style: TextButton.styleFrom(
             backgroundColor: Colors.grey, // 背景色を透明に設定
             elevation: 0, // 影を消す
@@ -596,3 +600,4 @@ class _DataCardState extends State<DataCard> {
     super.dispose();
   }
 }
+
