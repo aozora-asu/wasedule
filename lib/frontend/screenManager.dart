@@ -263,23 +263,24 @@ class _DataCardState extends State<DataCard> {
           child: Card(
             color: Color.fromARGB(255, 244, 237, 216),
             child: SizedBox(
-              height: SizeConfig.blockSizeVertical!  *35,
+              height: SizeConfig.blockSizeHorizontal!  *35,
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       TaskData(),
-                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
-                      SizedBox(
+                      Container(width: SizeConfig.blockSizeHorizontal! * 2,
+                               height: SizeConfig.blockSizeVertical!  *7),
+                      Container(
                         width: SizeConfig.blockSizeHorizontal!  *68,
+                        height: SizeConfig.blockSizeVertical!  *9,
                         child: TextField(
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize:  SizeConfig.blockSizeHorizontal! * 5,
                             fontWeight: FontWeight.w900,
                           ),
                           controller: _controller1,
-
                           decoration: InputDecoration(
                             hintText: "授業名",
                             border: InputBorder.none,
@@ -287,50 +288,62 @@ class _DataCardState extends State<DataCard> {
                           //maxLines: 2, // または1（1の場合は一行で折り返す）),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            String userInput1 = _controller1.text;
-                            // userInputにはTextField内の入力内容が反映されます
-                          });
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                           String userInput1 = _controller1.text;
+                         });
                         },
-                        style: TextButton.styleFrom(
-                          iconColor: Colors.brown,
-                          backgroundColor: Colors.transparent, // 背景色を透明に設定
-                          elevation: 0, // 影を消す
-                        ),
-                        child: Icon(Icons.edit),
+                      child: Container(
+                      width:SizeConfig.blockSizeHorizontal! * 4,
+                      height: SizeConfig.blockSizeHorizontal!  *4,
+                      decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10), // ボタンの角を丸くする
+                       ),
+                     child: Icon(
+                       Icons.edit, // アイコンの種類
+                       color: Colors.brown, // アイコンの色
+                       size: SizeConfig.blockSizeHorizontal!  *4
+                       ),
                       ),
+                     ),
                     ],
-                  ),
+                   ),
                   Divider(
                     color: Colors.yellow,
-                    thickness: 5,
+                    thickness: SizeConfig.blockSizeHorizontal! * 0.8,
                   ),
                   Container(
+                    height:SizeConfig.blockSizeHorizontal! * 4.2,
                     alignment: Alignment.topLeft, // テキストを左上に配置
                     child: Text(
                       '　課題',
                       textAlign: TextAlign.left, // テキスト自体の揃え方も指定
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
                         fontWeight: FontWeight.w800,
                         color: const Color.fromARGB(255, 77, 46, 35),
                       ),
                     ),
                   ),
-                  SizedBox(width: 10), // 適宜間隔を調整するためにSizedBoxを追加
+                  Container(
+                    width:SizeConfig.blockSizeHorizontal!  *2,
+                    height:SizeConfig.blockSizeHorizontal! * 0.6,        
+                  ), // 適宜間隔を調整するためにSizedBoxを追加
                   Expanded(
                     child: SizedBox(
-                      width: 440,
+                      width: SizeConfig.blockSizeHorizontal!  *96,
                       child: Row(
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(left: 8.0),
                             child: SizedBox(
-                              width: 375,
+                              width: SizeConfig.blockSizeHorizontal!  *83,
+                              height: SizeConfig.blockSizeHorizontal! * 3,
                               child: TextField(
                                 controller: _controller2,
+                                style:TextStyle(fontSize:  SizeConfig.blockSizeHorizontal! * 3,),
                                 //onChanged: (newValue) {
                                 //String userInput = _controller2.text;// テキストが変更された際の処理
                                 //},
@@ -341,46 +354,57 @@ class _DataCardState extends State<DataCard> {
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              String userInput2 = _controller2.text;
-                              // userInputにはTextField内の入力内容が反映されます
-                            },
-                            style: TextButton.styleFrom(
-                              iconColor: Colors.brown,
-                              backgroundColor: Colors.transparent, // 背景色を透明に設定
-                              elevation: 0, // 影を消す
-                            ),
-                            child: Icon(Icons.edit),
-                          ),
-                        ],
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                           String userInput2 = _controller2.text;
+                         });
+                        },
+                      child: Container(
+                      width:SizeConfig.blockSizeHorizontal! * 4.5,
+                      height: SizeConfig.blockSizeHorizontal!  *4.5,
+                      decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10), // ボタンの角を丸くする
+                       ),
+                     child: Icon(
+                       Icons.edit, // アイコンの種類
+                       color: Colors.brown, // アイコンの色
+                       size: SizeConfig.blockSizeHorizontal!  *4.5
+                        ),
+                       ),
                       ),
+                     ],
                     ),
+                   ),
                   ),
-
                   Container(
                     alignment: Alignment.topLeft, // テキストを左上に配置
                     child: Text(
                       '　期限',
                       textAlign: TextAlign.left, // テキスト自体の揃え方も指定
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
                         fontWeight: FontWeight.w800,
                         color: const Color.fromARGB(255, 77, 46, 35),
                       ),
                     ),
                   ),
-                  SizedBox(width: 10), // 適宜間隔を調整するためにSizedBoxを追加
+                  SizedBox(
+                    width:SizeConfig.blockSizeHorizontal!  *2,
+                    height:SizeConfig.blockSizeHorizontal! * 0.6,
+                    ),
                   Expanded(
                     child: SizedBox(
-                      width: 450,
+                      width: SizeConfig.blockSizeHorizontal!  *96,
                       child: Row(
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(left: 8.0),
                             child: SizedBox(
-                              width: 195,
+                              width: SizeConfig.blockSizeHorizontal!  *35,
                               child: TextField(
+                                style:TextStyle(fontSize:  SizeConfig.blockSizeHorizontal! * 3,),
                                 controller: _controller3,
                                 decoration: InputDecoration(
                                   hintText: "日付 (yyyy-MM-dd HH:mm)",
@@ -389,22 +413,34 @@ class _DataCardState extends State<DataCard> {
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              String userInput3 = _controller3.text;
-                              // userInputにはTextField内の入力内容が反映されます
-                            },
-                            style: TextButton.styleFrom(
-                              iconColor: Colors.brown,
-                              backgroundColor: Colors.transparent, // 背景色を透明に設定
-                              elevation: 0, // 影を消す
-                            ),
-                            child: Icon(Icons.edit),
-                          ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                           String userInput3 = _controller3.text;
+                         });
+                        },
+                      child: Container(
+                      width:SizeConfig.blockSizeHorizontal! * 4.5,
+                      height: SizeConfig.blockSizeHorizontal!  *4.5,
+                      decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10), // ボタンの角を丸くする
+                       ),
+                     child: Icon(
+                       Icons.edit, // アイコンの種類
+                       color: Colors.brown, // アイコンの色
+                       size: SizeConfig.blockSizeHorizontal!  *4.5
+                       ),
+                      ),
+                     ),
                           Row(
                             children: <Widget>[
+                              SizedBox(
+                                width:SizeConfig.blockSizeHorizontal! * 17,
+                                height:SizeConfig.blockSizeHorizontal! * 5,
+                              ),
                               DaysLeft(),
-                              SizedBox(width: 10),
+                              SizedBox(width:SizeConfig.blockSizeHorizontal!  *2),
                               ButtonSwitching(),
                             ],
                           ),
@@ -412,12 +448,15 @@ class _DataCardState extends State<DataCard> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                  height:SizeConfig.blockSizeHorizontal! * 1,
+                 ),
                 ],
               ),
             ),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 10),//カード間の隙間。固定値で。
       ],
     );
   }
@@ -492,7 +531,7 @@ class _DataCardState extends State<DataCard> {
         return Text(
           ("残り${difference.inDays} 日"),
           style: TextStyle(
-            fontSize: 18,
+            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
@@ -501,7 +540,7 @@ class _DataCardState extends State<DataCard> {
         return Text(
           ("残り${difference.inDays} 日"),
           style: TextStyle(
-            fontSize: 18,
+            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
             fontWeight: FontWeight.w600,
             color: const Color.fromARGB(255, 255, 0, 0),
           ),
@@ -511,7 +550,7 @@ class _DataCardState extends State<DataCard> {
       return Text(
         ("残り 0 日"),
         style: TextStyle(
-          fontSize: 18,
+          fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
           fontWeight: FontWeight.w600,
           color: const Color.fromARGB(255, 255, 0, 0),
         ),
@@ -538,7 +577,7 @@ class _DataCardState extends State<DataCard> {
             child: Text(
               '   未完了   ',
               style: TextStyle(
-                fontSize: 18,
+                fontSize:  SizeConfig.blockSizeHorizontal! *4,
                 fontWeight: FontWeight.w900,
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
@@ -552,7 +591,7 @@ class _DataCardState extends State<DataCard> {
             child: Text(
               '   完了！  ',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w900,
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
@@ -568,7 +607,7 @@ class _DataCardState extends State<DataCard> {
             child: Text(
               ' 期限切れ ',
               style: TextStyle(
-                fontSize: 18,
+                fontSize:  SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w900,
                 color: Color.fromARGB(255, 250, 0, 0),
               ),
@@ -582,7 +621,7 @@ class _DataCardState extends State<DataCard> {
             child: Text(
               '   完了！   ',
               style: TextStyle(
-                fontSize: 18,
+                fontSize:  SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w900,
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
