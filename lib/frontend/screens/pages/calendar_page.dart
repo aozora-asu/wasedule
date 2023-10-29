@@ -17,7 +17,6 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPageState extends State<FirstPage> {
   int _currentIndex = 0;
-
     void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -55,7 +54,6 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                 ),
               ]),
-              const SizedBox(width: 10),
             ],
           ),
         ),
