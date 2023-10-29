@@ -267,14 +267,18 @@ class _DataCardState extends State<DataCard> {
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
+                  Container(
+                   height: SizeConfig.blockSizeHorizontal! * 13,
+                   child:Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[Row(
+                     children: <Widget>[
                       TaskData(),
-                      Container(width: SizeConfig.blockSizeHorizontal! * 2,
-                               height: SizeConfig.blockSizeVertical!  *7),
+                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,
+                               height: SizeConfig.blockSizeHorizontal!  *7),
                       Container(
                         width: SizeConfig.blockSizeHorizontal!  *68,
-                        height: SizeConfig.blockSizeVertical!  *9,
+                        height: SizeConfig.blockSizeHorizontal!  *8,
                         child: TextField(
                           style: TextStyle(
                             fontSize:  SizeConfig.blockSizeHorizontal! * 5,
@@ -310,10 +314,13 @@ class _DataCardState extends State<DataCard> {
                      ),
                     ],
                    ),
-                  Divider(
+                   Divider(
                     color: Colors.yellow,
                     thickness: SizeConfig.blockSizeHorizontal! * 0.8,
                   ),
+                 ],
+                ),
+               ),
                   Container(
                     height:SizeConfig.blockSizeHorizontal! * 4.2,
                     alignment: Alignment.topLeft, // テキストを左上に配置
