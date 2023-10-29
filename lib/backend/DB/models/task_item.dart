@@ -1,9 +1,9 @@
 class TaskItem {
-  String summary;
+  String? summary;
   String? description;
-  int dtEnd;
+  int? dtEnd;
   String categories;
-  int isDone;
+  int isDone = 0;
   String? memo;
 
   TaskItem(
