@@ -1,5 +1,5 @@
 class TaskItem {
-  String summary;
+  String? summary;
   String? description;
   int dtEnd;
   String categories;
@@ -7,7 +7,7 @@ class TaskItem {
   String? memo;
 
   TaskItem(
-      {required this.summary,
+      {this.summary,
       this.description,
       required this.dtEnd,
       required this.categories,

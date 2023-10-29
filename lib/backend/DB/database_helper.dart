@@ -8,6 +8,7 @@ class TaskDatabaseHelper {
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'task_items.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
+    deleteAllData(_database);
   }
 
   // データベースの作成

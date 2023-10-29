@@ -14,7 +14,4 @@ void main() async {
   runApp(MaterialApp(
     home: FirstPage(),
   ));
-
-  //ここの引数にurl_y or url_tを入力するとコンソールにデータベースが出力されます
-  //await resisterTaskToDb(url_y);
 }
