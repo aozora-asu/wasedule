@@ -1,14 +1,14 @@
 class TaskItem {
-  String? summary;
+  String summary;
   String? description;
-  int? dtEnd;
+  int dtEnd;
   String categories;
   int isDone = 0;
   String? memo;
 
   TaskItem(
       {required this.summary,
-      required this.description,
+      this.description,
       required this.dtEnd,
       required this.categories,
       required this.isDone,

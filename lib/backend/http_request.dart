@@ -53,8 +53,11 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
     events["events"][i].remove("LAST-MODIFIED");
     events["events"][i].remove("DTSTAMP");
     events["events"][i].remove("DTSTART");
-    events["events"][i]["DTEND"] =
-        DateTime.parse(events["events"][i]["DTEND"]).millisecondsSinceEpoch;
+
+    events["events"][i]["DTEND"] = DateTime.parse(events["events"][i]["DTEND"])
+        .add(const Duration(hours: 9))
+        .millisecondsSinceEpoch;
+
     events["events"][i]["MEMO"] = null;
   }
   return events;

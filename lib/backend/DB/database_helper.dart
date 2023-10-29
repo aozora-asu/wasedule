@@ -30,6 +30,10 @@ class TaskDatabaseHelper {
     return await _database.insert('items', task.toMap());
   }
 
+  Future<void> deleteAllData(Database db) async {
+    await db.rawDelete('DELETE FROM items');
+  }
+
   // すべてのタスクを取得
   Future<List<TaskItem>> getTasks() async {
     final List<Map<String, dynamic>> maps = await _database.query('items');
@@ -75,7 +79,6 @@ class TaskDatabaseHelper {
         await _database.rawQuery('SELECT * FROM items');
 
     events["events"] = data;
-    print(events);
     return events;
   }
 }
