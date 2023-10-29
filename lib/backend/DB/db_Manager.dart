@@ -4,7 +4,7 @@ import "../http_request.dart";
 
 import "../status_code.dart";
 
-Future<void> resisterTaskToDb(String urlString) async {
+Future<Map<String, dynamic>> resisterTaskToDb(String urlString) async {
   // データベースヘルパークラスのインスタンスを作成
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   // データベースの初期化
@@ -15,26 +15,15 @@ Future<void> resisterTaskToDb(String urlString) async {
 
   for (int i = 0; i < taskData["events"].length; i++) {
     // 1. TaskItemオブジェクトを作成
-    taskItem = _makeTaskItem(taskData["events"][i]);
+    taskItem = TaskItem(
+        summary: taskData["SUMMARY"],
+        description: taskData["DESCRIPTION"],
+        dtEnd: taskData["DTEND"],
+        categories: taskData["CATEGORIES"],
+        isDone: STATUS_YET,
+        memo: taskData["MEMO"]);
     // 2. データベースヘルパークラスを使用してデータベースに挿入
     result = await databaseHelper.insertTask(taskItem);
   }
-
-  if (result != 0) {
-    print("新しいタスクがデータベースに登録されました。");
-    // データベース内のデータを表示
-    await databaseHelper.displayAllData();
-  } else {
-    print("タスクのデータベースへの登録に失敗しました.");
-  }
-}
-
-TaskItem _makeTaskItem(Map<String, dynamic> taskMap) {
-  return TaskItem(
-      summary: taskMap["SUMMARY"],
-      description: taskMap["DESCRIPTION"],
-      dtEnd: taskMap["DTEND"],
-      categories: taskMap["CATEGORIES"],
-      isDone: STATUS_YET,
-      memo: taskMap["MEMO"]);
+  return databaseHelper.getTaskFromDB();
 }

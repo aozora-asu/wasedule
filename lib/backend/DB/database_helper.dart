@@ -68,4 +68,14 @@ class TaskDatabaseHelper {
       print('-----------------------');
     });
   }
+
+  Future<Map<String, dynamic>> getTaskFromDB() async {
+    var events = <String, dynamic>{};
+    final List<Map<String, dynamic>> data =
+        await _database.rawQuery('SELECT * FROM items');
+
+    events["events"] = data;
+    print(events);
+    return events;
+  }
 }
