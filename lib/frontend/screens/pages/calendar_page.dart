@@ -35,9 +35,8 @@ class _FirstPageState extends State<FirstPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: MAIN_COLOR,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+          title:Center(
+             child: 
               const Column(children: <Widget>[
                 Text(
                   'わせジュール',
@@ -53,8 +52,8 @@ class _FirstPageState extends State<FirstPage> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-              ]),
-            ],
+              ]
+            ),
           ),
         ),
         body: body,
