@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:async';
 
 import '../../size_config.dart';
 import '../../colors.dart';
@@ -34,6 +35,7 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       body: Center(
         child: FutureBuilder<Map<String, dynamic>>(
           future: events,
@@ -130,10 +132,10 @@ class _DataCardState extends State<DataCard> {
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       children: <Widget>[
         ClipRRect(
-          borderRadius: BorderRadius.circular(1.0),
+          borderRadius: BorderRadius.circular(5.0),
           child: Card(
-            color: Color.fromARGB(255, 244, 237, 216),
-            child: SizedBox(
+            color: WIDGET_COLOR,//Color.fromARGB(255, 244, 237, 216),
+             child: SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
@@ -172,6 +174,7 @@ class _DataCardState extends State<DataCard> {
                                 setState(() {
                                   String userInput1 = _controller1.text;
                                 });
+                                showAutoDismissiblePopup(context);
                               },
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 4,
@@ -269,6 +272,7 @@ class _DataCardState extends State<DataCard> {
                                 setState(() {
                                   String userInput3 = _controller3.text;
                                 });
+                                showAutoDismissiblePopup(context);
                               },
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 4.5,
@@ -375,7 +379,7 @@ class _DataCardState extends State<DataCard> {
                                   //String userInput = _controller2.text;// テキストが変更された際の処理
                                   //},
                                   decoration:  InputDecoration(
-                                    hintText: "通知表示用の要約を入力… (例 レポ500字)",
+                                    hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
                                     hintStyle: TextStyle(
@@ -397,6 +401,7 @@ class _DataCardState extends State<DataCard> {
                                 setState(() {
                                   String userInput5 = _controller5.text;
                                 });
+                                showAutoDismissiblePopup(context);
                               },
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 4.5,
@@ -488,14 +493,13 @@ class _DataCardState extends State<DataCard> {
                                   //String userInput = _controller2.text;// テキストが変更された際の処理
                                   //},
                                   decoration: const InputDecoration(
-                                    hintText: "課題を入力…",
+                                    hintText: "課題の詳細やメモを入力…",
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.only(top: 0),
                                     hintStyle: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w500
                                       ),
-                                    //alignLabelWithHint: true,
                                   ),
                                 ),
                               ),
@@ -512,6 +516,7 @@ class _DataCardState extends State<DataCard> {
                                 setState(() {
                                   String userInput2 = _controller2.text;
                                 });
+                                showAutoDismissiblePopup(context);
                               },
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 4.5,
@@ -578,6 +583,9 @@ class _DataCardState extends State<DataCard> {
   String Titlename() {
     return _controller1.text;
   }
+
+
+
 
   ButtonSwitching() {
     if (widget.isDone == true) {
@@ -747,3 +755,28 @@ class _DataCardState extends State<DataCard> {
     super.dispose();
   }
 }
+
+
+    void showAutoDismissiblePopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
+        return 
+        Align(
+          alignment: Alignment.bottomCenter,
+          child:AlertDialog(
+          title: Text('変更が反映されました',
+          style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                fontWeight: FontWeight.w700,
+              ),
+          ),
+          )
+        );
+      },
+    );
+  }
