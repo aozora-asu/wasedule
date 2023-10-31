@@ -68,7 +68,7 @@ class DataCard extends StatefulWidget {
   final String categories; // 授業名
   final String? description; // 課題
   final DateTime dtEnd; // 期限
-  final String? memo;
+  final String? memo;//メモ(通知表示用の要約)
   bool isDone; // 課題が終了したか(trueで済)
 
   DataCard({
@@ -98,7 +98,7 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
           categories: data[i]["categories"],
           description: data[i]["description"],
           dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-          memo: null,
+          memo: data[i]["memo"],
           isDone: false,
         )
     ],
@@ -107,10 +107,11 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
 
 //ここにmemo追加しといてー。上のは追加した
 class _DataCardState extends State<DataCard> {
-  late TextEditingController _controller1;
-  late TextEditingController _controller2;
-  late TextEditingController _controller3;
-  late TextEditingController _controller4;
+  late TextEditingController _controller1;//categories
+  late TextEditingController _controller2;//description
+  late TextEditingController _controller3;//dtEnd
+  late TextEditingController _controller4;//isDone
+  late TextEditingController _controller5;//memo
 
   @override
   void initState() {
@@ -119,19 +120,21 @@ class _DataCardState extends State<DataCard> {
     _controller2 = TextEditingController(text: widget.description);
     _controller3 = TextEditingController(text: widget.dtEnd.toString());
     _controller4 = TextEditingController(text: widget.isDone.toString());
+    _controller5 = TextEditingController(text: widget.memo);
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Column(
+//カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(1.0),
           child: Card(
             color: Color.fromARGB(255, 244, 237, 216),
             child: SizedBox(
-              height: SizeConfig.blockSizeHorizontal! * 34,
+              height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -139,7 +142,7 @@ class _DataCardState extends State<DataCard> {
                   Container(
                     height: SizeConfig.blockSizeHorizontal! * 12,
                     child: Column(
-                      //mainAxisAlignment: MainAxisAlignment.start,
+//タスクの状態・授業名///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -197,12 +200,13 @@ class _DataCardState extends State<DataCard> {
                   ),
                   SizedBox(
                   height:SizeConfig.blockSizeHorizontal! * 1,),
+//期限、残り日数、完了ボタン//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                  Row(children:[
                   SizedBox(
                   width:SizeConfig.blockSizeHorizontal! * 1.2,),
                   Container(
                   height:SizeConfig.blockSizeHorizontal! * 6,
-                  width:SizeConfig.blockSizeHorizontal! * 73,
+                  width:SizeConfig.blockSizeHorizontal! * 72.3,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
@@ -221,7 +225,7 @@ class _DataCardState extends State<DataCard> {
                     children: [
                       Container(
                         child: Text(
-                          '  期限',
+                          ' 期限',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
@@ -308,6 +312,119 @@ class _DataCardState extends State<DataCard> {
                     ),
                    ]
               ),
+//要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+               SizedBox(
+                  height:SizeConfig.blockSizeHorizontal! * 1,
+                 ),
+                 Container(
+                  height:SizeConfig.blockSizeHorizontal! * 6,
+                  width:SizeConfig.blockSizeHorizontal! * 96,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                        ),
+                        BoxShadow(
+                          color: Colors.white,
+                          spreadRadius: -1.5,
+                          blurRadius: 2.0,
+                        ),
+                      ],                      
+                    ),
+                  child:Row(
+                    children: [
+                      Container(
+                        height: SizeConfig.blockSizeHorizontal! * 12,
+                        width:SizeConfig.blockSizeHorizontal! * 11,
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          '  要約',
+                          textAlign: TextAlign.left, // テキスト自体の揃え方も指定
+                          style: TextStyle(
+                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                            fontWeight: FontWeight.w800,
+                            color: const Color.fromARGB(255, 77, 46, 35),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: SizeConfig.blockSizeHorizontal! * 2,
+                        height: SizeConfig.blockSizeHorizontal! * 6,
+                      ),
+                      Container(
+                        width: SizeConfig.blockSizeHorizontal! * 82,
+                        height: SizeConfig.blockSizeHorizontal! *6,
+                        alignment: Alignment.topLeft,
+                        child: Row(
+                          children: <Widget>[ 
+                              Container(
+                                margin: EdgeInsets.only(top: 0),
+                                width: SizeConfig.blockSizeHorizontal! *75,
+                                alignment: Alignment.topLeft,
+                                height: SizeConfig.blockSizeHorizontal! *6,
+                                  child: TextField(
+                                  maxLines: 1,
+                                  textAlign: TextAlign.start,
+                                  controller: _controller5,
+                                  style: TextStyle(
+                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  //onChanged: (newValue) {
+                                  //String userInput = _controller2.text;// テキストが変更された際の処理
+                                  //},
+                                  decoration:  InputDecoration(
+                                    hintText: "通知表示用の要約を入力… (例 レポ500字)",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500
+                                      ),
+                                    //alignLabelWithHint: true,
+                                  ),
+                                ),
+                              ),
+                            Container(
+                            height:SizeConfig.blockSizeHorizontal! * 6,
+                            width:SizeConfig.blockSizeHorizontal! * 4.5,
+                            alignment: Alignment.topLeft,
+                            child:Column(children:[
+                              SizedBox(height:SizeConfig.blockSizeHorizontal! * 1,),
+                              InkWell(
+                              onTap: () {
+                                setState(() {
+                                  String userInput5 = _controller5.text;
+                                });
+                              },
+                              child: Container(
+                                width: SizeConfig.blockSizeHorizontal! * 4.5,
+                                height: SizeConfig.blockSizeHorizontal! * 4.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius:
+                                      BorderRadius.circular(10), // ボタンの角を丸くする
+                                ),
+                                child: Icon(Icons.edit, // アイコンの種類
+                                    color: Colors.brown, // アイコンの色
+                                    size:SizeConfig.blockSizeHorizontal! * 4.5
+                                ),
+                               ),
+                              ),
+                             ]
+                            ),
+                           ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  // SizedBox(
+                  //   height: SizeConfig.blockSizeHorizontal! * 1,
+                  // ),
+                 ),
+//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                  SizedBox(
                   height:SizeConfig.blockSizeHorizontal! * 1,
                  ),
@@ -413,7 +530,7 @@ class _DataCardState extends State<DataCard> {
                             SizedBox(height:SizeConfig.blockSizeHorizontal! * 1,),
                               InkWell(
                               onTap: () {
-                               //テキストボックスの中の文字を全消しできるような機能を付ける予定
+                               _controller2.clear();
                               },
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 4.5,
@@ -450,6 +567,9 @@ class _DataCardState extends State<DataCard> {
       ],
     );
   }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   String initialData() {
     return TaskData();
@@ -623,6 +743,7 @@ class _DataCardState extends State<DataCard> {
     _controller2.dispose();
     _controller3.dispose();
     _controller4.dispose();
+    _controller5.dispose();
     super.dispose();
   }
 }
