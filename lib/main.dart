@@ -12,6 +12,8 @@ import './frontend/screens/pages/calendar_page.dart';
 import 'backend/DB/database_helper.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Bindingの初期化
+
   await initializeDateFormatting(); // 初期化
 
   runApp(MaterialApp(

@@ -1,43 +1,42 @@
-import 'DB/models/task_item.dart';
+import "DB/models/task_item.dart";
 import 'DB/database_helper.dart';
-import 'http_request.dart';
+import "http_request.dart";
 
-import 'status_code.dart';
+import "status_code.dart";
 
-class DBManager extends TaskDatabaseHelper {
+Future<Map<String, dynamic>> resisterTaskToDB(String urlString) async {
+  // データベースヘルパークラスのインスタンスを作成
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  // データベースの初期化
 
-  Future<void> resisterTaskToDB(String urlString) async {
-    // データベースヘルパークラスのインスタンスを作成
+  await databaseHelper.initDatabase();
+  Map<String, dynamic> taskData = await getTaskData(urlString);
+  TaskItem taskItem;
+  int result = 0;
 
-    // データベースの初期化
-
-    Map<String, dynamic> taskData = await getTaskData(urlString);
-    TaskItem taskItem;
-    int result = 0;
-
-    for (int i = 0; i < taskData["events"].length; i++) {
-      // 1. TaskItemオブジェクトを作成
-      taskItem = TaskItem(
-        uid: taskData["events"][i]['UID'],
-        title: taskData["events"][i]['CATEGORIES'],
-        dtEnd: taskData["events"][i]['DTEND'],
-        summary: taskData["events"][i]['SUMMARY'],
-        description: taskData["events"][i]["DESCRIPTION"],
-
-        isDone: 0, // データベースの1をtrueにマップ
-      );
-      // 2. データベースヘルパークラスを使用してデータベースに挿入
-      result = await databaseHelper.insertTask(taskItem);
-    }
+  for (int i = 0; i < taskData["events"].length; i++) {
+    // 1. TaskItemオブジェクトを作成
+    taskItem = TaskItem(
+      uid: taskData["events"][i]["UID"],
+      summary: taskData["events"][i]["SUMMARY"],
+      description: taskData["events"][i]["DESCRIPTION"],
+      dtEnd: taskData["events"][i]["DTEND"],
+      title: taskData["events"][i]["CATEGORIES"],
+      isDone: STATUS_YET,
+    );
+    // 2. データベースヘルパークラスを使用してデータベースに挿入
+    result = await databaseHelper.insertTask(taskItem);
   }
+  return databaseHelper.getTaskFromDB();
+}
 
-  @override
-  Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
-    return databaseHelper.taskListForCalendarPage();
-  }
+Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  return databaseHelper.taskListForCalendarPage();
+}
 
-  Future<List<Map<String, dynamic>>> taskListforTaskPage() async {
-    return databaseHelper.taskListForTaskPage();
-  }
+Future<List<Map<String, dynamic>>> taskListforTaskPage() async {
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  print(databaseHelper.taskListForTaskPage());
+  return databaseHelper.taskListForTaskPage();
 }

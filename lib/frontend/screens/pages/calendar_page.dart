@@ -27,7 +27,10 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _loadData() async {
-    setState(() {});
+    final data = await resisterTaskToDB(url_t);
+    setState(() {
+      events = Future.value(data);
+    });
   }
 
   @override

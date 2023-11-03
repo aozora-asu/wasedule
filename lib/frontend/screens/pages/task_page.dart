@@ -17,17 +17,16 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  Future<List<Map<String, dynamic>>>? events;
-  DBManager dbManager = DBManager();
+  Future<Map<String, dynamic>>? events;
 
   @override
   void initState() {
     super.initState();
-    _initData();
+    _loadData();
   }
 
-  Future<void> _initData() async {
-    final data = await dbManager.taskListforTaskPage();
+  Future<void> _loadData() async {
+    final data = await resisterTaskToDB(url_t);
     setState(() {
       events = Future.value(data);
     });
@@ -38,17 +37,19 @@ class _TaskPageState extends State<TaskPage> {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       body: Center(
-        child: FutureBuilder<List<Map<String, dynamic>>>(
+        child: FutureBuilder<Map<String, dynamic>>(
           future: events,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text("エラー: ${snapshot.error}");
+              return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
+              // データが読み込まれた場合、リストを生成
               return buildDataCards(
-                  snapshot.data! as List<Map<String, dynamic>>);
+                  snapshot.data!["events"] as List<Map<String, dynamic>>);
             } else {
+              // データがない場合の処理（nullの場合など）
               return CircularProgressIndicator();
             }
           },
@@ -56,10 +57,10 @@ class _TaskPageState extends State<TaskPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _initData();
+          _loadData();
         },
-        backgroundColor: MAIN_COLOR,
-        child: Icon(Icons.get_app),
+        child: Icon(Icons.get_app), // ボタンのアイコン
+        backgroundColor: MAIN_COLOR, // ボタンの背景色
       ),
     );
   }
@@ -67,17 +68,16 @@ class _TaskPageState extends State<TaskPage> {
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
+  final String? description; // 課題
   final DateTime dtEnd; // 期限
   final String? summary; //メモ(通知表示用の要約)
-  final String? description; // 課題
-
   bool isDone; // 課題が終了したか(trueで済)
 
   DataCard({
     required this.title,
-    required this.dtEnd,
     this.description,
-    this.summary,
+    required this.dtEnd,
+    required this.summary,
     required this.isDone,
   });
 
@@ -129,40 +129,48 @@ class _DataCardState extends State<DataCard> {
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       children: <Widget>[
         ClipRRect(
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(8.0),
           child: Card(
-            color: WIDGET_COLOR, //Color.fromARGB(255, 244, 237, 216),
+            color: WIDGET_COLOR,
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
                   // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                  width: 3.5, // 輪郭線の幅
+                  width: 3, // 輪郭線の幅
                 ),
-                borderRadius: BorderRadius.circular(8.0), // カードの角を丸める場合は設定
+                borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
               ),
               height: SizeConfig.blockSizeHorizontal! * 42,
-              width: SizeConfig.blockSizeHorizontal! * 98,
+              width: SizeConfig.blockSizeHorizontal! * 96.8,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-//タスクの状態・授業名///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//タスクの状態・授業名・チェクボ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   Container(
                     height: SizeConfig.blockSizeHorizontal! * 12,
                     child: Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            TaskData(),
-                            SizedBox(
-                                width: SizeConfig.blockSizeHorizontal! * 2,
-                                height: SizeConfig.blockSizeHorizontal! * 11),
                             Container(
-                              width: SizeConfig.blockSizeHorizontal! * 68,
+                              width: SizeConfig.blockSizeHorizontal! * 2.5,
+                              height: SizeConfig.blockSizeHorizontal! * 5,
+                            ),
+                            Container(
+                              width: SizeConfig.blockSizeHorizontal! * 5,
+                              height: SizeConfig.blockSizeHorizontal! * 5,
+                              child: ButtonSwitching(),
+                            ),
+                            SizedBox(
+                                width: SizeConfig.blockSizeHorizontal! * 2.5,
+                                height: SizeConfig.blockSizeHorizontal! * 5),
+                            Container(
+                              width: SizeConfig.blockSizeHorizontal! * 80,
                               height: SizeConfig.blockSizeHorizontal! * 12,
                               child: TextField(
-                                textAlign: TextAlign.end,
+                                textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                   fontWeight: FontWeight.w900,
@@ -316,10 +324,9 @@ class _DataCardState extends State<DataCard> {
                     ),
                   ),
                   Divider(
-                    height:
-                        SizeConfig.blockSizeHorizontal! * 0.6, // 高さを指定する場合（省略可）
-                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                    thickness: 2, // 線の太さを指定する場合（省略可）
+                    height: SizeConfig.blockSizeHorizontal! * 0.6,
+                    color: WIDGET_OUTLINE_COLOR,
+                    thickness: 2,
                   ),
 //課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   SizedBox(
@@ -450,94 +457,98 @@ class _DataCardState extends State<DataCard> {
                     ),
                   ),
                   Divider(
-                    height:
-                        SizeConfig.blockSizeHorizontal! * 0.8, // 高さを指定する場合（省略可）
-                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                    thickness: 2, // 線の太さを指定する場合（省略可）
+                    height: SizeConfig.blockSizeHorizontal! * 0.8,
+                    color: WIDGET_OUTLINE_COLOR,
+                    thickness: 2,
                   ),
-//期限、残り日数、完了ボタン//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   Row(children: [
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 1.2,
                     ),
                     Container(
                       height: SizeConfig.blockSizeHorizontal! * 6,
-                      width: SizeConfig.blockSizeHorizontal! * 71.4,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              '期限',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromARGB(255, 0, 0, 0),
+                      width: SizeConfig.blockSizeHorizontal! * 93,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Text(
+                                ' 期限',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal! * 3.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 2,
-                            height: SizeConfig.blockSizeHorizontal! * 6,
-                          ),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 61,
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Container(
-                                    width: SizeConfig.blockSizeHorizontal! * 35,
-                                    height: SizeConfig.blockSizeHorizontal! * 6,
-                                    alignment: Alignment.center,
-                                    child: TextField(
-                                      style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 3,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      controller: _controller3,
-                                      decoration: InputDecoration(
-                                        hintText: "日付 (yyyy-MM-dd HH:mm)",
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.only(
-                                            bottom: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                3.2),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 2,
+                              height: SizeConfig.blockSizeHorizontal! * 6,
+                            ),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 83.1,
+                              child: Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Container(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 35,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 6,
+                                      alignment: Alignment.center,
+                                      child: TextField(
+                                        style: TextStyle(
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  3,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        controller: _controller3,
+                                        decoration: InputDecoration(
+                                          hintText: "日付 (yyyy-MM-dd HH:mm)",
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.only(
+                                              bottom: SizeConfig
+                                                      .blockSizeHorizontal! *
+                                                  3.2),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 5.9,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 5,
-                                    ),
-                                    Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 18,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 5.5,
-                                      child: DaysLeft(),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: SizeConfig.blockSizeHorizontal! *
+                                            24,
+                                        height:
+                                            SizeConfig.blockSizeHorizontal! * 5,
+                                      ),
+                                      Container(
+                                        width: SizeConfig.blockSizeHorizontal! *
+                                            22,
+                                        height:
+                                            SizeConfig.blockSizeHorizontal! *
+                                                6.5,
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: TaskData(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                    Container(
-                      width: SizeConfig.blockSizeHorizontal! * 20,
-                      height: SizeConfig.blockSizeHorizontal! * 5,
-                      child: ButtonSwitching(),
-                    ),
                   ]),
                 ],
               ),
@@ -563,51 +574,55 @@ class _DataCardState extends State<DataCard> {
     if (widget.isDone == true) {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //課題完了、期限内
-        return ElevatedButton(
-          onPressed: () {
-            setState(() {
-              widget.isDone = false;
+        return Checkbox(
+            value: widget.isDone,
+            onChanged: (bool? value) {
+              setState(() {
+                widget.isDone = value!;
+              });
             });
-          },
-          child: Text('元に戻す',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 2)),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.grey), // ボタンの背景色
-            elevation: MaterialStateProperty.all(0),
-          ),
-        );
       } else {
         //完了、期限切れ
-        return Text(
-          'スワイプ→',
-          style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 6),
+        return InkWell(
+          onTap: () {
+            InformationAutoDismissiblePopup(context);
+          },
+          child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 5,
+            height: SizeConfig.blockSizeHorizontal! * 5,
+            child: Icon(
+              Icons.info,
+              color: Colors.blueGrey,
+              size: SizeConfig.blockSizeHorizontal! * 5,
+            ),
+          ),
         );
       }
     } else {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //未完了、期限内
-        return ElevatedButton(
-          onPressed: () {
-            setState(() {
-              widget.isDone = true;
+        return Checkbox(
+            value: widget.isDone,
+            onChanged: (bool? value) {
+              setState(() {
+                widget.isDone = value!;
+              });
             });
-          },
-          child: Text('終わった！',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 2)),
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all(Colors.blueGrey), // ボタンの背景色
-            elevation: MaterialStateProperty.all(0),
-          ),
-        );
       } else {
         //未完了、期限切れ
-        return Text(
-          'スワイプで削除',
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 2.8,
-              color: const Color.fromARGB(255, 77, 46, 35),
-              fontWeight: FontWeight.w600),
+        return InkWell(
+          onTap: () {
+            InformationAutoDismissiblePopup(context);
+          },
+          child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 5,
+            height: SizeConfig.blockSizeHorizontal! * 5,
+            child: Icon(
+              Icons.info,
+              color: Colors.blueGrey,
+              size: SizeConfig.blockSizeHorizontal! * 5,
+            ),
+          ),
         );
       }
     }
@@ -618,30 +633,30 @@ class _DataCardState extends State<DataCard> {
       Duration difference = widget.dtEnd.difference(DateTime.now()); // 日付の差を求める
       if (difference >= Duration(days: 4)) {
         return Text(
-          ("残り${difference.inDays} 日"),
+          ("  残り${difference.inDays} 日  "),
           style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
+            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
           ),
         ); // 日数の差を出力
       } else {
         return Text(
-          ("残り${difference.inDays} 日"),
+          ("  残り${difference.inDays} 日  "),
           style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-            fontWeight: FontWeight.w600,
-            color: const Color.fromARGB(255, 255, 0, 0),
+            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            fontWeight: FontWeight.w900,
+            color: Colors.yellow,
           ),
         ); // 日数の差を出力
       }
     } else {
       return Text(
-        ("残り 0 日"),
+        ("  残り 0 日  "),
         style: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-          fontWeight: FontWeight.w600,
-          color: const Color.fromARGB(255, 255, 0, 0),
+          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+          fontWeight: FontWeight.w900,
+          color: Colors.yellow,
         ),
       );
     }
@@ -658,14 +673,7 @@ class _DataCardState extends State<DataCard> {
               color: Color.fromARGB(255, 255, 119, 119), // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
-            child: Text(
-              '   未完了   ',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-            ));
+            child: DaysLeft());
       } else {
         return Container(
             decoration: BoxDecoration(
@@ -723,6 +731,29 @@ class _DataCardState extends State<DataCard> {
     _controller5.dispose();
     super.dispose();
   }
+}
+
+void InformationAutoDismissiblePopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      Timer(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+      });
+
+      return Align(
+          alignment: Alignment.bottomCenter,
+          child: AlertDialog(
+            title: Text(
+              'カードはスワイプで削除できます。',
+              style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ));
+    },
+  );
 }
 
 void showAutoDismissiblePopup(BuildContext context) {
