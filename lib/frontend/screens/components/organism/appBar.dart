@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
-import "../../../colors.dart";
+import 'package:flutter_calandar_app/frontend/colors.dart';
 
-Widget appBar() {
-  return AppBar(
-    backgroundColor: MAIN_COLOR,
-    title: Center(
-      child: const Column(children: <Widget>[
-        Text(
-          'わせジュール',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-          ),
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  const CustomAppBar({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: MAIN_COLOR,
+      title: const Center(
+        child: Column(
+          children: <Widget>[
+            Text(
+              'わせジュール',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              '早稲田生のためのスケジュールアプリ',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
         ),
-        Text(
-          '早稲田生のためのスケジュールアプリ',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ]),
-    ),
-  );
+      ),
+    );
+  }
 }

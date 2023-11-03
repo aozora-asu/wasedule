@@ -2,82 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
 import 'package:flutter_calandar_app/backend/db_Manager.dart';
 
-import 'package:table_calendar/table_calendar.dart';
 
-import '../../../backend/temp_file.dart';
 import '../../size_config.dart';
 import '../../colors.dart';
-import 'task_page.dart';
-
-class FirstPage extends StatefulWidget {
-  @override
-  _FirstPageState createState() => _FirstPageState();
-}
-
-class _FirstPageState extends State<FirstPage> {
-  int _currentIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget body;
-    if (_currentIndex == 0) {
-      body = Calendar();
-    } else {
-      body = TaskPage();
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MAIN_COLOR,
-        title: Center(
-          child: const Column(children: <Widget>[
-            Text(
-              'わせジュール',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            Text(
-              '早稲田生のためのスケジュールアプリ',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ]),
-        ),
-      ),
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-        backgroundColor: MAIN_COLOR,
-        selectedItemColor: ACCENT_COLOR,
-        unselectedItemColor: Colors.white,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'カレンダー',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.splitscreen),
-            label: 'タスク',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: 'フレンド',
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class Calendar extends StatefulWidget {
   @override
