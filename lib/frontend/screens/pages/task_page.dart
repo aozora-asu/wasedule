@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import '../../size_config.dart';
 import '../../colors.dart';
@@ -73,6 +74,7 @@ class DataCard extends StatefulWidget {
   final String? summary; //メモ(通知表示用の要約)
   bool isDone; // 課題が終了したか(trueで済)
 
+  
   DataCard({
     required this.title,
     this.description,
@@ -104,6 +106,8 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   );
 }
 
+
+
 class _DataCardState extends State<DataCard> {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
@@ -111,12 +115,14 @@ class _DataCardState extends State<DataCard> {
   late TextEditingController _controller4; //isDone
   late TextEditingController _controller5; //memo
 
+ 
+
   @override
   void initState() {
     super.initState();
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(text: widget.dtEnd.toString());
+    _controller3 = TextEditingController(text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
   }
@@ -135,7 +141,7 @@ class _DataCardState extends State<DataCard> {
                 decoration: BoxDecoration(
                 border: Border.all( // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                  width: 3, // 輪郭線の幅
+                  width: 1, // 輪郭線の幅
                ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                ),
@@ -434,9 +440,6 @@ class _DataCardState extends State<DataCard> {
                                     fontSize:SizeConfig.blockSizeHorizontal! * 3,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  //onChanged: (newValue) {
-                                  //String userInput = _controller2.text;// テキストが変更された際の処理
-                                  //},
                                   decoration: const InputDecoration(
                                     hintText: "課題の詳細やメモを入力…",
                                     border: InputBorder.none,
@@ -496,7 +499,7 @@ class _DataCardState extends State<DataCard> {
                                 left: 8.0
                               ),
                               child: Container(
-                                width: SizeConfig.blockSizeHorizontal! * 35,
+                                width: SizeConfig.blockSizeHorizontal! * 38,
                                 height: SizeConfig.blockSizeHorizontal! * 6,
                                 alignment: Alignment.center,
                                 child: TextField(
@@ -506,7 +509,7 @@ class _DataCardState extends State<DataCard> {
                                   ),
                                   controller: _controller3,
                                   decoration: InputDecoration(
-                                    hintText: "日付 (yyyy-MM-dd HH:mm)",
+                                    hintText: "日付 (yyyy年mm月dd日 hh時mm分)",
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
                                   ),
@@ -515,7 +518,7 @@ class _DataCardState extends State<DataCard> {
                             ),
                             Row(children: <Widget>[
                                 SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 24,
+                                  width: SizeConfig.blockSizeHorizontal! * 20,
                                   height: SizeConfig.blockSizeHorizontal! * 5,
                                 ),
                                 Container(
