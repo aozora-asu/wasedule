@@ -17,17 +17,16 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  Future<List<Map<String, dynamic>>>? events;
-  DBManager dbManager = DBManager();
+  Future<Map<String, dynamic>>? events;
 
   @override
   void initState() {
     super.initState();
-    _initData();
+    _loadData();
   }
 
-  Future<void> _initData() async {
-    final data = await dbManager.taskListforTaskPage();
+  Future<void> _loadData() async {
+    final data = await resisterTaskToDB(url_t);
     setState(() {
       events = Future.value(data);
     });
@@ -38,17 +37,19 @@ class _TaskPageState extends State<TaskPage> {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       body: Center(
-        child: FutureBuilder<List<Map<String, dynamic>>>(
+        child: FutureBuilder<Map<String, dynamic>>(
           future: events,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text("エラー: ${snapshot.error}");
+              return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
+              // データが読み込まれた場合、リストを生成
               return buildDataCards(
-                  snapshot.data! as List<Map<String, dynamic>>);
+                  snapshot.data!["events"] as List<Map<String, dynamic>>);
             } else {
+              // データがない場合の処理（nullの場合など）
               return CircularProgressIndicator();
             }
           },
@@ -56,10 +57,10 @@ class _TaskPageState extends State<TaskPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _initData();
+          _loadData();
         },
-        backgroundColor: MAIN_COLOR,
-        child: Icon(Icons.get_app),
+        child: Icon(Icons.get_app), // ボタンのアイコン
+        backgroundColor: MAIN_COLOR, // ボタンの背景色
       ),
     );
   }
@@ -67,17 +68,16 @@ class _TaskPageState extends State<TaskPage> {
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
+  final String? description; // 課題
   final DateTime dtEnd; // 期限
   final String? summary; //メモ(通知表示用の要約)
-  final String? description; // 課題
-
   bool isDone; // 課題が終了したか(trueで済)
 
   DataCard({
     required this.title,
-    required this.dtEnd,
     this.description,
-    this.summary,
+    required this.dtEnd,
+    required this.summary,
     required this.isDone,
   });
 
@@ -139,6 +139,7 @@ class _DataCardState extends State<DataCard> {
                ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                ),
+
               height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 96.8,
               child: Column(
@@ -325,6 +326,7 @@ class _DataCardState extends State<DataCard> {
                     height:SizeConfig.blockSizeHorizontal! * 0.6, 
                     color: WIDGET_OUTLINE_COLOR, 
                     thickness: 2, 
+
                   ),
 //課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   SizedBox(
@@ -609,6 +611,7 @@ class _DataCardState extends State<DataCard> {
     ),
   ),
 );
+
       }
     }
   }
@@ -658,7 +661,9 @@ class _DataCardState extends State<DataCard> {
               color: Color.fromARGB(255, 255, 119, 119), // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
+
             child:DaysLeft());
+
       } else {
         return Container(
             decoration: BoxDecoration(
@@ -719,6 +724,7 @@ class _DataCardState extends State<DataCard> {
 }
 
 
+
     void InformationAutoDismissiblePopup(BuildContext context) {
     showDialog(
       context: context,
@@ -750,6 +756,7 @@ class _DataCardState extends State<DataCard> {
         Timer(Duration(seconds: 2), () {
           Navigator.of(context).pop();
         });
+
 
       return Align(
           alignment: Alignment.bottomCenter,
