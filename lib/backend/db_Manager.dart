@@ -4,7 +4,7 @@ import "http_request.dart";
 
 import "status_code.dart";
 
-Future<Map<String, dynamic>> resisterTaskToDB(String urlString) async {
+Future<List<Map<String, dynamic>>> resisterTaskToDB(String urlString) async {
   // データベースヘルパークラスのインスタンスを作成
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   // データベースの初期化
@@ -12,8 +12,8 @@ Future<Map<String, dynamic>> resisterTaskToDB(String urlString) async {
   await databaseHelper.initDatabase();
   Map<String, dynamic> taskData = await getTaskData(urlString);
   TaskItem taskItem;
-  int result = 0;
 
+  int result;
   for (int i = 0; i < taskData["events"].length; i++) {
     // 1. TaskItemオブジェクトを作成
     taskItem = TaskItem(
@@ -37,6 +37,5 @@ Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
 
 Future<List<Map<String, dynamic>>> taskListforTaskPage() async {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
-  print(databaseHelper.taskListForTaskPage());
   return databaseHelper.taskListForTaskPage();
 }

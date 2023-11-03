@@ -54,6 +54,8 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
     events["events"][i]["DTEND"] = DateTime.parse(events["events"][i]["DTEND"])
         .add(const Duration(hours: 9))
         .millisecondsSinceEpoch;
+    events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
+        .replaceAll(RegExp(r'[A-Za-z()\d]'), '');
   }
   return events;
 }
