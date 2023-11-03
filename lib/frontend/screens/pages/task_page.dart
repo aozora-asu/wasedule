@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/db_Manager.dart';
 import "package:flutter_calandar_app/backend/DB/database_helper.dart";
