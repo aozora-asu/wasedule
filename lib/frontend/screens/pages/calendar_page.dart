@@ -5,67 +5,11 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'package:flutter_calandar_app/backend/db_Manager.dart';
-import 'package:flutter_calandar_app/backend/http_request.dart';
 
-import "../../../backend/temp_file.dart";
+import '../../../backend/temp_file.dart';
 import '../../size_config.dart';
 import '../../colors.dart';
 import 'task_page.dart';
-
-class TaskPage extends StatefulWidget {
-  @override
-  _TaskPageState createState() => _TaskPageState();
-}
-
-class _TaskPageState extends State<TaskPage> {
-  Future<Map<String, dynamic>>? events;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    final data = await resisterTaskToDB(url_t);
-    setState(() {
-      events = Future.value(data);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Center(
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: events,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            } else if (snapshot.hasData) {
-              // データが読み込まれた場合、リストを生成
-              return buildDataCards(
-                  snapshot.data!["events"] as List<Map<String, dynamic>>);
-            } else {
-              // データがない場合の処理（nullの場合など）
-              return CircularProgressIndicator();
-            }
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _loadData();
-        },
-        child: Icon(Icons.get_app), // ボタンのアイコン
-        backgroundColor: MAIN_COLOR, // ボタンの背景色
-      ),
-    );
-  }
-}
 
 class FirstPage extends StatefulWidget {
   @override

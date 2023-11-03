@@ -1,16 +1,15 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/db_Manager.dart';
-import 'package:flutter_calandar_app/backend/http_request.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:table_calendar/table_calendar.dart';
+import "package:flutter_calandar_app/backend/DB/database_helper.dart";
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
 import '../../size_config.dart';
 import '../../colors.dart';
-import "../../../backend/temp_file.dart";
+import '../../../backend/temp_file.dart';
 
 class TaskPage extends StatefulWidget {
   @override
@@ -18,19 +17,43 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  Future<Map<String, dynamic>>? events;
+  Future<List<Map<String, dynamic>>>? events;
+  String urlString = url_t;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (existData(urlString) == true) {
+      _displayDB();
+    } else {
+      _loadData();
+    }
+    ;
   }
 
+  //データベースを更新する関数
   Future<void> _loadData() async {
-    final data = await resisterTaskToDB(url_t);
+    final data = await resisterTaskToDB(urlString);
     setState(() {
       events = Future.value(data);
     });
+  }
+
+  //既存データベースを表示する関数
+  Future<void> _displayDB() async {
+    final addData = await taskListforTaskPage();
+    setState(() {
+      events = Future.value(addData);
+    });
+  }
+
+  //データベースが存在するか判定する関数
+  Future<bool> existData(urlString) async {
+    if (await resisterTaskToDB(urlString) == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
@@ -38,7 +61,7 @@ class _TaskPageState extends State<TaskPage> {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       body: Center(
-        child: FutureBuilder<Map<String, dynamic>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: events,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,7 +71,7 @@ class _TaskPageState extends State<TaskPage> {
             } else if (snapshot.hasData) {
               // データが読み込まれた場合、リストを生成
               return buildDataCards(
-                  snapshot.data!["events"] as List<Map<String, dynamic>>);
+                  snapshot.data! as List<Map<String, dynamic>>);
             } else {
               // データがない場合の処理（nullの場合など）
               return CircularProgressIndicator();
@@ -73,9 +96,11 @@ class DataCard extends StatefulWidget {
   final DateTime dtEnd; // 期限
   final String? summary; //メモ(通知表示用の要約)
   bool isDone; // 課題が終了したか(trueで済)
+  final int index;
 
   
   DataCard({
+    required this.index,
     required this.title,
     this.description,
     required this.dtEnd,
@@ -96,6 +121,7 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
     children: [
       for (int i = 0; i < data.length; i++)
         DataCard(
+          index: i + 1,
           title: data[i]["title"],
           description: data[i]["description"],
           dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
@@ -114,6 +140,7 @@ class _DataCardState extends State<DataCard> {
   late TextEditingController _controller3; //dtEnd
   late TextEditingController _controller4; //isDone
   late TextEditingController _controller5; //memo
+  late TextEditingController _index;
 
  
 
@@ -125,27 +152,31 @@ class _DataCardState extends State<DataCard> {
     _controller3 = TextEditingController(text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
+    _index = TextEditingController(text: widget.index.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    int index = int.parse(_index.text);
+    TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+
     return Column(
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-            child:Card(
+          child: Card(
             color: WIDGET_COLOR,
-             child: Container(
-                decoration: BoxDecoration(
-                border: Border.all( // 輪郭線のスタイルを設定
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
                   width: 1, // 輪郭線の幅
                ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
-               ),
-
+              ),
               height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 96.8,
               child: Column(
@@ -191,6 +222,7 @@ class _DataCardState extends State<DataCard> {
                               onTap: () {
                                 setState(() {
                                   String userInput1 = _controller1.text;
+                                  databaseHelper.updateTitle(index, userInput1);
                                 });
                                 showAutoDismissiblePopup(context);
                               },
@@ -267,6 +299,8 @@ class _DataCardState extends State<DataCard> {
                                     onTap: () {
                                       setState(() {
                                         String userInput5 = _controller5.text;
+                                        databaseHelper.updateSummary(
+                                            index, userInput5);
                                       });
                                       showAutoDismissiblePopup(context);
                                     },
@@ -322,17 +356,16 @@ class _DataCardState extends State<DataCard> {
                                   ),
                                 ),
                               ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                 ),
-                   Divider(
-                    height:SizeConfig.blockSizeHorizontal! * 0.6, 
-                    color: WIDGET_OUTLINE_COLOR, 
-                    thickness: 2, 
-
+                  Divider(
+                    height: SizeConfig.blockSizeHorizontal! * 0.6,
+                    color: WIDGET_OUTLINE_COLOR,
+                    thickness: 2,
                   ),
 //課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   SizedBox(
@@ -379,6 +412,8 @@ class _DataCardState extends State<DataCard> {
                                     onTap: () {
                                       setState(() {
                                         String userInput2 = _controller2.text;
+                                        databaseHelper.updateDescription(
+                                            index, userInput2);
                                       });
                                       showAutoDismissiblePopup(context);
                                     },
@@ -433,6 +468,7 @@ class _DataCardState extends State<DataCard> {
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
+
                                   maxLines: 3,
                                   textAlign: TextAlign.start,
                                   controller: _controller2,
@@ -451,52 +487,40 @@ class _DataCardState extends State<DataCard> {
                                   ),
                                 ),
                               ),
-                            ),
-                           //),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                 ),
-                Divider(
-                    height:SizeConfig.blockSizeHorizontal! * 0.8, 
-                    color: WIDGET_OUTLINE_COLOR, 
-                    thickness: 2, 
-                  ),
-//期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                 Row(children:[
-                  SizedBox(
-                  width:SizeConfig.blockSizeHorizontal! * 1.2,),
-                  Container(
-                  height:SizeConfig.blockSizeHorizontal! * 6,
-                  width:SizeConfig.blockSizeHorizontal! * 93,
-                    child: Align(
-                    alignment: Alignment.centerLeft, 
-                  child:Row(
-                    children: [
-                      Container(
-                        child: Text(
-                          ' 期限',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                              //),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 2,
-                        height: SizeConfig.blockSizeHorizontal! * 6,
-                      ),
-                      SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! *83.1,
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: SizeConfig.blockSizeHorizontal! * 0.8,
+                    color: WIDGET_OUTLINE_COLOR,
+                    thickness: 2,
+                  ),
+//期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                  Row(children: [
+                    SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! * 1.2,
+                    ),
+                    Container(
+                      height: SizeConfig.blockSizeHorizontal! * 6,
+                      width: SizeConfig.blockSizeHorizontal! * 93,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
                         child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 8.0
+                          children: [
+                            Container(
+                              child: Text(
+                                ' 期限',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal! * 3.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
                               ),
                               child: Container(
                                 width: SizeConfig.blockSizeHorizontal! * 38,
@@ -512,10 +536,12 @@ class _DataCardState extends State<DataCard> {
                                     hintText: "日付 (yyyy年mm月dd日 hh時mm分)",
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
+
                                   ),
-                                ),
+                                ],
                               ),
                             ),
+
                             Row(children: <Widget>[
                                 SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 20,
@@ -531,17 +557,13 @@ class _DataCardState extends State<DataCard> {
                                ),
                               ],
                             ),
+
                           ],
                         ),
                       ),
-                    ],
-                   ),
-                  ),
-                  ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 1),
-                   ]
-              ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                  ]),
                 ],
               ),
             ),
@@ -567,54 +589,55 @@ class _DataCardState extends State<DataCard> {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //課題完了、期限内
         return Checkbox(
-          value: widget.isDone,
-          onChanged: (bool? value) {
-            setState(() {
-              widget.isDone = value!;
-            });});
+            value: widget.isDone,
+            onChanged: (bool? value) {
+              setState(() {
+                widget.isDone = value!;
+              });
+            });
       } else {
         //完了、期限切れ
         return InkWell(
-        onTap: () {
-          InformationAutoDismissiblePopup(context);
-        },
-        child: Container(
-          width: SizeConfig.blockSizeHorizontal! * 5, 
-          height: SizeConfig.blockSizeHorizontal! * 5, 
-          child: Icon(
-            Icons.info,
-            color: Colors.blueGrey,
-            size: SizeConfig.blockSizeHorizontal! * 5, 
+          onTap: () {
+            InformationAutoDismissiblePopup(context);
+          },
+          child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 5,
+            height: SizeConfig.blockSizeHorizontal! * 5,
+            child: Icon(
+              Icons.info,
+              color: Colors.blueGrey,
+              size: SizeConfig.blockSizeHorizontal! * 5,
+            ),
           ),
-        ),
-      );
+        );
       }
     } else {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //未完了、期限内
         return Checkbox(
-          value: widget.isDone,
-          onChanged: (bool? value) {
-            setState(() {
-              widget.isDone = value!;
-            });});
+            value: widget.isDone,
+            onChanged: (bool? value) {
+              setState(() {
+                widget.isDone = value!;
+              });
+            });
       } else {
         //未完了、期限切れ
-  return InkWell(
-  onTap: () {
-    InformationAutoDismissiblePopup(context);
-  },
-  child: Container(
-    width: SizeConfig.blockSizeHorizontal! * 5, 
-    height: SizeConfig.blockSizeHorizontal! * 5, 
-    child: Icon(
-      Icons.info,
-      color: Colors.blueGrey,
-      size: SizeConfig.blockSizeHorizontal! * 5, 
-    ),
-  ),
-);
-
+        return InkWell(
+          onTap: () {
+            InformationAutoDismissiblePopup(context);
+          },
+          child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 5,
+            height: SizeConfig.blockSizeHorizontal! * 5,
+            child: Icon(
+              Icons.info,
+              color: Colors.blueGrey,
+              size: SizeConfig.blockSizeHorizontal! * 5,
+            ),
+          ),
+        );
       }
     }
   }
@@ -664,9 +687,7 @@ class _DataCardState extends State<DataCard> {
               color: Color.fromARGB(255, 255, 119, 119), // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
-
-            child:DaysLeft());
-
+            child: DaysLeft());
       } else {
         return Container(
             decoration: BoxDecoration(
@@ -722,44 +743,41 @@ class _DataCardState extends State<DataCard> {
     _controller3.dispose();
     _controller4.dispose();
     _controller5.dispose();
+    _index.dispose();
     super.dispose();
   }
 }
 
+void InformationAutoDismissiblePopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      Timer(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+      });
 
-
-    void InformationAutoDismissiblePopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        Timer(Duration(seconds: 2), () {
-          Navigator.of(context).pop();
-        });
-
-        return 
-        Align(
+      return Align(
           alignment: Alignment.bottomCenter,
-          child:AlertDialog(
-          title: Text('カードはスワイプで削除できます。',
-          style: TextStyle(
+          child: AlertDialog(
+            title: Text(
+              'カードはスワイプで削除できます。',
+              style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w700,
               ),
-          ),
-          )
-        );
-      },
-    );
-  }
+            ),
+          ));
+    },
+  );
+}
 
-      void showAutoDismissiblePopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        Timer(Duration(seconds: 2), () {
-          Navigator.of(context).pop();
-        });
-
+void showAutoDismissiblePopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      Timer(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+      });
 
       return Align(
           alignment: Alignment.bottomCenter,

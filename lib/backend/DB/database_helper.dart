@@ -30,7 +30,7 @@ class TaskDatabaseHelper {
   Future<int> insertTask(TaskItem task) async {
     try {
       //うまくいった場合のこと(通常処理)をかく
-      return await _database.insert('items', task.toMap());
+      return await _database.insert('tasks', task.toMap());
     } catch (e) {
       return 0;
     }
@@ -108,12 +108,10 @@ class TaskDatabaseHelper {
     );
   }
 
-  Future<Map<String, dynamic>> getTaskFromDB() async {
-    var events = <String, dynamic>{};
+  Future<List<Map<String, dynamic>>> getTaskFromDB() async {
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
 
-    events["events"] = data;
-    return events;
+    return data;
   }
 }
