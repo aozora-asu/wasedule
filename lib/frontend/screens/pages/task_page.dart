@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/backend/db_Manager.dart';
 import "package:flutter_calandar_app/backend/DB/database_helper.dart";
 import 'package:flutter/widgets.dart';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import '../../size_config.dart';
 import '../../colors.dart';
@@ -97,6 +98,7 @@ class DataCard extends StatefulWidget {
   bool isDone; // 課題が終了したか(trueで済)
   final int index;
 
+  
   DataCard({
     required this.index,
     required this.title,
@@ -130,6 +132,8 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   );
 }
 
+
+
 class _DataCardState extends State<DataCard> {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
@@ -138,12 +142,14 @@ class _DataCardState extends State<DataCard> {
   late TextEditingController _controller5; //memo
   late TextEditingController _index;
 
+ 
+
   @override
   void initState() {
     super.initState();
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(text: widget.dtEnd.toString());
+    _controller3 = TextEditingController(text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
@@ -167,8 +173,8 @@ class _DataCardState extends State<DataCard> {
                 border: Border.all(
                   // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                  width: 3, // 輪郭線の幅
-                ),
+                  width: 1, // 輪郭線の幅
+               ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
               ),
               height: SizeConfig.blockSizeHorizontal! * 42,
@@ -462,22 +468,22 @@ class _DataCardState extends State<DataCard> {
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
-                                    maxLines: 3,
-                                    textAlign: TextAlign.start,
-                                    controller: _controller2,
-                                    style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      hintText: "課題の詳細やメモを入力…",
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(top: 0),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500),
-                                    ),
+
+                                  maxLines: 3,
+                                  textAlign: TextAlign.start,
+                                  controller: _controller2,
+                                  style: TextStyle(
+                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    hintText: "課題の詳細やメモを入力…",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(top: 0),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500
+                                      ),
                                   ),
                                 ),
                               ),
@@ -516,66 +522,42 @@ class _DataCardState extends State<DataCard> {
                                   color: Color.fromARGB(255, 0, 0, 0),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 2,
-                              height: SizeConfig.blockSizeHorizontal! * 6,
-                            ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 83.1,
-                              child: Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 35,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 6,
-                                      alignment: Alignment.center,
-                                      child: TextField(
-                                        style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        controller: _controller3,
-                                        decoration: InputDecoration(
-                                          hintText: "日付 (yyyy-MM-dd HH:mm)",
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.only(
-                                              bottom: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  3.2),
-                                        ),
-                                      ),
-                                    ),
+                              child: Container(
+                                width: SizeConfig.blockSizeHorizontal! * 38,
+                                height: SizeConfig.blockSizeHorizontal! * 6,
+                                alignment: Alignment.center,
+                                child: TextField(
+                                  style: TextStyle(
+                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            24,
-                                        height:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                      ),
-                                      Container(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            22,
-                                        height:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                6.5,
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: TaskData(),
-                                        ),
-                                      ),
-                                    ],
+                                  controller: _controller3,
+                                  decoration: InputDecoration(
+                                    hintText: "日付 (yyyy年mm月dd日 hh時mm分)",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
+
                                   ),
                                 ],
                               ),
                             ),
+
+                            Row(children: <Widget>[
+                                SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 20,
+                                  height: SizeConfig.blockSizeHorizontal! * 5,
+                                ),
+                                Container(
+                                  width: SizeConfig.blockSizeHorizontal! * 22,
+                                  height: SizeConfig.blockSizeHorizontal! * 6.5,
+                                child:Align(
+                                 alignment: Alignment.centerRight,
+                                 child:TaskData(),
+                                ),
+                               ),
+                              ],
+                            ),
+
                           ],
                         ),
                       ),
