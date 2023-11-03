@@ -269,7 +269,7 @@ class TaskList extends StatelessWidget {
       children:[Card(
        color: WIDGET_COLOR,
         child: SizedBox(
-         height: SizeConfig.blockSizeHorizontal! * 60,
+         height: SizeConfig.blockSizeHorizontal! * 37,
          width: SizeConfig.blockSizeHorizontal! * 98,
          child:Column(
           children:[
@@ -283,7 +283,7 @@ class TaskList extends StatelessWidget {
               ),
             ),
             Container(
-              height: SizeConfig.blockSizeHorizontal! * 50,
+              height: SizeConfig.blockSizeHorizontal! * 30,
               width: SizeConfig.blockSizeHorizontal! * 96,
               decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
