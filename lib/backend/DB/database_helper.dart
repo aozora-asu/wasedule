@@ -30,7 +30,7 @@ class TaskDatabaseHelper {
   Future<int> insertTask(TaskItem task) async {
     try {
       //うまくいった場合のこと(通常処理)をかく
-      return await _database.insert('items', task.toMap());
+      return await _database.insert('tasks', task.toMap());
     } catch (e) {
       return 0;
     }
