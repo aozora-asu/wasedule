@@ -1,27 +1,29 @@
 class TaskItem {
+  String uid;
+  String title;
+  int dtEnd;
   String? summary;
   String? description;
-  int dtEnd;
-  String categories;
-  int isDone = 0;
-  String? memo;
 
-  TaskItem(
-      {this.summary,
-      this.description,
-      required this.dtEnd,
-      required this.categories,
-      required this.isDone,
-      this.memo});
+  int isDone = 0;
+
+  TaskItem({
+    required this.uid,
+    required this.title,
+    required this.dtEnd,
+    this.summary,
+    this.description,
+    required this.isDone,
+  });
 
   Map<String, dynamic> toMap() {
     return {
+      'uid': uid,
+      'title': title,
+      'dtEnd': dtEnd,
       'summary': summary,
       'description': description,
-      'dtEnd': dtEnd,
-      'categories': categories,
       "isDone": isDone,
-      "memo": memo
     };
   }
 }
