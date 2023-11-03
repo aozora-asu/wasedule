@@ -46,7 +46,6 @@ Future<String> _getTask(String urlString) async {
 
 Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
   for (int i = 0; i < events["events"].length; i++) {
-    events["events"][i].remove("UID");
     events["events"][i].remove("CLASS");
     events["events"][i].remove("LAST-MODIFIED");
     events["events"][i].remove("DTSTAMP");
@@ -55,8 +54,6 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
     events["events"][i]["DTEND"] = DateTime.parse(events["events"][i]["DTEND"])
         .add(const Duration(hours: 9))
         .millisecondsSinceEpoch;
-
-    events["events"][i]["MEMO"] = null;
   }
   return events;
 }
@@ -66,6 +63,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskData(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> tasks = _parsedTaskData(taskString);
+
   return tasks;
 }
 

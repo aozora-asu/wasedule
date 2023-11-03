@@ -1,14 +1,23 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'models/task_item.dart';
+import 'dart:io';
 
 class TaskDatabaseHelper {
   late Database _database;
+
+  TaskDatabaseHelper() {
+    _initializeDatabase();
+  }
+
   // データベースの初期化
-  Future<void> initDatabase() async {
-    String path = join(await getDatabasesPath(), 'task_items.db');
+  Future<void> _initializeDatabase() async {
+    final File databaseFile = File('task.db');
+    if (databaseFile.existsSync()) {
+      databaseFile.deleteSync();
+    }
+    String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
-    deleteAllData(_database);
   }
 
   // データベースの作成
@@ -16,37 +25,30 @@ class TaskDatabaseHelper {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS items(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid TEXT UNIQUE, -- UNIQUE,
+        title TEXT,
+        dtEnd INTEGER,
         summary TEXT,
         description TEXT,
-        dtEnd INTEGER,
-        categories TEXT,
-        isDone INTEGER,
-        memo TEXT
+        
+        isDone INTEGER
+        
       )
     ''');
   }
 
   // タスクの挿入
   Future<int> insertTask(TaskItem task) async {
-    return await _database.insert('items', task.toMap());
+    try {
+      //うまくいった場合のこと(通常処理)をかく
+      return await _database.insert('items', task.toMap());
+    } catch (e) {
+      return 0;
+    }
   }
 
   Future<void> deleteAllData(Database db) async {
     await db.rawDelete('DELETE FROM items');
-  }
-
-  // すべてのタスクを取得
-  Future<List<TaskItem>> getTasks() async {
-    final List<Map<String, dynamic>> maps = await _database.query('items');
-    return List.generate(maps.length, (i) {
-      return TaskItem(
-          summary: maps[i]['summary'],
-          description: maps[i]['description'],
-          dtEnd: DateTime.parse(maps[i]['dtEnd']).millisecondsSinceEpoch,
-          categories: maps[i]['categories'],
-          isDone: maps[i]['isDone'], // データベースの1をtrueにマップ
-          memo: maps[i]["memo"]);
-    });
   }
 
   // タスクの削除
@@ -58,28 +60,47 @@ class TaskDatabaseHelper {
     );
   }
 
-  // データベース内のすべてのデータを表示
-  Future<void> displayAllData() async {
-    final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM items');
-    data.forEach((row) {
-      print('ID: ${row['id']}');
-      print('Summary: ${row['summary']}');
-      print('Description: ${row['description']}');
-      print('DtEnd: ${row['dtEnd']}');
-      print('Categories: ${row['categories']}');
-      print('IsDone: ${row['isDone']}');
-      print('Memo: ${row['memo']}');
-      print('-----------------------');
-    });
+  Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
+    final List<Map<String, dynamic>> dataList = await _database.query('items',
+        columns: ['title', 'dtEnd', 'summary', 'description']); // 複数のカラムのデータを取得
+
+    return dataList;
   }
 
-  Future<Map<String, dynamic>> getTaskFromDB() async {
-    var events = <String, dynamic>{};
-    final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM items');
+  Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
+    final List<Map<String, dynamic>> dataList = await _database.query('items',
+        columns: ['title', 'dtEnd', 'summary']); // 複数のカラムのデータを取得
 
-    events["events"] = data;
-    return events;
+    return dataList;
+  }
+
+  Future<void> updateTitle(int id, String newTitle) async {
+    // 'items' テーブル内の特定の行を更新
+    await _database.update(
+      'items',
+      {'title': newTitle}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> updateSummary(int id, String newSummary) async {
+    // 'items' テーブル内の特定の行を更新
+    await _database.update(
+      'items',
+      {'summary': newSummary}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> updateDescription(int id, String newDescription) async {
+    // 'items' テーブル内の特定の行を更新
+    await _database.update(
+      'items',
+      {'description': newDescription}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

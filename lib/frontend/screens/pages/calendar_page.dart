@@ -4,7 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
-import 'package:flutter_calandar_app/backend/DB/db_Manager.dart';
+import 'package:flutter_calandar_app/backend/db_Manager.dart';
 import 'package:flutter_calandar_app/backend/http_request.dart';
 
 import "../../../backend/temp_file.dart";
@@ -27,10 +27,7 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _loadData() async {
-    final data = await resisterTaskToDB(url_t);
-    setState(() {
-      events = Future.value(data);
-    });
+    setState(() {});
   }
 
   @override
@@ -67,17 +64,14 @@ class _TaskPageState extends State<TaskPage> {
   }
 }
 
-
-
-
 class FirstPage extends StatefulWidget {
   @override
-    _FirstPageState createState() => _FirstPageState();
+  _FirstPageState createState() => _FirstPageState();
 }
 
 class _FirstPageState extends State<FirstPage> {
   int _currentIndex = 0;
-    void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -85,7 +79,7 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-        Widget body;
+    Widget body;
     if (_currentIndex == 0) {
       body = Calendar();
     } else {
@@ -93,31 +87,29 @@ class _FirstPageState extends State<FirstPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: MAIN_COLOR,
-          title:Center(
-             child: 
-              const Column(children: <Widget>[
-                Text(
-                  'わせジュール',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  '早稲田生のためのスケジュールアプリ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ]
+      appBar: AppBar(
+        backgroundColor: MAIN_COLOR,
+        title: Center(
+          child: const Column(children: <Widget>[
+            Text(
+              'わせジュール',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
+            Text(
+              '早稲田生のためのスケジュールアプリ',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ]),
         ),
-        body: body,
-        bottomNavigationBar: BottomNavigationBar(
+      ),
+      body: body,
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
         backgroundColor: MAIN_COLOR,
@@ -126,7 +118,7 @@ class _FirstPageState extends State<FirstPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
-            label: 'カレンダー',           
+            label: 'カレンダー',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.splitscreen),
@@ -142,8 +134,6 @@ class _FirstPageState extends State<FirstPage> {
   }
 }
 
-
-
 class Calendar extends StatefulWidget {
   @override
   _CalendarState createState() => _CalendarState();
@@ -154,90 +144,87 @@ class _CalendarState extends State<Calendar> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-       ListView(children:[
+      body: ListView(children: [
         TableCalendar<dynamic>(
-        firstDay: DateTime.utc(1882, 10, 21),
-        lastDay: DateTime.utc(2100, 10, 21),
-        focusedDay: _focusedDay,
-        calendarFormat: _calendarFormat,
-        calendarBuilders: CalendarBuilders(
-          defaultBuilder:
-              (BuildContext context, DateTime day, DateTime focusedDay) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: EdgeInsets.zero,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1,
+          firstDay: DateTime.utc(1882, 10, 21),
+          lastDay: DateTime.utc(2100, 10, 21),
+          focusedDay: _focusedDay,
+          calendarFormat: _calendarFormat,
+          calendarBuilders: CalendarBuilders(
+            defaultBuilder:
+                (BuildContext context, DateTime day, DateTime focusedDay) {
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1,
+                  ),
                 ),
-              ),
-              alignment: Alignment.topCenter,
-              child: Text(
-                day.day.toString(),
-                style: TextStyle(
-                  color: Colors.black87,
+                alignment: Alignment.topCenter,
+                child: Text(
+                  day.day.toString(),
+                  style: TextStyle(
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
 
-          /// 有効範囲（firstDay~lastDay）以外の日付部分を生成する
-          disabledBuilder:
-              (BuildContext context, DateTime day, DateTime focusedDay) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: EdgeInsets.zero,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 0.5,
+            /// 有効範囲（firstDay~lastDay）以外の日付部分を生成する
+            disabledBuilder:
+                (BuildContext context, DateTime day, DateTime focusedDay) {
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 0.5,
+                  ),
                 ),
-              ),
-              alignment: Alignment.topCenter,
-              child: Text(
-                day.day.toString(),
-                style: TextStyle(
-                  color: Colors.grey,
+                alignment: Alignment.topCenter,
+                child: Text(
+                  day.day.toString(),
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            );
-          },
-          selectedBuilder:
-              (BuildContext context, DateTime day, DateTime focusedDay) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: EdgeInsets.zero,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.red[800]!,
-                  width: 3.0,
+              );
+            },
+            selectedBuilder:
+                (BuildContext context, DateTime day, DateTime focusedDay) {
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.red[800]!,
+                    width: 3.0,
+                  ),
                 ),
-              ),
-              alignment: Alignment.topCenter,
-              child: Text(
-                day.day.toString(),
-                style: TextStyle(
-                  color: Colors.black87,
+                alignment: Alignment.topCenter,
+                child: Text(
+                  day.day.toString(),
+                  style: TextStyle(
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-      ),
-      SizedBox(
-        height:13,
-      ),
-      TaskList()
-     ]
-   ),
-  );
- }
+        SizedBox(
+          height: 13,
+        ),
+        TaskList()
+      ]),
+    );
+  }
 }
 
 class EventData {
@@ -261,54 +248,45 @@ class EventData {
 // }
 
 class TaskList extends StatelessWidget {
-  
- @override
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Column(
-      children:[Card(
-       color: WIDGET_COLOR,
-        child: SizedBox(
-         height: SizeConfig.blockSizeHorizontal! * 60,
-         width: SizeConfig.blockSizeHorizontal! * 98,
-         child:Column(
-          children:[
-             Text(
-              ' ～現在の授業課題～',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                fontWeight: FontWeight.w800,
-                color: const Color.fromARGB(255, 77, 46, 35),
-              ),
-            ),
-            Container(
-              height: SizeConfig.blockSizeHorizontal! * 50,
-              width: SizeConfig.blockSizeHorizontal! * 96,
-              decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-               BoxShadow(
-                  color: Colors.grey,
+    return Column(children: [
+      Card(
+          color: WIDGET_COLOR,
+          child: SizedBox(
+              height: SizeConfig.blockSizeHorizontal! * 60,
+              width: SizeConfig.blockSizeHorizontal! * 98,
+              child: Column(children: [
+                Text(
+                  ' ～現在の授業課題～',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                    fontWeight: FontWeight.w800,
+                    color: const Color.fromARGB(255, 77, 46, 35),
+                  ),
                 ),
-                BoxShadow(
-                  color: Colors.white,
-                  spreadRadius: -1.5,
-                  blurRadius: 2.0,
-                ),
-              ],                      
-            ),
-            child:ListView(
-              children: [
-                   Text("なななななななななななななななななななななななななななな")
-                ],
-         )
-        )
-       ]
-      )
-     )
-    )
-   ]
-  );
- }
+                Container(
+                    height: SizeConfig.blockSizeHorizontal! * 50,
+                    width: SizeConfig.blockSizeHorizontal! * 96,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                        ),
+                        BoxShadow(
+                          color: Colors.white,
+                          spreadRadius: -1.5,
+                          blurRadius: 2.0,
+                        ),
+                      ],
+                    ),
+                    child: ListView(
+                      children: [Text("なななななななななななななななななななななななななななな")],
+                    ))
+              ])))
+    ]);
+  }
 }

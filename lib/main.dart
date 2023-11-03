@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'frontend/screenManager.dart';
-import 'backend/DB/db_Manager.dart';
+import 'backend/db_Manager.dart';
 
 import 'backend/temp_file.dart';
 import './frontend/screens/pages/calendar_page.dart';
