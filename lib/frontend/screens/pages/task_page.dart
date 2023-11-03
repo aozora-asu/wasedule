@@ -104,7 +104,6 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   );
 }
 
-//ここにmemo追加しといてー。上のは追加した
 class _DataCardState extends State<DataCard> {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
@@ -130,17 +129,17 @@ class _DataCardState extends State<DataCard> {
       children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: Card(
+            child:Card(
             color: WIDGET_COLOR,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  // 輪郭線のスタイルを設定
+             child: Container(
+                decoration: BoxDecoration(
+                border: Border.all( // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
                   width: 3, // 輪郭線の幅
-                ),
+               ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
-              ),
+               ),
+
               height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 96.8,
               child: Column(
@@ -317,16 +316,17 @@ class _DataCardState extends State<DataCard> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Divider(
-                    height: SizeConfig.blockSizeHorizontal! * 0.6,
-                    color: WIDGET_OUTLINE_COLOR,
-                    thickness: 2,
+                 ),
+                   Divider(
+                    height:SizeConfig.blockSizeHorizontal! * 0.6, 
+                    color: WIDGET_OUTLINE_COLOR, 
+                    thickness: 2, 
+
                   ),
 //課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   SizedBox(
@@ -427,129 +427,118 @@ class _DataCardState extends State<DataCard> {
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
-                                    maxLines: 3,
-                                    textAlign: TextAlign.start,
-                                    controller: _controller2,
-                                    style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    //onChanged: (newValue) {
-                                    //String userInput = _controller2.text;// テキストが変更された際の処理
-                                    //},
-                                    decoration: const InputDecoration(
-                                      hintText: "課題の詳細やメモを入力…",
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(top: 0),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500),
-                                    ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.start,
+                                  controller: _controller2,
+                                  style: TextStyle(
+                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  //onChanged: (newValue) {
+                                  //String userInput = _controller2.text;// テキストが変更された際の処理
+                                  //},
+                                  decoration: const InputDecoration(
+                                    hintText: "課題の詳細やメモを入力…",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(top: 0),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500
+                                      ),
                                   ),
                                 ),
                               ),
-                              //),
-                            ],
-                          ),
+                            ),
+                           //),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Divider(
-                    height: SizeConfig.blockSizeHorizontal! * 0.8,
-                    color: WIDGET_OUTLINE_COLOR,
-                    thickness: 2,
+                 ),
+                Divider(
+                    height:SizeConfig.blockSizeHorizontal! * 0.8, 
+                    color: WIDGET_OUTLINE_COLOR, 
+                    thickness: 2, 
                   ),
 //期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                  Row(children: [
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 1.2,
-                    ),
-                    Container(
-                      height: SizeConfig.blockSizeHorizontal! * 6,
-                      width: SizeConfig.blockSizeHorizontal! * 93,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
+                 Row(children:[
+                  SizedBox(
+                  width:SizeConfig.blockSizeHorizontal! * 1.2,),
+                  Container(
+                  height:SizeConfig.blockSizeHorizontal! * 6,
+                  width:SizeConfig.blockSizeHorizontal! * 93,
+                    child: Align(
+                    alignment: Alignment.centerLeft, 
+                  child:Row(
+                    children: [
+                      Container(
+                        child: Text(
+                          ' 期限',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 2,
+                        height: SizeConfig.blockSizeHorizontal! * 6,
+                      ),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! *83.1,
                         child: Row(
-                          children: [
-                            Container(
-                              child: Text(
-                                ' 期限',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal! * 3.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromARGB(255, 0, 0, 0),
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 8.0
+                              ),
+                              child: Container(
+                                width: SizeConfig.blockSizeHorizontal! * 35,
+                                height: SizeConfig.blockSizeHorizontal! * 6,
+                                alignment: Alignment.center,
+                                child: TextField(
+                                  style: TextStyle(
+                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  controller: _controller3,
+                                  decoration: InputDecoration(
+                                    hintText: "日付 (yyyy-MM-dd HH:mm)",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
+                                  ),
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 2,
-                              height: SizeConfig.blockSizeHorizontal! * 6,
-                            ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 83.1,
-                              child: Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 35,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 6,
-                                      alignment: Alignment.center,
-                                      child: TextField(
-                                        style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        controller: _controller3,
-                                        decoration: InputDecoration(
-                                          hintText: "日付 (yyyy-MM-dd HH:mm)",
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.only(
-                                              bottom: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  3.2),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            24,
-                                        height:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                      ),
-                                      Container(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            22,
-                                        height:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                6.5,
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: TaskData(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                            Row(children: <Widget>[
+                                SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 24,
+                                  height: SizeConfig.blockSizeHorizontal! * 5,
+                                ),
+                                Container(
+                                  width: SizeConfig.blockSizeHorizontal! * 22,
+                                  height: SizeConfig.blockSizeHorizontal! * 6.5,
+                                child:Align(
+                                 alignment: Alignment.centerRight,
+                                 child:TaskData(),
+                                ),
+                               ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                  ]),
+                    ],
+                   ),
+                  ),
+                  ),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 1),
+                   ]
+              ),
                 ],
               ),
             ),
@@ -575,55 +564,54 @@ class _DataCardState extends State<DataCard> {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //課題完了、期限内
         return Checkbox(
-            value: widget.isDone,
-            onChanged: (bool? value) {
-              setState(() {
-                widget.isDone = value!;
-              });
-            });
+          value: widget.isDone,
+          onChanged: (bool? value) {
+            setState(() {
+              widget.isDone = value!;
+            });});
       } else {
         //完了、期限切れ
         return InkWell(
-          onTap: () {
-            InformationAutoDismissiblePopup(context);
-          },
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-            height: SizeConfig.blockSizeHorizontal! * 5,
-            child: Icon(
-              Icons.info,
-              color: Colors.blueGrey,
-              size: SizeConfig.blockSizeHorizontal! * 5,
-            ),
+        onTap: () {
+          InformationAutoDismissiblePopup(context);
+        },
+        child: Container(
+          width: SizeConfig.blockSizeHorizontal! * 5, 
+          height: SizeConfig.blockSizeHorizontal! * 5, 
+          child: Icon(
+            Icons.info,
+            color: Colors.blueGrey,
+            size: SizeConfig.blockSizeHorizontal! * 5, 
           ),
-        );
+        ),
+      );
       }
     } else {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
         //未完了、期限内
         return Checkbox(
-            value: widget.isDone,
-            onChanged: (bool? value) {
-              setState(() {
-                widget.isDone = value!;
-              });
-            });
+          value: widget.isDone,
+          onChanged: (bool? value) {
+            setState(() {
+              widget.isDone = value!;
+            });});
       } else {
         //未完了、期限切れ
-        return InkWell(
-          onTap: () {
-            InformationAutoDismissiblePopup(context);
-          },
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-            height: SizeConfig.blockSizeHorizontal! * 5,
-            child: Icon(
-              Icons.info,
-              color: Colors.blueGrey,
-              size: SizeConfig.blockSizeHorizontal! * 5,
-            ),
-          ),
-        );
+  return InkWell(
+  onTap: () {
+    InformationAutoDismissiblePopup(context);
+  },
+  child: Container(
+    width: SizeConfig.blockSizeHorizontal! * 5, 
+    height: SizeConfig.blockSizeHorizontal! * 5, 
+    child: Icon(
+      Icons.info,
+      color: Colors.blueGrey,
+      size: SizeConfig.blockSizeHorizontal! * 5, 
+    ),
+  ),
+);
+
       }
     }
   }
@@ -673,7 +661,9 @@ class _DataCardState extends State<DataCard> {
               color: Color.fromARGB(255, 255, 119, 119), // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
-            child: DaysLeft());
+
+            child:DaysLeft());
+
       } else {
         return Container(
             decoration: BoxDecoration(
@@ -733,36 +723,40 @@ class _DataCardState extends State<DataCard> {
   }
 }
 
-void InformationAutoDismissiblePopup(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-      });
 
-      return Align(
+
+    void InformationAutoDismissiblePopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
+        return 
+        Align(
           alignment: Alignment.bottomCenter,
-          child: AlertDialog(
-            title: Text(
-              'カードはスワイプで削除できます。',
-              style: TextStyle(
+          child:AlertDialog(
+          title: Text('カードはスワイプで削除できます。',
+          style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w700,
               ),
-            ),
-          ));
-    },
-  );
-}
+          ),
+          )
+        );
+      },
+    );
+  }
 
-void showAutoDismissiblePopup(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-      });
+      void showAutoDismissiblePopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Timer(Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
 
       return Align(
           alignment: Alignment.bottomCenter,
