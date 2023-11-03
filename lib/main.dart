@@ -13,6 +13,7 @@ import 'backend/DB/database_helper.dart';
 
 void main() async {
   await initializeDateFormatting(); // 初期化
+
   runApp(MaterialApp(
     home: FirstPage(),
   ));

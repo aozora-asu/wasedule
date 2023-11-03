@@ -12,10 +12,6 @@ class TaskDatabaseHelper {
 
   // データベースの初期化
   Future<void> _initializeDatabase() async {
-    final File databaseFile = File('task.db');
-    if (databaseFile.existsSync()) {
-      databaseFile.deleteSync();
-    }
     String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
   }

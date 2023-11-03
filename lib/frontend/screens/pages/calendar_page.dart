@@ -251,7 +251,6 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-<<<<<<< HEAD
     return Column(children: [
       Card(
           color: WIDGET_COLOR,
@@ -267,33 +266,6 @@ class TaskList extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     color: const Color.fromARGB(255, 77, 46, 35),
                   ),
-=======
-    return Column(
-      children:[Card(
-       color: WIDGET_COLOR,
-        child: SizedBox(
-         height: SizeConfig.blockSizeHorizontal! * 37,
-         width: SizeConfig.blockSizeHorizontal! * 98,
-         child:Column(
-          children:[
-             Text(
-              ' ～現在の授業課題～',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                fontWeight: FontWeight.w800,
-                color: const Color.fromARGB(255, 77, 46, 35),
-              ),
-            ),
-            Container(
-              height: SizeConfig.blockSizeHorizontal! * 30,
-              width: SizeConfig.blockSizeHorizontal! * 96,
-              decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-               BoxShadow(
-                  color: Colors.grey,
->>>>>>> main
                 ),
                 Container(
                     height: SizeConfig.blockSizeHorizontal! * 50,

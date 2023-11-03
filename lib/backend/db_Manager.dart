@@ -32,11 +32,12 @@ class DBManager extends TaskDatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> displayTaskForCalendarPage() async {
+  @override
+  Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
     return databaseHelper.taskListForCalendarPage();
   }
 
-  Future<List<Map<String, dynamic>>> displayTaskforTaskPage() async {
+  Future<List<Map<String, dynamic>>> taskListforTaskPage() async {
     return databaseHelper.taskListForTaskPage();
   }
 }

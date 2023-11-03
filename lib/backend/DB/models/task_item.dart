@@ -1,6 +1,6 @@
 class TaskItem {
   String uid;
-  String? title;
+  String title;
   int dtEnd;
   String? summary;
   String? description;

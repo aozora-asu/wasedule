@@ -17,16 +17,20 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  late Future<List<Map<String, dynamic>>>? events;
+  Future<List<Map<String, dynamic>>>? events;
+  DBManager dbManager = DBManager();
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _initData();
   }
 
-  Future<void> _loadData() async {
-    setState(() {});
+  Future<void> _initData() async {
+    final data = await dbManager.taskListforTaskPage();
+    setState(() {
+      events = Future.value(data);
+    });
   }
 
   @override
@@ -40,13 +44,11 @@ class _TaskPageState extends State<TaskPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
+              return Text("エラー: ${snapshot.error}");
             } else if (snapshot.hasData) {
-              // データが読み込まれた場合、リストを生成
               return buildDataCards(
-                  snapshot.data![0] as List<Map<String, dynamic>>);
+                  snapshot.data! as List<Map<String, dynamic>>);
             } else {
-              // データがない場合の処理（nullの場合など）
               return CircularProgressIndicator();
             }
           },
@@ -54,27 +56,28 @@ class _TaskPageState extends State<TaskPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _loadData();
+          _initData();
         },
-        child: Icon(Icons.get_app), // ボタンのアイコン
-        backgroundColor: MAIN_COLOR, // ボタンの背景色
+        backgroundColor: MAIN_COLOR,
+        child: Icon(Icons.get_app),
       ),
     );
   }
 }
 
 class DataCard extends StatefulWidget {
-  final String? categories; // 授業名
-  final String? description; // 課題
+  final String title; // 授業名
   final DateTime dtEnd; // 期限
-  final String? memo; //メモ(通知表示用の要約)
+  final String? summary; //メモ(通知表示用の要約)
+  final String? description; // 課題
+
   bool isDone; // 課題が終了したか(trueで済)
 
   DataCard({
-    this.categories,
-    this.description,
+    required this.title,
     required this.dtEnd,
-    this.memo,
+    this.description,
+    this.summary,
     required this.isDone,
   });
 
@@ -86,18 +89,15 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   if (data == null) {
     return CircularProgressIndicator();
   }
-  for (int i = 0; i < data.length; i++) {
-    print(data.length);
-    print(data[i]["memo"]);
-  }
+
   return ListView(
     children: [
       for (int i = 0; i < data.length; i++)
         DataCard(
-          categories: data[i]["categories"],
+          title: data[i]["title"],
           description: data[i]["description"],
           dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-          memo: data[i]["memo"],
+          summary: data[i]["summary"],
           isDone: false,
         )
     ],
@@ -115,11 +115,11 @@ class _DataCardState extends State<DataCard> {
   @override
   void initState() {
     super.initState();
-    _controller1 = TextEditingController(text: widget.categories);
+    _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
     _controller3 = TextEditingController(text: widget.dtEnd.toString());
     _controller4 = TextEditingController(text: widget.isDone.toString());
-    _controller5 = TextEditingController(text: widget.memo);
+    _controller5 = TextEditingController(text: widget.summary);
   }
 
   @override
@@ -130,22 +130,17 @@ class _DataCardState extends State<DataCard> {
       children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(5.0),
-<<<<<<< HEAD
           child: Card(
             color: WIDGET_COLOR, //Color.fromARGB(255, 244, 237, 216),
-            child: SizedBox(
-=======
-            child:Card(
-            color: WIDGET_COLOR,//Color.fromARGB(255, 244, 237, 216),
-             child: Container(
-                decoration: BoxDecoration(
-                border: Border.all( // 輪郭線のスタイルを設定
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
                   width: 3.5, // 輪郭線の幅
-               ),
+                ),
                 borderRadius: BorderRadius.circular(8.0), // カードの角を丸める場合は設定
-               ),
->>>>>>> main
+              ),
               height: SizeConfig.blockSizeHorizontal! * 42,
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(
@@ -201,19 +196,264 @@ class _DataCardState extends State<DataCard> {
                             ),
                           ],
                         ),
-<<<<<<< HEAD
                         Container(
                           height: SizeConfig.blockSizeHorizontal! * 0,
-                          child: Divider(
-                            color: ACCENT_COLOR,
-                            thickness: SizeConfig.blockSizeHorizontal! * 0.8,
+                          // child:Divider(
+                          //   color: ACCENT_COLOR,
+                          //   thickness: SizeConfig.blockSizeHorizontal! * 0.8,
+                          // ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height:
+                        SizeConfig.blockSizeHorizontal! * 0.8, // 高さを指定する場合（省略可）
+                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
+                    thickness: 2, // 線の太さを指定する場合（省略可）
+                  ),
+//要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                  Container(
+                    height: SizeConfig.blockSizeHorizontal! * 6,
+                    width: SizeConfig.blockSizeHorizontal! * 96,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: SizeConfig.blockSizeHorizontal! * 12,
+                          width: SizeConfig.blockSizeHorizontal! * 11,
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '  要約',
+                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
+                            style: TextStyle(
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal! * 2,
+                          height: SizeConfig.blockSizeHorizontal! * 6,
+                        ),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal! * 82,
+                          height: SizeConfig.blockSizeHorizontal! * 6,
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                height: SizeConfig.blockSizeHorizontal! * 6,
+                                width: SizeConfig.blockSizeHorizontal! * 4.5,
+                                alignment: Alignment.topLeft,
+                                child: Column(children: [
+                                  SizedBox(
+                                    height: SizeConfig.blockSizeHorizontal! * 1,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        String userInput5 = _controller5.text;
+                                      });
+                                      showAutoDismissiblePopup(context);
+                                    },
+                                    child: Container(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(
+                                            10), // ボタンの角を丸くする
+                                      ),
+                                      child: Icon(Icons.edit, // アイコンの種類
+                                          color: Colors.grey, // アイコンの色
+                                          size:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  4.5),
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                              SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 2),
+                              Container(
+                                margin: EdgeInsets.only(top: 0),
+                                width: SizeConfig.blockSizeHorizontal! * 75,
+                                alignment: Alignment.topLeft,
+                                height: SizeConfig.blockSizeHorizontal! * 6,
+                                child: TextField(
+                                  maxLines: 1,
+                                  textAlign: TextAlign.start,
+                                  controller: _controller5,
+                                  style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 3,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  //onChanged: (newValue) {
+                                  //String userInput = _controller2.text;// テキストが変更された際の処理
+                                  //},
+                                  decoration: InputDecoration(
+                                    hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(
+                                        bottom:
+                                            SizeConfig.blockSizeHorizontal! *
+                                                3.2),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500),
+                                    //alignLabelWithHint: true,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
+                  Divider(
+                    height:
+                        SizeConfig.blockSizeHorizontal! * 0.6, // 高さを指定する場合（省略可）
+                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
+                    thickness: 2, // 線の太さを指定する場合（省略可）
+                  ),
+//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 1,
+                  ),
+                  Container(
+                    height: SizeConfig.blockSizeHorizontal! * 13,
+                    width: SizeConfig.blockSizeHorizontal! * 96,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: SizeConfig.blockSizeHorizontal! * 15,
+                          width: SizeConfig.blockSizeHorizontal! * 11,
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '  課題',
+                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
+                            style: TextStyle(
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal! * 2,
+                          height: SizeConfig.blockSizeHorizontal! * 0.6,
+                        ),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal! * 82,
+                          height: SizeConfig.blockSizeHorizontal! * 15,
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                height: SizeConfig.blockSizeHorizontal! * 15,
+                                width: SizeConfig.blockSizeHorizontal! * 4.5,
+                                alignment: Alignment.topLeft,
+                                child: Column(children: [
+                                  SizedBox(
+                                    height: SizeConfig.blockSizeHorizontal! * 1,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        String userInput2 = _controller2.text;
+                                      });
+                                      showAutoDismissiblePopup(context);
+                                    },
+                                    child: Container(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(
+                                            10), // ボタンの角を丸くする
+                                      ),
+                                      child: Icon(Icons.edit, // アイコンの種類
+                                          color: Colors.grey, // アイコンの色
+                                          size:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  4.5),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: SizeConfig.blockSizeHorizontal! * 1,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      _controller2.clear();
+                                    },
+                                    child: Container(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Icon(Icons.delete,
+                                          color: Colors.grey,
+                                          size:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  4.5),
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                              SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 2),
+                              SingleChildScrollView(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 0),
+                                  width: SizeConfig.blockSizeHorizontal! * 75,
+                                  alignment: Alignment.topLeft,
+                                  height: SizeConfig.blockSizeHorizontal! * 13,
+                                  child: TextField(
+                                    maxLines: 3,
+                                    textAlign: TextAlign.start,
+                                    controller: _controller2,
+                                    style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 3,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    //onChanged: (newValue) {
+                                    //String userInput = _controller2.text;// テキストが変更された際の処理
+                                    //},
+                                    decoration: const InputDecoration(
+                                      hintText: "課題の詳細やメモを入力…",
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(top: 0),
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              //),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height:
+                        SizeConfig.blockSizeHorizontal! * 0.8, // 高さを指定する場合（省略可）
+                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
+                    thickness: 2, // 線の太さを指定する場合（省略可）
                   ),
 //期限、残り日数、完了ボタン//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   Row(children: [
@@ -222,293 +462,20 @@ class _DataCardState extends State<DataCard> {
                     ),
                     Container(
                       height: SizeConfig.blockSizeHorizontal! * 6,
-                      width: SizeConfig.blockSizeHorizontal! * 72.3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-=======
-                       Container(
-                        height:SizeConfig.blockSizeHorizontal! * 0,
-                        // child:Divider(
-                        //   color: ACCENT_COLOR,
-                        //   thickness: SizeConfig.blockSizeHorizontal! * 0.8,
-                        // ),
-                       ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    height:SizeConfig.blockSizeHorizontal! * 0.8, // 高さを指定する場合（省略可）
-                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                    thickness: 2, // 線の太さを指定する場合（省略可）
-                  ),
-//要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                 Container(
-                  height:SizeConfig.blockSizeHorizontal! * 6,
-                  width:SizeConfig.blockSizeHorizontal! * 96,
-                  child:Row(
-                    children: [
-                      Container(
-                        height: SizeConfig.blockSizeHorizontal! * 12,
-                        width:SizeConfig.blockSizeHorizontal! * 11,
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '  要約',
-                          textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal! * 2,
-                        height: SizeConfig.blockSizeHorizontal! * 6,
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal! * 82,
-                        height: SizeConfig.blockSizeHorizontal! *6,
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: <Widget>[ 
-                           Container(
-                            height:SizeConfig.blockSizeHorizontal! * 6,
-                            width:SizeConfig.blockSizeHorizontal! * 4.5,
-                            alignment: Alignment.topLeft,
-                            child:Column(children:[
-                              SizedBox(height:SizeConfig.blockSizeHorizontal! * 1,),
-                              InkWell(
-                              onTap: () {
-                                setState(() {
-                                  String userInput5 = _controller5.text;
-                                });
-                                showAutoDismissiblePopup(context);
-                              },
-                              child: Container(
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                height: SizeConfig.blockSizeHorizontal! * 4.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.circular(10), // ボタンの角を丸くする
-                                ),
-                                child: Icon(Icons.edit, // アイコンの種類
-                                    color: Colors.grey, // アイコンの色
-                                    size:SizeConfig.blockSizeHorizontal! * 4.5
-                                ),
-                               ),
-                              ),
-                             ]
-                            ),
-                           ),
-                           SizedBox(width:SizeConfig.blockSizeHorizontal! * 2),
-                              Container(
-                                margin: EdgeInsets.only(top: 0),
-                                width: SizeConfig.blockSizeHorizontal! *75,
-                                alignment: Alignment.topLeft,
-                                height: SizeConfig.blockSizeHorizontal! *6,
-                                  child: TextField(
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                  controller: _controller5,
-                                  style: TextStyle(
-                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  //onChanged: (newValue) {
-                                  //String userInput = _controller2.text;// テキストが変更された際の処理
-                                  //},
-                                  decoration:  InputDecoration(
-                                    hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 3.2),
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500
-                                      ),
-                                    //alignLabelWithHint: true,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                 ),
-                   Divider(
-                    height:SizeConfig.blockSizeHorizontal! * 0.6, // 高さを指定する場合（省略可）
-                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                    thickness: 2, // 線の太さを指定する場合（省略可）
-                  ),
-//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                 SizedBox(
-                  height:SizeConfig.blockSizeHorizontal! * 1,
-                 ),
-                 Container(
-                  height:SizeConfig.blockSizeHorizontal! * 13,
-                  width:SizeConfig.blockSizeHorizontal! * 96,
-                  child:Row(
-                    children: [
-                      Container(
-                        height: SizeConfig.blockSizeHorizontal! * 15,
-                        width:SizeConfig.blockSizeHorizontal! * 11,
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          '  課題',
-                          textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal! * 2,
-                        height: SizeConfig.blockSizeHorizontal! * 0.6,
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal! * 82,
-                        height: SizeConfig.blockSizeHorizontal! *15,
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: <Widget>[
-                           Container(
-                            height:SizeConfig.blockSizeHorizontal! * 15,
-                            width:SizeConfig.blockSizeHorizontal! * 4.5,
-                            alignment: Alignment.topLeft,
-                            child:Column(children:[
-                              SizedBox(height:SizeConfig.blockSizeHorizontal! * 1,),
-                              InkWell(
-                              onTap: () {
-                                setState(() {
-                                  String userInput2 = _controller2.text;
-                                });
-                                showAutoDismissiblePopup(context);
-                              },
-                              child: Container(
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                height: SizeConfig.blockSizeHorizontal! * 4.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.circular(10), // ボタンの角を丸くする
-                                ),
-                                child: Icon(Icons.edit, // アイコンの種類
-                                    color: Colors.grey, // アイコンの色
-                                    size:SizeConfig.blockSizeHorizontal! * 4.5
-                               ),
-                              ),
-                            ),
-                            SizedBox(height:SizeConfig.blockSizeHorizontal! * 1,),
-                              InkWell(
-                              onTap: () {
-                               _controller2.clear();
-                              },
-                              child: Container(
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                height: SizeConfig.blockSizeHorizontal! * 4.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.circular(10), 
-                                ),
-                                child: Icon(Icons.delete,
-                                    color: Colors.grey, 
-                                    size:SizeConfig.blockSizeHorizontal! * 4.5
-                               ),
-                              ),
-                            ),
-                            ]
-                            ),
-                           ),
-                           SizedBox(width:SizeConfig.blockSizeHorizontal! * 2),
-                            SingleChildScrollView(  
-                              child: Container(
-                                margin: EdgeInsets.only(top: 0),
-                                width: SizeConfig.blockSizeHorizontal! *75,
-                                alignment: Alignment.topLeft,
-                                height: SizeConfig.blockSizeHorizontal! *13,
-                                  child: TextField(
-                                  maxLines: 3,
-                                  textAlign: TextAlign.start,
-                                  controller: _controller2,
-                                  style: TextStyle(
-                                    fontSize:SizeConfig.blockSizeHorizontal! * 3,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  //onChanged: (newValue) {
-                                  //String userInput = _controller2.text;// テキストが変更された際の処理
-                                  //},
-                                  decoration: const InputDecoration(
-                                    hintText: "課題の詳細やメモを入力…",
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(top: 0),
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500
-                                      ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                           //),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                 ),
-                Divider(
-                    height:SizeConfig.blockSizeHorizontal! * 0.8, // 高さを指定する場合（省略可）
-                    color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                    thickness: 2, // 線の太さを指定する場合（省略可）
-                  ),
-//期限、残り日数、完了ボタン//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                 Row(children:[
-                  SizedBox(
-                  width:SizeConfig.blockSizeHorizontal! * 1.2,),
-                  Container(
-                  height:SizeConfig.blockSizeHorizontal! * 6,
-                  width:SizeConfig.blockSizeHorizontal! * 71.4,
-                  child:Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Text(
-                          '期限',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 0, 0),
->>>>>>> main
-                          ),
-                          BoxShadow(
-                            color: Colors.white,
-                            spreadRadius: -1.5,
-                            blurRadius: 2.0,
-                          ),
-                        ],
-                      ),
+                      width: SizeConfig.blockSizeHorizontal! * 71.4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             child: Text(
-                              ' 期限',
+                              '期限',
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                                fontWeight: FontWeight.w800,
-                                color: const Color.fromARGB(255, 77, 46, 35),
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
-<<<<<<< HEAD
                           ),
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal! * 2,
@@ -541,42 +508,12 @@ class _DataCardState extends State<DataCard> {
                                       ),
                                     ),
                                   ),
-=======
-                            Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 5.9,
-                                  height: SizeConfig.blockSizeHorizontal! * 5,
->>>>>>> main
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      String userInput3 = _controller3.text;
-                                    });
-                                    showAutoDismissiblePopup(context);
-                                  },
-                                  child: Container(
-                                    width:
-                                        SizeConfig.blockSizeHorizontal! * 4.5,
-                                    height:
-                                        SizeConfig.blockSizeHorizontal! * 4.5,
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.circular(
-                                          10), // ボタンの角を丸くする
-                                    ),
-                                    child: Icon(Icons.edit, // アイコンの種類
-                                        color: Colors.brown, // アイコンの色
-                                        size: SizeConfig.blockSizeHorizontal! *
-                                            4.5),
-                                  ),
                                 ),
                                 Row(
                                   children: <Widget>[
                                     SizedBox(
                                       width:
-                                          SizeConfig.blockSizeHorizontal! * 1,
+                                          SizeConfig.blockSizeHorizontal! * 5.9,
                                       height:
                                           SizeConfig.blockSizeHorizontal! * 5,
                                     ),
@@ -601,286 +538,13 @@ class _DataCardState extends State<DataCard> {
                       height: SizeConfig.blockSizeHorizontal! * 5,
                       child: ButtonSwitching(),
                     ),
-<<<<<<< HEAD
                   ]),
-//要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                  SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 1,
-                  ),
-                  Container(
-                    height: SizeConfig.blockSizeHorizontal! * 6,
-                    width: SizeConfig.blockSizeHorizontal! * 96,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                        ),
-                        BoxShadow(
-                          color: Colors.white,
-                          spreadRadius: -1.5,
-                          blurRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: SizeConfig.blockSizeHorizontal! * 12,
-                          width: SizeConfig.blockSizeHorizontal! * 11,
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            '  要約',
-                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                              fontWeight: FontWeight.w800,
-                              color: const Color.fromARGB(255, 77, 46, 35),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal! * 2,
-                          height: SizeConfig.blockSizeHorizontal! * 6,
-                        ),
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal! * 82,
-                          height: SizeConfig.blockSizeHorizontal! * 6,
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(top: 0),
-                                width: SizeConfig.blockSizeHorizontal! * 75,
-                                alignment: Alignment.topLeft,
-                                height: SizeConfig.blockSizeHorizontal! * 6,
-                                child: TextField(
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                  controller: _controller5,
-                                  style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal! * 3,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  //onChanged: (newValue) {
-                                  //String userInput = _controller2.text;// テキストが変更された際の処理
-                                  //},
-                                  decoration: InputDecoration(
-                                    hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(
-                                        bottom:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                3.2),
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w500),
-                                    //alignLabelWithHint: true,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: SizeConfig.blockSizeHorizontal! * 6,
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                alignment: Alignment.topLeft,
-                                child: Column(children: [
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        String userInput5 = _controller5.text;
-                                      });
-                                      showAutoDismissiblePopup(context);
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(
-                                            10), // ボタンの角を丸くする
-                                      ),
-                                      child: Icon(Icons.edit, // アイコンの種類
-                                          color: Colors.brown, // アイコンの色
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    // SizedBox(
-                    //   height: SizeConfig.blockSizeHorizontal! * 1,
-                    // ),
-                  ),
-//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                  SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 1,
-                  ),
-                  Container(
-                    height: SizeConfig.blockSizeHorizontal! * 13,
-                    width: SizeConfig.blockSizeHorizontal! * 96,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                        ),
-                        BoxShadow(
-                          color: Colors.white,
-                          spreadRadius: -1.5,
-                          blurRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: SizeConfig.blockSizeHorizontal! * 15,
-                          width: SizeConfig.blockSizeHorizontal! * 11,
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            '  課題',
-                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                              fontWeight: FontWeight.w800,
-                              color: const Color.fromARGB(255, 77, 46, 35),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal! * 2,
-                          height: SizeConfig.blockSizeHorizontal! * 0.6,
-                        ),
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal! * 82,
-                          height: SizeConfig.blockSizeHorizontal! * 15,
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            children: <Widget>[
-                              SingleChildScrollView(
-                                child: Container(
-                                  margin: EdgeInsets.only(top: 0),
-                                  width: SizeConfig.blockSizeHorizontal! * 75,
-                                  alignment: Alignment.topLeft,
-                                  height: SizeConfig.blockSizeHorizontal! * 15,
-                                  child: TextField(
-                                    maxLines: 3,
-                                    textAlign: TextAlign.start,
-                                    controller: _controller2,
-                                    style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    //onChanged: (newValue) {
-                                    //String userInput = _controller2.text;// テキストが変更された際の処理
-                                    //},
-                                    decoration: const InputDecoration(
-                                      hintText: "課題の詳細やメモを入力…",
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(top: 0),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //),
-                              Container(
-                                height: SizeConfig.blockSizeHorizontal! * 15,
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                alignment: Alignment.topLeft,
-                                child: Column(children: [
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        String userInput2 = _controller2.text;
-                                      });
-                                      showAutoDismissiblePopup(context);
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(
-                                            10), // ボタンの角を丸くする
-                                      ),
-                                      child: Icon(Icons.edit, // アイコンの種類
-                                          color: Colors.brown, // アイコンの色
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      _controller2.clear();
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(Icons.delete,
-                                          color: Colors.brown,
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    // SizedBox(
-                    //   height: SizeConfig.blockSizeHorizontal! * 1,
-                    // ),
-                  ),
-=======
-                   ]
-              ),
->>>>>>> main
                 ],
               ),
             ),
           ),
-<<<<<<< HEAD
         ),
-        SizedBox(
-            height: SizeConfig.blockSizeHorizontal! * 0.75), //カード間の隙間。固定値で。
-=======
-          ),
         SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.75), //カード間の隙間。
->>>>>>> main
       ],
     );
   }
@@ -895,10 +559,6 @@ class _DataCardState extends State<DataCard> {
     return _controller1.text;
   }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> main
   ButtonSwitching() {
     if (widget.isDone == true) {
       if (widget.dtEnd.isBefore(DateTime.now()) == false) {
@@ -935,7 +595,8 @@ class _DataCardState extends State<DataCard> {
           child: Text('終わった！',
               style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 2)),
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.blueGrey), // ボタンの背景色
+            backgroundColor:
+                MaterialStateProperty.all(Colors.blueGrey), // ボタンの背景色
             elevation: MaterialStateProperty.all(0),
           ),
         );
@@ -946,14 +607,8 @@ class _DataCardState extends State<DataCard> {
           style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 2.8,
               color: const Color.fromARGB(255, 77, 46, 35),
-<<<<<<< HEAD
-              fontWeight: FontWeight.w800),
+              fontWeight: FontWeight.w600),
         );
-=======
-              fontWeight: FontWeight.w600
-            ),
-          );
->>>>>>> main
       }
     }
   }
@@ -995,7 +650,6 @@ class _DataCardState extends State<DataCard> {
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
     bool FinishOrNot = widget.isDone;
-
 
     if (TimeLimit.isBefore(DateTime.now()) == false) {
       if (FinishOrNot == false) {
