@@ -41,10 +41,12 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
 Future<String> _getTask(String urlString) async {
   Uri url = Uri.parse(urlString);
   var response = await http.post(url);
-  return response.body;
+  //print(response.body.substring(1200, 2200));
+  return response.body.replaceAll("\\n", "");
 }
 
 Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
+  //events["events"].removeAt(0);
   for (int i = 0; i < events["events"].length; i++) {
     events["events"][i].remove("CLASS");
     events["events"][i].remove("LAST-MODIFIED");
@@ -53,10 +55,11 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 
     events["events"][i]["DTEND"] = DateTime.parse(events["events"][i]["DTEND"])
         .add(const Duration(hours: 9))
-        .millisecondsSinceEpoch;
+        .millisecondsSinceEpoch; //これはエポックミリ秒 int型
     events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
         .replaceAll(RegExp(r'[A-Za-z()\d]'), '');
   }
+
   return events;
 }
 
@@ -65,7 +68,9 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskData(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> tasks = _parsedTaskData(taskString);
-
+  for (int i = 0; i < 30; i++) {
+    print(tasks["events"][i]["DESCRIPTION"]);
+  }
   return tasks;
 }
 
