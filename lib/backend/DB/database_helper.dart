@@ -6,9 +6,6 @@ import 'dart:io';
 class TaskDatabaseHelper {
   late Database _database;
   // データベースの初期化
-  TaskDatabaseHelper() {
-    initDatabase();
-  }
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);

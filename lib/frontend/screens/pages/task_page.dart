@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../../size_config.dart';
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
-import '../components/template/dataCard.dart';
+import '../components/template/data_card.dart';
 
 class TaskPage extends StatefulWidget {
   @override
@@ -37,17 +37,20 @@ class _TaskPageState extends State<TaskPage> {
   //データベースを更新する関数
   Future<void> _loadData() async {
     final data = await resisterTaskToDB(urlString);
-    setState(() {
-      events = Future.value(data);
-    });
+    if (mounted) {
+      setState(() {
+        events = Future.value(data);
+      });
+    }
   }
 
-  //既存データベースを表示する関数
   Future<void> _displayDB() async {
     final addData = await taskListforTaskPage();
-    setState(() {
-      events = Future.value(addData);
-    });
+    if (mounted) {
+      setState(() {
+        events = Future.value(addData);
+      });
+    }
   }
 
   //データベースが存在するか判定する関数
@@ -57,6 +60,23 @@ class _TaskPageState extends State<TaskPage> {
     } else {
       return true;
     }
+  }
+
+  Widget buildMyFutureBuilder(Future<List<Map<String, dynamic>>> events) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: events,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else if (snapshot.hasData) {
+          return buildDataCards(snapshot.data!);
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   @override

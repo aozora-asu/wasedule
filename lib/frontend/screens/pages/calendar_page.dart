@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import '../components/template/brief_task_text.dart';
 import 'package:flutter_calandar_app/backend/db_Manager.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
@@ -147,14 +147,29 @@ class TaskList extends StatelessWidget {
                         BoxShadow(
                           color: Colors.grey,
                         ),
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.white,
                           spreadRadius: -1.5,
                           blurRadius: 2.0,
                         ),
                       ],
                     ),
-                    child: Text("テスト"))
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: taskListforTaskPage(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // 読み込み中の場合、ProgressIndicator を表示
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          // エラーがある場合、エラーメッセージを表示
+                          return Text("Error: ${snapshot.error}");
+                        } else {
+                          // データがある場合、buildTaskText 関数を呼び出してデータを表示
+                          return buildTaskText(snapshot.data ?? []);
+                        }
+                      },
+                    ))
               ])))
     ]);
   }

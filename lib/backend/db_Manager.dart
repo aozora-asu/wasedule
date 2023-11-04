@@ -32,10 +32,12 @@ Future<List<Map<String, dynamic>>> resisterTaskToDB(String urlString) async {
 
 Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  await databaseHelper.initDatabase();
   return databaseHelper.taskListForCalendarPage();
 }
 
 Future<List<Map<String, dynamic>>> taskListforTaskPage() async {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  await databaseHelper.initDatabase();
   return databaseHelper.taskListForTaskPage();
 }
