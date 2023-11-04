@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import "package:flutter_calandar_app/backend/DB/database_helper.dart";
 import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 
 class DataCard extends StatefulWidget {
@@ -54,7 +55,7 @@ class _DataCardState extends State<DataCard> {
     super.initState();
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(text: widget.dtEnd.toString());
+    _controller3 = TextEditingController(text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
@@ -78,7 +79,7 @@ class _DataCardState extends State<DataCard> {
                 border: Border.all(
                   // 輪郭線のスタイルを設定
                   color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                  width: 3, // 輪郭線の幅
+                  width: 1, // 輪郭線の幅
                 ),
                 borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
               ),
@@ -405,7 +406,7 @@ class _DataCardState extends State<DataCard> {
                     thickness: 2,
                   ),
 //期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                  Row(children: [
+                 Row(children: [
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 1.2,
                     ),
@@ -440,7 +441,7 @@ class _DataCardState extends State<DataCard> {
                                     padding: EdgeInsets.only(left: 8.0),
                                     child: Container(
                                       width:
-                                          SizeConfig.blockSizeHorizontal! * 35,
+                                          SizeConfig.blockSizeHorizontal! * 38,
                                       height:
                                           SizeConfig.blockSizeHorizontal! * 6,
                                       alignment: Alignment.center,
@@ -453,7 +454,7 @@ class _DataCardState extends State<DataCard> {
                                         ),
                                         controller: _controller3,
                                         decoration: InputDecoration(
-                                          hintText: "日付 (yyyy-MM-dd HH:mm)",
+                                          hintText: "日付 (yyyy年mm月dd日 hh時mm分)",
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.only(
                                               bottom: SizeConfig
@@ -467,7 +468,7 @@ class _DataCardState extends State<DataCard> {
                                     children: <Widget>[
                                       SizedBox(
                                         width: SizeConfig.blockSizeHorizontal! *
-                                            24,
+                                            20,
                                         height:
                                             SizeConfig.blockSizeHorizontal! * 5,
                                       ),
