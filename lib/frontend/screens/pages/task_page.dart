@@ -64,23 +64,6 @@ class _TaskPageState extends State<TaskPage> {
     }
   }
 
-  Widget buildMyFutureBuilder(Future<List<Map<String, dynamic>>> events) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: events,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoadingScreen();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else if (snapshot.hasData) {
-          return buildDataCards(context, snapshot.data!);
-        } else {
-          return LoadingScreen();
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

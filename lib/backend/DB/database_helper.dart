@@ -6,9 +6,6 @@ import 'dart:io';
 class TaskDatabaseHelper {
   late Database _database;
   // データベースの初期化
-  TaskDatabaseHelper() {
-    initDatabase();
-  }
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
@@ -84,6 +81,9 @@ class TaskDatabaseHelper {
   Future<void> updateTitle(int id, String newTitle) async {
     // 'tasks' テーブル内の特定の行を更新
 
+    await initDatabase();
+
+
     await _database.update(
       'tasks',
       {'title': newTitle}, // 更新後の値
@@ -95,6 +95,9 @@ class TaskDatabaseHelper {
   Future<void> updateSummary(int id, String newSummary) async {
     // 'tasks' テーブル内の特定の行を更新
 
+
+    await initDatabase();
+
     await _database.update(
       'tasks',
       {'summary': newSummary}, // 更新後の値
@@ -105,6 +108,10 @@ class TaskDatabaseHelper {
 
   Future<void> updateDescription(int id, String newDescription) async {
     // 'tasks' テーブル内の特定の行を更新
+
+    await initDatabase();
+
+
 
     await _database.update(
       'tasks',

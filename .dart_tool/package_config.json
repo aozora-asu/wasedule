@@ -267,7 +267,8 @@
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/sqflite_common-2.5.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/sqflite_common-2.5.0+1",
+
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -362,7 +363,8 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-11-05T12:26:58.321969Z",
+
+  "generated": "2023-11-05T13:31:02.880918Z",
 
   "generator": "pub",
   "generatorVersion": "3.1.5"
