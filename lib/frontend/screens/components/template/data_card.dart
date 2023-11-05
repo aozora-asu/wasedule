@@ -8,52 +8,69 @@ import '../../pages/task_page.dart';
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
-  final String? description; // 課題
+  final String description; // 課題
   final DateTime dtEnd; // 期限
-  final String? summary; //メモ(通知表示用の要約)
+  final String summary; //メモ(通知表示用の要約)
   bool isDone; // 課題が終了したか(trueで済)
   final int index;
 
   DataCard({
     required this.index,
     required this.title,
-    this.description,
+    required this.description,
     required this.dtEnd,
     required this.summary,
     required this.isDone,
   });
 
   @override
-  _DataCardState createState() => _DataCardState();
+  DataCardState createState() => DataCardState();
 }
 
-Widget buildDataCards(List<Map<String, dynamic>> data) {
+Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
+  SizeConfig().init(context);
+
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   return ListView(
     children: [
       for (int i = 0; i < data.length; i++)
         if (data[i]["isDone"] != 1)
-          DataCard(
-            index: i + 1,
-            title: data[i]["title"],
-            description: data[i]["description"],
-            dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-            summary: data[i]["summary"],
-            isDone: false,
+          Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.startToEnd,
+            onDismissed: (direction) {
+              databaseHelper.unDisplay(i + 1);
+              // データカードを削除する処理をここに追加
+            },
+            background: Container(
+              color: Colors.red,
+              child: Icon(Icons.delete),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 16.0),
+            ),
+            child: DataCard(
+              index: i + 1,
+              title: data[i]["title"],
+              description: data[i]["description"],
+              dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+              summary: data[i]["summary"],
+              isDone: false,
+            ),
           )
     ],
   );
 }
 
-class _DataCardState extends State<DataCard> {
+class DataCardState extends State<DataCard> {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
   late TextEditingController _controller3; //dtEnd
   late TextEditingController _controller4; //isDone
   late TextEditingController _controller5; //memo
   late TextEditingController _index;
-String _userInput1 = '';
-String _userInput5 = '';
-String _userInput2 = '';
+  String _userInput1 = '';
+  String _userInput5 = '';
+  String _userInput2 = '';
 
   @override
   void initState() {
@@ -65,31 +82,14 @@ String _userInput2 = '';
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
-
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget mainCardBody(BuildContext context) {
     SizeConfig().init(context);
     int index = int.parse(_index.text);
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
-//スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
- return Dismissible(
-  key: UniqueKey(),
-  direction: DismissDirection.startToEnd,
-  onDismissed: (direction) {
-    _controller4.text = "1";
-    databaseHelper.unDisplay(index);
-  },
-  background: Container(
-    color: Colors.red,
-    child: Icon(Icons.delete),
-    alignment: Alignment.centerLeft,
-    padding: EdgeInsets.only(left: 16.0),
-  ),
-      child:
-//カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      Column(children: <Widget>[
+    return Column(
+      children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Card(
@@ -132,12 +132,12 @@ String _userInput2 = '';
                               width: SizeConfig.blockSizeHorizontal! * 80,
                               height: SizeConfig.blockSizeHorizontal! * 12,
                               child: TextField(
-                              textInputAction: TextInputAction.done,
-                               onSubmitted: (inputValue) {
-                                    _userInput1 = inputValue;
-                                    databaseHelper.updateTitle(
-                                    index, _userInput1);
-                                   },
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (inputValue) {
+                                  _userInput1 = inputValue;
+                                  databaseHelper.updateTitle(
+                                      index, _userInput1);
+                                },
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
@@ -210,12 +210,12 @@ String _userInput2 = '';
                                         SizeConfig.blockSizeHorizontal! * 3,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                   textInputAction: TextInputAction.done,
-                                    onSubmitted: (inputValue) {
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (inputValue) {
                                     _userInput5 = inputValue;
                                     databaseHelper.updateSummary(
-                                    index, _userInput5);
-                                   },
+                                        index, _userInput5);
+                                  },
                                   decoration: InputDecoration(
                                     hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
                                     border: InputBorder.none,
@@ -283,12 +283,12 @@ String _userInput2 = '';
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
-                                  textInputAction: TextInputAction.done,
+                                    textInputAction: TextInputAction.done,
                                     onSubmitted: (inputValue) {
-                                    _userInput2 = inputValue;
-                                    databaseHelper.updateDescription(
-                                    index, _userInput2);
-                                   },
+                                      _userInput2 = inputValue;
+                                      databaseHelper.updateDescription(
+                                          index, _userInput2);
+                                    },
                                     maxLines: 3,
                                     textAlign: TextAlign.start,
                                     controller: _controller2,
@@ -416,8 +416,14 @@ String _userInput2 = '';
         ),
         SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.75), //カード間の隙間。
       ],
-      ) 
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+//スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
+    return mainCardBody(context);
+//カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
