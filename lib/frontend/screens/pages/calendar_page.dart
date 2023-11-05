@@ -92,7 +92,7 @@ class _CalendarState extends State<Calendar> {
         SizedBox(
           height: 13,
         ),
-        TaskList()
+        briefTaskList()
       ]),
     );
   }
@@ -118,7 +118,7 @@ class EventData {
 //   }
 // }
 
-class TaskList extends StatelessWidget {
+class briefTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
