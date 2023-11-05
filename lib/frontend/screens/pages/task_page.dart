@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/db_manager.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
+import '../components/template/loading.dart';
 import 'package:intl/intl.dart';
 import '../../size_config.dart';
 import '../../colors.dart';
@@ -72,7 +73,7 @@ class _TaskPageState extends State<TaskPage> {
           future: events,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return LoadingScreen();
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
@@ -80,7 +81,7 @@ class _TaskPageState extends State<TaskPage> {
               return buildDataCards(context, snapshot.data!);
             } else {
               // データがない場合の処理（nullの場合など）
-              return const CircularProgressIndicator();
+              return LoadingScreen();
             }
           },
         ),

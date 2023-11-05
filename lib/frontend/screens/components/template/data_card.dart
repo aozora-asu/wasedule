@@ -381,15 +381,9 @@ class DataCardState extends State<DataCard> {
                                   ),
                                   Row(
                                     children: <Widget>[
-                                      SizedBox(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            20,
-                                        height:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                      ),
                                       Container(
                                         width: SizeConfig.blockSizeHorizontal! *
-                                            22,
+                                            42,
                                         height:
                                             SizeConfig.blockSizeHorizontal! *
                                                 6.5,
@@ -453,6 +447,18 @@ class DataCardState extends State<DataCard> {
     );
   }
 
+
+  
+  String getRemainingTime(DateTime dtEnd) {
+    Duration remainingTime = widget.dtEnd.difference(DateTime.now());
+
+    int days = remainingTime.inDays;
+    int minutes = (remainingTime.inMinutes % 60);
+    int seconds = (remainingTime.inSeconds % 60);
+
+    return '  $days日 $minutes分 $seconds秒  ';
+  }
+
   DaysLeft() {
     if (widget.dtEnd.isBefore(DateTime.now()) == false) {
       Duration difference = widget.dtEnd.difference(DateTime.now()); // 日付の差を求める
@@ -466,14 +472,21 @@ class DataCardState extends State<DataCard> {
           ),
         ); // 日数の差を出力
       } else {
-        return Text(
-          ("  残り${difference.inDays} 日  "),
-          style: TextStyle(
+        return Text(getRemainingTime(widget.dtEnd),
+            style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 4,
             fontWeight: FontWeight.w900,
             color: Colors.yellow,
-          ),
-        ); // 日数の差を出力
+         ),
+        );
+        // return Text(
+        //   ("  残り${difference.inDays} 日  "),
+        //   style: TextStyle(
+        //     fontSize: SizeConfig.blockSizeHorizontal! * 4,
+        //     fontWeight: FontWeight.w900,
+        //     color: Colors.yellow,
+        //   ),
+        // ); // 日数の差を出力
       }
     } else {
       return Text(
@@ -486,6 +499,8 @@ class DataCardState extends State<DataCard> {
       );
     }
   }
+
+int aaaa = 424;
 
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
@@ -547,6 +562,9 @@ class DataCardState extends State<DataCard> {
     }
   }
 
+  
+
+
   @override
   void dispose() {
     _controller1.dispose();
@@ -604,3 +622,4 @@ void showAutoDismissiblePopup(BuildContext context) {
     },
   );
 }
+//saa

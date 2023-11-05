@@ -80,7 +80,9 @@ class TaskDatabaseHelper {
 
   Future<void> updateTitle(int id, String newTitle) async {
     // 'tasks' テーブル内の特定の行を更新
+
     await initDatabase();
+
 
     await _database.update(
       'tasks',
@@ -93,7 +95,9 @@ class TaskDatabaseHelper {
   Future<void> updateSummary(int id, String newSummary) async {
     // 'tasks' テーブル内の特定の行を更新
 
+
     await initDatabase();
+
     await _database.update(
       'tasks',
       {'summary': newSummary}, // 更新後の値
@@ -104,7 +108,11 @@ class TaskDatabaseHelper {
 
   Future<void> updateDescription(int id, String newDescription) async {
     // 'tasks' テーブル内の特定の行を更新
+
     await initDatabase();
+
+
+
     await _database.update(
       'tasks',
       {'description': newDescription}, // 更新後の値
@@ -118,6 +126,16 @@ class TaskDatabaseHelper {
     await _database.update(
       'tasks',
       {'isDone': 1}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteCard(int id) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _database.delete(
+      'tasks',
+      // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
     );

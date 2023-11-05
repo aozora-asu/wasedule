@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.18.1
 
 
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,7 +70,8 @@ flutter_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+      - lib/assets/eye_catch/eyecatch.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
