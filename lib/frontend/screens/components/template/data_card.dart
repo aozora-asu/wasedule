@@ -30,14 +30,15 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   return ListView(
     children: [
       for (int i = 0; i < data.length; i++)
-        DataCard(
-          index: i + 1,
-          title: data[i]["title"],
-          description: data[i]["description"],
-          dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-          summary: data[i]["summary"],
-          isDone: false,
-        )
+        if (data[i]["isDone"] != 1)
+          DataCard(
+            index: i + 1,
+            title: data[i]["title"],
+            description: data[i]["description"],
+            dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+            summary: data[i]["summary"],
+            isDone: data[i]["isDone"],
+          )
     ],
   );
 }
@@ -55,7 +56,8 @@ class _DataCardState extends State<DataCard> {
     super.initState();
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
+    _controller3 = TextEditingController(
+        text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
@@ -406,7 +408,7 @@ class _DataCardState extends State<DataCard> {
                     thickness: 2,
                   ),
 //期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                 Row(children: [
+                  Row(children: [
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 1.2,
                     ),
