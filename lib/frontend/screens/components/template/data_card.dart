@@ -473,7 +473,6 @@ String _userInput2 = '';
             color: Colors.yellow,
          ),
         );
-
         // return Text(
         //   ("  残り${difference.inDays} 日  "),
         //   style: TextStyle(
@@ -494,6 +493,8 @@ String _userInput2 = '';
       );
     }
   }
+
+int aaaa = 424;
 
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
