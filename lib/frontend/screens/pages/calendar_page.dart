@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../components/template/brief_task_text.dart';
-import 'package:flutter_calandar_app/backend/db_Manager.dart';
+import 'package:flutter_calandar_app/backend/db_manager.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
 import '../../colors.dart';

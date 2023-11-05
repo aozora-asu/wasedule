@@ -108,6 +108,17 @@ class TaskDatabaseHelper {
     );
   }
 
+  Future<void> unDisplay(int id) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _database.update(
+      'tasks',
+      {'isDone': 1}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteExpairedTask() async {}
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
