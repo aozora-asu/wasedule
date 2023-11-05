@@ -68,9 +68,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskData(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> tasks = _parsedTaskData(taskString);
-  for (int i = 0; i < 30; i++) {
-    print(tasks["events"][i]["DESCRIPTION"]);
-  }
+
   return tasks;
 }
 

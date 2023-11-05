@@ -27,6 +27,7 @@ Future<List<Map<String, dynamic>>> resisterTaskToDB(String urlString) async {
     // 2. データベースヘルパークラスを使用してデータベースに挿入
     result = await databaseHelper.insertTask(taskItem);
   }
+
   return databaseHelper.getTaskFromDB();
 }
 
