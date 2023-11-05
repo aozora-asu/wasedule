@@ -37,7 +37,7 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
             description: data[i]["description"],
             dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
             summary: data[i]["summary"],
-            isDone: data[i]["isDone"],
+            isDone: false,
           )
     ],
   );
