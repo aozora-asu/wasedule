@@ -38,11 +38,10 @@ dependencies:
   table_calendar: ^3.0.9
 
   sqflite: ^2.3.0  #データベースをいじるパッケージ
-  http: ^1.1.0 #httpリクエストをするためのパッケージ
+ # http: ^1.1.0 #httpリクエストをするためのパッケージ
   path: ^1.8.3 #
   intl: ^0.18.1
-  path_provider: any
-  
+
 
 dev_dependencies:
   flutter_test:
