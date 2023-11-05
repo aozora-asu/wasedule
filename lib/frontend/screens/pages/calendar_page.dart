@@ -130,7 +130,7 @@ class TaskList extends StatelessWidget {
               width: SizeConfig.blockSizeHorizontal! * 98,
               child: Column(children: [
                 Text(
-                  ' ～現在の授業課題～',
+                  ' ～現在のタスク～',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
