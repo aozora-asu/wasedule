@@ -10,6 +10,7 @@ import '../../size_config.dart';
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
 import '../components/template/data_card.dart';
+import '../components/template/data_card.dart';
 
 class TaskPage extends StatefulWidget {
   @override
@@ -72,7 +73,7 @@ class _TaskPageState extends State<TaskPage> {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
-          return buildDataCards(snapshot.data!);
+          return buildDataCards(context, snapshot.data!);
         } else {
           return LoadingScreen();
         }
@@ -89,12 +90,12 @@ class _TaskPageState extends State<TaskPage> {
           future: events,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return  LoadingScreen();
+              return LoadingScreen();
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
               // データが読み込まれた場合、リストを生成
-              return buildDataCards(snapshot.data!);
+              return buildDataCards(context, snapshot.data!);
             } else {
               // データがない場合の処理（nullの場合など）
               return LoadingScreen();
@@ -112,3 +113,20 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 }
+
+  // Widget buildMyFutureBuilder(Future<List<Map<String, dynamic>>> events) {
+  //   return FutureBuilder<List<Map<String, dynamic>>>(
+  //     future: events,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator();
+  //       } else if (snapshot.hasError) {
+  //         return Text("Error: ${snapshot.error}");
+  //       } else if (snapshot.hasData) {
+  //         return buildDataCards(snapshot.data!);
+  //       } else {
+  //         return CircularProgressIndicator();
+  //       }
+  //     },
+  //   );
+  // }
