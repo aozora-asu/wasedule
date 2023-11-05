@@ -479,7 +479,6 @@ class DataCardState extends State<DataCard> {
             color: Colors.yellow,
          ),
         );
-
         // return Text(
         //   ("  残り${difference.inDays} 日  "),
         //   style: TextStyle(
@@ -500,6 +499,8 @@ class DataCardState extends State<DataCard> {
       );
     }
   }
+
+int aaaa = 424;
 
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
@@ -621,3 +622,4 @@ void showAutoDismissiblePopup(BuildContext context) {
     },
   );
 }
+//saa
