@@ -51,6 +51,9 @@ class _DataCardState extends State<DataCard> {
   late TextEditingController _controller4; //isDone
   late TextEditingController _controller5; //memo
   late TextEditingController _index;
+String _userInput1 = '';
+String _userInput5 = '';
+String _userInput2 = '';
 
   @override
   void initState() {
@@ -62,6 +65,7 @@ class _DataCardState extends State<DataCard> {
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
+
   }
 
   @override
@@ -72,6 +76,7 @@ class _DataCardState extends State<DataCard> {
 //スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
  return Dismissible(
   key: UniqueKey(),
+  direction: DismissDirection.startToEnd,
   onDismissed: (direction) {
     _controller4.text = "1";
     databaseHelper.unDisplay(index);
@@ -103,7 +108,7 @@ class _DataCardState extends State<DataCard> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-//タスクの状態・授業名・チェクボ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//タスクの状態・授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   Container(
                     height: SizeConfig.blockSizeHorizontal! * 12,
                     child: Column(
@@ -127,13 +132,12 @@ class _DataCardState extends State<DataCard> {
                               width: SizeConfig.blockSizeHorizontal! * 80,
                               height: SizeConfig.blockSizeHorizontal! * 12,
                               child: TextField(
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    String userInput1 = newValue;
+                              textInputAction: TextInputAction.done,
+                               onSubmitted: (inputValue) {
+                                    _userInput1 = inputValue;
                                     databaseHelper.updateTitle(
-                                        index, userInput1);
-                                  });
-                                },
+                                    index, _userInput1);
+                                   },
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
@@ -206,13 +210,12 @@ class _DataCardState extends State<DataCard> {
                                         SizeConfig.blockSizeHorizontal! * 3,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      String userInput5 = newValue;
-                                      databaseHelper.updateSummary(
-                                          index, userInput5);
-                                    });
-                                  },
+                                   textInputAction: TextInputAction.done,
+                                    onSubmitted: (inputValue) {
+                                    _userInput5 = inputValue;
+                                    databaseHelper.updateSummary(
+                                    index, _userInput5);
+                                   },
                                   decoration: InputDecoration(
                                     hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
                                     border: InputBorder.none,
@@ -280,13 +283,12 @@ class _DataCardState extends State<DataCard> {
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        String userInput2 = newValue;
-                                        databaseHelper.updateDescription(
-                                            index, userInput2);
-                                      });
-                                    },
+                                  textInputAction: TextInputAction.done,
+                                    onSubmitted: (inputValue) {
+                                    _userInput2 = inputValue;
+                                    databaseHelper.updateDescription(
+                                    index, _userInput2);
+                                   },
                                     maxLines: 3,
                                     textAlign: TextAlign.start,
                                     controller: _controller2,
