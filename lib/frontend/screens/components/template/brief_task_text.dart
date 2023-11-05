@@ -6,21 +6,29 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import '../../../size_config.dart';
 
-Widget buildTaskText(List<Map<String, dynamic>> taskList) {
+Widget buildTaskText(List<Map<String, dynamic>> taskList,BuildContext context) {
+  SizeConfig().init(context);
   if (taskList.isEmpty) {
     return const Text("現在のタスクはありません");
-  }
-
+  } 
   String text = "";
-  for (int i = 0; i < taskList.length; i++) {
-    text +=
-        '${DateFormat('【MM/dd HH:mm】').format(DateTime.fromMillisecondsSinceEpoch(taskList[i]["dtEnd"])).toString()} ${taskList[i]["title"]}\n      ${taskList[i]["summary"]}\n\n';
-  }
-  return SingleChildScrollView(
-    child: Text(
-      
-      text,
-      style:  TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 3.5),
-    ),
-  );
+
+  return ListView(children:[
+    for (int i = 0; i < taskList.length; i++) 
+     if(taskList[i]["isDone"] == 0)
+     Column(
+      children:[Container(
+      alignment: Alignment.centerLeft,
+      child:Text(
+      '${DateFormat('【MM/dd HH:mm】').format(DateTime.fromMillisecondsSinceEpoch(taskList[i]["dtEnd"])).toString()} ${taskList[i]["title"]}\n      ${taskList[i]["summary"]}',
+  style:TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 3),    
+      )
+      ),
+    Divider(
+    height: SizeConfig.blockSizeHorizontal! * 3,
+    color: WIDGET_OUTLINE_COLOR,
+    thickness: 2,
+  ),])
+    ]
+);
 }

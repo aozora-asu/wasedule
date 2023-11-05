@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import '../../pages/task_page.dart';
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -68,10 +69,22 @@ class _DataCardState extends State<DataCard> {
     SizeConfig().init(context);
     int index = int.parse(_index.text);
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
-
-    return Column(
+//スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
+ return Dismissible(
+  key: UniqueKey(),
+  onDismissed: (direction) {
+    _controller4.text = "1";
+    databaseHelper.unDisplay(index);
+  },
+  background: Container(
+    color: Colors.red,
+    child: Icon(Icons.delete),
+    alignment: Alignment.centerLeft,
+    padding: EdgeInsets.only(left: 16.0),
+  ),
+      child:
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      children: <Widget>[
+      Column(children: <Widget>[
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Card(
@@ -239,7 +252,7 @@ class _DataCardState extends State<DataCard> {
                           width: SizeConfig.blockSizeHorizontal! * 11,
                           alignment: Alignment.topLeft,
                           child: Text(
-                            '  課題',
+                            '  詳細',
                             textAlign: TextAlign.left, // テキスト自体の揃え方も指定
                             style: TextStyle(
                               fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
@@ -401,6 +414,7 @@ class _DataCardState extends State<DataCard> {
         ),
         SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.75), //カード間の隙間。
       ],
+      ) 
     );
   }
 

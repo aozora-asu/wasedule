@@ -124,7 +124,7 @@ class briefTaskList extends StatelessWidget {
     SizeConfig().init(context);
     return Column(children: [
       Card(
-          color: WIDGET_COLOR,
+          color: Color.fromARGB(255, 254, 230, 230),       
           child: SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 60,
               width: SizeConfig.blockSizeHorizontal! * 98,
@@ -155,7 +155,7 @@ class briefTaskList extends StatelessWidget {
                       ],
                     ),
                     child: FutureBuilder<List<Map<String, dynamic>>>(
-                      future: taskListforTaskPage(),
+                      future: taskListForCalendarPage(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -166,7 +166,7 @@ class briefTaskList extends StatelessWidget {
                           return Text("Error: ${snapshot.error}");
                         } else {
                           // データがある場合、buildTaskText 関数を呼び出してデータを表示
-                          return buildTaskText(snapshot.data ?? []);
+                          return buildTaskText(snapshot.data ?? [],context);
                         }
                       },
                     ))

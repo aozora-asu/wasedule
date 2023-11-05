@@ -76,7 +76,7 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
-        columns: ['title', 'dtEnd', 'summary']); // 複数のカラムのデータを取得
+        columns: ['title', 'dtEnd', 'summary','isDone']); // 複数のカラムのデータを取得
 
     return dataList;
   }
