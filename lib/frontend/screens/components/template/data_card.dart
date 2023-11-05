@@ -114,6 +114,13 @@ class _DataCardState extends State<DataCard> {
                               width: SizeConfig.blockSizeHorizontal! * 80,
                               height: SizeConfig.blockSizeHorizontal! * 12,
                               child: TextField(
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    String userInput1 = newValue;
+                                    databaseHelper.updateTitle(
+                                        index, userInput1);
+                                  });
+                                },
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
@@ -126,35 +133,10 @@ class _DataCardState extends State<DataCard> {
                                 ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  String userInput1 = _controller1.text;
-                                  databaseHelper.updateTitle(index, userInput1);
-                                });
-                                showAutoDismissiblePopup(context);
-                              },
-                              child: Container(
-                                width: SizeConfig.blockSizeHorizontal! * 4,
-                                height: SizeConfig.blockSizeHorizontal! * 4,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.circular(10), // ボタンの角を丸くする
-                                ),
-                                child: Icon(Icons.edit, // アイコンの種類
-                                    color: Colors.brown, // アイコンの色
-                                    size: SizeConfig.blockSizeHorizontal! * 4),
-                              ),
-                            ),
                           ],
                         ),
                         Container(
                           height: SizeConfig.blockSizeHorizontal! * 0,
-                          // child:Divider(
-                          //   color: ACCENT_COLOR,
-                          //   thickness: SizeConfig.blockSizeHorizontal! * 0.8,
-                          // ),
                         ),
                       ],
                     ),
@@ -195,42 +177,6 @@ class _DataCardState extends State<DataCard> {
                           alignment: Alignment.topLeft,
                           child: Row(
                             children: <Widget>[
-                              Container(
-                                height: SizeConfig.blockSizeHorizontal! * 6,
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                alignment: Alignment.topLeft,
-                                child: Column(children: [
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        String userInput5 = _controller5.text;
-                                        databaseHelper.updateSummary(
-                                            index, userInput5);
-                                      });
-                                      showAutoDismissiblePopup(context);
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(
-                                            10), // ボタンの角を丸くする
-                                      ),
-                                      child: Icon(Icons.edit, // アイコンの種類
-                                          color: Colors.grey, // アイコンの色
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                ]),
-                              ),
                               SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 2),
                               Container(
@@ -247,9 +193,13 @@ class _DataCardState extends State<DataCard> {
                                         SizeConfig.blockSizeHorizontal! * 3,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  //onChanged: (newValue) {
-                                  //String userInput = _controller2.text;// テキストが変更された際の処理
-                                  //},
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      String userInput5 = newValue;
+                                      databaseHelper.updateSummary(
+                                          index, userInput5);
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                     hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
                                     border: InputBorder.none,
@@ -308,65 +258,6 @@ class _DataCardState extends State<DataCard> {
                           alignment: Alignment.topLeft,
                           child: Row(
                             children: <Widget>[
-                              Container(
-                                height: SizeConfig.blockSizeHorizontal! * 15,
-                                width: SizeConfig.blockSizeHorizontal! * 4.5,
-                                alignment: Alignment.topLeft,
-                                child: Column(children: [
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        String userInput2 = _controller2.text;
-                                        databaseHelper.updateDescription(
-                                            index, userInput2);
-                                      });
-                                      showAutoDismissiblePopup(context);
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(
-                                            10), // ボタンの角を丸くする
-                                      ),
-                                      child: Icon(Icons.edit, // アイコンの種類
-                                          color: Colors.grey, // アイコンの色
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: SizeConfig.blockSizeHorizontal! * 1,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      _controller2.clear();
-                                    },
-                                    child: Container(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(Icons.delete,
-                                          color: Colors.grey,
-                                          size:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  4.5),
-                                    ),
-                                  ),
-                                ]),
-                              ),
                               SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 2),
                               SingleChildScrollView(
@@ -376,6 +267,13 @@ class _DataCardState extends State<DataCard> {
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        String userInput2 = newValue;
+                                        databaseHelper.updateDescription(
+                                            index, userInput2);
+                                      });
+                                    },
                                     maxLines: 3,
                                     textAlign: TextAlign.start,
                                     controller: _controller2,
@@ -414,7 +312,7 @@ class _DataCardState extends State<DataCard> {
                     ),
                     Container(
                       height: SizeConfig.blockSizeHorizontal! * 6,
-                      width: SizeConfig.blockSizeHorizontal! * 93,
+                      width: SizeConfig.blockSizeHorizontal! * 94,
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
@@ -517,61 +415,20 @@ class _DataCardState extends State<DataCard> {
   }
 
   ButtonSwitching() {
-    if (widget.isDone == true) {
-      if (widget.dtEnd.isBefore(DateTime.now()) == false) {
-        //課題完了、期限内
-        return Checkbox(
-            value: widget.isDone,
-            onChanged: (bool? value) {
-              setState(() {
-                widget.isDone = value!;
-              });
-            });
-      } else {
-        //完了、期限切れ
-        return InkWell(
-          onTap: () {
-            InformationAutoDismissiblePopup(context);
-          },
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-            height: SizeConfig.blockSizeHorizontal! * 5,
-            child: Icon(
-              Icons.info,
-              color: Colors.blueGrey,
-              size: SizeConfig.blockSizeHorizontal! * 5,
-            ),
-          ),
-        );
-      }
-    } else {
-      if (widget.dtEnd.isBefore(DateTime.now()) == false) {
-        //未完了、期限内
-        return Checkbox(
-            value: widget.isDone,
-            onChanged: (bool? value) {
-              setState(() {
-                widget.isDone = value!;
-              });
-            });
-      } else {
-        //未完了、期限切れ
-        return InkWell(
-          onTap: () {
-            InformationAutoDismissiblePopup(context);
-          },
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-            height: SizeConfig.blockSizeHorizontal! * 5,
-            child: Icon(
-              Icons.info,
-              color: Colors.blueGrey,
-              size: SizeConfig.blockSizeHorizontal! * 5,
-            ),
-          ),
-        );
-      }
-    }
+    return InkWell(
+      onTap: () {
+        InformationAutoDismissiblePopup(context);
+      },
+      child: Container(
+        width: SizeConfig.blockSizeHorizontal! * 5,
+        height: SizeConfig.blockSizeHorizontal! * 5,
+        child: Icon(
+          Icons.info,
+          color: Colors.blueGrey,
+          size: SizeConfig.blockSizeHorizontal! * 5,
+        ),
+      ),
+    );
   }
 
   DaysLeft() {
