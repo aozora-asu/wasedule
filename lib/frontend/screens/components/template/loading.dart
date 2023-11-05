@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:flutter_calandar_app/frontend/colors.dart';
 
-
 class LoadingScreen extends StatefulWidget {
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
@@ -11,17 +10,25 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   String loadingText = 'Loading';
-
+  Timer? _timer;
   @override
   void initState() {
     super.initState();
 
-    // インターバルごとにloadingTextを更新
-    Timer.periodic(Duration(milliseconds: 200), (timer) {
-      setState(() {
-        loadingText = (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
-      });
+    _timer = Timer.periodic(Duration(milliseconds: 200), (timer) {
+      if (mounted) {
+        setState(() {
+          loadingText =
+              (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -31,15 +38,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('lib/assets/eye_catch/eyecatch.png', height: 75, width: 75), 
+            Image.asset('lib/assets/eye_catch/eyecatch.png',
+                height: 75, width: 75),
             SizedBox(height: 20),
-            Text(loadingText, 
-            style: TextStyle(
-             fontSize: 25,
-             color:MAIN_COLOR,
-             fontWeight:FontWeight.w700
-             )
-            ),
+            Text(loadingText,
+                style: TextStyle(
+                    fontSize: 25,
+                    color: MAIN_COLOR,
+                    fontWeight: FontWeight.w700)),
           ],
         ),
       ),

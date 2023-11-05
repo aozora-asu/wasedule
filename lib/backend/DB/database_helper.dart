@@ -57,6 +57,7 @@ class TaskDatabaseHelper {
 
   // タスクの削除
   Future<int> deleteTask(int id) async {
+    await initDatabase();
     return await _database.delete(
       'tasks',
       where: 'id = ?',
@@ -83,7 +84,6 @@ class TaskDatabaseHelper {
 
     await initDatabase();
 
-
     await _database.update(
       'tasks',
       {'title': newTitle}, // 更新後の値
@@ -94,7 +94,6 @@ class TaskDatabaseHelper {
 
   Future<void> updateSummary(int id, String newSummary) async {
     // 'tasks' テーブル内の特定の行を更新
-
 
     await initDatabase();
 
@@ -111,8 +110,6 @@ class TaskDatabaseHelper {
 
     await initDatabase();
 
-
-
     await _database.update(
       'tasks',
       {'description': newDescription}, // 更新後の値
@@ -122,6 +119,7 @@ class TaskDatabaseHelper {
   }
 
   Future<void> unDisplay(int id) async {
+    await initDatabase();
     // 'tasks' テーブル内の特定の行を更新
     await _database.update(
       'tasks',
@@ -132,6 +130,7 @@ class TaskDatabaseHelper {
   }
 
   Future<void> deleteCard(int id) async {
+    await initDatabase();
     // 'tasks' テーブル内の特定の行を更新
     await _database.delete(
       'tasks',
