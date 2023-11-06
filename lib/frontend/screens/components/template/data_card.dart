@@ -401,7 +401,7 @@ String _userInput2 = '';
                         ),
                       ),
                     ),
-                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                   ]),
                 ],
               ),
@@ -442,15 +442,53 @@ String _userInput2 = '';
   }
 
 
+
+Stream<String> getRemainingTimeStream(DateTime dtEnd) async* {
+  while (dtEnd.isAfter(DateTime.now())) {
+    Duration remainingTime = dtEnd.difference(DateTime.now());
+
+    int days = remainingTime.inDays;
+    int hours = (remainingTime.inHours % 24);
+    int minutes = (remainingTime.inMinutes % 60);
+    int seconds = (remainingTime.inSeconds % 60);
+
+    yield '  $days日 $hours時間 $minutes分 $seconds秒  ';
+
+    await Future.delayed(Duration(seconds: 1));
+  }
+}
+
+StreamBuilder<String> RepeatDaysLeft() {
+  return StreamBuilder<String>(
+    stream: getRemainingTimeStream(widget.dtEnd),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Text(
+          snapshot.data!,
+          style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            fontWeight: FontWeight.w900,
+            color: Colors.yellow,
+          ),
+        );
+      } else {
+        return SizedBox(); // データがない場合は何も表示しない
+      }
+    },
+  );
+}
+
+
   
   String getRemainingTime(DateTime dtEnd) {
     Duration remainingTime = widget.dtEnd.difference(DateTime.now());
 
     int days = remainingTime.inDays;
+    int hours = (remainingTime.inHours % 24);
     int minutes = (remainingTime.inMinutes % 60);
     int seconds = (remainingTime.inSeconds % 60);
 
-    return '  $days日 $minutes分 $seconds秒  ';
+    return '  $days日 $hours時間 $minutes分 $seconds秒  ';
   }
 
   DaysLeft() {
@@ -466,6 +504,7 @@ String _userInput2 = '';
           ),
         ); // 日数の差を出力
       } else {
+
         return Text(getRemainingTime(widget.dtEnd),
             style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 4,
@@ -473,14 +512,6 @@ String _userInput2 = '';
             color: Colors.yellow,
          ),
         );
-        // return Text(
-        //   ("  残り${difference.inDays} 日  "),
-        //   style: TextStyle(
-        //     fontSize: SizeConfig.blockSizeHorizontal! * 4,
-        //     fontWeight: FontWeight.w900,
-        //     color: Colors.yellow,
-        //   ),
-        // ); // 日数の差を出力
       }
     } else {
       return Text(
@@ -488,43 +519,44 @@ String _userInput2 = '';
         style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! * 4,
           fontWeight: FontWeight.w900,
-          color: Colors.yellow,
+          color: Colors.white,
         ),
       );
     }
   }
 
-int aaaa = 424;
 
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
     bool FinishOrNot = widget.isDone;
-
+    Duration difference = widget.dtEnd.difference(DateTime.now());
     if (TimeLimit.isBefore(DateTime.now()) == false) {
-      if (FinishOrNot == false) {
-        return Container(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 119, 119), // 背景色を指定
-              borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
-            ),
-            child: DaysLeft());
+     if (difference >= Duration(days: 4)) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.blueGrey, // 背景色を指定
+          borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
+        ),
+        child: Text(
+          ("  残り${difference.inDays} 日  "),
+          style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        )
+        ); // 日数の差を出力
       } else {
-        return Container(
+               return Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0, 166, 255), // 背景色を指定
+              color: Colors.red, // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
-            child: Text(
-              '   完了！  ',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-            ));
+            child: RepeatDaysLeft());
+
       }
+
     } else {
-      if (FinishOrNot == false) {
         return Container(
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 0, 0, 0), // 背景色を指定
@@ -538,26 +570,8 @@ int aaaa = 424;
                 color: Color.fromARGB(255, 250, 0, 0),
               ),
             ));
-      } else {
-        return Container(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0, 166, 255), // 背景色を指定
-              borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
-            ),
-            child: Text(
-              '   完了！   ',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-            ));
-      }
     }
   }
-
-  
-
 
   @override
   void dispose() {
@@ -570,6 +584,8 @@ int aaaa = 424;
     super.dispose();
   }
 }
+
+
 
 void InformationAutoDismissiblePopup(BuildContext context) {
   showDialog(
@@ -616,4 +632,6 @@ void showAutoDismissiblePopup(BuildContext context) {
     },
   );
 }
-//saa
+
+
+
