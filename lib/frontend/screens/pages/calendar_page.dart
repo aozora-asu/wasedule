@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import 'package:sqflite/sqflite.dart';
+
 import '../components/template/brief_task_text.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
-import '../../colors.dart';
 
 class Calendar extends StatefulWidget {
   @override
@@ -146,7 +145,7 @@ class briefTaskList extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.grey,
                         ),
                         const BoxShadow(

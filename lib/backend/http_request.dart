@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'temp_file.dart';
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
   final lines = iCalendarData.split('\n'); // 行ごとに分割
