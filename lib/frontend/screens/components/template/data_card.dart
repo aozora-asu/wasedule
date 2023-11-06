@@ -29,14 +29,11 @@ class DataCard extends StatefulWidget {
 
 Widget buildDataCards(List<Map<String, dynamic>> data) {
   return ListView(
-    children: [
-      for (int i = 0; i < data.length; i++)
-    //未完了のカードのうち、
-        if (data[i]["isDone"] != 1)
-    //前のカードとtitleとdtEndのいずれかが一致していないものは,
-    //通常ウィジェットとして生成
-          if(data[i]["title"] != data[i - 1]["title"] || data[i]["dtEnd"] != data[i - 1]["dtEnd"])
-          DataCard(
+    children:<Widget> [
+      for (int i = 0; i < data.length; i++)...{
+       if (i == 0 )...{
+         if(data[i]["isDone"] != 1)
+           DataCard(
             index: i + 1,
             title: data[i]["title"],
             description: data[i]["description"],
@@ -44,19 +41,37 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
             summary: data[i]["summary"],
             isDone: false,
           )
+       }else...{
+    //未完了のカードのうち、
+         if (data[i]["isDone"] != 1)
+    //前のカードとtitleとdtEndのいずれかが一致していないものは,
+    //通常ウィジェットとして生成
+           if(data[i]["title"] != data[i - 1]["title"] || data[i]["dtEnd"] != data[i - 1]["dtEnd"])...{
+              DataCard(
+              index: i + 1,
+              title: data[i]["title"],
+              description: data[i]["description"],
+              dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+              summary: data[i]["summary"],
+              isDone: false,
+              )
     //前のカードとtitle、dtEndの両方が一致しているものは,
     //折りたたみウィジェットとして生成。      
-         else
-         FoldableCard(
-          summary:data[i]["summary"],
-           dataCard: DataCard(
-            index: i + 1,
-            title: data[i]["title"],
-            description: data[i]["description"],
-            dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-            summary: data[i]["summary"],
-            isDone: false,
-          ))
+           }else...{
+               FoldableCard(
+                summary:data[i]["summary"],
+                dataCard: DataCard(
+                  index: i + 1,
+                  title: data[i]["title"],
+                  description: data[i]["description"],
+                  dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                  summary: data[i]["summary"],
+                  isDone: false,
+                )
+                )
+        }
+       }
+      }
     ],
   );
 }
@@ -71,7 +86,10 @@ class _DataCardState extends State<DataCard> {
 String _userInput1 = '';
 String _userInput5 = '';
 String _userInput2 = '';
-
+FocusNode _focusNodeCategories = FocusNode();
+FocusNode _focusNodeMemo = FocusNode();
+FocusNode _focusNodeDescription = FocusNode();
+FocusNode _focusNodeDtEnd = FocusNode();
 
   @override
   void initState() {
@@ -86,6 +104,8 @@ String _userInput2 = '';
 
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -96,8 +116,10 @@ String _userInput2 = '';
   key: UniqueKey(),
   direction: DismissDirection.startToEnd,
   onDismissed: (direction) {
+    if (!_focusNodeCategories.hasFocus &&!_focusNodeMemo.hasFocus &&!_focusNodeDtEnd.hasFocus&&!_focusNodeDescription.hasFocus) {
     _controller4.text = "1";
     databaseHelper.unDisplay(index);
+    }
   },
   background: Container(
     color: Colors.red,
@@ -150,6 +172,7 @@ String _userInput2 = '';
                               width: SizeConfig.blockSizeHorizontal! * 80,
                               height: SizeConfig.blockSizeHorizontal! * 12,
                               child: TextField(
+                              focusNode: _focusNodeCategories,
                               textInputAction: TextInputAction.done,
                                onSubmitted: (inputValue) {
                                     _userInput1 = inputValue;
@@ -165,6 +188,9 @@ String _userInput2 = '';
                                 decoration: InputDecoration(
                                   hintText: "授業名",
                                   border: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
@@ -188,20 +214,20 @@ String _userInput2 = '';
                     width: SizeConfig.blockSizeHorizontal! * 96,
                     child: Row(
                       children: [
-                        Container(
-                          height: SizeConfig.blockSizeHorizontal! * 12,
-                          width: SizeConfig.blockSizeHorizontal! * 11,
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            '  要約',
-                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                              fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   height: SizeConfig.blockSizeHorizontal! * 12,
+                        //   width: SizeConfig.blockSizeHorizontal! * 11,
+                        //   alignment: Alignment.topLeft,
+                        //   child: Text(
+                        //     '  要約',
+                        //     textAlign: TextAlign.left, // テキスト自体の揃え方も指定
+                        //     style: TextStyle(
+                        //       fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                        //       fontWeight: FontWeight.w600,
+                        //       color: Color.fromARGB(255, 0, 0, 0),
+                        //     ),
+                        //   ),
+                        // ),
                         Container(
                           width: SizeConfig.blockSizeHorizontal! * 2,
                           height: SizeConfig.blockSizeHorizontal! * 6,
@@ -220,6 +246,7 @@ String _userInput2 = '';
                                 alignment: Alignment.topLeft,
                                 height: SizeConfig.blockSizeHorizontal! * 6,
                                 child: TextField(
+                                  focusNode: _focusNodeMemo,
                                   maxLines: 1,
                                   textAlign: TextAlign.start,
                                   controller: _controller5,
@@ -268,20 +295,20 @@ String _userInput2 = '';
                     width: SizeConfig.blockSizeHorizontal! * 96,
                     child: Row(
                       children: [
-                        Container(
-                          height: SizeConfig.blockSizeHorizontal! * 15,
-                          width: SizeConfig.blockSizeHorizontal! * 11,
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            '  詳細',
-                            textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                              fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   height: SizeConfig.blockSizeHorizontal! * 15,
+                        //   width: SizeConfig.blockSizeHorizontal! * 11,
+                        //   alignment: Alignment.topLeft,
+                        //   child: Text(
+                        //     '  詳細',
+                        //     textAlign: TextAlign.left, // テキスト自体の揃え方も指定
+                        //     style: TextStyle(
+                        //       fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                        //       fontWeight: FontWeight.w600,
+                        //       color: Color.fromARGB(255, 0, 0, 0),
+                        //     ),
+                        //   ),
+                        // ),
                         Container(
                           width: SizeConfig.blockSizeHorizontal! * 2,
                           height: SizeConfig.blockSizeHorizontal! * 0.6,
@@ -301,6 +328,7 @@ String _userInput2 = '';
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 13,
                                   child: TextField(
+                                    focusNode: _focusNodeDescription,
                                   textInputAction: TextInputAction.done,
                                     onSubmitted: (inputValue) {
                                     _userInput2 = inputValue;
@@ -379,6 +407,7 @@ String _userInput2 = '';
                                           SizeConfig.blockSizeHorizontal! * 6,
                                       alignment: Alignment.center,
                                       child: TextField(
+                                        focusNode: _focusNodeDtEnd,
                                         style: TextStyle(
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal! *
@@ -689,9 +718,17 @@ class _FoldableCardState extends State<FoldableCard> {
         child: isFolded ?
           Center(child: 
           Card(child:Container(
-          color:WIDGET_COLOR,
+          color:BACKGROUND_COLOR,
            width:SizeConfig.blockSizeHorizontal! * 96,
            child:Row(children:[
+            Container(
+              width:SizeConfig.blockSizeHorizontal! * 2,
+            ),
+            Container(
+              width:SizeConfig.blockSizeHorizontal! * 1.7,
+              height:SizeConfig.blockSizeHorizontal! * 4,
+              color:ACCENT_COLOR//Colors.lightGreen,
+            ),
             Container(
               width:SizeConfig.blockSizeHorizontal! * 2,
             ),
