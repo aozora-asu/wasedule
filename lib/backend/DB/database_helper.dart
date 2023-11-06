@@ -6,6 +6,7 @@ import 'dart:io';
 class TaskDatabaseHelper {
   late Database _database;
   // データベースの初期化
+
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
@@ -141,10 +142,24 @@ class TaskDatabaseHelper {
   }
 
   Future<void> deleteExpairedTask() async {}
+
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
 
     return data;
+  }
+
+  Future<bool> hasData() async {
+    // データベースファイルのパスを取得します（パスはアプリ固有のものに変更してください）
+    await initDatabase();
+    // データベース内のテーブル名
+    String tableName = 'tasks';
+    int? count;
+    // データのカウントを取得
+    count = Sqflite.firstIntValue(
+        await _database.rawQuery('SELECT COUNT(*) FROM $tableName'));
+
+    return count! > 0;
   }
 }

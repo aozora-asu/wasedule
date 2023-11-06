@@ -13,7 +13,6 @@ Future<List<Map<String, dynamic>>> resisterTaskToDB(String urlString) async {
   Map<String, dynamic> taskData = await getTaskData(urlString);
   TaskItem taskItem;
 
-  int result;
   for (int i = 0; i < taskData["events"].length; i++) {
     // 1. TaskItemオブジェクトを作成
     taskItem = TaskItem(
@@ -25,7 +24,7 @@ Future<List<Map<String, dynamic>>> resisterTaskToDB(String urlString) async {
       isDone: STATUS_YET,
     );
     // 2. データベースヘルパークラスを使用してデータベースに挿入
-    result = await databaseHelper.insertTask(taskItem);
+    await databaseHelper.insertTask(taskItem);
   }
 
   return databaseHelper.getTaskFromDB();

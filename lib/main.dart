@@ -7,17 +7,11 @@ import 'package:flutter/services.dart';
 import 'frontend/screens/pages/eyecatch_page.dart';
 
 void main() async {
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  //   DeviceOrientation.portraitDown,
-  // ]);
   WidgetsFlutterBinding.ensureInitialized(); // Bindingの初期化
-
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await initializeDateFormatting(); // 初期化
-
   runApp(MyApp());
-
-  // runApp(MaterialApp(
-  //   home: FirstPage(),
-  // ));
 }
