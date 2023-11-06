@@ -65,7 +65,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 
 //リクエストurlを受け取って以下のようなMapとListのキメラを返す関数
 //@param String urlSttring
-Future<Map<String, dynamic>> getTaskData(String urlString) async {
+Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> tasks = _parsedTaskData(taskString);
 

@@ -4,7 +4,6 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import '../../pages/task_page.dart';
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -29,13 +28,11 @@ class DataCard extends StatefulWidget {
 
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
-
-  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   return ListView(
     children: <Widget>[
       for (int i = 0; i < data.length; i++) ...{
         if (i == 0) ...{
-          if (data[i]["isDone"] != 1)
+          if (data[i]["isDone"] == 0)
             DataCard(
               index: i + 1,
               title: data[i]["title"],
@@ -46,7 +43,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
             )
         } else ...{
           //未完了のカードのうち、
-          if (data[i]["isDone"] != 1)
+          if (data[i]["isDone"] == 0)
             //前のカードとtitleとdtEndのいずれかが一致していないものは,
             //通常ウィジェットとして生成
             if (data[i]["title"] != data[i - 1]["title"] ||
@@ -99,13 +96,17 @@ class DataCardState extends State<DataCard> {
   @override
   void initState() {
     super.initState();
-    _controller1 = TextEditingController(text: widget.title);
-    _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(
-        text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
-    _controller4 = TextEditingController(text: widget.isDone.toString());
-    _controller5 = TextEditingController(text: widget.summary);
-    _index = TextEditingController(text: widget.index.toString());
+
+    setState(() {
+      _controller1 = TextEditingController(text: widget.title);
+      _controller2 = TextEditingController(text: widget.description);
+      _controller3 = TextEditingController(
+          text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
+
+      _controller4 = TextEditingController(text: widget.isDone.toString());
+      _controller5 = TextEditingController(text: widget.summary);
+      _index = TextEditingController(text: widget.index.toString());
+    });
   }
 
   @override
@@ -122,8 +123,8 @@ class DataCardState extends State<DataCard> {
               !_focusNodeMemo.hasFocus &&
               !_focusNodeDtEnd.hasFocus &&
               !_focusNodeDescription.hasFocus) {
-            _controller4.text = "1";
             databaseHelper.unDisplay(index);
+            _controller4.text = "1";
           }
         },
         background: Container(

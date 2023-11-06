@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/db_manager.dart';
+import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
 
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
 import '../components/template/loading.dart';
-import 'package:intl/intl.dart';
-import '../../size_config.dart';
+
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
-import '../components/template/data_card.dart';
 import '../components/template/data_card.dart';
 
 class TaskPage extends StatefulWidget {
@@ -20,47 +18,42 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   Future<List<Map<String, dynamic>>>? events;
   String urlString = url_t;
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
 
   @override
   void initState() {
     super.initState();
-    if (_existData(urlString) == true) {
-      _displayDB();
-    } else {
-      if (urlString == "") {
-        //urlStringがなかった時の処理はこちら
-      } else {
-        _loadData();
-      }
-    }
-    ;
+    _initializeData();
   }
 
-  //データベースを更新する関数
-  Future<void> _loadData() async {
-    final data = await resisterTaskToDB(urlString);
-    if (mounted) {
-      setState(() {
-        events = Future.value(data);
-      });
+  Future<void> _initializeData() async {
+    if (await databaseHelper.hasData() == true) {
+      await _displayDB();
+    } else {
+      if (urlString == "") {
+        // urlStringがない場合の処理
+      } else {
+        noneTaskText();
+      }
     }
+  }
+
+  Widget noneTaskText() {
+    return const Text("現在課題はありません");
+  }
+
+  //データベースを更新する関数。主にボタンを押された時のみ
+  Future<void> _loadData() async {
+    await databaseHelper.resisterTaskToDB(urlString);
+    await _displayDB();
   }
 
   Future<void> _displayDB() async {
-    final addData = await taskListforTaskPage();
+    final addData = await databaseHelper.taskListForTaskPage();
     if (mounted) {
       setState(() {
         events = Future.value(addData);
       });
-    }
-  }
-
-  //データベースが存在するか判定する関数
-  Future<bool> _existData(urlString) async {
-    if (await resisterTaskToDB(urlString) == false) {
-      return false;
-    } else {
-      return true;
     }
   }
 
@@ -78,10 +71,12 @@ class _TaskPageState extends State<TaskPage> {
               return Text("Error: ${snapshot.error}");
             } else if (snapshot.hasData) {
               // データが読み込まれた場合、リストを生成
+
               return buildDataCards(context, snapshot.data!);
             } else {
               // データがない場合の処理（nullの場合など）
-              return LoadingScreen();
+
+              return noneTaskText();
             }
           },
         ),
@@ -96,20 +91,3 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 }
-
-  // Widget buildMyFutureBuilder(Future<List<Map<String, dynamic>>> events) {
-  //   return FutureBuilder<List<Map<String, dynamic>>>(
-  //     future: events,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return CircularProgressIndicator();
-  //       } else if (snapshot.hasError) {
-  //         return Text("Error: ${snapshot.error}");
-  //       } else if (snapshot.hasData) {
-  //         return buildDataCards(snapshot.data!);
-  //       } else {
-  //         return CircularProgressIndicator();
-  //       }
-  //     },
-  //   );
-  // }
