@@ -5,7 +5,6 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import './calendar_page.dart';
 import '../../screen_manager.dart';
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,11 +15,12 @@ class MyApp extends StatelessWidget {
 }
 
 class FadingImage extends StatefulWidget {
-   @override
+  @override
   _FadingImageState createState() => _FadingImageState();
 }
 
-class _FadingImageState extends State<FadingImage> with SingleTickerProviderStateMixin {
+class _FadingImageState extends State<FadingImage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   late Animation<Offset> _imageAnimation;
@@ -29,7 +29,7 @@ class _FadingImageState extends State<FadingImage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-
+    late Timer _timer;
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 2),
@@ -42,13 +42,13 @@ class _FadingImageState extends State<FadingImage> with SingleTickerProviderStat
       ),
     );
 
-    _imageAnimation = Tween<Offset>(begin: Offset(0.0, 0.35), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: Curves.easeInOut,
-          ),
-        );
+    _imageAnimation =
+        Tween<Offset>(begin: Offset(0.0, 0.35), end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _controller.forward().whenComplete(() {
       // アニメーション完了後に遷移
@@ -61,9 +61,17 @@ class _FadingImageState extends State<FadingImage> with SingleTickerProviderStat
     });
 
     // インターバルごとにloadingTextを更新
-    Timer.periodic(Duration(milliseconds: 200), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 200), (timer) {
+      if (!mounted) {
+        // Check if the widget is still part of the tree
+        timer
+            .cancel(); // Cancel the timer if the widget is no longer in the tree
+        return;
+      }
+
       setState(() {
-        loadingText = (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
+        loadingText =
+            (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
       });
     });
   }

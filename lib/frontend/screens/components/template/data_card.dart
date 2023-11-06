@@ -668,21 +668,38 @@ void showAutoDismissiblePopup(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-      });
+      // ウィジェットの祖先への参照を保存する
+      BuildContext? parentContext;
 
-      return Align(
-          alignment: Alignment.bottomCenter,
-          child: AlertDialog(
-            title: Text(
-              'ダブルタップで内容を展開/折りたたみできます。',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                fontWeight: FontWeight.w700,
+      // didChangeDependencies メソッド内で参照を保存
+      void saveParentContext(BuildContext newContext) {
+        parentContext = newContext;
+      }
+
+      return Builder(
+        builder: (BuildContext builderContext) {
+          // Builder ウィジェットを使用して新しい context を取得
+          saveParentContext(builderContext);
+
+          Timer(Duration(seconds: 2), () {
+            // タイマー内で parentContext を使用
+            Navigator.of(parentContext!).pop();
+          });
+
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: AlertDialog(
+              title: Text(
+                'ダブルタップで内容を展開/折りたたみできます。',
+                style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ));
+          );
+        },
+      );
     },
   );
 }
