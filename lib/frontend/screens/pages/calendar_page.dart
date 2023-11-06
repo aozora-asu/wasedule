@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 import '../components/template/brief_task_text.dart';
-import 'package:flutter_calandar_app/backend/db_manager.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
 import '../../colors.dart';
@@ -119,12 +120,13 @@ class EventData {
 // }
 
 class briefTaskList extends StatelessWidget {
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Column(children: [
       Card(
-          color: Color.fromARGB(255, 254, 230, 230),       
+          color: Color.fromARGB(255, 254, 230, 230),
           child: SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 60,
               width: SizeConfig.blockSizeHorizontal! * 98,
@@ -155,7 +157,7 @@ class briefTaskList extends StatelessWidget {
                       ],
                     ),
                     child: FutureBuilder<List<Map<String, dynamic>>>(
-                      future: taskListForCalendarPage(),
+                      future: databaseHelper.taskListForCalendarPage(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -166,7 +168,7 @@ class briefTaskList extends StatelessWidget {
                           return Text("Error: ${snapshot.error}");
                         } else {
                           // データがある場合、buildTaskText 関数を呼び出してデータを表示
-                          return buildTaskText(snapshot.data ?? [],context);
+                          return buildTaskText(snapshot.data ?? [], context);
                         }
                       },
                     ))

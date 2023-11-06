@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import 'package:flutter_calandar_app/backend/db_manager.dart';
 
 import 'package:flutter/widgets.dart';
 import 'dart:async';
@@ -29,7 +28,7 @@ class _TaskPageState extends State<TaskPage> {
 
   Future<void> _initializeData() async {
     if (await databaseHelper.hasData() == true) {
-      _loadData();
+      await _displayDB();
     } else {
       if (urlString == "") {
         // urlStringがない場合の処理
@@ -43,18 +42,14 @@ class _TaskPageState extends State<TaskPage> {
     return const Text("現在課題はありません");
   }
 
-  //データベースを更新する関数
+  //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> _loadData() async {
-    final data = await resisterTaskToDB(urlString);
-    if (mounted) {
-      setState(() {
-        events = Future.value(data);
-      });
-    }
+    await databaseHelper.resisterTaskToDB(urlString);
+    await _displayDB();
   }
 
   Future<void> _displayDB() async {
-    final addData = await taskListforTaskPage();
+    final addData = await databaseHelper.taskListForTaskPage();
     if (mounted) {
       setState(() {
         events = Future.value(addData);

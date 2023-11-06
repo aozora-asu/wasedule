@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter_calandar_app/frontend/colors.dart';
-import './calendar_page.dart';
 import '../../screen_manager.dart';
 
 class MyApp extends StatelessWidget {

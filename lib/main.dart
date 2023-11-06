@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'frontend/screen_manager.dart';
 import 'package:flutter/services.dart';
 import 'frontend/screens/pages/eyecatch_page.dart';
 
