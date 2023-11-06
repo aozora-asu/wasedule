@@ -31,7 +31,11 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
   return ListView(
     children: [
       for (int i = 0; i < data.length; i++)
+    //未完了のカードのうち、
         if (data[i]["isDone"] != 1)
+    //前のカードとtitleとdtEndのいずれかが一致していないものは,
+    //通常ウィジェットとして生成
+          if(data[i]["title"] != data[i - 1]["title"] || data[i]["dtEnd"] != data[i - 1]["dtEnd"])
           DataCard(
             index: i + 1,
             title: data[i]["title"],
@@ -40,6 +44,19 @@ Widget buildDataCards(List<Map<String, dynamic>> data) {
             summary: data[i]["summary"],
             isDone: false,
           )
+    //前のカードとtitle、dtEndの両方が一致しているものは,
+    //折りたたみウィジェットとして生成。      
+         else
+         FoldableCard(
+          summary:data[i]["summary"],
+           dataCard: DataCard(
+            index: i + 1,
+            title: data[i]["title"],
+            description: data[i]["description"],
+            dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+            summary: data[i]["summary"],
+            isDone: false,
+          ))
     ],
   );
 }
@@ -54,6 +71,7 @@ class _DataCardState extends State<DataCard> {
 String _userInput1 = '';
 String _userInput5 = '';
 String _userInput2 = '';
+
 
   @override
   void initState() {
@@ -298,7 +316,7 @@ String _userInput2 = '';
                                       fontWeight: FontWeight.w500,
                                     ),
                                     decoration: const InputDecoration(
-                                      hintText: "課題の詳細やメモを入力…",
+                                      hintText: "タスクの詳細やメモを入力…",
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.only(top: 0),
                                       hintStyle: TextStyle(
@@ -528,7 +546,6 @@ StreamBuilder<String> RepeatDaysLeft() {
 
   TaskData() {
     DateTime TimeLimit = widget.dtEnd;
-    bool FinishOrNot = widget.isDone;
     Duration difference = widget.dtEnd.difference(DateTime.now());
     if (TimeLimit.isBefore(DateTime.now()) == false) {
      if (difference >= Duration(days: 4)) {
@@ -622,7 +639,7 @@ void showAutoDismissiblePopup(BuildContext context) {
           alignment: Alignment.bottomCenter,
           child: AlertDialog(
             title: Text(
-              '変更が反映されました',
+              'ダブルタップで内容を展開/折りたたみできます。',
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w700,
@@ -631,6 +648,82 @@ void showAutoDismissiblePopup(BuildContext context) {
           ));
     },
   );
+}
+
+//カードの折り畳みに関する記述//////////////////////////////////////////////////////////////////
+class FoldableCard extends StatefulWidget {
+  final DataCard dataCard; // DataCardのインスタンスを保持するプロパティ
+  final String summary; // 追加するString型データ
+
+  FoldableCard({
+    required this.dataCard,
+    required this.summary,
+  }); // コンストラクタでDataCardのインスタンスとtitleを受け取る
+
+  @override
+  _FoldableCardState createState() => _FoldableCardState();
+}
+
+class _FoldableCardState extends State<FoldableCard> {
+  bool isFolded = true;
+
+  void toggleFold() {
+    setState(() {
+      isFolded = !isFolded;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width:SizeConfig.blockSizeHorizontal! * 100,
+      color:BACKGROUND_COLOR,
+      child:GestureDetector(
+      onDoubleTap: toggleFold,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        height: isFolded ? SizeConfig.blockSizeHorizontal! * 7 : SizeConfig.blockSizeHorizontal! *45 , // カードが折りたたまれる高さと元の高さ
+        color: WIDGET_COLOR,
+
+        child: isFolded ?
+          Center(child: 
+          Card(child:Container(
+          color:WIDGET_COLOR,
+           width:SizeConfig.blockSizeHorizontal! * 96,
+           child:Row(children:[
+            Container(
+              width:SizeConfig.blockSizeHorizontal! * 2,
+            ),
+            InkWell(
+                onTap: () {
+                  showAutoDismissiblePopup(context);
+                },
+                child: Container(
+                  width: SizeConfig.blockSizeHorizontal! * 5,
+                  height: SizeConfig.blockSizeHorizontal! * 5,
+                  child: Icon(
+                    Icons.info,
+                    color: Colors.blueGrey,
+                    size: SizeConfig.blockSizeHorizontal! * 5,
+                  ),
+                ),
+              ),
+            Text(
+            "     ${widget.summary}",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: SizeConfig.blockSizeHorizontal! * 3,
+              fontWeight:FontWeight.w500,
+            )
+           ),])
+          )
+         )
+        ) : widget.dataCard, // DataCardのインスタンスを表示
+      ),
+     )
+    );
+  }
 }
 
 
