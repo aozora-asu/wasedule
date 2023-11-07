@@ -39,7 +39,7 @@ class _CalendarState extends State<Calendar> {
                 alignment: Alignment.topCenter,
                 child: Text(
                   day.day.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black87,
                   ),
                 ),
@@ -61,7 +61,7 @@ class _CalendarState extends State<Calendar> {
                 alignment: Alignment.topCenter,
                 child: Text(
                   day.day.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
@@ -81,7 +81,7 @@ class _CalendarState extends State<Calendar> {
                 alignment: Alignment.topCenter,
                 child: Text(
                   day.day.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black87,
                   ),
                 ),
@@ -89,7 +89,7 @@ class _CalendarState extends State<Calendar> {
             },
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 13,
         ),
         briefTaskList()
@@ -125,7 +125,7 @@ class briefTaskList extends StatelessWidget {
     SizeConfig().init(context);
     return Column(children: [
       Card(
-          color: Color.fromARGB(255, 254, 230, 230),
+          color: const Color.fromARGB(255, 254, 230, 230),
           child: SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 60,
               width: SizeConfig.blockSizeHorizontal! * 98,
@@ -145,10 +145,10 @@ class briefTaskList extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
-                        const BoxShadow(
+                        BoxShadow(
                           color: Colors.grey,
                         ),
-                        const BoxShadow(
+                        BoxShadow(
                           color: Colors.white,
                           spreadRadius: -1.5,
                           blurRadius: 2.0,
