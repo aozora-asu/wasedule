@@ -15,7 +15,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
 
-    _timer = Timer.periodic(Duration(milliseconds: 200), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
       if (mounted) {
         setState(() {
           loadingText =
@@ -40,9 +40,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
           children: [
             Image.asset('lib/assets/eye_catch/eyecatch.png',
                 height: 75, width: 75),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(loadingText,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 25,
                     color: MAIN_COLOR,
                     fontWeight: FontWeight.w700)),

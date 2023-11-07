@@ -5,7 +5,7 @@ class TaskItem {
   String? summary;
   String? description;
 
-  int isDone = 0;
+  int isDone;
 
   TaskItem({
     required this.uid,
