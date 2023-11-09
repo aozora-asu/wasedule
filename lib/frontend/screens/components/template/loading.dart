@@ -19,7 +19,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       if (mounted) {
         setState(() {
           loadingText =
-              (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
+              (loadingText == 'Loading...') ? 'Loading' : '$loadingText.';
         });
       }
     });
