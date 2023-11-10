@@ -3,7 +3,10 @@ import "package:flutter_calandar_app/backend/DB/database_helper.dart";
 import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
+
+Map<String, List<Widget>> FoldableMap = {};//折りたたみ可能ウィジェットの管理用キメラ。
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -26,12 +29,18 @@ class DataCard extends StatefulWidget {
   DataCardState createState() => DataCardState();
 }
 
+
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
+
+
+
   return ListView(
     children: <Widget>[
+      //１枚目のカードを生成(エラー回避)
       for (int i = 0; i < data.length; i++) ...{
         if (i == 0) ...{
+
           if (data[i]["isDone"] == 0)
             DataCard(
               index: i + 1,
@@ -41,11 +50,13 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
               summary: data[i]["summary"],
               isDone: false,
             )
+
         } else ...{
-          //未完了のカードのうち、
+        //2枚目以降の未完了のカードのうち、
           if (data[i]["isDone"] == 0)
-            //前のカードとtitleとdtEndのいずれかが一致していないものは,
-            //通常ウィジェットとして生成
+          //前のカードとtitleとdtEndのいずれかが一致していないものは,
+          //通常ウィジェットとして生成
+
             if (data[i]["title"] != data[i - 1]["title"] ||
                 data[i]["dtEnd"] != data[i - 1]["dtEnd"]) ...{
               DataCard(
@@ -55,21 +66,57 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
                 dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
                 summary: data[i]["summary"],
                 isDone: false,
-              )
-              //前のカードとtitle、dtEndの両方が一致しているものは,
-              //折りたたみウィジェットとして生成。
-            } else ...{
-              FoldableCard(
-                  summary: data[i]["summary"],
-                  dataCard: DataCard(
-                    index: i + 1,
-                    title: data[i]["title"],
-                    description: data[i]["description"],
-                    dtEnd:
-                        DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                    summary: data[i]["summary"],
-                    isDone: false,
-                  ))
+              )} else ...{
+
+             if (i == 1)...{
+            //前のカードとtitle、dtEndの両方が一致しているもので,
+            // ２枚目のカードだった場合、親折りたたみウィジェットを生成(エラー回避)
+
+              GroupFoldableCard(
+                isChild: false,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+               )
+              
+
+               }else...{
+              if (data[i]["title"] == data[i - 2]["title"] &&
+              data[i]["dtEnd"] == data[i - 2]["dtEnd"])...{
+              //２つ前のカードとTitle,dtEndが一致する場合、
+              //子折りたたみウィジェットを生成
+
+              GroupFoldableCard(
+                isChild: true,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+              ),
+
+              }else...{
+              //そうでない場合、親折りたたみウィジェットを生成。
+              
+              GroupFoldableCard(
+                isChild: false,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+              ),
+
+              }
+            }
             }
         }
       }
@@ -125,6 +172,7 @@ class DataCardState extends State<DataCard> {
               !_focusNodeDescription.hasFocus) {
             databaseHelper.unDisplay(index);
             _controller4.text = "1";
+            _showSnackBar(context);
           }
         },
         background: Container(
@@ -180,7 +228,8 @@ class DataCardState extends State<DataCard> {
                                 Container(
                                   width: SizeConfig.blockSizeHorizontal! * 80,
                                   height: SizeConfig.blockSizeHorizontal! * 12,
-                                  child: TextField(
+                                  child: 
+                                  TextField(
                                     focusNode: _focusNodeCategories,
                                     textInputAction: TextInputAction.done,
                                     onSubmitted: (inputValue) {
@@ -252,8 +301,10 @@ class DataCardState extends State<DataCard> {
                                       width:
                                           SizeConfig.blockSizeHorizontal! * 2),
                                   Container(
+                                    constraints: BoxConstraints(
+                                     maxWidth: SizeConfig.blockSizeHorizontal! * 75),
                                     margin: EdgeInsets.only(top: 0),
-                                    width: SizeConfig.blockSizeHorizontal! * 75,
+                                    //width: SizeConfig.blockSizeHorizontal! * 75,
                                     alignment: Alignment.topLeft,
                                     height: SizeConfig.blockSizeHorizontal! * 6,
                                     child: TextField(
@@ -336,11 +387,11 @@ class DataCardState extends State<DataCard> {
                                   SingleChildScrollView(
                                     child: Container(
                                       margin: EdgeInsets.only(top: 0),
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 75,
+                                      constraints: BoxConstraints(
+                                       maxWidth: SizeConfig.blockSizeHorizontal! * 75),
+                                      width:SizeConfig.blockSizeHorizontal! * 75,
                                       alignment: Alignment.topLeft,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 13,
+                                      height:SizeConfig.blockSizeHorizontal! * 13,
                                       child: TextField(
                                         focusNode: _focusNodeDescription,
                                         textInputAction: TextInputAction.done,
@@ -642,6 +693,28 @@ class DataCardState extends State<DataCard> {
   }
 }
 
+void _showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: const Text(
+              'タスクを削除しました…',
+              style: TextStyle(
+                color: Colors.black
+              ),
+            ),
+            action: SnackBarAction(
+                label: '元に戻す',
+                textColor: Colors.lightBlue,
+                onPressed: () {
+                    // カード削除取消の処理
+                },
+            ),
+            backgroundColor:WIDGET_OUTLINE_COLOR,
+            duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
+        ),
+    );
+}
+
 void InformationAutoDismissiblePopup(BuildContext context) {
   showDialog(
     context: context,
@@ -705,7 +778,7 @@ void showAutoDismissiblePopup(BuildContext context) {
   );
 }
 
-//カードの折り畳みに関する記述//////////////////////////////////////////////////////////////////
+//カードそのものの折り畳みに関する記述//////////////////////////////////////////////////////////////////
 class FoldableCard extends StatefulWidget {
   final DataCard dataCard; // DataCardのインスタンスを保持するプロパティ
   final String summary; // 追加するString型データ
@@ -788,3 +861,111 @@ class _FoldableCardState extends State<FoldableCard> {
         ));
   }
 }
+
+//グループ化されたカードの折り畳みに関する記述/////////////////////////////////////////////////////////////////
+class GroupFoldableCard extends StatefulWidget {
+  final bool isChild; 
+
+  final String FoldableCardSummary;
+  final int DatacardIndex;
+  final String DataCardTitle;
+  final String DataCardDescription;
+  final DateTime DataCardDtEnd;
+  final String DataCardSummary;
+  final bool DataCardIsDone;
+
+  GroupFoldableCard({
+    required this.isChild, // コンストラクタに追加
+    required this.FoldableCardSummary,
+    required this.DatacardIndex,
+    required this.DataCardTitle,
+    required this.DataCardDescription,
+    required this.DataCardDtEnd,
+    required this.DataCardSummary,
+    required this.DataCardIsDone,
+  });
+
+  @override
+  _GroupFoldableCardState createState() => _GroupFoldableCardState();
+}
+
+class _GroupFoldableCardState extends State<GroupFoldableCard> {
+  bool isFolded = true;
+  late FoldableCard foldableCard;
+
+  @override
+  void initState() {
+    
+    super.initState();
+    foldableCard = FoldableCard(
+      dataCard: DataCard(
+        index: widget.DatacardIndex,
+        title: widget.DataCardTitle,
+        description: widget.DataCardDescription,
+        dtEnd: widget.DataCardDtEnd,
+        summary: widget.DataCardSummary,
+        isDone: widget.DataCardIsDone,
+      ),
+      summary: widget.FoldableCardSummary,
+    );
+AddWidgetToMap();
+   
+  }
+
+  void AddWidgetToMap() {
+    if (widget.isChild == false) {
+      FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] = [foldableCard];
+    } else {
+      if (widget.DataCardTitle != null) {
+        if (FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] == null) {
+          FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] = [];
+        }
+        FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!.add(foldableCard);
+      }
+    }
+  }
+
+  void toggleFold() {
+    setState(() {
+      isFolded = !isFolded;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.isChild
+        ? const SizedBox.shrink()
+        : GestureDetector(
+            onTap: toggleFold,
+            child: Card(
+              child: Container(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title:  Text(
+                        "ほか${FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]?.length ?? 0}件のタスク…",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      trailing: Icon(
+                        isFolded ? Icons.arrow_drop_down : Icons.arrow_drop_up,
+                      ),
+                    ),
+                    if (!isFolded)
+                     ChildrenDataCards(context)
+                  ],
+                ),
+              ),
+            ),
+          );
+  }
+  Widget ChildrenDataCards(BuildContext context){
+    return Column(children:[
+     for (var card in FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!) card
+    ]);
+  }
+}
+

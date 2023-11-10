@@ -4,7 +4,9 @@ import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
+import 'package:flutter_calandar_app/frontend/size_config.dart';
 import '../components/template/loading.dart';
+import '../components/template/add_data_card_button.dart';
 
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
@@ -39,7 +41,7 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   Widget noneTaskText() {
-    return const Text("現在課題はありません");
+    return const Text("現在課題はありません。");
   }
 
   //データベースを更新する関数。主にボタンを押された時のみ
@@ -81,13 +83,22 @@ class _TaskPageState extends State<TaskPage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children:[
+        addDataCardButton(),
+        Container(
+          width:SizeConfig.blockSizeHorizontal! * 2,
+          height:SizeConfig.blockSizeHorizontal! * 5
+        ),
+        FloatingActionButton(
         onPressed: () {
           _loadData();
         },
         backgroundColor: MAIN_COLOR, // ボタンの背景色
         child: const Icon(Icons.get_app), // ボタンのアイコン
-      ),
+      ),]
+     )
     );
   }
 }

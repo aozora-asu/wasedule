@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   table_calendar: ^3.0.9
+  provider: ^6.0.5
 
   sqflite: ^2.3.0  #データベースをいじるパッケージ
  # http: ^1.1.0 #httpリクエストをするためのパッケージ
