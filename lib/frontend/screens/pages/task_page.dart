@@ -81,6 +81,12 @@ class _TaskPageState extends State<TaskPage> {
             },
           ),
         ),
-        floatingActionButton: floatButton(_loadData()));
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _loadData();
+          },
+          backgroundColor: MAIN_COLOR, // ボタンの背景色
+          child: const Icon(Icons.get_app), // ボタンのアイコン
+        ));
   }
 }
