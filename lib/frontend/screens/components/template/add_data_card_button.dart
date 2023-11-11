@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 
 Widget addDataCardButton() {
   return SizedBox(
+    //width:SizeConfig.blockSizeHorizontal! * 76,
     child: FloatingActionButton.extended(
       onPressed: () {
         // データカードを追加する処理をここに記述
