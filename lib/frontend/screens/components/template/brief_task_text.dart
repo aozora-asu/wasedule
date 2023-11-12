@@ -12,12 +12,12 @@ Widget buildTaskText(
 
   return ListView(children: [
     for (int i = 0; i < taskList.length; i++)
-      if (taskList[i]["isDone"] == 0)
+      if (taskList[i]["isDone"] == 0 &&  DateTime.fromMillisecondsSinceEpoch(taskList[i]["dtEnd"]).isBefore(DateTime.now()) == false)
         Column(children: [
           Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                '${DateFormat('【MM/dd HH:mm】').format(DateTime.fromMillisecondsSinceEpoch(taskList[i]["dtEnd"])).toString()} ${taskList[i]["title"]}\n      ${taskList[i]["summary"]}',
+                '${DateFormat('【MM/dd】 HH:mm  ').format(DateTime.fromMillisecondsSinceEpoch(taskList[i]["dtEnd"])).toString()} ${taskList[i]["title"]}\n      ${taskList[i]["summary"]}',
                 style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 3),
               )),
           Divider(

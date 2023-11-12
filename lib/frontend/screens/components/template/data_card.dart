@@ -3,7 +3,10 @@ import "package:flutter_calandar_app/backend/DB/database_helper.dart";
 import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
+
+Map<String, List<Widget>> FoldableMap = {};//折りたたみ可能ウィジェットの管理用キメラ。
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -26,26 +29,36 @@ class DataCard extends StatefulWidget {
   DataCardState createState() => DataCardState();
 }
 
+
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
+    //int index = int.parse(index.text);
+    TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+
+
   return ListView(
     children: <Widget>[
+      //１枚目のカードを生成(エラー回避)
       for (int i = 0; i < data.length; i++) ...{
         if (i == 0) ...{
           if (data[i]["isDone"] == 0)
-            DataCard(
+
+          DataCard(
               index: i + 1,
               title: data[i]["title"],
               description: data[i]["description"],
               dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
               summary: data[i]["summary"],
               isDone: false,
-            )
+            ),
+
+
         } else ...{
-          //未完了のカードのうち、
+        //2枚目以降の未完了のカードのうち、
           if (data[i]["isDone"] == 0)
-            //前のカードとtitleとdtEndのいずれかが一致していないものは,
-            //通常ウィジェットとして生成
+          //前のカードとtitleとdtEndのいずれかが一致していないものは,
+          //通常ウィジェットとして生成
+
             if (data[i]["title"] != data[i - 1]["title"] ||
                 data[i]["dtEnd"] != data[i - 1]["dtEnd"]) ...{
               DataCard(
@@ -55,21 +68,57 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
                 dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
                 summary: data[i]["summary"],
                 isDone: false,
-              )
-              //前のカードとtitle、dtEndの両方が一致しているものは,
-              //折りたたみウィジェットとして生成。
-            } else ...{
-              FoldableCard(
-                  summary: data[i]["summary"],
-                  dataCard: DataCard(
-                    index: i + 1,
-                    title: data[i]["title"],
-                    description: data[i]["description"],
-                    dtEnd:
-                        DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                    summary: data[i]["summary"],
-                    isDone: false,
-                  ))
+              )} else ...{
+
+             if (i == 1)...{
+            //前のカードとtitle、dtEndの両方が一致しているもので,
+            // ２枚目のカードだった場合、親折りたたみウィジェットを生成(エラー回避)
+
+              GroupFoldableCard(
+                isChild: false,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+               )
+              
+
+               }else...{
+              if (data[i]["title"] == data[i - 2]["title"] &&
+              data[i]["dtEnd"] == data[i - 2]["dtEnd"])...{
+              //２つ前のカードとTitle,dtEndが一致する場合、
+              //子折りたたみウィジェットを生成
+
+              GroupFoldableCard(
+                isChild: true,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+              ),
+
+              }else...{
+              //そうでない場合、親折りたたみウィジェットを生成。
+              
+              GroupFoldableCard(
+                isChild: false,
+                FoldableCardSummary: data[i]["summary"],
+                 DatacardIndex: i + 1,
+                 DataCardTitle: data[i]["title"],
+                 DataCardDescription: data[i]["description"],
+                 DataCardDtEnd:DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                 DataCardSummary: data[i]["summary"],
+                 DataCardIsDone: false,
+              ),
+
+              }
+            }
             }
         }
       }
@@ -77,7 +126,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   );
 }
 
-class DataCardState extends State<DataCard> {
+class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
   late TextEditingController _controller3; //dtEnd
@@ -94,39 +143,43 @@ class DataCardState extends State<DataCard> {
   final FocusNode _focusNodeDtEnd = FocusNode();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
 
-    setState(() {
+    //setState(() {
       _controller1 = TextEditingController(text: widget.title);
       _controller2 = TextEditingController(text: widget.description);
       _controller3 = TextEditingController(
           text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
-
       _controller4 = TextEditingController(text: widget.isDone.toString());
       _controller5 = TextEditingController(text: widget.summary);
       _index = TextEditingController(text: widget.index.toString());
-    });
+    //});
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     SizeConfig().init(context);
     int index = int.parse(_index.text);
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
 //スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
     return Dismissible(
-        key: UniqueKey(),
-        direction: DismissDirection.startToEnd,
-        onDismissed: (direction) {
-          if (!_focusNodeCategories.hasFocus &&
-              !_focusNodeMemo.hasFocus &&
-              !_focusNodeDtEnd.hasFocus &&
-              !_focusNodeDescription.hasFocus) {
-            databaseHelper.unDisplay(index);
-            _controller4.text = "1";
-          }
-        },
+      key: UniqueKey(),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) {
+        if (!_focusNodeCategories.hasFocus &&
+            !_focusNodeMemo.hasFocus &&
+            !_focusNodeDtEnd.hasFocus &&
+            !_focusNodeDescription.hasFocus) {
+          databaseHelper.unDisplay(index);
+          _controller4.text = "1";
+          _showSnackBar(context);
+        }
+      },
         background: Container(
           color: Colors.red,
           alignment: Alignment.centerLeft,
@@ -135,11 +188,13 @@ class DataCardState extends State<DataCard> {
         ),
         child:
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            Column(
+        Column(
           children: <Widget>[
+            SizedBox(height: SizeConfig.blockSizeHorizontal! * 4), //カード間の隙間。
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Card(
+                margin: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal! * 2),
                 color: WIDGET_COLOR,
                 child: Container(
                   decoration: BoxDecoration(
@@ -150,37 +205,41 @@ class DataCardState extends State<DataCard> {
                     ),
                     borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                   ),
-                  height: SizeConfig.blockSizeHorizontal! * 42,
-                  width: SizeConfig.blockSizeHorizontal! * 96.8,
+                   height: SizeConfig.blockSizeHorizontal! * 40.25,
+                   width: SizeConfig.blockSizeHorizontal! * 95.75,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-//タスクの状態・授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Container(
-                        height: SizeConfig.blockSizeHorizontal! * 12,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                        height: SizeConfig.blockSizeHorizontal! * 9,
+                        child:Row(
                               children: <Widget>[
                                 SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 2.5,
-                                  height: SizeConfig.blockSizeHorizontal! * 5,
+                                  height: SizeConfig.blockSizeHorizontal! * 9,
                                 ),
                                 SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 5,
-                                  height: SizeConfig.blockSizeHorizontal! * 5,
-                                  child: buttonSwitching(),
+
+                                  height: SizeConfig.blockSizeHorizontal! * 9,
+                                  child: ButtonSwitching(),
+
                                 ),
                                 SizedBox(
                                     width:
                                         SizeConfig.blockSizeHorizontal! * 2.5,
                                     height:
-                                        SizeConfig.blockSizeHorizontal! * 5),
-                                SizedBox(
+
+                                        SizeConfig.blockSizeHorizontal! * 9),
+                                Container(
+                                  //padding: const EdgeInsets.only(top: 12),
+
                                   width: SizeConfig.blockSizeHorizontal! * 80,
-                                  height: SizeConfig.blockSizeHorizontal! * 12,
-                                  child: TextField(
+                                  height: SizeConfig.blockSizeHorizontal! *9,
+                                  child: 
+                                  TextField(
+                                    
                                     focusNode: _focusNodeCategories,
                                     textInputAction: TextInputAction.done,
                                     onSubmitted: (inputValue) {
@@ -188,16 +247,19 @@ class DataCardState extends State<DataCard> {
                                       databaseHelper.updateTitle(
                                           index, _userInput1);
                                     },
-                                    textAlign: TextAlign.start,
+                                    textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 5,
+                                          SizeConfig.blockSizeHorizontal! * 4.5,
                                       fontWeight: FontWeight.w900,
                                     ),
                                     controller: _controller1,
-                                    decoration: const InputDecoration(
+
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 2.75),
+
                                       hintText: "授業名",
-                                      border: InputBorder.none,
+                                      border:InputBorder.none,
                                       hintStyle: TextStyle(
                                           color: Colors.grey,
                                           fontWeight: FontWeight.w600),
@@ -206,21 +268,18 @@ class DataCardState extends State<DataCard> {
                                 ),
                               ],
                             ),
-                            Container(
-                              height: SizeConfig.blockSizeHorizontal! * 0,
-                            ),
-                          ],
-                        ),
                       ),
-                      Divider(
-                        height: SizeConfig.blockSizeHorizontal! *
-                            0.8, // 高さを指定する場合（省略可）
-                        color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                        thickness: 2, // 線の太さを指定する場合（省略可）
-                      ),
+                      // Divider(
+                      //   height: SizeConfig.blockSizeHorizontal! *
+                      //       0.8, // 高さを指定する場合（省略可）
+                      //   color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
+                      //   thickness: 2, // 線の太さを指定する場合（省略可）
+                      // ),
 //要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                      SizedBox(
-                        height: SizeConfig.blockSizeHorizontal! * 6,
+
+                      Container(
+                        height: SizeConfig.blockSizeHorizontal! * 7,
+
                         width: SizeConfig.blockSizeHorizontal! * 96,
                         child: Row(
                           children: [
@@ -240,11 +299,11 @@ class DataCardState extends State<DataCard> {
                             // ),
                             SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 2,
-                              height: SizeConfig.blockSizeHorizontal! * 6,
+                              height: SizeConfig.blockSizeHorizontal! * 7,
                             ),
                             Container(
                               width: SizeConfig.blockSizeHorizontal! * 82,
-                              height: SizeConfig.blockSizeHorizontal! * 6,
+                              height: SizeConfig.blockSizeHorizontal! * 7,
                               alignment: Alignment.topLeft,
                               child: Row(
                                 children: <Widget>[
@@ -252,10 +311,12 @@ class DataCardState extends State<DataCard> {
                                       width:
                                           SizeConfig.blockSizeHorizontal! * 2),
                                   Container(
+                                    constraints: BoxConstraints(
+                                     maxWidth: SizeConfig.blockSizeHorizontal! * 75),
                                     margin: EdgeInsets.only(top: 0),
-                                    width: SizeConfig.blockSizeHorizontal! * 75,
+                                    //width: SizeConfig.blockSizeHorizontal! * 75,
                                     alignment: Alignment.topLeft,
-                                    height: SizeConfig.blockSizeHorizontal! * 6,
+                                    height: SizeConfig.blockSizeHorizontal! * 7,
                                     child: TextField(
                                       focusNode: _focusNodeMemo,
                                       maxLines: 1,
@@ -264,7 +325,7 @@ class DataCardState extends State<DataCard> {
                                       style: TextStyle(
                                         fontSize:
                                             SizeConfig.blockSizeHorizontal! * 3,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                       textInputAction: TextInputAction.done,
                                       onSubmitted: (inputValue) {
@@ -282,7 +343,7 @@ class DataCardState extends State<DataCard> {
                                         hintStyle: const TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.w500),
-                                        //alignLabelWithHint: true,
+                                       
                                       ),
                                     ),
                                   ),
@@ -336,11 +397,11 @@ class DataCardState extends State<DataCard> {
                                   SingleChildScrollView(
                                     child: Container(
                                       margin: EdgeInsets.only(top: 0),
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 75,
+                                      constraints: BoxConstraints(
+                                       maxWidth: SizeConfig.blockSizeHorizontal! * 75),
+                                      width:SizeConfig.blockSizeHorizontal! * 75,
                                       alignment: Alignment.topLeft,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 13,
+                                      height:SizeConfig.blockSizeHorizontal! * 13,
                                       child: TextField(
                                         focusNode: _focusNodeDescription,
                                         textInputAction: TextInputAction.done,
@@ -377,10 +438,13 @@ class DataCardState extends State<DataCard> {
                           ],
                         ),
                       ),
-                      Divider(
-                        height: SizeConfig.blockSizeHorizontal! * 0.8,
-                        color: WIDGET_OUTLINE_COLOR,
-                        thickness: 2,
+                      // Divider(
+                      //   height: SizeConfig.blockSizeHorizontal! * 0.8,
+                      //   color: WIDGET_OUTLINE_COLOR,
+                      //   thickness: 2,
+                      // ),
+                      SizedBox(
+                        height: SizeConfig.blockSizeHorizontal! * 2,
                       ),
 //期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Row(children: [
@@ -469,16 +533,15 @@ class DataCardState extends State<DataCard> {
                             ),
                           ),
                         ),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ]),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.75), //カード間の隙間。
           ],
-        ));
+        )
+    );
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -612,7 +675,10 @@ class DataCardState extends State<DataCard> {
               color: Colors.red, // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
-            child: repeatdaysLeft());
+
+            child:RepeatDaysLeft()
+            );
+
       }
     } else {
       return Container(
@@ -643,7 +709,31 @@ class DataCardState extends State<DataCard> {
   }
 }
 
-void informationAutoDismissiblePopup(BuildContext context) {
+
+void _showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: const Text(
+              'タスクを削除しました…',
+              style: TextStyle(
+                color: Colors.black
+              ),
+            ),
+            action: SnackBarAction(
+                label: '元に戻す',
+                textColor: Colors.lightBlue,
+                onPressed: () {
+                    // カード削除取消の処理
+                },
+            ),
+            backgroundColor:WIDGET_OUTLINE_COLOR,
+            duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
+        ),
+    );
+}
+
+void InformationAutoDismissiblePopup(BuildContext context) {
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -706,7 +796,7 @@ void showAutoDismissiblePopup(BuildContext context) {
   );
 }
 
-//カードの折り畳みに関する記述//////////////////////////////////////////////////////////////////
+//カードそのものの折り畳みに関する記述//////////////////////////////////////////////////////////////////
 class FoldableCard extends StatefulWidget {
   final DataCard dataCard; // DataCardのインスタンスを保持するプロパティ
   final String summary; // 追加するString型データ
@@ -757,7 +847,7 @@ class _FoldableCardState extends State<FoldableCard> {
                               Container(
                                   width: SizeConfig.blockSizeHorizontal! * 1.7,
                                   height: SizeConfig.blockSizeHorizontal! * 4,
-                                  color: ACCENT_COLOR //Colors.lightGreen,
+                                  color: ACCENT_COLOR,
                                   ),
                               Container(
                                 width: SizeConfig.blockSizeHorizontal! * 2,
@@ -784,8 +874,144 @@ class _FoldableCardState extends State<FoldableCard> {
                                     fontWeight: FontWeight.w500,
                                   )),
                             ]))))
-                : widget.dataCard, // DataCardのインスタンスを表示
+                : widget.dataCard,
           ),
         ));
+  }
+}
+
+//グループ化されたカードの折り畳みに関する記述/////////////////////////////////////////////////////////////////
+class GroupFoldableCard extends StatefulWidget {
+  final bool isChild; 
+
+  final String FoldableCardSummary;
+  final int DatacardIndex;
+  final String DataCardTitle;
+  final String DataCardDescription;
+  final DateTime DataCardDtEnd;
+  final String DataCardSummary;
+  final bool DataCardIsDone;
+
+  GroupFoldableCard({
+    required this.isChild, // コンストラクタに追加
+    required this.FoldableCardSummary,
+    required this.DatacardIndex,
+    required this.DataCardTitle,
+    required this.DataCardDescription,
+    required this.DataCardDtEnd,
+    required this.DataCardSummary,
+    required this.DataCardIsDone,
+  });
+
+  @override
+  _GroupFoldableCardState createState() => _GroupFoldableCardState();
+}
+
+class _GroupFoldableCardState extends State<GroupFoldableCard> with AutomaticKeepAliveClientMixin {
+  bool isFolded = true;
+  late FoldableCard foldableCard;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    foldableCard = FoldableCard(
+      dataCard: DataCard(
+        index: widget.DatacardIndex,
+        title: widget.DataCardTitle,
+        description: widget.DataCardDescription,
+        dtEnd: widget.DataCardDtEnd,
+        summary: widget.DataCardSummary,
+        isDone: widget.DataCardIsDone,
+      ),
+      summary: widget.FoldableCardSummary,
+    );
+    int? childLength =  FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]?.length;
+      AddWidgetToMap();
+  }
+
+  void AddWidgetToMap() {
+    if (widget.isChild == false) {
+      FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] = [foldableCard];
+    } else {
+      if (widget.DataCardTitle != null) {
+        if (FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] == null) {
+          FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] = [];
+        }
+        FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!.add(foldableCard);
+      }
+    }
+  }
+
+  void toggleFold() {
+    setState(() {
+      isFolded = !isFolded;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); 
+
+    return widget.isChild
+        ? const SizedBox.shrink()
+        : GestureDetector(
+            onTap: toggleFold,
+            child:Container(
+              width: SizeConfig.blockSizeHorizontal! * 95.75,
+              child: Card(
+              margin: EdgeInsets.symmetric(vertical: 0,horizontal: SizeConfig.blockSizeHorizontal! * 2),
+              child: Container(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Row(children:[
+                        //  Container(
+                        //   width: SizeConfig.blockSizeHorizontal! * 3,
+                        //   height: SizeConfig.blockSizeHorizontal! * 11,
+                        //   color: ACCENT_COLOR,
+                        //   ),
+                        //  Container(
+                        //   width: SizeConfig.blockSizeHorizontal! * 6,
+                        //   height: SizeConfig.blockSizeHorizontal! * 10,
+                        //   ),
+                        Icon(Icons.subdirectory_arrow_right,
+                            size: 30,
+                            color: Colors.blueGrey,
+                        ),
+                        Text(
+                        "そのほかのタスク…",
+                        //"ほか${FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]?.length ?? 0}件のタスク…",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      ]
+                      ),
+                      trailing: Icon(
+                        isFolded ? Icons.arrow_drop_down : Icons.arrow_drop_up,
+                      ),
+                    ),
+                    if (!isFolded)
+                      ChildrenDataCards(context),
+                  ],
+                ),
+              ),
+            ),
+           )
+          );
+
+  }
+
+  Widget ChildrenDataCards(BuildContext context) {
+    return Column(
+      children: [
+        for (var card in FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!) card
+      ],
+    );
   }
 }

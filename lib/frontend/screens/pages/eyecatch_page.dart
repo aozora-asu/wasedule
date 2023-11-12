@@ -60,7 +60,9 @@ class _FadingImageState extends State<FadingImage>
     });
 
     // インターバルごとにloadingTextを更新
-    Timer.periodic(const Duration(milliseconds: 200), (timer) {
+
+    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+
       if (!mounted) {
         // Check if the widget is still part of the tree
         timer
@@ -104,16 +106,18 @@ class _FadingImageState extends State<FadingImage>
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "わせジュール",
-              style: TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
+
+           SizedBox(height: 30),
+           SizedBox(
+             width: 200,
+             height: 5,
+             child: LinearProgressIndicator(
+                color:ACCENT_COLOR,
+                backgroundColor: Colors.pink[50],
+                  ),
               ),
-            ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
+
             Text(
               loadingText,
               style: const TextStyle(
