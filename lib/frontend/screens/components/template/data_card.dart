@@ -137,10 +137,10 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   String _userInput1 = '';
   String _userInput5 = '';
   String _userInput2 = '';
-  FocusNode _focusNodeCategories = FocusNode();
-  FocusNode _focusNodeMemo = FocusNode();
-  FocusNode _focusNodeDescription = FocusNode();
-  FocusNode _focusNodeDtEnd = FocusNode();
+  final FocusNode _focusNodeCategories = FocusNode();
+  final FocusNode _focusNodeMemo = FocusNode();
+  final FocusNode _focusNodeDescription = FocusNode();
+  final FocusNode _focusNodeDtEnd = FocusNode();
 
   @override
   bool get wantKeepAlive => true;
@@ -182,9 +182,9 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
       },
         background: Container(
           color: Colors.red,
-          child: Icon(Icons.delete),
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(left: 16.0),
+          padding: const EdgeInsets.only(left: 16.0),
+          child: const Icon(Icons.delete),
         ),
         child:
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,22 +215,26 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                         height: SizeConfig.blockSizeHorizontal! * 9,
                         child:Row(
                               children: <Widget>[
-                                Container(
+                                SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 2.5,
                                   height: SizeConfig.blockSizeHorizontal! * 9,
                                 ),
-                                Container(
+                                SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 5,
+
                                   height: SizeConfig.blockSizeHorizontal! * 9,
                                   child: ButtonSwitching(),
+
                                 ),
                                 SizedBox(
                                     width:
                                         SizeConfig.blockSizeHorizontal! * 2.5,
                                     height:
+
                                         SizeConfig.blockSizeHorizontal! * 9),
                                 Container(
                                   //padding: const EdgeInsets.only(top: 12),
+
                                   width: SizeConfig.blockSizeHorizontal! * 80,
                                   height: SizeConfig.blockSizeHorizontal! *9,
                                   child: 
@@ -250,8 +254,10 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                       fontWeight: FontWeight.w900,
                                     ),
                                     controller: _controller1,
+
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.only(bottom: SizeConfig.blockSizeHorizontal! * 2.75),
+
                                       hintText: "授業名",
                                       border:InputBorder.none,
                                       hintStyle: TextStyle(
@@ -270,12 +276,14 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                       //   thickness: 2, // 線の太さを指定する場合（省略可）
                       // ),
 //要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                       Container(
                         height: SizeConfig.blockSizeHorizontal! * 7,
+
                         width: SizeConfig.blockSizeHorizontal! * 96,
                         child: Row(
                           children: [
-                            // Container(
+                            // SizedBox(
                             //   height: SizeConfig.blockSizeHorizontal! * 12,
                             //   width: SizeConfig.blockSizeHorizontal! * 11,
                             //   alignment: Alignment.topLeft,
@@ -289,7 +297,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                             //     ),
                             //   ),
                             // ),
-                            Container(
+                            SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 2,
                               height: SizeConfig.blockSizeHorizontal! * 7,
                             ),
@@ -332,7 +340,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                             bottom: SizeConfig
                                                     .blockSizeHorizontal! *
                                                 3.2),
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.w500),
                                        
@@ -354,12 +362,12 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                       SizedBox(
                         height: SizeConfig.blockSizeHorizontal! * 1,
                       ),
-                      Container(
+                      SizedBox(
                         height: SizeConfig.blockSizeHorizontal! * 13,
                         width: SizeConfig.blockSizeHorizontal! * 96,
                         child: Row(
                           children: [
-                            // Container(
+                            // SizedBox(
                             //   height: SizeConfig.blockSizeHorizontal! * 15,
                             //   width: SizeConfig.blockSizeHorizontal! * 11,
                             //   alignment: Alignment.topLeft,
@@ -373,7 +381,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                             //     ),
                             //   ),
                             // ),
-                            Container(
+                            SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 2,
                               height: SizeConfig.blockSizeHorizontal! * 0.6,
                             ),
@@ -443,14 +451,14 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                         SizedBox(
                           width: SizeConfig.blockSizeHorizontal! * 1.2,
                         ),
-                        Container(
+                        SizedBox(
                           height: SizeConfig.blockSizeHorizontal! * 6,
                           width: SizeConfig.blockSizeHorizontal! * 94,
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Container(
+                                SizedBox(
                                   child: Text(
                                     ' 期限',
                                     textAlign: TextAlign.left,
@@ -458,7 +466,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 3.5,
                                       fontWeight: FontWeight.w600,
-                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                     ),
                                   ),
                                 ),
@@ -471,7 +479,8 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                   child: Row(
                                     children: <Widget>[
                                       Padding(
-                                        padding: EdgeInsets.only(left: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
                                         child: Container(
                                           width:
                                               SizeConfig.blockSizeHorizontal! *
@@ -503,7 +512,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                       ),
                                       Row(
                                         children: <Widget>[
-                                          Container(
+                                          SizedBox(
                                             width: SizeConfig
                                                     .blockSizeHorizontal! *
                                                 42,
@@ -512,7 +521,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                                 6.5,
                                             child: Align(
                                               alignment: Alignment.centerRight,
-                                              child: TaskData(),
+                                              child: taskData(),
                                             ),
                                           ),
                                         ],
@@ -538,19 +547,19 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   String initialData() {
-    return TaskData();
+    return taskData();
   }
 
-  String Titlename() {
+  String titlename() {
     return _controller1.text;
   }
 
-  ButtonSwitching() {
+  buttonSwitching() {
     return InkWell(
       onTap: () {
-        InformationAutoDismissiblePopup(context);
+        informationAutoDismissiblePopup(context);
       },
-      child: Container(
+      child: SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 5,
         height: SizeConfig.blockSizeHorizontal! * 5,
         child: Icon(
@@ -577,7 +586,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  StreamBuilder<String> RepeatDaysLeft() {
+  StreamBuilder<String> repeatdaysLeft() {
     return StreamBuilder<String>(
       stream: getRemainingTimeStream(widget.dtEnd),
       builder: (context, snapshot) {
@@ -591,7 +600,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
             ),
           );
         } else {
-          return SizedBox(); // データがない場合は何も表示しない
+          return const SizedBox(); // データがない場合は何も表示しない
         }
       },
     );
@@ -608,10 +617,10 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     return '  $days日 $hours時間 $minutes分 $seconds秒  ';
   }
 
-  DaysLeft() {
+  daysLeft() {
     if (widget.dtEnd.isBefore(DateTime.now()) == false) {
       Duration difference = widget.dtEnd.difference(DateTime.now()); // 日付の差を求める
-      if (difference >= Duration(days: 4)) {
+      if (difference >= const Duration(days: 4)) {
         return Text(
           ("  残り${difference.inDays} 日  "),
           style: TextStyle(
@@ -642,11 +651,11 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  TaskData() {
-    DateTime TimeLimit = widget.dtEnd;
+  taskData() {
+    DateTime timeLimit = widget.dtEnd;
     Duration difference = widget.dtEnd.difference(DateTime.now());
-    if (TimeLimit.isBefore(DateTime.now()) == false) {
-      if (difference >= Duration(days: 4)) {
+    if (timeLimit.isBefore(DateTime.now()) == false) {
+      if (difference >= const Duration(days: 4)) {
         return Container(
             decoration: BoxDecoration(
               color: Colors.blueGrey, // 背景色を指定
@@ -666,13 +675,15 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
               color: Colors.red, // 背景色を指定
               borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
             ),
+
             child:RepeatDaysLeft()
             );
+
       }
     } else {
       return Container(
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0, 0, 0), // 背景色を指定
+            color: const Color.fromARGB(255, 0, 0, 0), // 背景色を指定
             borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
           ),
           child: Text(
@@ -680,7 +691,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 250, 0, 0),
+              color: const Color.fromARGB(255, 250, 0, 0),
             ),
           ));
     }
@@ -697,6 +708,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 }
+
 
 void _showSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -721,10 +733,11 @@ void _showSnackBar(BuildContext context) {
 }
 
 void InformationAutoDismissiblePopup(BuildContext context) {
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      Timer(Duration(seconds: 2), () {
+      Timer(const Duration(seconds: 2), () {
         Navigator.of(context).pop();
       });
 
@@ -760,7 +773,7 @@ void showAutoDismissiblePopup(BuildContext context) {
           // Builder ウィジェットを使用して新しい context を取得
           saveParentContext(builderContext);
 
-          Timer(Duration(seconds: 2), () {
+          Timer(const Duration(seconds: 2), () {
             // タイマー内で parentContext を使用
             Navigator.of(parentContext!).pop();
           });
@@ -788,7 +801,7 @@ class FoldableCard extends StatefulWidget {
   final DataCard dataCard; // DataCardのインスタンスを保持するプロパティ
   final String summary; // 追加するString型データ
 
-  FoldableCard({
+  const FoldableCard({
     required this.dataCard,
     required this.summary,
   }); // コンストラクタでDataCardのインスタンスとtitleを受け取る
@@ -814,7 +827,7 @@ class _FoldableCardState extends State<FoldableCard> {
         child: GestureDetector(
           onDoubleTap: toggleFold,
           child: AnimatedContainer(
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
             height: isFolded
                 ? SizeConfig.blockSizeHorizontal! * 7
@@ -843,7 +856,7 @@ class _FoldableCardState extends State<FoldableCard> {
                                 onTap: () {
                                   showAutoDismissiblePopup(context);
                                 },
-                                child: Container(
+                                child: SizedBox(
                                   width: SizeConfig.blockSizeHorizontal! * 5,
                                   height: SizeConfig.blockSizeHorizontal! * 5,
                                   child: Icon(

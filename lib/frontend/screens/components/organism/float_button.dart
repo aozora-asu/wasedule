@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 
-Widget floatButton(func) {
+Future<Widget> floatButton(func) async {
   return FloatingActionButton(
     onPressed: () {
       func();

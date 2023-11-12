@@ -9,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: MAIN_COLOR,
+      elevation: 10,
       title: const Center(
         child: Column(
           children: <Widget>[

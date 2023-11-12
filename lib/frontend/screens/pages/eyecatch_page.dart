@@ -28,10 +28,10 @@ class _FadingImageState extends State<FadingImage>
   @override
   void initState() {
     super.initState();
-    late Timer _timer;
+
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -42,7 +42,7 @@ class _FadingImageState extends State<FadingImage>
     );
 
     _imageAnimation =
-        Tween<Offset>(begin: Offset(0.0, 0.35), end: Offset.zero).animate(
+        Tween<Offset>(begin: const Offset(0.0, 0.35), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeInOut,
@@ -60,7 +60,9 @@ class _FadingImageState extends State<FadingImage>
     });
 
     // インターバルごとにloadingTextを更新
+
     _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+
       if (!mounted) {
         // Check if the widget is still part of the tree
         timer
@@ -70,7 +72,7 @@ class _FadingImageState extends State<FadingImage>
 
       setState(() {
         loadingText =
-            (loadingText == 'Loading...') ? 'Loading' : '${loadingText}.';
+            (loadingText == 'Loading...') ? 'Loading' : '$loadingText.';
       });
     });
   }
@@ -82,7 +84,7 @@ class _FadingImageState extends State<FadingImage>
   }
 
   Future<void> load() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
   }
 
   @override
@@ -104,6 +106,7 @@ class _FadingImageState extends State<FadingImage>
                 ),
               ),
             ),
+
            SizedBox(height: 30),
            SizedBox(
              width: 200,
@@ -114,9 +117,10 @@ class _FadingImageState extends State<FadingImage>
                   ),
               ),
             SizedBox(height: 20),
+
             Text(
               loadingText,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 25,
                 color: Colors.white,
                 fontWeight: FontWeight.w700,

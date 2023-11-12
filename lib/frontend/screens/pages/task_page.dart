@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-
+import '../components/organism/float_button.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
@@ -62,26 +62,28 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Center(
-        child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: events,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingScreen();
-            } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            } else if (snapshot.hasData) {
-              // データが読み込まれた場合、リストを生成
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: events,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return LoadingScreen();
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else if (snapshot.hasData) {
+                // データが読み込まれた場合、リストを生成
 
-              return buildDataCards(context, snapshot.data!);
-            } else {
-              // データがない場合の処理（nullの場合など）
+                return buildDataCards(context, snapshot.data!);
+              } else {
+                // データがない場合の処理（nullの場合など）
 
-              return noneTaskText();
-            }
-          },
+                return noneTaskText();
+              }
+            },
+          ),
         ),
+
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -100,5 +102,6 @@ class _TaskPageState extends State<TaskPage> {
       ),]
      )
     );
+
   }
 }
