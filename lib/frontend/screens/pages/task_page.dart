@@ -83,25 +83,19 @@ class _TaskPageState extends State<TaskPage> {
             },
           ),
         ),
-
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children:[
-        addDataCardButton(),
-        Container(
-          width:SizeConfig.blockSizeHorizontal! * 2,
-          height:SizeConfig.blockSizeHorizontal! * 5
-        ),
-        FloatingActionButton(
-        onPressed: () {
-          _loadData();
-        },
-        backgroundColor: MAIN_COLOR, // ボタンの背景色
-        child: const Icon(Icons.get_app), // ボタンのアイコン
-      ),]
-     )
-    );
-
+        floatingActionButton:
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          addDataCardButton(),
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 2,
+              height: SizeConfig.blockSizeHorizontal! * 5),
+          FloatingActionButton(
+            onPressed: () {
+              _loadData();
+            },
+            backgroundColor: MAIN_COLOR, // ボタンの背景色
+            child: const Icon(Icons.get_app), // ボタンのアイコン
+          ),
+        ]));
   }
 }

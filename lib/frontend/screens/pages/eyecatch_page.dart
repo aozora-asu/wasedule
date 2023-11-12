@@ -61,8 +61,7 @@ class _FadingImageState extends State<FadingImage>
 
     // インターバルごとにloadingTextを更新
 
-    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
-
+    Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (!mounted) {
         // Check if the widget is still part of the tree
         timer
@@ -106,18 +105,16 @@ class _FadingImageState extends State<FadingImage>
                 ),
               ),
             ),
-
-           SizedBox(height: 30),
-           SizedBox(
-             width: 200,
-             height: 5,
-             child: LinearProgressIndicator(
-                color:ACCENT_COLOR,
+            SizedBox(height: 30),
+            SizedBox(
+              width: 200,
+              height: 5,
+              child: LinearProgressIndicator(
+                color: ACCENT_COLOR,
                 backgroundColor: Colors.pink[50],
-                  ),
               ),
+            ),
             SizedBox(height: 20),
-
             Text(
               loadingText,
               style: const TextStyle(
