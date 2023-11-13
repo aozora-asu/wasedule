@@ -36,7 +36,7 @@ class _InputFormState extends State<InputForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'タスク情報を入力…',
+            'イベント情報を入力…',
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 7,
               fontWeight: FontWeight.w900,
@@ -128,10 +128,10 @@ class _InputFormState extends State<InputForm> {
 
   @override
   Widget build(BuildContext context) {
-    return addDataCardButton();
+    return addEventButton();
   }
 
-  Widget addDataCardButton() {
+  Widget addEventButton() {
     return SizedBox(
       child: FloatingActionButton.extended(
         onPressed: () {
@@ -139,9 +139,9 @@ class _InputFormState extends State<InputForm> {
           _showInputDialog(context);
         },
         foregroundColor: Colors.white,
-        backgroundColor: ACCENT_COLOR,
+        backgroundColor:MAIN_COLOR,
         isExtended: true,
-        label: const Text('タスク追加'),
+        label: const Text('イベント追加'),
         icon: const Icon(Icons.add),
       ),
     );

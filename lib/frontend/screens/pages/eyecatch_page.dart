@@ -3,11 +3,17 @@ import 'dart:async';
 
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import '../../screen_manager.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // localizationsDelegates: [
+      //   GlobalMaterialLocalizations.delegate,
+      //   GlobalWidgetsLocalizations.delegate,],
+      // supportedLocales: [const Locale('en'),],
+      // locale: const Locale('en'),
       home: FadingImage(),
     );
   }
