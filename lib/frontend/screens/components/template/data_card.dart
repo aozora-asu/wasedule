@@ -32,8 +32,6 @@ class DataCard extends StatefulWidget {
 
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
-  //int index = int.parse(index.text);
-  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
 
   return ListView(
     children: <Widget>[
@@ -161,7 +159,44 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     SizeConfig().init(context);
     int index = int.parse(_index.text);
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+    late Map<String,dynamic> removedItem = {};
+
+
+
+
+
+
 //スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
+  void _showSnackBar(BuildContext context) {
+   ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text(
+        'タスクを削除しました…',
+        style: TextStyle(color: Colors.black),
+      ),
+      action: SnackBarAction(
+        label: '元に戻す',
+        textColor: Colors.lightBlue,
+        onPressed: () {
+         setState(() {
+         });
+        },
+      ),
+      backgroundColor: WIDGET_OUTLINE_COLOR,
+      duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
+    ),
+    ).closed.then((reason) {
+      if (reason == SnackBarClosedReason.action) {
+      print("消去取消");
+        } else {
+      print("消去発動");
+      // SnackBar が閉じられたときの処理（非表示になったとき）
+      databaseHelper.unDisplay(index);
+      _controller4.text = "1";
+      }
+    });
+}
+    
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
@@ -170,8 +205,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
               !_focusNodeMemo.hasFocus &&
               !_focusNodeDtEnd.hasFocus &&
               !_focusNodeDescription.hasFocus) {
-            databaseHelper.unDisplay(index);
-            _controller4.text = "1";
             _showSnackBar(context);
           }
         },
@@ -533,7 +566,10 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ],
-        ));
+        )
+        );
+
+        
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -698,25 +734,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   }
 }
 
-void _showSnackBar(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: const Text(
-        'タスクを削除しました…',
-        style: TextStyle(color: Colors.black),
-      ),
-      action: SnackBarAction(
-        label: '元に戻す',
-        textColor: Colors.lightBlue,
-        onPressed: () {
-          // カード削除取消の処理
-        },
-      ),
-      backgroundColor: WIDGET_OUTLINE_COLOR,
-      duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
-    ),
-  );
-}
 
 void informationAutoDismissiblePopup(BuildContext context) {
   showDialog(
