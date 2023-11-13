@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../components/template/brief_task_text.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
+import '../components/template/add_event_button.dart';
+
 
 class Calendar extends StatefulWidget {
   @override
@@ -18,105 +23,117 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(children: [
-        TableCalendar<dynamic>(
-          firstDay: DateTime.utc(1882, 10, 21),
-          lastDay: DateTime.utc(2100, 10, 21),
-          focusedDay: _focusedDay,
-          calendarFormat: _calendarFormat,
-          calendarBuilders: CalendarBuilders(
-            defaultBuilder:
-                (BuildContext context, DateTime day, DateTime focusedDay) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
-                  ),
-                ),
-                alignment: Alignment.topCenter,
-                child: Text(
-                  day.day.toString(),
-                  style: const TextStyle(
-                    color: Colors.black87,
-                  ),
-                ),
-              );
-            },
-
-            /// 有効範囲（firstDay~lastDay）以外の日付部分を生成する
-            disabledBuilder:
-                (BuildContext context, DateTime day, DateTime focusedDay) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 0.5,
-                  ),
-                ),
-                alignment: Alignment.topCenter,
-                child: Text(
-                  day.day.toString(),
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              );
-            },
-            selectedBuilder:
-                (BuildContext context, DateTime day, DateTime focusedDay) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.red[800]!,
-                    width: 3.0,
-                  ),
-                ),
-                alignment: Alignment.topCenter,
-                child: Text(
-                  day.day.toString(),
-                  style: const TextStyle(
-                    color: Colors.black87,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 13,
-        ),
-        briefTaskList()
-      ]),
+        body:SingleChildScrollView(child:Column(children: [Container(
+      height: SizeConfig.blockSizeHorizontal! * 200,
+      child:SfCalendar(
+      view: CalendarView.month,
+      backgroundColor: BACKGROUND_COLOR,
+      todayHighlightColor: ACCENT_COLOR,
+      showNavigationArrow: true,
+      selectionDecoration: BoxDecoration(
+            color: Colors.transparent,
+            border: Border.all(color: MAIN_COLOR,width: 3),),
+      onTap: (CalendarTapDetails details) {
+                  print("Hello,World!");
+                },
+      monthViewSettings: MonthViewSettings(
+        showAgenda: true,
+        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+      ),
+      dataSource: EventDataSource(_getDataSource()),
+      
+    ),
+    ),briefTaskList()
+    ])
+    ),
+     floatingActionButton:InputForm(),
     );
   }
-}
-
-class EventData {
-  String dtEnd;
-  String description;
-  String memo;
-
-  EventData(this.dtEnd, this.description, this.memo);
-}
-
+} 
 // void main() {
-//   List<EventData> events = [
-//     EventData('2023-10-22 03:59:00.000', '#1 アンケート', null),
-//     EventData('2023-10-23 00:00:00.000', '#2 アンケート', null),
-//     EventData('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
-//   ];
+  List events = [
+    ('2023-10-22 03:59:00.000', '#1 アンケート', null),
+    ('2023-10-23 00:00:00.000', '#2 アンケート', null),
+    ('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
+  ];
 
 //   for (var event in events) {
 //     print('dtEnd: ${event.dtEnd}, description: ${event.description}, memo: ${event.memo}');
 //   }
 // }
+
+class Event {
+  Event(this.eventName, this.from, this.to, this.background, this.isAllDay);
+
+  String eventName;
+  DateTime from;
+  DateTime to;
+  Color background;
+  bool isAllDay;
+}
+
+class EventDataSource extends CalendarDataSource {
+  EventDataSource(List<Event> event) {
+    appointments = event;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments![index].from;
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments![index].to;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].eventName;
+  }
+
+  @override
+  Color getColor(int index) {
+    return appointments![index].background;
+  }
+
+  @override
+  bool isAllDay(int index) {
+    return appointments![index].isAllDay;
+  }
+}
+
+List<Event> _getDataSource() {  //ここをカレンダーのイベントDBに置換する予定
+  final List<Event> event = <Event>[];
+  final DateTime today = DateTime.now();
+  final DateTime startTime =
+      DateTime(today.year, today.month, today.day, 9, 0, 0);
+  final DateTime endTime = startTime.add(const Duration(hours: 2));
+  event.add(
+      Event('イベント', startTime, endTime, ACCENT_COLOR, false));
+  return event;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class briefTaskList extends StatelessWidget {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
@@ -175,3 +192,5 @@ class briefTaskList extends StatelessWidget {
     ]);
   }
 }
+
+

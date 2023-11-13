@@ -122,7 +122,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
 class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   late TextEditingController _controller1; //categories
   late TextEditingController _controller2; //description
-  late TextEditingController _controller3; //dtEnd
+  late String _controller3; //dtEnd
   late TextEditingController _controller4; //isDone
   late TextEditingController _controller5; //memo
   late TextEditingController _index;
@@ -133,7 +133,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   final FocusNode _focusNodeCategories = FocusNode();
   final FocusNode _focusNodeMemo = FocusNode();
   final FocusNode _focusNodeDescription = FocusNode();
-  final FocusNode _focusNodeDtEnd = FocusNode();
 
   @override
   bool get wantKeepAlive => true;
@@ -145,8 +144,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     //setState(() {
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = TextEditingController(
-        text: DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd));
+    _controller3 = DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd);
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
@@ -203,7 +201,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
         onDismissed: (direction) {
           if (!_focusNodeCategories.hasFocus &&
               !_focusNodeMemo.hasFocus &&
-              !_focusNodeDtEnd.hasFocus &&
               !_focusNodeDescription.hasFocus) {
             _showSnackBar(context);
           }
@@ -515,23 +512,12 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                               SizeConfig.blockSizeHorizontal! *
                                                   6,
                                           alignment: Alignment.center,
-                                          child: TextField(
-                                            focusNode: _focusNodeDtEnd,
+                                          child: Text(_controller3,
                                             style: TextStyle(
                                               fontSize: SizeConfig
                                                       .blockSizeHorizontal! *
                                                   3,
                                               fontWeight: FontWeight.w600,
-                                            ),
-                                            controller: _controller3,
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  "日付 (yyyy年mm月dd日 hh時mm分)",
-                                              border: InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  bottom: SizeConfig
-                                                          .blockSizeHorizontal! *
-                                                      3.2),
                                             ),
                                           ),
                                         ),
@@ -624,7 +610,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w900,
-              color: Colors.yellow,
+              color: Colors.white,
             ),
           );
         } else {
@@ -663,7 +649,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 4,
             fontWeight: FontWeight.w900,
-            color: Colors.yellow,
+            color: Colors.white,
           ),
         );
       }
@@ -726,7 +712,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   void dispose() {
     _controller1.dispose();
     _controller2.dispose();
-    _controller3.dispose();
     _controller4.dispose();
     _controller5.dispose();
     _index.dispose();
