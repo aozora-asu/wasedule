@@ -16,12 +16,11 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+
 
   @override
   Widget build(BuildContext context) {
+        SizeConfig().init(context);
     return Scaffold(
         body:SingleChildScrollView(child:Column(children: [Container(
       height: SizeConfig.blockSizeHorizontal! * 200,
@@ -51,11 +50,11 @@ class _CalendarState extends State<Calendar> {
   }
 } 
 // void main() {
-  List events = [
-    ('2023-10-22 03:59:00.000', '#1 アンケート', null),
-    ('2023-10-23 00:00:00.000', '#2 アンケート', null),
-    ('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
-  ];
+  // List events = [
+  //   ('2023-10-22 03:59:00.000', '#1 アンケート', null),
+  //   ('2023-10-23 00:00:00.000', '#2 アンケート', null),
+  //   ('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
+  // ];
 
 //   for (var event in events) {
 //     print('dtEnd: ${event.dtEnd}, description: ${event.description}, memo: ${event.memo}');
@@ -70,6 +69,17 @@ class Event {
   DateTime to;
   Color background;
   bool isAllDay;
+}
+
+List<Event> _getDataSource() {
+  final List<Event> event = <Event>[];
+  final DateTime today = DateTime.now();
+  final DateTime startTime =
+      DateTime(today.year, today.month, today.day, 9, 0, 0);
+  final DateTime endTime = startTime.add(const Duration(hours: 2));
+  event.add(
+      Event('イベント', startTime, endTime, const Color(0xFF0F8644), false));
+  return event;
 }
 
 class EventDataSource extends CalendarDataSource {
@@ -103,16 +113,7 @@ class EventDataSource extends CalendarDataSource {
   }
 }
 
-List<Event> _getDataSource() {  //ここをカレンダーのイベントDBに置換する予定
-  final List<Event> event = <Event>[];
-  final DateTime today = DateTime.now();
-  final DateTime startTime =
-      DateTime(today.year, today.month, today.day, 9, 0, 0);
-  final DateTime endTime = startTime.add(const Duration(hours: 2));
-  event.add(
-      Event('イベント', startTime, endTime, ACCENT_COLOR, false));
-  return event;
-}
+
 
 
 
