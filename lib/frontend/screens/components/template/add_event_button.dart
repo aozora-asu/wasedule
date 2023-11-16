@@ -173,7 +173,7 @@ class _InputFormState extends State<InputForm> {
           _showInputDialog(context);
         },
         foregroundColor: Colors.white,
-        backgroundColor:MAIN_COLOR,
+        backgroundColor:ACCENT_COLOR,
         isExtended: true,
         label: const Text('イベント追加'),
         icon: const Icon(Icons.add),
@@ -283,88 +283,3 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
 
 
 
-//入力サジェスチョン/////////////////////////////////////////////////////////////////////////////////////////////
-// class SuggestionListDialog extends StatelessWidget {
-//   final TextEditingController controller;
-
-//   SuggestionListDialog({required this.controller});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       content: SuggestionList(controller: controller),
-//     );
-//   }
-// }
-
-// class SuggestionList extends StatefulWidget {
-//   final TextEditingController controller;
-
-//   SuggestionList({required this.controller});
-
-//   @override
-//   _SuggestionListState createState() => _SuggestionListState();
-// }
-
-// class _SuggestionListState extends State<SuggestionList> {
-//   Map<String, List<dynamic>> data = {
-//     'fruits': ['Apple', 'Banana', 'Orange'],
-//     'colors': ['Red', 'Blue', 'Green'],
-//   };
-
-//   bool isTextFieldFocused = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Container(
-//           width: SizeConfig.blockSizeHorizontal! * 80,
-//           height: SizeConfig.blockSizeHorizontal! * 8.5,
-//           child: TextField(
-//             // ... 既存のコード
-//           ),
-//         ),
-//         SizedBox(height: 16),
-//         if (isTextFieldFocused)
-//           Expanded(
-//             // Wrap the ListView with Expanded
-//             child: _buildSuggestions(widget.controller.text),
-//           ),
-//       ],
-//     );
-//   }
-  
-
-//   Widget _buildSuggestions(String input) {
-//     List<String> suggestions = [];
-
-//     // Iterate through each key in the map
-//     data.forEach((key, value) {
-//       // Check if the key contains the input text
-//       if (key.toLowerCase().contains(input.toLowerCase())) {
-//         suggestions.add(key);
-//       }
-
-//       // Check if any value in the list contains the input text
-//       value.forEach((item) {
-//         if (item.toString().toLowerCase().contains(input.toLowerCase())) {
-//           suggestions.add(item.toString());
-//         }
-//       });
-//     });
-
-//     // Display the suggestions as a simple text list
-//     return ListView(
-//       children: suggestions
-//           .map(
-//             (suggestion) => Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 4.0),
-//               child: Text(suggestion),
-//             ),
-//           )
-//           .toList(),
-//     );
-//   }
-// }
