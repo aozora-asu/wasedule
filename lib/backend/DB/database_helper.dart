@@ -29,12 +29,23 @@ class TaskDatabaseHelper {
     ''');
   }
 
+  Future<void> _orderByDateTime() async {
+    await initDatabase();
+    await _database.query(
+      'tasks',
+      orderBy: 'dtEnd ASC', // 日付で昇順にソート
+    );
+    _database.close();
+  }
+
   // タスクの挿入
   Future<void> insertTask(TaskItem task) async {
+    await initDatabase();
     try {
       await _database.insert('tasks', task.toMap());
     } catch (e) {}
-    //うまくいった場合のこと(通常処理)をかく
+    await _orderByDateTime();
+    _database.close();
   }
 
   Future<void> deleteAllData(Database db) async {
@@ -52,7 +63,9 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
     await initDatabase();
+
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
+        orderBy: 'dtEnd ASC',
         columns: [
           'title',
           'dtEnd',
@@ -60,6 +73,7 @@ class TaskDatabaseHelper {
           'description',
           "isDone"
         ]); // 複数のカラムのデータを取得
+
     _database.close();
     return dataList;
   }
@@ -123,6 +137,7 @@ class TaskDatabaseHelper {
   Future<void> deleteExpairedTask() async {}
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
+    await _orderByDateTime();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
 
@@ -162,6 +177,7 @@ class TaskDatabaseHelper {
       // 2. データベースヘルパークラスを使用してデータベースに挿入
       await insertTask(taskItem);
     }
+    await _orderByDateTime();
     _database.close();
   }
 }
