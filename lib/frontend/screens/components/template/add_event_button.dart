@@ -13,7 +13,9 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
+
   TextEditingController _ScheduleController = TextEditingController();
+
   TextEditingController _DtStartcontroller = TextEditingController();
   TextEditingController _TimeStartcontroller = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();
@@ -23,7 +25,7 @@ class _InputFormState extends State<InputForm> {
   bool isAllDay = false;
   bool isPrivate = false;
   TextEditingController _PublicScheduleController = TextEditingController();
- 
+
   @override
   void initState() {
     isAllDay = false;
@@ -64,8 +66,8 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
-
               Container(
+
                   width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *8.5,
               child:TextFormField(
@@ -80,96 +82,105 @@ class _InputFormState extends State<InputForm> {
 
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *3,),
+
               DateTimePickerFormField(
                 dateController: _DtStartcontroller,
                 dateLabelText: '開始日*',
                 timeController: _TimeStartcontroller,
                 timeLabelText: '開始時刻',
               ),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
               DateTimePickerFormField(
                 dateController: _DtEndcontroller,
                 dateLabelText: '終了日',
                 timeController: _TimeEndcontroller,
                 timeLabelText: '終了時刻',
               ),
-
-        Container(child: Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('終日',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-           CupertinoSwitch(
-              value: isAllDay,
-              onChanged: (value) {
-                super.setState(() {
-                  isAllDay  = value;
-                  print(value);
-                });
-              },
-            ),
-          ],
-        ),),
-        
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
               Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _PublicScheduleController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'フレンド共有用'),
-              ),),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
-
-
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '終日',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(height: 20),
+                    CupertinoSwitch(
+                      value: isAllDay,
+                      onChanged: (value) {
+                        super.setState(() {
+                          isAllDay = value;
+                          print(value);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
+              Container(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 8.5,
+                child: TextField(
+                  controller: _PublicScheduleController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(), labelText: 'フレンド共有用'),
+                ),
+              ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
             ],
           ),
-          actions: [Row(
-            children:[ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 35,
-                  SizeConfig.blockSizeHorizontal! * 7.5),
+          actions: [
+            Row(children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                    Size(SizeConfig.blockSizeHorizontal! * 35,
+                        SizeConfig.blockSizeHorizontal! * 7.5),
+                  ),
+                ),
+                child: Text('戻る'),
               ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 5,
+                height: SizeConfig.blockSizeHorizontal! * 8.5,
               ),
-              child:Text('戻る'),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 5,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,),
-            ElevatedButton(
-              onPressed: () {
-                // ここに、入力データをDBにぶち込む処理を追加。
-                print('Schedule: ${_ScheduleController.text}');
-                print('Isallday: $isAllDay');
-                print('DtStart: ${_DtStartcontroller.text}');
-                print('DtEnd: ${_DtEndcontroller.text}');
-                print('IsPrivate: $isPrivate');
-                print('PublicSchedule: ${_PublicScheduleController.text}');
-                Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
-                 fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 35,
-                  SizeConfig.blockSizeHorizontal! * 7.5),
+              ElevatedButton(
+                onPressed: () {
+                  // ここに、入力データをDBにぶち込む処理を追加。
+                  print('Schedule: ${_ScheduleController.text}');
+                  print('Isallday: $isAllDay');
+                  print('DtStart: ${_DtStartcontroller.text}');
+                  print('DtEnd: ${_DtEndcontroller.text}');
+                  print('IsPrivate: $isPrivate');
+                  print('PublicSchedule: ${_PublicScheduleController.text}');
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color?>(MAIN_COLOR),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                    Size(SizeConfig.blockSizeHorizontal! * 35,
+                        SizeConfig.blockSizeHorizontal! * 7.5),
+                  ),
+                ),
+                child: Text('追加'),
               ),
-              ),
-              child: Text('追加'),
-            ),
-          ])
-
+            ])
           ],
         );
       },
@@ -189,7 +200,7 @@ class _InputFormState extends State<InputForm> {
           _showInputDialog(context);
         },
         foregroundColor: Colors.white,
-        backgroundColor:MAIN_COLOR,
+        backgroundColor: MAIN_COLOR,
         isExtended: true,
         label: const Text('イベント追加'),
         icon: const Icon(Icons.add),
@@ -197,6 +208,10 @@ class _InputFormState extends State<InputForm> {
     );
   }
 }
+
+
+
+
 
 class DateTimePickerFormField extends StatefulWidget {
   final TextEditingController dateController;
@@ -226,6 +241,7 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+
 builder: (BuildContext context, Widget? child) {
   return Theme(
     data: ThemeData.light().copyWith(
@@ -242,9 +258,11 @@ builder: (BuildContext context, Widget? child) {
     child: child!,
   );
 },
+
     );
 
     if (pickedDate != null) {
+
       setState(() {
         _selectedDate = pickedDate;
         widget.dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
@@ -270,6 +288,7 @@ builder: (BuildContext context, Widget? child) {
         _selectedTime = pickedTime;
         widget.timeController.text = pickedTime.format(context);
       });
+
     }
   }
 
@@ -279,6 +298,7 @@ builder: (BuildContext context, Widget? child) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
+
           width: 200, // 適切な幅を指定してください
           height: 40, // 適切な高さを指定してください
           child: InkWell(
@@ -310,6 +330,7 @@ builder: (BuildContext context, Widget? child) {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: widget.timeLabelText,
+
                 ),
               ),
             ),
