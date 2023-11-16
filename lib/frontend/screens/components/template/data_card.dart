@@ -8,6 +8,8 @@ import 'dart:async';
 import '../../pages/task_page.dart';
 
 Map<String, List<Widget>> FoldableMap = {}; //折りたたみ可能ウィジェットの管理用キメラ。
+List<String> TitleList = [];
+List<String> uniqueTitleList = TitleList.toSet().toList();
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -157,10 +159,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     SizeConfig().init(context);
     int index = int.parse(_index.text);
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
-    late Map<String,dynamic> removedItem = {};
-
-
-
+    TitleList.add(widget.title);
 
 
 

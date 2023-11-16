@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/cupertino.dart';
 
 class InputForm extends StatefulWidget {
   @override
@@ -10,33 +11,44 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
-  TextEditingController _TitleController = TextEditingController();
-  TextEditingController _DescriptionController = TextEditingController();
-  TextEditingController _SummaryController = TextEditingController();
+  TextEditingController _DescriptionController = TextEditingController();//
+    TextEditingController _ScheduleController = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();
+  TextEditingController _DtStartcontroller = TextEditingController();
+  bool isAllDay = false;
+  bool isPrivate = false;
+  TextEditingController _PublicScheduleController = TextEditingController();
+ 
+  @override
+  void initState() {
+    isAllDay = false;
+    isPrivate = false;
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _TitleController.dispose();
-    _SummaryController.dispose();
+    _ScheduleController.dispose();
+    _PublicScheduleController.dispose();
     _DtEndcontroller.dispose();
-    _DescriptionController.dispose();
+    _DtStartcontroller.dispose();
     super.dispose();
   }
 
   void _showInputDialog(BuildContext context) {
     // ダイアログを表示する前にコントローラーのテキストをクリア
-    _TitleController.clear();
-    _SummaryController.clear();
+    _ScheduleController.clear();
+    _PublicScheduleController.clear();
     _DtEndcontroller.clear();
     _DescriptionController.clear();
+    _DtStartcontroller.clear();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'イベント情報を入力…',
+            '予定を入力…',
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 7,
               fontWeight: FontWeight.w900,
@@ -44,45 +56,65 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
+
               Container(
                   width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *8.5,
               child:TextField(
-                controller: _TitleController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
+                controller: _ScheduleController,
+                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '予定名'),
               ),),
 
 
-              // SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-              //     height:SizeConfig.blockSizeHorizontal! *3,),
-              //SuggestionList(controller:_TitleController,),
-              
-
-              
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *3,),
-              Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _SummaryController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '要約(通知表示用)'),
-              ),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
-              Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _DescriptionController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '詳細'),
-              ),),
+              DateTimePickerFormField(
+                controller: _DtStartcontroller,
+                labelText: '開始日時',
+              ),
+
+
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *3,),
               DateTimePickerFormField(
                 controller: _DtEndcontroller,
-                labelText: '締め切り日時(２４時間表示)',
+                labelText: '終了日時',
               ),
+
+        Container(child: Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('終日',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 20),
+           CupertinoSwitch(
+              value: isAllDay,
+              onChanged: (value) {
+                super.setState(() {
+                  isAllDay  = value;
+                  print(value);
+                });
+              },
+            ),
+          ],
+        ),),
+        
+
+              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *3,),
+              Container(
+                  width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *8.5,
+              child:TextField(
+                controller: _PublicScheduleController,
+                decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'フレンド共有用'),
+              ),),
+
+
+              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *3,),
+
+
             ],
           ),
           actions: [Row(
@@ -103,10 +135,12 @@ class _InputFormState extends State<InputForm> {
             ElevatedButton(
               onPressed: () {
                 // ここに、入力データをDBにぶち込む処理を追加。
-                print('Title: ${_TitleController.text}');
-                print('Summary: ${_SummaryController.text}');
-                print('Description: ${_DescriptionController.text}');
+                print('Schedule: ${_ScheduleController.text}');
+                print('Isallday: $isAllDay');
+                print('DtStart: ${_DtStartcontroller.text}');
                 print('DtEnd: ${_DtEndcontroller.text}');
+                print('IsPrivate: $isPrivate');
+                print('PublicSchedule: ${_PublicScheduleController.text}');
                 Navigator.of(context).pop();
               },
               style: ButtonStyle(
@@ -187,7 +221,7 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
     if (pickedDate != null) {
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay(hour: 23, minute: 59),
+        initialTime: TimeOfDay(hour: 00, minute: 00),
         initialEntryMode: TimePickerEntryMode.input,
         builder: (context, child) {
          return MediaQuery(
