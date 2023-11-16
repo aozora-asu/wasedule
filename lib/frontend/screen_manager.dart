@@ -5,6 +5,7 @@ import './screens/pages/calendar_page.dart';
 import './screens/pages/task_page.dart';
 
 import 'screens/components/organism/app_bar.dart';
+import 'screens/components/organism/burger_menu.dart';
 
 //主に画面の遷移などに関する処理をまとめるもの
 
@@ -32,6 +33,7 @@ class _FirstPageState extends State<FirstPage> {
 
     return Scaffold(
       appBar: const CustomAppBar(),
+      drawer: burgerMenu(),
       body: body,
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _currentIndex,

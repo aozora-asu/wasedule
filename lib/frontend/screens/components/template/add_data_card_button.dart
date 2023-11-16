@@ -46,32 +46,19 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
-              // Container(
-              //     width:SizeConfig.blockSizeHorizontal! * 80,
-              //     height:SizeConfig.blockSizeHorizontal! *8.5,
-              // child:TextField(
-              //   controller: _TitleController,
-              //   decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
-              // ),),
-              // SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-              //     height:SizeConfig.blockSizeHorizontal! *3,),
 
 
           Container( 
              width:SizeConfig.blockSizeHorizontal! * 80,
              height:SizeConfig.blockSizeHorizontal! *16,
-            // padding: EdgeInsets.all(10),
-            // alignment: Alignment.center,
             child: EasyAutocomplete(
               suggestions: uniqueTitleList,
-              onChanged: (value) => print('onChanged value: $value'),
-              onSubmitted: (value) => print('onSubmitted value: $value'),
               controller: _TitleController,
               decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
             )
           ),
 
-              
+
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *3,),
               Container(
