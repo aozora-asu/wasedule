@@ -69,3 +69,17 @@ Future<String> _getTask(String urlString) async {
 // }
 
 // void main() => runApp(MaterialApp(home: TextFileViewer()));
+
+
+
+map={
+  "title":{widget:"datetime"},
+  {"title":"datetime"}:widget,
+  {"title":"datetime"}:widget,
+  {"title":"datetime"}:widget,
+  {"title":"datetime"}:widget,
+  };
+
+
+
+map["title"]

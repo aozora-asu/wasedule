@@ -161,39 +161,40 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
     TitleList.add(widget.title);
 
-
-
 //スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
-  void _showSnackBar(BuildContext context) {
-   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: const Text(
-        'タスクを削除しました…',
-        style: TextStyle(color: Colors.black),
-      ),
-      action: SnackBarAction(
-        label: '元に戻す',
-        textColor: Colors.lightBlue,
-        onPressed: () {
-         setState(() {
-         });
-        },
-      ),
-      backgroundColor: WIDGET_OUTLINE_COLOR,
-      duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
-    ),
-    ).closed.then((reason) {
-      if (reason == SnackBarClosedReason.action) {
-      print("消去取消");
+    void _showSnackBar(BuildContext context) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+            SnackBar(
+              content: const Text(
+                'タスクを削除しました…',
+                style: TextStyle(color: Colors.black),
+              ),
+              action: SnackBarAction(
+                label: '元に戻す',
+                textColor: Colors.lightBlue,
+                onPressed: () {
+                  setState(() {});
+                },
+              ),
+              backgroundColor: WIDGET_OUTLINE_COLOR,
+              duration:
+                  const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
+            ),
+          )
+          .closed
+          .then((reason) {
+        if (reason == SnackBarClosedReason.action) {
+          print("消去取消");
         } else {
-      print("消去発動");
-      // SnackBar が閉じられたときの処理（非表示になったとき）
-      databaseHelper.unDisplay(index);
-      _controller4.text = "1";
-      }
-    });
-}
-    
+          print("消去発動");
+          // SnackBar が閉じられたときの処理（非表示になったとき）
+          databaseHelper.unDisplay(index);
+          _controller4.text = "1";
+        }
+      });
+    }
+
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
@@ -511,7 +512,8 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                               SizeConfig.blockSizeHorizontal! *
                                                   6,
                                           alignment: Alignment.center,
-                                          child: Text(_controller3,
+                                          child: Text(
+                                            _controller3,
                                             style: TextStyle(
                                               fontSize: SizeConfig
                                                       .blockSizeHorizontal! *
@@ -551,10 +553,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ],
-        )
-        );
-
-        
+        ));
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -717,7 +716,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 }
-
 
 void informationAutoDismissiblePopup(BuildContext context) {
   showDialog(
@@ -927,16 +925,14 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
         foldableCard
       ];
     } else {
-      if (widget.DataCardTitle != null) {
-        if (FoldableMap[
-                "$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] ==
-            null) {
-          FoldableMap[
-              "$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] = [];
-        }
-        FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!
-            .add(foldableCard);
+      if (FoldableMap[
+              "$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] ==
+          null) {
+        FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"] =
+            [];
       }
+      FoldableMap["$widget.DataCardTitle${widget.DataCardDtEnd.toString()}"]!
+          .add(foldableCard);
     }
   }
 
