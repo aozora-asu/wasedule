@@ -37,6 +37,7 @@ dependencies:
   google_fonts: ^6.1.0
   table_calendar: ^3.0.9
   provider: ^6.0.5
+  easy_autocomplete: ^1.6.0
   syncfusion_flutter_calendar: ^23.1.44
   flutter_localizations:
    sdk: flutter

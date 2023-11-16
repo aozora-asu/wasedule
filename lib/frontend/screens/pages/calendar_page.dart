@@ -20,14 +20,14 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-        SizeConfig().init(context);
+    SizeConfig().init(context);
     return Scaffold(
         body:SingleChildScrollView(child:Column(children: [Container(
       height: SizeConfig.blockSizeHorizontal! * 200,
       child:SfCalendar(
       view: CalendarView.month,
       backgroundColor: BACKGROUND_COLOR,
-      todayHighlightColor: ACCENT_COLOR,
+      todayHighlightColor: MAIN_COLOR,
       showNavigationArrow: true,
       selectionDecoration: BoxDecoration(
             color: Colors.transparent,
@@ -78,7 +78,7 @@ List<Event> _getDataSource() {
       DateTime(today.year, today.month, today.day, 9, 0, 0);
   final DateTime endTime = startTime.add(const Duration(hours: 2));
   event.add(
-      Event('イベント', startTime, endTime, const Color(0xFF0F8644), false));
+      Event('大学', startTime, endTime, ACCENT_COLOR, false));
   return event;
 }
 
