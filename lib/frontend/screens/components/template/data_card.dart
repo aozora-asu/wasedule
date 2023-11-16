@@ -482,6 +482,8 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                             child: Row(
                               children: [
                                 SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 8,
+                                  height: SizeConfig.blockSizeHorizontal! * 6,
                                   child: Text(
                                     ' 期限',
                                     textAlign: TextAlign.left,

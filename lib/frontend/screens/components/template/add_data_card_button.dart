@@ -25,10 +25,38 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
+
   final TextEditingController _TitleController = TextEditingController();
   final TextEditingController _DescriptionController = TextEditingController();
   final TextEditingController _SummaryController = TextEditingController();
   final TextEditingController _DtEndcontroller = TextEditingController();
+
+
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _TitleController.addListener(_validateInput);
+  }
+
+  void _validateInput() {
+    setState(() {
+      _isButtonEnabled = _TitleController.text.isNotEmpty;
+    });
+  }
+
+  void _handleSubmit() {
+    // フォームが有効な場合の処理
+    if (_isButtonEnabled) {
+      // ここで次に進む処理を行います
+      print('Valid input: ${_TitleController.text}');
+    } else {
+      // フォームが無効な場合の処理
+      print('Input is empty. Cannot proceed.');
+    }
+  }
+
 
   @override
   void dispose() {
@@ -59,15 +87,6 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
-              // Container(
-              //     width:SizeConfig.blockSizeHorizontal! * 80,
-              //     height:SizeConfig.blockSizeHorizontal! *8.5,
-              // child:TextField(
-              //   controller: _TitleController,
-              //   decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
-              // ),),
-              // SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-              //     height:SizeConfig.blockSizeHorizontal! *3,),
 
               Container(
                   width: SizeConfig.blockSizeHorizontal! * 80,
@@ -83,10 +102,25 @@ class _InputFormState extends State<InputForm> {
                         border: OutlineInputBorder(), labelText: '授業名/タスク名'),
                   )),
 
+
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
+
+          Container( 
+             width:SizeConfig.blockSizeHorizontal! * 80,
+             height:SizeConfig.blockSizeHorizontal! *16,
+            child: EasyAutocomplete(
+              suggestions: uniqueTitleList,
+              controller: _TitleController,
+              decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
+            )
+          ),
+
+
+              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *3,),
               Container(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,

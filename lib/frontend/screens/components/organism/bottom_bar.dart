@@ -14,8 +14,8 @@ class CustomBottomBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onItemTapped,
       backgroundColor: MAIN_COLOR,
-      selectedItemColor: ACCENT_COLOR,
-      unselectedItemColor: Colors.white,
+      selectedItemColor: WIDGET_COLOR,
+      unselectedItemColor:WIDGET_COLOR,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today),
@@ -30,6 +30,8 @@ class CustomBottomBar extends StatelessWidget {
           label: 'フレンド',
         ),
       ],
+        selectedFontSize: 17.0, // 選択されたアイテムのテキストサイズ
+  unselectedFontSize: 12.0, // 選択されていないアイテムのテキストサイズ
     );
   }
 }

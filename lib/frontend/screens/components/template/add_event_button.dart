@@ -4,6 +4,8 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import '../../../../frontend/validators.dart';
 
 class InputForm extends StatefulWidget {
   @override
@@ -11,10 +13,15 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
-  TextEditingController _DescriptionController = TextEditingController(); //
+
   TextEditingController _ScheduleController = TextEditingController();
-  TextEditingController _DtEndcontroller = TextEditingController();
+
   TextEditingController _DtStartcontroller = TextEditingController();
+  TextEditingController _TimeStartcontroller = TextEditingController();
+  TextEditingController _DtEndcontroller = TextEditingController();
+  TextEditingController _TimeEndcontroller = TextEditingController();
+  
+
   bool isAllDay = false;
   bool isPrivate = false;
   TextEditingController _PublicScheduleController = TextEditingController();
@@ -31,7 +38,9 @@ class _InputFormState extends State<InputForm> {
     _ScheduleController.dispose();
     _PublicScheduleController.dispose();
     _DtEndcontroller.dispose();
+    _TimeEndcontroller.dispose();
     _DtStartcontroller.dispose();
+    _TimeStartcontroller.dispose();
     super.dispose();
   }
 
@@ -40,8 +49,9 @@ class _InputFormState extends State<InputForm> {
     _ScheduleController.clear();
     _PublicScheduleController.clear();
     _DtEndcontroller.clear();
-    _DescriptionController.clear();
     _DtStartcontroller.clear();
+    _TimeStartcontroller.clear();
+    _TimeEndcontroller.clear();
 
     showDialog(
       context: context,
@@ -57,29 +67,37 @@ class _InputFormState extends State<InputForm> {
           content: Column(
             children: [
               Container(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeHorizontal! * 8.5,
-                child: TextField(
-                  controller: _ScheduleController,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: '予定名'),
+
+                  width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *8.5,
+              child:TextFormField(
+                controller: _ScheduleController,
+                decoration: InputDecoration(border: OutlineInputBorder(),errorMaxLines: 3,
+                labelText: '予定名*',
+                labelStyle: TextStyle(color:Colors.red),
                 ),
+                validator: nameValidator,
+              ),),
+
+
+              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *3,),
+
+              DateTimePickerFormField(
+                dateController: _DtStartcontroller,
+                dateLabelText: '開始日*',
+                timeController: _TimeStartcontroller,
+                timeLabelText: '開始時刻',
               ),
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
               DateTimePickerFormField(
-                controller: _DtStartcontroller,
-                labelText: '開始日時',
-              ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
-              DateTimePickerFormField(
-                controller: _DtEndcontroller,
-                labelText: '終了日時',
+                dateController: _DtEndcontroller,
+                dateLabelText: '終了日',
+                timeController: _TimeEndcontroller,
+                timeLabelText: '終了時刻',
               ),
               Container(
                 child: Row(
@@ -191,11 +209,22 @@ class _InputFormState extends State<InputForm> {
   }
 }
 
-class DateTimePickerFormField extends StatefulWidget {
-  final TextEditingController controller;
-  final String labelText;
 
-  DateTimePickerFormField({required this.controller, required this.labelText});
+
+
+
+class DateTimePickerFormField extends StatefulWidget {
+  final TextEditingController dateController;
+  final TextEditingController timeController;
+  final String dateLabelText;
+  final String timeLabelText;
+
+  DateTimePickerFormField({
+    required this.dateController,
+    required this.timeController,
+    required this.dateLabelText,
+    required this.timeLabelText,
+  });
 
   @override
   _DateTimePickerFormFieldState createState() =>
@@ -206,56 +235,60 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  Future<void> _selectDateAndTime(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light().copyWith(
-                // ヘッダーの色
-                primary: MAIN_COLOR),
-            // 日付選択部の色
-            dialogBackgroundColor: WIDGET_COLOR,
-            // 選択されたときの円の色
-            buttonTheme: const ButtonThemeData(
-              textTheme: ButtonTextTheme.accent,
-            ),
-          ),
+
+builder: (BuildContext context, Widget? child) {
+  return Theme(
+    data: ThemeData.light().copyWith(
+      colorScheme: ColorScheme.light().copyWith(
+        // ヘッダーの色
+        primary: Colors.blue,
+      ), // 日付選択部の色
+      // textButtonTheme: TextButtonThemeData(
+      //   style: TextButton.styleFrom(
+      //     // 選択されたときの円の色
+      //   ),
+      // ),
+    ),
+    child: child!,
+  );
+},
+
+    );
+
+    if (pickedDate != null) {
+
+      setState(() {
+        _selectedDate = pickedDate;
+        widget.dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: 00, minute: 00),
+      initialEntryMode: TimePickerEntryMode.input,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
           child: child!,
         );
       },
     );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay(hour: 00, minute: 00),
-        initialEntryMode: TimePickerEntryMode.input,
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!,
-          );
-        },
-      );
 
-      if (pickedTime != null) {
-        setState(() {
-          _selectedDate = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
+    if (pickedTime != null) {
+      setState(() {
+        _selectedTime = pickedTime;
+        widget.timeController.text = pickedTime.format(context);
+      });
 
-          widget.controller.text =
-              DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
-        });
-      }
     }
   }
 
@@ -265,18 +298,39 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          width: SizeConfig.blockSizeHorizontal! * 80,
-          height: SizeConfig.blockSizeHorizontal! * 8.5,
+
+          width: 200, // 適切な幅を指定してください
+          height: 40, // 適切な高さを指定してください
           child: InkWell(
             onTap: () {
-              _selectDateAndTime(context);
+              _selectDate(context);
             },
             child: IgnorePointer(
               child: TextFormField(
-                controller: widget.controller,
+                controller: widget.dateController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: widget.labelText,
+                  labelText: widget.dateLabelText,
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
+        Container(
+          width: 200, // 適切な幅を指定してください
+          height: 40, // 適切な高さを指定してください
+          child: InkWell(
+            onTap: () {
+              _selectTime(context);
+            },
+            child: IgnorePointer(
+              child: TextFormField(
+                controller: widget.timeController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: widget.timeLabelText,
+
                 ),
               ),
             ),
@@ -286,97 +340,3 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-//入力サジェスチョン/////////////////////////////////////////////////////////////////////////////////////////////
-// class SuggestionListDialog extends StatelessWidget {
-//   final TextEditingController controller;
-
-//   SuggestionListDialog({required this.controller});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       content: SuggestionList(controller: controller),
-//     );
-//   }
-// }
-
-// class SuggestionList extends StatefulWidget {
-//   final TextEditingController controller;
-
-//   SuggestionList({required this.controller});
-
-//   @override
-//   _SuggestionListState createState() => _SuggestionListState();
-// }
-
-// class _SuggestionListState extends State<SuggestionList> {
-//   Map<String, List<dynamic>> data = {
-//     'fruits': ['Apple', 'Banana', 'Orange'],
-//     'colors': ['Red', 'Blue', 'Green'],
-//   };
-
-//   bool isTextFieldFocused = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Container(
-//           width: SizeConfig.blockSizeHorizontal! * 80,
-//           height: SizeConfig.blockSizeHorizontal! * 8.5,
-//           child: TextField(
-//             // ... 既存のコード
-//           ),
-//         ),
-//         SizedBox(height: 16),
-//         if (isTextFieldFocused)
-//           Expanded(
-//             // Wrap the ListView with Expanded
-//             child: _buildSuggestions(widget.controller.text),
-//           ),
-//       ],
-//     );
-//   }
-  
-
-//   Widget _buildSuggestions(String input) {
-//     List<String> suggestions = [];
-
-//     // Iterate through each key in the map
-//     data.forEach((key, value) {
-//       // Check if the key contains the input text
-//       if (key.toLowerCase().contains(input.toLowerCase())) {
-//         suggestions.add(key);
-//       }
-
-//       // Check if any value in the list contains the input text
-//       value.forEach((item) {
-//         if (item.toString().toLowerCase().contains(input.toLowerCase())) {
-//           suggestions.add(item.toString());
-//         }
-//       });
-//     });
-
-//     // Display the suggestions as a simple text list
-//     return ListView(
-//       children: suggestions
-//           .map(
-//             (suggestion) => Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 4.0),
-//               child: Text(suggestion),
-//             ),
-//           )
-//           .toList(),
-//     );
-//   }
-// }
