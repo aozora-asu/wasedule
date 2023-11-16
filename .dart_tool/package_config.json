@@ -74,6 +74,24 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "dbus",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/dbus-0.7.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
+      "name": "device_info_plus",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/device_info_plus-9.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "device_info_plus_platform_interface",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "easy_autocomplete",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/easy_autocomplete-1.6.0",
       "packageUri": "lib/",
@@ -88,6 +106,12 @@
     {
       "name": "ffi",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/ffi-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "file",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/file-7.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -110,6 +134,24 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "flutter_local_notifications",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications-16.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_local_notifications_linux",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-4.0.0+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_local_notifications_platform_interface",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-7.0.0+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_localizations",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_localizations",
       "packageUri": "lib/",
@@ -118,6 +160,18 @@
     {
       "name": "flutter_test",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "flutter_timezone",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_timezone-1.0.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -386,6 +440,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "win32_registry",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/win32_registry-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "xdg_directories",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/xdg_directories-1.0.3",
       "packageUri": "lib/",
@@ -410,7 +470,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-11-16T08:41:20.184806Z",
+  "generated": "2023-11-16T11:21:17.833073Z",
   "generator": "pub",
   "generatorVersion": "3.1.5"
 }
