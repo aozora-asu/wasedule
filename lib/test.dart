@@ -72,14 +72,3 @@ Future<String> _getTask(String urlString) async {
 
 
 
-map={
-  "title":{widget:"datetime"},
-  {"title":"datetime"}:widget,
-  {"title":"datetime"}:widget,
-  {"title":"datetime"}:widget,
-  {"title":"datetime"}:widget,
-  };
-
-
-
-map["title"]

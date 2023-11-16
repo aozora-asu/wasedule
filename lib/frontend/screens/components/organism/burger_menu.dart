@@ -44,7 +44,7 @@ class burgerMenu extends StatelessWidget {
               ),
             ),
             onTap: () {
-              Navigator.pop(context); // Drawerを閉じる
+              Navigator.pop(context); 
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SettingsPage()),
@@ -53,7 +53,7 @@ class burgerMenu extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.airline_seat_flat_angled,
+              Icons.abc,
               color: MAIN_COLOR,
             ),
             title: Text(

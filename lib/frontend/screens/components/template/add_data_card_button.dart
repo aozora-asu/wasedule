@@ -16,6 +16,30 @@ class _InputFormState extends State<InputForm> {
   TextEditingController _DescriptionController = TextEditingController();
   TextEditingController _SummaryController = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _TitleController.addListener(_validateInput);
+  }
+
+  void _validateInput() {
+    setState(() {
+      _isButtonEnabled = _TitleController.text.isNotEmpty;
+    });
+  }
+
+  void _handleSubmit() {
+    // フォームが有効な場合の処理
+    if (_isButtonEnabled) {
+      // ここで次に進む処理を行います
+      print('Valid input: ${_TitleController.text}');
+    } else {
+      // フォームが無効な場合の処理
+      print('Input is empty. Cannot proceed.');
+    }
+  }
 
   @override
   void dispose() {
