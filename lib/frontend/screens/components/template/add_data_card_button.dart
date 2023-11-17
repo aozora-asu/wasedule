@@ -5,6 +5,20 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
+import '../../../../backend/DB/models/task.dart';
+import '../../../../backend/DB/database_helper.dart';
+
+Future<void> registeTaskToDB(Map<String, dynamic> task) async {
+  TaskItem taskItem;
+  taskItem = TaskItem(
+      uid: null,
+      title: task["title"],
+      dtEnd: task["dtEnd"],
+      isDone: 0,
+      summary: task["summary"],
+      description: task["description"]);
+  await TaskDatabaseHelper().insertTask(taskItem);
+}
 
 class InputForm extends StatefulWidget {
   @override
@@ -12,21 +26,22 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
-  TextEditingController _TitleController = TextEditingController();
-  TextEditingController _DescriptionController = TextEditingController();
-  TextEditingController _SummaryController = TextEditingController();
-  TextEditingController _DtEndcontroller = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _summaryController = TextEditingController();
+  final TextEditingController _dtEndcontroller = TextEditingController();
+
   bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _TitleController.addListener(_validateInput);
+    _titleController.addListener(_validateInput);
   }
 
   void _validateInput() {
     setState(() {
-      _isButtonEnabled = _TitleController.text.isNotEmpty;
+      _isButtonEnabled = _titleController.text.isNotEmpty;
     });
   }
 
@@ -34,7 +49,7 @@ class _InputFormState extends State<InputForm> {
     // フォームが有効な場合の処理
     if (_isButtonEnabled) {
       // ここで次に進む処理を行います
-      print('Valid input: ${_TitleController.text}');
+      print('Valid input: ${_titleController.text}');
     } else {
       // フォームが無効な場合の処理
       print('Input is empty. Cannot proceed.');
@@ -43,19 +58,19 @@ class _InputFormState extends State<InputForm> {
 
   @override
   void dispose() {
-    _TitleController.dispose();
-    _SummaryController.dispose();
-    _DtEndcontroller.dispose();
-    _DescriptionController.dispose();
+    _titleController.dispose();
+    _summaryController.dispose();
+    _dtEndcontroller.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   void _showInputDialog(BuildContext context) {
     // ダイアログを表示する前にコントローラーのテキストをクリア
-    _TitleController.clear();
-    _SummaryController.clear();
-    _DtEndcontroller.clear();
-    _DescriptionController.clear();
+    _titleController.clear();
+    _summaryController.clear();
+    _dtEndcontroller.clear();
+    _descriptionController.clear();
 
     showDialog(
       context: context,
@@ -70,80 +85,102 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
-
-
-          Container( 
-             width:SizeConfig.blockSizeHorizontal! * 80,
-             height:SizeConfig.blockSizeHorizontal! *16,
-            child: EasyAutocomplete(
-              suggestions: uniqueTitleList,
-              controller: _TitleController,
-              decoration: InputDecoration(border: OutlineInputBorder(),labelText: '授業名/タスク名'),
-            )
-          ),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
               Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _SummaryController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '要約(通知表示用)'),
-              ),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
+                  width: SizeConfig.blockSizeHorizontal! * 80,
+                  height: SizeConfig.blockSizeHorizontal! * 16,
+                  // padding: EdgeInsets.all(10),
+                  // alignment: Alignment.center,
+                  child: EasyAutocomplete(
+                    suggestions: uniqueTitleList,
+                    onChanged: (value) => print('onChanged value: $value'),
+                    onSubmitted: (value) => print('onSubmitted value: $value'),
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(), labelText: '授業名/タスク名'),
+                  )),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
               Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _DescriptionController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: '詳細'),
-              ),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 8.5,
+                child: TextField(
+                  controller: _summaryController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(), labelText: '要約(通知表示用)'),
+                ),
+              ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
+              Container(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 8.5,
+                child: TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(), labelText: '詳細'),
+                ),
+              ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
               DateTimePickerFormField(
-                controller: _DtEndcontroller,
+                controller: _dtEndcontroller,
                 labelText: '締め切り日時(２４時間表示)',
               ),
             ],
           ),
-          actions: [Row(
-            children:[ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 35,
-                  SizeConfig.blockSizeHorizontal! * 7.5),
+          actions: [
+            Row(children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                    Size(SizeConfig.blockSizeHorizontal! * 35,
+                        SizeConfig.blockSizeHorizontal! * 7.5),
+                  ),
+                ),
+                child: const Text('戻る'),
               ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 5,
+                height: SizeConfig.blockSizeHorizontal! * 8.5,
               ),
-              child:Text('戻る'),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 5,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,),
-            ElevatedButton(
-              onPressed: () {
-                // ここに、入力データをDBにぶち込む処理を追加。
-                print('Title: ${_TitleController.text}');
-                print('Summary: ${_SummaryController.text}');
-                print('Description: ${_DescriptionController.text}');
-                print('DtEnd: ${_DtEndcontroller.text}');
-                Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
-                 fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 35,
-                  SizeConfig.blockSizeHorizontal! * 7.5),
-              ),
-              ),
-              child: Text('追加'),
-            ),
-          ])
+              ElevatedButton(
+                onPressed: () {
+                  // ここに、入力データをDBにぶち込む処理を追加。
+                  Map<String, dynamic> taskItem = {};
+                  taskItem["title"] = _titleController.text;
+                  taskItem["summary"] = _summaryController.text;
+                  taskItem["description"] = _descriptionController.text;
+                  taskItem["dtEnd"] = DateTime.parse(_dtEndcontroller.text)
+                      .millisecondsSinceEpoch;
 
+                  setState(() {
+                    registeTaskToDB(taskItem);
+                  });
+
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color?>(MAIN_COLOR),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                    Size(SizeConfig.blockSizeHorizontal! * 35,
+                        SizeConfig.blockSizeHorizontal! * 7.5),
+                  ),
+                ),
+                child: const Text('追加'),
+              ),
+            ])
           ],
         );
       },
@@ -171,6 +208,7 @@ class _InputFormState extends State<InputForm> {
     );
   }
 }
+
 class DateTimePickerFormField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
@@ -178,7 +216,8 @@ class DateTimePickerFormField extends StatefulWidget {
   DateTimePickerFormField({required this.controller, required this.labelText});
 
   @override
-  _DateTimePickerFormFieldState createState() => _DateTimePickerFormFieldState();
+  _DateTimePickerFormFieldState createState() =>
+      _DateTimePickerFormFieldState();
 }
 
 class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
@@ -193,10 +232,10 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data:ThemeData.light().copyWith(
-                colorScheme: ColorScheme.light().copyWith(
-            // ヘッダーの色
-            primary: MAIN_COLOR),
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light().copyWith(
+                // ヘッダーの色
+                primary: MAIN_COLOR),
             // 日付選択部の色
             dialogBackgroundColor: WIDGET_COLOR,
             // 選択されたときの円の色
@@ -214,11 +253,11 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
         initialTime: TimeOfDay(hour: 23, minute: 59),
         initialEntryMode: TimePickerEntryMode.input,
         builder: (context, child) {
-         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+            child: child!,
+          );
+        },
       );
 
       if (pickedTime != null) {
@@ -231,7 +270,8 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
             pickedTime.minute,
           );
 
-          widget.controller.text = DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
+          widget.controller.text =
+              DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
         });
       }
     }
@@ -242,24 +282,24 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-       Container(
-        width:SizeConfig.blockSizeHorizontal! * 80,
-        height:SizeConfig.blockSizeHorizontal! *8.5,
-        child:InkWell(
-          onTap: () {
-            _selectDateAndTime(context);
-          },
-          child: IgnorePointer(
-            child: TextFormField(
-              controller: widget.controller,
-              decoration: InputDecoration(
-                border:OutlineInputBorder(),
-                labelText: widget.labelText,
+        Container(
+          width: SizeConfig.blockSizeHorizontal! * 80,
+          height: SizeConfig.blockSizeHorizontal! * 8.5,
+          child: InkWell(
+            onTap: () {
+              _selectDateAndTime(context);
+            },
+            child: IgnorePointer(
+              child: TextFormField(
+                controller: widget.controller,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: widget.labelText,
+                ),
               ),
             ),
           ),
         ),
-       ),
       ],
     );
   }

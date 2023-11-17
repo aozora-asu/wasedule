@@ -1,5 +1,5 @@
 class TaskItem {
-  String uid;
+  String? uid;
   String title;
   int dtEnd;
   String? summary;
@@ -8,7 +8,7 @@ class TaskItem {
   int isDone;
 
   TaskItem({
-    required this.uid,
+    this.uid,
     required this.title,
     required this.dtEnd,
     this.summary,
