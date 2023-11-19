@@ -9,53 +9,101 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../size_config.dart';
 import '../components/template/add_event_button.dart';
 
-
 class Calendar extends StatefulWidget {
   @override
   _CalendarState createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
-
+  Future<List<Map<String, dynamic>>> _getDataSource() async {
+    Future<List<Map<String, dynamic>>> scheduleList =
+        ScheduleDatabaseHelper().getScheduleFromDB();
+    final List<Event> event = <Event>[];
+    final DateTime today = DateTime.now();
+    final DateTime startTime =
+        DateTime(today.year, today.month, today.day, 9, 0, 0);
+    final DateTime endTime = startTime.add(const Duration(hours: 2));
+    event.add(Event('大学', startTime, endTime, ACCENT_COLOR, false));
+    return scheduleList;
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        body:SingleChildScrollView(child:Column(children: [Container(
-      height: SizeConfig.blockSizeHorizontal! * 200,
-      child:SfCalendar(
-      view: CalendarView.month,
-      backgroundColor: BACKGROUND_COLOR,
-      todayHighlightColor: MAIN_COLOR,
-      showNavigationArrow: true,
-      selectionDecoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(color: MAIN_COLOR,width: 3),),
-      onTap: (CalendarTapDetails details) {
-                  print("Hello,World!");
-                  
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: SizeConfig.blockSizeHorizontal! * 200,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _getDataSource(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // データが取得される間、ローディングインディケータを表示できます。
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    // エラーがある場合、エラーメッセージを表示します。
+                    return Text('エラー: ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // データがないか、データが空の場合、メッセージを表示できます。
+                    return Text('利用可能なイベントはありません。');
+                  } else {
+                    // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
+                    final List<Map<String, dynamic>> scheduleList =
+                        snapshot.data!;
+                    final List<Event> events = <Event>[];
+
+                    // スケジュールリストからイベントを作成するか、必要に応じて変更してください。
+                    for (var schedule in scheduleList) {
+                      // スケジュールデータを解析し、Event オブジェクトを作成します。
+                      // 例：
+                      // final String eventName = schedule['eventName'];
+                      // final DateTime startTime = schedule['startTime'];
+                      // final DateTime endTime = schedule['endTime'];
+                      // final Color background = schedule['background'];
+                      // final bool isAllDay = schedule['isAllDay'];
+                      // events.add(Event(eventName, startTime, endTime, background, isAllDay));
+                    }
+
+                    return SfCalendar(
+                      view: CalendarView.month,
+                      backgroundColor: BACKGROUND_COLOR,
+                      todayHighlightColor: MAIN_COLOR,
+                      showNavigationArrow: true,
+                      selectionDecoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: MAIN_COLOR, width: 3),
+                      ),
+                      onTap: (CalendarTapDetails details) {
+                        print("こんにちは、世界！");
+                      },
+                      monthViewSettings: MonthViewSettings(
+                        showAgenda: true,
+                        appointmentDisplayMode:
+                            MonthAppointmentDisplayMode.appointment,
+                      ),
+                      dataSource: EventDataSource(events),
+                    );
+                  }
                 },
-      monthViewSettings: MonthViewSettings(
-        showAgenda: true,
-        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+              ),
+            ),
+            briefTaskList(),
+          ],
+        ),
       ),
-      dataSource: EventDataSource(_getDataSource()),
-      
-    ),
-    ),briefTaskList()
-    ])
-    ),
-     floatingActionButton:AddEventButton(),
+      floatingActionButton: AddEventButton(),
     );
   }
-} 
+}
+
 // void main() {
-  // List events = [
-  //   ('2023-10-22 03:59:00.000', '#1 アンケート', null),
-  //   ('2023-10-23 00:00:00.000', '#2 アンケート', null),
-  //   ('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
-  // ];
+// List events = [
+//   ('2023-10-22 03:59:00.000', '#1 アンケート', null),
+//   ('2023-10-23 00:00:00.000', '#2 アンケート', null),
+//   ('2023-10-05 05:00:00.000', '質問申請フォーム/Question Application Form', null),
+// ];
 
 //   for (var event in events) {
 //     print('dtEnd: ${event.dtEnd}, description: ${event.description}, memo: ${event.memo}');
@@ -70,17 +118,6 @@ class Event {
   DateTime to;
   Color background;
   bool isAllDay;
-}
-
-List<Event> _getDataSource() {
-  final List<Event> event = <Event>[];
-  final DateTime today = DateTime.now();
-  final DateTime startTime =
-      DateTime(today.year, today.month, today.day, 9, 0, 0);
-  final DateTime endTime = startTime.add(const Duration(hours: 2));
-  event.add(
-      Event('大学', startTime, endTime, ACCENT_COLOR, false));
-  return event;
 }
 
 class EventDataSource extends CalendarDataSource {
@@ -113,29 +150,6 @@ class EventDataSource extends CalendarDataSource {
     return appointments![index].isAllDay;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class briefTaskList extends StatelessWidget {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
@@ -194,5 +208,3 @@ class briefTaskList extends StatelessWidget {
     ]);
   }
 }
-
-
