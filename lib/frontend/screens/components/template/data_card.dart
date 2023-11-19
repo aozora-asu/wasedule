@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../components/organism/float_button.dart';
 import 'dart:async';
 import '../../pages/task_page.dart';
 
@@ -191,10 +192,10 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
           // SnackBar が閉じられたときの処理（非表示になったとき）
           databaseHelper.unDisplay(index);
           _controller4.text = "1";
+          
         }
       });
     }
-
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
