@@ -38,7 +38,9 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
+
   TextEditingController _ScheduleController = TextEditingController();
+
   TextEditingController _DtStartcontroller = TextEditingController();
   TextEditingController _TimeStartcontroller = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();
@@ -94,7 +96,6 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
-
               Container(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
@@ -112,12 +113,15 @@ class _InputFormState extends State<InputForm> {
                     labelStyle: TextStyle(color: Colors.red),
                   ),
                   validator: nameValidator,
+
                 ),
               ),
 
 
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+
                   height:SizeConfig.blockSizeHorizontal! *8,),
+
               DateTimePickerFormField(
                 dateController: _DtStartcontroller,
                 dateLabelText: '開始日*',
@@ -129,10 +133,10 @@ class _InputFormState extends State<InputForm> {
                     });
                   },
               ),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeHorizontal! * 3,
+              ),
               DateTimePickerFormField(
                 dateController: _DtEndcontroller,
                 dateLabelText: '終了日',
@@ -142,6 +146,7 @@ class _InputFormState extends State<InputForm> {
                   setState(() {});
                  },
               ),
+
 
 
           Container( 
@@ -259,6 +264,7 @@ ElevatedButton(
 }
 
 
+
 class DateTimePickerFormField extends StatefulWidget {
   final TextEditingController dateController;
   final TextEditingController timeController;
@@ -291,6 +297,7 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+
 builder: (BuildContext context, Widget? child) {
   return Theme(
     data: ThemeData.light().copyWith(
@@ -302,9 +309,11 @@ builder: (BuildContext context, Widget? child) {
     child: child!,
   );
 },
+
     );
 
     if (pickedDate != null) {
+
       setState(() {
         _selectedDate = pickedDate;
         widget.dateController.text = DateFormat('yyyy/MM/dd').format(pickedDate);
@@ -330,6 +339,7 @@ builder: (BuildContext context, Widget? child) {
         _selectedTime = pickedTime;
         widget.timeController.text = pickedTime.format(context);
       });
+
     }
   }
 
@@ -339,8 +349,10 @@ builder: (BuildContext context, Widget? child) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
+
           width:SizeConfig.blockSizeHorizontal! * 33.5,
           height:SizeConfig.blockSizeHorizontal! *8.5, 
+
           child: InkWell(
             onTap: () {
               _selectDate(context);
@@ -373,6 +385,7 @@ builder: (BuildContext context, Widget? child) {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: widget.timeLabelText,
+
                 ),
               ),
             ),

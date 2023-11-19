@@ -1,27 +1,34 @@
-class CalendarItem {
+class ScheduleItem {
   String subject;
-  String title;
-  int dtEnd;
-  String? summary;
-  String? description;
 
-  CalendarItem({
-    required this.subject,
-    required this.title,
-    required this.dtEnd,
-    this.summary,
-    this.description,
-    
-  });
+  int startDate;
+  int? startTime;
+  int? endDate;
+  int? endTime;
+  bool isPublic;
+  String? publicSubject;
+  String? tag;
+
+  ScheduleItem(
+      {required this.subject,
+      required this.startDate,
+      this.startTime,
+      this.endDate,
+      this.endTime,
+      required this.isPublic,
+      this.publicSubject,
+      this.tag});
 
   Map<String, dynamic> toMap() {
     return {
       'subject': subject,
-      'title': title,
-      'dtEnd': dtEnd,
-      'summary': summary,
-      'description': description,
-      
+      'startDate': startDate,
+      'startTime': startTime,
+      'endDate': endDate,
+      'endTime': endTime,
+      'isPublic': isPublic,
+      "publicSubject": publicSubject,
+      "tag": tag
     };
   }
 }

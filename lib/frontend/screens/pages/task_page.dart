@@ -47,6 +47,7 @@ class _TaskPageState extends State<TaskPage> {
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> _loadData() async {
     await databaseHelper.resisterTaskToDB(urlString);
+
     await _displayDB();
   }
 
