@@ -10,3 +10,7 @@ Future<Widget> floatButton(func) async {
     child: const Icon(Icons.get_app), // ボタンのアイコン
   );
 }
+
+Future<void> reLoad(func) async {
+      func();
+}

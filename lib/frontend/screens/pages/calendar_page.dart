@@ -45,7 +45,7 @@ class _CalendarState extends State<Calendar> {
     ),briefTaskList()
     ])
     ),
-     floatingActionButton:InputForm(),
+     floatingActionButton:AddEventButton(),
     );
   }
 } 
