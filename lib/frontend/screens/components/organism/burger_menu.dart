@@ -53,11 +53,11 @@ class burgerMenu extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.abc,
+              Icons.school,
               color: MAIN_COLOR,
             ),
             title: Text(
-              "ああああ",
+              "使い方",
               style: TextStyle(
                 fontSize: 22.5,
                 fontWeight: FontWeight.w800,

@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/components/template/data_c
 import 'package:form_field_validator/form_field_validator.dart';
 import '../../../../frontend/validators.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
+import '../../../../backend/DB/database_helper.dart';
 
 class AddEventButton extends StatelessWidget {
   @override
@@ -38,9 +39,7 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
-
   TextEditingController _ScheduleController = TextEditingController();
-
   TextEditingController _DtStartcontroller = TextEditingController();
   TextEditingController _TimeStartcontroller = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();
@@ -49,13 +48,13 @@ class _InputFormState extends State<InputForm> {
   
 
   bool isAllDay = false;
-  bool isPrivate = false;
+  bool isPublic = false;
   TextEditingController _PublicScheduleController = TextEditingController();
 
   @override
   void initState() {
     isAllDay = false;
-    isPrivate = false;
+    isPublic = false;
     super.initState();
   }
 
@@ -96,6 +95,7 @@ class _InputFormState extends State<InputForm> {
           ),
           content: Column(
             children: [
+
               Container(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
@@ -113,15 +113,12 @@ class _InputFormState extends State<InputForm> {
                     labelStyle: TextStyle(color: Colors.red),
                   ),
                   validator: nameValidator,
-
                 ),
               ),
 
 
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-
                   height:SizeConfig.blockSizeHorizontal! *8,),
-
               DateTimePickerFormField(
                 dateController: _DtStartcontroller,
                 dateLabelText: '開始日*',
@@ -133,20 +130,21 @@ class _InputFormState extends State<InputForm> {
                     });
                   },
               ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
+
+
+              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
+                  height:SizeConfig.blockSizeHorizontal! *3,),
               DateTimePickerFormField(
                 dateController: _DtEndcontroller,
                 dateLabelText: '終了日',
                 timeController: _TimeEndcontroller,
                 timeLabelText: '終了時刻',
                 whenSubmitted:  (value) {
-                  setState(() {});
+                  setState(() {
+
+                  });
                  },
               ),
-
 
 
           Container( 
@@ -161,7 +159,7 @@ class _InputFormState extends State<InputForm> {
               controller: _Tagcontroller,
               decoration: InputDecoration(
               border: InputBorder.none,
-              labelText: 'タグ',
+              labelText: 'タグを追加…',
               labelStyle: TextStyle(
                 color: Colors.black,
                 backgroundColor: Colors.transparent,
@@ -173,16 +171,16 @@ class _InputFormState extends State<InputForm> {
 
         Container(child: Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('終日',
+            Text('フレンドに共有',
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 20),
            CupertinoSwitch(
             activeColor: ACCENT_COLOR, 
-              value: isAllDay,
+              value: isPublic,
               onChanged: (value) {
                 setState(() {
-                  isAllDay  = value;
+                  isPublic  = value;
                   print(value);
                 });
               },
@@ -228,15 +226,32 @@ class _InputFormState extends State<InputForm> {
 ElevatedButton(
   onPressed: () {
     if (_DtStartcontroller.text.isEmpty || _ScheduleController.text.isEmpty) {
-      print("ボタン無効");
+      //print("ボタン無効");
+      print(Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
     } else {
+      int intIspublic;
+      if (isPublic){intIspublic = 1;}else{intIspublic = 0;}
+
+      Map<String, dynamic> schedule =
+                              {"subject": "$_ScheduleController",
+                               "startDate": "$_DtStartcontroller",
+                               "startTime": "$_TimeStartcontroller",
+                               "endDate": "$_DtEndcontroller",
+                               "endTime": "$_TimeEndcontroller",
+                               "isPublic": "$intIspublic",                               "publicSubject": "public用の予定",
+                               "tag":  "$_Tagcontroller"
+															};
+
       print('Schedule: ${_ScheduleController.text}');
-      print('Isallday: $isAllDay');
-      print('DtStart: ${_DtStartcontroller.text}');
-      print('DtEnd: ${_DtEndcontroller.text}');
-      print('IsPrivate: $isPrivate');
+      print('Ispublic: $isPublic');
+      print('DtStart: $_DtStartcontroller');
+      print('DtEnd: $_DtEndcontroller');
+      print('IsPrivate: $isPublic');
       print('PublicSchedule: ${_PublicScheduleController.text}');
       print('Tag: ${_Tagcontroller.text}');
+
+
+      ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
       clearContents();
       Navigator.of(context).pop();
     }
@@ -262,7 +277,6 @@ ElevatedButton(
         );
   }
 }
-
 
 
 class DateTimePickerFormField extends StatefulWidget {
@@ -297,7 +311,6 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-
 builder: (BuildContext context, Widget? child) {
   return Theme(
     data: ThemeData.light().copyWith(
@@ -309,11 +322,9 @@ builder: (BuildContext context, Widget? child) {
     child: child!,
   );
 },
-
     );
 
     if (pickedDate != null) {
-
       setState(() {
         _selectedDate = pickedDate;
         widget.dateController.text = DateFormat('yyyy/MM/dd').format(pickedDate);
@@ -339,7 +350,6 @@ builder: (BuildContext context, Widget? child) {
         _selectedTime = pickedTime;
         widget.timeController.text = pickedTime.format(context);
       });
-
     }
   }
 
@@ -349,10 +359,8 @@ builder: (BuildContext context, Widget? child) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-
           width:SizeConfig.blockSizeHorizontal! * 33.5,
           height:SizeConfig.blockSizeHorizontal! *8.5, 
-
           child: InkWell(
             onTap: () {
               _selectDate(context);
@@ -385,7 +393,6 @@ builder: (BuildContext context, Widget? child) {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: widget.timeLabelText,
-
                 ),
               ),
             ),
