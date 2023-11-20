@@ -240,9 +240,10 @@ class ScheduleDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
+    await initDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule');
-
+    _database.close();
     return data;
   }
 }
