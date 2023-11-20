@@ -5,6 +5,8 @@ import 'models/schedule.dart';
 import "../status_code.dart";
 import "../http_request.dart";
 
+class databasehelper {}
+
 class TaskDatabaseHelper {
   late Database _database;
   // データベースの初期化
