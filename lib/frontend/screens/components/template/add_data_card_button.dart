@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
+import '../../../screens/pages/task_page.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../../backend/DB/database_helper.dart';
@@ -19,6 +20,8 @@ Future<void> registeTaskToDB(Map<String, dynamic> task) async {
       description: task["description"]);
   await TaskDatabaseHelper().insertTask(taskItem);
 }
+
+
 
 class InputForm extends StatefulWidget {
   @override
