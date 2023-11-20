@@ -210,7 +210,9 @@ class ScheduleDatabaseHelper {
 
   // データベースの初期化
   Future<void> insertSchedule(ScheduleItem schedule) async {
+    await initDatabase();
     await _database.insert('schedule', schedule.toMap());
+    _database.close();
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
