@@ -44,7 +44,7 @@ class _CalendarState extends State<Calendar> {
                     return CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     // エラーがある場合、エラーメッセージを表示します。
-                    return Text('エラー: ${snapshot.error}');
+                    return Text('エラーだよい: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     // データがないか、データが空の場合、メッセージを表示できます。
                     return Text('利用可能なイベントはありません。');
@@ -56,14 +56,44 @@ class _CalendarState extends State<Calendar> {
 
                     // スケジュールリストからイベントを作成するか、必要に応じて変更してください。
                     for (var schedule in scheduleList) {
-                      // スケジュールデータを解析し、Event オブジェクトを作成します。
-                      // 例：
-                      // final String eventName = schedule['eventName'];
-                      // final DateTime startTime = schedule['startTime'];
-                      // final DateTime endTime = schedule['endTime'];
-                      // final Color background = schedule['background'];
-                      // final bool isAllDay = schedule['isAllDay'];
-                      // events.add(Event(eventName, startTime, endTime, background, isAllDay));
+                    // スケジュールデータを解析し、Event オブジェクトを作成します。
+                      
+                      DateTime combineStartDateAndTime() {
+                      // 開始日と時刻の結合
+                      DateTime startDate = schedule['startDate'];
+                      DateTime startTime = schedule['startTime'];
+                      DateTime combinedStartDateTime = DateTime(startDate.year, startDate.month, startDate.day);
+                      combinedStartDateTime = combinedStartDateTime.add(Duration(hours: startTime.hour, minutes: startTime.minute));
+                      print(combinedStartDateTime);
+                      return combinedStartDateTime;
+                      }
+
+                      DateTime combineEndDateAndTime() {
+                      // 終了日と時刻の結合
+                      DateTime endDate = schedule['endDate'];
+                      DateTime endTime = schedule['endTime'];
+                      DateTime combinedEndDateTime = DateTime(endDate.year, endDate.month, endDate.day);
+                      combinedEndDateTime = combinedEndDateTime.add(Duration(hours: endTime.hour, minutes: endTime.minute));
+                      print(combinedEndDateTime);
+                      return combinedEndDateTime;
+                      }
+
+                      bool setIsAllDay() {
+                      //startTimeとendTimeのどちらも空だった場合にtrueを返す
+                      if(schedule['startTime']=="" && schedule['endTime']==""){
+                        return true;
+                        }else{
+                        return false;  
+                        }
+                      }
+
+                     //整形したデータをカレンダー表示用のリストにぶち込む
+                       final String eventName = schedule['eventName'];
+                       final DateTime from = combineStartDateAndTime();
+                       final DateTime to = combineEndDateAndTime();
+                       const Color background = ACCENT_COLOR;
+                       final bool isAllDay = setIsAllDay();
+                       events.add(Event(eventName, from, to, background, isAllDay));
                     }
 
                     return SfCalendar(
@@ -76,7 +106,7 @@ class _CalendarState extends State<Calendar> {
                         border: Border.all(color: MAIN_COLOR, width: 3),
                       ),
                       onTap: (CalendarTapDetails details) {
-                        print("こんにちは、世界！");
+                        print("カレンダーがタップされた");
                       },
                       monthViewSettings: MonthViewSettings(
                         showAgenda: true,
