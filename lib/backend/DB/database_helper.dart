@@ -210,7 +210,9 @@ class ScheduleDatabaseHelper {
 
   // データベースの初期化
   Future<void> insertSchedule(ScheduleItem schedule) async {
+    await initDatabase();
     await _database.insert('schedule', schedule.toMap());
+    _database.close();
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
@@ -238,9 +240,10 @@ class ScheduleDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
+    await initDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule');
-
+    _database.close();
     return data;
   }
 }
