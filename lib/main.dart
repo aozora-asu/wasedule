@@ -12,5 +12,5 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await initializeDateFormatting(); // 初期化
-    runApp(MyApp());
+  runApp(MyApp());
 }
