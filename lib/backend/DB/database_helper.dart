@@ -8,9 +8,12 @@ import "../http_request.dart";
 class TaskDatabaseHelper {
   late Database _database;
   // データベースの初期化
+  TaskDatabaseHelper() {
+    _initDatabase();
+  }
 
-  Future<void> initDatabase() async {
-    String path = join(await getDatabasesPath(), 'user.db');
+  Future<void> _initDatabase() async {
+    String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
   }
 
@@ -30,7 +33,7 @@ class TaskDatabaseHelper {
   }
 
   Future<void> _orderByDateTime() async {
-    await initDatabase();
+    await _initDatabase();
     await _database.query(
       'tasks',
       orderBy: 'dtEnd ASC', // 日付で昇順にソート
@@ -40,7 +43,7 @@ class TaskDatabaseHelper {
 
   // タスクの挿入
   Future<void> insertTask(TaskItem task) async {
-    await initDatabase();
+    await _initDatabase();
     try {
       await _database.insert('tasks', task.toMap());
     } catch (e) {}
@@ -49,11 +52,13 @@ class TaskDatabaseHelper {
   }
 
   Future<void> deleteAllData(Database db) async {
+    await _initDatabase();
     await db.rawDelete('DELETE FROM tasks');
   }
 
   // タスクの削除
   Future<int> _deleteTask(int id) async {
+    await _initDatabase();
     return await _database.delete(
       'tasks',
       where: 'id = ?',
@@ -62,7 +67,7 @@ class TaskDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
-    await initDatabase();
+    await _initDatabase();
 
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
@@ -79,8 +84,9 @@ class TaskDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
-    await initDatabase();
+    await _initDatabase();
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
+        orderBy: 'dtEnd ASC',
         columns: ['title', 'dtEnd', 'summary', 'isDone']); // 複数のカラムのデータを取得
     _database.close();
     return dataList;
@@ -88,7 +94,7 @@ class TaskDatabaseHelper {
 
   Future<void> updateTitle(int id, String newTitle) async {
     // 'tasks' テーブル内の特定の行を更新
-    await initDatabase();
+    await _initDatabase();
     await _database.update(
       'tasks',
       {'title': newTitle}, // 更新後の値
@@ -100,7 +106,7 @@ class TaskDatabaseHelper {
 
   Future<void> updateSummary(int id, String newSummary) async {
     // 'tasks' テーブル内の特定の行を更新
-    await initDatabase();
+    await _initDatabase();
     await _database.update(
       'tasks',
       {'summary': newSummary}, // 更新後の値
@@ -112,7 +118,7 @@ class TaskDatabaseHelper {
 
   Future<void> updateDescription(int id, String newDescription) async {
     // 'tasks' テーブル内の特定の行を更新
-    await initDatabase();
+    await _initDatabase();
     await _database.update(
       'tasks',
       {'description': newDescription}, // 更新後の値
@@ -124,7 +130,7 @@ class TaskDatabaseHelper {
 
   Future<void> unDisplay(int id) async {
     // 'tasks' テーブル内の特定の行を更新
-    await initDatabase();
+    await _initDatabase();
     await _database.update(
       'tasks',
       {'isDone': 1}, // 更新後の値
@@ -137,7 +143,7 @@ class TaskDatabaseHelper {
   Future<void> deleteExpairedTask() async {}
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
-    initDatabase();
+    _initDatabase();
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
@@ -152,7 +158,7 @@ class TaskDatabaseHelper {
     String tableName = 'tasks';
     int? count;
     // データのカウントを取得
-    await initDatabase();
+    await _initDatabase();
     count = Sqflite.firstIntValue(
         await _database.rawQuery('SELECT COUNT(*) FROM $tableName'));
     _database.close();
@@ -165,7 +171,7 @@ class TaskDatabaseHelper {
     // データベースの初期化
     Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
     TaskItem taskItem;
-    await initDatabase();
+    await _initDatabase();
     for (int i = 0; i < taskData["events"].length; i++) {
       // 1. TaskItemオブジェクトを作成
       taskItem = TaskItem(
@@ -188,13 +194,14 @@ class ScheduleDatabaseHelper {
   late Database _database;
   // データベースの初期化
 
-  Future<void> initDatabase() async {
+  Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
-    _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
+    _database =
+        await openDatabase(path, version: 1, onCreate: _createScheduleDatabase);
   }
 
   // データベースの作成
-  Future<void> _createDatabase(Database db, int version) async {
+  Future<void> _createScheduleDatabase(Database db, int version) async {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS schedule(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -212,13 +219,13 @@ class ScheduleDatabaseHelper {
 
   // データベースの初期化
   Future<void> insertSchedule(ScheduleItem schedule) async {
-    await initDatabase();
+    await _initScheduleDatabase();
     await _database.insert('schedule', schedule.toMap());
     _database.close();
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
-    await initDatabase();
+    await _initScheduleDatabase();
     ScheduleItem scheduleItem;
     for (int i = 0; i < schedule.length; i++) {
       // 1. TaskItemオブジェクトを作成
@@ -242,7 +249,7 @@ class ScheduleDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
-    await initDatabase();
+    await _initScheduleDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule');
     _database.close();
