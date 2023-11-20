@@ -34,20 +34,20 @@ class _CalendarState extends State<Calendar> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 200,
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _getDataSource(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     // データが取得される間、ローディングインディケータを表示できます。
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     // エラーがある場合、エラーメッセージを表示します。
                     return Text('エラーだよい: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     // データがないか、データが空の場合、メッセージを表示できます。
-                    return Text('利用可能なイベントはありません。');
+                    return const Text('利用可能なイベントはありません。');
                   } else {
                     // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                     final List<Map<String, dynamic>> scheduleList =
@@ -116,7 +116,7 @@ class _CalendarState extends State<Calendar> {
                       onTap: (CalendarTapDetails details) {
                         print("カレンダーがタップされた");
                       },
-                      monthViewSettings: MonthViewSettings(
+                      monthViewSettings: const MonthViewSettings(
                         showAgenda: true,
                         appointmentDisplayMode:
                             MonthAppointmentDisplayMode.appointment,
@@ -214,7 +214,7 @@ class briefTaskList extends StatelessWidget {
                     width: SizeConfig.blockSizeHorizontal! * 96,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.grey,
                         ),
@@ -231,7 +231,7 @@ class briefTaskList extends StatelessWidget {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           // 読み込み中の場合、ProgressIndicator を表示
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           // エラーがある場合、エラーメッセージを表示
                           return Text("Error: ${snapshot.error}");

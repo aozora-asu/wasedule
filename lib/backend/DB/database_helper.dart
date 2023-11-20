@@ -4,6 +4,7 @@ import 'models/task.dart';
 import 'models/schedule.dart';
 import "../status_code.dart";
 import "../http_request.dart";
+import 'package:intl/intl.dart';
 
 class TaskDatabaseHelper {
   late Database _database;
@@ -195,7 +196,7 @@ class ScheduleDatabaseHelper {
   // データベースの初期化
 
   Future<void> _initScheduleDatabase() async {
-    String path = join(await getDatabasesPath(), 'user.db');
+    String path = join(await getDatabasesPath(), 'schedule.db');
     _database =
         await openDatabase(path, version: 1, onCreate: _createScheduleDatabase);
   }
@@ -231,15 +232,26 @@ class ScheduleDatabaseHelper {
       // 1. TaskItemオブジェクトを作成
       scheduleItem = ScheduleItem(
           subject: schedule["subject"],
-          startDate: schedule["startDate"].millisecondsSinceEpoch ~/ 1000,
-          startTime: schedule["startTime"].hour * 3600 +
-              schedule["startTime"].minute * 60 +
-              schedule["startTime"].second,
-          endDate: schedule["endDate"].millisecondsSinceEpoch ~/ 1000,
-          endTime: schedule["endTime"].hour * 3600 +
-              schedule["endTime"].minute * 60 +
-              schedule["endTime"].second,
-          isPublic: schedule["isPublic"],
+          startDate: DateTime.parse(schedule["startDate"].replaceAll('/', '-'))
+                  .millisecondsSinceEpoch ~/
+              1000,
+          startTime: schedule["startTime"] != null
+              ? DateFormat("h:mm a").parse(schedule["startTime"]).hour * 3600 +
+                  DateFormat("h:mm a").parse(schedule["startTime"]).minute *
+                      60 +
+                  DateFormat("h:mm a").parse(schedule["startTime"]).second
+              : null,
+          endDate: schedule["endDate"] != null
+              ? DateTime.parse(schedule["endDate"].replaceAll('/', '-'))
+                      .millisecondsSinceEpoch ~/
+                  1000
+              : null,
+          endTime: schedule["endTime"] != null
+              ? DateFormat("h:mm a").parse(schedule["endTime"]).hour * 3600 +
+                  DateFormat("h:mm a").parse(schedule["endTime"]).minute * 60 +
+                  DateFormat("h:mm a").parse(schedule["endTime"]).second
+              : null,
+          isPublic: int.parse(schedule["isPublic"]),
           publicSubject: schedule["publicSubject"],
           tag: schedule["tag"]);
       // 2. データベースヘルパークラスを使用してデータベースに挿入
