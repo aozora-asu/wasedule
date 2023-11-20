@@ -70,6 +70,22 @@ class _InputFormState extends State<InputForm> {
     super.dispose();
   }
 
+
+  Widget publicScheduleField(){
+  if(isPublic == true){
+  return Container(
+        width:SizeConfig.blockSizeHorizontal! * 80,
+        height:SizeConfig.blockSizeHorizontal! *8.5,
+      child:TextField(
+      controller: _PublicScheduleController,
+      decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'フレンドに見せる予定名'),
+    ),);
+  }else{
+   return SizedBox(width:0,height:0);
+  }
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -147,34 +163,38 @@ class _InputFormState extends State<InputForm> {
               ),
 
 
-          Container( 
+          SizedBox( 
              width:SizeConfig.blockSizeHorizontal! * 80,
              height:SizeConfig.blockSizeHorizontal! *16,
             child: EasyAutocomplete(
               suggestions: uniqueTitleList,
-              inputTextStyle: TextStyle(
+              inputTextStyle: const TextStyle(
                fontWeight: FontWeight.w800,
                color: Colors.white,
                backgroundColor: Colors.blueAccent, ), 
               controller: _Tagcontroller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
               border: InputBorder.none,
               labelText: 'タグを追加…',
               labelStyle: TextStyle(
-                color: Colors.black,
+                color: Colors.blueGrey,
                 backgroundColor: Colors.transparent,
                 fontWeight: FontWeight.w300,
                 )
               ),
             )
           ),
-
-        Container(child: Row(mainAxisAlignment: MainAxisAlignment.center,
+            SizedBox(
+              height: SizeConfig.blockSizeHorizontal! * 3,
+              width: SizeConfig.blockSizeHorizontal! * 80),
+        Container(child: Row(mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text('フレンドに共有',
               style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 20),
+            SizedBox(
+              height: SizeConfig.blockSizeHorizontal! * 5,
+              width: SizeConfig.blockSizeHorizontal! * 16),
            CupertinoSwitch(
             activeColor: ACCENT_COLOR, 
               value: isPublic,
@@ -182,6 +202,7 @@ class _InputFormState extends State<InputForm> {
                 setState(() {
                   isPublic  = value;
                   print(value);
+                  _PublicScheduleController.clear();
                 });
               },
             ),
@@ -191,14 +212,8 @@ class _InputFormState extends State<InputForm> {
 
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *3,),
-              Container(
-                  width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8.5,
-              child:TextField(
-                controller: _PublicScheduleController,
-                decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'フレンド共有用'),
-              ),),
 
+             publicScheduleField(),
 
               SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
                   height:SizeConfig.blockSizeHorizontal! *8,),
