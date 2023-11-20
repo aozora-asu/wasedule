@@ -31,8 +31,6 @@ class AddEventButton extends StatelessWidget {
   }
 }
 
-
-
 class InputForm extends StatefulWidget {
   @override
   _InputFormState createState() => _InputFormState();
@@ -45,7 +43,6 @@ class _InputFormState extends State<InputForm> {
   TextEditingController _DtEndcontroller = TextEditingController();
   TextEditingController _TimeEndcontroller = TextEditingController();
   TextEditingController _Tagcontroller = TextEditingController();
-  
 
   bool isAllDay = false;
   bool isPublic = false;
@@ -70,229 +67,228 @@ class _InputFormState extends State<InputForm> {
     super.dispose();
   }
 
-
-  Widget publicScheduleField(){
-  if(isPublic == true){
-  return Container(
-        width:SizeConfig.blockSizeHorizontal! * 80,
-        height:SizeConfig.blockSizeHorizontal! *8.5,
-      child:TextField(
-      controller: _PublicScheduleController,
-      decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'フレンドに見せる予定名'),
-    ),);
-  }else{
-   return SizedBox(width:0,height:0);
-  }
-
+  Widget publicScheduleField() {
+    if (isPublic == true) {
+      return Container(
+        width: SizeConfig.blockSizeHorizontal! * 80,
+        height: SizeConfig.blockSizeHorizontal! * 8.5,
+        child: TextField(
+          controller: _PublicScheduleController,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(), labelText: 'フレンドに見せる予定名'),
+        ),
+      );
+    } else {
+      return SizedBox(width: 0, height: 0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // テキストをクリア
+    void clearContents() {
+      _ScheduleController.clear();
+      _PublicScheduleController.clear();
+      _DtEndcontroller.clear();
+      _DtStartcontroller.clear();
+      _TimeStartcontroller.clear();
+      _TimeEndcontroller.clear();
+      _Tagcontroller.clear();
+    }
 
-  // テキストをクリア
-  void clearContents(){
-    _ScheduleController.clear();
-    _PublicScheduleController.clear();
-    _DtEndcontroller.clear();
-    _DtStartcontroller.clear();
-    _TimeStartcontroller.clear();
-    _TimeEndcontroller.clear();
-    _Tagcontroller.clear();
-  }
-
-      return 
-        AlertDialog(
-          title: Text(
-            '予定を入力…',
-            style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 7,
-              fontWeight: FontWeight.w900,
+    return AlertDialog(
+      title: Text(
+        '予定を入力…',
+        style: TextStyle(
+          fontSize: SizeConfig.blockSizeHorizontal! * 7,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      content: Column(
+        children: [
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeHorizontal! * 8.5,
+            child: TextFormField(
+              controller: _ScheduleController,
+              onFieldSubmitted: (value) {
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                errorMaxLines: 3,
+                labelText: '予定名*',
+                labelStyle: TextStyle(color: Colors.red),
+              ),
+              validator: nameValidator,
             ),
           ),
-          content: Column(
-            children: [
-
-              Container(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeHorizontal! * 8.5,
-                child: TextFormField(
-                  controller: _ScheduleController,
-                  onFieldSubmitted: (value) {
-                    setState(() {
-
-                    });
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    errorMaxLines: 3,
-                    labelText: '予定名*',
-                    labelStyle: TextStyle(color: Colors.red),
-                  ),
-                  validator: nameValidator,
-                ),
-              ),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8,),
-              DateTimePickerFormField(
-                dateController: _DtStartcontroller,
-                dateLabelText: '開始日*',
-                timeController: _TimeStartcontroller,
-                timeLabelText: '開始時刻',
-                whenSubmitted:  (value) {
-                    setState(() {
-
-                    });
-                  },
-              ),
-
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
-              DateTimePickerFormField(
-                dateController: _DtEndcontroller,
-                dateLabelText: '終了日',
-                timeController: _TimeEndcontroller,
-                timeLabelText: '終了時刻',
-                whenSubmitted:  (value) {
-                  setState(() {
-
-                  });
-                 },
-              ),
-
-
-          SizedBox( 
-             width:SizeConfig.blockSizeHorizontal! * 80,
-             height:SizeConfig.blockSizeHorizontal! *16,
-            child: EasyAutocomplete(
-              suggestions: uniqueTitleList,
-              inputTextStyle: const TextStyle(
-               fontWeight: FontWeight.w800,
-               color: Colors.white,
-               backgroundColor: Colors.blueAccent, ), 
-              controller: _Tagcontroller,
-              decoration: const InputDecoration(
-              border: InputBorder.none,
-              labelText: 'タグを追加…',
-              labelStyle: TextStyle(
-                color: Colors.blueGrey,
-                backgroundColor: Colors.transparent,
-                fontWeight: FontWeight.w300,
-                )
-              ),
-            )
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeHorizontal! * 8,
           ),
-            SizedBox(
+          DateTimePickerFormField(
+            dateController: _DtStartcontroller,
+            dateLabelText: '開始日*',
+            timeController: _TimeStartcontroller,
+            timeLabelText: '開始時刻',
+            whenSubmitted: (value) {
+              setState(() {});
+            },
+          ),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeHorizontal! * 3,
+          ),
+          DateTimePickerFormField(
+            dateController: _DtEndcontroller,
+            dateLabelText: '終了日',
+            timeController: _TimeEndcontroller,
+            timeLabelText: '終了時刻',
+            whenSubmitted: (value) {
+              setState(() {});
+            },
+          ),
+          SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 80,
+              height: SizeConfig.blockSizeHorizontal! * 16,
+              child: EasyAutocomplete(
+                suggestions: uniqueTitleList,
+                inputTextStyle: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                ),
+                controller: _Tagcontroller,
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    labelText: 'タグを追加…',
+                    labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      backgroundColor: Colors.transparent,
+                      fontWeight: FontWeight.w300,
+                    )),
+              )),
+          SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 3,
               width: SizeConfig.blockSizeHorizontal! * 80),
-        Container(child: Row(mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text('フレンドに共有',
-              style: TextStyle(fontSize: 20),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'フレンドに共有',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 5,
+                    width: SizeConfig.blockSizeHorizontal! * 16),
+                CupertinoSwitch(
+                  activeColor: ACCENT_COLOR,
+                  value: isPublic,
+                  onChanged: (value) {
+                    setState(() {
+                      isPublic = value;
+                      print(value);
+                      _PublicScheduleController.clear();
+                    });
+                  },
+                ),
+              ],
             ),
-            SizedBox(
-              height: SizeConfig.blockSizeHorizontal! * 5,
-              width: SizeConfig.blockSizeHorizontal! * 16),
-           CupertinoSwitch(
-            activeColor: ACCENT_COLOR, 
-              value: isPublic,
-              onChanged: (value) {
-                setState(() {
-                  isPublic  = value;
-                  print(value);
-                  _PublicScheduleController.clear();
-                });
-              },
-            ),
-          ],
-        ),),
-        
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *3,),
-
-             publicScheduleField(),
-
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 80,
-                  height:SizeConfig.blockSizeHorizontal! *8,),
-
-
-
-            ],
           ),
-          actions: [Row(
-            children:[ElevatedButton(
-              onPressed: () {
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeHorizontal! * 3,
+          ),
+          publicScheduleField(),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeHorizontal! * 8,
+          ),
+        ],
+      ),
+      actions: [
+        Row(children: [
+          ElevatedButton(
+            onPressed: () {
+              clearContents();
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              fixedSize: MaterialStateProperty.all<Size>(
+                Size(SizeConfig.blockSizeHorizontal! * 35,
+                    SizeConfig.blockSizeHorizontal! * 7.5),
+              ),
+            ),
+            child: Text('戻る'),
+          ),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 5,
+            height: SizeConfig.blockSizeHorizontal! * 8.5,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_DtStartcontroller.text.isEmpty ||
+                  _ScheduleController.text.isEmpty) {
+                //print("ボタン無効");
+                print(
+                    Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
+              } else {
+                int intIspublic;
+                if (isPublic) {
+                  intIspublic = 1;
+                } else {
+                  intIspublic = 0;
+                }
+
+                Map<String, dynamic> schedule = {
+                  "subject": "$_ScheduleController",
+                  "startDate": "${_DtStartcontroller.text}",
+                  "startTime": "${_TimeStartcontroller.text}",
+                  "endDate": "${_DtEndcontroller.text}",
+                  "endTime": "${_TimeEndcontroller.text}",
+                  "isPublic": "$intIspublic",
+                  "publicSubject": "public用の予定",
+                  "tag": "$_Tagcontroller"
+                };
+
+                print('Schedule: ${_ScheduleController.text}');
+                print('Ispublic: $isPublic');
+                print('DtStart: ${_DtStartcontroller.text.runtimeType}');
+                print('DtEnd: $_DtEndcontroller');
+                print('IsPrivate: $isPublic');
+                print('PublicSchedule: ${_PublicScheduleController.text}');
+                print('Tag: ${_Tagcontroller.text}');
+
+                ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
                 clearContents();
                 Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 35,
-                  SizeConfig.blockSizeHorizontal! * 7.5),
-              ),
-              ),
-              child:Text('戻る'),),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! * 5,
-                      height:SizeConfig.blockSizeHorizontal! *8.5,),
-ElevatedButton(
-  onPressed: () {
-    if (_DtStartcontroller.text.isEmpty || _ScheduleController.text.isEmpty) {
-      //print("ボタン無効");
-      print(Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
-    } else {
-      int intIspublic;
-      if (isPublic){intIspublic = 1;}else{intIspublic = 0;}
-
-      Map<String, dynamic> schedule =
-                              {"subject": "$_ScheduleController",
-                               "startDate": "$_DtStartcontroller",
-                               "startTime": "$_TimeStartcontroller",
-                               "endDate": "$_DtEndcontroller",
-                               "endTime": "$_TimeEndcontroller",
-                               "isPublic": "$intIspublic",                               "publicSubject": "public用の予定",
-                               "tag":  "$_Tagcontroller"
-															};
-
-      print('Schedule: ${_ScheduleController.text}');
-      print('Ispublic: $isPublic');
-      print('DtStart: $_DtStartcontroller');
-      print('DtEnd: $_DtEndcontroller');
-      print('IsPrivate: $isPublic');
-      print('PublicSchedule: ${_PublicScheduleController.text}');
-      print('Tag: ${_Tagcontroller.text}');
-
-
-      ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
-      clearContents();
-      Navigator.of(context).pop();
-    }
-  },
-  style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      // 条件によってボタンの色を選択
-      if (_DtStartcontroller.text.isEmpty || _ScheduleController.text.isEmpty) {
-        return Colors.grey; // ボタンが無効の場合の色
-      }
-      return MAIN_COLOR; // ボタンが通常の場合の色
-    }),
-    fixedSize: MaterialStateProperty.all<Size>(Size(
-      SizeConfig.blockSizeHorizontal! * 35,
-      SizeConfig.blockSizeHorizontal! * 7.5,
-    )),
-  ),
-  child: Text('追加'),
-),
-          ])
-
-          ],
-        );
+              }
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                  (Set<MaterialState> states) {
+                // 条件によってボタンの色を選択
+                if (_DtStartcontroller.text.isEmpty ||
+                    _ScheduleController.text.isEmpty) {
+                  return Colors.grey; // ボタンが無効の場合の色
+                }
+                return MAIN_COLOR; // ボタンが通常の場合の色
+              }),
+              fixedSize: MaterialStateProperty.all<Size>(Size(
+                SizeConfig.blockSizeHorizontal! * 35,
+                SizeConfig.blockSizeHorizontal! * 7.5,
+              )),
+            ),
+            child: Text('追加'),
+          ),
+        ])
+      ],
+    );
   }
 }
-
 
 class DateTimePickerFormField extends StatefulWidget {
   final TextEditingController dateController;
@@ -318,31 +314,30 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-
-
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-builder: (BuildContext context, Widget? child) {
-  return Theme(
-    data: ThemeData.light().copyWith(
-      colorScheme: ColorScheme.light().copyWith(
-        // ヘッダーの色
-        primary: MAIN_COLOR,
-      ), // 日付選択部の色
-    ),
-    child: child!,
-  );
-},
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light().copyWith(
+              // ヘッダーの色
+              primary: MAIN_COLOR,
+            ), // 日付選択部の色
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (pickedDate != null) {
       setState(() {
         _selectedDate = pickedDate;
-        widget.dateController.text = DateFormat('yyyy/MM/dd').format(pickedDate);
+        widget.dateController.text =
+            DateFormat('yyyy/MM/dd').format(pickedDate);
       });
     }
   }
@@ -374,17 +369,17 @@ builder: (BuildContext context, Widget? child) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          width:SizeConfig.blockSizeHorizontal! * 33.5,
-          height:SizeConfig.blockSizeHorizontal! *8.5, 
+          width: SizeConfig.blockSizeHorizontal! * 33.5,
+          height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
               _selectDate(context);
             },
             child: IgnorePointer(
               child: TextFormField(
-               onFieldSubmitted: widget.whenSubmitted,
-               controller: widget.dateController,
-               decoration: InputDecoration(
+                onFieldSubmitted: widget.whenSubmitted,
+                controller: widget.dateController,
+                decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: widget.dateLabelText,
                 ),
@@ -394,13 +389,12 @@ builder: (BuildContext context, Widget? child) {
         ),
         SizedBox(height: 16),
         Container(
-          width:SizeConfig.blockSizeHorizontal! * 33.5,
-          height:SizeConfig.blockSizeHorizontal! *8.5,
+          width: SizeConfig.blockSizeHorizontal! * 33.5,
+          height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
               _selectTime(context);
             },
-            
             child: IgnorePointer(
               child: TextFormField(
                 controller: widget.timeController,

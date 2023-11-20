@@ -5,7 +5,7 @@ class ScheduleItem {
   int? startTime;
   int? endDate;
   int? endTime;
-  bool isPublic;
+  int isPublic;
   String? publicSubject;
   String? tag;
 
