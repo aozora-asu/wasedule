@@ -137,9 +137,11 @@ class TaskDatabaseHelper {
   Future<void> deleteExpairedTask() async {}
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
+    initDatabase();
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
+    _database.close();
 
     return data;
   }

@@ -148,7 +148,7 @@ Future<void> initialize() async {
   );
 }
 
-Future<void> _configureLocalTimeZone() async {
+Future<void> configureLocalTimeZone() async {
   tz.initializeTimeZones();
   final String timeZoneName = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName));
