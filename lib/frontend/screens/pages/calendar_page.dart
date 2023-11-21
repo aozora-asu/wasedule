@@ -15,9 +15,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../../backend/notify/notify_setting.dart';
 import '../../../backend/DB/models/notify_content.dart';
+import '../../../backend/notify/notify.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
@@ -42,6 +42,10 @@ class _CalendarState extends State<Calendar> {
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
+  }
+
+  testNotify() async {
+    await Notify().repeatNotification();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -154,6 +158,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    testNotify();
     SizeConfig().init(context);
     return Scaffold(
       body: SingleChildScrollView(
