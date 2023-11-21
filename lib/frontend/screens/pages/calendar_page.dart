@@ -60,8 +60,10 @@ class _CalendarState extends State<Calendar> {
 
                       DateTime combineStartDateAndTime() {
                         // 開始日と時刻の結合
-                        DateTime startDate = schedule['startDate'];
-                        DateTime startTime = schedule['startTime'];
+                        DateTime startDate =
+                            DateTime.parse(schedule['startDate']);
+                        DateTime startTime =
+                            DateTime.parse(schedule['startTime']);
                         DateTime combinedStartDateTime = DateTime(
                             startDate.year, startDate.month, startDate.day);
                         combinedStartDateTime = combinedStartDateTime.add(
@@ -74,8 +76,8 @@ class _CalendarState extends State<Calendar> {
 
                       DateTime combineEndDateAndTime() {
                         // 終了日と時刻の結合
-                        DateTime endDate = schedule['endDate'];
-                        DateTime endTime = schedule['endTime'];
+                        DateTime endDate = DateTime.parse(schedule['endDate']);
+                        DateTime endTime = DateTime.parse(schedule['endTime']);
                         DateTime combinedEndDateTime =
                             DateTime(endDate.year, endDate.month, endDate.day);
                         combinedEndDateTime = combinedEndDateTime.add(Duration(
@@ -95,7 +97,7 @@ class _CalendarState extends State<Calendar> {
                       }
 
                       //整形したデータをカレンダー表示用のリストにぶち込む
-                      final String eventName = schedule['eventName'];
+                      final String eventName = schedule['subject'];
                       final DateTime from = combineStartDateAndTime();
                       final DateTime to = combineEndDateAndTime();
                       const Color background = ACCENT_COLOR;

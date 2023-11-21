@@ -241,17 +241,17 @@ class ScheduleDatabaseHelper {
                       60 +
                   DateFormat("h:mm a").parse(schedule["startTime"]).second
               : null,
-          endDate: schedule["endDate"] != null
+          endDate: schedule["endDate"] != ""
               ? DateTime.parse(schedule["endDate"].replaceAll('/', '-'))
                       .millisecondsSinceEpoch ~/
                   1000
               : null,
-          endTime: schedule["endTime"] != null
+          endTime: schedule["endTime"] != ""
               ? DateFormat("h:mm a").parse(schedule["endTime"]).hour * 3600 +
                   DateFormat("h:mm a").parse(schedule["endTime"]).minute * 60 +
                   DateFormat("h:mm a").parse(schedule["endTime"]).second
               : null,
-          isPublic: int.parse(schedule["isPublic"]),
+          isPublic: schedule["isPublic"],
           publicSubject: schedule["publicSubject"],
           tag: schedule["tag"]);
       // 2. データベースヘルパークラスを使用してデータベースに挿入
