@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class Notify {
+  int id = 0;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -33,5 +34,35 @@ class Notify {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
+  }
+
+  Future<void> _showNotificationCustomSound() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      channelDescription: 'your other channel description',
+      sound: RawResourceAndroidNotificationSound('slow_spring_board'),
+    );
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      sound: 'slow_spring_board.aiff',
+    );
+    final LinuxNotificationDetails linuxPlatformChannelSpecifics =
+        LinuxNotificationDetails(
+      sound: AssetsLinuxSound('sound/slow_spring_board.mp3'),
+    );
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
+      linux: linuxPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'custom sound notification title',
+      'custom sound notification body',
+      notificationDetails,
+    );
   }
 }
