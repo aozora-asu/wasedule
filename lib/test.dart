@@ -342,6 +342,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  //通知からアプリを開いた時の処理
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((String? payload) async {
       await Navigator.of(context).push(MaterialPageRoute<void>(
