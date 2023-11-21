@@ -188,3 +188,7 @@ Future<bool> isAndroidPermissionGranted() async {
   }
   return false;
 }
+
+Future<void> _cancelAllNotifications() async {
+  await flutterLocalNotificationsPlugin.cancelAll();
+}
