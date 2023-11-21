@@ -284,14 +284,31 @@ class ScheduleDatabaseHelper {
     return data;
   }
 
-  Future<List<Map<String, dynamic>>> getTodaysSchedule() async {
+  Future<List<Map<String, dynamic>>> _getTodaysSchedule() async {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> todaysSchedule = await _database.query(
-      'your_table_name',
+      'schedule',
       where: 'startDate = ?',
       whereArgs: [DateTime.now().millisecondsSinceEpoch ~/ 1000],
     );
     _database.close();
+    return todaysSchedule;
+  }
+
+  Future<String> notifyTodaysSchedule() async {
+    Future<List<Map<String, dynamic>>> todaysScheduleList =
+        _getTodaysSchedule();
+
+    late String todaysSchedule;
+    for (var schedule in await todaysScheduleList) {
+      todaysSchedule += schedule["startTime"] +
+          "~" +
+          schedule["endTime"] +
+          "  " +
+          schedule["subject"] +
+          "\n";
+    }
+
     return todaysSchedule;
   }
 }
