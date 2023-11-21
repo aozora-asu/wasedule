@@ -119,8 +119,10 @@ class _CalendarState extends State<Calendar> {
 
   DateTime combineStartDateAndTime(Map<String, dynamic> schedule) {
     // 開始日と時刻の結合
-    DateTime startDate = schedule['startDate'];
-    DateTime startTime = schedule['startTime'];
+    DateTime startDate =
+        DateTime.fromMillisecondsSinceEpoch(schedule['startDate']);
+    DateTime startTime =
+        DateTime.fromMillisecondsSinceEpoch(schedule['startTime']);
     DateTime combinedStartDateTime =
         DateTime(startDate.year, startDate.month, startDate.day);
     combinedStartDateTime = combinedStartDateTime
@@ -131,8 +133,8 @@ class _CalendarState extends State<Calendar> {
 
   DateTime combineEndDateAndTime(Map<String, dynamic> schedule) {
     // 終了日と時刻の結合
-    DateTime endDate = schedule['endDate'];
-    DateTime endTime = schedule['endTime'];
+    DateTime endDate = DateTime.fromMillisecondsSinceEpoch(schedule['endDate']);
+    DateTime endTime = DateTime.fromMillisecondsSinceEpoch(schedule['endTime']);
     DateTime combinedEndDateTime =
         DateTime(endDate.year, endDate.month, endDate.day);
     combinedEndDateTime = combinedEndDateTime

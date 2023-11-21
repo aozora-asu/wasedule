@@ -37,11 +37,6 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 Future<void> initialize() async {
-  String? selectedNotificationPayload;
-
-  /// A notification action which triggers a url launch event
-  const String urlLaunchActionId = 'id_1';
-
   /// A notification action which triggers a App navigation event
   const String navigationActionId = 'id_3';
 
