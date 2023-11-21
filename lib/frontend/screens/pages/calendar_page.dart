@@ -57,13 +57,15 @@ class _CalendarState extends State<Calendar> {
                     // スケジュールリストからイベントを作成するか、必要に応じて変更してください。
                     for (var schedule in scheduleList) {
                       // スケジュールデータを解析し、Event オブジェクトを作成します。
-
+                      print(schedule);
                       DateTime combineStartDateAndTime() {
                         // 開始日と時刻の結合
                         DateTime startDate =
-                            DateTime.parse(schedule['startDate']);
+                            DateTime.fromMillisecondsSinceEpoch(
+                                schedule['startDate']);
                         DateTime startTime =
-                            DateTime.parse(schedule['startTime']);
+                            DateTime.fromMillisecondsSinceEpoch(
+                                schedule['startTime']);
                         DateTime combinedStartDateTime = DateTime(
                             startDate.year, startDate.month, startDate.day);
                         combinedStartDateTime = combinedStartDateTime.add(
@@ -76,8 +78,10 @@ class _CalendarState extends State<Calendar> {
 
                       DateTime combineEndDateAndTime() {
                         // 終了日と時刻の結合
-                        DateTime endDate = DateTime.parse(schedule['endDate']);
-                        DateTime endTime = DateTime.parse(schedule['endTime']);
+                        DateTime endDate = DateTime.fromMillisecondsSinceEpoch(
+                            schedule['endDate']);
+                        DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
+                            schedule['endTime']);
                         DateTime combinedEndDateTime =
                             DateTime(endDate.year, endDate.month, endDate.day);
                         combinedEndDateTime = combinedEndDateTime.add(Duration(
