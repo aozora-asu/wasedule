@@ -300,13 +300,25 @@ class ScheduleDatabaseHelper {
         _getTodaysSchedule();
 
     late String todaysSchedule;
-    for (var schedule in await todaysScheduleList) {
-      todaysSchedule += schedule["startTime"] +
-          "~" +
-          schedule["endTime"] +
-          "  " +
-          schedule["subject"] +
-          "\n";
+    List<Map<String, dynamic>> schedules = await todaysScheduleList;
+    if (schedules.isEmpty) {
+      todaysSchedule = "本日の予定はありません";
+    } else {
+      for (var schedule in schedules) {
+        int startTimeInSeconds = schedule["startTime"] ?? 0; // 仮の初期値
+        String endTimeString = schedule["endTime"] != null
+            ? "${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).hour}:${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).minute}"
+            : ""; // 仮の初期値
+        String subject = schedule["subject"]; // null の場合はから文字列
+
+        // int を DateTime に変換
+        DateTime startTime =
+            DateTime.fromMillisecondsSinceEpoch(startTimeInSeconds * 1000);
+        // 24時間表記の文字列に変換
+        String startTimeString = "${startTime.hour}:${startTime.minute}";
+
+        todaysSchedule += "$startTimeString~$endTimeString  $subject\n";
+      }
     }
 
     return todaysSchedule;
