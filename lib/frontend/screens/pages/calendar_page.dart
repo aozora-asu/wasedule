@@ -181,10 +181,54 @@ class _CalendarState extends State<Calendar> {
                     for (var schedule in scheduleList) {
                       // スケジュールデータを解析し、Event オブジェクトを作成します。
 
+                      print(schedule);
+                      DateTime combineStartDateAndTime() {
+                        // 開始日と時刻の結合
+                        DateTime startDate =
+                            DateTime.fromMillisecondsSinceEpoch(
+                                schedule['startDate']);
+                        DateTime startTime =
+                            DateTime.fromMillisecondsSinceEpoch(
+                                schedule['startTime']);
+                        DateTime combinedStartDateTime = DateTime(
+                            startDate.year, startDate.month, startDate.day);
+                        combinedStartDateTime = combinedStartDateTime.add(
+                            Duration(
+                                hours: startTime.hour,
+                                minutes: startTime.minute));
+                        print(combinedStartDateTime);
+                        return combinedStartDateTime;
+                      }
+
+                      DateTime combineEndDateAndTime() {
+                        // 終了日と時刻の結合
+                        DateTime endDate = DateTime.fromMillisecondsSinceEpoch(
+                            schedule['endDate']);
+                        DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
+                            schedule['endTime']);
+                        DateTime combinedEndDateTime =
+                            DateTime(endDate.year, endDate.month, endDate.day);
+                        combinedEndDateTime = combinedEndDateTime.add(Duration(
+                            hours: endTime.hour, minutes: endTime.minute));
+                        print(combinedEndDateTime);
+                        return combinedEndDateTime;
+                      }
+
+                      bool setIsAllDay() {
+                        //startTimeとendTimeのどちらも空だった場合にtrueを返す
+                        if (schedule['startTime'] == "" &&
+                            schedule['endTime'] == "") {
+                          return true;
+                        } else {
+                          return false;
+                        }
+                      }
+
                       //整形したデータをカレンダー表示用のリストにぶち込む
-                      final String eventName = schedule['eventName'];
-                      final DateTime from = combineStartDateAndTime(schedule);
-                      final DateTime to = combineEndDateAndTime(schedule);
+                      final String eventName = schedule['subject'];
+                      final DateTime from = combineStartDateAndTime();
+                      final DateTime to = combineEndDateAndTime();
+
                       const Color background = ACCENT_COLOR;
                       final bool isAllDay = setIsAllDay(schedule);
                       events.add(
