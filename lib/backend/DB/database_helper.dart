@@ -235,7 +235,7 @@ class ScheduleDatabaseHelper {
           startDate: DateTime.parse(schedule["startDate"].replaceAll('/', '-'))
                   .millisecondsSinceEpoch ~/
               1000,
-          startTime: schedule["startTime"] != null
+          startTime: schedule["startTime"] != ""
               ? DateFormat("h:mm a").parse(schedule["startTime"]).hour * 3600 +
                   DateFormat("h:mm a").parse(schedule["startTime"]).minute *
                       60 +
