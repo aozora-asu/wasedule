@@ -38,6 +38,7 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
+    testNotify();
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
@@ -158,7 +159,6 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    testNotify();
     SizeConfig().init(context);
     return Scaffold(
       body: SingleChildScrollView(
