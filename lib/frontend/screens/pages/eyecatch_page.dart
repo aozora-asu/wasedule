@@ -60,7 +60,7 @@ class _FadingImageState extends State<FadingImage>
       load().then((_) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => FirstPage()),
+          MaterialPageRoute(builder: (context) => AppPage()),
         );
       });
     });

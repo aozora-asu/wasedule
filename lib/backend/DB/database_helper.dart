@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/backend/notify/notify_setting.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'models/task.dart';
@@ -189,6 +190,21 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
     _database.close();
   }
+
+  Future<List<Map<String, dynamic>>> withinNdaysTask() async {
+    int n = 2;
+    await initialize();
+    List<Map<String, dynamic>> withinNdaysTask = await _database.query(
+      'tasks',
+      where: 'dtEnd >= ? AND dtEnd < ?',
+      whereArgs: [
+        DateTime.now().millisecondsSinceEpoch,
+        DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch
+      ],
+    );
+    _database.close();
+    return withinNdaysTask;
+  }
 }
 
 class ScheduleDatabaseHelper {
@@ -266,5 +282,16 @@ class ScheduleDatabaseHelper {
         await _database.rawQuery('SELECT * FROM schedule');
     _database.close();
     return data;
+  }
+
+  Future<List<Map<String, dynamic>>> getTodaysSchedule() async {
+    await _initScheduleDatabase();
+    List<Map<String, dynamic>> todaysSchedule = await _database.query(
+      'your_table_name',
+      where: 'startDate = ?',
+      whereArgs: [DateTime.now().millisecondsSinceEpoch ~/ 1000],
+    );
+    _database.close();
+    return todaysSchedule;
   }
 }
