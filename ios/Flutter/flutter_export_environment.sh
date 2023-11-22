@@ -3,7 +3,7 @@
 export "FLUTTER_ROOT=/Users/yazawashun/Documents/FLUTTER_APP/flutter"
 export "FLUTTER_APPLICATION_PATH=/Users/yazawashun/Documents/Flutter_app/Apps/wase_dule"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
-export "FLUTTER_TARGET=/Users/yazawashun/Documents/Flutter_app/Apps/wase_dule/lib/main.dart"
+export "FLUTTER_TARGET=/Users/yazawashun/Documents/Flutter_app/Apps/wase_dule/lib/test.dart"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
 export "FLUTTER_BUILD_NUMBER=1"

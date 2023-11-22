@@ -244,14 +244,14 @@ class _InputFormState extends State<InputForm> {
                 }
 
                 Map<String, dynamic> schedule = {
-                  "subject": "$_ScheduleController",
-                  "startDate": "${_DtStartcontroller.text}",
-                  "startTime": "${_TimeStartcontroller.text}",
-                  "endDate": "${_DtEndcontroller.text}",
-                  "endTime": "${_TimeEndcontroller.text}",
-                  "isPublic": "$intIspublic",
+                  "subject": _ScheduleController.text,
+                  "startDate": _DtStartcontroller.text,
+                  "startTime": _TimeStartcontroller.text,
+                  "endDate": _DtEndcontroller.text,
+                  "endTime": _TimeEndcontroller.text,
+                  "isPublic": intIspublic,
                   "publicSubject": "public用の予定",
-                  "tag": "$_Tagcontroller"
+                  "tag": _Tagcontroller.text
                 };
 
                 print('Schedule: ${_ScheduleController.text}');

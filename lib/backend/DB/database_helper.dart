@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/backend/notify/notify_setting.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'models/task.dart';
@@ -189,6 +190,21 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
     _database.close();
   }
+
+  Future<List<Map<String, dynamic>>> withinNdaysTask() async {
+    int n = 2;
+    await initialize();
+    List<Map<String, dynamic>> withinNdaysTask = await _database.query(
+      'tasks',
+      where: 'dtEnd >= ? AND dtEnd < ?',
+      whereArgs: [
+        DateTime.now().millisecondsSinceEpoch,
+        DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch
+      ],
+    );
+    _database.close();
+    return withinNdaysTask;
+  }
 }
 
 class ScheduleDatabaseHelper {
@@ -235,23 +251,23 @@ class ScheduleDatabaseHelper {
           startDate: DateTime.parse(schedule["startDate"].replaceAll('/', '-'))
                   .millisecondsSinceEpoch ~/
               1000,
-          startTime: schedule["startTime"] != null
+          startTime: schedule["startTime"] != ""
               ? DateFormat("h:mm a").parse(schedule["startTime"]).hour * 3600 +
                   DateFormat("h:mm a").parse(schedule["startTime"]).minute *
                       60 +
                   DateFormat("h:mm a").parse(schedule["startTime"]).second
               : null,
-          endDate: schedule["endDate"] != null
+          endDate: schedule["endDate"] != ""
               ? DateTime.parse(schedule["endDate"].replaceAll('/', '-'))
                       .millisecondsSinceEpoch ~/
                   1000
               : null,
-          endTime: schedule["endTime"] != null
+          endTime: schedule["endTime"] != ""
               ? DateFormat("h:mm a").parse(schedule["endTime"]).hour * 3600 +
                   DateFormat("h:mm a").parse(schedule["endTime"]).minute * 60 +
                   DateFormat("h:mm a").parse(schedule["endTime"]).second
               : null,
-          isPublic: int.parse(schedule["isPublic"]),
+          isPublic: schedule["isPublic"],
           publicSubject: schedule["publicSubject"],
           tag: schedule["tag"]);
       // 2. データベースヘルパークラスを使用してデータベースに挿入
@@ -266,5 +282,45 @@ class ScheduleDatabaseHelper {
         await _database.rawQuery('SELECT * FROM schedule');
     _database.close();
     return data;
+  }
+
+  Future<List<Map<String, dynamic>>> _getTodaysSchedule() async {
+    await _initScheduleDatabase();
+    List<Map<String, dynamic>> todaysSchedule = await _database.query(
+      'schedule',
+      where: 'startDate = ?',
+      whereArgs: [DateTime.now().millisecondsSinceEpoch ~/ 1000],
+    );
+    _database.close();
+    return todaysSchedule;
+  }
+
+  Future<String> notifyTodaysSchedule() async {
+    Future<List<Map<String, dynamic>>> todaysScheduleList =
+        _getTodaysSchedule();
+
+    late String todaysSchedule;
+    List<Map<String, dynamic>> schedules = await todaysScheduleList;
+    if (schedules.isEmpty) {
+      todaysSchedule = "本日の予定はありません";
+    } else {
+      for (var schedule in schedules) {
+        int startTimeInSeconds = schedule["startTime"] ?? 0; // 仮の初期値
+        String endTimeString = schedule["endTime"] != null
+            ? "${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).hour}:${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).minute}"
+            : ""; // 仮の初期値
+        String subject = schedule["subject"]; // null の場合はから文字列
+
+        // int を DateTime に変換
+        DateTime startTime =
+            DateTime.fromMillisecondsSinceEpoch(startTimeInSeconds * 1000);
+        // 24時間表記の文字列に変換
+        String startTimeString = "${startTime.hour}:${startTime.minute}";
+
+        todaysSchedule += "$startTimeString~$endTimeString  $subject\n";
+      }
+    }
+
+    return todaysSchedule;
   }
 }
