@@ -237,7 +237,7 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light().copyWith(
-                // ヘッダーの色
+            // ヘッダーの色
                 primary: MAIN_COLOR),
             // 日付選択部の色
             dialogBackgroundColor: WIDGET_COLOR,

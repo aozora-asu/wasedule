@@ -57,7 +57,7 @@ class burgerMenu extends StatelessWidget {
               color: MAIN_COLOR,
             ),
             title: Text(
-              "使い方",
+              "使い方ガイド",
               style: TextStyle(
                 fontSize: 22.5,
                 fontWeight: FontWeight.w800,
