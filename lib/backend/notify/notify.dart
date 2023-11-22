@@ -26,7 +26,7 @@ class Notify {
 
   Future<void> scheduleDailyTenAMNotification() async {
     String todaysSchedule =
-        await ScheduleDatabaseHelper().notifyTodaysSchedule();
+        await ScheduleDatabaseHelper().todaysScheduleForNotify();
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         '今日の予定',

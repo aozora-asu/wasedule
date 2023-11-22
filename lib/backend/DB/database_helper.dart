@@ -295,7 +295,7 @@ class ScheduleDatabaseHelper {
     return todaysSchedule;
   }
 
-  Future<String> notifyTodaysSchedule() async {
+  Future<String> todaysScheduleForNotify() async {
     Future<List<Map<String, dynamic>>> todaysScheduleList =
         _getTodaysSchedule();
 
