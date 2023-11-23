@@ -37,7 +37,7 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
-  TextEditingController _ScheduleController = TextEditingController();
+  final TextEditingController _ScheduleController = TextEditingController();
   TextEditingController _DtStartcontroller = TextEditingController();
   TextEditingController _TimeStartcontroller = TextEditingController();
   TextEditingController _DtEndcontroller = TextEditingController();

@@ -10,7 +10,9 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
   await initializeNotification();
+
   await initializeDateFormatting(); // 初期化
   runApp(MyApp());
 }

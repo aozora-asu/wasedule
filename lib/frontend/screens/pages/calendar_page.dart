@@ -8,6 +8,7 @@ import '../components/template/brief_task_text.dart';
 import '../../size_config.dart';
 import '../components/template/add_event_button.dart';
 import '../components/template/event.dart';
+import '../components/template/loading.dart';
 
 import 'dart:async';
 import 'dart:io';
@@ -126,10 +127,14 @@ class _CalendarState extends State<Calendar> {
     // 開始日と時刻の結合
     DateTime startDate =
         DateTime.fromMillisecondsSinceEpoch(schedule['startDate']);
-    DateTime startTime =
-        DateTime.fromMillisecondsSinceEpoch(schedule['startTime']);
     DateTime combinedStartDateTime =
         DateTime(startDate.year, startDate.month, startDate.day);
+    DateTime startTime =
+        DateTime(startDate.year, startDate.month, startDate.day, 0, 0);
+    if (schedule["startTime"] != null) {
+      startTime = DateTime.fromMillisecondsSinceEpoch(schedule['startTime']);
+    }
+
     combinedStartDateTime = combinedStartDateTime
         .add(Duration(hours: startTime.hour, minutes: startTime.minute));
     print(combinedStartDateTime);
@@ -138,8 +143,18 @@ class _CalendarState extends State<Calendar> {
 
   DateTime combineEndDateAndTime(Map<String, dynamic> schedule) {
     // 終了日と時刻の結合
-    DateTime endDate = DateTime.fromMillisecondsSinceEpoch(schedule['endDate']);
-    DateTime endTime = DateTime.fromMillisecondsSinceEpoch(schedule['endTime']);
+    DateTime startDate =
+        DateTime.fromMillisecondsSinceEpoch(schedule['startDate']);
+    DateTime endDate =
+        DateTime(startDate.year, startDate.month, startDate.day + 1, 0, 0);
+    late DateTime endTime;
+    if (schedule["endDate"] != null) {
+      endDate = DateTime.fromMillisecondsSinceEpoch(schedule['endDate']);
+    } else if (schedule["endTime"] != null) {
+      endTime = DateTime.fromMillisecondsSinceEpoch(schedule['endTime']);
+    }
+    endTime = DateTime(endDate.year, endDate.month, endDate.day, 0, 0);
+
     DateTime combinedEndDateTime =
         DateTime(endDate.year, endDate.month, endDate.day);
     combinedEndDateTime = combinedEndDateTime
@@ -150,7 +165,7 @@ class _CalendarState extends State<Calendar> {
 
   bool setIsAllDay(Map<String, dynamic> schedule) {
     //startTimeとendTimeのどちらも空だった場合にtrueを返す
-    if (schedule['startTime'] == "" && schedule['endTime'] == "") {
+    if (schedule['startTime'] == null && schedule['endTime'] == null) {
       return true;
     } else {
       return false;
@@ -171,7 +186,7 @@ class _CalendarState extends State<Calendar> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     // データが取得される間、ローディングインディケータを表示できます。
-                    return const CircularProgressIndicator();
+                    return LoadingScreen();
                   } else if (snapshot.hasError) {
                     // エラーがある場合、エラーメッセージを表示します。
                     return Text('エラーだよい: ${snapshot.error}');

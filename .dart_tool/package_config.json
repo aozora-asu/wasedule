@@ -398,6 +398,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "tab_indicator_styler",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/tab_indicator_styler-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "table_calendar",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
       "packageUri": "lib/",
@@ -476,7 +482,9 @@
       "languageVersion": "3.1"
     }
   ],
+
   "generated": "2023-11-23T06:48:28.846149Z",
+
   "generator": "pub",
   "generatorVersion": "3.1.5"
 }

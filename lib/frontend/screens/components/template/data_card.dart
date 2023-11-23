@@ -5,8 +5,10 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../components/organism/float_button.dart';
+import '../../components/template/brief_kanban.dart';
 import 'dart:async';
 import '../../pages/task_page.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 Map<String, List<Widget>> FoldableMap = {}; //折りたたみ可能ウィジェットの管理用キメラ。
 List<String> TitleList = [];
@@ -132,7 +134,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
 
   String _userInput1 = '';
   String _userInput5 = '';
-  String _userInput2 = '';
   final FocusNode _focusNodeCategories = FocusNode();
   final FocusNode _focusNodeMemo = FocusNode();
   final FocusNode _focusNodeDescription = FocusNode();
@@ -143,15 +144,12 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-
-    //setState(() {
     _controller1 = TextEditingController(text: widget.title);
     _controller2 = TextEditingController(text: widget.description);
-    _controller3 = DateFormat('yyyy年MM月dd日 HH時mm分').format(widget.dtEnd);
+    _controller3 = DateFormat('MM月dd日 HH時mm分、yyyy年').format(widget.dtEnd);
     _controller4 = TextEditingController(text: widget.isDone.toString());
     _controller5 = TextEditingController(text: widget.summary);
     _index = TextEditingController(text: widget.index.toString());
-    //});
   }
 
   @override
@@ -180,7 +178,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
               ),
               backgroundColor: WIDGET_OUTLINE_COLOR,
               duration:
-                  const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。デフォルトは4秒
+                  const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。
             ),
           )
           .closed
@@ -223,42 +221,33 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                 margin: EdgeInsets.symmetric(
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
                 color: WIDGET_COLOR,
+                elevation: 5,
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      // 輪郭線のスタイルを設定
-                      color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                      width: 1, // 輪郭線の幅
-                    ),
+                     border: Border.all(
+                       // 輪郭線のスタイルを設定
+                       color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
+                       width: 2, // 輪郭線の幅
+                     ),
                     borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                   ),
-                  height: SizeConfig.blockSizeHorizontal! * 40.25,
+                  height: SizeConfig.blockSizeHorizontal! * 24.5,
                   width: SizeConfig.blockSizeHorizontal! * 95.75,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
 //授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Container(
+                        //color: WIDGET_OUTLINE_COLOR,
+                        alignment: Alignment.bottomLeft,
                         height: SizeConfig.blockSizeHorizontal! * 9,
                         child: Row(
                           children: <Widget>[
                             SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 2.5,
-                              height: SizeConfig.blockSizeHorizontal! * 9,
-                            ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 5,
-                              height: SizeConfig.blockSizeHorizontal! * 9,
-                              child: buttonSwitching(),
-                            ),
-                            SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 2.5,
-                                height: SizeConfig.blockSizeHorizontal! * 9),
-                            Container(
-                              //padding: const EdgeInsets.only(top: 12),
-
-                              width: SizeConfig.blockSizeHorizontal! * 80,
-                              height: SizeConfig.blockSizeHorizontal! * 9,
+                                height: SizeConfig.blockSizeHorizontal! * 8),
+                            Expanded(
+                              
                               child: TextField(
                                 focusNode: _focusNodeCategories,
                                 textInputAction: TextInputAction.done,
@@ -286,58 +275,78 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 2.5,
+                              height: SizeConfig.blockSizeHorizontal! * 9,
+                            ),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 9,
+                              height: SizeConfig.blockSizeHorizontal! * 9,
+                              child: buttonSwitching(),
+                            ),
                           ],
                         ),
                       ),
-                      // Divider(
-                      //   height: SizeConfig.blockSizeHorizontal! *
-                      //       0.8, // 高さを指定する場合（省略可）
-                      //   color: WIDGET_OUTLINE_COLOR, // 線の色を指定する場合（省略可）
-                      //   thickness: 2, // 線の太さを指定する場合（省略可）
-                      // ),
-//要約(メモ)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//期限/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Container(
-                        height: SizeConfig.blockSizeHorizontal! * 7,
+                        height: SizeConfig.blockSizeHorizontal! * 3.8,
                         width: SizeConfig.blockSizeHorizontal! * 96,
                         child: Row(
                           children: [
-                            // SizedBox(
-                            //   height: SizeConfig.blockSizeHorizontal! * 12,
-                            //   width: SizeConfig.blockSizeHorizontal! * 11,
-                            //   alignment: Alignment.topLeft,
-                            //   child: Text(
-                            //     '  要約',
-                            //     textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            //     style: TextStyle(
-                            //       fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            //       fontWeight: FontWeight.w600,
-                            //       color: Color.fromARGB(255, 0, 0, 0),
-                            //     ),
-                            //   ),
-                            // ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 2,
-                              height: SizeConfig.blockSizeHorizontal! * 7,
-                            ),
                             Container(
-                              width: SizeConfig.blockSizeHorizontal! * 82,
-                              height: SizeConfig.blockSizeHorizontal! * 7,
+                              width: SizeConfig.blockSizeHorizontal! * 88,
+                              height: SizeConfig.blockSizeHorizontal! * 3.8,
                               alignment: Alignment.topLeft,
                               child: Row(
                                 children: <Widget>[
                                   SizedBox(
                                       width:
                                           SizeConfig.blockSizeHorizontal! * 2),
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                75),
-                                    margin: EdgeInsets.only(top: 0),
-                                    //width: SizeConfig.blockSizeHorizontal! * 75,
-                                    alignment: Alignment.topLeft,
-                                    height: SizeConfig.blockSizeHorizontal! * 7,
+                                    Padding(
+                                        padding:
+                                             EdgeInsets.only(left: SizeConfig.blockSizeHorizontal! * 0.5),
+                                        child: Container(
+                                          width:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  50,
+                                          height:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  3.8,
+                                          child: Text(
+                                            _controller3,
+                                            style: TextStyle(
+                                              fontSize: SizeConfig.blockSizeHorizontal! *3,
+                                              fontWeight: FontWeight.w400,
+                                              color:const Color.fromARGB(255, 133, 133, 133)
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+//要約//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [SizedBox(
+                          height: SizeConfig.blockSizeHorizontal! * 10,
+                          width: SizeConfig.blockSizeHorizontal! * 94,
+                          child: Align(
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 2.5,
+                                  height: SizeConfig.blockSizeHorizontal! * 10,
+                                ),
+                                SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal! * 90,
+                                  child: Row(
+                                    children: <Widget>[
+                                  Expanded(child:Container(
+                                    //margin: EdgeInsets.only(top: 0),
+                                    height: SizeConfig.blockSizeHorizontal! * 10,
                                     child: TextField(
                                       focusNode: _focusNodeMemo,
                                       maxLines: 1,
@@ -345,204 +354,30 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                       controller: _controller5,
                                       style: TextStyle(
                                         fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 3,
-                                        fontWeight: FontWeight.w700,
+                                            SizeConfig.blockSizeHorizontal! * 3.25,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       textInputAction: TextInputAction.done,
                                       onSubmitted: (inputValue) {
                                         _userInput5 = inputValue;
-                                        databaseHelper.updateSummary(
-                                            index, _userInput5);
+                                        databaseHelper.updateSummary(index, _userInput5);
                                       },
                                       decoration: InputDecoration(
                                         hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.only(
-                                            bottom: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                3.2),
                                         hintStyle: const TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: SizeConfig.blockSizeHorizontal! * 0.6,
-                        color: WIDGET_OUTLINE_COLOR,
-                        thickness: 2,
-                      ),
-//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                      SizedBox(
-                        height: SizeConfig.blockSizeHorizontal! * 1,
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeHorizontal! * 13,
-                        width: SizeConfig.blockSizeHorizontal! * 96,
-                        child: Row(
-                          children: [
-                            // SizedBox(
-                            //   height: SizeConfig.blockSizeHorizontal! * 15,
-                            //   width: SizeConfig.blockSizeHorizontal! * 11,
-                            //   alignment: Alignment.topLeft,
-                            //   child: Text(
-                            //     '  詳細',
-                            //     textAlign: TextAlign.left, // テキスト自体の揃え方も指定
-                            //     style: TextStyle(
-                            //       fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                            //       fontWeight: FontWeight.w600,
-                            //       color: Color.fromARGB(255, 0, 0, 0),
-                            //     ),
-                            //   ),
-                            // ),
-                            SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 2,
-                              height: SizeConfig.blockSizeHorizontal! * 0.6,
-                            ),
-                            Container(
-                              width: SizeConfig.blockSizeHorizontal! * 82,
-                              height: SizeConfig.blockSizeHorizontal! * 15,
-                              alignment: Alignment.topLeft,
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 2),
-                                  SingleChildScrollView(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 0),
-                                      constraints: BoxConstraints(
-                                          maxWidth:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  75),
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 75,
-                                      alignment: Alignment.topLeft,
-                                      height:
-                                          SizeConfig.blockSizeHorizontal! * 13,
-                                      child: TextField(
-                                        focusNode: _focusNodeDescription,
-                                        textInputAction: TextInputAction.done,
-                                        onSubmitted: (inputValue) {
-                                          _userInput2 = inputValue;
-                                          databaseHelper.updateDescription(
-                                              index, _userInput2);
-                                        },
-                                        maxLines: 3,
-                                        textAlign: TextAlign.start,
-                                        controller: _controller2,
-                                        style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        decoration: const InputDecoration(
-                                          hintText: "タスクの詳細やメモを入力…",
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                              EdgeInsets.only(top: 0),
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
                                   ),
-                                  //),
-                                ],
+                              SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 1.5,
+                              height: SizeConfig.blockSizeHorizontal! * 7,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Divider(
-                      //   height: SizeConfig.blockSizeHorizontal! * 0.8,
-                      //   color: WIDGET_OUTLINE_COLOR,
-                      //   thickness: 2,
-                      // ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeHorizontal! * 2,
-                      ),
-//期限、残り日数、タスクの状態//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                      Row(children: [
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 1.2,
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 6,
-                          width: SizeConfig.blockSizeHorizontal! * 94,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 8,
-                                  height: SizeConfig.blockSizeHorizontal! * 6,
-                                  child: Text(
-                                    ' 期限',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 2,
-                                  height: SizeConfig.blockSizeHorizontal! * 6,
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 83.1,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Container(
-                                          width:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  38,
-                                          height:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  6,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            _controller3,
-                                            style: TextStyle(
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  3,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                42,
-                                            height: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                6.5,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: taskData(),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                  taskData()
+                                  ],   
                                   ),
                                 ),
                               ],
@@ -550,6 +385,79 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                           ),
                         ),
                       ]),
+//課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                      // SizedBox(
+                      //   height: SizeConfig.blockSizeHorizontal! * 1,
+                      // ),
+                      // SizedBox(
+                      //   height: SizeConfig.blockSizeHorizontal! * 13,
+                      //   width: SizeConfig.blockSizeHorizontal! * 96,
+                      //   child: Row(
+                      //     children: [
+                      //       SizedBox(
+                      //         width: SizeConfig.blockSizeHorizontal! * 2,
+                      //         height: SizeConfig.blockSizeHorizontal! * 0.6,
+                      //       ),
+                      //       Container(
+                      //         width: SizeConfig.blockSizeHorizontal! * 82,
+                      //         height: SizeConfig.blockSizeHorizontal! * 15,
+                      //         alignment: Alignment.topLeft,
+                      //         child: Row(
+                      //           children: <Widget>[
+                      //             SizedBox(
+                      //                 width:
+                      //                     SizeConfig.blockSizeHorizontal! * 2),
+                      //             SingleChildScrollView(
+                      //               child: Container(
+                      //                 margin: EdgeInsets.only(top: 0),
+                      //                 constraints: BoxConstraints(
+                      //                     maxWidth:
+                      //                         SizeConfig.blockSizeHorizontal! *
+                      //                             75),
+                      //                 width:
+                      //                     SizeConfig.blockSizeHorizontal! * 75,
+                      //                 alignment: Alignment.topLeft,
+                      //                 height:
+                      //                     SizeConfig.blockSizeHorizontal! * 13,
+                      //                 child: TextField(
+                      //                   focusNode: _focusNodeDescription,
+                      //                   textInputAction: TextInputAction.done,
+                      //                   onSubmitted: (inputValue) {
+                      //                     _userInput2 = inputValue;
+                      //                     databaseHelper.updateDescription(
+                      //                         index, _userInput2);
+                      //                   },
+                      //                   maxLines: 3,
+                      //                   textAlign: TextAlign.start,
+                      //                   controller: _controller2,
+                      //                   style: TextStyle(
+                      //                     fontSize:
+                      //                         SizeConfig.blockSizeHorizontal! *
+                      //                             3,
+                      //                     fontWeight: FontWeight.w500,
+                      //                   ),
+                      //                   decoration: const InputDecoration(
+                      //                     hintText: "タスクの詳細やメモを入力…",
+                      //                     border: InputBorder.none,
+                      //                     contentPadding:
+                      //                         EdgeInsets.only(top: 0),
+                      //                     hintStyle: TextStyle(
+                      //                         color: Colors.grey,
+                      //                         fontWeight: FontWeight.w500),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //             //),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      SizedBox(
+                        height: SizeConfig.blockSizeHorizontal! * 0.5,
+                      ),
                     ],
                   ),
                 ),
@@ -570,20 +478,13 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   }
 
   buttonSwitching() {
-    return InkWell(
-      onTap: () {
-        informationAutoDismissiblePopup(context);
-      },
-      child: SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 5,
-        height: SizeConfig.blockSizeHorizontal! * 5,
-        child: Icon(
-          Icons.info,
-          color: Colors.blueGrey,
-          size: SizeConfig.blockSizeHorizontal! * 5,
-        ),
-      ),
-    );
+    return InformationAutoDismissiblePopup(
+      controller:_controller2,
+      text : widget.description,
+      index: widget.index,
+      titleName: widget.title,
+      summary: widget.summary,
+      );
   }
 
   Stream<String> getRemainingTimeStream(DateTime dtEnd) async* {
@@ -703,7 +604,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w900,
-              color: const Color.fromARGB(255, 250, 0, 0),
+              color: Colors.white,
             ),
           ));
     }
@@ -720,28 +621,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   }
 }
 
-void informationAutoDismissiblePopup(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      Timer(const Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-      });
 
-      return Align(
-          alignment: Alignment.bottomCenter,
-          child: AlertDialog(
-            title: Text(
-              'カードはスワイプで削除できます。',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ));
-    },
-  );
-}
 
 void showAutoDismissiblePopup(BuildContext context) {
   showDialog(
@@ -782,6 +662,210 @@ void showAutoDismissiblePopup(BuildContext context) {
     },
   );
 }
+//詳細のポップアップ///////////////////////////////////////////////////////////////////////////////////
+class InformationAutoDismissiblePopup extends StatefulWidget {
+  late TextEditingController controller;
+  late int index;
+  String _userInput2 = '';
+  late String text;
+  TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  late String titleName;
+  late String summary;
+
+  InformationAutoDismissiblePopup({
+    required this.controller,
+    required this.index,
+    required this.text,
+    required this.titleName,
+    required this.summary
+  });
+
+  @override
+  InformationAutoDismissiblePopupState createState() => InformationAutoDismissiblePopupState();
+}
+
+class InformationAutoDismissiblePopupState extends State<InformationAutoDismissiblePopup> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller = TextEditingController(text:widget.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
+
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+          backgroundColor: Colors.transparent,
+          //isScrollControlled: true,
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.only(top: 64),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                 Container(
+                  decoration: BoxDecoration(
+                  color:Colors.white, 
+                  borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5), // 影の色と透明度
+                        spreadRadius: 2, // 影の広がり
+                        blurRadius: 4, // 影のぼかし
+                        offset: Offset(0, 2), // 影の方向（横、縦）
+                      ),
+                    ],), 
+                    alignment: Alignment.center,
+                    height: SizeConfig.blockSizeHorizontal! * 13,
+                    child:Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
+                      Container(width:SizeConfig.blockSizeHorizontal! *92,
+                      child: Row(children: [
+                      Container(
+                       constraints:BoxConstraints(maxWidth :SizeConfig.blockSizeHorizontal! *73.5),
+                       child:Text(widget.titleName,
+                       maxLines: 1,
+                       overflow: TextOverflow.ellipsis,
+                       style: TextStyle(
+                        fontSize:SizeConfig.blockSizeHorizontal! * 5,
+                        fontWeight: FontWeight.w700
+                          ),
+                        ),),
+
+                    Text("  の詳細",
+                      style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! * 5,
+                      fontWeight: FontWeight.w700
+                      ),
+                    ),
+                      ],)),
+
+                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
+                    ],)
+                  ),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
+                  Align(alignment: Alignment.centerLeft,
+                    child:Text("   タスクの概要",
+                      style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
+                      fontWeight: FontWeight.w600
+                      ),
+                    ),),
+                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
+                    Align(alignment: Alignment.centerLeft,
+                    child:Text("   ${widget.summary}",
+                      maxLines: 1,
+                      style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
+                      fontWeight: FontWeight.w400
+                      ),
+                    ),),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
+                  Align(alignment: Alignment.centerLeft,
+                    child:Text("   タスクの詳細情報(編集可)",
+                      style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
+                      fontWeight: FontWeight.w600
+                      ),
+                    ),),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 32,
+                    //width: SizeConfig.blockSizeHorizontal! * 93,
+                    child: Row(
+                      children: [
+                        Container(
+                          //width: SizeConfig.blockSizeHorizontal! *90,
+                          height: SizeConfig.blockSizeHorizontal! * 32,
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: SizeConfig.blockSizeHorizontal! * 2,
+                              ),
+                              SingleChildScrollView(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 0),
+                                  constraints: BoxConstraints(
+                                    maxWidth: SizeConfig.blockSizeHorizontal! * 97,
+                                  ),
+                                  //width: SizeConfig.blockSizeHorizontal! * 90,
+                                  alignment: Alignment.topLeft,
+                                  height: SizeConfig.blockSizeHorizontal! * 32,
+                                  child: TextField(
+                                    textInputAction: TextInputAction.done,
+                                    onSubmitted: (inputValue) {
+                                      widget._userInput2 = inputValue;
+                                      widget.databaseHelper.updateDescription(
+                                      widget.index, widget._userInput2);
+                                    },
+                                    maxLines: 7,
+                                    textAlign: TextAlign.start,
+                                    controller: widget.controller,
+                                    style: TextStyle(
+                                      fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      hintText: "タスクの詳細やメモを入力…",
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(
+                                        top: 0,left:4,right:4),
+                                      hintStyle: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Align(alignment: Alignment.centerLeft,
+                    child:Text("   タスクの優先度設定",
+                      style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
+                      fontWeight: FontWeight.w600
+                      ),
+                    ),),
+                  PriorityTabBar(),
+                ],
+              ),
+            );
+          },
+        );
+      },
+       child: SizedBox(
+        width: SizeConfig.blockSizeHorizontal! * 8,
+        height: SizeConfig.blockSizeHorizontal! * 8,
+        child: Icon(
+          Icons.edit_note_rounded,
+          color: Colors.blueGrey,
+          size: SizeConfig.blockSizeHorizontal! * 8,
+        ),
+      ),
+    );
+  }
+}
 
 //カードそのものの折り畳みに関する記述//////////////////////////////////////////////////////////////////
 class FoldableCard extends StatefulWidget {
@@ -818,7 +902,7 @@ class _FoldableCardState extends State<FoldableCard> {
             curve: Curves.easeInOut,
             height: isFolded
                 ? SizeConfig.blockSizeHorizontal! * 7
-                : SizeConfig.blockSizeHorizontal! * 45, // カードが折りたたまれる高さと元の高さ
+                : SizeConfig.blockSizeHorizontal! * 33, // カードが折りたたまれる高さと元の高さ
             color: WIDGET_COLOR,
 
             child: isFolded
@@ -956,6 +1040,7 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
             child: Container(
               width: SizeConfig.blockSizeHorizontal! * 95.75,
               child: Card(
+                elevation: 2,
                 margin: EdgeInsets.symmetric(
                     vertical: 0,
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
@@ -964,15 +1049,6 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
                     children: [
                       ListTile(
                         title: Row(children: [
-                          //  Container(
-                          //   width: SizeConfig.blockSizeHorizontal! * 3,
-                          //   height: SizeConfig.blockSizeHorizontal! * 11,
-                          //   color: ACCENT_COLOR,
-                          //   ),
-                          //  Container(
-                          //   width: SizeConfig.blockSizeHorizontal! * 6,
-                          //   height: SizeConfig.blockSizeHorizontal! * 10,
-                          //   ),
                           Icon(
                             Icons.subdirectory_arrow_right,
                             size: 30,
