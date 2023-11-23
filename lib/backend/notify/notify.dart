@@ -34,8 +34,11 @@ class Notify {
         _nextInstanceOfEightAM(),
         NotificationDetails(
           android: AndroidNotificationDetails(
-              'daily notification channel id', '今日の予定',
-              channelDescription: todaysSchedule),
+            'daily notification channel id',
+            '今日の予定',
+            channelDescription: todaysSchedule,
+            allowWhileIdle: true,
+          ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:

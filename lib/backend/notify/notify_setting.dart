@@ -36,7 +36,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   }
 }
 
-Future<void> initialize() async {
+Future<void> initializeNotification() async {
   /// A notification action which triggers a App navigation event
   const String navigationActionId = 'id_3';
 
@@ -111,7 +111,7 @@ Future<void> initialize() async {
     notificationCategories: darwinNotificationCategories,
   );
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('../../images/icon/icon.png');
+      AndroidInitializationSettings('icon');
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsDarwin,
