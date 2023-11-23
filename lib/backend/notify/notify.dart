@@ -26,7 +26,7 @@ class Notify {
 
   Future<void> scheduleDailyTenAMNotification() async {
     String todaysSchedule =
-        await ScheduleDatabaseHelper().notifyTodaysSchedule();
+        await ScheduleDatabaseHelper().todaysScheduleForNotify();
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         '今日の予定',
@@ -34,8 +34,11 @@ class Notify {
         _nextInstanceOfEightAM(),
         NotificationDetails(
           android: AndroidNotificationDetails(
-              'daily notification channel id', '今日の予定',
-              channelDescription: todaysSchedule),
+            'daily notification channel id',
+            '今日の予定',
+            channelDescription: todaysSchedule,
+            allowWhileIdle: true,
+          ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:

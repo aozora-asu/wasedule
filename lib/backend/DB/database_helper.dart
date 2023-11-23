@@ -193,7 +193,7 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> withinNdaysTask() async {
     int n = 2;
-    await initialize();
+    await initializeNotification();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
       where: 'dtEnd >= ? AND dtEnd < ?',
@@ -295,7 +295,7 @@ class ScheduleDatabaseHelper {
     return todaysSchedule;
   }
 
-  Future<String> notifyTodaysSchedule() async {
+  Future<String> todaysScheduleForNotify() async {
     Future<List<Map<String, dynamic>>> todaysScheduleList =
         _getTodaysSchedule();
 
