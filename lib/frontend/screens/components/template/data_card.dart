@@ -759,13 +759,13 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                   ),
                   SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
                   Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの概要：",
+                    child:Text("   タスクの概要",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w600
                       ),
                     ),),
-                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
+                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
                     Align(alignment: Alignment.centerLeft,
                     child:Text("   ${widget.summary}",
                       maxLines: 1,
@@ -776,13 +776,13 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     ),),
                   SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
                   Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの詳細情報(編集可)：",
+                    child:Text("   タスクの詳細情報(編集可)",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w600
                       ),
                     ),),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 32,
                     //width: SizeConfig.blockSizeHorizontal! * 93,
@@ -844,7 +844,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     child:Text("   タスクの優先度設定",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w600
                       ),
                     ),),
                   PriorityTabBar(),

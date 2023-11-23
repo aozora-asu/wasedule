@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'app_bar.dart';
 import "../../../size_config.dart";
 import '../../pages/setting_page.dart';
+import '../../pages/url_register_page.dart';
 
 class burgerMenu extends StatelessWidget {
 
@@ -65,6 +66,26 @@ class burgerMenu extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
+            },
+          ),
+                    ListTile(
+            leading: Icon(
+              Icons.add_link,
+              color: MAIN_COLOR,
+            ),
+            title: Text(
+              "Moodle URLの登録",
+              style: TextStyle(
+                fontSize: 22.5,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            onTap: () {
+              Navigator.pop(context); 
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+              );
             },
           ),
         ],
