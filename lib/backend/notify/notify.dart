@@ -37,7 +37,6 @@ class Notify {
             'daily notification channel id',
             '今日の予定',
             channelDescription: todaysSchedule,
-            allowWhileIdle: true,
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
