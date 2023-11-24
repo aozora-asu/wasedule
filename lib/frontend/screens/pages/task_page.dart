@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter_calandar_app/frontend/size_config.dart';
 import '../components/template/loading.dart';
 import '../components/template/add_data_card_button.dart';
+import '../components/template/brief_kanban.dart';
 
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
@@ -62,41 +63,72 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
-        body: Center(
-          child: FutureBuilder<List<Map<String, dynamic>>>(
+    return WillPopScope(
+  onWillPop: () async {
+    // 画面が閉じられる直前の処理
+    if(isSnackBar){
+      canSnackBarClose = false;
+    }
+    return true; // trueを返すと閉じる、falseを返すと閉じない
+  },child:Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: null, // 戻るアイコンを非表示
+            automaticallyImplyLeading: false, // 戻るアイコンを非表示
+            expandedHeight: SizeConfig.blockSizeHorizontal! *80,
+            flexibleSpace: FlexibleSpaceBar(
+              title: BoxContainer(),
+              background: Container(
+                color:WIDGET_COLOR,
+              ),
+            ),
+            floating: false,
+            pinned: true,
+            backgroundColor: WIDGET_COLOR,
+          ),
+          FutureBuilder<List<Map<String, dynamic>>>(
             future: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return LoadingScreen();
+                return SliverFillRemaining(
+                  child: LoadingScreen(),
+                );
               } else if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
+                return SliverFillRemaining(
+                  child: Text("Error: ${snapshot.error}"),
+                );
               } else if (snapshot.hasData) {
-                // データが読み込まれた場合、リストを生成
-
-                return buildDataCards(context, snapshot.data!);
+                return 
+                 buildDataCards(context, snapshot.data!);
               } else {
-                // データがない場合の処理（nullの場合など）
-
-                return noneTaskText();
+                return SliverFillRemaining(
+                  child: noneTaskText(),
+                );
               }
             },
           ),
-        ),
-        floatingActionButton:
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
           InputForm(),
           Container(
-              width: SizeConfig.blockSizeHorizontal! * 2,
-              height: SizeConfig.blockSizeHorizontal! * 5),
+            width: SizeConfig.blockSizeHorizontal! * 2,
+            height: SizeConfig.blockSizeHorizontal! * 5,
+          ),
           FloatingActionButton(
             onPressed: () {
               _loadData();
             },
-            backgroundColor: MAIN_COLOR, // ボタンの背景色
-            child: const Icon(Icons.get_app), // ボタンのアイコン
+            backgroundColor: MAIN_COLOR,
+            child: const Icon(Icons.get_app),
           ),
-        ]));
+        ],
+      )
+     )
+    );
   }
 }

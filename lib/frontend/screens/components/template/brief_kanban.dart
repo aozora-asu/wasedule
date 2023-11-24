@@ -70,3 +70,82 @@ class _PriorityTabBarState extends State<PriorityTabBar> with TickerProviderStat
     );
   }
 }
+
+
+class BoxContainer extends StatefulWidget {
+  @override
+  _BoxContainerState createState() => _BoxContainerState();
+}
+
+class _BoxContainerState extends State<BoxContainer> {
+  List<BoxData> boxes = [
+    BoxData(color: Colors.red, text: '高'),
+    BoxData(color: Colors.green, text: '中'),
+    BoxData(color: Colors.blue, text: '低'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: boxes
+          .map((box) => DraggableBox(
+                data: box,
+              ))
+          .toList(),
+    );
+  }
+}
+
+class DraggableBox extends StatelessWidget {
+  final BoxData data;
+
+  DraggableBox({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Draggable(
+      data: data,
+      child: BoxWidget(
+        color: data.color,
+        text: data.text,
+      ),
+      feedback: BoxWidget(
+        color: data.color.withOpacity(0.7),
+        text: data.text,
+      ),
+      childWhenDragging: Container(),
+    );
+  }
+}
+
+class BoxWidget extends StatelessWidget {
+  final Color color;
+  final String text;
+
+  BoxWidget({required this.color, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return Container(
+      width:SizeConfig.blockSizeHorizontal! *25,
+      height:SizeConfig.blockSizeHorizontal! *20,
+      color: color,
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class BoxData {
+  final Color color;
+  final String text;
+
+  BoxData({required this.color, required this.text});
+}
