@@ -70,24 +70,28 @@ class _TaskPageState extends State<TaskPage> {
       canSnackBarClose = false;
     }
     return true; // trueを返すと閉じる、falseを返すと閉じない
-  },child:Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: null, // 戻るアイコンを非表示
-            automaticallyImplyLeading: false, // 戻るアイコンを非表示
-            expandedHeight: SizeConfig.blockSizeHorizontal! *80,
-            flexibleSpace: FlexibleSpaceBar(
-              title: BoxContainer(),
-              background: Container(
-                color:WIDGET_COLOR,
+  },
+      child: Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              elevation: 0,
+              leading: null, // 戻るアイコンを非表示
+              automaticallyImplyLeading: false, // 戻るアイコンを非表示
+              expandedHeight: SizeConfig.blockSizeHorizontal! * 100,
+              collapsedHeight: SizeConfig.blockSizeHorizontal! * 20,
+              floating: false,
+              pinned: true,
+              backgroundColor: WIDGET_COLOR,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(),//こっちにタスク進捗リスト
+              ),
+                bottom: PreferredSize(
+                preferredSize: Size.fromHeight(SizeConfig.blockSizeHorizontal! * 25), // ウィジェットの高さ
+                child: BriefKanBan(), // 折り畳み後の領域に表示するウィジェット
               ),
             ),
-            floating: false,
-            pinned: true,
-            backgroundColor: WIDGET_COLOR,
-          ),
           FutureBuilder<List<Map<String, dynamic>>>(
             future: events,
             builder: (context, snapshot) {
