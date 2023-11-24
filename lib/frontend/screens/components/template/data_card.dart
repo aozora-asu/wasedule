@@ -777,7 +777,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     child:Text("   タスクの概要：",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w700
                       ),
                     ),),
                     SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
@@ -794,7 +794,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     child:Text("   タスクの詳細情報(編集可)：",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w700
                       ),
                     ),),
                   SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
@@ -859,7 +859,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     child:Text("   タスクの優先度設定",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
+                      fontWeight: FontWeight.w700
                       ),
                     ),),
                   PriorityTabBar(),
@@ -890,7 +890,7 @@ class FoldableCard extends StatefulWidget {
   const FoldableCard({
     required this.dataCard,
     required this.summary,
-  }); // コンストラクタでDataCardのインスタンスとtitleを受け取る
+  }); 
 
   @override
   _FoldableCardState createState() => _FoldableCardState();

@@ -36,6 +36,7 @@ class _PriorityTabBarState extends State<PriorityTabBar> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -72,80 +73,69 @@ class _PriorityTabBarState extends State<PriorityTabBar> with TickerProviderStat
 }
 
 
-class BoxContainer extends StatefulWidget {
+class BriefKanBan extends StatefulWidget {
   @override
-  _BoxContainerState createState() => _BoxContainerState();
+  _BriefKanBanState createState() => _BriefKanBanState();
 }
 
-class _BoxContainerState extends State<BoxContainer> {
-  List<BoxData> boxes = [
-    BoxData(color: Colors.red, text: '高'),
-    BoxData(color: Colors.green, text: '中'),
-    BoxData(color: Colors.blue, text: '低'),
-  ];
-
+class _BriefKanBanState extends State<BriefKanBan> {
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: boxes
-          .map((box) => DraggableBox(
-                data: box,
-              ))
-          .toList(),
-    );
-  }
-}
-
-class DraggableBox extends StatelessWidget {
-  final BoxData data;
-
-  DraggableBox({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Draggable(
-      data: data,
-      child: BoxWidget(
-        color: data.color,
-        text: data.text,
-      ),
-      feedback: BoxWidget(
-        color: data.color.withOpacity(0.7),
-        text: data.text,
-      ),
-      childWhenDragging: Container(),
-    );
-  }
-}
-
-class BoxWidget extends StatelessWidget {
-  final Color color;
-  final String text;
-
-  BoxWidget({required this.color, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return Container(
-      width:SizeConfig.blockSizeHorizontal! *25,
-      height:SizeConfig.blockSizeHorizontal! *20,
-      color: color,
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(color: Colors.white),
+    return Column(children:[
+        Container(
+         width: SizeConfig.blockSizeHorizontal! * 100,
+         height: SizeConfig.blockSizeHorizontal! * 5,
+         child: Text(" タスクの優先度",
+         style:TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 4,
+         fontWeight: FontWeight.w600)
+         ),
         ),
-      ),
-    );
+                Container(
+         width: SizeConfig.blockSizeHorizontal! * 100,
+         height: SizeConfig.blockSizeHorizontal! * 1),
+       Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 32,
+            height: SizeConfig.blockSizeHorizontal! * 37.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20),),
+                color: WIDGET_OUTLINE_COLOR,
+                ),
+            child: Center(
+              child: Text('高'),
+            ),
+          ),
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 32,
+            height: SizeConfig.blockSizeHorizontal! *  37.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20),),
+                color: WIDGET_OUTLINE_COLOR,
+                ),
+            child: Center(
+              child: Text('中'),
+            ),
+          ),
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 32,
+            height: SizeConfig.blockSizeHorizontal! *  37.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20),),
+                color: WIDGET_OUTLINE_COLOR,
+                ),
+            child: Center(
+              child: Text('低'),
+            ),
+          ),
+        ],
+      ), 
+        Container(
+         width: SizeConfig.blockSizeHorizontal! * 100,
+         height: SizeConfig.blockSizeHorizontal! * 0.5),
+      ]
+      );
+
   }
-}
-
-class BoxData {
-  final Color color;
-  final String text;
-
-  BoxData({required this.color, required this.text});
 }

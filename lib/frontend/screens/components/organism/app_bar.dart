@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MAIN_COLOR,
-        elevation: 10,
+        elevation: 3,
         title: Column(
           children: <Widget>[
             Text(
