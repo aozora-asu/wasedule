@@ -14,7 +14,7 @@ class AddEventButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: FloatingActionButton.extended(
+      child: FloatingActionButton(
         onPressed: () {
           showDialog(
             context: context,
@@ -23,9 +23,7 @@ class AddEventButton extends StatelessWidget {
         },
         foregroundColor: Colors.white,
         backgroundColor: ACCENT_COLOR,
-        isExtended: true,
-        label: const Text('イベント追加'),
-        icon: const Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

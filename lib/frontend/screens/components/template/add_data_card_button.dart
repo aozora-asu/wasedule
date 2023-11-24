@@ -193,16 +193,14 @@ class _InputFormState extends State<InputForm> {
 
   Widget addDataCardButton() {
     return SizedBox(
-      child: FloatingActionButton.extended(
+      child: FloatingActionButton(
         onPressed: () {
           // データカードを追加する処理をここに記述
           _showInputDialog(context);
         },
         foregroundColor: Colors.white,
         backgroundColor: ACCENT_COLOR,
-        isExtended: true,
-        label: const Text('タスク追加'),
-        icon: const Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
