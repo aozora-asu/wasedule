@@ -13,6 +13,8 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 Map<String, List<Widget>> FoldableMap = {}; //折りたたみ可能ウィジェットの管理用キメラ。
 List<String> TitleList = [];
 List<String> uniqueTitleList = TitleList.toSet().toList();
+bool isSnackBar = false;
+bool canSnackBarClose = true;
 
 class DataCard extends StatefulWidget {
   final String title; // 授業名
@@ -37,8 +39,13 @@ class DataCard extends StatefulWidget {
 
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
-
-  return ListView(
+  
+  return  SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context,index) {
+    return ListView(
+    shrinkWrap: true,
+    physics: NeverScrollableScrollPhysics(),
     children: <Widget>[
       //１枚目のカードを生成(エラー回避)
       for (int i = 0; i < data.length; i++) ...{
@@ -122,6 +129,9 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
       }
     ],
   );
+  }
+  )
+  );
 }
 
 class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
@@ -162,6 +172,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
 
 //スワイプで削除の処理////////////////////////////////////////////////////////////////////////////
     void _showSnackBar(BuildContext context) {
+      isSnackBar = true;
       ScaffoldMessenger.of(context)
           .showSnackBar(
             SnackBar(
@@ -173,7 +184,9 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                 label: '元に戻す',
                 textColor: Colors.lightBlue,
                 onPressed: () {
-                  setState(() {});
+                  if(canSnackBarClose){
+                  setState(() {});}
+                  isSnackBar = false;
                 },
               ),
               backgroundColor: WIDGET_OUTLINE_COLOR,
@@ -185,12 +198,14 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
           .then((reason) {
         if (reason == SnackBarClosedReason.action) {
           print("消去取消");
+          isSnackBar = false;
         } else {
           print("消去発動");
           // SnackBar が閉じられたときの処理（非表示になったとき）
+        if(canSnackBarClose){
           databaseHelper.unDisplay(index);
-          _controller4.text = "1";
-          
+          _controller4.text = "1";}
+          isSnackBar = false;
         }
       });
     }
@@ -759,13 +774,13 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                   ),
                   SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
                   Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの概要",
+                    child:Text("   タスクの概要：",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w600
+                      fontWeight: FontWeight.w400
                       ),
                     ),),
-                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
+                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
                     Align(alignment: Alignment.centerLeft,
                     child:Text("   ${widget.summary}",
                       maxLines: 1,
@@ -776,13 +791,13 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     ),),
                   SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
                   Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの詳細情報(編集可)",
+                    child:Text("   タスクの詳細情報(編集可)：",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w600
+                      fontWeight: FontWeight.w400
                       ),
                     ),),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 0.5,),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 32,
                     //width: SizeConfig.blockSizeHorizontal! * 93,
@@ -844,7 +859,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                     child:Text("   タスクの優先度設定",
                       style: TextStyle(
                       fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w600
+                      fontWeight: FontWeight.w400
                       ),
                     ),),
                   PriorityTabBar(),
@@ -1049,7 +1064,7 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
                     children: [
                       ListTile(
                         title: Row(children: [
-                          Icon(
+                          const Icon(
                             Icons.subdirectory_arrow_right,
                             size: 30,
                             color: Colors.blueGrey,

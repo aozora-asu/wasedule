@@ -9,7 +9,7 @@ class SettingsPage extends StatelessWidget {
             appBar: AppBar(
         backgroundColor: MAIN_COLOR,
         elevation: 10,
-        title: Column(
+        title: const Column(
           children:<Widget>[
             Row(children:[
             Icon(
@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      body:MyWidget(),
+      body:const MyWidget(),
       );
   }
 }
@@ -104,8 +104,8 @@ class MainContents extends StatelessWidget {
       ),
     ),
             Positioned(
-              top: 4,
-              left: 4,
+              top: 7,
+              left: 10,
               child:  Text('通知設定…',
               style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *7,
@@ -126,8 +126,8 @@ class MainContents extends StatelessWidget {
       ),
     ),
             Positioned(
-              top: 4,
-              left: 4,
+              top: 7,
+              left: 10,
               child:  Text('フレンド設定…',
               style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *7,
@@ -148,8 +148,8 @@ class MainContents extends StatelessWidget {
       ),
     ),
             Positioned(
-              top: 4,
-              left: 4,
+              top: 7,
+              left: 10,
               child:  Text('カレンダー設定…',
               style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *7,
