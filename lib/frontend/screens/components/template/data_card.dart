@@ -42,6 +42,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   
   return  SliverList(
       delegate: SliverChildBuilderDelegate(
+        childCount: 1,
         (BuildContext context,index) {
     return ListView(
     shrinkWrap: true,
