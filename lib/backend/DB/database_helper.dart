@@ -36,11 +36,24 @@ class TaskDatabaseHelper {
 
   Future<void> _orderByDateTime() async {
     await _initDatabase();
-    await _database.query(
+
+    // データを日付でソート
+    List<Map<String, dynamic>> sortedTasks = await _database.query(
       'tasks',
-      orderBy: 'dtEnd ASC', // 日付で昇順にソート
+      orderBy: 'dtEnd ASC',
     );
-    _database.close();
+
+    // 新しいidを振り直す
+    for (int i = 0; i < sortedTasks.length; i++) {
+      await _database.update(
+        'tasks',
+        {'id': i + 1},
+        where: 'id = ?', // idで行を特定
+        whereArgs: [sortedTasks[i]['id']],
+      );
+    }
+
+    await _database.close();
   }
 
   // タスクの挿入
