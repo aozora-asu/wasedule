@@ -76,7 +76,7 @@ class _InputFormState extends State<InputForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'タスク情報を入力…',
+            ' 新タスクを追加',
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 7,
               fontWeight: FontWeight.w900,

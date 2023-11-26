@@ -98,7 +98,7 @@ class _BriefKanBanState extends State<BriefKanBan> {
         children: [
           Container(
             width: SizeConfig.blockSizeHorizontal! * 32,
-            height: SizeConfig.blockSizeHorizontal! * 37.5,
+            height: SizeConfig.blockSizeHorizontal! * 32,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20),),
                 color: WIDGET_OUTLINE_COLOR,
@@ -109,7 +109,7 @@ class _BriefKanBanState extends State<BriefKanBan> {
           ),
           Container(
             width: SizeConfig.blockSizeHorizontal! * 32,
-            height: SizeConfig.blockSizeHorizontal! *  37.5,
+            height: SizeConfig.blockSizeHorizontal! *  32,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20),),
                 color: WIDGET_OUTLINE_COLOR,
@@ -120,7 +120,7 @@ class _BriefKanBanState extends State<BriefKanBan> {
           ),
           Container(
             width: SizeConfig.blockSizeHorizontal! * 32,
-            height: SizeConfig.blockSizeHorizontal! *  37.5,
+            height: SizeConfig.blockSizeHorizontal! *  32,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20),),
                 color: WIDGET_OUTLINE_COLOR,
@@ -133,7 +133,7 @@ class _BriefKanBanState extends State<BriefKanBan> {
       ), 
         Container(
          width: SizeConfig.blockSizeHorizontal! * 100,
-         height: SizeConfig.blockSizeHorizontal! * 0.5),
+         height: SizeConfig.blockSizeHorizontal! *1),
       ]
       );
 
