@@ -80,7 +80,7 @@ class _TaskPageState extends State<TaskPage> {
               leading: null, // 戻るアイコンを非表示
               automaticallyImplyLeading: false, // 戻るアイコンを非表示
               expandedHeight: SizeConfig.blockSizeHorizontal! * 100,
-              collapsedHeight: SizeConfig.blockSizeHorizontal! * 20,
+              collapsedHeight: SizeConfig.blockSizeHorizontal! * 15,
               floating: false,
               pinned: true,
               backgroundColor: WIDGET_COLOR,
