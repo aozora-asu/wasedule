@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../../backend/DB/database_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;
@@ -19,61 +20,74 @@ Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   await TaskDatabaseHelper().insertTask(taskItem);
 }
 
-class InputForm extends StatefulWidget {
-  @override
-  _InputFormState createState() => _InputFormState();
+final inputFormProvider = StateNotifierProvider<InputFormNotifier, InputForm>(
+  (ref) => InputFormNotifier(),
+);
+
+class InputFormNotifier extends StateNotifier<InputForm> {
+  InputFormNotifier() : super(InputForm());
+
+  void updateDateTimeFields() {
+    state = state.copyWith();
+  }
+
 }
 
-class _InputFormState extends State<InputForm> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _summaryController = TextEditingController();
-  final TextEditingController _dtEndcontroller = TextEditingController();
+class InputForm {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController summaryController = TextEditingController();
+  final TextEditingController dtEndController = TextEditingController();
 
-  bool _isButtonEnabled = false;
+  InputForm copyWith({
+    String? titleController,
+    String? descriptionController,
+    String? summaryController,
+    String? dtEndController,
+  }) {
+    return InputForm()
+      ..titleController.text = titleController ?? this.titleController.text
+      ..descriptionController.text = descriptionController ?? this.descriptionController.text
+      ..summaryController.text = summaryController ?? this.summaryController.text
+      ..dtEndController.text = dtEndController ?? this.dtEndController.text;
+  }
 
+    void clearContents() {
+    titleController.clear();
+    descriptionController.clear();
+    dtEndController.clear();
+    summaryController.clear();
+  }
+
+}
+
+class AddDataCardButton extends ConsumerWidget {
   @override
-  void initState() {
-    super.initState();
-    _titleController.addListener(_validateInput);
+  Widget build(BuildContext context,WidgetRef ref) {
+    final inputForm = ref.watch(inputFormProvider);
+    return SizedBox(
+      child: FloatingActionButton(
+        onPressed: () {
+          inputForm.clearContents();
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => TaskInputForm(),
+          );
+        },
+        foregroundColor: Colors.white,
+        backgroundColor: ACCENT_COLOR,
+        child: const Icon(Icons.add),
+      ),
+    );
   }
+}
 
-  void _validateInput() {
-    setState(() {
-      _isButtonEnabled = _titleController.text.isNotEmpty;
-    });
-  }
-
-  void _handleSubmit() {
-    // フォームが有効な場合の処理
-    if (_isButtonEnabled) {
-      // ここで次に進む処理を行います
-      print('Valid input: ${_titleController.text}');
-    } else {
-      // フォームが無効な場合の処理
-      print('Input is empty. Cannot proceed.');
-    }
-  }
-
+class TaskInputForm extends ConsumerWidget {
+  
   @override
-  void dispose() {
-    _titleController.dispose();
-    _summaryController.dispose();
-    _dtEndcontroller.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  void _showInputDialog(BuildContext context) {
-    // ダイアログを表示する前にコントローラーのテキストをクリア
-    _titleController.clear();
-    _summaryController.clear();
-    _dtEndcontroller.clear();
-    _descriptionController.clear();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
+  Widget build(BuildContext context ,WidgetRef ref) {
+   final inputForm = ref.watch(inputFormProvider);
+     
         return AlertDialog(
           title: Text(
             ' 新タスクを追加',
@@ -87,16 +101,19 @@ class _InputFormState extends State<InputForm> {
               Container(
                   width: SizeConfig.blockSizeHorizontal! * 80,
                   height: SizeConfig.blockSizeHorizontal! * 16,
-                  // padding: EdgeInsets.all(10),
-                  // alignment: Alignment.center,
-                  child: EasyAutocomplete(
-                    suggestions: uniqueTitleList,
-                    onChanged: (value) => print('onChanged value: $value'),
-                    onSubmitted: (value) => print('onSubmitted value: $value'),
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: '授業名/タスク名'),
-                  )),
+                  child: TextFormField( 
+                  //child: EasyAutoComplete(
+                  //suggestions: uniqueTitleList,
+                  onFieldSubmitted: (value) {
+                    ref.read(inputFormProvider.notifier).updateDateTimeFields();
+                  },
+                  controller: inputForm.titleController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '授業名/タスク名',
+                    ),
+                   ),
+                  ),
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 3,
@@ -105,8 +122,8 @@ class _InputFormState extends State<InputForm> {
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
-                  controller: _summaryController,
-                  decoration: InputDecoration(
+                  controller: inputForm.summaryController,
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '要約(通知表示用)'),
                 ),
               ),
@@ -118,7 +135,7 @@ class _InputFormState extends State<InputForm> {
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
-                  controller: _descriptionController,
+                  controller: inputForm.descriptionController,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), labelText: '詳細'),
                 ),
@@ -128,7 +145,7 @@ class _InputFormState extends State<InputForm> {
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
               DateTimePickerFormField(
-                controller: _dtEndcontroller,
+                controller: inputForm.dtEndController,
                 labelText: '締め切り日時(２４時間表示)',
               ),
             ],
@@ -155,73 +172,60 @@ class _InputFormState extends State<InputForm> {
               ),
               ElevatedButton(
                 onPressed: () {
+                 if (inputForm.dtEndController.text.isEmpty ||
+                  inputForm.titleController.text.isEmpty) {
+                  print("ボタン無効");
+                } else {
                   // ここに、入力データをDBにぶち込む処理を追加。
                   Map<String, dynamic> taskItem = {};
-                  taskItem["title"] = _titleController.text;
-                  taskItem["summary"] = _summaryController.text;
-                  taskItem["description"] = _descriptionController.text;
-                  taskItem["dtEnd"] = DateTime.parse(_dtEndcontroller.text)
+                  taskItem["title"] = inputForm.titleController.text;
+                  taskItem["summary"] = inputForm.summaryController.text;
+                  taskItem["description"] = inputForm.descriptionController.text;
+                  taskItem["dtEnd"] = DateTime.parse(inputForm.dtEndController.text)
                       .millisecondsSinceEpoch;
-
-                  setState(() {
-                    registeTaskToDB(taskItem);
-                  });
-
-                  Navigator.of(context).pop();
+                  registeTaskToDB(taskItem);
+                  Navigator.of(context).pop();}
                 },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color?>(MAIN_COLOR),
-                  fixedSize: MaterialStateProperty.all<Size>(
-                    Size(SizeConfig.blockSizeHorizontal! * 35,
-                        SizeConfig.blockSizeHorizontal! * 7.5),
-                  ),
-                ),
+
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+                // 条件によってボタンの色を選択
+              if (inputForm.dtEndController.text.isEmpty ||inputForm.titleController.text.isEmpty) {
+               return Colors.grey;}else{
+                    // ボタンが無効の場合の色
+                return MAIN_COLOR; // ボタンが通常の場合の色
+                   }
+              }
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(Size(
+                SizeConfig.blockSizeHorizontal! * 35,
+                SizeConfig.blockSizeHorizontal! * 7.5,
+              )),
+            ),
                 child: const Text('追加'),
               ),
             ])
           ],
         );
-      },
-    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return addDataCardButton();
-  }
 
-  Widget addDataCardButton() {
-    return SizedBox(
-      child: FloatingActionButton(
-        onPressed: () {
-          // データカードを追加する処理をここに記述
-          _showInputDialog(context);
-        },
-        foregroundColor: Colors.white,
-        backgroundColor: ACCENT_COLOR,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
 }
 
-class DateTimePickerFormField extends StatefulWidget {
+class DateTimePickerFormField extends ConsumerWidget {
   final TextEditingController controller;
   final String labelText;
 
-  DateTimePickerFormField({required this.controller, required this.labelText});
+  DateTimePickerFormField({
+    required this.controller,
+    required this.labelText
+    });
 
-  @override
-  _DateTimePickerFormFieldState createState() =>
-      _DateTimePickerFormFieldState();
-}
-
-class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
   DateTime? _selectedDate;
-  //TimeOfDay? _selectedTime;
+  TimeOfDay? _selectedTime;
 
-  Future<void> _selectDateAndTime(BuildContext context) async {
+  Future<void> _selectDateAndTime(BuildContext context,WidgetRef ref) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -258,7 +262,6 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
       );
 
       if (pickedTime != null) {
-        setState(() {
           _selectedDate = DateTime(
             pickedDate.year,
             pickedDate.month,
@@ -266,16 +269,16 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
             pickedTime.hour,
             pickedTime.minute,
           );
-
-          widget.controller.text =
+          controller.text =
               DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
-        });
+
+        ref.read(inputFormProvider.notifier).updateDateTimeFields();
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -284,14 +287,14 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
           height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
-              _selectDateAndTime(context);
+              _selectDateAndTime(context,ref);
             },
             child: IgnorePointer(
               child: TextFormField(
-                controller: widget.controller,
+                controller: controller,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: widget.labelText,
+                  labelText: labelText,
                 ),
               ),
             ),

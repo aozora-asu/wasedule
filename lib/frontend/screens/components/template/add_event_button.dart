@@ -93,12 +93,14 @@ class ScheduleForm {
 
 
 
-class AddEventButton extends StatelessWidget {
+class AddEventButton extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheduleForm = ref.watch(scheduleFormProvider);
     return SizedBox(
       child: FloatingActionButton(
         onPressed: () {
+         scheduleForm.clearContents();
           showDialog(
             context: context,
             builder: (BuildContext context) => InputForm(),
@@ -113,36 +115,6 @@ class AddEventButton extends StatelessWidget {
 }
 
 class InputForm extends ConsumerWidget {
-
-  // final TextEditingController _ScheduleController = TextEditingController();
-  // TextEditingController _DtStartcontroller = TextEditingController();
-  // TextEditingController _TimeStartcontroller = TextEditingController();
-  // TextEditingController _DtEndcontroller = TextEditingController();
-  // TextEditingController _TimeEndcontroller = TextEditingController();
-  // TextEditingController _Tagcontroller = TextEditingController();
-
-  // bool isAllDay = false;
-  // bool isPublic = false;
-  // TextEditingController _PublicScheduleController = TextEditingController();
-
-  // @override
-  // void initState() {
-  //   isAllDay = false;
-  //   isPublic = false;
-  //   super.initState();
-  // }
-
-  // @override
-  // void dispose() {
-  //   _ScheduleController.dispose();
-  //   _PublicScheduleController.dispose();
-  //   _DtEndcontroller.dispose();
-  //   _TimeEndcontroller.dispose();
-  //   _DtStartcontroller.dispose();
-  //   _TimeStartcontroller.dispose();
-  //   _Tagcontroller.dispose();
-  //   super.dispose();
-  // }
 
   Widget publicScheduleField(ref) {
   final scheduleForm = ref.watch(scheduleFormProvider);
@@ -164,12 +136,12 @@ class InputForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    
     final scheduleForm = ref.watch(scheduleFormProvider);
+    scheduleForm.isAllDay=false;
+
     return AlertDialog(
       title: Text(
-        '予定を入力…',
+        '予定を追加…',
         style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! * 7,
           fontWeight: FontWeight.w900,
@@ -201,10 +173,6 @@ class InputForm extends ConsumerWidget {
             dateLabelText: '開始日*',
             timeController: scheduleForm.timeStartController,
             timeLabelText: '開始時刻',
-            // whenSubmitted: (value) {
-            //   ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
-            //   print("再描画処理発動");
-            // },
           ),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,
@@ -215,9 +183,6 @@ class InputForm extends ConsumerWidget {
             dateLabelText: '終了日',
             timeController: scheduleForm.timeEndController,
             timeLabelText: '終了時刻',
-            //whenSubmitted: (value) {
-            //   ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
-            // },
           ),
           SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
@@ -246,7 +211,7 @@ class InputForm extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'フレンドに共有',
                   style: TextStyle(fontSize: 20),
                 ),
@@ -279,7 +244,7 @@ class InputForm extends ConsumerWidget {
         Row(children: [
           ElevatedButton(
             onPressed: () {
-              scheduleForm.clearContents();
+             
               Navigator.of(context).pop();
             },
             style: ButtonStyle(
@@ -341,7 +306,7 @@ class InputForm extends ConsumerWidget {
                 print('Tag: ${scheduleForm.tagController.text}');
 
                 ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
-                scheduleForm.clearContents();
+                
                 Navigator.of(context).pop();
                    }
                 }
@@ -386,14 +351,12 @@ class DateTimePickerFormField extends ConsumerWidget {
   final TextEditingController timeController;
   final String dateLabelText;
   final String timeLabelText;
-  //final void Function(String)? whenSubmitted;
 
   DateTimePickerFormField({
     required this.dateController,
     required this.timeController,
     required this.dateLabelText,
     required this.timeLabelText,
-    //required this.whenSubmitted,
   });
 
 
