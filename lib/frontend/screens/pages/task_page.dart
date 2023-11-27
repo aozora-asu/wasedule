@@ -118,7 +118,7 @@ class _TaskPageState extends State<TaskPage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          InputForm(),
+          AddDataCardButton(),
           Container(
             width: SizeConfig.blockSizeHorizontal! * 2,
             height: SizeConfig.blockSizeHorizontal! * 5,
