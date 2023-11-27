@@ -172,6 +172,27 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
+  Widget emptyCalendar(){
+      return SfCalendar(
+      view: CalendarView.month,
+      backgroundColor: BACKGROUND_COLOR,
+      todayHighlightColor: MAIN_COLOR,
+      showNavigationArrow: true,
+      selectionDecoration: BoxDecoration(
+        color: Colors.transparent,
+        border: Border.all(color: MAIN_COLOR, width: 3),
+      ),
+      onTap: (CalendarTapDetails details) {
+        print("カレンダーがタップされた");
+      },
+      monthViewSettings: const MonthViewSettings(
+        showAgenda: true,
+        appointmentDisplayMode:
+            MonthAppointmentDisplayMode.appointment,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -191,8 +212,8 @@ class _CalendarState extends State<Calendar> {
                     // エラーがある場合、エラーメッセージを表示します。
                     return Text('エラーだよい: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // データがないか、データが空の場合、メッセージを表示できます。
-                    return const Text('利用可能なイベントはありません。');
+                    // データがないか、データが空の場合、空っぽのカレンダーを表示。
+                    return  emptyCalendar();
                   } else {
                     // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                     final List<Map<String, dynamic>> scheduleList =
