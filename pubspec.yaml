@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   table_calendar: ^3.0.9
-  provider: ^6.0.5
+  flutter_riverpod: ^2.4.8
   easy_autocomplete: ^1.6.0
   syncfusion_flutter_calendar: ^23.1.44
   tab_indicator_styler: ^2.0.0

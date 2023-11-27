@@ -9,6 +9,89 @@ import 'package:form_field_validator/form_field_validator.dart';
 import '../../../../frontend/validators.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import '../../../../backend/DB/database_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+
+final scheduleFormProvider = StateNotifierProvider<ScheduleFormNotifier, ScheduleForm>(
+  (ref) => ScheduleFormNotifier(),
+);
+
+class ScheduleFormNotifier extends StateNotifier<ScheduleForm> {
+  ScheduleFormNotifier() : super(ScheduleForm());
+
+  void updateDateTimeFields() {
+    state = state.copyWith();
+  }
+
+    void toggleSwitch() {
+    state = state.copyWith(isPublic: !state.isPublic);
+  }
+
+
+
+}
+
+class ScheduleForm {
+   TextEditingController scheduleController = TextEditingController();
+   TextEditingController dtStartController = TextEditingController();
+   TextEditingController timeStartController = TextEditingController();
+   TextEditingController dtEndController = TextEditingController();
+   TextEditingController timeEndController = TextEditingController();
+   TextEditingController tagController = TextEditingController();
+    bool isAllDay = false;
+    bool isPublic = false;
+   TextEditingController publicScheduleController = TextEditingController();
+
+   TextEditingController dateController = TextEditingController();
+   TextEditingController timeController = TextEditingController();
+
+  ScheduleForm copyWith({
+    String? scheduleController,
+    String? dtStartController,
+    String? timeStartController,
+    String? dtEndController,
+    String? timeEndController,
+    String? tagController,
+    bool? isAllDay,
+    bool? isPublic,
+    String? publicScheduleController,
+
+    String? dateController,
+    String? timeController,
+  }) {
+    return ScheduleForm()
+      ..scheduleController.text = scheduleController ?? this.scheduleController.text
+      ..dtStartController.text = dtStartController ?? this.dtStartController.text
+      ..timeStartController.text = timeStartController ?? this.timeStartController.text
+      ..dtEndController.text = dtEndController ?? this.dtEndController.text
+      ..timeEndController.text = timeEndController ?? this.timeEndController.text
+      ..tagController.text = tagController ?? this.tagController.text
+      ..isAllDay = isAllDay ?? this.isAllDay
+      ..isPublic = isPublic ?? this.isPublic
+      ..publicScheduleController.text = publicScheduleController ?? this.publicScheduleController.text
+  
+      ..dateController.text = dateController ?? this.dateController.text  
+      ..timeController.text = timeController ?? this.timeController.text;
+  }
+
+    void clearContents() {
+    scheduleController.clear();
+    publicScheduleController.clear();
+    dtEndController.clear();
+    dtStartController.clear();
+    timeStartController.clear();
+    timeEndController.clear();
+    tagController.clear();
+  }
+
+  void clearpublicScheduleController(){
+  publicScheduleController.clear();
+  }
+
+}
+
+
+
 
 class AddEventButton extends StatelessWidget {
   @override
@@ -29,71 +112,61 @@ class AddEventButton extends StatelessWidget {
   }
 }
 
-class InputForm extends StatefulWidget {
-  @override
-  _InputFormState createState() => _InputFormState();
-}
+class InputForm extends ConsumerWidget {
 
-class _InputFormState extends State<InputForm> {
-  final TextEditingController _ScheduleController = TextEditingController();
-  TextEditingController _DtStartcontroller = TextEditingController();
-  TextEditingController _TimeStartcontroller = TextEditingController();
-  TextEditingController _DtEndcontroller = TextEditingController();
-  TextEditingController _TimeEndcontroller = TextEditingController();
-  TextEditingController _Tagcontroller = TextEditingController();
+  // final TextEditingController _ScheduleController = TextEditingController();
+  // TextEditingController _DtStartcontroller = TextEditingController();
+  // TextEditingController _TimeStartcontroller = TextEditingController();
+  // TextEditingController _DtEndcontroller = TextEditingController();
+  // TextEditingController _TimeEndcontroller = TextEditingController();
+  // TextEditingController _Tagcontroller = TextEditingController();
 
-  bool isAllDay = false;
-  bool isPublic = false;
-  TextEditingController _PublicScheduleController = TextEditingController();
+  // bool isAllDay = false;
+  // bool isPublic = false;
+  // TextEditingController _PublicScheduleController = TextEditingController();
 
-  @override
-  void initState() {
-    isAllDay = false;
-    isPublic = false;
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   isAllDay = false;
+  //   isPublic = false;
+  //   super.initState();
+  // }
 
-  @override
-  void dispose() {
-    _ScheduleController.dispose();
-    _PublicScheduleController.dispose();
-    _DtEndcontroller.dispose();
-    _TimeEndcontroller.dispose();
-    _DtStartcontroller.dispose();
-    _TimeStartcontroller.dispose();
-    _Tagcontroller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _ScheduleController.dispose();
+  //   _PublicScheduleController.dispose();
+  //   _DtEndcontroller.dispose();
+  //   _TimeEndcontroller.dispose();
+  //   _DtStartcontroller.dispose();
+  //   _TimeStartcontroller.dispose();
+  //   _Tagcontroller.dispose();
+  //   super.dispose();
+  // }
 
-  Widget publicScheduleField() {
-    if (isPublic == true) {
+  Widget publicScheduleField(ref) {
+  final scheduleForm = ref.watch(scheduleFormProvider);
+    if (scheduleForm.isPublic == true) {
       return Container(
         width: SizeConfig.blockSizeHorizontal! * 80,
         height: SizeConfig.blockSizeHorizontal! * 8.5,
         child: TextField(
-          controller: _PublicScheduleController,
-          decoration: InputDecoration(
+          controller: scheduleForm.publicScheduleController,
+          decoration: const InputDecoration(
               border: OutlineInputBorder(), labelText: 'フレンドに見せる予定名'),
         ),
       );
     } else {
-      return SizedBox(width: 0, height: 0);
+      scheduleForm.clearpublicScheduleController();
+      return const SizedBox(width: 0, height: 0);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    // テキストをクリア
-    void clearContents() {
-      _ScheduleController.clear();
-      _PublicScheduleController.clear();
-      _DtEndcontroller.clear();
-      _DtStartcontroller.clear();
-      _TimeStartcontroller.clear();
-      _TimeEndcontroller.clear();
-      _Tagcontroller.clear();
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
 
+    
+    final scheduleForm = ref.watch(scheduleFormProvider);
     return AlertDialog(
       title: Text(
         '予定を入力…',
@@ -108,17 +181,15 @@ class _InputFormState extends State<InputForm> {
             width: SizeConfig.blockSizeHorizontal! * 80,
             height: SizeConfig.blockSizeHorizontal! * 8.5,
             child: TextFormField(
-              controller: _ScheduleController,
-              onFieldSubmitted: (value) {
-                setState(() {});
-              },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                errorMaxLines: 3,
-                labelText: '予定名*',
-                labelStyle: TextStyle(color: Colors.red),
-              ),
-              validator: nameValidator,
+                    controller: scheduleForm.scheduleController,
+                    onFieldSubmitted: (value) {
+                      ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+                    },
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '予定名*',
+                      labelStyle: TextStyle(color: Colors.red),
+                    ),
             ),
           ),
           SizedBox(
@@ -126,26 +197,27 @@ class _InputFormState extends State<InputForm> {
             height: SizeConfig.blockSizeHorizontal! * 8,
           ),
           DateTimePickerFormField(
-            dateController: _DtStartcontroller,
+            dateController: scheduleForm.dtStartController,
             dateLabelText: '開始日*',
-            timeController: _TimeStartcontroller,
+            timeController: scheduleForm.timeStartController,
             timeLabelText: '開始時刻',
-            whenSubmitted: (value) {
-              setState(() {});
-            },
+            // whenSubmitted: (value) {
+            //   ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+            //   print("再描画処理発動");
+            // },
           ),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,
             height: SizeConfig.blockSizeHorizontal! * 3,
           ),
           DateTimePickerFormField(
-            dateController: _DtEndcontroller,
+            dateController: scheduleForm.dtEndController,
             dateLabelText: '終了日',
-            timeController: _TimeEndcontroller,
+            timeController: scheduleForm.timeEndController,
             timeLabelText: '終了時刻',
-            whenSubmitted: (value) {
-              setState(() {});
-            },
+            //whenSubmitted: (value) {
+            //   ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+            // },
           ),
           SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
@@ -157,7 +229,7 @@ class _InputFormState extends State<InputForm> {
                   color: Colors.white,
                   backgroundColor: Colors.blueAccent,
                 ),
-                controller: _Tagcontroller,
+                controller: scheduleForm.tagController,
                 decoration: const InputDecoration(
                     border: InputBorder.none,
                     labelText: 'タグを追加…',
@@ -183,14 +255,11 @@ class _InputFormState extends State<InputForm> {
                     width: SizeConfig.blockSizeHorizontal! * 16),
                 CupertinoSwitch(
                   activeColor: ACCENT_COLOR,
-                  value: isPublic,
-                  onChanged: (value) {
-                    setState(() {
-                      isPublic = value;
-                      print(value);
-                      _PublicScheduleController.clear();
-                    });
-                  },
+                  value: scheduleForm.isPublic,
+                onChanged: (value) {
+                  ref.read(scheduleFormProvider.notifier).toggleSwitch();
+                  ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+                  }
                 ),
               ],
             ),
@@ -199,7 +268,7 @@ class _InputFormState extends State<InputForm> {
             width: SizeConfig.blockSizeHorizontal! * 80,
             height: SizeConfig.blockSizeHorizontal! * 3,
           ),
-          publicScheduleField(),
+          publicScheduleField(ref),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,
             height: SizeConfig.blockSizeHorizontal! * 8,
@@ -210,7 +279,7 @@ class _InputFormState extends State<InputForm> {
         Row(children: [
           ElevatedButton(
             onPressed: () {
-              clearContents();
+              scheduleForm.clearContents();
               Navigator.of(context).pop();
             },
             style: ButtonStyle(
@@ -228,53 +297,74 @@ class _InputFormState extends State<InputForm> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (_DtStartcontroller.text.isEmpty ||
-                  _ScheduleController.text.isEmpty) {
-                //print("ボタン無効");
-                print(
-                    Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
+              if (scheduleForm.dtStartController.text.isEmpty ||
+                  scheduleForm.scheduleController.text.isEmpty) {
+                print("ボタン無効");
+                //print(Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
               } else {
+                if(scheduleForm.dtEndController.text.isEmpty && 
+                  scheduleForm.timeEndController.text.isNotEmpty){print("ボタン無効");}else{
+
+                if(scheduleForm.dtEndController.text.isNotEmpty && 
+                scheduleForm.timeEndController.text.isEmpty){print("ボタン無効");}else{
+
+
                 int intIspublic;
-                if (isPublic) {
+                if (scheduleForm.isPublic) {
                   intIspublic = 1;
                 } else {
                   intIspublic = 0;
                 }
 
+                //共有用予定が空だったら、個人用予定と揃える
+                if(scheduleForm.publicScheduleController.text.isEmpty){
+                  scheduleForm.publicScheduleController = scheduleForm.scheduleController;
+                }
+
                 Map<String, dynamic> schedule = {
-                  "subject": _ScheduleController.text,
-                  "startDate": _DtStartcontroller.text,
-                  "startTime": _TimeStartcontroller.text,
-                  "endDate": _DtEndcontroller.text,
-                  "endTime": _TimeEndcontroller.text,
+                  "subject": scheduleForm.scheduleController.text,
+                  "startDate": scheduleForm.dtStartController.text,
+                  "startTime": scheduleForm.timeStartController.text,
+                  "endDate": scheduleForm.dtStartController.text,
+                  "endTime": scheduleForm.timeEndController.text,
                   "isPublic": intIspublic,
-                  "publicSubject": "public用の予定",
-                  "tag": _Tagcontroller.text
+                  "publicSubject": scheduleForm.publicScheduleController.text,
+                  "tag": scheduleForm.tagController.text
                 };
 
-                print('Schedule: ${_ScheduleController.text}');
-                print('Ispublic: $isPublic');
-                print('DtStart: ${_DtStartcontroller.text.runtimeType}');
-                print('DtEnd: $_DtEndcontroller');
-                print('IsPrivate: $isPublic');
-                print('PublicSchedule: ${_PublicScheduleController.text}');
-                print('Tag: ${_Tagcontroller.text}');
+                print('Schedule: ${scheduleForm.scheduleController.text}');
+                print('Ispublic: ${scheduleForm.isPublic}');
+                print('DtStart: ${scheduleForm.dtStartController.text.runtimeType}');
+                print('DtEnd: ${scheduleForm.dtEndController}');
+                print('IsPrivate: ${scheduleForm.isPublic}');
+                print('PublicSchedule: ${scheduleForm.publicScheduleController.text}');
+                print('Tag: ${scheduleForm.tagController.text}');
 
                 ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
-                clearContents();
+                scheduleForm.clearContents();
                 Navigator.of(context).pop();
+                   }
+                }
               }
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                   (Set<MaterialState> states) {
                 // 条件によってボタンの色を選択
-                if (_DtStartcontroller.text.isEmpty ||
-                    _ScheduleController.text.isEmpty) {
-                  return Colors.grey; // ボタンが無効の場合の色
-                }
+              if (scheduleForm.dtStartController.text.isEmpty ||scheduleForm.scheduleController.text.isEmpty) {
+               return Colors.grey;}else{
+                if(scheduleForm.dtEndController.text.isEmpty && scheduleForm.timeEndController.text.isNotEmpty){
+                  return Colors.grey;}else{
+                 if(scheduleForm.dtEndController.text.isNotEmpty && scheduleForm.timeEndController.text.isEmpty){
+                   return Colors.grey;
+                    // ボタンが無効の場合の色
+              }else{
                 return MAIN_COLOR; // ボタンが通常の場合の色
-              }),
+                   }
+                 }
+               }
+              }
+              ),
               fixedSize: MaterialStateProperty.all<Size>(Size(
                 SizeConfig.blockSizeHorizontal! * 35,
                 SizeConfig.blockSizeHorizontal! * 7.5,
@@ -285,40 +375,39 @@ class _InputFormState extends State<InputForm> {
         ])
       ],
     );
-  }
-}
+      }
+     
+    }
+  
 
-class DateTimePickerFormField extends StatefulWidget {
+
+class DateTimePickerFormField extends ConsumerWidget {
   final TextEditingController dateController;
   final TextEditingController timeController;
   final String dateLabelText;
   final String timeLabelText;
-  final void Function(String)? whenSubmitted;
+  //final void Function(String)? whenSubmitted;
 
   DateTimePickerFormField({
     required this.dateController,
     required this.timeController,
     required this.dateLabelText,
     required this.timeLabelText,
-    required this.whenSubmitted,
+    //required this.whenSubmitted,
   });
 
-  @override
-  _DateTimePickerFormFieldState createState() =>
-      _DateTimePickerFormFieldState();
-}
 
-class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context, WidgetRef ref) async {
+    final scheduleForm = ref.watch(scheduleFormProvider);
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
+      builder: (BuildContext context, Widget? child ) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light().copyWith(
@@ -332,18 +421,17 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
     );
 
     if (pickedDate != null) {
-      setState(() {
         _selectedDate = pickedDate;
-        widget.dateController.text =
-            DateFormat('yyyy/MM/dd').format(pickedDate);
-      });
+        dateController.text =DateFormat('yyyy/MM/dd').format(pickedDate); 
+        ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context,WidgetRef ref) async {
+    final scheduleForm = ref.watch(scheduleFormProvider);
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: 00, minute: 00),
+      initialTime: const TimeOfDay(hour: 00, minute: 00),
       initialEntryMode: TimePickerEntryMode.input,
       builder: (context, child) {
         return MediaQuery(
@@ -354,15 +442,15 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
     );
 
     if (pickedTime != null) {
-      setState(() {
         _selectedTime = pickedTime;
-        widget.timeController.text = pickedTime.format(context);
-      });
+        timeController.text = pickedTime.format(context);
+        ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheduleForm = ref.watch(scheduleFormProvider);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -371,15 +459,14 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
           height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
-              _selectDate(context);
+              _selectDate(context, ref);
             },
             child: IgnorePointer(
               child: TextFormField(
-                onFieldSubmitted: widget.whenSubmitted,
-                controller: widget.dateController,
+                controller:  dateController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: widget.dateLabelText,
+                  labelText: dateLabelText,
                 ),
               ),
             ),
@@ -391,15 +478,14 @@ class _DateTimePickerFormFieldState extends State<DateTimePickerFormField> {
           height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
-              _selectTime(context);
+              _selectTime(context,ref);
             },
             child: IgnorePointer(
               child: TextFormField(
-                controller: widget.timeController,
-                onFieldSubmitted: widget.whenSubmitted,
+                controller:  timeController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: widget.timeLabelText,
+                  labelText: timeLabelText,
                 ),
               ),
             ),
