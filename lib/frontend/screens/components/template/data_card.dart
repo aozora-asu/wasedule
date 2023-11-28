@@ -236,17 +236,17 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                 margin: EdgeInsets.symmetric(
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
                 color: WIDGET_COLOR,
-                elevation: 5,
+                elevation: 0,
                 child: Container(
                   decoration: BoxDecoration(
                      border: Border.all(
                        // 輪郭線のスタイルを設定
                        color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                       width: 2, // 輪郭線の幅
+                       width: 2.5, // 輪郭線の幅
                      ),
                     borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                   ),
-                  height: SizeConfig.blockSizeHorizontal! * 24.5,
+                  height: SizeConfig.blockSizeHorizontal! * 25,
                   width: SizeConfig.blockSizeHorizontal! * 95.75,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -873,7 +873,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
         width: SizeConfig.blockSizeHorizontal! * 8,
         height: SizeConfig.blockSizeHorizontal! * 8,
         child: Icon(
-          Icons.edit_note_rounded,
+          Icons.more_horiz,
           color: Colors.blueGrey,
           size: SizeConfig.blockSizeHorizontal! * 8,
         ),
