@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
 import '../components/organism/float_button.dart';
+import '../components/template/task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
@@ -72,20 +73,34 @@ class _TaskPageState extends State<TaskPage> {
     return true; // trueを返すと閉じる、falseを返すと閉じない
   },
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor:Colors.white, // BACKGROUND_COLOR,
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
               elevation: 0,
               leading: null, // 戻るアイコンを非表示
               automaticallyImplyLeading: false, // 戻るアイコンを非表示
-              expandedHeight: SizeConfig.blockSizeHorizontal! * 100,
+              expandedHeight: SizeConfig.blockSizeHorizontal! * 89,
               collapsedHeight: SizeConfig.blockSizeHorizontal! * 15,
               floating: false,
               pinned: true,
               backgroundColor: WIDGET_COLOR,
               flexibleSpace: FlexibleSpaceBar(
-                background: Container(),//こっちにタスク進捗リスト
+               background: //こっちにタスク進捗リスト
+                FutureBuilder<List<Map<String, dynamic>>>(
+                future: events,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LoadingScreen();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    return buildTaskProgressIndicator(context, snapshot.data!);
+                  } else {
+                    return noneTaskText();
+                  }
+                 },
+               ),
               ),
                 bottom: PreferredSize(
                 preferredSize: Size.fromHeight(SizeConfig.blockSizeHorizontal! * 25), // ウィジェットの高さ
