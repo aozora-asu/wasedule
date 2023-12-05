@@ -24,7 +24,7 @@ class Notify {
       FlutterLocalNotificationsPlugin();
   String? selectedNotificationPayload;
 
-  Future<void> scheduleDailyTenAMNotification() async {
+  Future<void> scheduleDailyEightAMNotification() async {
     String todaysSchedule =
         await ScheduleDatabaseHelper().todaysScheduleForNotify();
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -86,16 +86,17 @@ class Notify {
   }
 
   Future<void> repeatNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-            'repeating channel id', 'repeating channel name',
-            channelDescription: 'repeating description');
-    const NotificationDetails notificationDetails =
+    String todaysSchedule =
+        await ScheduleDatabaseHelper().todaysScheduleForNotify();
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails('repeating channel id', '今日の予定',
+            channelDescription: todaysSchedule);
+    NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.periodicallyShow(
       id++,
-      'repeating title',
-      'repeating body',
+      '今日の予定',
+      todaysSchedule,
       RepeatInterval.everyMinute,
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

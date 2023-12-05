@@ -48,6 +48,7 @@ class _CalendarState extends State<Calendar> {
 
   testNotify() async {
     await Notify().repeatNotification();
+    await Notify().scheduleDailyEightAMNotification();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
