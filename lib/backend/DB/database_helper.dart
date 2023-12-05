@@ -298,35 +298,29 @@ class ScheduleDatabaseHelper {
     List<Map<String, dynamic>> todaysSchedule = await _database.query(
       'schedule',
       where: 'startDate = ?',
-      whereArgs: [DateTime.now().millisecondsSinceEpoch ~/ 1000],
+      whereArgs: [DateFormat("yyyy-MM-dd").format(DateTime.now())],
     );
     _database.close();
     return todaysSchedule;
   }
 
   Future<String> todaysScheduleForNotify() async {
+    await _initScheduleDatabase();
     Future<List<Map<String, dynamic>>> todaysScheduleList =
         _getTodaysSchedule();
+    _database.close();
 
-    late String todaysSchedule;
+    late String todaysSchedule = "";
     List<Map<String, dynamic>> schedules = await todaysScheduleList;
     if (schedules.isEmpty) {
       todaysSchedule = "本日の予定はありません";
     } else {
       for (var schedule in schedules) {
-        int startTimeInSeconds = schedule["startTime"] ?? 0; // 仮の初期値
-        String endTimeString = schedule["endTime"] != null
-            ? "${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).hour}:${DateTime.fromMillisecondsSinceEpoch(schedule["endTime"] * 1000).minute}"
-            : ""; // 仮の初期値
+        String startTime = schedule["startTime"] ?? ""; // 仮の初期値
+        String endTime = schedule["endTime"] ?? ""; // 仮の初期値
         String subject = schedule["subject"]; // null の場合はから文字列
-
-        // int を DateTime に変換
-        DateTime startTime =
-            DateTime.fromMillisecondsSinceEpoch(startTimeInSeconds * 1000);
-        // 24時間表記の文字列に変換
-        String startTimeString = "${startTime.hour}:${startTime.minute}";
-
-        todaysSchedule += "$startTimeString~$endTimeString  $subject\n";
+        todaysSchedule += "$startTime~$endTime  $subject\n";
+        todaysSchedule.trimRight();
       }
     }
 
