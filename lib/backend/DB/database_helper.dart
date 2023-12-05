@@ -236,10 +236,10 @@ class ScheduleDatabaseHelper {
       CREATE TABLE IF NOT EXISTS schedule(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         subject TEXT,
-        startDate INTEGER,
-        startTime INTEGER,
-        endDate INTEGER,
-        endTime INTEGER,
+        startDate TEXT,
+        startTime TEXT,
+        endDate TEXT,
+        endTime TEXT,
         isPublic INTEGER, 
         publicSubject TEXT,
         tag TEXT
@@ -257,35 +257,31 @@ class ScheduleDatabaseHelper {
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
     await _initScheduleDatabase();
     ScheduleItem scheduleItem;
-    for (int i = 0; i < schedule.length; i++) {
-      // 1. TaskItemオブジェクトを作成
-      scheduleItem = ScheduleItem(
-          subject: schedule["subject"],
-          startDate: DateTime.parse(schedule["startDate"].replaceAll('/', '-'))
-                  .millisecondsSinceEpoch ~/
-              1000,
-          startTime: schedule["startTime"] != ""
-              ? DateFormat("h:mm a").parse(schedule["startTime"]).hour * 3600 +
-                  DateFormat("h:mm a").parse(schedule["startTime"]).minute *
-                      60 +
-                  DateFormat("h:mm a").parse(schedule["startTime"]).second
-              : null,
-          endDate: schedule["endDate"] != ""
-              ? DateTime.parse(schedule["endDate"].replaceAll('/', '-'))
-                      .millisecondsSinceEpoch ~/
-                  1000
-              : null,
-          endTime: schedule["endTime"] != ""
-              ? DateFormat("h:mm a").parse(schedule["endTime"]).hour * 3600 +
-                  DateFormat("h:mm a").parse(schedule["endTime"]).minute * 60 +
-                  DateFormat("h:mm a").parse(schedule["endTime"]).second
-              : null,
-          isPublic: schedule["isPublic"],
-          publicSubject: schedule["publicSubject"],
-          tag: schedule["tag"]);
-      // 2. データベースヘルパークラスを使用してデータベースに挿入
-      await insertSchedule(scheduleItem);
-    }
+
+    String startDate = schedule["startDate"].replaceAll('/', '-');
+    String? startTime = schedule["startTime"] != ""
+        ? DateFormat("HH:mm")
+            .format(DateFormat("h:mm a").parse(schedule['startTime']))
+        : null;
+    String? endDate = schedule["endDate"].replaceAll('/', '-');
+    String? endTime = schedule["endTime"] != ""
+        ? DateFormat("HH:mm")
+            .format(DateFormat("h:mm a").parse(schedule['endTime']))
+        : null;
+
+    // 1. TaskItemオブジェクトを作成
+    scheduleItem = ScheduleItem(
+        subject: schedule["subject"],
+        startDate: startDate,
+        startTime: startTime,
+        endDate: endDate,
+        endTime: endTime,
+        isPublic: schedule["isPublic"],
+        publicSubject: schedule["publicSubject"],
+        tag: schedule["tag"]);
+    // 2. データベースヘルパークラスを使用してデータベースに挿入
+    await insertSchedule(scheduleItem);
+
     _database.close();
   }
 

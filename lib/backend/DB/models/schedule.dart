@@ -1,10 +1,10 @@
 class ScheduleItem {
   String subject;
 
-  int startDate;
-  int? startTime;
-  int? endDate;
-  int? endTime;
+  String startDate;
+  String? startTime;
+  String? endDate;
+  String? endTime;
   int isPublic;
   String? publicSubject;
   String? tag;

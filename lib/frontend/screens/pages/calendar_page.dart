@@ -114,53 +114,7 @@ class _CalendarState extends State<Calendar> {
   Future<List<Map<String, dynamic>>> _getDataSource() async {
     Future<List<Map<String, dynamic>>> scheduleList =
         ScheduleDatabaseHelper().getScheduleFromDB();
-    final List<Event> event = <Event>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime =
-        DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-    event.add(Event('大学', startTime, endTime, ACCENT_COLOR, false));
     return scheduleList;
-  }
-
-  DateTime combineStartDateAndTime(Map<String, dynamic> schedule) {
-    // 開始日と時刻の結合
-    DateTime startDate =
-        DateTime.fromMillisecondsSinceEpoch(schedule['startDate']);
-    DateTime combinedStartDateTime =
-        DateTime(startDate.year, startDate.month, startDate.day);
-    DateTime startTime =
-        DateTime(startDate.year, startDate.month, startDate.day, 0, 0);
-    if (schedule["startTime"] != null) {
-      startTime = DateTime.fromMillisecondsSinceEpoch(schedule['startTime']);
-    }
-
-    combinedStartDateTime = combinedStartDateTime
-        .add(Duration(hours: startTime.hour, minutes: startTime.minute));
-    print(combinedStartDateTime);
-    return combinedStartDateTime;
-  }
-
-  DateTime combineEndDateAndTime(Map<String, dynamic> schedule) {
-    // 終了日と時刻の結合
-    DateTime startDate =
-        DateTime.fromMillisecondsSinceEpoch(schedule['startDate']);
-    DateTime endDate =
-        DateTime(startDate.year, startDate.month, startDate.day + 1, 0, 0);
-    late DateTime endTime;
-    if (schedule["endDate"] != null) {
-      endDate = DateTime.fromMillisecondsSinceEpoch(schedule['endDate']);
-    } else if (schedule["endTime"] != null) {
-      endTime = DateTime.fromMillisecondsSinceEpoch(schedule['endTime']);
-    }
-    endTime = DateTime(endDate.year, endDate.month, endDate.day, 0, 0);
-
-    DateTime combinedEndDateTime =
-        DateTime(endDate.year, endDate.month, endDate.day);
-    combinedEndDateTime = combinedEndDateTime
-        .add(Duration(hours: endTime.hour, minutes: endTime.minute));
-    print(combinedEndDateTime);
-    return combinedEndDateTime;
   }
 
   bool setIsAllDay(Map<String, dynamic> schedule) {
@@ -172,8 +126,8 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
-  Widget emptyCalendar(){
-      return SfCalendar(
+  Widget emptyCalendar() {
+    return SfCalendar(
       view: CalendarView.month,
       backgroundColor: BACKGROUND_COLOR,
       todayHighlightColor: MAIN_COLOR,
@@ -187,8 +141,7 @@ class _CalendarState extends State<Calendar> {
       },
       monthViewSettings: const MonthViewSettings(
         showAgenda: true,
-        appointmentDisplayMode:
-            MonthAppointmentDisplayMode.appointment,
+        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
       ),
     );
   }
@@ -213,7 +166,7 @@ class _CalendarState extends State<Calendar> {
                     return Text('エラーだよい: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     // データがないか、データが空の場合、空っぽのカレンダーを表示。
-                    return  emptyCalendar();
+                    return emptyCalendar();
                   } else {
                     // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                     final List<Map<String, dynamic>> scheduleList =
@@ -224,11 +177,20 @@ class _CalendarState extends State<Calendar> {
                     for (var schedule in scheduleList) {
                       //整形したデータをカレンダー表示用のリストにぶち込む
                       final String eventName = schedule['subject'];
-                      final DateTime from = combineStartDateAndTime(schedule);
-                      final DateTime to = combineEndDateAndTime(schedule);
+                      final DateTime from = schedule["startTime"] != null
+                          ? DateTime.parse(schedule['startDate'] +
+                              " " +
+                              schedule['startTime'])
+                          : DateTime.parse(
+                              schedule['startDate'] + " " + "00:00");
+                      final DateTime to = schedule["endTime"] != null
+                          ? DateTime.parse(
+                              schedule['endDate'] + " " + schedule['endTime'])
+                          : DateTime.parse(schedule['endDate'] + " " + "00:00");
 
                       const Color background = ACCENT_COLOR;
                       final bool isAllDay = setIsAllDay(schedule);
+
                       events.add(
                           Event(eventName, from, to, background, isAllDay));
                     }
