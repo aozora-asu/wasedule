@@ -143,7 +143,7 @@ class _TaskPageState extends State<TaskPage> {
               _loadData();
             },
             backgroundColor: MAIN_COLOR,
-            child: const Icon(Icons.get_app),
+            child: const Icon(Icons.get_app,color:Colors.white),
           ),
         ],
       )

@@ -160,11 +160,11 @@ class TaskInputForm extends ConsumerWidget {
                   backgroundColor:
                       MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                   fixedSize: MaterialStateProperty.all<Size>(
-                    Size(SizeConfig.blockSizeHorizontal! * 35,
+                    Size(SizeConfig.blockSizeHorizontal! * 31,
                         SizeConfig.blockSizeHorizontal! * 7.5),
                   ),
                 ),
-                child: const Text('戻る'),
+                child: const Text('戻る',style:TextStyle(color: Colors.white)),
               ),
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 5,
@@ -199,11 +199,11 @@ class TaskInputForm extends ConsumerWidget {
               }
               ),
               fixedSize: MaterialStateProperty.all<Size>(Size(
-                SizeConfig.blockSizeHorizontal! * 35,
+                SizeConfig.blockSizeHorizontal! * 31,
                 SizeConfig.blockSizeHorizontal! * 7.5,
               )),
             ),
-                child: const Text('追加'),
+                child: const Text('追加',style:TextStyle(color: Colors.white)),
               ),
             ])
           ],
