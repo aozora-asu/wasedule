@@ -1107,10 +1107,11 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
                 margin: EdgeInsets.symmetric(
                     vertical: 0,
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
-                child: Container(
+                child: Container(color: Colors.white,
                   child: Column(
                     children: [
                       ListTile(
+                        
                         title: Row(children: [
                           const Icon(
                             Icons.subdirectory_arrow_right,
