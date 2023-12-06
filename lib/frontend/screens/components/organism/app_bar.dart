@@ -14,13 +14,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       appBar: AppBar(
         backgroundColor: MAIN_COLOR,
         elevation: 3,
-        title: Column(
+        title: const Column(
           children: <Widget>[
             Text(
               'わせジュール',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
+                color:Colors.white
               ),
             ),
             Text(
@@ -28,12 +29,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
+                color:Colors.white
               ),
             ),
           ],
         ),
          leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu,color:Colors.white),
           onPressed: () {
             Scaffold.of(context).openDrawer();
           },

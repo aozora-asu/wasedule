@@ -29,6 +29,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! *5,
                 fontWeight: FontWeight.w800,
+                color:Colors.white
               ),
             ),
             ]
@@ -62,7 +63,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: MAIN_COLOR, // ここで背景色を設定
             ),
-              child: const Text('登録'),
+              child: const Text('登録',style:TextStyle(color:Colors.white)),
             ),
             Divider(color: ACCENT_COLOR,thickness: 2,),
               Align(alignment:Alignment.centerLeft,

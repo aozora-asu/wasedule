@@ -145,7 +145,7 @@ class InputForm extends ConsumerWidget {
       content: Column(
         children: [
           Container(
-            width: SizeConfig.blockSizeHorizontal! * 80,
+            width: SizeConfig.blockSizeHorizontal! * 85,
             height: SizeConfig.blockSizeHorizontal! * 8.5,
             child: TextFormField(
               controller: scheduleForm.scheduleController,
@@ -181,7 +181,7 @@ class InputForm extends ConsumerWidget {
           ),
           SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
-              height: SizeConfig.blockSizeHorizontal! * 16,
+              height: SizeConfig.blockSizeHorizontal! * 18,
               child: EasyAutocomplete(
                 suggestions: uniqueTitleList,
                 inputTextStyle: const TextStyle(
@@ -236,7 +236,7 @@ class InputForm extends ConsumerWidget {
           ),
         ],
       ),
-      actions: [
+       actions: [
         Row(children: [
           ElevatedButton(
             onPressed: () {
@@ -245,11 +245,11 @@ class InputForm extends ConsumerWidget {
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
               fixedSize: MaterialStateProperty.all<Size>(
-                Size(SizeConfig.blockSizeHorizontal! * 35,
+                Size(SizeConfig.blockSizeHorizontal! * 30,
                     SizeConfig.blockSizeHorizontal! * 7.5),
               ),
             ),
-            child: Text('戻る'),
+            child: const Text('戻る',style:TextStyle(color:Colors.white)),
           ),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
@@ -325,11 +325,11 @@ class InputForm extends ConsumerWidget {
                 }
               }),
               fixedSize: MaterialStateProperty.all<Size>(Size(
-                SizeConfig.blockSizeHorizontal! * 35,
+                SizeConfig.blockSizeHorizontal! * 30,
                 SizeConfig.blockSizeHorizontal! * 7.5,
               )),
             ),
-            child: Text('追加'),
+            child: const Text('追加',style:TextStyle(color:Colors.white)),
           ),
         ])
       ],
