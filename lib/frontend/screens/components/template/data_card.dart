@@ -38,78 +38,46 @@ class DataCard extends StatefulWidget {
 
 Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
   SizeConfig().init(context);
-  
-  return  SliverList(
-      delegate: SliverChildBuilderDelegate(
-        childCount: 1,
-        (BuildContext context,index) {
-    return ListView(
-    shrinkWrap: true,
-    physics: NeverScrollableScrollPhysics(),
-    children: <Widget>[
-      //１枚目のカードを生成(エラー回避)
-      for (int i = 0; i < data.length; i++) ...{
-        if (i == 0) ...{
-          if (data[i]["isDone"] == 0)
-            DataCard(
-              index: i + 1,
-              title: data[i]["title"],
-              description: data[i]["description"],
-              dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-              summary: data[i]["summary"],
-              isDone: false,
-            ),
-        } else ...{
-          //2枚目以降の未完了のカードのうち、
-          if (data[i]["isDone"] == 0)
-            //前のカードとtitleとdtEndのいずれかが一致していないものは,
-            //通常ウィジェットとして生成
 
-            if (data[i]["title"] != data[i - 1]["title"] ||
-                data[i]["dtEnd"] != data[i - 1]["dtEnd"]) ...{
+  return SliverList(
+      delegate: SliverChildBuilderDelegate(childCount: 1,
+          (BuildContext context, index) {
+    return ListView(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: <Widget>[
+        //１枚目のカードを生成(エラー回避)
+        for (int i = 0; i < data.length; i++) ...{
+          if (i == 0) ...{
+            if (data[i]["isDone"] == 0)
               DataCard(
                 index: i + 1,
                 title: data[i]["title"],
                 description: data[i]["description"],
                 dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                summary: data[i]["summary"],
+                summary: data[i]["summary"] ?? "",
                 isDone: false,
-              )
-            } else ...{
-              if (i == 1) ...{
-                //前のカードとtitle、dtEndの両方が一致しているもので,
-                // ２枚目のカードだった場合、親折りたたみウィジェットを生成(エラー回避)
+              ),
+          } else ...{
+            //2枚目以降の未完了のカードのうち、
+            if (data[i]["isDone"] == 0)
+              //前のカードとtitleとdtEndのいずれかが一致していないものは,
+              //通常ウィジェットとして生成
 
-                GroupFoldableCard(
-                  isChild: false,
-                  FoldableCardSummary: data[i]["summary"],
-                  DatacardIndex: i + 1,
-                  DataCardTitle: data[i]["title"],
-                  DataCardDescription: data[i]["description"],
-                  DataCardDtEnd:
-                      DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                  DataCardSummary: data[i]["summary"],
-                  DataCardIsDone: false,
+              if (data[i]["title"] != data[i - 1]["title"] ||
+                  data[i]["dtEnd"] != data[i - 1]["dtEnd"]) ...{
+                DataCard(
+                  index: i + 1,
+                  title: data[i]["title"],
+                  description: data[i]["description"],
+                  dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                  summary: data[i]["summary"] ?? "",
+                  isDone: false,
                 )
               } else ...{
-                if (data[i]["title"] == data[i - 2]["title"] &&
-                    data[i]["dtEnd"] == data[i - 2]["dtEnd"]) ...{
-                  //２つ前のカードとTitle,dtEndが一致する場合、
-                  //子折りたたみウィジェットを生成
-
-                  GroupFoldableCard(
-                    isChild: true,
-                    FoldableCardSummary: data[i]["summary"],
-                    DatacardIndex: i + 1,
-                    DataCardTitle: data[i]["title"],
-                    DataCardDescription: data[i]["description"],
-                    DataCardDtEnd:
-                        DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                    DataCardSummary: data[i]["summary"],
-                    DataCardIsDone: false,
-                  ),
-                } else ...{
-                  //そうでない場合、親折りたたみウィジェットを生成。
+                if (i == 1) ...{
+                  //前のカードとtitle、dtEndの両方が一致しているもので,
+                  // ２枚目のカードだった場合、親折りたたみウィジェットを生成(エラー回避)
 
                   GroupFoldableCard(
                     isChild: false,
@@ -119,19 +87,48 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
                     DataCardDescription: data[i]["description"],
                     DataCardDtEnd:
                         DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
-                    DataCardSummary: data[i]["summary"],
+                    DataCardSummary: data[i]["summary"] ?? "",
                     DataCardIsDone: false,
-                  ),
+                  )
+                } else ...{
+                  if (data[i]["title"] == data[i - 2]["title"] &&
+                      data[i]["dtEnd"] == data[i - 2]["dtEnd"]) ...{
+                    //２つ前のカードとTitle,dtEndが一致する場合、
+                    //子折りたたみウィジェットを生成
+
+                    GroupFoldableCard(
+                      isChild: true,
+                      FoldableCardSummary: data[i]["summary"],
+                      DatacardIndex: i + 1,
+                      DataCardTitle: data[i]["title"],
+                      DataCardDescription: data[i]["description"],
+                      DataCardDtEnd:
+                          DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                      DataCardSummary: data[i]["summary"] ?? "",
+                      DataCardIsDone: false,
+                    ),
+                  } else ...{
+                    //そうでない場合、親折りたたみウィジェットを生成。
+
+                    GroupFoldableCard(
+                      isChild: false,
+                      FoldableCardSummary: data[i]["summary"],
+                      DatacardIndex: i + 1,
+                      DataCardTitle: data[i]["title"],
+                      DataCardDescription: data[i]["description"],
+                      DataCardDtEnd:
+                          DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
+                      DataCardSummary: data[i]["summary"],
+                      DataCardIsDone: false,
+                    ),
+                  }
                 }
               }
-            }
+          }
         }
-      }
-    ],
-  );
-  }
-  )
-  );
+      ],
+    );
+  }));
 }
 
 class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
@@ -184,14 +181,14 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                 label: '元に戻す',
                 textColor: Colors.lightBlue,
                 onPressed: () {
-                  if(canSnackBarClose){
-                  setState(() {});}
+                  if (canSnackBarClose) {
+                    setState(() {});
+                  }
                   isSnackBar = false;
                 },
               ),
               backgroundColor: WIDGET_OUTLINE_COLOR,
-              duration:
-                  const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。
+              duration: const Duration(seconds: 6), // スナックバーが自動で閉じるまでの時間。
             ),
           )
           .closed
@@ -202,13 +199,15 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
         } else {
           print("消去発動");
           // SnackBar が閉じられたときの処理（非表示になったとき）
-        if(canSnackBarClose){
-          databaseHelper.unDisplay(index);
-          _controller4.text = "1";}
+          if (canSnackBarClose) {
+            databaseHelper.unDisplay(index);
+            _controller4.text = "1";
+          }
           isSnackBar = false;
         }
       });
     }
+
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
@@ -239,11 +238,11 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                 elevation: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                     border: Border.all(
-                       // 輪郭線のスタイルを設定
-                       color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
-                       width: 2.5, // 輪郭線の幅
-                     ),
+                    border: Border.all(
+                      // 輪郭線のスタイルを設定
+                      color: WIDGET_OUTLINE_COLOR, // 輪郭線の色
+                      width: 2.5, // 輪郭線の幅
+                    ),
                     borderRadius: BorderRadius.circular(5.0), // カードの角を丸める場合は設定
                   ),
                   height: SizeConfig.blockSizeHorizontal! * 25,
@@ -262,7 +261,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                 width: SizeConfig.blockSizeHorizontal! * 2.5,
                                 height: SizeConfig.blockSizeHorizontal! * 8),
                             Expanded(
-                              
                               child: TextField(
                                 focusNode: _focusNodeCategories,
                                 textInputAction: TextInputAction.done,
@@ -317,26 +315,27 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                   SizedBox(
                                       width:
                                           SizeConfig.blockSizeHorizontal! * 2),
-                                    Padding(
-                                        padding:
-                                             EdgeInsets.only(left: SizeConfig.blockSizeHorizontal! * 0.5),
-                                        child: Container(
-                                          width:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  50,
-                                          height:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3.8,
-                                          child: Text(
-                                            _controller3,
-                                            style: TextStyle(
-                                              fontSize: SizeConfig.blockSizeHorizontal! *3,
-                                              fontWeight: FontWeight.w400,
-                                              color:const Color.fromARGB(255, 133, 133, 133)
-                                            ),
-                                          ),
-                                        ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: SizeConfig.blockSizeHorizontal! *
+                                            0.5),
+                                    child: Container(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 50,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 3.8,
+                                      child: Text(
+                                        _controller3,
+                                        style: TextStyle(
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                3,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color.fromARGB(
+                                                255, 133, 133, 133)),
                                       ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -344,62 +343,79 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                         ),
                       ),
 //要約//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 10,
-                          width: SizeConfig.blockSizeHorizontal! * 94,
-                          child: Align(
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 2.5,
-                                  height: SizeConfig.blockSizeHorizontal! * 10,
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 90,
-                                  child: Row(
-                                    children: <Widget>[
-                                  Expanded(child:Container(
-                                    //margin: EdgeInsets.only(top: 0),
-                                    height: SizeConfig.blockSizeHorizontal! * 10,
-                                    child: TextField(
-                                      focusNode: _focusNodeMemo,
-                                      maxLines: 1,
-                                      textAlign: TextAlign.start,
-                                      controller: _controller5,
-                                      style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 3.25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textInputAction: TextInputAction.done,
-                                      onSubmitted: (inputValue) {
-                                        _userInput5 = inputValue;
-                                        databaseHelper.updateSummary(index, _userInput5);
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: "通知表示用の要約を入力…  (例 レポ課題1500字)",
-                                        border: InputBorder.none,
-                                        hintStyle: const TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w500),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: SizeConfig.blockSizeHorizontal! * 10,
+                              width: SizeConfig.blockSizeHorizontal! * 94,
+                              child: Align(
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 2.5,
+                                      height:
+                                          SizeConfig.blockSizeHorizontal! * 10,
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          SizeConfig.blockSizeHorizontal! * 90,
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              //margin: EdgeInsets.only(top: 0),
+                                              height: SizeConfig
+                                                      .blockSizeHorizontal! *
+                                                  10,
+                                              child: TextField(
+                                                focusNode: _focusNodeMemo,
+                                                maxLines: 1,
+                                                textAlign: TextAlign.start,
+                                                controller: _controller5,
+                                                style: TextStyle(
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal! *
+                                                      3.25,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                textInputAction:
+                                                    TextInputAction.done,
+                                                onSubmitted: (inputValue) {
+                                                  _userInput5 = inputValue;
+                                                  databaseHelper.updateSummary(
+                                                      index, _userInput5);
+                                                },
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                      "通知表示用の要約を入力…  (例 レポ課題1500字)",
+                                                  border: InputBorder.none,
+                                                  hintStyle: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                1.5,
+                                            height: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                7,
+                                          ),
+                                          taskData()
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  ),
-                              SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 1.5,
-                              height: SizeConfig.blockSizeHorizontal! * 7,
-                              ),
-                                  taskData()
-                                  ],   
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ]),
+                          ]),
 //課題////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       // SizedBox(
                       //   height: SizeConfig.blockSizeHorizontal! * 1,
@@ -494,12 +510,12 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
 
   buttonSwitching() {
     return InformationAutoDismissiblePopup(
-      controller:_controller2,
-      text : widget.description,
+      controller: _controller2,
+      text: widget.description,
       index: widget.index,
       titleName: widget.title,
       summary: widget.summary,
-      );
+    );
   }
 
   Stream<String> getRemainingTimeStream(DateTime dtEnd) async* {
@@ -636,8 +652,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
   }
 }
 
-
-
 void showAutoDismissiblePopup(BuildContext context) {
   showDialog(
     context: context,
@@ -677,6 +691,7 @@ void showAutoDismissiblePopup(BuildContext context) {
     },
   );
 }
+
 //詳細のポップアップ///////////////////////////////////////////////////////////////////////////////////
 class InformationAutoDismissiblePopup extends StatefulWidget {
   late TextEditingController controller;
@@ -687,29 +702,29 @@ class InformationAutoDismissiblePopup extends StatefulWidget {
   late String titleName;
   late String summary;
 
-  InformationAutoDismissiblePopup({
-    required this.controller,
-    required this.index,
-    required this.text,
-    required this.titleName,
-    required this.summary
-  });
+  InformationAutoDismissiblePopup(
+      {required this.controller,
+      required this.index,
+      required this.text,
+      required this.titleName,
+      required this.summary});
 
   @override
-  InformationAutoDismissiblePopupState createState() => InformationAutoDismissiblePopupState();
+  InformationAutoDismissiblePopupState createState() =>
+      InformationAutoDismissiblePopupState();
 }
 
-class InformationAutoDismissiblePopupState extends State<InformationAutoDismissiblePopup> {
+class InformationAutoDismissiblePopupState
+    extends State<InformationAutoDismissiblePopup> {
   @override
   void initState() {
     super.initState();
-    widget.controller = TextEditingController(text:widget.text);
+    widget.controller = TextEditingController(text: widget.text);
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
 
     return InkWell(
       onTap: () {
@@ -729,75 +744,104 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
               ),
               child: Column(
                 children: [
-                 Container(
-                  decoration: BoxDecoration(
-                  color:Colors.white, 
-                  borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                        spreadRadius: 2, // 影の広がり
-                        blurRadius: 4, // 影のぼかし
-                        offset: Offset(0, 2), // 影の方向（横、縦）
-                      ),
-                    ],), 
-                    alignment: Alignment.center,
-                    height: SizeConfig.blockSizeHorizontal! * 13,
-                    child:Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
-                      Container(width:SizeConfig.blockSizeHorizontal! *92,
-                      child: Row(children: [
-                      Container(
-                       constraints:BoxConstraints(maxWidth :SizeConfig.blockSizeHorizontal! *73.5),
-                       child:Text(widget.titleName,
-                       maxLines: 1,
-                       overflow: TextOverflow.ellipsis,
-                       style: TextStyle(
-                        fontSize:SizeConfig.blockSizeHorizontal! * 5,
-                        fontWeight: FontWeight.w700
+                  Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5), // 影の色と透明度
+                            spreadRadius: 2, // 影の広がり
+                            blurRadius: 4, // 影のぼかし
+                            offset: Offset(0, 2), // 影の方向（横、縦）
                           ),
-                        ),),
-
-                    Text("  の詳細",
-                      style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! * 5,
-                      fontWeight: FontWeight.w700
+                        ],
                       ),
-                    ),
-                      ],)),
-
-                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
-                    ],)
+                      alignment: Alignment.center,
+                      height: SizeConfig.blockSizeHorizontal! * 13,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 4,
+                          ),
+                          Container(
+                              width: SizeConfig.blockSizeHorizontal! * 92,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            SizeConfig.blockSizeHorizontal! *
+                                                73.5),
+                                    child: Text(
+                                      widget.titleName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  5,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                  Text(
+                                    "  の詳細",
+                                    style: TextStyle(
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 5,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 4,
+                          ),
+                        ],
+                      )),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 4,
                   ),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
-                  Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの概要：",
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "   タスクの概要：",
                       style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w700
-                      ),
-                    ),),
-                    SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
-                    Align(alignment: Alignment.centerLeft,
-                    child:Text("   ${widget.summary}",
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 1,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "   ${widget.summary}",
                       maxLines: 1,
                       style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w400
-                      ),
-                    ),),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 4,),
-                  Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの詳細情報(編集可)：",
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 4,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "   タスクの詳細情報(編集可)：",
                       style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w700
-                      ),
-                    ),),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1,),
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 1,
+                  ),
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 32,
                     //width: SizeConfig.blockSizeHorizontal! * 93,
@@ -816,7 +860,8 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                                 child: Container(
                                   margin: EdgeInsets.only(top: 0),
                                   constraints: BoxConstraints(
-                                    maxWidth: SizeConfig.blockSizeHorizontal! * 97,
+                                    maxWidth:
+                                        SizeConfig.blockSizeHorizontal! * 97,
                                   ),
                                   //width: SizeConfig.blockSizeHorizontal! * 90,
                                   alignment: Alignment.topLeft,
@@ -826,20 +871,21 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                                     onSubmitted: (inputValue) {
                                       widget._userInput2 = inputValue;
                                       widget.databaseHelper.updateDescription(
-                                      widget.index, widget._userInput2);
+                                          widget.index, widget._userInput2);
                                     },
                                     maxLines: 7,
                                     textAlign: TextAlign.start,
                                     controller: widget.controller,
                                     style: TextStyle(
-                                      fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 4,
                                       fontWeight: FontWeight.w500,
                                     ),
                                     decoration: const InputDecoration(
                                       hintText: "タスクの詳細やメモを入力…",
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.only(
-                                        top: 0,left:4,right:4),
+                                          top: 0, left: 4, right: 4),
                                       hintStyle: TextStyle(
                                         fontSize: 15,
                                         color: Colors.grey,
@@ -855,13 +901,15 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
                       ],
                     ),
                   ),
-                  Align(alignment: Alignment.centerLeft,
-                    child:Text("   タスクの優先度設定",
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "   タスクの優先度設定",
                       style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                      fontWeight: FontWeight.w700
-                      ),
-                    ),),
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
                   PriorityTabBar(),
                 ],
               ),
@@ -869,7 +917,7 @@ class InformationAutoDismissiblePopupState extends State<InformationAutoDismissi
           },
         );
       },
-       child: SizedBox(
+      child: SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 8,
         height: SizeConfig.blockSizeHorizontal! * 8,
         child: Icon(
@@ -890,7 +938,7 @@ class FoldableCard extends StatefulWidget {
   const FoldableCard({
     required this.dataCard,
     required this.summary,
-  }); 
+  });
 
   @override
   _FoldableCardState createState() => _FoldableCardState();
