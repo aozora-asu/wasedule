@@ -308,7 +308,6 @@ class ScheduleDatabaseHelper {
     await _initScheduleDatabase();
     Future<List<Map<String, dynamic>>> todaysScheduleList =
         _getTodaysSchedule();
-    _database.close();
 
     late String todaysSchedule = "";
     List<Map<String, dynamic>> schedules = await todaysScheduleList;
@@ -323,6 +322,7 @@ class ScheduleDatabaseHelper {
         todaysSchedule.trimRight();
       }
     }
+    _database.close();
 
     return todaysSchedule;
   }

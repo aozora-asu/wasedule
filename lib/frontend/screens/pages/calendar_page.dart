@@ -39,15 +39,15 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    testNotify();
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
+    testNotify();
   }
 
   testNotify() async {
-    await Notify().repeatNotification();
+    //await Notify().repeatNotification();
     await Notify().scheduleDailyEightAMNotification();
   }
 
@@ -113,8 +113,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   Future<List<Map<String, dynamic>>> _getDataSource() async {
-    Future<List<Map<String, dynamic>>> scheduleList =
-        ScheduleDatabaseHelper().getScheduleFromDB();
+    List<Map<String, dynamic>> scheduleList =
+        await ScheduleDatabaseHelper().getScheduleFromDB();
     return scheduleList;
   }
 
