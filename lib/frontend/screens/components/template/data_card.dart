@@ -69,7 +69,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
                 DataCard(
                   index: i + 1,
                   title: data[i]["title"],
-                  description: data[i]["description"],
+                  description: data[i]["description"] ?? "",
                   dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
                   summary: data[i]["summary"] ?? "",
                   isDone: false,
@@ -1107,11 +1107,11 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
                 margin: EdgeInsets.symmetric(
                     vertical: 0,
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
-                child: Container(color: Colors.white,
+                child: Container(
+                  color: Colors.white,
                   child: Column(
                     children: [
                       ListTile(
-                        
                         title: Row(children: [
                           const Icon(
                             Icons.subdirectory_arrow_right,

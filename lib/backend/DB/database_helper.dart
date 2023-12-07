@@ -52,8 +52,6 @@ class TaskDatabaseHelper {
         whereArgs: [sortedTasks[i]['id']],
       );
     }
-
-    await _database.close();
   }
 
   // タスクの挿入
@@ -63,7 +61,6 @@ class TaskDatabaseHelper {
       await _database.insert('tasks', task.toMap());
     } catch (e) {}
     await _orderByDateTime();
-    _database.close();
   }
 
   Future<void> deleteAllData(Database db) async {
@@ -94,7 +91,6 @@ class TaskDatabaseHelper {
           "isDone"
         ]); // 複数のカラムのデータを取得
 
-    _database.close();
     return dataList;
   }
 
@@ -103,7 +99,7 @@ class TaskDatabaseHelper {
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
         columns: ['title', 'dtEnd', 'summary', 'isDone']); // 複数のカラムのデータを取得
-    _database.close();
+
     return dataList;
   }
 
@@ -116,7 +112,6 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    _database.close();
   }
 
   Future<void> updateSummary(int id, String newSummary) async {
@@ -128,7 +123,6 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    _database.close();
   }
 
   Future<void> updateDescription(int id, String newDescription) async {
@@ -140,7 +134,6 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    _database.close();
   }
 
   Future<void> unDisplay(int id) async {
@@ -152,7 +145,6 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    _database.close();
   }
 
   Future<void> deleteExpairedTask() async {}
@@ -162,7 +154,6 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
-    _database.close();
 
     return data;
   }
@@ -176,7 +167,7 @@ class TaskDatabaseHelper {
     await _initDatabase();
     count = Sqflite.firstIntValue(
         await _database.rawQuery('SELECT COUNT(*) FROM $tableName'));
-    _database.close();
+
     return count! > 0;
   }
 
@@ -201,7 +192,6 @@ class TaskDatabaseHelper {
       await insertTask(taskItem);
     }
     await _orderByDateTime();
-    _database.close();
   }
 
   Future<List<Map<String, dynamic>>> withinNdaysTask() async {
@@ -215,7 +205,7 @@ class TaskDatabaseHelper {
         DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch
       ],
     );
-    _database.close();
+
     return withinNdaysTask;
   }
 }
@@ -223,6 +213,9 @@ class TaskDatabaseHelper {
 class ScheduleDatabaseHelper {
   late Database _database;
   // データベースの初期化
+  ScheduleDatabaseHelper() {
+    _initScheduleDatabase();
+  }
 
   Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
@@ -251,7 +244,6 @@ class ScheduleDatabaseHelper {
   Future<void> insertSchedule(ScheduleItem schedule) async {
     await _initScheduleDatabase();
     await _database.insert('schedule', schedule.toMap());
-    _database.close();
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
@@ -267,7 +259,7 @@ class ScheduleDatabaseHelper {
     String? endTime = schedule["endTime"] != ""
         ? DateFormat("HH:mm")
             .format(DateFormat("h:mm a").parse(schedule['endTime']))
-        : null;
+        : "23:59";
 
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
@@ -281,15 +273,13 @@ class ScheduleDatabaseHelper {
         tag: schedule["tag"]);
     // 2. データベースヘルパークラスを使用してデータベースに挿入
     await insertSchedule(scheduleItem);
-
-    _database.close();
   }
 
   Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
     await _initScheduleDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule');
-    _database.close();
+
     return data;
   }
 
@@ -300,17 +290,16 @@ class ScheduleDatabaseHelper {
       where: 'startDate = ?',
       whereArgs: [DateFormat("yyyy-MM-dd").format(DateTime.now())],
     );
-    _database.close();
+
     return todaysSchedule;
   }
 
   Future<String> todaysScheduleForNotify() async {
     await _initScheduleDatabase();
-    Future<List<Map<String, dynamic>>> todaysScheduleList =
-        _getTodaysSchedule();
+    List<Map<String, dynamic>> todaysScheduleList = await _getTodaysSchedule();
 
     late String todaysSchedule = "";
-    List<Map<String, dynamic>> schedules = await todaysScheduleList;
+    List<Map<String, dynamic>> schedules = todaysScheduleList;
     if (schedules.isEmpty) {
       todaysSchedule = "本日の予定はありません";
     } else {
@@ -322,7 +311,6 @@ class ScheduleDatabaseHelper {
         todaysSchedule.trimRight();
       }
     }
-    _database.close();
 
     return todaysSchedule;
   }
