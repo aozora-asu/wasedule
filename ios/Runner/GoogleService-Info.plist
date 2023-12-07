@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDX0d9S6NMMaOjjz2--cv4HIy0jtT9o2Fc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>342079600357</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.flutterCalendar.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>wasedule-f719a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>wasedule-f719a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:342079600357:ios:0a6b9a79ac8bd85263460c</string>
+</dict>
+</plist>

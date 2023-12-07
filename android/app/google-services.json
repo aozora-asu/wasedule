@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "342079600357",
+    "project_id": "wasedule-f719a",
+    "storage_bucket": "wasedule-f719a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342079600357:android:42cdf983f5a0bed263460c",
+        "android_client_info": {
+          "package_name": "com.example.flutter_calandar_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLqp6EL9DnpF8y8CYJ7CdkHW00iDrzh6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
