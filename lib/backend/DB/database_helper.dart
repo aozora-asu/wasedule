@@ -42,16 +42,6 @@ class TaskDatabaseHelper {
       'tasks',
       orderBy: 'dtEnd ASC',
     );
-
-    // 新しいidを振り直す
-    for (int i = 0; i < sortedTasks.length; i++) {
-      await _database.update(
-        'tasks',
-        {'id': i + 1},
-        where: 'id = ?', // idで行を特定
-        whereArgs: [sortedTasks[i]['id']],
-      );
-    }
   }
 
   // タスクの挿入
@@ -259,7 +249,7 @@ class ScheduleDatabaseHelper {
     String? endTime = schedule["endTime"] != ""
         ? DateFormat("HH:mm")
             .format(DateFormat("h:mm a").parse(schedule['endTime']))
-        : "23:59";
+        : null;
 
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
