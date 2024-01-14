@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/screens/components/organism/bottom
 
 import './screens/pages/calendar_page.dart';
 import './screens/pages/task_page.dart';
+import "./screens/pages/task_view_page.dart";
 
 import 'screens/components/organism/app_bar.dart';
 import 'screens/components/organism/burger_menu.dart';
@@ -29,7 +30,9 @@ class _AppPageState extends State<AppPage> {
     Widget body;
     if (_currentIndex == 0) {
       body = const Calendar();
-    } else {
+    } else if (_currentIndex == 2){
+      body = TaskViewPage();
+    } else{
       body = TaskPage();
     }
 

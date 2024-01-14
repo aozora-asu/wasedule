@@ -136,7 +136,7 @@ class TaskInputForm extends ConsumerWidget {
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
                   controller: inputForm.descriptionController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '詳細'),
                 ),
               ),
