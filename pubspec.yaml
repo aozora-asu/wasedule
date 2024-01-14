@@ -41,7 +41,7 @@ dependencies:
   syncfusion_flutter_calendar: ^23.1.44
   tab_indicator_styler: ^2.0.0
   percent_indicator: ^4.0.1
-
+  expandable: ^5.0.1
   flutter_localizations:
    sdk: flutter
  

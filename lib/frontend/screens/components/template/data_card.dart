@@ -226,7 +226,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
         ),
         child:
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            Column(
+         Column(
           children: <Widget>[
             SizedBox(height: SizeConfig.blockSizeHorizontal! * 4), //カード間の隙間。
             ClipRRect(
@@ -252,7 +252,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                     children: <Widget>[
 //授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Container(
-                        //color: WIDGET_OUTLINE_COLOR,
                         alignment: Alignment.bottomLeft,
                         height: SizeConfig.blockSizeHorizontal! * 9,
                         child: Row(
@@ -282,7 +281,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                           2.75),
                                   hintText: "授業名",
                                   border: InputBorder.none,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -730,7 +729,6 @@ class InformationAutoDismissiblePopupState
       onTap: () {
         showModalBottomSheet(
           backgroundColor: Colors.transparent,
-          //isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
             return Container(

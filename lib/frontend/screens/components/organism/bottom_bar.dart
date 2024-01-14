@@ -13,21 +13,29 @@ class CustomBottomBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onItemTapped,
-      backgroundColor: MAIN_COLOR,
+      backgroundColor:MAIN_COLOR,
       selectedItemColor: WIDGET_COLOR,
       unselectedItemColor:WIDGET_COLOR,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today),
           label: 'カレンダー',
+          backgroundColor: MAIN_COLOR
+        ),
+                BottomNavigationBarItem(
+          icon: Icon(Icons.work),
+          label: 'ワーク',
+          backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.splitscreen),
           label: 'タスク',
+          backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.group),
           label: 'フレンド',
+          backgroundColor: MAIN_COLOR
         ),
       ],
         selectedFontSize: 17.0, // 選択されたアイテムのテキストサイズ
