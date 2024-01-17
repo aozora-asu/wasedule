@@ -7,6 +7,8 @@ import 'package:easy_autocomplete/easy_autocomplete.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../../backend/DB/database_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_calandar_app/frontend/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/pages/task_view_page.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;
@@ -87,7 +89,7 @@ class TaskInputForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context ,WidgetRef ref) {
    final inputForm = ref.watch(inputFormProvider);
-     
+   final taskData = ref.read(taskDataProvider.notifier);
         return AlertDialog(
           title: Text(
             ' 新タスクを追加',
@@ -175,6 +177,7 @@ class TaskInputForm extends ConsumerWidget {
                  if (inputForm.dtEndController.text.isEmpty ||
                   inputForm.titleController.text.isEmpty) {
                   print("ボタン無効");
+                  
                 } else {
                   // ここに、入力データをDBにぶち込む処理を追加。
                   Map<String, dynamic> taskItem = {};
@@ -184,6 +187,11 @@ class TaskInputForm extends ConsumerWidget {
                   taskItem["dtEnd"] = DateTime.parse(inputForm.dtEndController.text)
                       .millisecondsSinceEpoch;
                   registeTaskToDB(taskItem);
+
+                  final list = ref.read(taskDataProvider).taskDataList;
+                  final newList = [...list, taskItem];
+                  ref.read(taskDataProvider.notifier).state = TaskData(taskDataList:newList);
+                  ref.read(taskDataProvider).isRenewed = true;
                   Navigator.of(context).pop();}
                 },
 

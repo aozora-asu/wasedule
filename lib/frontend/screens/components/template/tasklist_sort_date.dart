@@ -18,7 +18,10 @@ import '../../../../backend/temp_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget  {
-
+  Map<DateTime,List<Map<String,dynamic>>>sortedData = {};
+ TaskListByDtEnd({
+  required this.sortedData
+ });
   @override
   _TaskListByDtEndState createState() => _TaskListByDtEndState();
 }
@@ -28,8 +31,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     final taskData = ref.watch(taskDataProvider);
-    Map<DateTime,List<Map<String,dynamic>>>sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
-    
+    Map<DateTime,List<Map<String,dynamic>>>sortedData = widget.sortedData;
+    sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
+
+    ref.watch(taskDataProvider.notifier);
+    ref.watch(taskDataProvider);
       return Scrollbar(
        child:Container(
         child: ListView.builder(
@@ -39,23 +45,42 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
           String adjustedDtEnd = ("${dateEnd.month}月${dateEnd.day}日  ");
            return Container(
             width:SizeConfig.blockSizeHorizontal! *100,
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left:8.0,right:8.0,bottom:0.0,top:4.0),
             child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
                ExpandablePanel(
                 header:Row(children:[
-                 Text(adjustedDtEnd,
-                 style:TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal!*7,
-                  fontWeight:FontWeight.w800
+                 Column(
+                 crossAxisAlignment:CrossAxisAlignment.start,
+                 children:[
+                  Row(children:[                  
+                   Text(adjustedDtEnd,
+                   style:TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal!*7,
+                    fontWeight:FontWeight.w800
+                    ),
+                   ),
+                  Text(" ${sortedData.values.elementAt(keyIndex).length}件",
+                   style:TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal!*4.25,
+                    fontWeight:FontWeight.w600,
+                    color:Colors.grey
+                    )
                   )
-                ),
-                remainingTime(dateEnd)]),
+                  ]),
+                  remainingTime(dateEnd)]),
+                ]),
+                
                 collapsed: const SizedBox(),
-                expanded: DtEndTaskGroup(keyIndex:keyIndex,sortedData:sortedData),
-                controller:ExpandableController(initialExpanded:isLimitOver(dateEnd))
+                expanded: DtEndTaskGroup(keyIndex:keyIndex,sortedData: widget.sortedData,),
+                controller:ExpandableController(initialExpanded:isLimitOver(dateEnd,sortedData,dateEnd))
                 ),
+                const Divider(
+                  thickness: 2.5,
+                  indent: 7,
+                  endIndent: 7,
+                )
           ])
          );
         },
@@ -65,9 +90,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
    );
   }
 
-  bool isLimitOver(DateTime dtEnd){
-  DateTime timeLimit =dtEnd;
-  if (timeLimit.isBefore(DateTime.now())) {
+  bool isLimitOver
+   (DateTime dtEnd,
+    Map<DateTime,List<Map<String,dynamic>>>sortedData,
+    DateTime keyDateTime){
+    DateTime timeLimit =dtEnd;
+  //if (timeLimit.isBefore(DateTime.now())) {
+  if (sortedData[keyDateTime]!.length>=8) {
    return false;
   }else{
    return true;
@@ -129,7 +158,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
         return Container(
             decoration: BoxDecoration(
               color: Colors.blueGrey, // 背景色を指定
-              borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
+              borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
             ),
             child: Text(
               ("  あと${difference.inDays} 日  "),
@@ -143,15 +172,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
         return Container(
             decoration: BoxDecoration(
               color: Colors.red, // 背景色を指定
-              borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
+              borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
             ),
             child: repeatdaysLeft(dtEnd));
       }
-    } else if(difference >= const Duration(days: 1)) {
+    } else if(dtEnd.year == DateTime.now().year && dtEnd.month == DateTime.now().month && dtEnd.day == DateTime.now().day) {
         return Container(
             decoration: BoxDecoration(
               color: Colors.red, // 背景色を指定
-              borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
+              borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
             ),
             child: Text(
               ("  今日まで  "),
@@ -165,7 +194,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
       return Container(
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 0, 0, 0), // 背景色を指定
-          borderRadius: BorderRadius.circular(7), // 角丸にする場合は設定
+          borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
         ),
         child: Text(
           ' 期限切れ ',
@@ -182,7 +211,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
 
 
 
-class DtEndTaskGroup extends StatefulWidget {
+class DtEndTaskGroup extends ConsumerStatefulWidget {
   final int keyIndex;
   final Map<DateTime,List<Map<String,dynamic>>>sortedData;
 
@@ -195,9 +224,13 @@ class DtEndTaskGroup extends StatefulWidget {
   _DtEndTaskGroupState createState() => _DtEndTaskGroupState();
 }
 
-class _DtEndTaskGroupState extends State<DtEndTaskGroup> {
+class _DtEndTaskGroupState extends ConsumerState<DtEndTaskGroup> {
   @override
   Widget build(BuildContext context) {
+    ref.watch(taskDataProvider.notifier);
+    ref.watch(taskDataProvider);
+    //final taskData = ref.watch(taskDataProvider);
+    //widget.sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
     return Container(
       //height: SizeConfig.blockSizeVertical!*12*widget.sortedData[widget.sortedData.keys.elementAt(widget.keyIndex)]!.length,
       width:SizeConfig.blockSizeHorizontal!*100,
@@ -205,14 +238,9 @@ class _DtEndTaskGroupState extends State<DtEndTaskGroup> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int valueIndex){
-          // DateTime dateEnd = widget.sortedData.keys.elementAt(widget.keyIndex);
-          // print("keyIndex:${widget.keyIndex}");
-          // print("Date:$dateEnd");
-          // print("valueLength:${widget.sortedData[widget.sortedData.keys.elementAt(widget.keyIndex)]!.length}");
-          // print("valueIndex:$valueIndex");
           return Container(
               child:
-              DtEndTaskChild(keyIndex:widget.keyIndex,valueIndex:valueIndex,sortedData:widget.sortedData)
+              DtEndTaskChild(keyIndex:widget.keyIndex,valueIndex:valueIndex,sortedData:widget.sortedData,)
          );
         },
         itemCount: widget.sortedData[widget.sortedData.keys.elementAt(widget.keyIndex)]!.length,
@@ -223,7 +251,7 @@ class _DtEndTaskGroupState extends State<DtEndTaskGroup> {
 
 
 
-  class DtEndTaskChild extends StatefulWidget {
+  class DtEndTaskChild extends ConsumerStatefulWidget {
   final int keyIndex;
   final int valueIndex;
   final Map<DateTime,List<Map<String,dynamic>>>sortedData;
@@ -238,9 +266,13 @@ class _DtEndTaskGroupState extends State<DtEndTaskGroup> {
   _DtEndTaskChildState createState() => _DtEndTaskChildState();
 }
 
-class _DtEndTaskChildState extends State<DtEndTaskChild> {
+class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
+  
   @override
   Widget build(BuildContext context) {
+    ref.watch(taskDataProvider.notifier);
+    ref.watch(taskDataProvider);
+    final taskData = ref.watch(taskDataProvider);
           DateTime dateEnd = widget.sortedData.keys.elementAt(widget.keyIndex);
           List<Map<String,dynamic>> childData =  widget.sortedData[dateEnd]!;
           Map<String,dynamic> targetData = childData.elementAt(widget.valueIndex);
@@ -258,7 +290,6 @@ class _DtEndTaskChildState extends State<DtEndTaskChild> {
       onTap: () {
         showModalBottomSheet(
           backgroundColor: Colors.transparent,
-          //isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
             return Container(
@@ -386,7 +417,6 @@ class _DtEndTaskChildState extends State<DtEndTaskChild> {
                     height: SizeConfig.blockSizeHorizontal! * 2,
                   ),
 
-
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -474,7 +504,7 @@ class _DtEndTaskChildState extends State<DtEndTaskChild> {
           },
         );
       },
-                child: Container(
+           child: Container(
                 constraints: BoxConstraints(
                 maxWidth:SizeConfig.blockSizeHorizontal!*85,
                   ),
@@ -541,7 +571,6 @@ class _DtEndTaskChildState extends State<DtEndTaskChild> {
   }
 
 //詳細のポップアップ///////////////////////////////////////////////////////////////////////////////////
-@immutable
 class InformationAutoDismissiblePopup extends StatefulWidget {
   late TextEditingController controller;
   late int index;

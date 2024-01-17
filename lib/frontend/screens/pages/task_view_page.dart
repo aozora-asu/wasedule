@@ -13,14 +13,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../colors.dart';
 import '../../../backend/temp_file.dart';
-import '../components/template/data_card.dart';
 
 class TaskViewPage extends ConsumerStatefulWidget {
   @override
-  _TaskViewPageState createState() => _TaskViewPageState();
+  TaskViewPageState createState() => TaskViewPageState();
 }
 
-class _TaskViewPageState extends ConsumerState<TaskViewPage> {
+class TaskViewPageState extends ConsumerState<TaskViewPage> {
   Future<List<Map<String, dynamic>>>? events;
   String urlString = url_t;
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
@@ -33,7 +32,7 @@ class _TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   Future<void> _initializeData() async {
     if (await databaseHelper.hasData() == true) {
-      await _displayDB();
+      await displayDB();
     } else {
       if (urlString == "") {
         // urlStringがない場合の処理
@@ -48,13 +47,13 @@ class _TaskViewPageState extends ConsumerState<TaskViewPage> {
   }
 
   //データベースを更新する関数。主にボタンを押された時のみ
-  Future<void> _loadData() async {
+  Future<void> loadData() async {
     await databaseHelper.resisterTaskToDB(urlString);
 
-    await _displayDB();
+    await displayDB();
   }
 
-  Future<void> _displayDB() async {
+  Future<void> displayDB() async {
     final addData = await databaseHelper.taskListForTaskPage();
     if (mounted) {
       setState(() {
@@ -65,8 +64,8 @@ class _TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(taskDataProvider);
     final taskData =ref.watch(taskDataProvider);
+     
     return 
        Scaffold(
         backgroundColor:Colors.white, // BACKGROUND_COLOR,
@@ -75,14 +74,31 @@ class _TaskViewPageState extends ConsumerState<TaskViewPage> {
             future: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return 
-                  LoadingScreen();
+              
+               if(ref.read(taskDataProvider).isInit){
+                return LoadingScreen();
+               }else{
+                return TaskListByDtEnd(sortedData:taskData.sortDataByDtEnd(taskData.taskDataList));
+               }
+
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
               } else if (snapshot.hasData) {
+
+                if(ref.watch(taskDataProvider).isInit){
+                  
+                  ref.read(taskDataProvider).isInit = false;
+                }
                 taskData.getData(snapshot.data!);
-                print(taskData.sortDataByDtEnd(taskData.taskDataList));
-                return TaskListByDtEnd();
+
+                if(ref.read(taskDataProvider).isRenewed){
+                  displayDB();
+                  ref.read(taskDataProvider).isRenewed = false;
+                }
+
+                taskData.sortDataByDtEnd(taskData.taskDataList);
+
+                return TaskListByDtEnd(sortedData:taskData.sortDataByDtEnd(taskData.taskDataList));
               } else {
                 return noneTaskText();
               }
@@ -98,7 +114,7 @@ class _TaskViewPageState extends ConsumerState<TaskViewPage> {
           ),
           FloatingActionButton(
             onPressed: () {
-              _loadData();
+              loadData();
             },
             backgroundColor: MAIN_COLOR,
             child: const Icon(Icons.get_app,color:Colors.white),

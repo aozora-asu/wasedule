@@ -6,54 +6,68 @@ final taskDataProvider = StateNotifierProvider<TaskDataNotifier, TaskData>(
 );
 
 class TaskDataNotifier extends StateNotifier<TaskData> {
-  TaskDataNotifier() : super(TaskData());
+  TaskDataNotifier() : super(TaskData(taskDataList: []));
 
-  // void updateTaskData() {
-  //   state = state.copyWith();
-  // }
-
-}
-
-class TaskData {
-  late List<Map<String,dynamic>> taskDataList = [];
- 
- void getData(List<Map<String,dynamic>> data){
-  taskDataList = data;
- }
-
- Map<DateTime,List<Map<String,dynamic>>>sortDataByDtEnd(taskDataList){
-  Map<DateTime,List<Map<String,dynamic>>> sortedData = {};
-  for(int i = 0; i < taskDataList.length; i++){
-   DateTime targetDate = DateTime(
-     DateTime.fromMillisecondsSinceEpoch(taskDataList[i]["dtEnd"]).year,
-     DateTime.fromMillisecondsSinceEpoch(taskDataList[i]["dtEnd"]).month,
-     DateTime.fromMillisecondsSinceEpoch(taskDataList[i]["dtEnd"]).day);
-  
-  if(taskDataList.elementAt(i)["isDone"] == 0){
-   if(sortedData.containsKey(targetDate)){
-     sortedData[targetDate]!.add(taskDataList.elementAt(i));
-     }else{
-     sortedData[targetDate] = [taskDataList.elementAt(i)];
-     }
+  void addNewData(Map<String, dynamic> newDataMap) {
+    final newTaskDataList = [...state.taskDataList, newDataMap];
+    state = state.copyWith(taskDataList: newTaskDataList);
   }
-   }
- return sortedData;
- }
+}
+class TaskData {
+  List<Map<String, dynamic>> taskDataList = [];
+  late bool isInit = false;
+  late bool isRenewed = false;
+
+  TaskData({
+    List<Map<String, dynamic>> taskDataList = const [],
+  }) : taskDataList = taskDataList;
+
+  TaskData copyWith({
+    List<Map<String, dynamic>>? taskDataList,
+  }) {
+    return TaskData(
+      taskDataList: taskDataList ?? this.taskDataList,
+    );
+  }
+
+  void getData(List<Map<String, dynamic>> data) {
+    taskDataList = data;
+    print("GETDATA RAN");
+  }
+
+
+  void addNewData(Map<String, dynamic> newDataMap) {
+    taskDataList = [...taskDataList, newDataMap];
+    isInit =false;
+  }
+
+  Map<DateTime, List<Map<String, dynamic>>> sortDataByDtEnd(TDList) {
+    Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
+    for (int i = 0; i < TDList.length; i++) {
+      DateTime targetDate = DateTime(
+        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).year,
+        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).month,
+        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).day,
+      );
+      if (TDList.elementAt(i)["isDone"] == 0) {
+        if (sortedData.containsKey(targetDate)) {
+          sortedData[targetDate]!.add(TDList.elementAt(i));
+        } else {
+          sortedData[targetDate] = [TDList.elementAt(i)];
+        }
+      }
+    }
+   return sortedData;
+  }
+
   // TaskData copyWith({
-  //   String? titleController,
-  //   String? descriptionController,
-  //   String? summaryController,
-  //   String? dtEndController,
+  //   List<Map<String, dynamic>>? taskDataList,
   // }) {
   //   return TaskData()
-  //     ..titleController.text = titleController ?? this.titleController.text
-  //     ..descriptionController.text = descriptionController ?? this.descriptionController.text
-  //     ..summaryController.text = summaryController ?? this.summaryController.text
-  //     ..dtEndController.text = dtEndController ?? this.dtEndController.text;
+  //     ..taskDataList = taskDataList ?? this.taskDataList;
   // }
 
-    void clearContents() {
+  void clearContents() {
     taskDataList.clear();
   }
-
 }
