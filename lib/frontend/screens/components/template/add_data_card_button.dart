@@ -4,6 +4,10 @@ import 'package:flutter_calandar_app/frontend/size_config.dart';
 import 'package:flutter_calandar_app/frontend/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
+
+
+import '../organism/app_bar.dart';
+import '../organism/burger_menu.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../../backend/DB/database_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +40,7 @@ class InputFormNotifier extends StateNotifier<InputForm> {
 }
 
 class InputForm {
-  final TextEditingController titleController = TextEditingController();
+        TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController summaryController = TextEditingController();
   final TextEditingController dtEndController = TextEditingController();
@@ -71,9 +75,9 @@ class AddDataCardButton extends ConsumerWidget {
       child: FloatingActionButton(
         onPressed: () {
           inputForm.clearContents();
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => TaskInputForm(),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TaskInputForm()),
           );
         },
         foregroundColor: Colors.white,
@@ -89,52 +93,167 @@ class TaskInputForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context ,WidgetRef ref) {
    final inputForm = ref.watch(inputFormProvider);
-   final taskData = ref.read(taskDataProvider.notifier);
-        return AlertDialog(
-          title: Text(
-            ' 新タスクを追加',
-            style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 7,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          content: Column(
+   final taskData = ref.read(taskDataProvider);
+   
+        return Scaffold(
+          appBar:  const CustomAppBar(),
+          drawer: burgerMenu(),
+          body: Column(
             children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child:Text(
+              ' 新タスクを追加',
+              style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontWeight: FontWeight.w900,
+              ),
+             )
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child:Row(
+               children:[
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                Text(
+               ' カテゴリーを選択',
+               style: TextStyle(
+               fontSize: SizeConfig.blockSizeHorizontal! * 4,
+               //fontWeight: FontWeight.w900,
+               color: requiredColour(inputForm.titleController.text)
+               ),
+              ),
+              TextButton(
+               onPressed: (){
+                inputForm.titleController.clear();
+                showDialog(
+                  context: context, 
+                  builder: (BuildContext context){
+                        return AlertDialog(
+      title: const Text('新しいカテゴリ名を追加'),
+      content: TextField(
+        controller: inputForm.titleController,
+        decoration: const InputDecoration(
+          labelText: 'カテゴリ名',
+          border: OutlineInputBorder()
+          ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // ダイアログを閉じる
+          },
+          child:const Text('戻る'),
+        ),
+        TextButton(
+          onPressed: () {
+            String enteredText = inputForm.titleController.text;
+            ref.read(inputFormProvider.notifier).updateDateTimeFields();
+            Navigator.of(context).pop(); // ダイアログを閉じる
+          },
+          child:const Text('登録'),
+        ),
+      ],
+    );
+                  }
+                  );
+               },
+               child:const Text(
+                           "カテゴリの追加",
+                           style:TextStyle(color:Colors.blue),
+                           ) )
+             ]),
+            ),
               Container(
-                  width: SizeConfig.blockSizeHorizontal! * 80,
-                  height: SizeConfig.blockSizeHorizontal! * 16,
-                  child: TextFormField( 
-                  //child: EasyAutoComplete(
-                  //suggestions: uniqueTitleList,
-                  onFieldSubmitted: (value) {
-                    ref.read(inputFormProvider.notifier).updateDateTimeFields();
-                  },
-                  controller: inputForm.titleController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '授業名/タスク名',
+               width: SizeConfig.blockSizeHorizontal! * 90,
+               height: SizeConfig.blockSizeVertical! * 20,
+               decoration: BoxDecoration(border: Border.all(color:Colors.grey)),
+               child:ListView.builder(
+                itemExtent: SizeConfig.blockSizeVertical!*4,
+                itemBuilder:(BuildContext context, int index){
+                return ListTile(
+                  title:Column(children:[
+                   Text(
+                    taskData.extractTitles(taskData.taskDataList).elementAt(index),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                   ),
+                   const Divider(height:2)
+                  ]),
+                  selectedColor: Colors.amber,
+                  contentPadding: const EdgeInsets.all(0),
+                  //tileColor:tileColour(index),
+                  onTap:() {
+                     inputForm.titleController = TextEditingController(text:taskData.extractTitles(taskData.taskDataList).elementAt(index));
+                     ref.read(inputFormProvider.notifier).updateDateTimeFields();
+                   },
+                  );
+               },
+               itemCount:taskData.extractTitles(taskData.taskDataList).length,
+               ),
+              ),
+              Container(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  height: SizeConfig.blockSizeHorizontal! * 10,
+                  padding:const EdgeInsets.all(5),
+                  child:Container(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  child:
+                  Row(
+                  children:[
+                  Text(
+                    categoryText(inputForm.titleController.text),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top:3,
+                      bottom:3,
+                      left:10,
+                      right:10
+                    ),
+                    decoration: BoxDecoration(
+                      color:categoryColour(inputForm.titleController.text),
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                  child:
+                  Text(
+                  inputForm.titleController.text,
+                  style:TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                    fontWeight: FontWeight.w700,
+                    color:Colors.white
+                    )
                    ),
                   ),
+                  const Spacer()       
+                 ]),
+                 )
+                ),
+              
               SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
+                width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
               Container(
-                width: SizeConfig.blockSizeHorizontal! * 80,
+                width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
                   controller: inputForm.summaryController,
                   decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '要約(通知表示用)'),
+                      border: OutlineInputBorder(), 
+                      labelText: 'タスク名',
+                      //labelStyle: TextStyle(color:requiredColour(inputForm.titleController.text))
+                      ),
                 ),
               ),
               SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
+                width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
               Container(
-                width: SizeConfig.blockSizeHorizontal! * 80,
+                width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
                   controller: inputForm.descriptionController,
@@ -143,17 +262,20 @@ class TaskInputForm extends ConsumerWidget {
                 ),
               ),
               SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
+                width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
               DateTimePickerFormField(
                 controller: inputForm.dtEndController,
                 labelText: '締め切り日時(２４時間表示)',
+                labelColor:requiredColour(inputForm.dtEndController.text)
               ),
-            ],
-          ),
-          actions: [
-            Row(children: [
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 90,
+                height: SizeConfig.blockSizeVertical! * 5,
+              ),
+              Row(children: [
+              const Spacer(),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -162,22 +284,19 @@ class TaskInputForm extends ConsumerWidget {
                   backgroundColor:
                       MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                   fixedSize: MaterialStateProperty.all<Size>(
-                    Size(SizeConfig.blockSizeHorizontal! * 31,
+                    Size(SizeConfig.blockSizeHorizontal! * 45,
                         SizeConfig.blockSizeHorizontal! * 7.5),
                   ),
                 ),
                 child: const Text('戻る',style:TextStyle(color: Colors.white)),
               ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 5,
-                height: SizeConfig.blockSizeHorizontal! * 8.5,
-              ),
+              const Spacer(),
               ElevatedButton(
                 onPressed: () {
                  if (inputForm.dtEndController.text.isEmpty ||
                   inputForm.titleController.text.isEmpty) {
                   print("ボタン無効");
-                  
+
                 } else {
                   // ここに、入力データをDBにぶち込む処理を追加。
                   Map<String, dynamic> taskItem = {};
@@ -207,27 +326,58 @@ class TaskInputForm extends ConsumerWidget {
               }
               ),
               fixedSize: MaterialStateProperty.all<Size>(Size(
-                SizeConfig.blockSizeHorizontal! * 31,
+                SizeConfig.blockSizeHorizontal! * 45,
                 SizeConfig.blockSizeHorizontal! * 7.5,
               )),
             ),
                 child: const Text('追加',style:TextStyle(color: Colors.white)),
               ),
+            const Spacer(),
             ])
-          ],
+            ],
+          ),
         );
   }
 
+  Color tileColour(int index){
+   if(index.isEven){
+    return Colors.white;
+   }
+    return Colors.grey;
+  }
+
+  Color categoryColour(String str){
+   if(str == ""){
+    return Colors.transparent;
+   }
+    return Colors.blue;
+  }
+
+  String categoryText(String str){
+   if(str == ""){
+    return "";
+   }
+    return "選択中：";
+  }
+
+  Color? requiredColour(String str){
+   if(str == ""){
+    return Colors.red;
+   }
+    return Colors.grey[700];
+  }
 
 }
 
 class DateTimePickerFormField extends ConsumerWidget {
   final TextEditingController controller;
   final String labelText;
+  final Color? labelColor;
 
   DateTimePickerFormField({
     required this.controller,
-    required this.labelText
+    required this.labelText,
+    required this.labelColor
     });
 
   DateTime? _selectedDate;
@@ -291,7 +441,7 @@ class DateTimePickerFormField extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          width: SizeConfig.blockSizeHorizontal! * 80,
+          width: SizeConfig.blockSizeHorizontal! * 90,
           height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
@@ -303,6 +453,7 @@ class DateTimePickerFormField extends ConsumerWidget {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: labelText,
+                  labelStyle:TextStyle(color:labelColor)
                 ),
               ),
             ),

@@ -582,7 +582,6 @@ class InformationAutoDismissiblePopup extends StatefulWidget {
 
   InformationAutoDismissiblePopup(
       {
-      //required this.index,
       required this.text,
       required this.titleName,
       required this.summary});

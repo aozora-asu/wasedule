@@ -13,6 +13,8 @@ class TaskDataNotifier extends StateNotifier<TaskData> {
     state = state.copyWith(taskDataList: newTaskDataList);
   }
 }
+
+
 class TaskData {
   List<Map<String, dynamic>> taskDataList = [];
   late bool isInit = false;
@@ -35,6 +37,19 @@ class TaskData {
     print("GETDATA RAN");
   }
 
+  List<String> extractTitles(List<Map<String, dynamic>> TDList){
+    List<String> titles = ["その他"];
+    for (int i = 0; i < TDList.length; i++) {
+      String targetData = TDList.elementAt(i)["title"];
+      if (TDList.elementAt(i)["isDone"] == 0) {
+        if (titles.contains(targetData) == false) {
+          titles.add(TDList.elementAt(i)["title"]);
+        }
+      }
+    }
+   print(titles);
+   return titles;
+  }
 
   void addNewData(Map<String, dynamic> newDataMap) {
     taskDataList = [...taskDataList, newDataMap];
