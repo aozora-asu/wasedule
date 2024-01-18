@@ -42,6 +42,7 @@ dependencies:
   tab_indicator_styler: ^2.0.0
   percent_indicator: ^4.0.1
   expandable: ^5.0.1
+  fk_toggle: ^0.1.1
   flutter_localizations:
    sdk: flutter
  

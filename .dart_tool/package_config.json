@@ -164,6 +164,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "fk_toggle",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/fk_toggle-0.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///C:/src/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -542,7 +548,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-01-16T09:00:50.152205Z",
+  "generated": "2024-01-18T04:47:48.571636Z",
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }

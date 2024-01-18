@@ -33,7 +33,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime,List<Map<String,dynamic>>>sortedData = widget.sortedData;
     sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
-
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
       return Scrollbar(
@@ -95,12 +94,23 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
     Map<DateTime,List<Map<String,dynamic>>>sortedData,
     DateTime keyDateTime){
     DateTime timeLimit =dtEnd;
-  //if (timeLimit.isBefore(DateTime.now())) {
-  if (sortedData[keyDateTime]!.length>=8) {
-   return false;
-  }else{
-   return true;
+  
+  switch(ref.watch(taskDataProvider).foldState){
+    case 0:
+      if (timeLimit.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+      return false;
+      }else{
+      return true;
+      }
+    case 1:
+      return false;
+    case 2:
+      return true;
+    default:
+      return true;
+  
   }
+
 
   }
 

@@ -5,8 +5,14 @@ final taskDataProvider = StateNotifierProvider<TaskDataNotifier, TaskData>(
   (ref) => TaskDataNotifier(),
 );
 
+final taskPageIndexProvider = StateProvider<int>((ref) => ref.watch(taskDataProvider).taskPageIndex);
+
 class TaskDataNotifier extends StateNotifier<TaskData> {
-  TaskDataNotifier() : super(TaskData(taskDataList: []));
+  TaskDataNotifier() : super(TaskData(taskDataList: [], taskPageIndex: 0));
+
+  void setTaskPageIndex(int newIndex) {
+    state = state.copyWith(taskPageIndex: newIndex);
+  }
 
   void addNewData(Map<String, dynamic> newDataMap) {
     final newTaskDataList = [...state.taskDataList, newDataMap];
@@ -14,21 +20,26 @@ class TaskDataNotifier extends StateNotifier<TaskData> {
   }
 }
 
-
 class TaskData {
   List<Map<String, dynamic>> taskDataList = [];
-  late bool isInit = false;
-  late bool isRenewed = false;
-
+  bool isInit = false;
+  bool isRenewed = false;
+  int taskPageIndex = 0;
+  int foldState = 0;
+  
   TaskData({
     List<Map<String, dynamic>> taskDataList = const [],
-  }) : taskDataList = taskDataList;
+    int taskPageIndex = 0,
+  })  : taskDataList = taskDataList,
+        taskPageIndex = taskPageIndex;
 
   TaskData copyWith({
     List<Map<String, dynamic>>? taskDataList,
+    int? taskPageIndex,
   }) {
     return TaskData(
       taskDataList: taskDataList ?? this.taskDataList,
+      taskPageIndex: taskPageIndex ?? this.taskPageIndex,
     );
   }
 
@@ -47,7 +58,6 @@ class TaskData {
         }
       }
     }
-   print(titles);
    return titles;
   }
 
@@ -69,6 +79,21 @@ class TaskData {
           sortedData[targetDate]!.add(TDList.elementAt(i));
         } else {
           sortedData[targetDate] = [TDList.elementAt(i)];
+        }
+      }
+    }
+   return sortedData;
+  }
+
+  Map<String, List<Map<String, dynamic>>> sortDataByCategory(TDList) {
+    Map<String, List<Map<String, dynamic>>> sortedData = {};
+    for (int i = 0; i < TDList.length; i++) {
+      String targetCategory = TDList[i]["title"];
+      if (TDList.elementAt(i)["isDone"] == 0) {
+        if (sortedData.containsKey(targetCategory)) {
+          sortedData[targetCategory]!.add(TDList.elementAt(i));
+        } else {
+          sortedData[targetCategory] = [TDList.elementAt(i)];
         }
       }
     }

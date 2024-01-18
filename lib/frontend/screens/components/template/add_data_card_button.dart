@@ -98,7 +98,8 @@ class TaskInputForm extends ConsumerWidget {
         return Scaffold(
           appBar:  const CustomAppBar(),
           drawer: burgerMenu(),
-          body: Column(
+          body: 
+          SingleChildScrollView(child:          Column(
             children: [
             Align(
               alignment: Alignment.centerLeft,
@@ -116,13 +117,14 @@ class TaskInputForm extends ConsumerWidget {
                children:[
                 SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                 Text(
-               ' カテゴリーを選択',
+               ' カテゴリーを選択*',
                style: TextStyle(
                fontSize: SizeConfig.blockSizeHorizontal! * 4,
                //fontWeight: FontWeight.w900,
                color: requiredColour(inputForm.titleController.text)
                ),
               ),
+              const Spacer(),
               TextButton(
                onPressed: (){
                 inputForm.titleController.clear();
@@ -158,10 +160,12 @@ class TaskInputForm extends ConsumerWidget {
                   }
                   );
                },
-               child:const Text(
-                           "カテゴリの追加",
-                           style:TextStyle(color:Colors.blue),
-                           ) )
+    child:
+     Text(
+            "カテゴリの追加",
+            style:TextStyle(color:Colors.blue,fontSize: SizeConfig.blockSizeHorizontal! *3),
+            ) ),
+    SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),        
              ]),
             ),
               Container(
@@ -267,7 +271,7 @@ class TaskInputForm extends ConsumerWidget {
               ),
               DateTimePickerFormField(
                 controller: inputForm.dtEndController,
-                labelText: '締め切り日時(２４時間表示)',
+                labelText: '締め切り日時(２４時間表示)*',
                 labelColor:requiredColour(inputForm.dtEndController.text)
               ),
               SizedBox(
@@ -335,7 +339,8 @@ class TaskInputForm extends ConsumerWidget {
             const Spacer(),
             ])
             ],
-          ),
+          ),)
+
         );
   }
 
