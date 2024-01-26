@@ -99,28 +99,37 @@ class TaskInputForm extends ConsumerWidget {
           appBar:  const CustomAppBar(),
           drawer: burgerMenu(),
           body: 
-          SingleChildScrollView(child:          Column(
-            children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child:Text(
-              ' 新タスクを追加',
-              style: TextStyle(
+          SingleChildScrollView(
+            child: Column(
+             children: [
+              const SizedBox(height:4),
+              Row(children:[
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+                Image.asset('lib/assets/eye_catch/eyecatch.png',
+                height: 30, width: 30),
+              Align(
+               alignment: Alignment.centerLeft,
+               child:Text(
+                ' 新タスクを追加',
+                style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                fontWeight: FontWeight.w900,
-              ),
-             )
+                fontWeight: FontWeight.w700,
+                ),
+               )
+              )
+             ],
             ),
+
             Align(
               alignment: Alignment.centerLeft,
               child:Row(
+               crossAxisAlignment:CrossAxisAlignment.end,
                children:[
                 SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                 Text(
                ' カテゴリーを選択*',
                style: TextStyle(
                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-               //fontWeight: FontWeight.w900,
                color: requiredColour(inputForm.titleController.text)
                ),
               ),
@@ -160,6 +169,10 @@ class TaskInputForm extends ConsumerWidget {
                   }
                   );
                },
+              style: const ButtonStyle(
+            padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap
+            ),
     child:
      Text(
             "カテゴリの追加",
@@ -173,7 +186,7 @@ class TaskInputForm extends ConsumerWidget {
                height: SizeConfig.blockSizeVertical! * 20,
                decoration: BoxDecoration(border: Border.all(color:Colors.grey)),
                child:ListView.builder(
-                itemExtent: SizeConfig.blockSizeVertical!*4,
+                itemExtent: SizeConfig.blockSizeVertical!*4.5,
                 itemBuilder:(BuildContext context, int index){
                 return ListTile(
                   title:Column(children:[
@@ -182,7 +195,7 @@ class TaskInputForm extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                    ),
-                   const Divider(height:2)
+                   const Divider(height:1,thickness: 1,)
                   ]),
                   selectedColor: Colors.amber,
                   contentPadding: const EdgeInsets.all(0),

@@ -14,12 +14,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       appBar: AppBar(
         backgroundColor: MAIN_COLOR,
         elevation: 3,
-        title: const Column(
+        title: const 
+        Column(
           children: <Widget>[
             Text(
               'わせジュール',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 21,
                 fontWeight: FontWeight.w800,
                 color:Colors.white
               ),
@@ -27,7 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Text(
               '早稲田生のためのスケジュールアプリ',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 13,
                 fontWeight: FontWeight.w400,
                 color:Colors.white
               ),

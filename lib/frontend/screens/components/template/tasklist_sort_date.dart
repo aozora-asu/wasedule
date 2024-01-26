@@ -41,7 +41,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
          shrinkWrap: true,
          itemBuilder: (BuildContext context, int keyIndex){
           DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
-          String adjustedDtEnd = ("${dateEnd.month}月${dateEnd.day}日  ");
+          String adjustedDtEnd = ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday-1)} ");
            return Container(
             width:SizeConfig.blockSizeHorizontal! *100,
             padding: const EdgeInsets.only(left:8.0,right:8.0,bottom:0.0,top:4.0),
@@ -76,6 +76,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
                 controller:ExpandableController(initialExpanded:isLimitOver(dateEnd,sortedData,dateEnd))
                 ),
                 const Divider(
+                  
                   thickness: 2.5,
                   indent: 7,
                   endIndent: 7,
@@ -88,6 +89,27 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd>  {
     )
    );
   }
+
+String getDayOfWeek(int weekday) {
+  switch (weekday) {
+    case 0:
+      return '(月)';
+    case 1:
+      return '(火)';
+    case 2:
+      return '(水)';
+    case 3:
+      return '(木)';
+    case 4:
+      return '(金)';
+    case 5:
+      return '(土)';
+    case 6:
+      return '(日)';
+    default:
+      return '(不明な曜日)';
+  }
+}
 
   bool isLimitOver
    (DateTime dtEnd,
@@ -239,10 +261,7 @@ class _DtEndTaskGroupState extends ConsumerState<DtEndTaskGroup> {
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    //final taskData = ref.watch(taskDataProvider);
-    //widget.sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
     return Container(
-      //height: SizeConfig.blockSizeVertical!*12*widget.sortedData[widget.sortedData.keys.elementAt(widget.keyIndex)]!.length,
       width:SizeConfig.blockSizeHorizontal!*100,
       child: ListView.builder(
         shrinkWrap: true,
@@ -282,12 +301,13 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
+    bool isTextEditing = false;
     final taskData = ref.watch(taskDataProvider);
           DateTime dateEnd = widget.sortedData.keys.elementAt(widget.keyIndex);
           List<Map<String,dynamic>> childData =  widget.sortedData[dateEnd]!;
           Map<String,dynamic> targetData = childData.elementAt(widget.valueIndex);
           TextEditingController descriptionController = 
-            TextEditingController(text: targetData["descriptionController"] ?? "");
+            TextEditingController(text: targetData["description"] ?? "");
 
           return Row(children:[
               Text(truncateTimeEnd(targetData),
@@ -299,10 +319,12 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
               InkWell(
       onTap: () {
         showModalBottomSheet(
+          isScrollControlled:true,
           backgroundColor: Colors.transparent,
           context: context,
           builder: (BuildContext context) {
             return Container(
+              height:SizeConfig.blockSizeVertical! *50,
               margin: const EdgeInsets.only(top: 64),
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -311,7 +333,8 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: Column(
+              child:SingleChildScrollView(
+               child:Column(
                 children: [
                   Container(
                       decoration: BoxDecoration(
@@ -352,8 +375,7 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  5,
+                                            SizeConfig.blockSizeHorizontal! *5,
                                           fontWeight: FontWeight.w700),
                                     ),
                                   ),
@@ -400,7 +422,6 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                     height: SizeConfig.blockSizeHorizontal! * 2,
                   ),
 
-
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -441,11 +462,9 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                   ),
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 17,
-                    //width: SizeConfig.blockSizeHorizontal! * 93,
                     child: Row(
                       children: [
                         Container(
-                          //width: SizeConfig.blockSizeHorizontal! *90,
                           height: SizeConfig.blockSizeHorizontal! * 17,
                           alignment: Alignment.topLeft,
                           child: Row(
@@ -453,6 +472,7 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                               SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 2,
                               ),
+                              Scrollbar(child:
                               SingleChildScrollView(
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 0),
@@ -460,7 +480,6 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                                     maxWidth:
                                         SizeConfig.blockSizeHorizontal! * 97,
                                   ),
-                                  //width: SizeConfig.blockSizeHorizontal! * 90,
                                   alignment: Alignment.topLeft,
                                   height: SizeConfig.blockSizeHorizontal! * 17,
                                   child: TextField(
@@ -476,8 +495,12 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                                     style: TextStyle(
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 4,
-                                      fontWeight: FontWeight.w500,
                                     ),
+                                    onChanged: (text) {
+                                      setState(() {
+                                        isEditingText(descriptionController);
+                                      });
+                                    },
                                     decoration: const InputDecoration(
                                       hintText: "タスクの詳細やメモを入力…",
                                       border: InputBorder.none,
@@ -491,13 +514,15 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ),)
+                              
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(height:15),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -508,15 +533,18 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                     ),
                   ),
                   PriorityTabBar(),
+                  SizedBox(height:SizeConfig.blockSizeVertical! *30,)
                 ],
               ),
+              )
             );
+
           },
         );
       },
            child: Container(
                 constraints: BoxConstraints(
-                maxWidth:SizeConfig.blockSizeHorizontal!*85,
+                maxWidth:SizeConfig.blockSizeHorizontal!*84,
                   ),
                padding: const EdgeInsets.only(top:8.0,bottom:8.0,left:8.0),
                 child:Container(
@@ -526,13 +554,13 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                  boxShadow: [
                   BoxShadow(
                    color: Colors.black.withOpacity(0.2), // 影の色と透明度
-                   spreadRadius: 2, // 影の広がり
-                   blurRadius: 3, // ぼかしの強さ
-                   offset: const Offset(0, 2), // 影の位置（横方向、縦方向）
+                   spreadRadius: 1.5, // 影の広がり
+                   blurRadius: 1, // ぼかしの強さ
+                   offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                   ),
                  ]
                 ),
-                width:SizeConfig.blockSizeHorizontal!*85,
+                width:SizeConfig.blockSizeHorizontal!*83,
                 child:Row(children:[
                  CupertinoCheckbox(
                   value:false,
@@ -544,7 +572,7 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children:[
                 SizedBox(
-                width: SizeConfig.blockSizeHorizontal!* 70,
+                width: SizeConfig.blockSizeHorizontal!* 69,
                 child:Text(targetData["summary"] ?? "(詳細なし)",
                   style:TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal!*4.5,
@@ -552,12 +580,11 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                   ))
                 ),
                 SizedBox(
-                width: SizeConfig.blockSizeHorizontal!* 70,
+                width: SizeConfig.blockSizeHorizontal!* 69,
                 child:Text(targetData["title"] ?? "(タイトルなし)",
                   style:TextStyle(
                     fontSize: SizeConfig.blockSizeVertical!*1.75,
                     color: Colors.grey,
-                   //fontWeight:FontWeight.w700
                 )
                )
               )
@@ -569,6 +596,11 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
 
       ]);
     }
+
+    bool isEditingText(TextEditingController controller) {
+     return controller.text.isNotEmpty;
+    }
+
     String truncateTimeEnd(targetData){
       String hour = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]).hour.toString();
       String minute = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]).minute.toString();

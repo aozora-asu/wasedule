@@ -22,6 +22,7 @@ class TaskDataNotifier extends StateNotifier<TaskData> {
 
 class TaskData {
   List<Map<String, dynamic>> taskDataList = [];
+  List<Map<String, dynamic>> deletedTaskDataList = [];
   bool isInit = false;
   bool isRenewed = false;
   int taskPageIndex = 0;
@@ -45,7 +46,7 @@ class TaskData {
 
   void getData(List<Map<String, dynamic>> data) {
     taskDataList = data;
-    print("GETDATA RAN");
+    print(taskDataList);
   }
 
   List<String> extractTitles(List<Map<String, dynamic>> TDList){
@@ -68,6 +69,7 @@ class TaskData {
 
   Map<DateTime, List<Map<String, dynamic>>> sortDataByDtEnd(TDList) {
     Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
+    deletedTaskDataList = [];
     for (int i = 0; i < TDList.length; i++) {
       DateTime targetDate = DateTime(
         DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).year,
@@ -80,6 +82,8 @@ class TaskData {
         } else {
           sortedData[targetDate] = [TDList.elementAt(i)];
         }
+      }else{
+        deletedTaskDataList.add(TDList.elementAt(i));
       }
     }
    return sortedData;

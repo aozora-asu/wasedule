@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import 'package:flutter_calandar_app/frontend/screens/pages/deleted_tasks.dart';
 import '../components/organism/float_button.dart';
 import '../components/template/tasklist_sort_date.dart';
 import 'package:flutter/widgets.dart';
@@ -71,28 +72,83 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
        Scaffold(
         backgroundColor:Colors.white, // BACKGROUND_COLOR,
         body: //こっちにタスク進捗リスト
-         Column(children:[         
-         Padding(
-          padding: const EdgeInsets.only(
-            top:10,
-            left:10,
-            right:10,
-            ),
-          child: FkToggle(
-            width: SizeConfig.blockSizeHorizontal! * 45,
-            height: SizeConfig.blockSizeVertical! * 5,
-            labels: const ['期限順', 'カテゴリ別'],
-            selectedColor: ACCENT_COLOR,
-            onSelected: (idx, instance) {
-              setState((){(ref.read(taskDataProvider).taskPageIndex = idx);});
-              ref.read(taskDataProvider).isInit = true;
-            },
+         Column(children:[
+    Container(
+      width:SizeConfig.blockSizeHorizontal! *100,
+      child:SingleChildScrollView(
+       scrollDirection: Axis.horizontal,
+        child:Container(
+        decoration: BoxDecoration(
+         color:Colors.white,
+          boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 1), // 影のオフセット（x, y）
           ),
-        ),
+    ],
+     ),
+     height: SizeConfig.blockSizeVertical! *4.5,
+     child:Row(
+      children: [
         Align(
-          alignment:Alignment.centerLeft,
-          child:foldStateSwitch()
+          alignment: Alignment.centerLeft,
+          child: foldStateSwitch(),
         ),
+        const VerticalDivider(
+          width: 4,
+          thickness: 1.5,
+          color: Colors.grey,
+          indent:0,
+          endIndent: 4,
+        ),
+        TextButton(
+          child:const Text("削除済み"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DeletedTaskPage()),
+            );
+          },
+          ),
+        const VerticalDivider(
+          width: 4,
+          thickness: 1.5,
+          color: Colors.grey,
+          indent:0,
+          endIndent: 4,
+        ),
+        sortSwitch(),
+        SizedBox(width:SizeConfig.blockSizeHorizontal! *25)
+        ]),
+      ),
+    ),
+
+   ),
+    const Divider(
+      thickness:0.3,
+      height:0.3,
+      color:Colors.grey
+    ),
+
+        //  Padding(
+        //   padding: const EdgeInsets.only(
+        //     top:3,
+        //     left:10,
+        //     right:10,
+        //     bottom:2
+        //     ),
+        //   child: FkToggle(
+        //     width: SizeConfig.blockSizeHorizontal! * 45,
+        //     height: SizeConfig.blockSizeVertical! * 5,
+        //     labels: const ['期限順', 'カテゴリ別'],
+        //     selectedColor: ACCENT_COLOR,
+        //     onSelected: (idx, instance) {
+        //       setState((){(ref.read(taskDataProvider).taskPageIndex = idx);});
+        //     },
+        //   ),
+        // ),
         Expanded(
           child:pages()
           )
@@ -157,7 +213,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 }
 
                 taskData.sortDataByDtEnd(taskData.taskDataList);
-                print(taskData.sortDataByCategory(taskData.taskDataList));
+                print(taskData.deletedTaskDataList);
                 return TaskListByDtEnd(sortedData:taskData.sortDataByDtEnd(taskData.taskDataList));
 
               } else {
@@ -189,21 +245,49 @@ Widget foldStateSwitch(){
       onPressed: () {
        setState((){taskData.foldState = 2;});
       },
-      child:const Text("全て開く")
+      child:const Text("全て展開する")
     );
    case 2:
     return TextButton(
       onPressed: () {
        setState((){taskData.foldState = 0;});
       },
-      child:const Text("期限内のみ開く")
+      child:const Text("期限内のみ展開する")
     );
    default:
     return TextButton(
       onPressed: () {
        setState((){taskData.foldState = 0;});
       },
-      child:const Text("期限内のみ開く")
+      child:const Text("期限内のみ展開する")
+    );
+  }
+  
+}
+
+Widget sortSwitch(){
+  final taskData =ref.watch(taskDataProvider);
+  switch(taskData.taskPageIndex){
+   case 0: 
+    return TextButton(
+      onPressed: () {
+       setState((){ref.read(taskDataProvider).taskPageIndex = 1;});
+      },
+      child:const Text("ソート：期限")
+    );
+   case 1:
+    return TextButton(
+      onPressed: () {
+       setState((){ref.read(taskDataProvider).taskPageIndex = 0;});
+      },
+      child:const Text("ソート：カテゴリ")
+    );
+   default:
+    return TextButton(
+      onPressed: () {
+       setState((){ref.read(taskDataProvider).taskPageIndex = 0;});
+      },
+      child:const Text("ソート：ゴリゴリ")
     );
   }
   
