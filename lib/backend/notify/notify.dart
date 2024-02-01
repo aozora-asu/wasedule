@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
 import './notify_setting.dart';
-import '../DB/database_helper.dart';
+import '../DB/handler/schedule_db_handler.dart';
 
 /// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';
@@ -46,9 +48,11 @@ class Notify {
   }
 
   tz.TZDateTime _nextInstanceOfEightAM() {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.initializeTimeZones();
+    tz.Location _local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(_local);
     tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, 8);
+        tz.TZDateTime(_local, now.year, now.month, now.day, 8);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import "package:flutter_calandar_app/backend/DB/database_helper.dart";
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import "package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart";
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
-import '../../components/organism/float_button.dart';
-import '../../components/template/brief_kanban.dart';
+import '../common/float_button.dart';
+import 'brief_kanban.dart';
 import 'dart:async';
-import '../../pages/task_page.dart';
+import '../to_do_page/to_do_page.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 Map<String, List<Widget>> FoldableMap = {}; //折りたたみ可能ウィジェットの管理用キメラ。
@@ -69,7 +69,7 @@ Widget buildDataCards(BuildContext context, List<Map<String, dynamic>> data) {
                 DataCard(
                   index: i + 1,
                   title: data[i]["title"],
-                  description: data[i]["description"],
+                  description: data[i]["description"] ?? "",
                   dtEnd: DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]),
                   summary: data[i]["summary"] ?? "",
                   isDone: false,
@@ -252,7 +252,6 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                     children: <Widget>[
 //授業名////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       Container(
-                        //color: WIDGET_OUTLINE_COLOR,
                         alignment: Alignment.bottomLeft,
                         height: SizeConfig.blockSizeHorizontal! * 9,
                         child: Row(
@@ -282,7 +281,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
                                           2.75),
                                   hintText: "授業名",
                                   border: InputBorder.none,
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -730,7 +729,6 @@ class InformationAutoDismissiblePopupState
       onTap: () {
         showModalBottomSheet(
           backgroundColor: Colors.transparent,
-          //isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
             return Container(
@@ -1108,6 +1106,7 @@ class _GroupFoldableCardState extends State<GroupFoldableCard>
                     vertical: 0,
                     horizontal: SizeConfig.blockSizeHorizontal! * 2),
                 child: Container(
+                  color: Colors.white,
                   child: Column(
                     children: [
                       ListTile(

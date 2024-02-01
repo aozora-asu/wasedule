@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:flutter_calandar_app/frontend/colors.dart';
-import '../../screen_manager.dart';
+import '../../assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import '../../assist_files/screen_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends StatelessWidget {
@@ -19,12 +21,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class FadingImage extends StatefulWidget {
+class FadingImage extends ConsumerStatefulWidget {
   @override
   _FadingImageState createState() => _FadingImageState();
 }
 
-class _FadingImageState extends State<FadingImage>
+class _FadingImageState extends ConsumerState<FadingImage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -94,6 +96,8 @@ class _FadingImageState extends State<FadingImage>
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(taskDataProvider.notifier);
+    ref.watch(taskDataProvider);
     return Scaffold(
       backgroundColor: MAIN_COLOR,
       body: Center(
