@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
-import '../../components/organism/float_button.dart';
+import '../common/float_button.dart';
 import 'dart:async';
-import '../../pages/task_page.dart';
+import 'to_do_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:math';
 

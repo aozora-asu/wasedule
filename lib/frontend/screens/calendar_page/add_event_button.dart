@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_calandar_app/frontend/screens/components/template/data_card.dart';
+import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import '../../../../frontend/validators.dart';
+import '../../assist_files/validators.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
-import '../../../../backend/DB/database_helper.dart';
+import '../../../backend/DB/database_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final scheduleFormProvider =

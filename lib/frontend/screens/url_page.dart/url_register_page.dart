@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../colors.dart';
-import '../../size_config.dart';
+import '../../assist_files/colors.dart';
+import '../../assist_files/size_config.dart';
 
 class UrlRegisterPage extends StatefulWidget {
   @override

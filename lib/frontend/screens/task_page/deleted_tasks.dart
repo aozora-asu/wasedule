@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/screens/components/template/data_card.dart';
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
 
 
-import '../components/organism/app_bar.dart';
-import '../components/organism/burger_menu.dart';
+import '../common/app_bar.dart';
+import '../common/burger_menu.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../../backend/DB/database_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/pages/task_view_page.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 class DeletedTaskPage extends ConsumerStatefulWidget  {
   List<Map<String,dynamic>>deletedData = [];

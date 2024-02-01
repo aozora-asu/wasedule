@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/notify/notify_setting.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
-import 'frontend/screens/pages/eyecatch_page.dart';
+import 'frontend/screens/common/eyecatch_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
-import './burger_menu.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'burger_menu.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override

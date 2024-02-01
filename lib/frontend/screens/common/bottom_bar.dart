@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -23,8 +23,8 @@ class CustomBottomBar extends StatelessWidget {
           backgroundColor: MAIN_COLOR
         ),
                 BottomNavigationBarItem(
-          icon: Icon(Icons.work),
-          label: 'ワーク',
+          icon: Icon(Icons.task),
+          label: 'ToDo',
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(

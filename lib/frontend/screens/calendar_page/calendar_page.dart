@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../components/template/brief_task_text.dart';
-import '../../size_config.dart';
-import '../components/template/add_event_button.dart';
-import '../components/template/event.dart';
-import '../components/template/loading.dart';
+import 'brief_task_text.dart';
+import '../../assist_files/size_config.dart';
+import 'add_event_button.dart';
+import 'event.dart';
+import '../common/loading.dart';
 
 import 'dart:async';
 import 'dart:io';

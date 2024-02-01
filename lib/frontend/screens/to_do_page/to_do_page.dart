@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import '../components/organism/float_button.dart';
-import '../components/template/task_progress_indicator.dart';
+import '../common/float_button.dart';
+import 'task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import '../components/template/loading.dart';
-import '../components/template/add_data_card_button.dart';
-import '../components/template/brief_kanban.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import '../common/loading.dart';
+import '../task_page/add_data_card_button.dart';
+import '../outdated/brief_kanban.dart';
 
-import '../../colors.dart';
+import '../../assist_files/colors.dart';
 import '../../../backend/temp_file.dart';
-import '../components/template/data_card.dart';
+import '../outdated/data_card.dart';
 
 class TaskPage extends StatefulWidget {
   @override
@@ -78,7 +78,7 @@ class _TaskPageState extends State<TaskPage> {
           slivers: [
             SliverAppBar(
               elevation: 0,
-              leading: null, // 戻るアイコンを非表示
+              leading: null,                     // 戻るアイコンを非表示
               automaticallyImplyLeading: false, // 戻るアイコンを非表示
               expandedHeight: SizeConfig.blockSizeHorizontal! * 89,
               collapsedHeight: SizeConfig.blockSizeHorizontal! * 25,
@@ -86,7 +86,7 @@ class _TaskPageState extends State<TaskPage> {
               pinned: true,
               backgroundColor: WIDGET_COLOR,
               flexibleSpace: FlexibleSpaceBar(
-               background: //こっちにタスク進捗リスト
+               background:
                 FutureBuilder<List<Map<String, dynamic>>>(
                 future: events,
                 builder: (context, snapshot) {
@@ -103,8 +103,8 @@ class _TaskPageState extends State<TaskPage> {
                ),
               ),
                 bottom: PreferredSize(
-                preferredSize: Size.fromHeight(SizeConfig.blockSizeHorizontal! * 25), // ウィジェットの高さ
-                child: BriefKanBan(), // 折り畳み後の領域に表示するウィジェット
+                preferredSize: Size.fromHeight(SizeConfig.blockSizeHorizontal! * 0), // ウィジェットの高さ
+                child: Container(), // 折り畳み後の領域に表示するウィジェット
               ),
             ),
           FutureBuilder<List<Map<String, dynamic>>>(

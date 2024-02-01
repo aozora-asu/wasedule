@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
-import 'package:flutter_calandar_app/frontend/screens/pages/deleted_tasks.dart';
-import '../components/organism/float_button.dart';
-import '../components/template/tasklist_sort_date.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
+import '../common/float_button.dart';
+import 'tasklist_sort_date.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
-import '../../data_manager.dart';
+import '../../assist_files/data_manager.dart';
 
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import '../components/template/loading.dart';
-import '../components/template/add_data_card_button.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import '../common/loading.dart';
+import 'add_data_card_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fk_toggle/fk_toggle.dart';
 
-import '../../colors.dart';
+import '../../assist_files/colors.dart';
 import '../../../backend/temp_file.dart';
 
 class TaskViewPage extends ConsumerStatefulWidget {

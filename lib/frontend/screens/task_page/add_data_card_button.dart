@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/screens/components/template/data_card.dart';
-import 'package:flutter_calandar_app/frontend/size_config.dart';
-import 'package:flutter_calandar_app/frontend/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 
 
-import '../organism/app_bar.dart';
-import '../organism/burger_menu.dart';
-import '../../../../backend/DB/models/task.dart';
-import '../../../../backend/DB/database_helper.dart';
+import '../common/app_bar.dart';
+import '../common/burger_menu.dart';
+import '../../../backend/DB/models/task.dart';
+import '../../../backend/DB/database_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/pages/task_view_page.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;

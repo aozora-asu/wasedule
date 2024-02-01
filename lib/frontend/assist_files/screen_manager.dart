@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/screens/components/organism/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 
-import './screens/pages/calendar_page.dart';
-import './screens/pages/task_page.dart';
-import "./screens/pages/task_view_page.dart";
+import '../screens/calendar_page/calendar_page.dart';
+import '../screens/to_do_page/to_do_page.dart';
+import '../screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'screens/components/organism/app_bar.dart';
-import 'screens/components/organism/burger_menu.dart';
-import '././data_manager.dart';
+import '../screens/common/app_bar.dart';
+import '../screens/common/burger_menu.dart';
+import 'data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
 class AppPage extends ConsumerStatefulWidget {
