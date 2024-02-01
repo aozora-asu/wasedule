@@ -6,7 +6,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
 import './notify_setting.dart';
-import '../DB/database_helper.dart';
+import '../DB/handler/schedule_db_handler.dart';
 
 /// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';

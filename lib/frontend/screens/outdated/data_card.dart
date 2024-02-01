@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import "package:flutter_calandar_app/backend/DB/database_helper.dart";
+import "package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart";
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
@@ -226,7 +226,7 @@ class DataCardState extends State<DataCard> with AutomaticKeepAliveClientMixin {
         ),
         child:
 //カード本体//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-         Column(
+            Column(
           children: <Widget>[
             SizedBox(height: SizeConfig.blockSizeHorizontal! * 4), //カード間の隙間。
             ClipRRect(

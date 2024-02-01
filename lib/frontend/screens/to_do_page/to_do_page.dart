@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import '../common/float_button.dart';
 import 'task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
@@ -65,89 +65,88 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-  onWillPop: () async {
-    // 画面が閉じられる直前の処理
-    if(isSnackBar){
-      canSnackBarClose = false;
-    }
-    return true; // trueを返すと閉じる、falseを返すと閉じない
-  },
-      child: Scaffold(
-        backgroundColor:Colors.white, // BACKGROUND_COLOR,
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              elevation: 0,
-              leading: null,                     // 戻るアイコンを非表示
-              automaticallyImplyLeading: false, // 戻るアイコンを非表示
-              expandedHeight: SizeConfig.blockSizeHorizontal! * 89,
-              collapsedHeight: SizeConfig.blockSizeHorizontal! * 25,
-              floating: false,
-              pinned: true,
-              backgroundColor: WIDGET_COLOR,
-              flexibleSpace: FlexibleSpaceBar(
-               background:
+        onWillPop: () async {
+          // 画面が閉じられる直前の処理
+          if (isSnackBar) {
+            canSnackBarClose = false;
+          }
+          return true; // trueを返すと閉じる、falseを返すと閉じない
+        },
+        child: Scaffold(
+            backgroundColor: Colors.white, // BACKGROUND_COLOR,
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  elevation: 0,
+                  leading: null, // 戻るアイコンを非表示
+                  automaticallyImplyLeading: false, // 戻るアイコンを非表示
+                  expandedHeight: SizeConfig.blockSizeHorizontal! * 89,
+                  collapsedHeight: SizeConfig.blockSizeHorizontal! * 25,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: WIDGET_COLOR,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: events,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return LoadingScreen();
+                        } else if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        } else if (snapshot.hasData) {
+                          return buildTaskProgressIndicator(
+                              context, snapshot.data!);
+                        } else {
+                          return noneTaskText();
+                        }
+                      },
+                    ),
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(
+                        SizeConfig.blockSizeHorizontal! * 0), // ウィジェットの高さ
+                    child: Container(), // 折り畳み後の領域に表示するウィジェット
+                  ),
+                ),
                 FutureBuilder<List<Map<String, dynamic>>>(
-                future: events,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return LoadingScreen();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    return buildTaskProgressIndicator(context, snapshot.data!);
-                  } else {
-                    return noneTaskText();
-                  }
-                 },
-               ),
-              ),
-                bottom: PreferredSize(
-                preferredSize: Size.fromHeight(SizeConfig.blockSizeHorizontal! * 0), // ウィジェットの高さ
-                child: Container(), // 折り畳み後の領域に表示するウィジェット
-              ),
+                  future: events,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SliverFillRemaining(
+                        child: LoadingScreen(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return SliverFillRemaining(
+                        child: Text("Error: ${snapshot.error}"),
+                      );
+                    } else if (snapshot.hasData) {
+                      return buildDataCards(context, snapshot.data!);
+                    } else {
+                      return SliverFillRemaining(
+                        child: noneTaskText(),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
-          FutureBuilder<List<Map<String, dynamic>>>(
-            future: events,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return SliverFillRemaining(
-                  child: LoadingScreen(),
-                );
-              } else if (snapshot.hasError) {
-                return SliverFillRemaining(
-                  child: Text("Error: ${snapshot.error}"),
-                );
-              } else if (snapshot.hasData) {
-                return 
-                 buildDataCards(context, snapshot.data!);
-              } else {
-                return SliverFillRemaining(
-                  child: noneTaskText(),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          AddDataCardButton(),
-          Container(
-            width: SizeConfig.blockSizeHorizontal! * 2,
-            height: SizeConfig.blockSizeHorizontal! * 5,
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              _loadData();
-            },
-            backgroundColor: MAIN_COLOR,
-            child: const Icon(Icons.get_app,color:Colors.white),
-          ),
-        ],
-      )
-     )
-    );
+            floatingActionButton: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AddDataCardButton(),
+                Container(
+                  width: SizeConfig.blockSizeHorizontal! * 2,
+                  height: SizeConfig.blockSizeHorizontal! * 5,
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    _loadData();
+                  },
+                  backgroundColor: MAIN_COLOR,
+                  child: const Icon(Icons.get_app, color: Colors.white),
+                ),
+              ],
+            )));
   }
 }
