@@ -20,7 +20,7 @@ class TaskDatabaseHelper {
   // データベースの作成
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS task(
+      CREATE TABLE IF NOT EXISTS tasks(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT UNIQUE, -- UNIQUE,
         title TEXT,
@@ -37,7 +37,7 @@ class TaskDatabaseHelper {
 
     // データを日付でソート
     List<Map<String, dynamic>> sortedTasks = await _database.query(
-      'task',
+      'tasks',
       orderBy: 'dtEnd ASC',
     );
   }
@@ -46,21 +46,21 @@ class TaskDatabaseHelper {
   Future<void> insertTask(TaskItem task) async {
     await _initDatabase();
     try {
-      await _database.insert('task', task.toMap());
+      await _database.insert('tasks', task.toMap());
     } catch (e) {}
     await _orderByDateTime();
   }
 
   Future<void> deleteAllData(Database db) async {
     await _initDatabase();
-    await db.rawDelete('DELETE FROM task');
+    await db.rawDelete('DELETE FROM tasks');
   }
 
   // タスクの削除
   Future<int> _deleteTask(int id) async {
     await _initDatabase();
     return await _database.delete(
-      'task',
+      'tasks',
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -69,7 +69,7 @@ class TaskDatabaseHelper {
   Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
     await _initDatabase();
 
-    final List<Map<String, dynamic>> dataList = await _database.query('task',
+    final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
         columns: [
           'title',
@@ -84,7 +84,7 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
     await _initDatabase();
-    final List<Map<String, dynamic>> dataList = await _database.query('task',
+    final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
         columns: ['title', 'dtEnd', 'summary', 'isDone']); // 複数のカラムのデータを取得
 
@@ -95,7 +95,7 @@ class TaskDatabaseHelper {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
     await _database.update(
-      'task',
+      'tasks',
       {'title': newTitle}, // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
@@ -106,7 +106,7 @@ class TaskDatabaseHelper {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
     await _database.update(
-      'task',
+      'tasks',
       {'summary': newSummary}, // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
@@ -117,7 +117,7 @@ class TaskDatabaseHelper {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
     await _database.update(
-      'task',
+      'tasks',
       {'description': newDescription}, // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
@@ -128,7 +128,7 @@ class TaskDatabaseHelper {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
     await _database.update(
-      'task',
+      'tasks',
       {'isDone': 1}, // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
@@ -141,7 +141,7 @@ class TaskDatabaseHelper {
     _initDatabase();
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM task');
+        await _database.rawQuery('SELECT * FROM tasks');
 
     return data;
   }
@@ -149,7 +149,7 @@ class TaskDatabaseHelper {
   Future<bool> hasData() async {
     // データベースファイルのパスを取得します（パスはアプリ固有のものに変更してください）
     // データベース内のテーブル名
-    String tableName = 'task';
+    String tableName = 'tasks';
     int? count;
     // データのカウントを取得
     await _initDatabase();
@@ -186,7 +186,7 @@ class TaskDatabaseHelper {
     int n = 2;
     await initializeNotification();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
-      'task',
+      'tasks',
       where: 'dtEnd >= ? AND dtEnd < ?',
       whereArgs: [
         DateTime.now().millisecondsSinceEpoch,
