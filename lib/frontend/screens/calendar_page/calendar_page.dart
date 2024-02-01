@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -371,7 +372,8 @@ class _CalendarState extends ConsumerState<Calendar> {
       child:ListView.builder(
       itemBuilder: (context,index){
         DateTime target = generateCalendarData()[dayOfWeek]!.elementAt(index);
-        return Container(
+        return InkWell(
+    child:Container(
           width: SizeConfig.blockSizeHorizontal! *14.285,
           height: SizeConfig.blockSizeVertical! *12,
           decoration: BoxDecoration(
@@ -389,13 +391,21 @@ class _CalendarState extends ConsumerState<Calendar> {
             ),
             calendarCellsChild(target)
           ])
+        ),
+          onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DailyViewPage(target: target)),
+          );
+        },
         );
       }, 
       itemCount:generateCalendarData()[dayOfWeek]!.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
-      ));
+      )
+    );
   }
 
   Widget calendarCellsChild(DateTime target){
@@ -410,7 +420,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             if (targetDayData.elementAt(index)["startTime"] != null){
               dateTimeData =
                   Text(
-                    targetDayData.elementAt(index)["startTime"].hours.toString() + ":" + targetDayData.elementAt(index)["startTime"].minutes.toString(),
+                    targetDayData.elementAt(index)["startTime"],
                     style: const TextStyle(color: Colors.grey,fontSize: 8),
                   );
                 }
