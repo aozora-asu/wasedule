@@ -410,7 +410,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             if (targetDayData.elementAt(index)["startTime"] != null){
               dateTimeData =
                   Text(
-                    targetDayData.elementAt(index)["startTime"],
+                    targetDayData.elementAt(index)["startTime"].hours.toString() + ":" + targetDayData.elementAt(index)["startTime"].minutes.toString(),
                     style: const TextStyle(color: Colors.grey,fontSize: 8),
                   );
                 }
@@ -425,7 +425,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             );
           },
           separatorBuilder: (context,index){
-            return const Divider(height:0.5);
+            return const Divider(height:0.7,indent:2,endIndent:2,thickness: 0.7,);
           },
           itemCount: targetDayData.length,
           shrinkWrap: true,
