@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/database_helper.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
-import '../../../backend/DB/database_helper.dart';
+import '../../../backend/DB/handler/task_db_handler.dart';
 
 Widget buildTaskText(
     List<Map<String, dynamic>> taskList, BuildContext context) {
