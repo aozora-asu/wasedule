@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
@@ -296,7 +297,7 @@ class InputForm extends ConsumerWidget {
                     };
 
                     ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
-
+                    ref.read(calendarDataProvider.notifier).state = CalendarData();
                     Navigator.of(context).pop();
                   }
                 }
