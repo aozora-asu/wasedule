@@ -3,559 +3,541 @@
   "packages": [
     {
       "name": "_flutterfire_internals",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.14",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/_flutterfire_internals-1.3.14",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "archive",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/archive-3.4.9",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/archive-3.4.9",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "args",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/args-2.4.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.4.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "async",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/async-2.11.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "boolean_selector",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/boolean_selector-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "characters",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/characters-1.3.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/characters-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "checked_yaml",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/checked_yaml-2.0.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/checked_yaml-2.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "cli_util",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cli_util-0.4.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cli_util-0.4.0",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "clock",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/clock-1.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/clock-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "cloud_firestore",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cloud_firestore-4.13.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.13.3",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "cloud_firestore_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cloud_firestore_platform_interface-6.0.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore_platform_interface-6.0.7",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "cloud_firestore_web",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.8.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore_web-3.8.7",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/collection-1.18.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/collection-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "convert",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/convert-3.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/convert-3.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "crypto",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/crypto-3.0.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "cupertino_icons",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.6",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "dbus",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/dbus-0.7.10",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.10",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "device_info_plus",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/device_info_plus-9.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus-9.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "device_info_plus_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "easy_autocomplete",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/easy_autocomplete-1.6.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/easy_autocomplete-1.6.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "expandable",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/expandable-5.0.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/expandable-5.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "fake_async",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fake_async-1.3.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/fake_async-1.3.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "ffi",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/ffi-2.1.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "file",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/file-7.0.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/file-7.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "firebase_core",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/firebase_core-2.24.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core-2.24.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "firebase_core_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-5.0.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core_platform_interface-5.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "firebase_core_web",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/firebase_core_web-2.9.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core_web-2.9.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "fk_toggle",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fk_toggle-0.1.4",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/fk_toggle-0.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter",
+      "rootUri": "file:///C:/src/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "flutter_launcher_icons",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.13.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_launcher_icons-0.13.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-2.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "flutter_local_notifications",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications-16.2.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_local_notifications-16.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "flutter_local_notifications_linux",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-4.0.0+1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_local_notifications_linux-4.0.0+1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "flutter_local_notifications_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-7.0.0+1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_local_notifications_platform_interface-7.0.0+1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "flutter_localizations",
-      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_localizations",
+      "rootUri": "file:///C:/src/flutter/packages/flutter_localizations",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "flutter_riverpod",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_riverpod-2.4.9",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_riverpod-2.4.9",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_test",
+      "rootUri": "file:///C:/src/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "flutter_timezone",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_timezone-1.0.8",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_timezone-1.0.8",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///C:/src/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "form_field_validator",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/form_field_validator-1.1.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/form_field_validator-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "google_fonts",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/google_fonts-6.1.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/google_fonts-6.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
     {
       "name": "http",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/http-1.1.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "http_parser",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "image",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/image-4.1.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/image-4.1.3",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
     {
       "name": "intl",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/intl-0.18.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "js",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/js-0.6.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "json_annotation",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/json_annotation-4.8.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.8.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
-      "name": "leak_tracker",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/leak_tracker-9.0.16",
-      "packageUri": "lib/",
-      "languageVersion": "3.1"
-    },
-    {
-      "name": "leak_tracker_testing",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/leak_tracker_testing-1.0.5",
-      "packageUri": "lib/",
-      "languageVersion": "3.1"
-    },
-    {
       "name": "lints",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/lints-2.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/lints-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/matcher-0.12.16",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/matcher-0.12.16",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "material_color_utilities",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/material_color_utilities-0.8.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/material_color_utilities-0.5.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/meta-1.11.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.10.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "path",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path-1.9.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path-1.8.3",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "2.12"
     },
     {
       "name": "path_provider",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider-2.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider_android-2.2.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_android-2.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_foundation-2.3.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "path_provider_linux",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_linux-2.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "path_provider_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_platform_interface-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "path_provider_windows",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider_windows-2.2.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_windows-2.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "percent_indicator",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/percent_indicator-4.2.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/percent_indicator-4.2.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "petitparser",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/petitparser-6.0.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "platform",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/platform-3.1.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/platform-3.1.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "plugin_platform_interface",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.7",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "pointycastle",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/pointycastle-3.7.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/pointycastle-3.7.3",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
     {
       "name": "riverpod",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/riverpod-2.4.9",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/riverpod-2.4.9",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "simple_gesture_detector",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/simple_gesture_detector-0.2.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/simple_gesture_detector-0.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///C:/src/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "source_span",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/source_span-1.10.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "sqflite",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/sqflite-2.3.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite-2.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/sqflite_common-2.5.0+2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.0+2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "stack_trace",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/stack_trace-1.11.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/stack_trace-1.11.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "state_notifier",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/state_notifier-1.0.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/state_notifier-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "stream_channel",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/stream_channel-2.1.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/stream_channel-2.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "string_scanner",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/string_scanner-1.2.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/string_scanner-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "syncfusion_flutter_calendar",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/syncfusion_flutter_calendar-23.2.6",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_calendar-23.2.6",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "syncfusion_flutter_core",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/syncfusion_flutter_core-23.2.6",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_core-23.2.6",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "syncfusion_flutter_datepicker",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/syncfusion_flutter_datepicker-23.2.6",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_datepicker-23.2.6",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "synchronized",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/synchronized-3.1.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/synchronized-3.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "tab_indicator_styler",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/tab_indicator_styler-2.0.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/tab_indicator_styler-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "table_calendar",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/table_calendar-3.0.9",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "term_glyph",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/term_glyph-1.2.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/term_glyph-1.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/test_api-0.6.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.6.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "timezone",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/timezone-0.9.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/timezone-0.9.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "typed_data",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/typed_data-1.3.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/typed_data-1.3.2",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vector_math-2.1.4",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
     {
-      "name": "vm_service",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vm_service-13.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "web",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/web-0.4.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/web-0.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/win32-5.1.1",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
     {
       "name": "win32_registry",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/win32_registry-1.1.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/win32_registry-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
     {
       "name": "xdg_directories",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/xdg_directories-1.0.3",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/xdg_directories-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "xml",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/xml-6.5.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "yaml",
-      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/yaml-3.1.2",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/yaml-3.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -566,7 +548,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-02-01T09:16:10.062204Z",
+  "generated": "2024-02-01T09:23:06.819547Z",
   "generator": "pub",
-  "generatorVersion": "3.3.0-198.0.dev"
+  "generatorVersion": "3.2.6"
 }

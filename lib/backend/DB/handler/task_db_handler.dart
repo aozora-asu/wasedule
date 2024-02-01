@@ -4,6 +4,12 @@ import 'package:path/path.dart';
 import '../models/task.dart';
 import "../../status_code.dart";
 import "../../http_request.dart";
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
+import '../models/schedule.dart';
+
+import 'package:intl/intl.dart';
 
 class TaskDatabaseHelper {
   late Database _database;
@@ -195,5 +201,46 @@ class TaskDatabaseHelper {
     );
 
     return withinNdaysTask;
+  }
+
+  Future<List<Map<String, dynamic>>> getTaskDueTody() async {
+    await _initDatabase();
+    List<Map<String, dynamic>> taskDueToday = await _database.query(
+      'tasks',
+      where: 'dtEnd = ?',
+      whereArgs: [DateFormat("yyyy-MM-dd").format(DateTime.now())],
+    );
+
+    return taskDueToday;
+  }
+
+  Future<String> taskDueTodayForNotify() async {
+    await _initDatabase();
+    List<Map<String, dynamic>> taskDueTodayList = await getTaskDueTody();
+
+    late String taskDueToday = "";
+    List<Map<String, dynamic>> tasks = taskDueTodayList;
+    bool hasIncompleteTasks =
+        false; // Flag to check if any incomplete tasks are found
+
+    for (var task in tasks) {
+      if (task["isDone"] == 0) {
+        hasIncompleteTasks =
+            true; // Set the flag to true if an incomplete task is found
+
+        String due = task["DtEnd"] ?? "";
+        String title = task["title"] ?? "";
+        String summary = task["summary"] ?? "";
+        taskDueToday += "$due  $title\n　　$summary\n";
+      }
+    }
+
+    if (!hasIncompleteTasks) {
+      taskDueToday = "本日が期限の課題はありません";
+    }
+
+    taskDueToday = taskDueToday.trimRight(); // Trim trailing whitespaces
+
+    return taskDueToday;
   }
 }
