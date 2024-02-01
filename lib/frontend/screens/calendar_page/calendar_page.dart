@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -394,36 +395,49 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
-  Widget generateCalendarCells(String dayOfWeek) {
-    return Container(
-        width: SizeConfig.blockSizeHorizontal! * 14.285,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            DateTime target =
-                generateCalendarData()[dayOfWeek]!.elementAt(index);
-            return Container(
-                width: SizeConfig.blockSizeHorizontal! * 14.285,
-                height: SizeConfig.blockSizeVertical! * 12,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 0.5,
-                  ),
-                ),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(target.day.toString())),
-                      calendarCellsChild(target)
-                    ]));
-          },
-          itemCount: generateCalendarData()[dayOfWeek]!.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-        ));
+
+  Widget generateCalendarCells(String dayOfWeek){
+    return 
+    Container(
+      width: SizeConfig.blockSizeHorizontal! *14.285,
+      child:ListView.builder(
+      itemBuilder: (context,index){
+        DateTime target = generateCalendarData()[dayOfWeek]!.elementAt(index);
+        return InkWell(
+    child:Container(
+          width: SizeConfig.blockSizeHorizontal! *14.285,
+          height: SizeConfig.blockSizeVertical! *12,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+          ),
+          child:Column(
+           mainAxisAlignment: MainAxisAlignment.start,
+           children:[
+            Align(
+              alignment: Alignment.centerLeft,
+              child:Text(target.day.toString())
+            ),
+            calendarCellsChild(target)
+          ])
+        ),
+          onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DailyViewPage(target: target)),
+          );
+        },
+        );
+      }, 
+      itemCount:generateCalendarData()[dayOfWeek]!.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      )
+    );
+
   }
 
   Widget calendarCellsChild(DateTime target) {
@@ -437,17 +451,23 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (data.sortedDataByDay.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDay[targetKey];
       return SizedBox(
-          child: ListView.separated(
-        itemBuilder: (context, index) {
-          if (targetDayData.elementAt(index)["startTime"] != null) {
-            dateTimeData = Text(
-              targetDayData.elementAt(index)["startTime"].hours.toString() +
-                  ":" +
-                  targetDayData
-                      .elementAt(index)["startTime"]
-                      .minutes
-                      .toString(),
-              style: const TextStyle(color: Colors.grey, fontSize: 8),
+        child:ListView.separated(
+          itemBuilder: (context,index){
+            if (targetDayData.elementAt(index)["startTime"] != null){
+              dateTimeData =
+                  Text(
+                    targetDayData.elementAt(index)["startTime"],
+                    style: const TextStyle(color: Colors.grey,fontSize: 8),
+                  );
+                }
+            return Container(
+              child:Column(children:[
+                dateTimeData,
+                Text(
+                  targetDayData.elementAt(index)["subject"],
+                  style: const TextStyle(color: Colors.black,fontSize: 8),
+                  ),
+              ])
             );
           }
           return Container(
