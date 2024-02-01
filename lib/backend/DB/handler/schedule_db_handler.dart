@@ -69,9 +69,9 @@ class ScheduleDatabaseHelper {
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
         subject: schedule["subject"],
-        startDate: schedule["startDate"],
+        startDate: schedule["startDate"].replaceAll("/", "-"),
         startTime: schedule["startTime"],
-        endDate: schedule["endDate"],
+        endDate: schedule["endDate"].replaceAll("/", "-"),
         endTime: schedule["endTime"],
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],
