@@ -141,7 +141,7 @@ class TaskDatabaseHelper {
     _initDatabase();
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM tasks');
+        await _database.rawQuery('SELECT * FROM task');
 
     return data;
   }
