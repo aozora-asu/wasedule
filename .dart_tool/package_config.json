@@ -118,12 +118,14 @@
     {
       "name": "easy_autocomplete",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/easy_autocomplete-1.6.0",
+
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "expandable",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/expandable-5.0.1",
+
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -164,12 +166,14 @@
       "languageVersion": "2.18"
     },
     {
+
       "name": "fk_toggle",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fk_toggle-0.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
     {
+
       "name": "flutter",
       "rootUri": "file:///Users/yazawashun/Documents/FLUTTER_APP/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -309,19 +313,25 @@
     },
     {
       "name": "material_color_utilities",
+
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/material_color_utilities-0.8.0",
+
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "meta",
+
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/meta-1.11.0",
+
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "path",
+
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path-1.9.0",
+
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -525,7 +535,9 @@
     },
     {
       "name": "web",
+
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/web-0.4.0",
+
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -566,7 +578,9 @@
       "languageVersion": "3.1"
     }
   ],
+
   "generated": "2024-02-01T05:45:16.554860Z",
+
   "generator": "pub",
   "generatorVersion": "3.3.0-198.0.dev"
 }

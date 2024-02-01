@@ -78,10 +78,12 @@ easy_autocomplete
 2.12
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/easy_autocomplete-1.6.0/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/easy_autocomplete-1.6.0/lib/
+
 expandable
 2.12
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/expandable-5.0.1/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/expandable-5.0.1/lib/
+
 fake_async
 2.12
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fake_async-1.3.1/
@@ -106,10 +108,12 @@ firebase_core_web
 2.18
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/firebase_core_web-2.9.0/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/firebase_core_web-2.9.0/lib/
+
 fk_toggle
 2.15
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fk_toggle-0.1.4/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/fk_toggle-0.1.4/lib/
+
 flutter_launcher_icons
 2.18
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.13.1/
@@ -170,6 +174,7 @@ json_annotation
 2.19
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/json_annotation-4.8.1/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/json_annotation-4.8.1/lib/
+
 leak_tracker
 3.1
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/leak_tracker-9.0.16/
@@ -178,6 +183,7 @@ leak_tracker_testing
 3.1
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/leak_tracker_testing-1.0.5/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/leak_tracker_testing-1.0.5/lib/
+
 lints
 3.0
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/lints-2.1.1/
@@ -188,6 +194,7 @@ file:///Users/yazawashun/.pub-cache/hosted/pub.dev/matcher-0.12.16/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/matcher-0.12.16/lib/
 material_color_utilities
 2.17
+
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/material_color_utilities-0.8.0/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/material_color_utilities-0.8.0/lib/
 meta
@@ -198,6 +205,7 @@ path
 3.0
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path-1.9.0/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path-1.9.0/lib/
+
 path_provider
 2.19
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/path_provider-2.1.1/
@@ -322,6 +330,7 @@ vector_math
 2.14
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vector_math-2.1.4/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib/
+
 vm_service
 3.0
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vm_service-13.0.0/
@@ -330,6 +339,7 @@ web
 3.2
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/web-0.4.0/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/web-0.4.0/lib/
+
 win32
 3.1
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/win32-5.1.1/
