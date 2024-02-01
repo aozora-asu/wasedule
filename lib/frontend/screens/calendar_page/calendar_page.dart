@@ -39,12 +39,17 @@ class _CalendarState extends ConsumerState<Calendar> {
   final StreamController<ScheduleNotification>
       didScheduleLocalNotificationStream =
       StreamController<ScheduleNotification>.broadcast();
- 
-  late String targetMonth = "";
-  String thisMonth = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0');
-  String today = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0') + "/" + DateTime.now().day.toString().padLeft(2, '0');
 
- 
+  late String targetMonth = "";
+  String thisMonth = DateTime.now().year.toString() +
+      "/" +
+      DateTime.now().month.toString().padLeft(2, '0');
+  String today = DateTime.now().year.toString() +
+      "/" +
+      DateTime.now().month.toString().padLeft(2, '0') +
+      "/" +
+      DateTime.now().day.toString().padLeft(2, '0');
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +65,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   testNotify() async {
     //await Notify().repeatNotification();
     await Notify().scheduleDailyEightAMNotification();
+    await Notify().taskDueTodayNotification();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -138,200 +144,224 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
     return Scaffold(
       body: ListView(
-          children: [
-            SizedBox(
-              height: SizeConfig.blockSizeHorizontal! * 200,
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _getDataSource(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // データが取得される間、ローディングインディケータを表示できます。
-                    return calendarBody();
-                  } else if (snapshot.hasError) {
-                    // エラーがある場合、エラーメッセージを表示します。
-                    return Text('エラーだよい: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // データがないか、データが空の場合、空っぽのカレンダーを表示。
-                    return calendarBody();
-                  } else {
-                    // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
-                     print(snapshot.data);
-                     ref.read(calendarDataProvider).getData(snapshot.data!);
-                     ref.read(calendarDataProvider).sortDataByDay();
-                    return calendarBody();
-                  }
-                },
-              ),
+        children: [
+          SizedBox(
+            height: SizeConfig.blockSizeHorizontal! * 200,
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _getDataSource(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // データが取得される間、ローディングインディケータを表示できます。
+                  return calendarBody();
+                } else if (snapshot.hasError) {
+                  // エラーがある場合、エラーメッセージを表示します。
+                  return Text('エラーだよい: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  // データがないか、データが空の場合、空っぽのカレンダーを表示。
+                  return calendarBody();
+                } else {
+                  // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
+                  print(snapshot.data);
+                  ref.read(calendarDataProvider).getData(snapshot.data!);
+                  ref.read(calendarDataProvider).sortDataByDay();
+                  return calendarBody();
+                }
+              },
             ),
-            BriefTaskList(),
-          ],
-        ),
+          ),
+          BriefTaskList(),
+        ],
+      ),
       floatingActionButton: AddEventButton(),
     );
   }
-  
-  Widget calendarBody(){
-    return Column(children:[
-        SizedBox(
-        child:Row(children:[
-        IconButton(
-          onPressed:(){
-            decreasePgNumber();
-          }, 
-          icon: Icon(Icons.arrow_back_ios),iconSize:20),
-         Text(targetMonth,
-          style: TextStyle(fontSize:25,fontWeight:FontWeight.w700,),  
-         ),
-        IconButton(
-          onPressed:(){
-            setState((){increasePgNumber();});
-          }, 
-          icon: Icon(Icons.arrow_forward_ios),iconSize:20)
-       ]),
-       ),
-       SizedBox(
-        width: SizeConfig.blockSizeHorizontal! *100,
-        child:Row(children:[
-          generateCalendarCells("sunday"),
-          generateCalendarCells("monday"),
-          generateCalendarCells("tuesday"),
-          generateCalendarCells("wednesday"),
-          generateCalendarCells("thursday"),
-          generateCalendarCells("friday"),
-          generateCalendarCells("saturday")
-       ])
-      )
-       
+
+  Widget calendarBody() {
+    return Column(children: [
+      SizedBox(
+        child: Row(children: [
+          IconButton(
+              onPressed: () {
+                decreasePgNumber();
+              },
+              icon: Icon(Icons.arrow_back_ios),
+              iconSize: 20),
+          Text(
+            targetMonth,
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  increasePgNumber();
+                });
+              },
+              icon: Icon(Icons.arrow_forward_ios),
+              iconSize: 20)
+        ]),
+      ),
+      SizedBox(
+          width: SizeConfig.blockSizeHorizontal! * 100,
+          child: Row(children: [
+            generateCalendarCells("sunday"),
+            generateCalendarCells("monday"),
+            generateCalendarCells("tuesday"),
+            generateCalendarCells("wednesday"),
+            generateCalendarCells("thursday"),
+            generateCalendarCells("friday"),
+            generateCalendarCells("saturday")
+          ]))
     ]);
   }
 
- void increasePgNumber(){
-   String increasedMonth = "";
-    
-    if(targetMonth.substring(5,7) == "12"){
-    int year = int.parse(targetMonth.substring(0,4));
-    year += 1;
-      setState((){increasedMonth =  year.toString() + "/" + "01";});
-    }else{
-     int month = int.parse(targetMonth.substring(5,7));
-     month += 1;
-     setState((){increasedMonth = targetMonth.substring(0,5) + month.toString().padLeft(2, '0');});
+  void increasePgNumber() {
+    String increasedMonth = "";
+
+    if (targetMonth.substring(5, 7) == "12") {
+      int year = int.parse(targetMonth.substring(0, 4));
+      year += 1;
+      setState(() {
+        increasedMonth = year.toString() + "/" + "01";
+      });
+    } else {
+      int month = int.parse(targetMonth.substring(5, 7));
+      month += 1;
+      setState(() {
+        increasedMonth =
+            targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
+      });
     }
 
     targetMonth = increasedMonth;
     generateCalendarData();
   }
 
- void decreasePgNumber(){
-   String decreasedMonth = "";
-    
-    if(targetMonth.substring(5,7) == "01"){
-    int year = int.parse(targetMonth.substring(0,4));
-    year -= 1;
-      setState((){decreasedMonth =  year.toString() + "/" + "12";});
-    }else{
-     int month = int.parse(targetMonth.substring(5,7));
-     month -= 1;
-     setState((){decreasedMonth = targetMonth.substring(0,5) + month.toString().padLeft(2, '0');});
+  void decreasePgNumber() {
+    String decreasedMonth = "";
+
+    if (targetMonth.substring(5, 7) == "01") {
+      int year = int.parse(targetMonth.substring(0, 4));
+      year -= 1;
+      setState(() {
+        decreasedMonth = year.toString() + "/" + "12";
+      });
+    } else {
+      int month = int.parse(targetMonth.substring(5, 7));
+      month -= 1;
+      setState(() {
+        decreasedMonth =
+            targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
+      });
     }
 
     targetMonth = decreasedMonth;
     generateCalendarData();
   }
 
-  Map<String,List<DateTime>> generateCalendarData(){
-   DateTime firstDay = DateTime(int.parse(targetMonth.substring(0,4)),int.parse(targetMonth.substring(5,7)));
-   List<DateTime> firstWeek = [];
+  Map<String, List<DateTime>> generateCalendarData() {
+    DateTime firstDay = DateTime(int.parse(targetMonth.substring(0, 4)),
+        int.parse(targetMonth.substring(5, 7)));
+    List<DateTime> firstWeek = [];
 
-   List<DateTime> sunDay = [];
-   List<DateTime> monDay = [];
-   List<DateTime> tuesDay = [];
-   List<DateTime> wednesDay = [];
-   List<DateTime> thursDay = [];
-   List<DateTime> friDay = [];
-   List<DateTime> saturDay = [];
-   
-   switch (firstDay.weekday){
-    case 1: firstWeek = [
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      firstDay.add(const Duration(days: 3)),
-      firstDay.add(const Duration(days: 4)),
-      firstDay.add(const Duration(days: 5)),
-      ];
-    case 2: firstWeek = [
-      firstDay.subtract(const Duration(days: 2)),
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      firstDay.add(const Duration(days: 3)),
-      firstDay.add(const Duration(days: 4)),
-      ];
-    case 3: firstWeek = [
-      firstDay.subtract(const Duration(days: 3)),
-      firstDay.subtract(const Duration(days: 2)),
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      firstDay.add(const Duration(days: 3)),
-      ];
-    case 4: firstWeek = [
-      firstDay.subtract(const Duration(days: 4)),
-      firstDay.subtract(const Duration(days: 3)),
-      firstDay.subtract(const Duration(days: 2)),
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      ];
-    case 5: firstWeek = [
-      firstDay.subtract(const Duration(days: 5)),
-      firstDay.subtract(const Duration(days: 4)),
-      firstDay.subtract(const Duration(days: 3)),
-      firstDay.subtract(const Duration(days: 2)),
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      ];
-    case 6: firstWeek = [
-      firstDay.subtract(const Duration(days: 6)),
-      firstDay.subtract(const Duration(days: 5)),
-      firstDay.subtract(const Duration(days: 4)),
-      firstDay.subtract(const Duration(days: 3)),
-      firstDay.subtract(const Duration(days: 2)),
-      firstDay.subtract(const Duration(days: 1)),
-      firstDay,
-      ];
-    case 7: firstWeek = [
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      firstDay.add(const Duration(days: 3)),
-      firstDay.add(const Duration(days: 4)),
-      firstDay.add(const Duration(days: 5)),
-      firstDay.add(const Duration(days: 6)),
-      ];
-    default : firstWeek = [
-      firstDay,
-      firstDay.add(const Duration(days: 1)),
-      firstDay.add(const Duration(days: 2)),
-      firstDay.add(const Duration(days: 3)),
-      firstDay.add(const Duration(days: 4)),
-      firstDay.add(const Duration(days: 5)),
-      firstDay.add(const Duration(days: 6)),
-      ];
-   }
+    List<DateTime> sunDay = [];
+    List<DateTime> monDay = [];
+    List<DateTime> tuesDay = [];
+    List<DateTime> wednesDay = [];
+    List<DateTime> thursDay = [];
+    List<DateTime> friDay = [];
+    List<DateTime> saturDay = [];
+
+    switch (firstDay.weekday) {
+      case 1:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+          firstDay.add(const Duration(days: 3)),
+          firstDay.add(const Duration(days: 4)),
+          firstDay.add(const Duration(days: 5)),
+        ];
+      case 2:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 2)),
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+          firstDay.add(const Duration(days: 3)),
+          firstDay.add(const Duration(days: 4)),
+        ];
+      case 3:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 3)),
+          firstDay.subtract(const Duration(days: 2)),
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+          firstDay.add(const Duration(days: 3)),
+        ];
+      case 4:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 4)),
+          firstDay.subtract(const Duration(days: 3)),
+          firstDay.subtract(const Duration(days: 2)),
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+        ];
+      case 5:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 5)),
+          firstDay.subtract(const Duration(days: 4)),
+          firstDay.subtract(const Duration(days: 3)),
+          firstDay.subtract(const Duration(days: 2)),
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+        ];
+      case 6:
+        firstWeek = [
+          firstDay.subtract(const Duration(days: 6)),
+          firstDay.subtract(const Duration(days: 5)),
+          firstDay.subtract(const Duration(days: 4)),
+          firstDay.subtract(const Duration(days: 3)),
+          firstDay.subtract(const Duration(days: 2)),
+          firstDay.subtract(const Duration(days: 1)),
+          firstDay,
+        ];
+      case 7:
+        firstWeek = [
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+          firstDay.add(const Duration(days: 3)),
+          firstDay.add(const Duration(days: 4)),
+          firstDay.add(const Duration(days: 5)),
+          firstDay.add(const Duration(days: 6)),
+        ];
+      default:
+        firstWeek = [
+          firstDay,
+          firstDay.add(const Duration(days: 1)),
+          firstDay.add(const Duration(days: 2)),
+          firstDay.add(const Duration(days: 3)),
+          firstDay.add(const Duration(days: 4)),
+          firstDay.add(const Duration(days: 5)),
+          firstDay.add(const Duration(days: 6)),
+        ];
+    }
     sunDay = generateWeek(firstWeek.elementAt(0));
     monDay = generateWeek(firstWeek.elementAt(1));
     tuesDay = generateWeek(firstWeek.elementAt(2));
@@ -340,30 +370,31 @@ class _CalendarState extends ConsumerState<Calendar> {
     friDay = generateWeek(firstWeek.elementAt(5));
     saturDay = generateWeek(firstWeek.elementAt(6));
 
-    Map<String,List<DateTime>> result = {
-      "sunday" : sunDay,
-      "monday" : monDay,
-      "tuesday" : tuesDay,
-      "wednesday" : wednesDay,
-      "thursday" : thursDay,
-      "friday" : friDay,
-      "saturday" : saturDay
+    Map<String, List<DateTime>> result = {
+      "sunday": sunDay,
+      "monday": monDay,
+      "tuesday": tuesDay,
+      "wednesday": wednesDay,
+      "thursday": thursDay,
+      "friday": friDay,
+      "saturday": saturDay
     };
 
     return result;
   }
 
-  List<DateTime>generateWeek(DateTime firstDayOfDay){
-   List<DateTime> result = [
-    firstDayOfDay,
-    firstDayOfDay.add(const Duration(days:7)),
-    firstDayOfDay.add(const Duration(days:14)),
-    firstDayOfDay.add(const Duration(days:21)),
-    firstDayOfDay.add(const Duration(days:28)),
-    firstDayOfDay.add(const Duration(days:35))
-   ];
-   return result;
+  List<DateTime> generateWeek(DateTime firstDayOfDay) {
+    List<DateTime> result = [
+      firstDayOfDay,
+      firstDayOfDay.add(const Duration(days: 7)),
+      firstDayOfDay.add(const Duration(days: 14)),
+      firstDayOfDay.add(const Duration(days: 21)),
+      firstDayOfDay.add(const Duration(days: 28)),
+      firstDayOfDay.add(const Duration(days: 35))
+    ];
+    return result;
   }
+
 
   Widget generateCalendarCells(String dayOfWeek){
     return 
@@ -406,13 +437,18 @@ class _CalendarState extends ConsumerState<Calendar> {
       scrollDirection: Axis.vertical,
       )
     );
+
   }
 
-  Widget calendarCellsChild(DateTime target){
+  Widget calendarCellsChild(DateTime target) {
     Widget dateTimeData = Container();
     final data = ref.watch(calendarDataProvider);
-    String targetKey =  target.year.toString()+ "-" + target.month.toString().padLeft(2,"0") + "-" + target.day.toString().padLeft(2,"0");
-    if(data.sortedDataByDay.keys.contains(targetKey)){
+    String targetKey = target.year.toString() +
+        "-" +
+        target.month.toString().padLeft(2, "0") +
+        "-" +
+        target.day.toString().padLeft(2, "0");
+    if (data.sortedDataByDay.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDay[targetKey];
       return SizedBox(
         child:ListView.separated(
@@ -433,19 +469,29 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
               ])
             );
-          },
-          separatorBuilder: (context,index){
-            return const Divider(height:0.7,indent:2,endIndent:2,thickness: 0.7,);
-          },
-          itemCount: targetDayData.length,
-          shrinkWrap: true,
-          )
-       );
-    }else{
+          }
+          return Container(
+              child: Column(children: [
+            dateTimeData,
+            Text(
+              targetDayData.elementAt(index)["subject"],
+              style: const TextStyle(color: Colors.black, fontSize: 8),
+            ),
+          ]));
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 0.7,
+            indent: 2,
+            endIndent: 2,
+            thickness: 0.7,
+          );
+        },
+        itemCount: targetDayData.length,
+        shrinkWrap: true,
+      ));
+    } else {
       return const Center();
     }
-    
   }
-
-
 }

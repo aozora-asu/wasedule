@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -39,6 +40,27 @@ class Notify {
             'daily notification channel id',
             '今日の予定',
             channelDescription: todaysSchedule,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
+  Future<void> taskDueTodayNotification() async {
+    String taskDueToday = await TaskDatabaseHelper().taskDueTodayForNotify();
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        '今日が期限の課題',
+        taskDueToday,
+        _nextInstanceOfEightAM(),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily notification channel id',
+            '今日が期限の課題',
+            channelDescription: taskDueToday,
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -89,24 +111,6 @@ class Notify {
     );
   }
 
-  Future<void> repeatNotification() async {
-    String todaysSchedule =
-        await ScheduleDatabaseHelper().todaysScheduleForNotify();
-    AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('repeating channel id', '今日の予定',
-            channelDescription: todaysSchedule);
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.periodicallyShow(
-      id++,
-      '今日の予定',
-      todaysSchedule,
-      RepeatInterval.everyMinute,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
-  }
-
   Future<void> _showNotificationWithActions() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
@@ -146,30 +150,9 @@ class Notify {
       categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
-    const DarwinNotificationDetails macOSNotificationDetails =
-        DarwinNotificationDetails(
-      categoryIdentifier: darwinNotificationCategoryPlain,
-    );
-
-    const LinuxNotificationDetails linuxNotificationDetails =
-        LinuxNotificationDetails(
-      actions: <LinuxNotificationAction>[
-        LinuxNotificationAction(
-          key: urlLaunchActionId,
-          label: 'Action 1',
-        ),
-        LinuxNotificationAction(
-          key: navigationActionId,
-          label: 'Action 2',
-        ),
-      ],
-    );
-
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetails,
-      macOS: macOSNotificationDetails,
-      linux: linuxNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', notificationDetails,
