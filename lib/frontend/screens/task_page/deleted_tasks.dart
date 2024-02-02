@@ -9,7 +9,7 @@ import '../common/burger_menu.dart';
 import '../../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 class DeletedTaskPage extends ConsumerStatefulWidget {

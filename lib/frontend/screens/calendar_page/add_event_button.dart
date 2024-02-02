@@ -261,7 +261,6 @@ class InputForm extends ConsumerWidget {
               if (scheduleForm.dtStartController.text.isEmpty ||
                   scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
-                //print(Future.value(ScheduleDatabaseHelper().getScheduleFromDB()));
               } else {
                 if (scheduleForm.dtEndController.text.isEmpty &&
                     scheduleForm.timeEndController.text.isNotEmpty) {
@@ -295,9 +294,9 @@ class InputForm extends ConsumerWidget {
                           scheduleForm.publicScheduleController.text,
                       "tag": scheduleForm.tagController.text
                     };
-
                     ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
                     ref.read(calendarDataProvider.notifier).state = CalendarData();
+                    ref.read(scheduleFormProvider).clearContents();
                     Navigator.of(context).pop();
                   }
                 }
@@ -376,7 +375,7 @@ class DateTimePickerFormField extends ConsumerWidget {
 
     if (pickedDate != null) {
       _selectedDate = pickedDate;
-      dateController.text = DateFormat('yyyy/MM/dd').format(pickedDate);
+      dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
       ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
     }
   }
