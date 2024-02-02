@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 
@@ -11,7 +12,7 @@ import '../common/burger_menu.dart';
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
@@ -76,17 +77,17 @@ class DailyViewPage extends ConsumerStatefulWidget {
   });
 
  @override
-  _DailyViewPageState createState() => _DailyViewPageState();
+   DailyViewPageState createState() => DailyViewPageState();
 }
 
-class _DailyViewPageState extends ConsumerState<DailyViewPage> {
+class DailyViewPageState extends ConsumerState<DailyViewPage> {
   @override
   Widget build(BuildContext context) {
     final inputForm = ref.watch(inputFormProvider);
     final taskData = ref.read(taskDataProvider);
     final data = ref.read(calendarDataProvider);
     String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
-
+    ref.watch(taskDataProvider);
     return Scaffold(
         appBar: const CustomAppBar(),
         drawer: burgerMenu(),
@@ -111,16 +112,19 @@ class _DailyViewPageState extends ConsumerState<DailyViewPage> {
                     )
                 ],
               ),
+
+            const Divider(thickness:3, indent: 10,endIndent: 10,),
+
               Align(
                 alignment: Alignment.centerLeft,
                 child:
                     Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                   Text(
-                    '',
+                    '予定',
                     style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                        color:Colors.black),
+                        fontSize: SizeConfig.blockSizeHorizontal! *7,
+                        color:Colors.grey),
                   ),
                 ]),
               ),
@@ -132,74 +136,107 @@ class _DailyViewPageState extends ConsumerState<DailyViewPage> {
                 width: SizeConfig.blockSizeHorizontal! * 90,
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
-              Row(children: [
+            
+            Column(children:[
+             InkWell(
+              child:Container(
+               width: SizeConfig.blockSizeHorizontal! *95,
+               padding: const EdgeInsets.all(16.0),
+               decoration: BoxDecoration(
+                color: Colors.redAccent, // コンテナの背景色
+                borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+               ),
+              child:const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                Text("  +   予定の追加...",
+                     style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
+              ]),
+            ),
+            onTap: (){}
+          ),
+          const SizedBox(height:15) 
+          ]),
+
+            const Divider(thickness:3, indent: 10,endIndent: 10,),
+
+              const SizedBox(height:5),
+              Align(
+                alignment: Alignment.centerLeft,
+                child:
+                  Row(
+                  children: [
+                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                   Text(
+                    '期限のタスク',
+                    style: TextStyle(
+                        fontSize: SizeConfig.blockSizeHorizontal! *7,
+                        color:Colors.grey),
+                  ),
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+                  taskListLength(18.0),
+              ]),
+            ),
+            taskDataList(),
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                        Column(children:[
+             InkWell(
+              child:Container(
+               width: SizeConfig.blockSizeHorizontal! *95,
+               padding: const EdgeInsets.all(16.0),
+               decoration: BoxDecoration(
+                color: Colors.white, // コンテナの背景色
+                borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+                boxShadow: [
+                BoxShadow(
+                  color:
+                      Colors.grey.withOpacity(0.5), // 影の色と透明度
+                  spreadRadius: 2, // 影の広がり
+                  blurRadius: 4, // 影のぼかし
+                  offset: const Offset(0, 2), // 影の方向（横、縦）
+                ),
+            ],
+               ),
+              child:const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                Text("  +   タスクの追加...",
+                     style:TextStyle(color:Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),)
+              ]),
+            ),
+            onTap: (){
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TaskInputForm()),
+            );
+            }
+          ),
+          const SizedBox(height:15) 
+          ]),
+            const Divider(thickness:3, indent: 10,endIndent: 10,),
+
+            SizedBox(height:SizeConfig.blockSizeVertical! *10),
+          ])
+        ),
+        floatingActionButton:
+            Row(
+              children:[
                 const Spacer(),
-                ElevatedButton(
+                FloatingActionButton.extended(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                    fixedSize: MaterialStateProperty.all<Size>(
-                      Size(SizeConfig.blockSizeHorizontal! * 45,
-                          SizeConfig.blockSizeHorizontal! * 7.5),
-                    ),
-                  ),
-                  child:
-                      const Text('戻る', style: TextStyle(color: Colors.white)),
+                  backgroundColor: ACCENT_COLOR,
+                  label: 
+                    SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *80,
+                      child:const 
+                       Center(child:Text('戻る', style: TextStyle(color: Colors.white)),)
+                      )
                 ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {
-                    if (inputForm.dtEndController.text.isEmpty ||
-                        inputForm.titleController.text.isEmpty) {
-                      print("ボタン無効");
-                    } else {
-                      // ここに、入力データをDBにぶち込む処理を追加。
-                      Map<String, dynamic> taskItem = {};
-                      taskItem["title"] = inputForm.titleController.text;
-                      taskItem["summary"] = inputForm.summaryController.text;
-                      taskItem["description"] =
-                          inputForm.descriptionController.text;
-                      taskItem["dtEnd"] =
-                          DateTime.parse(inputForm.dtEndController.text)
-                              .millisecondsSinceEpoch;
-                      registeTaskToDB(taskItem);
-
-                      final list = ref.read(taskDataProvider).taskDataList;
-                      final newList = [...list, taskItem];
-                      ref.read(taskDataProvider.notifier).state =
-                          TaskData(taskDataList: newList);
-                      ref.read(taskDataProvider).isRenewed = true;
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
-                      // 条件によってボタンの色を選択
-                      if (inputForm.dtEndController.text.isEmpty ||
-                          inputForm.titleController.text.isEmpty) {
-                        return Colors.grey;
-                      } else {
-                        // ボタンが無効の場合の色
-                        return MAIN_COLOR; // ボタンが通常の場合の色
-                      }
-                    }),
-                    fixedSize: MaterialStateProperty.all<Size>(Size(
-                      SizeConfig.blockSizeHorizontal! * 45,
-                      SizeConfig.blockSizeHorizontal! * 7.5,
-                    )),
-                  ),
-                  child:
-                      const Text('追加', style: TextStyle(color: Colors.white)),
-                ),
-                const Spacer(),
               ])
-            ],
-          ),
-        )
+              
+                
       );
   }
 
@@ -209,11 +246,33 @@ class _DailyViewPageState extends ConsumerState<DailyViewPage> {
     String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
 
     if(data.sortedDataByDay[targetKey] == null){
-      return const SizedBox();
+      return  const SizedBox();
     }else{
+     List targetDayData = data.sortedDataByDay[targetKey];
    return
-   ListView.builder(
+     ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+            if (targetDayData.elementAt(index)["startTime"].trim() != "" && targetDayData.elementAt(index)["endTime"].trim() != ""){
+              dateTimeData =
+                  Text(
+                    " " + targetDayData.elementAt(index)["startTime"] + "～" + targetDayData.elementAt(index)["endTime"],
+                    style: const TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            } else if (targetDayData.elementAt(index)["startTime"].trim() != ""){
+              dateTimeData =
+                  Text(
+                    " " + targetDayData.elementAt(index)["startTime"],
+                    style: const TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            } else {
+              dateTimeData = const Text(
+                    " 終日",
+                    style: TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            }
+
+
            return  Column(children:[
             Container(
              //height: SizeConfig.blockSizeVertical! * 10,
@@ -226,8 +285,7 @@ class _DailyViewPageState extends ConsumerState<DailyViewPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              Text(data.sortedDataByDay[targetKey].elementAt(index)["startTime"] ?? " 終日",
-              style: const TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),),
+              dateTimeData,
               Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
                             style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
             ]),
@@ -271,96 +329,82 @@ class _DailyViewPageState extends ConsumerState<DailyViewPage> {
    return dayOfWeek;
   }
 
-}
 
-class DateTimePickerFormField extends ConsumerWidget {
-  final TextEditingController controller;
-  final String labelText;
-  final Color? labelColor;
 
-  DateTimePickerFormField(
-      {required this.controller,
-      required this.labelText,
-      required this.labelColor});
-
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-
-  Future<void> _selectDateAndTime(BuildContext context, WidgetRef ref) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light().copyWith(
-                // ヘッダーの色
-                primary: MAIN_COLOR),
-            // 日付選択部の色
-            dialogBackgroundColor: WIDGET_COLOR,
-            // 選択されたときの円の色
-            buttonTheme: const ButtonThemeData(
-              textTheme: ButtonTextTheme.accent,
-            ),
+  Widget taskListLength(fontSize){
+    final taskData = ref.watch(taskDataProvider);
+    Map<DateTime, List<Map<String, dynamic>>> sortedData = 
+    taskData.sortDataByDtEnd(taskData.taskDataList);
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.redAccent,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.all(fontSize / 3),
+      child:Text(
+        (sortedData[widget.target]?.length ?? 0).toString(),
+        style:  TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize:fontSize
           ),
-          child: child!,
-        );
-      },
-    );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay(hour: 23, minute: 59),
-        initialEntryMode: TimePickerEntryMode.input,
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!,
-          );
+        )
+      );
+  }
+
+  Widget taskDataList(){
+    final taskData = ref.watch(taskDataProvider);
+    Map<DateTime, List<Map<String, dynamic>>> sortedData = 
+    taskData.sortDataByDtEnd(taskData.taskDataList);
+
+    if(sortedData.keys.contains(widget.target)){
+      return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+              dateTimeData =
+                  Text(
+                    sortedData[widget.target]!.elementAt(index)["title"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+
+           return  Column(children:[
+            Container(
+             width: SizeConfig.blockSizeHorizontal! *95,
+             padding: const EdgeInsets.all(16.0),
+             decoration: BoxDecoration(
+              color: Colors.white, // コンテナの背景色
+              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+              boxShadow: [
+               BoxShadow(
+                color:
+                    Colors.grey.withOpacity(0.5), // 影の色と透明度
+                spreadRadius: 2, // 影の広がり
+                blurRadius: 4, // 影のぼかし
+                offset: const Offset(0, 2), // 影の方向（横、縦）
+              ),
+            ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[
+              dateTimeData,
+              Text(sortedData[widget.target]!.elementAt(index)["summary"] ?? "(詳細なし)",
+                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
+            ]),
+          ),
+          const SizedBox(height:15)   
+         ]);    
         },
+        itemCount:
+            sortedData[widget.target]!.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       );
 
-      if (pickedTime != null) {
-        _selectedDate = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        controller.text = DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
+    }else{
 
-        ref.read(inputFormProvider.notifier).updateDateTimeFields();
-      }
+      return  const SizedBox();
     }
   }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          width: SizeConfig.blockSizeHorizontal! * 90,
-          height: SizeConfig.blockSizeHorizontal! * 8.5,
-          child: InkWell(
-            onTap: () {
-              _selectDateAndTime(context, ref);
-            },
-            child: IgnorePointer(
-              child: TextFormField(
-                controller: controller,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: labelText,
-                    labelStyle: TextStyle(color: labelColor)),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
+

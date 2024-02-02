@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -10,7 +11,7 @@ import '../common/burger_menu.dart';
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
@@ -256,7 +257,6 @@ class TaskInputForm extends ConsumerWidget {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'タスク名',
-                    //labelStyle: TextStyle(color:requiredColour(inputForm.titleController.text))
                   ),
                 ),
               ),
@@ -325,6 +325,8 @@ class TaskInputForm extends ConsumerWidget {
                       ref.read(taskDataProvider.notifier).state =
                           TaskData(taskDataList: newList);
                       ref.read(taskDataProvider).isRenewed = true;
+                      inputForm.clearContents();
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
                       Navigator.of(context).pop();
                     }
                   },
