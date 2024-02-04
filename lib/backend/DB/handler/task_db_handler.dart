@@ -78,6 +78,7 @@ class TaskDatabaseHelper {
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
         columns: [
+          "id",
           'title',
           'dtEnd',
           'summary',
@@ -92,7 +93,13 @@ class TaskDatabaseHelper {
     await _initDatabase();
     final List<Map<String, dynamic>> dataList = await _database.query('tasks',
         orderBy: 'dtEnd ASC',
-        columns: ['title', 'dtEnd', 'summary', 'isDone']); // 複数のカラムのデータを取得
+        columns: [
+          "id",
+          'title',
+          'dtEnd',
+          'summary',
+          'isDone'
+        ]); // 複数のカラムのデータを取得
 
     return dataList;
   }
