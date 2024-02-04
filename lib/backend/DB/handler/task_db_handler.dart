@@ -1,13 +1,9 @@
-import 'package:flutter_calandar_app/backend/notify/notify_setting.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
 import "../../status_code.dart";
 import "../../http_request.dart";
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
-import '../models/schedule.dart';
 import "../../notify/notify.dart";
 import 'package:intl/intl.dart';
 
@@ -41,8 +37,7 @@ class TaskDatabaseHelper {
   Future<void> _orderByDateTime() async {
     await _initDatabase();
 
-    // データを日付でソート
-    List<Map<String, dynamic>> sortedTasks = await _database.query(
+    await _database.query(
       'tasks',
       orderBy: 'dtEnd ASC',
     );
@@ -238,7 +233,7 @@ class TaskDatabaseHelper {
         String due = task["DtEnd"] ?? "";
         String title = task["title"] ?? "";
         String summary = task["summary"] ?? "";
-        taskDueToday += "$due  $title\n　　$summary\n";
+        taskDueToday += "$due  $title\n   $summary\n";
       }
     }
 
