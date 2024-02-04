@@ -5,7 +5,7 @@ import '../common/float_button.dart';
 import 'tasklist_sort_date.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
-import '../../assist_files/data_manager.dart';
+import 'data_manager.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
@@ -125,24 +125,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             ),
           ),
           const Divider(thickness: 0.3, height: 0.3, color: Colors.grey),
-
-          //  Padding(
-          //   padding: const EdgeInsets.only(
-          //     top:3,
-          //     left:10,
-          //     right:10,
-          //     bottom:2
-          //     ),
-          //   child: FkToggle(
-          //     width: SizeConfig.blockSizeHorizontal! * 45,
-          //     height: SizeConfig.blockSizeVertical! * 5,
-          //     labels: const ['期限順', 'カテゴリ別'],
-          //     selectedColor: ACCENT_COLOR,
-          //     onSelected: (idx, instance) {
-          //       setState((){(ref.read(taskDataProvider).taskPageIndex = idx);});
-          //     },
-          //   ),
-          // ),
           Expanded(child: pages())
         ]),
         floatingActionButton: Row(

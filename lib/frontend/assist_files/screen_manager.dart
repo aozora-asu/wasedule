@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../screens/common/app_bar.dart';
 import '../screens/common/burger_menu.dart';
-import 'data_manager.dart';
+import '../screens/task_page/data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
 class AppPage extends ConsumerStatefulWidget {

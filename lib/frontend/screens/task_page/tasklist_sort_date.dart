@@ -11,7 +11,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
 import 'add_data_card_button.dart';
 import '../outdated/brief_kanban.dart';
-import '../../assist_files/data_manager.dart';
+import 'data_manager.dart';
 
 import '../../assist_files/colors.dart';
 import '../../../backend/temp_file.dart';
