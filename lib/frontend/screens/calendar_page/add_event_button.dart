@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
@@ -77,6 +78,14 @@ class ScheduleForm {
       ..timeController.text = timeController ?? this.timeController.text;
   }
 
+  void clearTimeStart(){
+    timeStartController.clear();
+  }
+
+  void clearTimeEnd(){
+    timeEndController.clear();
+  }
+
   void clearContents() {
     scheduleController.clear();
     publicScheduleController.clear();
@@ -128,22 +137,11 @@ class CalendarInputForm extends ConsumerStatefulWidget {
 }
 
 class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
-  Widget publicScheduleField(ref) {
-    final scheduleForm = ref.watch(scheduleFormProvider);
-    if (scheduleForm.isPublic == true) {
-      return Container(
-        width: SizeConfig.blockSizeHorizontal! * 80,
-        height: SizeConfig.blockSizeHorizontal! * 8.5,
-        child: TextField(
-          controller: scheduleForm.publicScheduleController,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(), labelText: 'フレンドに見せる予定名'),
-        ),
-      );
-    } else {
-      scheduleForm.clearpublicScheduleController();
-      return const SizedBox(width: 0, height: 0);
-    }
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(scheduleFormProvider).dtStartController.text = DateFormat('yyyy-MM-dd').format(widget.target);
   }
 
   @override
@@ -156,16 +154,42 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
       Padding(
         padding: const EdgeInsets.only(right:10,left:10),
         child:Column(
-        children: [Text(
-        '予定を追加…',
-        style: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! * 7,
-          fontWeight: FontWeight.w900,
-          ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+        
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 1,
+          width: SizeConfig.blockSizeHorizontal! * 80
         ),
+
+
+              Row(
+                children: [
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+                  Image.asset('lib/assets/eye_catch/eyecatch.png',
+                      height: 30, width: 30),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "予定を追加…",
+                        style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 8,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    )
+                ],
+              ),
+
+
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 2,
+            width: SizeConfig.blockSizeHorizontal! * 80
+          ),
+
+
           Container(
-            width: SizeConfig.blockSizeHorizontal! * 85,
-            height: SizeConfig.blockSizeHorizontal! * 8.5,
+            height: SizeConfig.blockSizeVertical! *10,
             child: TextFormField(
               controller: scheduleForm.scheduleController,
               onFieldSubmitted: (value) {
@@ -178,10 +202,35 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
               ),
             ),
           ),
+
+
+         const Divider(indent: 7,endIndent: 7,thickness: 3),
+
+         Row(children:[
           ElevatedButton(
            onPressed: (){
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => TimeInputPage(target:widget.target)),
+            _selectDate(context);
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text(" + 日付       ",style:TextStyle(color:Colors.white))
+          ),
+          timeInputPreview(scheduleForm.dtStartController.text)
+          ]),
+
+
+         Row(children:[
+          ElevatedButton(
+           onPressed: (){
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => 
+                TimeInputPage(
+                 target:widget.target,
+                 inputCategory:"startTime",
+                )
+              ),
             );
            },
            style: ButtonStyle(
@@ -189,29 +238,52 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
               ),
            child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
           ),
-          SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 80,
-              height: SizeConfig.blockSizeHorizontal! * 18,
-              child: EasyAutocomplete(
-                suggestions: uniqueTitleList,
-                inputTextStyle: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  backgroundColor: Colors.blueAccent,
+          timeInputPreview(scheduleForm.timeStartController.text)
+          ]),
+          
+
+          Row(children:[
+          ElevatedButton(
+           onPressed: (){
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => 
+                TimeInputPage(
+                 target:widget.target,
+                 inputCategory:"endTime",
+                )
+              ),
+            );
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("+ 終了時刻",style:TextStyle(color:Colors.white))
+          ),
+          timeInputPreview(scheduleForm.timeEndController.text)
+          ]),
+          
+
+          Row(children:[         
+            ElevatedButton(
+            onPressed: (){
+             _showTextDialog(context);
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                 ),
-                controller: scheduleForm.tagController,
-                decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    labelText: 'タグを追加…',
-                    labelStyle: TextStyle(
-                      color: Colors.blueGrey,
-                      backgroundColor: Colors.transparent,
-                      fontWeight: FontWeight.w300,
-                    )),
-              )),
+            child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
+            ),
+            timeInputPreview(scheduleForm.tagController.text)
+          ]),
+
+
+          const Divider(indent: 7,endIndent: 7,thickness: 3),
+
           SizedBox(
-              height: SizeConfig.blockSizeHorizontal! * 3,
+              height: SizeConfig.blockSizeVertical! * 1,
               width: SizeConfig.blockSizeHorizontal! * 80),
+              
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -220,9 +292,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   'フレンドに共有',
                   style: TextStyle(fontSize: 20),
                 ),
-                SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 5,
-                    width: SizeConfig.blockSizeHorizontal! * 16),
+                const Spacer(),
                 CupertinoSwitch(
                     activeColor: ACCENT_COLOR,
                     value: scheduleForm.isPublic,
@@ -240,14 +310,20 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             height: SizeConfig.blockSizeHorizontal! * 3,
           ),
           publicScheduleField(ref),
+          
+          const Divider(indent: 7,endIndent: 7,thickness: 3),
+          
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeHorizontal! * 8,
+            height: SizeConfig.blockSizeVertical! * 3,
           ),
+         
+
           Row(children: [
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+             scheduleForm.clearContents();
+             Navigator.pop(context);
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -265,7 +341,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
               } else {
-                if (scheduleForm.dtEndController.text.isEmpty &&
+                if (scheduleForm.dtEndController.text.isNotEmpty &&   //仮で条件変更してます
                     scheduleForm.timeEndController.text.isNotEmpty) {
                   print("ボタン無効");
                 } else {
@@ -290,7 +366,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       "subject": scheduleForm.scheduleController.text,
                       "startDate": scheduleForm.dtStartController.text,
                       "startTime": scheduleForm.timeStartController.text,
-                      "endDate": scheduleForm.dtStartController.text,
+                      "endDate": scheduleForm.dtStartController.text, //ここでは仮で開始日を代入
                       "endTime": scheduleForm.timeEndController.text,
                       "isPublic": intIspublic,
                       "publicSubject":
@@ -300,7 +376,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
                     ref.read(calendarDataProvider.notifier).state = CalendarData();
                     ref.read(scheduleFormProvider).clearContents();
-                    Navigator.of(context).pop();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 }
               }
@@ -313,7 +389,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     scheduleForm.scheduleController.text.isEmpty) {
                   return Colors.grey;
                 } else {
-                  if (scheduleForm.dtEndController.text.isEmpty &&
+                  if (scheduleForm.dtEndController.text.isNotEmpty &&
                       scheduleForm.timeEndController.text.isNotEmpty) {
                     return Colors.grey;
                   } else {
@@ -336,120 +412,107 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           ),
         ],
        ),
-     ]),)
-      
+     ]),
+     )
     );
   }
-}
 
-class DateTimePickerFormField extends ConsumerWidget {
-  final TextEditingController dateController;
-  final TextEditingController timeController;
-  final String dateLabelText;
-  final String timeLabelText;
+  Widget timeInputPreview(String text){
+    String previewText = "なし";
+    if(text != ""){previewText = text;}
 
-  DateTimePickerFormField({
-    required this.dateController,
-    required this.timeController,
-    required this.dateLabelText,
-    required this.timeLabelText,
-  });
-
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-
-  Future<void> _selectDate(BuildContext context, WidgetRef ref) async {
-    final scheduleForm = ref.watch(scheduleFormProvider);
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light().copyWith(
-              // ヘッダーの色
-              primary: MAIN_COLOR,
-            ), // 日付選択部の色
-          ),
-          child: child!,
-        );
-      },
+    return Expanded(
+      child:Center(
+        child:Text(
+          previewText,
+          style:const TextStyle(
+            color:Colors.grey,
+            fontWeight:FontWeight.bold,
+            fontSize:30
+            )
+        )
+      ) 
     );
+  }
 
-    if (pickedDate != null) {
-      _selectedDate = pickedDate;
-      dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
-      ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+
+  Widget publicScheduleField(ref) {
+    final scheduleForm = ref.watch(scheduleFormProvider);
+    if (scheduleForm.isPublic == true) {
+      return Container(
+
+        child: 
+        Column(children:[        
+          TextField(
+          controller: scheduleForm.publicScheduleController,
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(), labelText: 'フレンドに見せる予定名'),
+         ),
+        SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeVertical! * 1,
+          ),
+       ]),
+      );
+    } else {
+      scheduleForm.clearpublicScheduleController();
+      return const SizedBox(width: 0, height: 0);
     }
   }
 
-  Future<void> _selectTime(BuildContext context, WidgetRef ref) async {
-    final scheduleForm = ref.watch(scheduleFormProvider);
-    final TimeOfDay? pickedTime = await showTimePicker(
+  Future<void> _showTextDialog(BuildContext context) async {
+    return showDialog(
       context: context,
-      initialTime: const TimeOfDay(hour: 00, minute: 00),
-      initialEntryMode: TimePickerEntryMode.input,
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
+      builder: (BuildContext context) {
+        TextEditingController _textEditingController = TextEditingController();
+        return AlertDialog(
+          title: const Text('タグを入力…'),
+          content: TextField(
+            controller: _textEditingController,
+            decoration: const InputDecoration(
+              labelText: '新しいタグ',
+              border: OutlineInputBorder()
+              ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('戻る'),
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(scheduleFormProvider).tagController.text = _textEditingController.text;
+                ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
         );
       },
     );
-
-    if (pickedTime != null) {
-      _selectedTime = pickedTime;
-      timeController.text = pickedTime.format(context);
-      ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
-    }
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scheduleForm = ref.watch(scheduleFormProvider);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          width: SizeConfig.blockSizeHorizontal! * 33.5,
-          height: SizeConfig.blockSizeHorizontal! * 8.5,
-          child: InkWell(
-            onTap: () {
-              _selectDate(context, ref);
-            },
-            child: IgnorePointer(
-              child: TextFormField(
-                controller: dateController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: dateLabelText,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 16),
-        Container(
-          width: SizeConfig.blockSizeHorizontal! * 33.5,
-          height: SizeConfig.blockSizeHorizontal! * 8.5,
-          child: InkWell(
-            onTap: () {
-              _selectTime(context, ref);
-            },
-            child: IgnorePointer(
-              child: TextFormField(
-                controller: timeController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: timeLabelText,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime selectedDate = DateTime.now();
+
+    final DateTime? picked = await showDatePicker(
+      barrierColor: MAIN_COLOR,
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1882),
+      lastDate: DateTime(2112),
     );
+
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        ref.read(scheduleFormProvider).dtStartController.text
+         = DateFormat('yyyy-MM-dd').format(picked);
+        ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+      });
+    }
   }
 }
