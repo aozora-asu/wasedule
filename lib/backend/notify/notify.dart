@@ -158,4 +158,21 @@ class Notify {
         id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item z');
   }
+
+  Future<void> repeatNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+            'repeating channel id', 'repeating channel name',
+            channelDescription: 'repeating description');
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.periodicallyShow(
+      id++,
+      'repeating title',
+      'repeating body',
+      RepeatInterval.everyMinute,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
 }
