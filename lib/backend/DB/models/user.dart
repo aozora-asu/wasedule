@@ -1,6 +1,6 @@
-class User {
+class UserInfo {
   String url;
-  User({required this.url});
+  UserInfo({required this.url});
 
   Map<String, dynamic> toMap() {
     return {
