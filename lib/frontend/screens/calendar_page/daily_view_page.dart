@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -153,7 +154,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                      style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
               ]),
             ),
-            onTap: (){}
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target)),
+              );
+            }
           ),
           const SizedBox(height:15) 
           ]),
