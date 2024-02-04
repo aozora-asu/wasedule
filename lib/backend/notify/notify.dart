@@ -5,8 +5,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
-
-import './notify_setting.dart';
 import '../DB/handler/schedule_db_handler.dart';
 
 /// A notification action which triggers a url launch event
@@ -23,9 +21,22 @@ const String darwinNotificationCategoryPlain = 'plainCategory';
 
 class Notify {
   int id = 0;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   String? selectedNotificationPayload;
+  Future<void> initializeNotifications() async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('icon');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Notify() {
+    initializeNotifications();
+  }
 
   Future<void> scheduleDailyEightAMNotification() async {
     String todaysSchedule =
