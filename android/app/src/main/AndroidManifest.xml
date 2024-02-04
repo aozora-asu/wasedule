@@ -1,8 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+ <uses-permission android:name="android.permission.VIBRATE" />
     <application
-        android:label="flutter_calandar_app"
+        android:label="わせジュール"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+       <intent-filter>
+         <action android:name="android.intent.action.BOOT_COMPLETED"/>
+         <!-- 2021.05.27 再起動時のローカル通知継続用設定を追加 -->
+         <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+         <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+         <!-- 2021.05.27 -->
+         
+         <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+       </intent-filter>
+       </receiver>
+       <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
