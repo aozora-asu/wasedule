@@ -1,30 +1,23 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
- <uses-permission android:name="android.permission.VIBRATE" />
-    <application
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dexterous.flutter_local_notifications_example">
+   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+   <uses-permission android:name="android.permission.VIBRATE" />
+   <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+   <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+   <application
         android:label="わせジュール"
-        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
-       <intent-filter>
-         <action android:name="android.intent.action.BOOT_COMPLETED"/>
-         <!-- 2021.05.27 再起動時のローカル通知継続用設定を追加 -->
-         <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-         <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-         <!-- 2021.05.27 -->
-         
-         <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-       </intent-filter>
-       </receiver>
-       <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:exported="true">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -43,9 +36,23 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-            <meta-data
-    android:name="com.google.firebase.messaging.default_notification_icon"
-    android:resource="@drawable/icon" />
-
+        <!-- If you want your foreground service to be stopped if
+             your app is stopped, set android:stopWithTask to true.
+             See https://developer.android.com/reference/android/R.attr#stopWithTask -->
+        <service
+            android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
+            android:exported="false"
+            android:stopWithTask="false"/>
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>
