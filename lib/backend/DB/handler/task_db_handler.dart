@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 import '../models/schedule.dart';
-
+import "../../notify/notify.dart";
 import 'package:intl/intl.dart';
 
 class TaskDatabaseHelper {
@@ -197,7 +197,7 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> withinNdaysTask() async {
     int n = 2;
-    await initializeNotification();
+    await Notify().initializeNotifications();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
       where: 'dtEnd >= ? AND dtEnd < ?',

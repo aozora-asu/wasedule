@@ -5,8 +5,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
-
-import './notify_setting.dart';
 import '../DB/handler/schedule_db_handler.dart';
 
 /// A notification action which triggers a url launch event
@@ -23,9 +21,22 @@ const String darwinNotificationCategoryPlain = 'plainCategory';
 
 class Notify {
   int id = 0;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   String? selectedNotificationPayload;
+  Future<void> initializeNotifications() async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('icon');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Notify() {
+    initializeNotifications();
+  }
 
   Future<void> scheduleDailyEightAMNotification() async {
     String todaysSchedule =
@@ -159,20 +170,24 @@ class Notify {
         payload: 'item z');
   }
 
-  Future<void> repeatNotification() async {
+  Future<void> scheduleNotifications() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-            'repeating channel id', 'repeating channel name',
-            channelDescription: 'repeating description');
+      'repeating_channel_id',
+      'repeating_channel_name',
+      channelDescription: 'repeating_channel_description',
+    );
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.periodicallyShow(
-      id++,
-      'repeating title',
-      'repeating body',
-      RepeatInterval.everyMinute,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+
+    // Schedule a notification every minute
+    Timer.periodic(const Duration(minutes: 1), (timer) async {
+      await flutterLocalNotificationsPlugin.show(
+        id++,
+        'Repeating Title',
+        'Repeating Body',
+        notificationDetails,
+      );
+    });
   }
 }

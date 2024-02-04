@@ -11,7 +11,9 @@ class TimeInputPage extends ConsumerStatefulWidget {
   DateTime target;
   String inputCategory;
 
+
   TimeInputPage({required this.target, required this.inputCategory});
+
 
   @override
   TimeInputPageState createState() => TimeInputPageState();
@@ -36,6 +38,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
     SizeConfig().init(context);
     return Scaffold(
         appBar: const CustomAppBar(),
+
         body: Padding(
             padding: EdgeInsets.only(
                 left: SizeConfig.blockSizeHorizontal! * 3,
@@ -95,12 +98,15 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
               const Divider(indent: 7, endIndent: 7, thickness: 4),
               Row(children: [modoruButton(), const Spacer(), submitButton()])
             ])));
+
   }
 
   Widget numPanel(int num, String category) {
     return InkWell(
         child: Container(
+
           width: SizeConfig.blockSizeHorizontal! * 18.8,
+
           height: SizeConfig.blockSizeHorizontal! * 20,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
@@ -210,6 +216,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         const Spacer(),
       ]), // ボタンのテキスト
     );
+
   }
 
   String preview(category) {
@@ -281,6 +288,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         ),
       ),
       child: const Text('戻る', style: TextStyle(color: Colors.white)),
+
     );
   }
 }

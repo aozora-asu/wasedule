@@ -61,12 +61,13 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   testNotify() async {
-    //await Notify().repeatNotification();
+
     await Notify().scheduleDailyEightAMNotification();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
     final bool granted = await isAndroidPermissionGranted();
+
     setState(() {
       _notificationsEnabled = granted;
     });
