@@ -3,13 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TimeInputPage extends ConsumerStatefulWidget {
   DateTime target;
+  String inputCategory;
 
-  TimeInputPage({required this.target});
+
+  TimeInputPage({required this.target, required this.inputCategory});
+
 
   @override
   TimeInputPageState createState() => TimeInputPageState();
@@ -34,53 +38,75 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
     SizeConfig().init(context);
     return Scaffold(
         appBar: const CustomAppBar(),
-        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text(
-            "時間を入力…",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 15),
-          Row(children: [
-            numPanel(1, "時間"),
-            numPanel(2, "時間"),
-            numPanel(3, "時間"),
-            numPanel(4, "時間"),
-            numPanel(5, "時間")
-          ]),
-          Row(children: [
-            numPanel(6, "時間"),
-            numPanel(7, "時間"),
-            numPanel(8, "時間"),
-            numPanel(9, "時間"),
-            numPanel(0, "時間")
-          ]),
-          imputButton("時"),
-          const SizedBox(height: 15),
-          Row(children: [
-            numPanel(1, "分"),
-            numPanel(2, "分"),
-            numPanel(3, "分"),
-            numPanel(4, "分"),
-            numPanel(5, "分")
-          ]),
-          Row(children: [
-            numPanel(6, "分"),
-            numPanel(7, "分"),
-            numPanel(8, "分"),
-            numPanel(9, "分"),
-            numPanel(0, "分")
-          ]),
-          imputButton("分"),
-          const SizedBox(height: 15),
-          const Divider(indent: 7, endIndent: 7, thickness: 4),
-          submitButton()
-        ]));
+
+        body: Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.blockSizeHorizontal! * 3,
+                right: SizeConfig.blockSizeHorizontal! * 3),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+                  Image.asset('lib/assets/eye_catch/eyecatch.png',
+                      height: 30, width: 30),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        " 時間を入力(24時間)…",
+                        style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 8,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ))
+                ],
+              ),
+              const SizedBox(height: 15),
+              Row(children: [
+                numPanel(1, "時間"),
+                numPanel(2, "時間"),
+                numPanel(3, "時間"),
+                numPanel(4, "時間"),
+                numPanel(5, "時間")
+              ]),
+              Row(children: [
+                numPanel(6, "時間"),
+                numPanel(7, "時間"),
+                numPanel(8, "時間"),
+                numPanel(9, "時間"),
+                numPanel(0, "時間")
+              ]),
+              imputButton("時"),
+              const SizedBox(height: 15),
+              Row(children: [
+                numPanel(1, "分"),
+                numPanel(2, "分"),
+                numPanel(3, "分"),
+                numPanel(4, "分"),
+                numPanel(5, "分")
+              ]),
+              Row(children: [
+                numPanel(6, "分"),
+                numPanel(7, "分"),
+                numPanel(8, "分"),
+                numPanel(9, "分"),
+                numPanel(0, "分")
+              ]),
+              imputButton("分"),
+              const SizedBox(height: 15),
+              const Divider(indent: 7, endIndent: 7, thickness: 4),
+              Row(children: [modoruButton(), const Spacer(), submitButton()])
+            ])));
+
   }
 
   Widget numPanel(int num, String category) {
     return InkWell(
         child: Container(
-          width: SizeConfig.blockSizeHorizontal! * 20,
+
+          width: SizeConfig.blockSizeHorizontal! * 18.8,
+
           height: SizeConfig.blockSizeHorizontal! * 20,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
@@ -190,6 +216,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         const Spacer(),
       ]), // ボタンのテキスト
     );
+
   }
 
   String preview(category) {
@@ -213,19 +240,31 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         minute = userImput["minuteDigit10"].toString() +
             userImput["minuteDigit1"].toString();
         inputResult = hour + ":" + minute;
-        print(inputResult);
-        Navigator.of(context).pushReplacement(
+
+        TextEditingController timeController = TextEditingController();
+        final inputForm = ref.watch(scheduleFormProvider);
+
+        if (widget.inputCategory == "startTime") {
+          timeController = inputForm.timeStartController;
+          timeController.text = inputResult;
+          ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+        } else {
+          timeController = inputForm.timeEndController;
+          timeController.text = inputResult;
+          ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+        }
+        Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => CalendarInputForm(target: widget.target)),
         );
       },
       style: ElevatedButton.styleFrom(
         fixedSize: Size(
-          SizeConfig.blockSizeHorizontal! * 100,
+          SizeConfig.blockSizeHorizontal! * 45,
           SizeConfig.blockSizeVertical! * 5,
         ),
         backgroundColor: MAIN_COLOR, // ボタンの背景色
-        textStyle: const TextStyle(color: Colors.white), // テキストの色
+        textStyle: TextStyle(color: Colors.white), // テキストの色
       ),
       child: Text(userImput["hourDigit10"].toString() +
           userImput["hourDigit1"].toString() +
@@ -233,6 +272,23 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
           userImput["minuteDigit10"].toString() +
           userImput["minuteDigit1"].toString() +
           "分で登録"), // ボタンのテキスト
+    );
+  }
+
+  Widget modoruButton() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+        fixedSize: MaterialStateProperty.all<Size>(
+          Size(SizeConfig.blockSizeHorizontal! * 45,
+              SizeConfig.blockSizeVertical! * 5),
+        ),
+      ),
+      child: const Text('戻る', style: TextStyle(color: Colors.white)),
+
     );
   }
 }

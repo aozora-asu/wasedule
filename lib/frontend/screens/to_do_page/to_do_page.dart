@@ -64,15 +64,7 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async {
-          // 画面が閉じられる直前の処理
-          if (isSnackBar) {
-            canSnackBarClose = false;
-          }
-          return true; // trueを返すと閉じる、falseを返すと閉じない
-        },
-        child: Scaffold(
+    return Scaffold(
             backgroundColor: Colors.white, // BACKGROUND_COLOR,
             body: CustomScrollView(
               slivers: [
@@ -147,6 +139,6 @@ class _TaskPageState extends State<TaskPage> {
                   child: const Icon(Icons.get_app, color: Colors.white),
                 ),
               ],
-            )));
+            ));
   }
 }
