@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
@@ -98,10 +100,10 @@ class AddEventButton extends ConsumerWidget {
       child: FloatingActionButton(
         onPressed: () {
           scheduleForm.clearContents();
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => InputForm(),
-          );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CalendarInputForm(target:DateTime.now())),
+            );
         },
         foregroundColor: Colors.white,
         backgroundColor: ACCENT_COLOR,
@@ -111,7 +113,21 @@ class AddEventButton extends ConsumerWidget {
   }
 }
 
-class InputForm extends ConsumerWidget {
+
+class CalendarInputForm extends ConsumerStatefulWidget {
+  DateTime target;
+
+  CalendarInputForm({
+  required this.target
+  });
+  // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
+  // bool get didNotificationLaunchApp =>
+  //     notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+  @override
+  _CalendarInputFormState createState() => _CalendarInputFormState();
+}
+
+class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   Widget publicScheduleField(ref) {
     final scheduleForm = ref.watch(scheduleFormProvider);
     if (scheduleForm.isPublic == true) {
@@ -131,20 +147,22 @@ class InputForm extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final scheduleForm = ref.watch(scheduleFormProvider);
     scheduleForm.isAllDay = false;
-
-    return AlertDialog(
-      title: Text(
+    return Scaffold(
+      appBar:const CustomAppBar(),
+      body: 
+      Padding(
+        padding: const EdgeInsets.only(right:10,left:10),
+        child:Column(
+        children: [Text(
         '予定を追加…',
         style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! * 7,
           fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-      content: Column(
-        children: [
           Container(
             width: SizeConfig.blockSizeHorizontal! * 85,
             height: SizeConfig.blockSizeHorizontal! * 8.5,
@@ -160,25 +178,16 @@ class InputForm extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeHorizontal! * 8,
-          ),
-          DateTimePickerFormField(
-            dateController: scheduleForm.dtStartController,
-            dateLabelText: '開始日*',
-            timeController: scheduleForm.timeStartController,
-            timeLabelText: '開始時刻',
-          ),
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeHorizontal! * 3,
-          ),
-          DateTimePickerFormField(
-            dateController: scheduleForm.dtEndController,
-            dateLabelText: '終了日',
-            timeController: scheduleForm.timeEndController,
-            timeLabelText: '終了時刻',
+          ElevatedButton(
+           onPressed: (){
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => TimeInputPage(target:widget.target)),
+            );
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
           ),
           SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
@@ -235,10 +244,7 @@ class InputForm extends ConsumerWidget {
             width: SizeConfig.blockSizeHorizontal! * 80,
             height: SizeConfig.blockSizeHorizontal! * 8,
           ),
-        ],
-      ),
-      actions: [
-        Row(children: [
+          Row(children: [
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -246,16 +252,13 @@ class InputForm extends ConsumerWidget {
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
               fixedSize: MaterialStateProperty.all<Size>(
-                Size(SizeConfig.blockSizeHorizontal! * 30,
+                Size(SizeConfig.blockSizeHorizontal! * 45,
                     SizeConfig.blockSizeHorizontal! * 7.5),
               ),
             ),
             child: const Text('戻る', style: TextStyle(color: Colors.white)),
           ),
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-            height: SizeConfig.blockSizeHorizontal! * 8.5,
-          ),
+          const Spacer(),
           ElevatedButton(
             onPressed: () {
               if (scheduleForm.dtStartController.text.isEmpty ||
@@ -325,14 +328,16 @@ class InputForm extends ConsumerWidget {
                 }
               }),
               fixedSize: MaterialStateProperty.all<Size>(Size(
-                SizeConfig.blockSizeHorizontal! * 30,
+                SizeConfig.blockSizeHorizontal! * 45,
                 SizeConfig.blockSizeHorizontal! * 7.5,
               )),
             ),
             child: const Text('追加', style: TextStyle(color: Colors.white)),
           ),
-        ])
-      ],
+        ],
+       ),
+     ]),)
+      
     );
   }
 }
