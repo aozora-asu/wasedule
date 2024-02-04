@@ -3,7 +3,6 @@ import 'package:path/path.dart';
 import '../models/task.dart';
 import "../../status_code.dart";
 import "../../http_request.dart";
-
 import "../../notify/notify.dart";
 import 'package:intl/intl.dart';
 
@@ -55,16 +54,6 @@ class TaskDatabaseHelper {
   Future<void> deleteAllData(Database db) async {
     await _initDatabase();
     await db.rawDelete('DELETE FROM tasks');
-  }
-
-  // タスクの削除
-  Future<int> _deleteTask(int id) async {
-    await _initDatabase();
-    return await _database.delete(
-      'tasks',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
   }
 
   Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
