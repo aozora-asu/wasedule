@@ -491,7 +491,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   Color cellColour(DateTime target){
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0,4)),int.parse(targetMonth.substring(5,7))); 
     if(target.year == DateTime.now().year && target.month == DateTime.now().month && target.day == DateTime.now().day){
-     return const Color.fromARGB(255, 255, 255, 227);
+     return const Color.fromARGB(255, 255, 207, 207);
     }else if(target.month != targetmonthDT.month){
      return const Color.fromARGB(255, 242, 242, 242);
     }else if(target.weekday == 6){
@@ -566,6 +566,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 Text(
                   " " + targetDayData.elementAt(index)["subject"],
                   style: const TextStyle(color: Colors.black,fontSize: 8),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   ),
               ])

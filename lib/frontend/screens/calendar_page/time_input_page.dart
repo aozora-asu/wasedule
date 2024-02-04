@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class TimeInputPage extends ConsumerStatefulWidget{
+  DateTime target;
+
+  TimeInputPage({
+  required this.target
+  });
+
+  @override
+  TimeInputPageState createState() =>  TimeInputPageState();
+}
+
+class  TimeInputPageState extends ConsumerState<TimeInputPage> {
+  Map<String,int> userImput = {};
+
+  @override
+  void initState() {
+    super.initState();
+    userImput = {"hourDigit10":0,"hourDigit1":0,"minuteDigit10":0,"minuteDigit1":0};
+  }
+
+  @override
+  Widget build(BuildContext context){
+  SizeConfig().init(context);
+   return Scaffold(
+    appBar:const CustomAppBar(),
+    body: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children:[
+    const Text(
+      "時間を入力…",
+      style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 15),
+    Row(children:[numPanel(1,"時間"),numPanel(2,"時間"),numPanel(3,"時間"),numPanel(4,"時間"),numPanel(5,"時間")]),
+    Row(children:[numPanel(6,"時間"),numPanel(7,"時間"),numPanel(8,"時間"),numPanel(9,"時間"),numPanel(0,"時間")]),
+    imputButton("時"),
+    const SizedBox(height: 15),
+    Row(children:[numPanel(1,"分"),numPanel(2,"分"),numPanel(3,"分"),numPanel(4,"分"),numPanel(5,"分")]),
+    Row(children:[numPanel(6,"分"),numPanel(7,"分"),numPanel(8,"分"),numPanel(9,"分"),numPanel(0,"分")]),
+    imputButton("分"),
+    const SizedBox(height: 15),
+    const Divider(indent: 7,endIndent: 7,thickness: 4),
+    submitButton()
+    ])
+   );
+  }
+
+Widget numPanel(int num,String category){
+     return InkWell(
+      child:Container(
+      width: SizeConfig.blockSizeHorizontal! *20,
+      height: SizeConfig.blockSizeHorizontal! *20,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(
+          color: Colors.grey,
+          width: 2.0,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          num.toString(),
+          style: const TextStyle(fontSize: 20),
+        ),
+      ),
+    ),
+    onTap:(){
+      if(category == "時間"){
+
+       if(userImput["hourDigit10"]! > 2){
+
+        setState((){
+        userImput["hourDigit10"] = 2;
+        userImput["hourDigit1"] = 3;
+        });
+
+       }else{
+
+        if(userImput["hourDigit10"] == 0 && userImput["hourDigit1"] == 0){
+          
+        setState((){
+           userImput["hourDigit1"] = num;
+        });
+
+        }else{
+          
+        setState((){
+           userImput["hourDigit10"] = userImput["hourDigit1"]!;
+           userImput["hourDigit1"] = num;
+        });
+
+        if(userImput["hourDigit10"]!*10 + userImput["hourDigit1"]! > 23){
+         setState((){
+          userImput["hourDigit10"] = 2;
+          userImput["hourDigit1"] = 3;
+          });
+        }
+        }
+       }
+
+      }else{
+
+       if(userImput["minuteDigit10"]! > 6){
+
+        setState((){
+        userImput["minuteDigit10"] = 0;
+        userImput["minuteDigit1"] = 0;
+        });
+
+       }else{
+
+        if(userImput["minuteDigit10"] == 0 && userImput["minuteDigit1"] == 0){
+          
+        setState((){
+           userImput["minuteDigit1"] = num;
+        });
+
+        }else{
+          
+        setState((){
+           userImput["minuteDigit10"] = userImput["minuteDigit1"]!;
+           userImput["minuteDigit1"] = num;
+        });
+
+        if(userImput["minuteDigit10"]!*10 + userImput["minuteDigit10"]! > 60){
+         setState((){
+          userImput["minuteDigit10"] = 0;
+          userImput["minuteDigit1"] = 0;
+        });
+        }
+      }
+      }
+    }
+    }
+  );
+}
+
+Widget imputButton(String category){
+  return ElevatedButton(
+            onPressed: () {
+              if(category == "時"){
+                setState(() {
+                userImput["hourDigit10"] = 0;
+                userImput["hourDigit1"] = 0;                  
+                });
+              }else{
+                setState(() {
+                userImput["minuteDigit10"] = 0;
+                userImput["minuteDigit1"] = 0;                  
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(SizeConfig.blockSizeHorizontal! *100, SizeConfig.blockSizeVertical! *5,),
+              primary: Colors.blueAccent, // ボタンの背景色
+              onPrimary: Colors.white, // テキストの色
+            ),
+            child: Row(
+              children:[
+              const Spacer(),
+              Text(preview(category) + category),
+              const SizedBox(width:20),
+              const Icon(Icons.delete,color: Colors.white,),
+              const Spacer(),
+              ]), // ボタンのテキスト
+          );
+}
+
+String preview(category){
+  if(category == "時"){
+    return userImput["hourDigit10"].toString() + userImput["hourDigit1"].toString();
+  }else{
+    return userImput["minuteDigit10"].toString() + userImput["minuteDigit1"].toString();
+  }
+}
+
+Widget submitButton(){
+
+    return ElevatedButton(
+            onPressed: () async{
+              String inputResult;
+              String hour = "";
+              String minute = "";
+              hour = userImput["hourDigit10"].toString() + userImput["hourDigit1"].toString();
+              minute = userImput["minuteDigit10"].toString() + userImput["minuteDigit1"].toString();
+              inputResult = hour + ":" + minute;
+              print(inputResult);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target)),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(SizeConfig.blockSizeHorizontal! *100, SizeConfig.blockSizeVertical! *5,),
+              primary: MAIN_COLOR, // ボタンの背景色
+              onPrimary: Colors.white, // テキストの色
+            ),
+            child:
+              Text(
+                userImput["hourDigit10"].toString() +
+                userImput["hourDigit1"].toString() + 
+                "時" +
+                userImput["minuteDigit10"].toString() +
+                userImput["minuteDigit1"].toString() +
+                "分で登録"
+                ), // ボタンのテキスト
+          );
+}
+
+}
