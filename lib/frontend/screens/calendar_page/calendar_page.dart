@@ -515,21 +515,19 @@ class _CalendarState extends ConsumerState<Calendar> {
         ));
   }
 
-  Color cellColour(DateTime target) {
-    DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-        int.parse(targetMonth.substring(5, 7)));
-    if (target.year == DateTime.now().year &&
-        target.month == DateTime.now().month &&
-        target.day == DateTime.now().day) {
-      return const Color.fromARGB(255, 255, 255, 227);
-    } else if (target.month != targetmonthDT.month) {
-      return const Color.fromARGB(255, 242, 242, 242);
-    } else if (target.weekday == 6) {
-      return Colors.white; //Color.fromARGB(255, 227, 238, 255);
-    } else if (target.weekday == 7) {
-      return Colors.white; //Color.fromARGB(255, 255, 239, 239);
-    } else {
-      return Colors.white;
+  Color cellColour(DateTime target){
+    DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0,4)),int.parse(targetMonth.substring(5,7))); 
+    if(target.year == DateTime.now().year && target.month == DateTime.now().month && target.day == DateTime.now().day){
+     return const Color.fromARGB(255, 255, 207, 207);
+    }else if(target.month != targetmonthDT.month){
+     return const Color.fromARGB(255, 242, 242, 242);
+    }else if(target.weekday == 6){
+     return Colors.white;//Color.fromARGB(255, 227, 238, 255);
+    }else if(target.weekday == 7){
+     return Colors.white;//Color.fromARGB(255, 255, 239, 239);
+    }else{
+     return Colors.white;
+
     }
   }
 
@@ -597,7 +595,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                 Align(alignment: Alignment.centerLeft, child: dateTimeData),
                 Text(
                   " " + targetDayData.elementAt(index)["subject"],
-                  style: const TextStyle(color: Colors.black, fontSize: 8),
+                  style: const TextStyle(color: Colors.black,fontSize: 8),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ]));
