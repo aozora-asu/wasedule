@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
@@ -248,6 +249,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget listView(){
     final taskData = ref.read(taskDataProvider);
     final data = ref.read(calendarDataProvider);
+    ref.watch(calendarDataProvider);
     String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
 
     if(data.sortedDataByDay[targetKey] == null){
@@ -280,21 +282,43 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
            return  Column(children:[
             Container(
-             //height: SizeConfig.blockSizeVertical! * 10,
              width: SizeConfig.blockSizeHorizontal! *95,
              padding: const EdgeInsets.all(16.0),
              decoration: BoxDecoration(
               color: Colors.redAccent, // コンテナの背景色
               borderRadius: BorderRadius.circular(12.0), // 角丸の半径
             ),
-            child: Column(
+            child:
+            Row(children:[
+            InkWell(
+             onTap:(){
+              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
+             },
+             child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
               dateTimeData,
               Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
-                            style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
+                   style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
             ]),
-          ),
+            
+            ),
+            const Spacer(),
+            Column(children:[
+              IconButton(
+              icon: const Icon(Icons.delete,color:Colors.white),
+              onPressed: ()async{
+                await ScheduleDatabaseHelper().deleteSchedule(
+                  data.sortedDataByDay[targetKey].elementAt(index)["id"]
+                  );
+                ref.read(calendarDataProvider.notifier).state = CalendarData();
+                Navigator.of(context).pop();
+              },
+              ),
+            ])
+
+          ])   
+        ),
           const SizedBox(height:15)   
          ]);    
         },
@@ -411,5 +435,53 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       return  const SizedBox();
     }
   }
+
+  Future<void> _showTextDialog(BuildContext context,Map targetData) async {
+    TextEditingController controller = TextEditingController();
+    controller.text = targetData["subject"];
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('予定の編集...'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: '予定',
+              border:OutlineInputBorder()
+              ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('戻る'),
+            ),
+            TextButton(
+              onPressed: () async{
+              Map<String,dynamic>newMap = {};
+              newMap["subject"] = controller.text;
+              newMap["startDate"] = targetData["startDate"];
+              newMap["startTime"] = targetData["startTime"];
+              newMap["endDate"] = targetData["endDate"];
+              newMap["endTime"] = targetData["endTime"];
+              newMap["isPublic"] = targetData["isPublic"];
+              newMap["publicSubject"] = targetData["publicSubject"];
+              newMap["tag"] = targetData["tag"];
+              newMap["id"] = targetData["id"];
+              await ScheduleDatabaseHelper().updateSchedule(newMap);
+              ref.read(calendarDataProvider.notifier).state = CalendarData();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text('変更'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 

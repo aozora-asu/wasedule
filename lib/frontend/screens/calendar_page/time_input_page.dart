@@ -207,7 +207,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
       ),
       child: Row(children: [
         const Spacer(),
-        Text(preview(category) + category),
+        Text(preview(category) + category,style:const TextStyle(color:Colors.white)),
         const SizedBox(width: 20),
         const Icon(
           Icons.delete,
@@ -253,10 +253,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
           timeController.text = inputResult;
           ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
         }
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => CalendarInputForm(target: widget.target)),
-        );
+        Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(
         fixedSize: Size(
@@ -264,14 +261,16 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
           SizeConfig.blockSizeVertical! * 5,
         ),
         backgroundColor: MAIN_COLOR, // ボタンの背景色
-        textStyle: TextStyle(color: Colors.white), // テキストの色
+        textStyle: const TextStyle(color: Colors.white), // テキストの色
       ),
       child: Text(userImput["hourDigit10"].toString() +
           userImput["hourDigit1"].toString() +
           "時" +
           userImput["minuteDigit10"].toString() +
           userImput["minuteDigit1"].toString() +
-          "分で登録"), // ボタンのテキスト
+          "分で登録",
+          style:const TextStyle(color:Colors.white)
+          ), // ボタンのテキスト
     );
   }
 

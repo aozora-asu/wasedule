@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import '../common/float_button.dart';
 import '../to_do_page/task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +11,6 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
 import 'add_data_card_button.dart';
-import '../outdated/brief_kanban.dart';
 import 'data_manager.dart';
 
 import '../../assist_files/colors.dart';
@@ -25,6 +25,8 @@ class TaskListByDtEnd extends ConsumerStatefulWidget {
 }
 
 class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
+
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -241,6 +243,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           ));
     }
   }
+  
+
 }
 
 class DtEndTaskGroup extends ConsumerStatefulWidget {
@@ -294,6 +298,14 @@ class DtEndTaskChild extends ConsumerStatefulWidget {
 }
 
 class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
+   late bool isChosen;
+  
+  @override
+  void initState() {
+    super.initState();
+    isChosen = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider.notifier);
@@ -528,16 +540,6 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "   タスクの優先度設定",
-                              style: TextStyle(
-                                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PriorityTabBar(),
                           SizedBox(
                             height: SizeConfig.blockSizeVertical! * 30,
                           )
@@ -566,7 +568,19 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
                       ]),
                   width: SizeConfig.blockSizeHorizontal! * 83,
                   child: Row(children: [
-                    CupertinoCheckbox(value: false, onChanged: (value) {}),
+                    CupertinoCheckbox(
+                      value: isChosen, onChanged: (value) {
+                        var chosenTaskIdList = ref.watch(taskDataProvider).chosenTaskIdList;
+                      setState((){
+                        isChosen = value ?? false;
+                        if(chosenTaskIdList.contains(targetData["id"])){
+                          ref.read(taskDataProvider).chosenTaskIdList.remove(targetData["id"]);
+                        }else{
+                          ref.read(taskDataProvider).chosenTaskIdList.add(targetData["id"]);
+                        }
+                      ref.read(taskDataProvider.notifier).state;
+                      });
+                    }),
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -613,7 +627,6 @@ class _DtEndTaskChildState extends ConsumerState<DtEndTaskChild> {
 class InformationAutoDismissiblePopup extends StatefulWidget {
   late TextEditingController controller;
   late int index;
-  String _userInput2 = '';
   late String text;
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   late String titleName;

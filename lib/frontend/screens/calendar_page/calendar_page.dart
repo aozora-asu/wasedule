@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'brief_task_text.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 import '../common/loading.dart';
@@ -215,7 +214,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                 },
               ),
             ),
-            BriefTaskList(),
           ],
         ),
       floatingActionButton: AddEventButton(),
