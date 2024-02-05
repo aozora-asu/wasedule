@@ -1,13 +1,11 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/task.dart';
-import "../../status_code.dart";
-import "../../http_request.dart";
 import '../models/user.dart';
 
 class UserDatabaseHelper {
   late Database _database;
-  // データベースの初期化
+  String TABLE_NAME = "user";
+  late UserInfo userInfo;
   UserDatabaseHelper() {
     _initDatabase();
   }
@@ -20,66 +18,54 @@ class UserDatabaseHelper {
   // データベースの作成
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS user(
+      CREATE TABLE IF NOT EXISTS $TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         url TEXT
       )
     ''');
   }
 
-  // タスクの挿入
-  Future<void> insertUserInfo(UserInfo userInfo) async {
+  // urlばりデートを行い、DBに追加できればtrue、追加できなければfalseを返す
+  Future<bool> resisterUserInfo(String url) async {
     await _initDatabase();
-    await _database.insert('user', userInfo.toMap());
+    if (_isValidUrl(url)) {
+      userInfo = UserInfo(url: url);
+      return await _database.insert(TABLE_NAME, userInfo.toMap()) > 0;
+    } else {
+      return false;
+    }
   }
 
-  Future<void> deleteAllData(Database db) async {
+  Future<String?> getUrl() async {
     await _initDatabase();
-    await db.rawDelete('DELETE FROM tasks');
-  }
-
-  // タスクの削除
-  Future<int> _deleteTask(int id) async {
-    await _initDatabase();
-    return await _database.delete(
-      'tasks',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<void> updateTitle(int id, String newTitle) async {
-    // 'tasks' テーブル内の特定の行を更新
-    await _initDatabase();
-    await _database.update(
-      'tasks',
-      {'title': newTitle}, // 更新後の値
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<void> updateSummary(int id, String newSummary) async {
-    // 'tasks' テーブル内の特定の行を更新
-    await _initDatabase();
-    await _database.update(
-      'tasks',
-      {'summary': newSummary}, // 更新後の値
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    List<Map<String, dynamic>> userInfo =
+        await _database.rawQuery('SELECT * FROM user');
+    if (userInfo == []) {
+      return null;
+    } else {
+      return userInfo[-1]["url"];
+    }
   }
 
   Future<bool> hasData() async {
-    // データベースファイルのパスを取得します（パスはアプリ固有のものに変更してください）
-    // データベース内のテーブル名
-    String tableName = 'tasks';
     int? count;
     // データのカウントを取得
     await _initDatabase();
     count = Sqflite.firstIntValue(
-        await _database.rawQuery('SELECT COUNT(*) FROM $tableName'));
+        await _database.rawQuery('SELECT COUNT(*) FROM $TABLE_NAME'));
 
     return count! > 0;
+  }
+
+  bool _isValidUrl(String url) {
+    // 正規表現パターン
+    String pattern =
+        r'^https:\/\/wsdmoodle\.waseda\.jp\/calendar\/export_execute\.php\?userid=.*$';
+
+    // 正規表現を作成
+    RegExp regExp = RegExp(pattern);
+
+    // 文字列が正規表現に一致するかどうかを確認
+    return regExp.hasMatch(url);
   }
 }

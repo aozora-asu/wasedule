@@ -47,12 +47,14 @@ class Notify {
         todaysSchedule,
         _nextInstanceOfEightAM(),
         NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily notification channel id',
-            '今日の予定',
-            channelDescription: todaysSchedule,
-          ),
-        ),
+            android: AndroidNotificationDetails(
+                'daily notification channel id', '今日の予定',
+                channelDescription: todaysSchedule,
+                sound: const RawResourceAndroidNotificationSound(
+                    'slow_spring_board')),
+            iOS: const DarwinNotificationDetails(
+              sound: 'slow_spring_board.aiff',
+            )),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -68,12 +70,14 @@ class Notify {
         taskDueToday,
         _nextInstanceOfEightAM(),
         NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily notification channel id',
-            '今日が期限の課題',
-            channelDescription: taskDueToday,
-          ),
-        ),
+            android: AndroidNotificationDetails(
+                'daily notification channel id', '今日が期限の課題',
+                channelDescription: taskDueToday,
+                sound: const RawResourceAndroidNotificationSound(
+                    'slow_spring_board')),
+            iOS: const DarwinNotificationDetails(
+              sound: 'slow_spring_board.aiff',
+            )),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -90,36 +94,6 @@ class Notify {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
-  }
-
-  Future<void> _showNotificationCustomSound() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-      'your other channel id',
-      'your other channel name',
-      channelDescription: 'your other channel description',
-      sound: RawResourceAndroidNotificationSound('slow_spring_board'),
-    );
-    const DarwinNotificationDetails darwinNotificationDetails =
-        DarwinNotificationDetails(
-      sound: 'slow_spring_board.aiff',
-    );
-    final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-        LinuxNotificationDetails(
-      sound: AssetsLinuxSound('sound/slow_spring_board.mp3'),
-    );
-    final NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: darwinNotificationDetails,
-      macOS: darwinNotificationDetails,
-      linux: linuxPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.show(
-      id++,
-      'custom sound notification title',
-      'custom sound notification body',
-      notificationDetails,
-    );
   }
 
   Future<void> _showNotificationWithActions() async {
@@ -168,26 +142,5 @@ class Notify {
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item z');
-  }
-
-  Future<void> scheduleNotifications() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-      'repeating_channel_id',
-      'repeating_channel_name',
-      channelDescription: 'repeating_channel_description',
-    );
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
-
-    // Schedule a notification every minute
-    Timer.periodic(const Duration(minutes: 1), (timer) async {
-      await flutterLocalNotificationsPlugin.show(
-        id++,
-        'Repeating Title',
-        'Repeating Body',
-        notificationDetails,
-      );
-    });
   }
 }
