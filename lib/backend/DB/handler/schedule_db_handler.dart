@@ -54,6 +54,7 @@ class ScheduleDatabaseHelper {
   Future<void> updateSchedule(Map<String, dynamic> newSchedule) async {
     // 'tasks' テーブル内の特定の行を更新
     await _initScheduleDatabase();
+    print(newSchedule);
     await _database.update(
       'schedule',
       newSchedule, // 更新後の値

@@ -25,12 +25,16 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   Future<List<Map<String, dynamic>>>? events;
   String urlString = url_t;
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
+  late bool isButton;
 
   @override
   void initState() {
     super.initState();
     _initializeData();
+    ref.read(taskDataProvider).chosenTaskIdList = [];
+    isButton = false;
   }
+
 
   Future<void> _initializeData() async {
     if (await databaseHelper.hasData() == true) {
@@ -68,6 +72,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   Widget build(BuildContext context) {
     final taskData = ref.watch(taskDataProvider);
     ref.watch(taskPageIndexProvider);
+    ref.watch(taskDataProvider.notifier);
+    ref.watch(taskDataProvider);
+    manageIsButton();
     return Scaffold(
         backgroundColor: Colors.white, // BACKGROUND_COLOR,
         body: //こっちにタスク進捗リスト
@@ -130,10 +137,18 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 57.5,
+              child:executeDeleteButton()
+              ),
+            Container(
+              width: SizeConfig.blockSizeHorizontal! * 2,
+              height: SizeConfig.blockSizeVertical! * 5,
+            ),
             AddDataCardButton(),
             Container(
               width: SizeConfig.blockSizeHorizontal! * 2,
-              height: SizeConfig.blockSizeHorizontal! * 5,
+              height: SizeConfig.blockSizeVertical! * 5,
             ),
             FloatingActionButton(
               onPressed: () {
@@ -145,6 +160,40 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ],
         ));
   }
+
+  void manageIsButton(){
+    ref.watch(taskDataProvider);
+    if(ref.watch(taskDataProvider).chosenTaskIdList.isNotEmpty){
+     setState(() {
+       isButton = true;
+     }); 
+    }else{
+     setState(() {
+       isButton = false;
+     });
+    }
+  }
+
+  Widget executeDeleteButton(){
+    ref.watch(taskDataProvider.notifier);
+    print("BUTTON FUNCTION CALLED");
+    print(ref.watch(taskDataProvider).chosenTaskIdList);
+    if(isButton){
+      return FloatingActionButton.extended(
+        onPressed: (){},
+        label: const Row(children:[
+          Icon(Icons.delete,color:Colors.white),
+          Text("   Done!!!   ",style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold),),
+          Icon(Icons.delete,color:Colors.white),
+          ]),
+        backgroundColor: Colors.pinkAccent
+      );
+    }else{
+      return Container(height:0);
+    }
+  }
+
+
 
   Widget pages() {
     final taskData = ref.watch(taskDataProvider);

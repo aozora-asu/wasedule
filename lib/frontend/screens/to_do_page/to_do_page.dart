@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/screen_manager.dart';
 import '../common/float_button.dart';
 import 'task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
@@ -8,7 +9,6 @@ import 'dart:async';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
 import '../task_page/add_data_card_button.dart';
-import '../outdated/brief_kanban.dart';
 
 import '../../assist_files/colors.dart';
 import '../../../backend/temp_file.dart';
@@ -66,19 +66,10 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
             backgroundColor: Colors.white, // BACKGROUND_COLOR,
-            body: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  elevation: 0,
-                  leading: null, // 戻るアイコンを非表示
-                  automaticallyImplyLeading: false, // 戻るアイコンを非表示
-                  expandedHeight: SizeConfig.blockSizeHorizontal! * 89,
-                  collapsedHeight: SizeConfig.blockSizeHorizontal! * 25,
-                  floating: false,
-                  pinned: true,
-                  backgroundColor: WIDGET_COLOR,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: FutureBuilder<List<Map<String, dynamic>>>(
+            body: Column(children:[
+                Container(
+                  height:SizeConfig.blockSizeVertical! * 25,
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: events,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -95,50 +86,8 @@ class _TaskPageState extends State<TaskPage> {
                       },
                     ),
                   ),
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(
-                        SizeConfig.blockSizeHorizontal! * 0), // ウィジェットの高さ
-                    child: Container(), // 折り畳み後の領域に表示するウィジェット
-                  ),
-                ),
-                FutureBuilder<List<Map<String, dynamic>>>(
-                  future: events,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SliverFillRemaining(
-                        child: LoadingScreen(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return SliverFillRemaining(
-                        child: Text("Error: ${snapshot.error}"),
-                      );
-                    } else if (snapshot.hasData) {
-                      return buildDataCards(context, snapshot.data!);
-                    } else {
-                      return SliverFillRemaining(
-                        child: noneTaskText(),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            floatingActionButton: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AddDataCardButton(),
-                Container(
-                  width: SizeConfig.blockSizeHorizontal! * 2,
-                  height: SizeConfig.blockSizeHorizontal! * 5,
-                ),
-                FloatingActionButton(
-                  onPressed: () {
-                    _loadData();
-                  },
-                  backgroundColor: MAIN_COLOR,
-                  child: const Icon(Icons.get_app, color: Colors.white),
-                ),
-              ],
-            ));
-  }
+                Expanded(child:ScreenBuilder())
+                ])
+              );
+ }
 }

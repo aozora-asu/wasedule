@@ -4,7 +4,6 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
 import '../common/float_button.dart';
-import 'brief_kanban.dart';
 import 'dart:async';
 import '../to_do_page/to_do_page.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
@@ -899,16 +898,6 @@ class InformationAutoDismissiblePopupState
                       ],
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "   タスクの優先度設定",
-                      style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  PriorityTabBar(),
                 ],
               ),
             );

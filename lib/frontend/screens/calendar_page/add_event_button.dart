@@ -499,7 +499,6 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     DateTime selectedDate = DateTime.now();
 
     final DateTime? picked = await showDatePicker(
-      barrierColor: MAIN_COLOR,
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1882),

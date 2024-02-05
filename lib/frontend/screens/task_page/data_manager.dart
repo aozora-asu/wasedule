@@ -27,12 +27,14 @@ class TaskData {
   bool isRenewed = false;
   int taskPageIndex = 0;
   int foldState = 0;
-  
+  var chosenTaskIdList = [];
+
   TaskData({
     List<Map<String, dynamic>> taskDataList = const [],
     int taskPageIndex = 0,
   })  : taskDataList = taskDataList,
         taskPageIndex = taskPageIndex;
+        
 
   TaskData copyWith({
     List<Map<String, dynamic>>? taskDataList,
