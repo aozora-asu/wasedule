@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/task_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/data_receiver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
@@ -9,9 +10,15 @@ import 'dart:async';
 
 class TimerView extends ConsumerStatefulWidget {
   List<Map<String,dynamic>>? targetMonthData;
+  Future<List<Map<String, dynamic>>>? events;
+  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  BuildContext context;
 
   TimerView({
-    this.targetMonthData
+    this.targetMonthData,
+    this.events,
+    required this.snapshot,
+    required this.context
   });
 
   @override
@@ -25,7 +32,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
   void initState() {
     super.initState();
     // 100ミリ秒ごとにタイマーを更新する
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {}); // タイマーが更新されるたびに画面を再構築
     });
   }
@@ -43,7 +50,8 @@ class  _TimerViewState extends ConsumerState<TimerView> {
 
    SizeConfig().init(context);
    if(widget.targetMonthData == null){
-    return SizedBox();
+    return buildTaskProgressIndicator(
+                              widget.context, widget.snapshot.data!);
    }else{
     data.generateIsTimerList(widget.targetMonthData!);
     return Container(
@@ -58,8 +66,8 @@ class  _TimerViewState extends ConsumerState<TimerView> {
           height:SizeConfig.blockSizeVertical! *40,
           child: Column(children:[          
             Row(children:[
-              Icon(Icons.timer,color:Colors.grey,size:20),
-              Text(" " + date + "：タイマー作動中",style: TextStyle(color:Colors.grey,fontSize:17,),)
+              const Icon(Icons.timer,color:Colors.grey,size:20),
+              Text(" " + date + "：タイマー作動中",style: const TextStyle(color:Colors.grey,fontSize:17,),)
             ]),
             buildTimer(startTime,formattedDuration,targetDayData),
             ElevatedButton(
@@ -86,12 +94,12 @@ class  _TimerViewState extends ConsumerState<TimerView> {
                 backgroundColor: Colors.blueAccent, // ボタンの背景色
                 textStyle: const TextStyle(color:Colors.white), // テキストの色
               ),
-              child: Row(
+              child:const Row(
                 children:[
                 Spacer(),
                 Icon(Icons.timer,color: Colors.white,),
                 SizedBox(width:20),
-                Text("記録に加算して停止"),
+                Text("記録に加算して停止",style:TextStyle(color:Colors.white)),
                 Spacer(),
                 ]), // ボタンのテキスト
           ),
@@ -104,12 +112,12 @@ class  _TimerViewState extends ConsumerState<TimerView> {
                 backgroundColor: Colors.redAccent, // ボタンの背景色
                 textStyle: const TextStyle(color:Colors.white),/// テキストの色
               ),
-              child: Row(
+              child:const Row(
                 children:[
                 Spacer(),
                 Icon(Icons.delete,color: Colors.white,),
                 SizedBox(width:20),
-                Text("記録せずに停止"),
+                Text("記録せずに停止",style:TextStyle(color:Colors.white),),
                 Spacer(),
                 ]),
           ),
@@ -118,7 +126,12 @@ class  _TimerViewState extends ConsumerState<TimerView> {
           ])
          );
         }else{
-         return SizedBox();
+         if(index == 1 && data.isTimerList.values.contains(true) == false){
+         return buildTaskProgressIndicator(
+                              widget.context, widget.snapshot.data!);
+         }else{
+          return const SizedBox();
+         }
         }
       },
       shrinkWrap: true,

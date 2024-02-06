@@ -22,7 +22,7 @@ DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
 DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
 DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
-DateTime lastDayOfWeek = firstDayOfWeek.add(Duration(days: 6));
+DateTime lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
 
 String formattedDate = DateFormat('MM月dd日(EEE)').format(now);
 int circularIndicatorState = 0;
@@ -65,6 +65,21 @@ Widget buildTaskProgressIndicator(
             DateTime.fromMillisecondsSinceEpoch(data[i]["dtEnd"]);
       }
     }
+  }
+
+  if(allTasks.isEmpty){
+    allTasks["仮データ"] = DateTime.now();
+    allDoneTasks["仮データ"] = DateTime.now();
+  }
+
+  if(monthlyTasks.isEmpty){
+    monthlyTasks["仮データ"] = DateTime.now();
+    monthlyDoneTasks["仮データ"] = DateTime.now();
+  }
+
+  if(weeklyTasks.isEmpty){
+    weeklyTasks["仮データ"] = DateTime.now();
+    weeklyDoneTasks["仮データ"] = DateTime.now();
   }
   return TaskProgressIndicator();
 }
@@ -167,7 +182,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
     SizeConfig().init(context);
     return Column(children: [
       Container(
-          height: SizeConfig.blockSizeHorizontal! * 5,
+          height: SizeConfig.blockSizeVertical! * 2,
           width: SizeConfig.blockSizeHorizontal! * 100),
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,7 +211,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                     )
                   ])),
               Container(
-                  height: SizeConfig.blockSizeHorizontal! * 8,
+                  height: SizeConfig.blockSizeVertical! * 4,
                   width: SizeConfig.blockSizeHorizontal! * 55,
                   child: InkWell(
                     onTap: () {
@@ -286,7 +301,9 @@ class HpGauge3Color extends StatelessWidget {
             ),
           ),
         ),
-        Text('${currentHp.toString().padLeft(2, '  ')}/$maxHp'),
+        Text('${currentHp.toString().padLeft(2, '  ')}/$maxHp',
+            style:TextStyle(fontSize:SizeConfig.blockSizeVertical! *1.5)
+        ),
       ],
     );
   }

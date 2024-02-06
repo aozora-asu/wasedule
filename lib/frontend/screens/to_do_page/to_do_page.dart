@@ -65,10 +65,10 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            backgroundColor: Colors.white, // BACKGROUND_COLOR,
+            backgroundColor: Colors.white,
             body: Column(children:[
-                Container(
-                  height:SizeConfig.blockSizeVertical! * 25,
+                SizedBox(
+                  height:SizeConfig.blockSizeVertical! * 80,
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: events,
                       builder: (context, snapshot) {
@@ -78,15 +78,17 @@ class _TaskPageState extends State<TaskPage> {
                         } else if (snapshot.hasError) {
                           return Text("Error: ${snapshot.error}");
                         } else if (snapshot.hasData) {
-                          return buildTaskProgressIndicator(
-                              context, snapshot.data!);
+                          return ScreenBuilder(
+                            snapshot: snapshot,
+                            context: context,
+                            events: events,
+                            );
                         } else {
                           return noneTaskText();
                         }
                       },
                     ),
                   ),
-                Expanded(child:ScreenBuilder())
                 ])
               );
  }

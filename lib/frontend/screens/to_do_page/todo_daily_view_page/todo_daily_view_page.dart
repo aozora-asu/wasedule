@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/stats_page/stats_page.dart';
@@ -12,6 +13,16 @@ import 'dart:async';
 
 
 class DaylyViewPage extends ConsumerStatefulWidget {
+  Future<List<Map<String, dynamic>>>? events;
+  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  BuildContext context;
+
+  DaylyViewPage({
+    this.events,
+    required this.snapshot,
+    required this.context
+  });
+
   @override
    _DaylyViewPageState createState() =>  _DaylyViewPageState();
 }
@@ -21,7 +32,11 @@ class  _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
   Widget build(BuildContext context) {
     final data = ref.read(dataProvider);
     return Scaffold(
-      body:DaylyViewPageBody(),
+      body:DaylyViewPageBody(
+        events:widget.events,
+        snapshot:widget.snapshot,
+        context:widget.context
+      ),
       floatingActionButton:showButtonOrNot(context,ref),
     );
   }
@@ -49,6 +64,15 @@ class  _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
 
 
 class DaylyViewPageBody extends ConsumerStatefulWidget {
+  Future<List<Map<String, dynamic>>>? events;
+  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  BuildContext context;
+
+  DaylyViewPageBody({
+    this.events,
+    required this.snapshot,
+    required this.context
+  });
   @override
    _DaylyViewPageBodyState createState() =>  _DaylyViewPageBodyState();
 }
@@ -74,7 +98,12 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
        crossAxisAlignment: CrossAxisAlignment.start,
        children:[
         
-        TimerView(targetMonthData:data.sortDataByMonth()[thisMonth]),
+        TimerView(
+          targetMonthData:data.sortDataByMonth()[thisMonth],
+          events:widget.events,
+          context:widget.context,
+          snapshot: widget.snapshot,
+          ),
 
         SizedBox(
         child:Row(children:[
@@ -119,9 +148,9 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
   double calculateHeight(){
    final data = ref.watch(dataProvider);
    if(data.isTimerList.containsValue(true)){
-    return 49 - 40;
+    return 50 - 17.75;
    }else{
-    return 49;
+    return 50;
    }
   }
 
@@ -280,8 +309,23 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
             child:Column(
              crossAxisAlignment:CrossAxisAlignment.start,
              children:[
+              
               Row(children:[
-               const Text("  予定 ",style: TextStyle(fontSize:10,color:Colors.grey),),
+               const Icon(Icons.calendar_month,size:10,color:Colors.grey),
+               const Text("予定 ",style: TextStyle(fontSize:10,color:Colors.grey),),
+               const SizedBox(width:4),
+               Expanded(child:
+               Text(calendarData(index),
+                style: const TextStyle(fontSize:12,color:Colors.grey),
+                overflow: TextOverflow.ellipsis,
+               ),
+               )
+              ]),
+
+
+              Row(children:[
+               const Icon(Icons.edit,size:10,color:Colors.grey),
+               const Text("メモ ",style: TextStyle(fontSize:10,color:Colors.grey),),
                const SizedBox(width:4),
                Expanded(child:               
                TextField(
@@ -351,6 +395,22 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
       },
       itemCount: targetMonthData.length,
      );
+  }
+}
+
+String calendarData(index){
+  String targetDay = targetMonth.substring(0,4) + "-" +targetMonth.substring(5,7) +  "-" + (index + 1).toString().padLeft(2,"0");
+  
+  final calendarData = ref.read(calendarDataProvider);
+
+  if(calendarData.sortedDataByDay.keys.contains(targetDay)){
+    List<String> subJectList = [];
+    for(int i = 0; i < calendarData.sortedDataByDay[targetDay].length; i++){
+      subJectList.add(calendarData.sortedDataByDay[targetDay].elementAt(i)["subject"]);
+    }
+    return subJectList.join('、');
+  }else{
+    return "   (なし)";
   }
 }
 

@@ -327,7 +327,7 @@ class TaskInputForm extends ConsumerWidget {
                       ref.read(taskDataProvider).isRenewed = true;
                       inputForm.clearContents();
                       ref.read(calendarDataProvider.notifier).state = CalendarData();
-                      Navigator.of(context).pop();
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
                   style: ButtonStyle(

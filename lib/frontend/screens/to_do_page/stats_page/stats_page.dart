@@ -79,7 +79,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
     return Container(
       child:
       Column(children:[
-        TimerView(targetMonthData:data.sortDataByMonth()[thisMonth]),
+        //TimerView(targetMonthData:data.sortDataByMonth()[thisMonth]),
         
         SizedBox(
          height:SizeConfig.blockSizeVertical! *calculateHeight(),
@@ -194,52 +194,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
           ),
           Column(children:[
            
-          const Padding(
-            padding: EdgeInsets.only(top:6,bottom:4),
-            child:Text("  総勉強時間(月)",style:TextStyle(fontSize: 17,color:Colors.grey))
-          ),
-          Row(children:[
-            const Text("  １位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeMonthes.keys.elementAt(0) +
-                 "    "+ 
-                 topThreeMonthes.values.elementAt(0).inHours.toString() +
-                 "時間"+
-                 (topThreeMonthes.values.elementAt(0).inMinutes%60).toString() +
-                 "分    (平均"+
-                 topThreeMonthesAvg.values.elementAt(0).inHours.toString() +
-                 "時間"+
-                 (topThreeMonthesAvg.values.elementAt(0).inMinutes%60).toString() +
-                 "分/日)"
-                 ),
-          ]),
-          Row(children:[
-            Text("  ２位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeMonthes.keys.elementAt(1) +
-                 "    "+ 
-                 topThreeMonthes.values.elementAt(1).inHours.toString() +
-                 "時間"+
-                 (topThreeMonthes.values.elementAt(1).inMinutes%60).toString()+
-                 "分    (平均"+
-                 topThreeMonthesAvg.values.elementAt(1).inHours.toString()+
-                 "時間"+
-                 (topThreeMonthesAvg.values.elementAt(1).inMinutes%60).toString() +
-                 "分/日)"
-                 ),
-          ]),
-          Row(children:[
-            Text("  ３位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeMonthes.keys.elementAt(2) +
-                 "    "+ 
-                 topThreeMonthes.values.elementAt(2).inHours.toString()+
-                 "時間"+
-                 (topThreeMonthes.values.elementAt(2).inMinutes%60).toString()+
-                 "分    (平均"+
-                 topThreeMonthesAvg.values.elementAt(2).inHours.toString() +
-                 "時間"+
-                 (topThreeMonthesAvg.values.elementAt(2).inMinutes%60).toString()+
-                 "分/日)"
-                 ),
-          ]),
+          monthlyLanking(),
 
           const Padding(
             padding: EdgeInsets.only(top:6,bottom:4),
@@ -358,7 +313,60 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
    );
   }
 
-
+Widget monthlyLanking(){
+  if(topThreeMonthes.length < 3){
+   return const SizedBox();
+  }else{
+   return Column(children:[
+    const Padding(
+      padding: EdgeInsets.only(top:6,bottom:4),
+      child:Text("  総勉強時間(月)",style:TextStyle(fontSize: 17,color:Colors.grey))
+    ),
+    Row(children:[
+      const Text("  １位：",style:TextStyle(color:Colors.grey)),
+      Text(topThreeMonthes.keys.elementAt(0) +
+            "    "+ 
+            topThreeMonthes.values.elementAt(0).inHours.toString() +
+            "時間"+
+            (topThreeMonthes.values.elementAt(0).inMinutes%60).toString() +
+            "分    (平均"+
+            topThreeMonthesAvg.values.elementAt(0).inHours.toString() +
+            "時間"+
+            (topThreeMonthesAvg.values.elementAt(0).inMinutes%60).toString() +
+            "分/日)"
+            ),
+    ]),
+    Row(children:[
+      Text("  ２位：",style:TextStyle(color:Colors.grey)),
+      Text(topThreeMonthes.keys.elementAt(1)+
+            "    "+ 
+            topThreeMonthes.values.elementAt(1).inHours.toString() +
+            "時間"+
+            (topThreeMonthes.values.elementAt(1).inMinutes%60).toString()+
+            "分    (平均"+
+            topThreeMonthesAvg.values.elementAt(1).inHours.toString()+
+            "時間"+
+            (topThreeMonthesAvg.values.elementAt(1).inMinutes%60).toString() +
+            "分/日)"
+            ),
+    ]),
+    Row(children:[
+      Text("  ３位：",style:TextStyle(color:Colors.grey)),
+      Text(topThreeMonthes.keys.elementAt(2) +
+            "    "+ 
+            topThreeMonthes.values.elementAt(2).inHours.toString()+
+            "時間"+
+            (topThreeMonthes.values.elementAt(2).inMinutes%60).toString()+
+            "分    (平均"+
+            topThreeMonthesAvg.values.elementAt(2).inHours.toString() +
+            "時間"+
+            (topThreeMonthesAvg.values.elementAt(2).inMinutes%60).toString()+
+            "分/日)"
+            ),
+     ]),
+   ]);
+  }
+}
 
 
   void generateTimesumByMonth(){

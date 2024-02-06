@@ -32,11 +32,11 @@ class CustomBottomBar extends StatelessWidget {
           label: 'タスク',
           backgroundColor: MAIN_COLOR
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.group),
-          label: 'フレンド',
-          backgroundColor: MAIN_COLOR
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.group),
+        //   label: 'フレンド',
+        //   backgroundColor: MAIN_COLOR
+        // ),
       ],
         selectedFontSize: 17.0, // 選択されたアイテムのテキストサイズ
   unselectedFontSize: 12.0, // 選択されていないアイテムのテキストサイズ

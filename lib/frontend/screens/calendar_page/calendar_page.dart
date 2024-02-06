@@ -181,6 +181,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       setState(() {
         events = Future.value(addData);
       });
+      taskData = [];
       taskData.addAll(addData);
     }
   }
@@ -209,13 +210,22 @@ class _CalendarState extends ConsumerState<Calendar> {
                 } else {
                   // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                   print(snapshot.data);
+
+                  if(ref.read(taskDataProvider).isRenewed){
+                    displayDB();
+                    ref.read(taskDataProvider).isRenewed = false;
+                  }
+
                   ref.read(calendarDataProvider).getData(snapshot.data!);
                   ref.read(calendarDataProvider).sortDataByDay();
+                  print(ref.watch(calendarDataProvider).sortedDataByDay);
                   ref.read(taskDataProvider).getData(taskData);
+
                   return calendarBody();
                 }
               },
             ),
+           )
           ],
         ),
 
@@ -231,11 +241,11 @@ class _CalendarState extends ConsumerState<Calendar> {
               onPressed: () {
                 decreasePgNumber();
               },
-              icon: Icon(Icons.arrow_back_ios),
+              icon: const Icon(Icons.arrow_back_ios),
               iconSize: 20),
           Text(
             targetMonth,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.w700,
             ),
@@ -246,7 +256,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   increasePgNumber();
                 });
               },
-              icon: Icon(Icons.arrow_forward_ios),
+              icon: const Icon(Icons.arrow_forward_ios),
               iconSize: 20)
         ]),
       ),
@@ -433,7 +443,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<String> days = ["日", "月", "火", "水", "木", "金", "土"];
     return ListView.builder(
       itemBuilder: (context, index) {
-        return Container(
+        return SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 14.285,
             height: SizeConfig.blockSizeVertical! * 4,
             child: Center(
@@ -462,7 +472,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget generateCalendarCells(String dayOfWeek) {
-    return Container(
+    return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 14.285,
         child: ListView.builder(
           itemBuilder: (context, index) {

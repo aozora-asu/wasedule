@@ -6,6 +6,15 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScreenBuilder extends ConsumerStatefulWidget{
+  Future<List<Map<String, dynamic>>>? events;
+  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  BuildContext context;
+
+  ScreenBuilder ({
+    this.events,
+    required this.snapshot,
+    required this.context
+  });
   @override
   ScreenBuilderState createState() =>  ScreenBuilderState();
 }
@@ -43,7 +52,8 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
       });
     }
   }
-
+  
+  @override
   Widget build (BuildContext context){
     ref.watch(dataProvider);
     final data = ref.watch(dataProvider);
@@ -53,10 +63,14 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
       future: events,
       builder: (BuildContext context,snapshot){
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return DaylyViewPage();
+          return DaylyViewPage(
+            snapshot: widget.snapshot,
+            context: widget.context,
+            events: widget.events,
+            );
         }else if(snapshot.hasError){
           final error  = snapshot.error;
-          return Text('$error', style: TextStyle(fontSize: 60,),);
+          return Text('$error', style: const TextStyle(fontSize: 60,),);
         }else if (snapshot.hasData) {
 
           if(ref.watch(dataProvider).isInit){
@@ -67,13 +81,21 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
             displayDB();
           }
           data.getData(snapshot.data!);
-          return DaylyViewPage();
+          return DaylyViewPage(
+            snapshot: widget.snapshot,
+            context: widget.context,
+            events: widget.events,
+            );
         } else {
           
           if(ref.read(dataProvider).isRenewed){
             displayDB();
           }
-          return DaylyViewPage();
+          return DaylyViewPage(
+            snapshot: widget.snapshot,
+            context: widget.context,
+            events: widget.events,
+            );
      }
     }
   );
