@@ -46,6 +46,7 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
             indent: 7,
             endIndent: 7,
           ),
+          Expanded(child:
           ListView.builder(
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int i) {
@@ -81,6 +82,8 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
             },
             itemCount: deletedData.length,
           ),
+        ),
+          
           Row(children: [
             const SizedBox(width: 7),
             ElevatedButton(
@@ -91,6 +94,8 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                 },
                 child: const Text("戻る", style: TextStyle(color: Colors.white)))
           ])
-        ])));
+        ])
+      )
+    );
   }
 }

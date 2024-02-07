@@ -6,6 +6,7 @@ final taskDataProvider = StateNotifierProvider<TaskDataNotifier, TaskData>(
 );
 
 final taskPageIndexProvider = StateProvider<int>((ref) => ref.watch(taskDataProvider).taskPageIndex);
+final deleteButtonIndexProvider = StateProvider<bool>((ref) => ref.watch(taskDataProvider).isButton);
 
 class TaskDataNotifier extends StateNotifier<TaskData> {
   TaskDataNotifier() : super(TaskData(taskDataList: [], taskPageIndex: 0));
@@ -25,6 +26,7 @@ class TaskData {
   List<Map<String, dynamic>> deletedTaskDataList = [];
   bool isInit = false;
   bool isRenewed = false;
+  bool isButton = false;
   int taskPageIndex = 0;
   int foldState = 0;
   var chosenTaskIdList = [];
@@ -106,6 +108,14 @@ class TaskData {
    return sortedData;
   }
 
+
+  void manageIsButton(){
+    if(chosenTaskIdList.isNotEmpty){
+       isButton = true;
+    }else{
+       isButton = false;
+    }
+  }
   // TaskData copyWith({
   //   List<Map<String, dynamic>>? taskDataList,
   // }) {

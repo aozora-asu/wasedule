@@ -74,7 +74,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    manageIsButton();
     return Scaffold(
         backgroundColor: Colors.white, // BACKGROUND_COLOR,
         body: //こっちにタスク進捗リスト
@@ -137,14 +136,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-
-            SizedBox(width: SizeConfig.blockSizeHorizontal! * 57.5,
-              child:executeDeleteButton()
-              ),
-            Container(
-              width: SizeConfig.blockSizeHorizontal! * 2,
-              height: SizeConfig.blockSizeVertical! * 5,
-            ),
             AddDataCardButton(),
             Container(
               width: SizeConfig.blockSizeHorizontal! * 2,
@@ -160,39 +151,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ],
         ));
   }
-
-  void manageIsButton(){
-    ref.watch(taskDataProvider);
-    if(ref.watch(taskDataProvider).chosenTaskIdList.isNotEmpty){
-     setState(() {
-       isButton = true;
-     }); 
-    }else{
-     setState(() {
-       isButton = false;
-     });
-    }
-  }
-
-  Widget executeDeleteButton(){
-    ref.watch(taskDataProvider.notifier);
-    print("BUTTON FUNCTION CALLED");
-    print(ref.watch(taskDataProvider).chosenTaskIdList);
-    if(isButton){
-      return FloatingActionButton.extended(
-        onPressed: (){},
-        label: const Row(children:[
-          Icon(Icons.delete,color:Colors.white),
-          Text("   Done!!!   ",style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold),),
-          Icon(Icons.delete,color:Colors.white),
-          ]),
-        backgroundColor: Colors.pinkAccent
-      );
-    }else{
-      return Container(height:0);
-    }
-  }
-
 
 
   Widget pages() {
