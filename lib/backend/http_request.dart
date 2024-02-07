@@ -1,7 +1,8 @@
 import 'package:http/http.dart' as http;
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
-  final lines = iCalendarData.split('\n'); // 行ごとに分割
+  String s = iCalendarData.replaceAll("\\n\\n", "\\n");
+  final lines = s.split('\n'); // 行ごとに分割
 
   final iCalInfo = <String, dynamic>{
     'events': [], // イベントの情報を格納するリスト
