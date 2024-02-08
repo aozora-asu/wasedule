@@ -55,7 +55,7 @@ class  TimeInputPageState extends ConsumerState<TimeInputPage> {
    );
   }
 
-Widget numPanel(int num,String category){
+  Widget numPanel(int num,String category){
      return InkWell(
       child:Container(
       width: SizeConfig.blockSizeHorizontal! *20,

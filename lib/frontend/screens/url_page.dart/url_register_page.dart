@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 
@@ -57,15 +59,15 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
               onPressed: () {
                 // ここで入力されたURLを取得
                 String enteredUrl = _urlController.text;
-                // TODO: 入力されたURLを使用する処理を追加
-                print('Entered URL: $enteredUrl');
+                UserDatabaseHelper().resisterUserInfo(enteredUrl);
+                Navigator.pop(context);
               },
             style: ElevatedButton.styleFrom(
-              backgroundColor: MAIN_COLOR, // ここで背景色を設定
+              backgroundColor: MAIN_COLOR,
             ),
               child: const Text('登録',style:TextStyle(color:Colors.white)),
             ),
-            Divider(color: ACCENT_COLOR,thickness: 2,),
+            const Divider(color: ACCENT_COLOR,thickness: 2,),
               Align(alignment:Alignment.centerLeft,
               child:Text('登録方法',
                style: TextStyle(
