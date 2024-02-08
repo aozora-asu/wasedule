@@ -35,10 +35,10 @@ class _AppPageState extends ConsumerState<AppPage> {
     if (_currentIndex == 0) {
       body = const Calendar();
     } else if (_currentIndex == 2){
+      body = TaskPage();
+    } else {
       ref.read(taskDataProvider).taskPageIndex = 0;
       body = TaskViewPage();
-    } else {
-      body = TaskPage();
     }
 
     return Scaffold(

@@ -22,14 +22,14 @@ class CustomBottomBar extends StatelessWidget {
           label: 'カレンダー',
           backgroundColor: MAIN_COLOR
         ),
-                BottomNavigationBarItem(
-          icon: Icon(Icons.task),
-          label: 'ToDo',
-          backgroundColor: MAIN_COLOR
-        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.splitscreen),
           label: 'タスク',
+          backgroundColor: MAIN_COLOR
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.task),
+          label: 'ToDo',
           backgroundColor: MAIN_COLOR
         ),
         // BottomNavigationBarItem(

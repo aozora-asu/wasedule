@@ -3,9 +3,11 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page.dart/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/url_page.dart/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -194,7 +196,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       body: ListView(
         children: [
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal! * 200,
+            height: SizeConfig.blockSizeVertical! * 90,
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _getDataSource(),
               builder: (context, snapshot) {
@@ -225,6 +227,54 @@ class _CalendarState extends ConsumerState<Calendar> {
                 }
               },
             ),
+           ),
+           Padding(
+            padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
+            child:Column(children:[
+
+            Row(children:[
+              menuPanel(
+                Icons.tag_outlined,
+                "タグ管理",
+                () {
+
+              }),
+              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
+              menuPanel(
+                Icons.data_exploration_outlined,
+                "アルバイト",
+                () {
+
+              }),
+            ]),
+
+            const SizedBox(height:15),
+
+            Row(children:[
+              menuPanel(
+                Icons.link_rounded,
+                "Moodle URL登録",
+                () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+                );
+              }),
+              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
+              menuPanel(
+                Icons.settings,
+                "設定",
+                () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              }),
+            ]),
+
+            const SizedBox(height:30),
+
+           ])
            )
           ],
         ),
@@ -627,4 +677,36 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const Center();
     }
   }
+
+  Widget menuPanel(IconData icon, String text, void Function() ontap){
+     return InkWell(
+      onTap:ontap,
+      child:Container(
+       width: SizeConfig.blockSizeHorizontal! *45,
+       height: SizeConfig.blockSizeHorizontal! *45,
+      decoration: BoxDecoration(
+        color:Colors.white,
+        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.7), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(children:[
+          const Spacer(),
+          Icon(icon,color:MAIN_COLOR,size:80),
+          Text(text,style:const TextStyle(fontSize:15)),
+          const Spacer(),
+       ])
+      ),
+    ),
+  );
+ }
+
+
 }
