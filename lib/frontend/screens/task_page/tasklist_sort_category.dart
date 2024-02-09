@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
+import 'package:intl/intl.dart';
 import '../common/float_button.dart';
 import '../to_do_page/task_progress_indicator.dart';
 import 'package:flutter/widgets.dart';
@@ -127,7 +128,7 @@ void initState() {
        
     switch (ref.watch(taskDataProvider).foldState) {
       case 0:
-        return true;
+        return false;
       case 1:
         return false;
       case 2:
@@ -231,17 +232,15 @@ void initState() {
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
 
     return Row(children: [
-      Text(truncateTimeEnd(targetData),
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
-              fontWeight: FontWeight.w700)),
+          
+
       InkWell(
           onTap: () {
              bottomSheet(targetData);
           },
           child: Container(
               constraints: BoxConstraints(
-                maxWidth: SizeConfig.blockSizeHorizontal! * 84,
+                maxWidth: SizeConfig.blockSizeHorizontal! * 94,
               ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
@@ -256,7 +255,7 @@ void initState() {
                           offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                         ),
                       ]),
-                  width: SizeConfig.blockSizeHorizontal! * 83,
+                  //width: SizeConfig.blockSizeHorizontal! *95,
                   child: Row(children: [
                     CupertinoCheckbox(
                       value: isChosen, onChanged: (value) {
@@ -268,7 +267,6 @@ void initState() {
                         }else{
                           ref.read(taskDataProvider).chosenTaskIdList.add(targetData["id"]);
                         }
-                      //ref.read(taskDataProvider.notifier).state;
                       ref.read(taskDataProvider).manageIsButton();
                       
                       });
@@ -283,16 +281,24 @@ void initState() {
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 4.5,
                                       fontWeight: FontWeight.w700))),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 69,
-                              child: Text(targetData["title"] ?? "(タイトルなし)",
-                                  style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeVertical! * 1.75,
-                                    color: Colors.grey,
-                                  )))
-                        ]),
-                  ]))))
+                      Row(children:[
+                          Text(truncateDtEnd(targetData),
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color:Colors.grey)),
+                          const SizedBox(width:10),
+                          Text(truncateTimeEnd(targetData),
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color:Colors.grey)),
+                      ])
+                    ]),
+                  ])
+                )
+              )
+            )
     ]);
   }
 
@@ -567,5 +573,10 @@ void initState() {
     String formattedminute = minute.padLeft(2, '0');
 
     return formattedhour + ":" + formattedminute;
+  }
+
+  String truncateDtEnd(targetData) {
+    String dtEnd = DateFormat('yyyy/MM/dd').format(DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]));
+    return dtEnd;
   }
 }
