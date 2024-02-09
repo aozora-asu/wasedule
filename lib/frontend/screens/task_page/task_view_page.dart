@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 import '../common/float_button.dart';
 import 'tasklist_sort_date.dart';
 import 'package:flutter/widgets.dart';
@@ -191,7 +192,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               }
 
               taskData.sortDataByDtEnd(taskData.taskDataList);
-              print(taskData.deletedTaskDataList);
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
@@ -201,7 +201,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         );
 
       case 1:
-        return LoadingScreen();
+        return TaskListByCategory(sortedData: taskData.sortDataByCategory(taskData.taskDataList));
 
       default:
         return LoadingScreen();
