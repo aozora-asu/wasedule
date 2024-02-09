@@ -44,13 +44,13 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
         padding: const EdgeInsets.all(14.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Container(
-            height:SizeConfig.blockSizeHorizontal! *10,
+          children: [SizedBox(
+            height:SizeConfig.blockSizeVertical! *5,
             child:TextField(
               controller: _urlController,
-              decoration: const InputDecoration(
+              decoration: const InputDecoration.collapsed(
                 border: OutlineInputBorder(),
-                labelText: 'Moodle URL',
+                hintText: 'Moodle URL',
               ),
              ), 
             ),

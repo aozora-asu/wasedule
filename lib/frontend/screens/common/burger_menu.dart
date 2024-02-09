@@ -15,10 +15,10 @@ class burgerMenu extends StatelessWidget {
         children: <Widget>[
           Container(
             height: SizeConfig.blockSizeHorizontal! *30, // 高さを設定
-            decoration: BoxDecoration(
+            decoration:const BoxDecoration(
               color: ACCENT_COLOR,
             ),
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
@@ -33,11 +33,11 @@ class burgerMenu extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.settings,
               color: MAIN_COLOR,
             ),
-            title: Text(
+            title: const Text(
               "設定",
               style: TextStyle(
                 fontSize: 22.5,
@@ -53,11 +53,11 @@ class burgerMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.school,
               color: MAIN_COLOR,
             ),
-            title: Text(
+            title: const Text(
               "使い方ガイド",
               style: TextStyle(
                 fontSize: 22.5,
@@ -69,11 +69,11 @@ class burgerMenu extends StatelessWidget {
             },
           ),
                     ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.add_link,
               color: MAIN_COLOR,
             ),
-            title: Text(
+            title: const Text(
               "Moodle URLの登録",
               style: TextStyle(
                 fontSize: 22.5,
