@@ -199,11 +199,13 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                 ],
               ),
 
+         const Divider(indent: 7,endIndent: 7,thickness: 3),
 
           SizedBox(
-            height: SizeConfig.blockSizeVertical! * 2,
+            height: SizeConfig.blockSizeVertical! * 1,
             width: SizeConfig.blockSizeHorizontal! * 80
           ),
+
 
 
           Container(
@@ -222,7 +224,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           ),
 
 
-         const Divider(indent: 7,endIndent: 7,thickness: 3),
+
 
          Row(children:[
           ElevatedButton(
