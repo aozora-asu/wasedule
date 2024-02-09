@@ -452,20 +452,14 @@
       "languageVersion": "2.18"
     },
     {
-      "name": "syncfusion_flutter_calendar",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_calendar-23.2.7",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
       "name": "syncfusion_flutter_core",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_core-23.2.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_core-24.2.4",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "syncfusion_flutter_datepicker",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_datepicker-23.2.7",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_datepicker-24.2.4",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -560,7 +554,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-02-08T14:15:02.126533Z",
+  "generated": "2024-02-09T09:46:00.397939Z",
   "generator": "pub",
   "generatorVersion": "3.2.6"
 }

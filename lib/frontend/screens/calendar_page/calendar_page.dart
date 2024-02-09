@@ -9,7 +9,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/url_page.dart/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../assist_files/size_config.dart';
@@ -235,7 +234,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             Row(children:[
               menuPanel(
                 Icons.tag_outlined,
-                "タグ管理",
+                "タグとテンプレート",
                 () {
 
               }),

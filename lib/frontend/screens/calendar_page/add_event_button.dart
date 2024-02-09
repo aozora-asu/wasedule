@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_pag
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,6 +47,9 @@ class ScheduleForm {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
+  var dtStartList = [];
+  var dtEndList = [];
+
   ScheduleForm copyWith({
     String? scheduleController,
     String? dtStartController,
@@ -58,6 +62,8 @@ class ScheduleForm {
     String? publicScheduleController,
     String? dateController,
     String? timeController,
+    var dtStartList,
+    var dtEndList,
   }) {
     return ScheduleForm()
       ..scheduleController.text =
@@ -75,7 +81,9 @@ class ScheduleForm {
       ..publicScheduleController.text =
           publicScheduleController ?? this.publicScheduleController.text
       ..dateController.text = dateController ?? this.dateController.text
-      ..timeController.text = timeController ?? this.timeController.text;
+      ..timeController.text = timeController ?? this.timeController.text
+      ..dtStartList = dtStartList ?? this.dtStartList
+      ..dtEndList = dtEndList ?? this.dtEndList;
   }
 
   void clearTimeStart(){
@@ -86,6 +94,14 @@ class ScheduleForm {
     timeEndController.clear();
   }
 
+  void clearDateStartList(){
+    dtStartList = [];
+  }
+
+  void clearDateEndList(){
+    dtEndList = [];
+  }
+
   void clearContents() {
     scheduleController.clear();
     publicScheduleController.clear();
@@ -94,6 +110,8 @@ class ScheduleForm {
     timeStartController.clear();
     timeEndController.clear();
     tagController.clear();
+    dtStartList = [];
+    dtEndList = [];
   }
 
   void clearpublicScheduleController() {
@@ -151,7 +169,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     return Scaffold(
       appBar:const CustomAppBar(),
       body: 
-      Padding(
+      SingleChildScrollView(child:Padding(
         padding: const EdgeInsets.only(right:10,left:10),
         child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,15 +226,16 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
 
          Row(children:[
           ElevatedButton(
-           onPressed: (){
-            _selectDate(context);
-           },
+    onPressed: () async {
+            scheduleForm.clearDateStartList();
+            _selectDateMultipul(context,ref.read(scheduleFormProvider).dtStartList);
+          },
            style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
               ),
            child: const Text(" + 日付       ",style:TextStyle(color:Colors.white))
           ),
-          timeInputPreview(scheduleForm.dtStartController.text)
+          dateInputPreview(scheduleForm.dtStartList)
           ]),
 
 
@@ -278,46 +297,54 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           ]),
 
 
+
+
+
+          SizedBox(
+              height: SizeConfig.blockSizeVertical! * 0.5,
+              width: SizeConfig.blockSizeHorizontal! * 80),           
+          // Container(
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.start,
+          //     children: [
+          //       const Text(
+          //         'フレンドに共有',
+          //         style: TextStyle(fontSize: 20),
+          //       ),
+          //       const Spacer(),
+          //       CupertinoSwitch(
+          //           activeColor: ACCENT_COLOR,
+          //           value: scheduleForm.isPublic,
+          //           onChanged: (value) {
+          //             ref.read(scheduleFormProvider.notifier).toggleSwitch();
+          //             ref
+          //                 .read(scheduleFormProvider.notifier)
+          //                 .updateDateTimeFields();
+          //           }),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(
+          //   width: SizeConfig.blockSizeHorizontal! * 80,
+          //   height: SizeConfig.blockSizeHorizontal! * 3,
+          // ),
+          // publicScheduleField(ref),
+          
+
+          addTemplateButton(),
+
+          
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeVertical! * 0.5,
+          ),
+         
           const Divider(indent: 7,endIndent: 7,thickness: 3),
 
           SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1,
-              width: SizeConfig.blockSizeHorizontal! * 80),
-              
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'フレンドに共有',
-                  style: TextStyle(fontSize: 20),
-                ),
-                const Spacer(),
-                CupertinoSwitch(
-                    activeColor: ACCENT_COLOR,
-                    value: scheduleForm.isPublic,
-                    onChanged: (value) {
-                      ref.read(scheduleFormProvider.notifier).toggleSwitch();
-                      ref
-                          .read(scheduleFormProvider.notifier)
-                          .updateDateTimeFields();
-                    }),
-              ],
-            ),
-          ),
-          SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeHorizontal! * 3,
+            height: SizeConfig.blockSizeVertical! * 1,
           ),
-          publicScheduleField(ref),
-          
-          const Divider(indent: 7,endIndent: 7,thickness: 3),
-          
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeVertical! * 3,
-          ),
-         
 
           Row(children: [
           ElevatedButton(
@@ -337,7 +364,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           const Spacer(),
           ElevatedButton(
             onPressed: () {
-              if (scheduleForm.dtStartController.text.isEmpty ||
+              if (scheduleForm.dtStartList.isEmpty ||
                   scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
               } else {
@@ -362,21 +389,24 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                           scheduleForm.scheduleController;
                     }
 
-                    Map<String, dynamic> schedule = {
-                      "subject": scheduleForm.scheduleController.text,
-                      "startDate": scheduleForm.dtStartController.text,
-                      "startTime": scheduleForm.timeStartController.text,
-                      "endDate": scheduleForm.dtStartController.text, //ここでは仮で開始日を代入
-                      "endTime": scheduleForm.timeEndController.text,
-                      "isPublic": intIspublic,
-                      "publicSubject":
-                          scheduleForm.publicScheduleController.text,
-                      "tag": scheduleForm.tagController.text
-                    };
-                    ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
-                    ref.read(calendarDataProvider.notifier).state = CalendarData();
-                    ref.read(scheduleFormProvider).clearContents();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    for(int i = 0; i < scheduleForm.dtStartList.length; i++){
+                      Map<String, dynamic> schedule = {
+                        "subject": scheduleForm.scheduleController.text,
+                        "startDate": scheduleForm.dtStartList.elementAt(i),
+                        "startTime": scheduleForm.timeStartController.text,
+                        "endDate": scheduleForm.dtStartList.elementAt(i), //ここでは仮で開始日を代入
+                        "endTime": scheduleForm.timeEndController.text,
+                        "isPublic": intIspublic,
+                        "publicSubject":
+                            scheduleForm.publicScheduleController.text,
+                        "tag": scheduleForm.tagController.text
+                      };
+                      ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
+                      }
+
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      ref.read(scheduleFormProvider).clearContents();
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 }
               }
@@ -385,7 +415,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
               backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                   (Set<MaterialState> states) {
                 // 条件によってボタンの色を選択
-                if (scheduleForm.dtStartController.text.isEmpty ||
+                if (scheduleForm.dtStartList.isEmpty ||
                     scheduleForm.scheduleController.text.isEmpty) {
                   return Colors.grey;
                 } else {
@@ -412,10 +442,36 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           ),
         ],
        ),
+
+
+
      ]),
      )
+    )  
+   );
+  }
+
+  Widget dateInputPreview(List textList){
+    String previewText = "なし";
+    String convertedList = textList.join('\n');
+
+    if(textList.isNotEmpty){previewText = convertedList;}
+
+    return Expanded(
+      child:Center(
+        child:Text(
+          previewText,
+          style:const TextStyle(
+            color:Colors.grey,
+            fontWeight:FontWeight.bold,
+            fontSize:30
+            ),
+          overflow: TextOverflow.visible,
+        )
+      ) 
     );
   }
+
 
   Widget timeInputPreview(String text){
     String previewText = "なし";
@@ -429,9 +485,28 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             color:Colors.grey,
             fontWeight:FontWeight.bold,
             fontSize:30
-            )
+            ),
+          overflow: TextOverflow.visible,
         )
       ) 
+    );
+  }
+
+  Widget addTemplateButton(){
+    return ElevatedButton(
+      onPressed: () {
+        
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
+      ),
+      child: const Row(children:[
+        Spacer(),
+        Icon(Icons.add,color:Colors.white),
+        SizedBox(width:10),
+        Text('テンプレート', style: TextStyle(color: Colors.white)),
+        Spacer(),
+      ]) ,
     );
   }
 
@@ -495,23 +570,66 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime selectedDate = DateTime.now();
 
-    final DateTime? picked = await showDatePicker(
+
+ Future<void> _selectDateMultipul(BuildContext context,var targetList) async {
+
+  await showDialog(
       context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(1882),
-      lastDate: DateTime(2112),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-        ref.read(scheduleFormProvider).dtStartController.text
-         = DateFormat('yyyy-MM-dd').format(picked);
-        ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+      builder: (_) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(0.0),
+          titlePadding: const EdgeInsets.all(0.0),
+          title: SizedBox(
+            height: 400,
+            child: Scaffold(
+              body: SizedBox(
+                child: SfDateRangePicker(
+                    headerHeight: 60,
+                    todayHighlightColor:MAIN_COLOR,
+                    selectionColor: MAIN_COLOR,
+                    headerStyle: const DateRangePickerHeaderStyle(
+                      backgroundColor: MAIN_COLOR,
+                      textStyle: TextStyle(color:Colors.white)
+                      ),
+                  // controllerは設定しなくてもOK!
+                  // 他の項目も必要なものだけ設定してください。他にも色々あります。
+                    view: DateRangePickerView.month,
+                    initialSelectedDate: DateTime.now(), // 選択済みの日
+                    // multiple 複数日
+                    // range 連日
+                    // multiRange 複数連日 などバリエーション豊かに選択範囲が設定できます！
+                    selectionMode: DateRangePickerSelectionMode.multiple,
+                    allowViewNavigation: true, // 月移動矢印
+                    navigationMode: DateRangePickerNavigationMode.snap, // スクロール量、止まる位置 snapは月毎にぴったり止まって切り替わる
+                    showNavigationArrow: true,
+                    showActionButtons: true, // 下のボタンを表示したい時
+                    onSubmit: (dynamic value) {
+                      if(value.isNotEmpty){
+                        
+                        for(int i = 0; i < value.length; i++){
+                          String result = DateFormat('yyyy-MM-dd').format(value.elementAt(i));
+                          targetList.add(result);
+                          print(ref.read(scheduleFormProvider).dtStartList);
+                        }
+                        ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
+                      }
+                      setState(() {
+                        Navigator.pop(context);
+                      });
+                     },
+                    onCancel: () {
+                      Navigator.pop(context);
+                    },
+                  confirmText: "ＯＫ",
+                  cancelText: "戻る",
+                  ),
+              ),
+            ),
+          ),
+        );
       });
     }
-  }
+
 }
+
