@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';

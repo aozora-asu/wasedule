@@ -3,11 +3,12 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page.dart/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/url_page.dart/url_register_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_page.dart/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -257,6 +258,30 @@ class _CalendarState extends ConsumerState<Calendar> {
                   Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+                );
+              }),
+              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
+              menuPanel(
+                Icons.ios_share_rounded,
+                "SNSコンテンツ",
+                () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              }),
+            ]),
+
+            const SizedBox(height:15),
+
+            Row(children:[
+              menuPanel(
+                Icons.question_mark_rounded,
+                "使い方ガイドと\nサポート",
+                () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SnsLinkPage()),
                 );
               }),
               SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'app_bar.dart';
 import '../../assist_files/size_config.dart';
-import '../setting_page.dart/setting_page.dart';
-import '../url_page.dart/url_register_page.dart';
+import '../menu_pages/setting_page.dart/setting_page.dart';
+import '../menu_pages/url_page.dart/url_register_page.dart';
 
 class burgerMenu extends StatelessWidget {
 

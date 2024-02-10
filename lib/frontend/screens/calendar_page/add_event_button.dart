@@ -9,7 +9,6 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_calandar_app/frontend/screens/outdated/data_card.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import '../../assist_files/validators.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';

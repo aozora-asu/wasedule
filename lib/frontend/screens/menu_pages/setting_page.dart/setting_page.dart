@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../assist_files/colors.dart';
-import '../../assist_files/size_config.dart';
+import '../../../assist_files/colors.dart';
+import '../../../assist_files/size_config.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
             appBar: AppBar(
+        leading: const BackButton(color:Colors.white),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: const Column(

@@ -12,7 +12,6 @@ import '../task_page/add_data_card_button.dart';
 
 import '../../assist_files/colors.dart';
 import '../../../backend/temp_file.dart';
-import '../outdated/data_card.dart';
 
 class TaskPage extends StatefulWidget {
   @override
