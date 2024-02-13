@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../common/app_bar.dart';
 import '../common/burger_menu.dart';
@@ -82,6 +86,8 @@ class DailyViewPage extends ConsumerStatefulWidget {
 }
 
 class DailyViewPageState extends ConsumerState<DailyViewPage> {
+  late Timer timer; // Timerを保持する変数
+
   @override
   Widget build(BuildContext context) {
     final inputForm = ref.watch(inputFormProvider);
@@ -280,7 +286,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
 
            return  Column(children:[
-            Container(
+            InkWell(
+             onTap:(){
+              inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
+              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
+             },
+             child:Container(
              width: SizeConfig.blockSizeHorizontal! *95,
              padding: const EdgeInsets.all(16.0),
              decoration: BoxDecoration(
@@ -289,19 +300,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ),
             child:
             Row(children:[
-            InkWell(
-             onTap:(){
-              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
-             },
-             child:Column(
+Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
               dateTimeData,
               Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
                    style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
             ]),
-            
-            ),
             const Spacer(),
             Column(children:[
               IconButton(
@@ -316,7 +321,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               ),
             ])
 
-          ])   
+          ])
+         )
         ),
           const SizedBox(height:15)   
          ]);    
@@ -435,22 +441,117 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     }
   }
 
-  Future<void> _showTextDialog(BuildContext context,Map targetData) async {
-    TextEditingController controller = TextEditingController();
-    controller.text = targetData["subject"];
+  void inittodaiarogu(Map targetData){
+    final provider = ref.watch(scheduleFormProvider);
+    provider.timeStartController.text = targetData["startTime"];
+    provider.timeEndController.text = targetData["endTime"];
+  }
 
+  Future<void> _showTextDialog(BuildContext context,Map targetData) async {
+    final provider = ref.watch(scheduleFormProvider);
+    TextEditingController titlecontroller = TextEditingController();
+    titlecontroller.text = targetData["subject"];
+    dynamic dtStartcontroller = targetData["startDate"];
+    
     return showDialog(
       context: context,
       builder: (BuildContext context) {
+        ref.watch(scheduleFormProvider.notifier);
         return AlertDialog(
           title: const Text('予定の編集...'),
-          content: TextField(
-            controller: controller,
+          content: StatefulBuilder(
+           builder: (BuildContext context, StateSetter setState) {
+            ref.watch(scheduleFormProvider.notifier);
+
+            String tagcontroller = targetData["tag"];
+
+           return Column(children:[TextField(
+            controller: titlecontroller,
             decoration: const InputDecoration(
               labelText: '予定',
               border:OutlineInputBorder()
               ),
+            ),
+          
+        Row(children:[
+         ElevatedButton(
+          onPressed: () async {
+             dtStartcontroller = await _selectDateMultipul(context,dtStartcontroller,setState) ?? dtStartcontroller;
+             setState((){});
+          },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text(" + 日付       ",style:TextStyle(color:Colors.white))
           ),
+          timeInputPreview(dtStartcontroller)
+          ]),
+
+
+         Row(children:[
+          ElevatedButton(
+           onPressed: () {
+           
+              Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                TimeInputPage(
+                 target:widget.target,
+                 inputCategory:"startTime",
+                )
+              ),
+            );
+             setState((){});
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
+          ),
+          //timeInputPreview(provider.timeStartController.text)
+          ]),
+          
+
+          Row(children:[
+          ElevatedButton(
+           onPressed: (){
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => 
+                TimeInputPage(
+                 target:widget.target,
+                 inputCategory:"endTime",
+                )
+              ),
+            );
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("+ 終了時刻",style:TextStyle(color:Colors.white))
+          ),
+          //timeInputPreview(provider.timeEndController.text)
+          ]),
+          
+
+          Row(children:[         
+            ElevatedButton(
+            onPressed: (){
+             
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                ),
+            child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
+            ),
+            timeInputPreview(tagcontroller)
+          ]),
+
+          ]);
+        },
+      ),
+
+
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -461,11 +562,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             TextButton(
               onPressed: () async{
               Map<String,dynamic>newMap = {};
-              newMap["subject"] = controller.text;
-              newMap["startDate"] = targetData["startDate"];
-              newMap["startTime"] = targetData["startTime"];
-              newMap["endDate"] = targetData["endDate"];
-              newMap["endTime"] = targetData["endTime"];
+              newMap["subject"] = titlecontroller.text;
+              newMap["startDate"] = dtStartcontroller; 
+              newMap["startTime"] = provider.timeStartController.text;
+              newMap["endDate"] = dtStartcontroller;
+              newMap["endTime"] = provider.timeEndController.text;
               newMap["isPublic"] = targetData["isPublic"];
               newMap["publicSubject"] = targetData["publicSubject"];
               newMap["tag"] = targetData["tag"];
@@ -482,5 +583,74 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     );
   }
 
-}
 
+
+  Widget timeInputPreview(String text){
+    String previewText = "なし";
+    if(text != ""){previewText = text;}
+
+    return Expanded(
+      child:Center(
+        child:Text(
+          previewText,
+          style:const TextStyle(
+            color:Colors.grey,
+            fontWeight:FontWeight.bold,
+            fontSize:20
+            ),
+          overflow: TextOverflow.visible,
+        )
+      ) 
+    );
+  }
+
+Future<String?> _selectDateMultipul(BuildContext context, String controller, StateSetter setState) async {
+  Completer<String?> completer = Completer<String?>();
+
+  await showDialog(
+    context: context,
+    builder: (_) {
+      return SimpleDialog(
+        contentPadding: const EdgeInsets.all(0.0),
+        titlePadding: const EdgeInsets.all(0.0),
+        title: SizedBox(
+          height: 400,
+          child: Scaffold(
+            body: SizedBox(
+              child: SfDateRangePicker(
+                headerHeight: 60,
+                todayHighlightColor: MAIN_COLOR,
+                selectionColor: MAIN_COLOR,
+                headerStyle: const DateRangePickerHeaderStyle(
+                  backgroundColor: MAIN_COLOR,
+                  textStyle: TextStyle(color: Colors.white)
+                ),
+                view: DateRangePickerView.month,
+                initialSelectedDate: DateTime.now(),
+                selectionMode: DateRangePickerSelectionMode.single,
+                allowViewNavigation: true,
+                navigationMode: DateRangePickerNavigationMode.snap,
+                showNavigationArrow: true,
+                showActionButtons: true,
+                onSubmit: (dynamic value) {
+                  String result = DateFormat('yyyy-MM-dd').format(value);
+                  completer.complete(result);
+                  Navigator.pop(context);
+                },
+                onCancel: () {
+                  completer.complete(null);
+                  Navigator.pop(context);
+                },
+                confirmText: "ＯＫ",
+                cancelText: "戻る",
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  );
+
+  return completer.future;
+ }
+}

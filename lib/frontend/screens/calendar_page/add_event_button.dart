@@ -158,7 +158,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   @override
   void initState() {
     super.initState();
-    ref.read(scheduleFormProvider).dtStartController.text = DateFormat('yyyy-MM-dd').format(widget.target);
+    ref.read(scheduleFormProvider).clearContents();
+    ref.read(scheduleFormProvider).dtStartList.add(DateFormat('yyyy-MM-dd').format(widget.target));
   }
 
   @override
@@ -377,6 +378,9 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       scheduleForm.timeEndController.text.isEmpty) {
                     print("ボタン無効");
                   } else {
+                    if(isConflict(scheduleForm.timeStartController.text, scheduleForm.timeEndController.text)){
+                      print("ボタン無効");
+                      }else{
                     int intIspublic;
                     if (scheduleForm.isPublic) {
                       intIspublic = 1;
@@ -404,10 +408,10 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       };
                       ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
                       }
-
                       ref.read(calendarDataProvider.notifier).state = CalendarData();
                       ref.read(scheduleFormProvider).clearContents();
                       Navigator.of(context).popUntil((route) => route.isFirst);
+                      }
                   }
                 }
               }
@@ -429,7 +433,12 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       return Colors.grey;
                       // ボタンが無効の場合の色
                     } else {
-                      return MAIN_COLOR; // ボタンが通常の場合の色
+                      if(isConflict(scheduleForm.timeStartController.text, scheduleForm.timeEndController.text)){
+                        return Colors.grey;
+                      }else {
+                        return MAIN_COLOR; // ボタンが通常の場合の色
+                      }
+                      
                     }
                   }
                 }
@@ -571,6 +580,15 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     );
   }
 
+  bool isConflict(String start , String end){
+    if(end == ""){return false;}else{
+    Duration startTime = Duration(hours: int.parse(start.substring(0,2)), minutes:int.parse(start.substring(3,5)));
+    Duration endTime = Duration(hours: int.parse(end.substring(0,2)), minutes:int.parse(end.substring(3,5)));
+
+    if(startTime <= endTime){return false;}else{return true;}
+    }
+  }
+
 
 
  Future<void> _selectDateMultipul(BuildContext context,var targetList) async {
@@ -611,7 +629,6 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                         for(int i = 0; i < value.length; i++){
                           String result = DateFormat('yyyy-MM-dd').format(value.elementAt(i));
                           targetList.add(result);
-                          print(ref.read(scheduleFormProvider).dtStartList);
                         }
                         ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
                       }

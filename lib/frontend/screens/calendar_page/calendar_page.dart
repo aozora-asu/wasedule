@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
@@ -263,11 +264,11 @@ class _CalendarState extends ConsumerState<Calendar> {
               SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
               menuPanel(
                 Icons.ios_share_rounded,
-                "SNSコンテンツ",
+                "SNS共有コンテンツ",
                 () {
                   Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                  MaterialPageRoute(builder: (context) => SnsContentsPage()),
                 );
               }),
             ]),
@@ -651,7 +652,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (data.sortedDataByDay.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDay[targetKey];
       return SizedBox(
-          child: ListView.separated(
+       child: ListView.separated(
         itemBuilder: (context, index) {
           if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
               targetDayData.elementAt(index)["endTime"].trim() != "") {
@@ -696,7 +697,10 @@ class _CalendarState extends ConsumerState<Calendar> {
         },
         itemCount: targetDayData.length,
         shrinkWrap: true,
-      ));
+        physics:const ClampingScrollPhysics()
+      )
+     
+    );
     } else {
       return const Center();
     }
@@ -734,3 +738,4 @@ class _CalendarState extends ConsumerState<Calendar> {
 
 
 }
+
