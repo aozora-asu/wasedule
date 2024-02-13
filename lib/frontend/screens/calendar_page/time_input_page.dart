@@ -248,7 +248,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
           timeController = inputForm.timeStartController;
           timeController.text = inputResult;
           ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
-        } else {
+        } else if (widget.inputCategory == "endTime"){
           timeController = inputForm.timeEndController;
           timeController.text = inputResult;
           ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
