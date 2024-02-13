@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page/sns_link_page.dart';
@@ -140,6 +142,12 @@ class _CalendarState extends ConsumerState<Calendar> {
     return scheduleList;
   }
 
+  Future<List<Map<String, dynamic>>> _getTemplateDataSource() async {
+    List<Map<String, dynamic>> templateList =
+        await ScheduleTemplateDatabaseHelper().getScheduleFromDB();
+    return templateList;
+  }
+
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   String urlString = url_t;
   Future<List<Map<String, dynamic>>>? events;
@@ -216,9 +224,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
                   if(ref.read(taskDataProvider).isRenewed){
                     displayDB();
+                    _getTemplateDataSource();
                     ref.read(taskDataProvider).isRenewed = false;
                   }
-
+                  ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                   ref.read(calendarDataProvider).getData(snapshot.data!);
                   ref.read(calendarDataProvider).sortDataByDay();
                   print(ref.watch(calendarDataProvider).sortedDataByDay);
@@ -238,7 +247,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                 Icons.tag_outlined,
                 "タグとテンプレート",
                 () {
-
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
+                );
               }),
               SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
               menuPanel(

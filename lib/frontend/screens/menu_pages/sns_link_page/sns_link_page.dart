@@ -17,7 +17,8 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
         leading: const BackButton(color:Colors.white),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
@@ -76,7 +77,7 @@ class HomePageUrlLauncher extends StatelessWidget {
           onPressed: () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
-              "https://main--silver-alpaca-276a52.netlify.app/",
+              "https://main--wase-dule.netlify.app/",
             );
           }
         );
