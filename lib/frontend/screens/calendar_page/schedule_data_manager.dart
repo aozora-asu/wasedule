@@ -19,11 +19,18 @@ class CalendarDataNotifier extends StateNotifier<CalendarData> {
 
 class CalendarData {
   var calendarData = [];
+  var templateData = [];
   var sortedDataByDay = {};
   CalendarData();
 
   void getData(List<Map<String, dynamic>> data) {
     calendarData = data;
+  }
+
+  void getTemplateData(Future<List<Map<String, dynamic>>> data) async {
+    List<Map<String, dynamic>> fetchedTemplateData = await data;
+    templateData = fetchedTemplateData;
+    print("テンプレデータだよ" + templateData.toString());
   }
 
   void sortDataByDay(){

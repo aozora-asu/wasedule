@@ -722,13 +722,14 @@ int LengthOfMonth(String targetMonth){
             onPressed:()async{
               showMyalog(context,targetDayData);
             },
-            child: Text("+ テンプレートを追加…",style:TextStyle(color:Colors.white)),
-            style: ButtonStyle(
+            
+            style: const  ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
               minimumSize: MaterialStatePropertyAll(Size(1000, 35))
               ),
+            child: const Text("+ テンプレートを追加…",style:TextStyle(color:Colors.white)),
             ),
-            Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
             ElevatedButton(
             onPressed:()async{
             List<String> newList = targetDayData["plan"];

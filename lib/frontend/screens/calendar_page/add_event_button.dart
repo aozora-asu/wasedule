@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
@@ -505,7 +507,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   Widget addTemplateButton(){
     return ElevatedButton(
       onPressed: () {
-        
+        showTemplateDialogue();
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
@@ -648,6 +650,104 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
         );
       });
     }
+
+  Future<void> showTemplateDialogue() async{
+    final data = ref.read(calendarDataProvider);
+    List tempLateMap = data.templateData;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("テンプレート選択"),
+        actions:[
+         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+            const Text("テンプレート(ダブルタップで追加):",style:(TextStyle(fontWeight: FontWeight.bold))),
+            SizedBox(
+              child:ListView.separated(
+                separatorBuilder: (context, index) {
+                 if(tempLateMap.isEmpty){
+                  return const SizedBox();
+                 }else{
+                    return const SizedBox(height:5);
+                 }
+                },
+                itemBuilder: (BuildContext context, index){
+                 if(tempLateMap.isEmpty){
+                   return const SizedBox();
+                 }else{
+                    return InkWell(
+                      onTap: () async{
+                        final inputform = ref.watch(scheduleFormProvider);
+                        inputform.scheduleController.text = data.templateData.elementAt(index)["subject"];
+                        inputform.timeStartController.text = data.templateData.elementAt(index)["startTime"];
+                        inputform.timeEndController.text = data.templateData.elementAt(index)["endTime"];
+                        inputform.tagController.text = data.templateData.elementAt(index)["tag"];
+                        setState((){
+                          ref.read(calendarDataProvider.notifier).state = CalendarData();
+                        });
+                        Navigator.pop(context);
+                      },
+                      child:Container(
+                      height:45,
+                  
+                      decoration:BoxDecoration(
+                        color:Colors.blue[100],
+                        borderRadius:const BorderRadius.all(Radius.circular(20))
+                      ),
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:[
+                        Text(
+                          timedata(index),
+                          style: const TextStyle(fontSize: 10,color:Colors.white),),
+                        Text("  " + ref.read(calendarDataProvider).templateData.elementAt(index)["subject"],
+                             style: const TextStyle(fontSize: 20,color:Colors.white),
+                             overflow: TextOverflow.ellipsis,)
+                      ])
+                        
+                      )
+                    );
+                  }
+                },
+                shrinkWrap: true,
+                itemCount: tempLateMap.length,
+              )
+            ),
+            ElevatedButton(
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
+              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+              ),
+            onPressed:(){
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => TemplateInputForm()),
+              );
+              
+            },
+            child: const Text("+ テンプレートを追加…",style:TextStyle(color:Colors.white)),
+            ),
+          ]),
+        ],
+      );
+ 
+      }
+    );
+  }
+
+String timedata(index){
+
+  if(ref.read(calendarDataProvider).templateData.elementAt(index)["startTime"] == "" &&
+    ref.read(calendarDataProvider).templateData.elementAt(index)["endTime"] == ""){
+     return "      終日";
+  }else{
+    return "      " + ref.read(calendarDataProvider).templateData.elementAt(index)["startTime"] +
+    " ～ " + ref.read(calendarDataProvider).templateData.elementAt(index)["endTime"];
+  }
+}
 
 }
 
