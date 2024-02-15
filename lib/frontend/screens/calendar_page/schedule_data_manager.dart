@@ -20,6 +20,7 @@ class CalendarDataNotifier extends StateNotifier<CalendarData> {
 class CalendarData {
   var calendarData = [];
   var templateData = [];
+  var tagData = [];
   var sortedDataByDay = {};
   CalendarData();
 
@@ -31,6 +32,18 @@ class CalendarData {
     List<Map<String, dynamic>> fetchedTemplateData = await data;
     templateData = fetchedTemplateData;
     print("テンプレデータだよ" + templateData.toString());
+  }
+
+  void getTagData(Future<List<Map<String, dynamic>>> data) async {
+    List<Map<String, dynamic>> fetchedTagData = await data;
+
+      for(int i = 0; i < fetchedTagData.length;){
+        fetchedTagData.elementAt(i)["color"] =
+         intToColor(fetchedTagData.elementAt(i)["color"]);
+      }
+
+    tagData = fetchedTagData;
+    print("タグデータだよ" + templateData.toString());
   }
 
   void sortDataByDay(){
@@ -68,5 +81,9 @@ class CalendarData {
    
  }
 
-
+  // int型からColor型への変換関数
+  Color intToColor(int value) {
+    // 16進数から赤、緑、青、アルファの値を抽出してColorオブジェクトを作成する
+    return Color(value);
+  }
 }

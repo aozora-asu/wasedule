@@ -279,58 +279,55 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     }
 
   Widget tagDataList(){
-    final taskData = ref.watch(taskDataProvider);
-    Map<DateTime, List<Map<String, dynamic>>> sortedData = 
-    taskData.sortDataByDtEnd(taskData.taskDataList);
+    final tagData = ref.watch(calendarDataProvider);
+    List sortedData = 
+    tagData.tagData;
 
-    // if(sortedData.keys.contains(widget.target)){
-    //   return ListView.builder(
-    //       itemBuilder: (BuildContext context, int index) {
-    //         Widget dateTimeData = Container();
-    //           dateTimeData =
-    //               Text(
-    //                 sortedData[widget.target]!.elementAt(index)["title"],
-    //                 style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
-    //               );
 
-    //        return  Column(children:[
-    //         Container(
-    //          width: SizeConfig.blockSizeHorizontal! *95,
-    //          padding: const EdgeInsets.all(16.0),
-    //          decoration: BoxDecoration(
-    //           color: Colors.white, // コンテナの背景色
-    //           borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-    //           boxShadow: [
-    //            BoxShadow(
-    //             color:
-    //                 Colors.grey.withOpacity(0.5), // 影の色と透明度
-    //             spreadRadius: 2, // 影の広がり
-    //             blurRadius: 4, // 影のぼかし
-    //             offset: const Offset(0, 2), // 影の方向（横、縦）
-    //           ),
-    //         ],
-    //         ),
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children:[
-    //           dateTimeData,
-    //           Text(sortedData[widget.target]!.elementAt(index)["summary"] ?? "(詳細なし)",
-    //                         style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
-    //         ]),
-    //       ),
-    //       const SizedBox(height:15)   
-    //      ]);    
-    //     },
-    //     itemCount:
-    //         sortedData[widget.target]!.length,
-    //   shrinkWrap: true,
-    //   physics: const NeverScrollableScrollPhysics(),
-    //   );
+      return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+              dateTimeData =
+                  Text(
+                    sortedData.elementAt(index)["title"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
 
-    // }else{
-
-      return  const SizedBox();
+           return  Column(children:[
+            Container(
+             width: SizeConfig.blockSizeHorizontal! *95,
+             padding: const EdgeInsets.all(16.0),
+             decoration: BoxDecoration(
+              color: sortedData.elementAt(index)["color"], // コンテナの背景色
+              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+              boxShadow: [
+               BoxShadow(
+                color:
+                    Colors.grey.withOpacity(0.5), // 影の色と透明度
+                spreadRadius: 2, // 影の広がり
+                blurRadius: 4, // 影のぼかし
+                offset: const Offset(0, 2), // 影の方向（横、縦）
+              ),
+            ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[
+              dateTimeData,
+              Text(sortedData.elementAt(index)["title"] ?? "(詳細なし)",
+                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
+            ]),
+          ),
+          const SizedBox(height:15)   
+         ]);    
+        },
+        itemCount:
+            sortedData.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      );
     }
+  
 
   void inittodaiarogu(Map targetData){
     final provider = ref.watch(scheduleFormProvider);
