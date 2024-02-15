@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -148,6 +149,12 @@ class _CalendarState extends ConsumerState<Calendar> {
     return templateList;
   }
 
+  Future<List<Map<String, dynamic>>> _getTagDataSource() async {
+    List<Map<String, dynamic>> tagList =
+        await TagDatabaseHelper().getTagFromDB();
+    return tagList;
+  }
+
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   String urlString = url_t;
   Future<List<Map<String, dynamic>>>? events;
@@ -220,14 +227,15 @@ class _CalendarState extends ConsumerState<Calendar> {
                   return calendarBody();
                 } else {
                   // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
-                  print(snapshot.data);
 
                   if(ref.read(taskDataProvider).isRenewed){
                     displayDB();
                     _getTemplateDataSource();
+                    
                     ref.read(taskDataProvider).isRenewed = false;
                   }
                   ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   ref.read(calendarDataProvider).getData(snapshot.data!);
                   ref.read(calendarDataProvider).sortDataByDay();
                   print(ref.watch(calendarDataProvider).sortedDataByDay);

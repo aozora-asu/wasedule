@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import "dart:async";
 
@@ -71,7 +68,7 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
   for (int i = 0; i < fixedDataList.length; i++) {
     String durationAsString = fixedDataList[i]["time"];
     RegExp regex = RegExp(r'(\d+)h(\d+)m');
-    Duration duration = Duration(hours: 0, minutes: 0);
+    Duration duration = const Duration(hours: 0, minutes: 0);
     RegExpMatch? match = regex.firstMatch(durationAsString);
     if (match != null) {
       int hours = int.parse(match.group(1)!);
@@ -83,11 +80,10 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
     Map<String, dynamic> modifiedData = {
       ...fixedDataList[i], // 既存のデータをコピー
       "time": duration,
-      "plan": StringToListString(fixedDataList[i]["plan"]),
-      "record": StringToListString(fixedDataList[i]["record"]),
-      "timeStamp": StringToListDateTime(fixedDataList[i]["timeStamp"]),
+      "plan": stringToListString(fixedDataList[i]["plan"]),
+      "record": stringToListString(fixedDataList[i]["record"]),
+      "timeStamp": stringToListDateTime(fixedDataList[i]["timeStamp"]),
     };
-    print("MODIFIED DATA${modifiedData}");
     result.add(modifiedData);
   }
 
@@ -107,7 +103,7 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
     return count! > 0;
   }
 
-  List<dynamic> StringToListString(String target){
+  List<dynamic> stringToListString(String target){
 
     String newTarget = target.substring(1, target.length - 1);
 
@@ -121,9 +117,9 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
     }
   }
 
-  List<dynamic> StringToListDateTime(String dateString){
-  String NewdateString = dateString.substring(1, dateString.length - 1);
-  List<String> dateStrings = NewdateString.split(',');
+  List<dynamic> stringToListDateTime(String dateString){
+  String newdateString = dateString.substring(1, dateString.length - 1);
+  List<String> dateStrings = newdateString.split(',');
   List<dynamic>? dateList = dateStrings.map((string) {
   try {
     return DateTime.parse(string.trim());
