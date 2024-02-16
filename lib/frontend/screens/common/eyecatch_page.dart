@@ -39,7 +39,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 0),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -91,7 +91,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
   }
 
   Future<void> load() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 0));
   }
 
   @override

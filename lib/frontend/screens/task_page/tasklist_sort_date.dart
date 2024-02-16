@@ -110,7 +110,6 @@ void initState() {
       containedIdList.add(sortedData[keyDateTime]!.elementAt(i)["id"]);
     }
     List<dynamic> chosenIdList = ref.watch(taskDataProvider).chosenTaskIdList;
-    print(containedIdList);
 
       // 2つのリストを集合に変換
     Set<dynamic> set1 = containedIdList.toSet();
@@ -146,8 +145,6 @@ void initState() {
 
   Widget executeDeleteButton(){
     ref.watch(taskDataProvider);
-    print("BUTTON FUNCTION CALLED");
-    print(ref.watch(taskDataProvider).chosenTaskIdList);
     if(ref.read(taskDataProvider).isButton){
       return InkWell(
         onTap: (){

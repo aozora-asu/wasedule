@@ -43,7 +43,7 @@ class CalendarData {
       }
 
     tagData = fetchedTagData;
-    print("タグデータだよ" + templateData.toString());
+    print("タグデータだよ" + tagData.toString());
   }
 
   void sortDataByDay(){

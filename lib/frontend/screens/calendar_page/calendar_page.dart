@@ -15,13 +15,13 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_page.dart/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 
+import 'dart:math';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
-import '../common/loading.dart';
 
 import 'dart:async';
-import 'dart:io';
 // ignore: unnecessary_import
 
 import 'package:flutter/cupertino.dart';
@@ -30,6 +30,9 @@ import '../../../backend/notify/notify_setting.dart';
 import '../../../backend/DB/models/notify_content.dart';
 import '../../../backend/notify/notify.dart';
 
+  var random = Random(DateTime.now().millisecondsSinceEpoch);
+  var randomNumber = random.nextInt(10); // 0から10までの整数を生成
+
 class Calendar extends ConsumerStatefulWidget {
   const Calendar({
     Key? key,
@@ -37,6 +40,7 @@ class Calendar extends ConsumerStatefulWidget {
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
   // bool get didNotificationLaunchApp =>
   //     notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+  
   @override
   _CalendarState createState() => _CalendarState();
 }
@@ -46,7 +50,6 @@ class _CalendarState extends ConsumerState<Calendar> {
   final StreamController<ScheduleNotification>
       didScheduleLocalNotificationStream =
       StreamController<ScheduleNotification>.broadcast();
-
   late String targetMonth = "";
   String thisMonth = DateTime.now().year.toString() +
       "/" +
@@ -56,6 +59,8 @@ class _CalendarState extends ConsumerState<Calendar> {
       DateTime.now().month.toString().padLeft(2, '0') +
       "/" +
       DateTime.now().day.toString().padLeft(2, '0');
+
+
 
   @override
   void initState() {
@@ -209,10 +214,41 @@ class _CalendarState extends ConsumerState<Calendar> {
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
     return Scaffold(
-      body: ListView(
+      body:Container(
+        decoration:  BoxDecoration(
+         image: DecorationImage(
+         image: calendarBackGroundImage(),
+          fit: BoxFit.cover,
+        )
+      ),
+       child:ListView(
         children: [
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 90,
+
+        SizedBox(height:SizeConfig.blockSizeVertical! *2,),
+        Padding(
+          padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
+          child:
+          tipsAndNewsPanel(randomNumber,""),
+        ),
+        SizedBox(height:SizeConfig.blockSizeVertical! *1.5,),
+
+        Padding(
+        padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
+        child:
+         Container(
+            height: SizeConfig.blockSizeVertical! * 85,
+                  decoration: BoxDecoration(
+                  color:Colors.white,
+                  borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+                  boxShadow: [
+                     BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                      spreadRadius: 2, // 影の広がり
+                      blurRadius: 3, // ぼかしの強さ
+                      offset: const Offset(0, 3), // 影の方向（横、縦）
+                    ),
+                  ],
+                ),
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _getDataSource(),
               builder: (context, snapshot) {
@@ -238,30 +274,27 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   ref.read(calendarDataProvider).getData(snapshot.data!);
                   ref.read(calendarDataProvider).sortDataByDay();
-                  print(ref.watch(calendarDataProvider).sortedDataByDay);
                   ref.read(taskDataProvider).getData(taskData);
+
+                  //print(ref.watch(calendarDataProvider).sortedDataByDay);
 
                   return calendarBody();
                 }
               },
             ),
            ),
+          ),
+
+          SizedBox(height:SizeConfig.blockSizeVertical! *3,),
+
            Padding(
-            padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
+            padding: EdgeInsets.only(
+              left:SizeConfig.blockSizeHorizontal! *2.5,
+              right:SizeConfig.blockSizeHorizontal! *2.5,),
             child:Column(children:[
 
             Row(children:[
-              menuPanel(
-                Icons.tag_outlined,
-                "タグとテンプレート",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
-                );
-              }),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
-              menuPanel(
+              expandedMenuPanel(
                 Icons.data_exploration_outlined,
                 "アルバイト",
                 () {
@@ -323,10 +356,22 @@ class _CalendarState extends ConsumerState<Calendar> {
            )
           ],
         ),
+      ),
 
       floatingActionButton: AddEventButton(),
     );
   }
+
+  AssetImage calendarBackGroundImage(){
+    if(DateTime.now().hour >= 5 &&DateTime.now().hour <= 9){
+      return const AssetImage('lib/assets/calendar_background/ookuma_morning.png');
+    }else if(DateTime.now().hour >= 9 &&DateTime.now().hour <= 18){
+      return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
+    }else {
+      return const AssetImage('lib/assets/calendar_background/ookuma_night.png');
+    }
+  }
+
 
   Widget calendarBody() {
     return Column(children: [
@@ -352,12 +397,23 @@ class _CalendarState extends ConsumerState<Calendar> {
                 });
               },
               icon: const Icon(Icons.arrow_forward_ios),
-              iconSize: 20)
+              iconSize: 20),
+
+          TextButton.icon(
+            onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
+              );
+            },
+            icon: const Icon(Icons.tag,size: 20,),
+            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10)),
+          )
         ]),
-      ),
+       ),
       SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 100,
-        height: SizeConfig.blockSizeVertical! * 4,
+        height: SizeConfig.blockSizeVertical! * 3,
         child: generateWeekThumbnail(),
       ),
       SizedBox(
@@ -539,8 +595,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     return ListView.builder(
       itemBuilder: (context, index) {
         return SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 14.285,
-            height: SizeConfig.blockSizeVertical! * 4,
+            width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
+            height: SizeConfig.blockSizeVertical! * 2,
             child: Center(
                 child: Text(
               days.elementAt(index),
@@ -568,14 +624,14 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 14.285,
+        width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
         child: ListView.builder(
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return InkWell(
               child: Container(
-                  width: SizeConfig.blockSizeHorizontal! * 14.285,
+                  width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
                   height: SizeConfig.blockSizeVertical! * 12,
                   decoration: BoxDecoration(
                     color: cellColour(target),
@@ -737,7 +793,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.7), // 影の色と透明度
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
             spreadRadius: 2, // 影の広がり
             blurRadius: 3, // ぼかしの強さ
             offset: const Offset(0, 3), // 影の方向（横、縦）
@@ -756,6 +812,102 @@ class _CalendarState extends ConsumerState<Calendar> {
   );
  }
 
+  Widget expandedMenuPanel(IconData icon, String text, void Function() ontap){
+     return InkWell(
+      onTap:ontap,
+      child:Container(
+       width: SizeConfig.blockSizeHorizontal! *95,
+       height: SizeConfig.blockSizeHorizontal! *45,
+      decoration: BoxDecoration(
+        color:Colors.white,
+        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(children:[
+          const Spacer(),
+          Icon(icon,color:MAIN_COLOR,size:80),
+          Text(text,style:const TextStyle(fontSize:15)),
+          const Spacer(),
+       ])
+      ),
+    ),
+  );
+ }
+
+
+  Widget tipsAndNewsPanel(int rundomNum, String newsText){
+     String today = DateFormat('MM月dd日').format(DateTime.now());
+     String category = "TIPS";
+     String content = "";
+     if(newsText != ""){
+      category = "お知らせ";
+      content = newsText;
+      }else{
+        print("乱数だよ: " + rundomNum.toString());
+        switch (rundomNum){
+          case 0: content = "アルバイトタグを予定に紐づけて、一目で見込み月収をチェック！\n ＞＞『アルバイト』から";
+          case 1: content = "いつタスクをやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
+          case 2: content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
+          case 3: content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
+          case 4: content = "友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
+          case 5: content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『タグとテンプレート』から";
+          case 6: content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
+          case 7: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";
+          case 8: content = "運営公式SNSで最新情報をチェック！  \n＞＞『使い方ガイドとサポート』から";
+          case 9: content = "重要タスクやスケジュールは通知でお知らせ！ \n＞＞『設定』から";
+          case 10: content = "毎日お疲れ様です！";
+        }
+      }
+     
+
+     return Container(
+       width: SizeConfig.blockSizeHorizontal! *95,
+      decoration: BoxDecoration(
+        color:Colors.redAccent,
+        borderRadius: BorderRadius.circular(12.5), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top:2,left:10,right:10,bottom:2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+            Text(category,
+             style: const TextStyle(
+              color:Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize:10
+              ),
+            ),
+            const Divider(color:Colors.white, height:2),
+            Text(content,
+             style: const TextStyle(
+              color:Colors.white,
+              fontSize:12.5
+              ),
+              overflow: TextOverflow.clip,
+            )
+
+
+       ])
+      ),
+  );
+ }
 
 }
 
