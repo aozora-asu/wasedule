@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -158,10 +161,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
               ]),
             ),
             onTap: (){
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TaskInputForm()),
-            );
+             tagDialog();         
             }
           ),
           const SizedBox(height:15) 
@@ -288,13 +288,32 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
           itemBuilder: (BuildContext context, int index) {
             Widget dateTimeData = Container();
               dateTimeData =
-                  Text(
-                    sortedData.elementAt(index)["title"],
-                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  const Text(
+                    "通常タグ",
+                    style: TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
                   );
+            
+            if(sortedData.elementAt(index)["isBeit"] == 1){
+              dateTimeData = Row(children:[
+                const Text(
+                  "アルバイトタグ",
+                  style: TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold,
+                  backgroundColor: Colors.red),
+                ),
+                const SizedBox(width:15),
+               Text(
+                    "時給：" + sortedData.elementAt(index)["wage"].toString() + "円",
+                    style: const TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
+                  )
+              ]);
+            }
 
            return  Column(children:[
-            Container(
+           InkWell(
+            onTap:(){
+              editTagDialog(sortedData.elementAt(index));
+            },
+            child:Container(
              width: SizeConfig.blockSizeHorizontal! *95,
              padding: const EdgeInsets.all(16.0),
              decoration: BoxDecoration(
@@ -310,14 +329,31 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
               ),
             ],
             ),
-            child: Column(
+            child: Row(children:[
+              
+              Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              dateTimeData,
-              Text(sortedData.elementAt(index)["title"] ?? "(詳細なし)",
-                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
+                dateTimeData,
+                Text(sortedData.elementAt(index)["title"] ?? "(詳細なし)",
+                style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
+          ]),
+          const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.delete,color:Colors.white),
+              onPressed: ()async{
+                await TagDatabaseHelper().deleteTag(
+                  sortedData.elementAt(index)["id"]
+                  );
+                ref.read(calendarDataProvider.notifier).state = CalendarData();
+                Navigator.of(context).pop();
+              },
+            ),
+            
             ]),
           ),
+        ),
+            
           const SizedBox(height:15)   
          ]);    
         },
@@ -329,58 +365,59 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     }
   
 
+
+
   void inittodaiarogu(Map targetData){
     final provider = ref.watch(scheduleFormProvider);
     provider.timeStartController.text = targetData["startTime"];
-    provider.timeEndController.text = targetData["endTime"];
+    provider.timeEndController.text = targetData["endTime"];  
   }
 
   Future<void> _showTextDialog(BuildContext context,Map targetData) async {
-    final provider = ref.watch(scheduleFormProvider);
+    final provider = ref.read(scheduleFormProvider);
     TextEditingController titlecontroller = TextEditingController();
     titlecontroller.text = targetData["subject"];
-    dynamic dtStartcontroller = targetData["startDate"];
-    
+
+
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        ref.watch(scheduleFormProvider.notifier);
         return AlertDialog(
-          title: const Text('テンプレートの編集...'),
-          content: StatefulBuilder(
+          title: const Text('テンプレートの編集...',style:TextStyle(fontSize:20)),
+          actions: <Widget>[ 
+          StatefulBuilder(
            builder: (BuildContext context, StateSetter setState) {
-            ref.watch(scheduleFormProvider.notifier);
             String tagcontroller = targetData["tag"];
-
-            return Column(children:[TextField(
-             controller: titlecontroller,
-             decoration: const InputDecoration(
-              labelText: '予定',
-              border:OutlineInputBorder()
+            return Column(
+              children:[TextField(
+               controller: titlecontroller,
+               decoration: const InputDecoration(
+                labelText: 'テンプレート予定名',
+                border:OutlineInputBorder()
               ),
             ),
           
          Row(children:[
           ElevatedButton(
            onPressed: () {
-           
               Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
                 TimeInputPage(
                  target:DateTime.now(),
                  inputCategory:"startTime",
+                 setState: setState,
                 )
               ),
             );
-             setState((){});
            },
            style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
               ),
            child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
           ),
-          //timeInputPreview(provider.timeStartController.text)
+          timeInputPreview(provider.timeStartController.text)
           ]),
           
 
@@ -393,6 +430,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
                 TimeInputPage(
                  target:DateTime.now(),
                  inputCategory:"endTime",
+                 setState: setState,
                 )
               ),
             );
@@ -402,7 +440,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
               ),
            child: const Text("+ 終了時刻",style:TextStyle(color:Colors.white))
           ),
-          //timeInputPreview(provider.timeEndController.text)
+          timeInputPreview(provider.timeEndController.text)
           ]),
           
 
@@ -424,13 +462,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
       ),
 
 
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('戻る'),
-            ),
+          
             TextButton(
               onPressed: () async{
               Map<String,dynamic>newMap = {};
@@ -453,8 +485,6 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     );
   }
 
-
-
   Widget timeInputPreview(String text){
     String previewText = "なし";
     if(text != ""){previewText = text;}
@@ -474,4 +504,513 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     );
   }
 
+  void tagDialog(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TagDialog(); // カスタムダイアログを表示
+      },
+    );
+  }
+
+  void editTagDialog(tagData){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditTagDialog(tagData:tagData,); // カスタムダイアログを表示
+      },
+    );
+  }
+
+}
+
+class TagDialog extends ConsumerStatefulWidget {
+
+  @override
+  _TagDialogState createState() => _TagDialogState();
+}
+
+class _TagDialogState extends ConsumerState<TagDialog> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController wageController = TextEditingController();
+  late Color tagColor;
+  late bool isBeit;
+
+
+  @override
+  void initState() {
+    super.initState();
+    isBeit = false;
+    tagColor = Colors.redAccent; // コンテナの背景色
+    wageController.text = "0";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("タグの新規追加...",style:TextStyle(fontSize:20)),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: "タグ名",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 5),
+
+            Row(children:[
+              ElevatedButton(
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+              onPressed: () {
+                colorPickerDialogue();
+              },
+              child: const Text('  色を選択 ',style:TextStyle(color:Colors.white)),
+              ),
+              const SizedBox(width:10),
+            Expanded(
+              child:Container(
+                height:30,
+                color:tagColor
+              ))
+            ]),
+
+            Row(children:[
+              ElevatedButton(
+              style:ElevatedButton.styleFrom(
+                // ボタンの背景色を条件に応じて変更する
+                backgroundColor: isBeit ? ACCENT_COLOR: Colors.grey,
+                // その他のスタイル設定
+                textStyle: const TextStyle(color: Colors.white),
+                // 他のスタイルプロパティを設定する
+              ),
+              onPressed: () {
+                setState((){
+                  if(isBeit){
+                    isBeit = false;
+                  }else{
+                    isBeit = true;
+                  }
+                });
+              },
+              child: const Text('アルバイト',style:TextStyle(color:Colors.white)),
+              ),
+              const SizedBox(width:10),
+            Expanded(
+              child:wageField())
+            ]),
+
+            const SizedBox(height: 10),
+
+            SizedBox(
+            width:500,
+            child:
+             ElevatedButton(
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+              onPressed: (){
+
+                TagDatabaseHelper().resisterTagToDB({
+                  "title" : titleController.text,
+                  "color" : tagColor,
+                  "isBeit" : boolToInt(isBeit),
+                  "wage" : int.parse(wageController.text)
+                });
+               ref.read(calendarDataProvider.notifier).state = CalendarData();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child:  const Text('追加',style:TextStyle(color:Colors.white)),
+            ),
+          )
+          ],
+        ),
+      ),
+    );
+  }
+
+  int boolToInt(bool){
+    if(bool){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+
+
+  Widget wageField(){
+    if(isBeit){
+       return SizedBox(
+        height:40,
+        child:TextField(
+              controller: wageController,
+              decoration: const InputDecoration(
+                labelText: "時給*",
+                labelStyle: TextStyle(color:Colors.red),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
+              ],
+            ))
+       ;
+    }else{
+      return const Text("OFF",style:TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize:20));
+    }
+  }
+
+  void colorPickerDialogue(){
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('タグの色を選択...'),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor:Colors.redAccent,
+              onColorChanged:(color){
+               setState((){tagColor = color;}); 
+              }
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('選択'),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        );
+      });
+  }
+
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    wageController.dispose();
+    super.dispose();
+  }
+}
+
+
+class EditTagDialog extends ConsumerStatefulWidget {
+  Map<String,dynamic> tagData;
+
+  EditTagDialog({
+    required this.tagData
+  });
+  @override
+  _EditTagDialogState createState() => _EditTagDialogState();
+}
+
+class _EditTagDialogState extends ConsumerState<EditTagDialog> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController wageController = TextEditingController();
+  late Color tagColor;
+  late bool isBeit;
+
+
+  @override
+  void initState() {
+    super.initState();
+    titleController.text = widget.tagData["title"];
+    isBeit = intToBool(widget.tagData["isBeit"]);
+    tagColor = widget.tagData["color"];
+    wageController.text = widget.tagData["wage"].toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("タグの編集...",style:TextStyle(fontSize:20)),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: "タグ名",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 5),
+
+            Row(children:[
+              ElevatedButton(
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+              onPressed: () {
+                colorPickerDialogue();
+              },
+              child: const Text('  色を選択 ',style:TextStyle(color:Colors.white)),
+              ),
+              const SizedBox(width:10),
+            Expanded(
+              child:Container(
+                height:30,
+                color:tagColor
+              ))
+            ]),
+
+            Row(children:[
+              ElevatedButton(
+              style:ElevatedButton.styleFrom(
+                // ボタンの背景色を条件に応じて変更する
+                backgroundColor: isBeit ? ACCENT_COLOR: Colors.grey,
+                // その他のスタイル設定
+                textStyle: const TextStyle(color: Colors.white),
+                // 他のスタイルプロパティを設定する
+              ),
+              onPressed: () {
+              },
+              child: const Text('アルバイト',style:TextStyle(color:Colors.white)),
+              ),
+              const SizedBox(width:10),
+            Expanded(
+              child:wageField())
+            ]),
+
+            const SizedBox(height: 10),
+
+            SizedBox(
+            width:500,
+            child:
+             ElevatedButton(
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+              onPressed: (){
+
+                TagDatabaseHelper().updateTag({
+                  "id" : widget.tagData["id"],
+                  "title" : titleController.text,
+                  "color" : colorToInt(tagColor),
+                  "isBeit" : boolToInt(isBeit),
+                  "wage" : int.parse(wageController.text)
+                });
+               ref.read(calendarDataProvider.notifier).state = CalendarData();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child:  const Text('変更',style:TextStyle(color:Colors.white)),
+            ),
+          )
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool intToBool(int){
+    if(int == 1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+
+  int boolToInt(bool){
+    if(bool){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+
+  // Color型からint型への変換関数
+  int colorToInt(Color? color) {
+    if (color == null){color = MAIN_COLOR;}
+    // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
+    return (color.alpha << 24) | (color.red << 16) | (color.green << 8) | color.blue;
+  }
+
+  Widget wageField(){
+    if(isBeit){
+       return SizedBox(
+        height:40,
+        child:TextField(
+              controller: wageController,
+              decoration: const InputDecoration(
+                labelText: "時給*",
+                labelStyle: TextStyle(color:Colors.red),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
+              ],
+            ))
+       ;
+    }else{
+      return const Text("OFF",style:TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize:20));
+    }
+  }
+
+  void colorPickerDialogue(){
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('タグの色を選択...'),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor:Colors.redAccent,
+              onColorChanged:(color){
+               setState((){tagColor = color;}); 
+              }
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('選択'),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        );
+      });
+  }
+
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    wageController.dispose();
+    super.dispose();
+  }
+}
+
+
+
+Future<void> showTagDialogue(WidgetRef ref, BuildContext context, StateSetter setState) async{
+final data = ref.read(calendarDataProvider);
+List tagMap = data.tagData;
+showDialog(
+context: context,
+builder: (BuildContext context) {
+  return AlertDialog(
+    title: const Text("タグを選択："),
+  actions:[
+    Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children:[
+      const Text("登録  タグ一覧",style:(TextStyle(fontWeight: FontWeight.bold))),
+      SizedBox(
+        child:ListView.separated(
+          separatorBuilder: (context, index) {
+            if(tagMap.isEmpty){
+            return const SizedBox();
+            }else{
+              return const SizedBox(height:5);
+            }
+          },
+          itemBuilder: (BuildContext context, index){
+            if(tagMap.isEmpty){
+              return const SizedBox();
+            }else{
+              Widget dateTimeData = Container();
+                dateTimeData =
+                    const Text(
+                      "通常タグ",
+                      style: TextStyle(color:Colors.white,fontSize: 10,fontWeight: FontWeight.bold),
+                    );
+              
+              if(data.tagData.elementAt(index)["isBeit"] == 1){
+                dateTimeData = Row(children:[
+                  const Text(
+                    "アルバイトタグ",
+                    style: TextStyle(color:Colors.white,fontSize: 8,fontWeight: FontWeight.bold,
+                    backgroundColor: Colors.red),
+                  ),
+                  const SizedBox(width:15),
+                Text(
+                      "時給：" + data.tagData.elementAt(index)["wage"].toString() + "円",
+                      style: const TextStyle(color:Colors.white,fontSize: 10,fontWeight: FontWeight.bold),
+                    )
+                ]);
+              }
+
+
+
+              return InkWell(
+                onTap: () async{
+                  final inputform = ref.watch(scheduleFormProvider);
+                  setState((){inputform.tagController.text = data.tagData.elementAt(index)["id"].toString();});
+                  Navigator.pop(context);
+                },
+                child:Container(
+            
+                decoration:BoxDecoration(
+                  color:data.tagData.elementAt(index)["color"],
+                  borderRadius:const BorderRadius.all(Radius.circular(20))
+                ),
+                child:Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+                    Padding(
+                    child:dateTimeData,
+                    padding:const EdgeInsets.only(left:15,top:3)
+                    )
+                    ,
+                  Text("  " + data.tagData.elementAt(index)["title"],
+                        style: const TextStyle(fontSize: 20,color:Colors.white),
+                        overflow: TextOverflow.ellipsis,)
+                ])
+                )
+              );
+            }
+          },
+          shrinkWrap: true,
+          itemCount: tagMap.length,
+        )
+      ),
+      ElevatedButton(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
+          minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+          ),
+        onPressed:(){
+          setState((){ref.read(scheduleFormProvider).tagController.text = "";});
+          Navigator.pop(context);
+        },
+        child: const Text(" - タグをクリア",style:TextStyle(color:Colors.white)),
+      ),
+    ]),
+  ],
+);
+
+}
+);
+}
+
+String returnTagData(String id, WidgetRef ref){
+    final data = ref.read(calendarDataProvider);
+    List tagMap = data.tagData;
+    if(id == ""){
+    return "";
+  }else{
+    for (var data in tagMap) {
+      if (data["id"] == int.parse(id)) {
+        return data["title"]; // 指定の数字を含むMapが見つかった場合、trueを返す
+      }
+    }
+  return "無効なタグです"; // 指定の数字を含むMapが見つからなかった場合、falseを返す
+ }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_bu
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:intl/intl.dart';
@@ -464,7 +465,7 @@ Column(
         ref.watch(scheduleFormProvider.notifier);
         return AlertDialog(
           title: const Text('予定の編集...'),
-          content: StatefulBuilder(
+          actions: <Widget>[StatefulBuilder(
            builder: (BuildContext context, StateSetter setState) {
             ref.watch(scheduleFormProvider.notifier);
 
@@ -503,6 +504,7 @@ Column(
                 TimeInputPage(
                  target:widget.target,
                  inputCategory:"startTime",
+                 setState: setState,
                 )
               ),
             );
@@ -513,7 +515,7 @@ Column(
               ),
            child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
           ),
-          //timeInputPreview(provider.timeStartController.text)
+          timeInputPreview(provider.timeStartController.text)
           ]),
           
 
@@ -526,6 +528,7 @@ Column(
                 TimeInputPage(
                  target:widget.target,
                  inputCategory:"endTime",
+                 setState: setState,
                 )
               ),
             );
@@ -535,21 +538,21 @@ Column(
               ),
            child: const Text("+ 終了時刻",style:TextStyle(color:Colors.white))
           ),
-          //timeInputPreview(provider.timeEndController.text)
+          timeInputPreview(provider.timeEndController.text)
           ]),
           
 
           Row(children:[         
             ElevatedButton(
             onPressed: (){
-             
+             showTagDialogue(ref, context, setState);
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                 ),
             child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
             ),
-            timeInputPreview(tagcontroller)
+            timeInputPreview(returnTagData(provider.tagController.text,ref))
           ]),
 
           ]);
@@ -557,13 +560,6 @@ Column(
       ),
 
 
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('戻る'),
-            ),
             TextButton(
               onPressed: () async{
               Map<String,dynamic>newMap = {};

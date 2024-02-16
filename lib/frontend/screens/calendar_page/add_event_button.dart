@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -290,14 +291,14 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           Row(children:[         
             ElevatedButton(
             onPressed: (){
-             _showTextDialog(context);
+             showTagDialogue(ref, context, setState);
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                 ),
             child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
             ),
-            timeInputPreview(scheduleForm.tagController.text)
+            timeInputPreview(returnTagData(scheduleForm.tagController.text,ref))
           ]),
 
 
@@ -664,7 +665,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            const Text("テンプレート(ダブルタップで追加):",style:(TextStyle(fontWeight: FontWeight.bold))),
+            const Text("テンプレート:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
               child:ListView.separated(
                 separatorBuilder: (context, index) {

@@ -35,14 +35,20 @@ class CalendarData {
   }
 
   void getTagData(Future<List<Map<String, dynamic>>> data) async {
-    List<Map<String, dynamic>> fetchedTagData = await data;
+    var fetchedTagData = await data;
+    var fixedData = [];
 
-      for(int i = 0; i < fetchedTagData.length;){
-        fetchedTagData.elementAt(i)["color"] =
-         intToColor(fetchedTagData.elementAt(i)["color"]);
-      }
+    for (int i = 0; i < fetchedTagData.length; i++) {
+      fixedData.add({
+        "id": fetchedTagData.elementAt(i)["id"],
+        "title": fetchedTagData.elementAt(i)["title"],
+        "color": intToColor(fetchedTagData.elementAt(i)["color"]),
+        "isBeit": fetchedTagData.elementAt(i)["isBeit"],
+        "wage": fetchedTagData.elementAt(i)["wage"],
+      });
+    }
 
-    tagData = fetchedTagData;
+    tagData = fixedData;
     print("タグデータだよ" + tagData.toString());
   }
 

@@ -10,9 +10,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TimeInputPage extends ConsumerStatefulWidget {
   DateTime target;
   String inputCategory;
+  StateSetter? setState;
 
-
-  TimeInputPage({required this.target, required this.inputCategory});
+  TimeInputPage({
+    required this.target,
+    required this.inputCategory,
+    this.setState
+    });
 
 
   @override
@@ -243,14 +247,19 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
 
         TextEditingController timeController = TextEditingController();
         final inputForm = ref.watch(scheduleFormProvider);
-
+        
         if (widget.inputCategory == "startTime") {
           timeController = inputForm.timeStartController;
+          inputForm.clearTimeStart();
           timeController.text = inputResult;
-          ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
         } else if (widget.inputCategory == "endTime"){
           timeController = inputForm.timeEndController;
+          inputForm.clearTimeEnd();
           timeController.text = inputResult;
+        }
+        if(widget.setState != null){
+          widget.setState!((){});
+        }else{
           ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
         }
         Navigator.pop(context);

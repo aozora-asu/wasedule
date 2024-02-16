@@ -365,7 +365,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   AssetImage calendarBackGroundImage(){
     if(DateTime.now().hour >= 5 &&DateTime.now().hour <= 9){
       return const AssetImage('lib/assets/calendar_background/ookuma_morning.png');
-    }else if(DateTime.now().hour >= 9 &&DateTime.now().hour <= 18){
+    }else if(DateTime.now().hour >= 9 &&DateTime.now().hour <= 17){
       return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
     }else {
       return const AssetImage('lib/assets/calendar_background/ookuma_night.png');
@@ -399,16 +399,24 @@ class _CalendarState extends ConsumerState<Calendar> {
               icon: const Icon(Icons.arrow_forward_ios),
               iconSize: 20),
 
-          TextButton.icon(
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 40,
+            height: SizeConfig.blockSizeVertical! * 4,
+            child: TextButton.icon(
             onPressed: () {
                 Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
               );
             },
-            icon: const Icon(Icons.tag,size: 20,),
-            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10)),
-          )
+            icon: const Icon(Icons.tag,size: 15,color:Colors.white),
+            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white)),
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
+              ),
+          ),
+          ),
+
         ]),
        ),
       SizedBox(
