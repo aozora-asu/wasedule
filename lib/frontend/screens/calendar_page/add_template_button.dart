@@ -5,8 +5,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,6 +22,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
 class TemplateInputForm extends ConsumerStatefulWidget {
+  StateSetter setosute;
+
+  TemplateInputForm({
+     required this.setosute
+  });
 
   @override
   _TemplateInputFormState createState() => _TemplateInputFormState();
@@ -145,14 +152,14 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
           Row(children:[         
             ElevatedButton(
             onPressed: (){
-             _showTextDialog(context);
+             showTagDialogue(ref, context, setState);
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                 ),
             child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
             ),
-            timeInputPreview(scheduleForm.tagController.text)
+            timeInputPreview(returnTagData(scheduleForm.tagController.text,ref))
           ]),
 
 
@@ -218,7 +225,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
           ),
           const Spacer(),
           ElevatedButton(
-            onPressed: () {
+            onPressed: ()async {
               if (scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
               } else {
@@ -246,11 +253,17 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                         "publicSubject":scheduleForm.publicScheduleController.text,
                         "tag": scheduleForm.tagController.text
                       };
-                      ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
-                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      await ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
                       ref.read(scheduleFormProvider).clearContents();
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      ref.read(taskDataProvider).isRenewed = true;
+                      while (ref.read(taskDataProvider).isRenewed != false) {
+                        await Future.delayed(const Duration(microseconds:1));
                       }
+                      widget.setosute((){});
+                      Navigator.pop(context);
+                      }
+                      
                   }
             },
             style: ButtonStyle(

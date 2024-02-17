@@ -31,7 +31,6 @@ class CalendarData {
   void getTemplateData(Future<List<Map<String, dynamic>>> data) async {
     List<Map<String, dynamic>> fetchedTemplateData = await data;
     templateData = fetchedTemplateData;
-    print("テンプレデータだよ" + templateData.toString());
   }
 
   void getTagData(Future<List<Map<String, dynamic>>> data) async {
@@ -47,9 +46,7 @@ class CalendarData {
         "wage": fetchedTagData.elementAt(i)["wage"],
       });
     }
-
     tagData = fixedData;
-    print("タグデータだよ" + tagData.toString());
   }
 
   void sortDataByDay(){

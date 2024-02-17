@@ -263,11 +263,13 @@ class _CalendarState extends ConsumerState<Calendar> {
                   return calendarBody();
                 } else {
                   // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
-
+                  print("カレンダーの再読み");
                   if(ref.read(taskDataProvider).isRenewed){
+                    print("データ更新時処理実行");
                     displayDB();
                     _getTemplateDataSource();
-                    
+                    ref.read(calendarDataProvider).getData(snapshot.data!);
+                    ref.read(calendarDataProvider).sortDataByDay();
                     ref.read(taskDataProvider).isRenewed = false;
                   }
                   ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
@@ -276,7 +278,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ref.read(calendarDataProvider).sortDataByDay();
                   ref.read(taskDataProvider).getData(taskData);
 
-                  //print(ref.watch(calendarDataProvider).sortedDataByDay);
 
                   return calendarBody();
                 }
@@ -859,10 +860,9 @@ class _CalendarState extends ConsumerState<Calendar> {
       category = "お知らせ";
       content = newsText;
       }else{
-        print("乱数だよ: " + rundomNum.toString());
         switch (rundomNum){
           case 0: content = "アルバイトタグを予定に紐づけて、一目で見込み月収をチェック！\n ＞＞『アルバイト』から";
-          case 1: content = "いつタスクをやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
+          case 1: content = "課題いつやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
           case 2: content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
           case 3: content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
           case 4: content = "友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";

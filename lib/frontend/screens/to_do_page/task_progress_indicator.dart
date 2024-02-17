@@ -25,7 +25,7 @@ DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
 DateTime lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
 
 String formattedDate = DateFormat('MM月dd日(EEE)').format(now);
-int circularIndicatorState = 0;
+int circularIndicatorState = 2;
 
 class TaskProgressIndicator extends StatefulWidget {
   @override

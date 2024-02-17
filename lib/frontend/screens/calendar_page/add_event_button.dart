@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
@@ -121,9 +122,14 @@ class ScheduleForm {
   }
 }
 
-class AddEventButton extends ConsumerWidget {
+class AddEventButton extends ConsumerStatefulWidget{
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _AddEventButtonState createState() => _AddEventButtonState();
+
+}
+class _AddEventButtonState extends ConsumerState {
+  @override
+  Widget build(BuildContext context) {
     final scheduleForm = ref.watch(scheduleFormProvider);
     return SizedBox(
       child: FloatingActionButton(
@@ -131,7 +137,7 @@ class AddEventButton extends ConsumerWidget {
           scheduleForm.clearContents();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CalendarInputForm(target:DateTime.now())),
+              MaterialPageRoute(builder: (context) => CalendarInputForm(target:DateTime.now(),setosute:setState,),),
             );
         },
         foregroundColor: Colors.white,
@@ -145,9 +151,11 @@ class AddEventButton extends ConsumerWidget {
 
 class CalendarInputForm extends ConsumerStatefulWidget {
   DateTime target;
+  StateSetter setosute;
 
   CalendarInputForm({
-  required this.target
+  required this.target,
+  required this.setosute
   });
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
   // bool get didNotificationLaunchApp =>
@@ -368,7 +376,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
           ),
           const Spacer(),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async{
               if (scheduleForm.dtStartList.isEmpty ||
                   scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
@@ -409,11 +417,18 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                             scheduleForm.publicScheduleController.text,
                         "tag": scheduleForm.tagController.text
                       };
-                      ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
+                      await ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
                       }
-                      ref.read(calendarDataProvider.notifier).state = CalendarData();
                       ref.read(scheduleFormProvider).clearContents();
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+
+
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      ref.read(taskDataProvider).isRenewed = true;
+                      while (ref.read(taskDataProvider).isRenewed != false) {
+                        await Future.delayed(const Duration(milliseconds:1));
+                      }
+                      widget.setosute((){});
+                      Navigator.pop(context);
                       }
                   }
                 }
@@ -681,13 +696,12 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                  }else{
                     return InkWell(
                       onTap: () async{
+                        setState((){
                         final inputform = ref.watch(scheduleFormProvider);
                         inputform.scheduleController.text = data.templateData.elementAt(index)["subject"];
                         inputform.timeStartController.text = data.templateData.elementAt(index)["startTime"];
                         inputform.timeEndController.text = data.templateData.elementAt(index)["endTime"];
                         inputform.tagController.text = data.templateData.elementAt(index)["tag"];
-                        setState((){
-                          ref.read(calendarDataProvider.notifier).state = CalendarData();
                         });
                         Navigator.pop(context);
                       },
@@ -725,7 +739,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             onPressed:(){
               Navigator.pop(context);
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => TemplateInputForm()),
+                MaterialPageRoute(builder: (context) => TemplateInputForm(setosute:setState)),
               );
               
             },

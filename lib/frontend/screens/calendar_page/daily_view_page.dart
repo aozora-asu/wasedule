@@ -87,14 +87,9 @@ class DailyViewPage extends ConsumerStatefulWidget {
 }
 
 class DailyViewPageState extends ConsumerState<DailyViewPage> {
-  late Timer timer; // Timerを保持する変数
-
+  
   @override
   Widget build(BuildContext context) {
-    final inputForm = ref.watch(inputFormProvider);
-    final taskData = ref.read(taskDataProvider);
-    final data = ref.read(calendarDataProvider);
-    String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
     ref.watch(taskDataProvider);
     return Scaffold(
         appBar: const CustomAppBar(),
@@ -136,7 +131,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   ),
                 ]),
               ),
-              Container(
+              SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 100,
                 child: listView(),
               ),
@@ -163,7 +158,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ),
             onTap: (){
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target)),
+                MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
               );
             }
           ),
@@ -304,7 +299,15 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              dateTimeData,
+              Row(children:[
+                dateTimeData,
+                const SizedBox(width:15),
+                SizedBox(
+                  height:SizeConfig.blockSizeVertical! *3,
+                  child:tagChip(targetDayData.elementAt(index)["tag"], ref))
+                
+                ]),
+              
               SizedBox(
                 width:SizeConfig.blockSizeHorizontal! *70,
                 child:Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
@@ -321,8 +324,12 @@ Column(
                 await ScheduleDatabaseHelper().deleteSchedule(
                   data.sortedDataByDay[targetKey].elementAt(index)["id"]
                   );
-                ref.read(calendarDataProvider.notifier).state = CalendarData();
-                Navigator.of(context).pop();
+                  ref.read(taskDataProvider).isRenewed = true;
+                  ref.read(calendarDataProvider.notifier).state = CalendarData();
+                  while (ref.read(taskDataProvider).isRenewed != false) {
+                    await Future.delayed(const Duration(microseconds:1));
+                  }
+                  setState((){});
               },
               ),
             ])
@@ -451,6 +458,7 @@ Column(
     final provider = ref.watch(scheduleFormProvider);
     provider.timeStartController.text = targetData["startTime"];
     provider.timeEndController.text = targetData["endTime"];
+    provider.tagController.text = targetData["tag"];
   }
 
   Future<void> _showTextDialog(BuildContext context,Map targetData) async {
@@ -570,11 +578,16 @@ Column(
               newMap["endTime"] = provider.timeEndController.text;
               newMap["isPublic"] = targetData["isPublic"];
               newMap["publicSubject"] = targetData["publicSubject"];
-              newMap["tag"] = targetData["tag"];
+              newMap["tag"] = provider.tagController.text;
               newMap["id"] = targetData["id"];
               await ScheduleDatabaseHelper().updateSchedule(newMap);
+              ref.read(taskDataProvider).isRenewed = true;
               ref.read(calendarDataProvider.notifier).state = CalendarData();
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              while (ref.read(taskDataProvider).isRenewed != false) {
+                await Future.delayed(const Duration(microseconds:1));
+              }
+              setState((){});
+              Navigator.pop(context);
               },
               child: const Text('変更'),
             ),

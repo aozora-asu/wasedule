@@ -30,10 +30,10 @@ class TagAndTemplatePage extends ConsumerStatefulWidget {
 
 
  @override
-   DailyViewPageState createState() => DailyViewPageState();
+   _TagAndTemplatePageState createState() => _TagAndTemplatePageState();
 }
 
-class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
+class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
             ),
             onTap: (){
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => TemplateInputForm()),
+                  MaterialPageRoute(builder: (context) => TemplateInputForm(setosute: setState,)),
                 );
             }
           ),
@@ -241,7 +241,12 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              dateTimeData,
+                Row(children:[
+                  dateTimeData,
+                  const SizedBox(width:15),
+                  tagChip(data.templateData.elementAt(index)["tag"], ref)
+                  ]),
+              
                SizedBox(
                 width:SizeConfig.blockSizeHorizontal! *70,
                 child:Text(data.templateData.elementAt(index)["subject"],
@@ -259,8 +264,13 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
                 await ScheduleTemplateDatabaseHelper().deleteSchedule(
                   data.templateData.elementAt(index)["id"]
                   );
+                ref.read(scheduleFormProvider).clearContents();
                 ref.read(calendarDataProvider.notifier).state = CalendarData();
-                Navigator.of(context).pop();
+                ref.read(taskDataProvider).isRenewed = true;
+                while (ref.read(taskDataProvider).isRenewed != false) {
+                  await Future.delayed(const Duration(microseconds:1));
+                }
+                setState((){});
               },
               ),
             ])
@@ -345,8 +355,13 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
                 await TagDatabaseHelper().deleteTag(
                   sortedData.elementAt(index)["id"]
                   );
+                ref.read(scheduleFormProvider).clearContents();
                 ref.read(calendarDataProvider.notifier).state = CalendarData();
-                Navigator.of(context).pop();
+                ref.read(taskDataProvider).isRenewed = true;
+                while (ref.read(taskDataProvider).isRenewed != false) {
+                  await Future.delayed(const Duration(microseconds:1));
+                }
+                setState((){});
               },
             ),
             
@@ -370,7 +385,8 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
   void inittodaiarogu(Map targetData){
     final provider = ref.watch(scheduleFormProvider);
     provider.timeStartController.text = targetData["startTime"];
-    provider.timeEndController.text = targetData["endTime"];  
+    provider.timeEndController.text = targetData["endTime"];
+    provider.tagController.text = targetData["tag"];  
   }
 
   Future<void> _showTextDialog(BuildContext context,Map targetData) async {
@@ -388,7 +404,6 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
           actions: <Widget>[ 
           StatefulBuilder(
            builder: (BuildContext context, StateSetter setState) {
-            String tagcontroller = targetData["tag"];
             return Column(
               children:[TextField(
                controller: titlecontroller,
@@ -447,14 +462,14 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
           Row(children:[         
             ElevatedButton(
             onPressed: (){
-             
+              showTagDialogue(ref, context, setState);
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
                 ),
             child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
             ),
-            timeInputPreview(tagcontroller)
+            timeInputPreview(returnTagData(provider.tagController.text,ref))
 
          ])
         ]);
@@ -471,11 +486,17 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
               newMap["endTime"] = provider.timeEndController.text;
               newMap["isPublic"] = targetData["isPublic"];
               newMap["publicSubject"] = targetData["publicSubject"];
-              newMap["tag"] = targetData["tag"];
+              newMap["tag"] = provider.tagController.text;
               newMap["id"] = targetData["id"];
               await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
+              ref.read(scheduleFormProvider).clearContents();
+              ref.read(taskDataProvider).isRenewed = true;
               ref.read(calendarDataProvider.notifier).state = CalendarData();
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              while (ref.read(taskDataProvider).isRenewed != false) {
+                await Future.delayed(const Duration(microseconds:1));
+              }
+              setState((){});
+              Navigator.pop(context);
               },
               child: const Text('変更'),
             ),
@@ -508,7 +529,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return TagDialog(); // カスタムダイアログを表示
+        return TagDialog(setosute:setState); // カスタムダイアログを表示
       },
     );
   }
@@ -517,7 +538,7 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditTagDialog(tagData:tagData,); // カスタムダイアログを表示
+        return EditTagDialog(tagData:tagData,setosute:setState); // カスタムダイアログを表示
       },
     );
   }
@@ -525,6 +546,11 @@ class DailyViewPageState extends ConsumerState<TagAndTemplatePage> {
 }
 
 class TagDialog extends ConsumerStatefulWidget {
+  StateSetter setosute;
+
+  TagDialog({
+   required this.setosute
+  });
 
   @override
   _TagDialogState createState() => _TagDialogState();
@@ -616,16 +642,24 @@ class _TagDialogState extends ConsumerState<TagDialog> {
             child:
              ElevatedButton(
               style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-              onPressed: (){
+              onPressed: ()async{
 
-                TagDatabaseHelper().resisterTagToDB({
+                await TagDatabaseHelper().resisterTagToDB({
                   "title" : titleController.text,
                   "color" : tagColor,
                   "isBeit" : boolToInt(isBeit),
                   "wage" : int.parse(wageController.text)
                 });
-               ref.read(calendarDataProvider.notifier).state = CalendarData();
-              Navigator.of(context).popUntil((route) => route.isFirst);
+                ref.read(scheduleFormProvider).clearContents();
+                ref.read(taskDataProvider).isRenewed = true;
+                ref.read(calendarDataProvider.notifier).state = CalendarData();
+                while (ref.read(taskDataProvider).isRenewed != false) {
+                  await Future.delayed(const Duration(microseconds:1));
+                }
+                widget.setosute((){});
+                Navigator.pop(context);
+                
+                
               },
               child:  const Text('追加',style:TextStyle(color:Colors.white)),
             ),
@@ -706,9 +740,11 @@ class _TagDialogState extends ConsumerState<TagDialog> {
 
 class EditTagDialog extends ConsumerStatefulWidget {
   Map<String,dynamic> tagData;
+  StateSetter setosute;
 
   EditTagDialog({
-    required this.tagData
+    required this.tagData,
+    required this.setosute
   });
   @override
   _EditTagDialogState createState() => _EditTagDialogState();
@@ -794,17 +830,23 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
             child:
              ElevatedButton(
               style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-              onPressed: (){
+              onPressed: ()async{
 
-                TagDatabaseHelper().updateTag({
+                await TagDatabaseHelper().updateTag({
                   "id" : widget.tagData["id"],
                   "title" : titleController.text,
                   "color" : colorToInt(tagColor),
                   "isBeit" : boolToInt(isBeit),
                   "wage" : int.parse(wageController.text)
                 });
-               ref.read(calendarDataProvider.notifier).state = CalendarData();
-              Navigator.of(context).popUntil((route) => route.isFirst);
+                ref.read(scheduleFormProvider).clearContents();
+                ref.read(taskDataProvider).isRenewed = true;
+                ref.read(calendarDataProvider.notifier).state = CalendarData();
+                while (ref.read(taskDataProvider).isRenewed != false) {
+                  await Future.delayed(const Duration(microseconds:1));
+                }
+                widget.setosute((){});
+                Navigator.pop(context);
               },
               child:  const Text('変更',style:TextStyle(color:Colors.white)),
             ),
@@ -1006,11 +1048,60 @@ String returnTagData(String id, WidgetRef ref){
     if(id == ""){
     return "";
   }else{
-    for (var data in tagMap) {
+    for (var data in tagMap) {print(tagMap);
       if (data["id"] == int.parse(id)) {
-        return data["title"]; // 指定の数字を含むMapが見つかった場合、trueを返す
+        return data["title"];
       }
     }
-  return "無効なタグです"; // 指定の数字を含むMapが見つからなかった場合、falseを返す
+  
+  return "無効なタグです";
+ }
+}
+
+Widget tagChip(String id, WidgetRef ref){
+  final data = ref.read(calendarDataProvider);
+  List tagMap = data.tagData;
+  if(id == ""){
+    return const SizedBox();
+  }else{
+    for (var data in tagMap) {
+      if (data["id"] == int.parse(id)) {
+        
+        return Chip(
+          visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
+          labelPadding: const EdgeInsets.only(left:10,),
+          avatar:CircleAvatar(
+            backgroundColor: Colors.grey[600],
+          ),
+          label: Text(
+            data["title"],
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+            ),
+          ),
+          backgroundColor: data["color"],
+          elevation: 6.0, // 影の大きさ
+          shadowColor: Colors.grey[60], // 影の色
+          padding: const EdgeInsets.all(9),
+        );// 指定の数字を含むMapが見つかった場合、trueを返す
+
+      }
+    }
+  return  Chip(
+          visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
+          labelPadding: EdgeInsets.zero,
+          label: const Text(
+            "！ 削除されたタグ",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+            ),
+          ),
+          backgroundColor: Colors.grey,
+          elevation: 6.0, // 影の大きさ
+          shadowColor: Colors.grey[60], // 影の色
+
+        );
  }
 }

@@ -50,7 +50,6 @@ class TaskData {
 
   void getData(List<Map<String, dynamic>> data) {
     taskDataList = data;
-    print(taskDataList);
   }
 
   List<String> extractTitles(List<Map<String, dynamic>> TDList){

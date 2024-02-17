@@ -311,19 +311,20 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
              children:[
               
               Row(children:[
+               const SizedBox(width:7),
                const Icon(Icons.calendar_month,size:10,color:Colors.grey),
                const Text("予定 ",style: TextStyle(fontSize:10,color:Colors.grey),),
                const SizedBox(width:4),
                Expanded(child:
                Text(calendarData(index),
                 style: const TextStyle(fontSize:12,color:Colors.grey),
-                overflow: TextOverflow.ellipsis,
                ),
                )
               ]),
 
 
               Row(children:[
+               const SizedBox(width:7),
                const Icon(Icons.edit,size:10,color:Colors.grey),
                const Text("メモ ",style: TextStyle(fontSize:10,color:Colors.grey),),
                const SizedBox(width:4),
@@ -349,7 +350,7 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
                  ref.read(dataProvider).isRenewed = true;
                },
                ),
-               )              
+               )
               ]),
 
 
@@ -410,7 +411,7 @@ String calendarData(index){
     }
     return subJectList.join('、');
   }else{
-    return "   (なし)";
+    return "";
   }
 }
 
