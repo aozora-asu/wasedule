@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page/sns_link_page.dart';
@@ -253,6 +254,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               future: _getDataSource(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
+                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   // データが取得される間、ローディングインディケータを表示できます。
                   return calendarBody();
                 } else if (snapshot.hasError) {
@@ -262,6 +264,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   // データがないか、データが空の場合、空っぽのカレンダーを表示。
                   return calendarBody();
                 } else {
+                  
                   // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                   print("カレンダーの再読み");
                   if(ref.read(taskDataProvider).isRenewed){
@@ -272,14 +275,14 @@ class _CalendarState extends ConsumerState<Calendar> {
                     ref.read(calendarDataProvider).sortDataByDay();
                     ref.read(taskDataProvider).isRenewed = false;
                   }
-                  ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                   ref.read(calendarDataProvider).getTagData(_getTagDataSource());
+                  ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                   ref.read(calendarDataProvider).getData(snapshot.data!);
                   ref.read(calendarDataProvider).sortDataByDay();
                   ref.read(taskDataProvider).getData(taskData);
-
-
+                 
                   return calendarBody();
+                  
                 }
               },
             ),
@@ -299,7 +302,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                 Icons.data_exploration_outlined,
                 "アルバイト",
                 () {
-
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:targetMonth,)),
+                );
               }),
             ]),
 
@@ -764,12 +770,17 @@ class _CalendarState extends ConsumerState<Calendar> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Align(alignment: Alignment.centerLeft, child: dateTimeData),
-                Text(
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[tagThumbnail(targetDayData.elementAt(index)["tag"]),
+                  Flexible(child:
+                  Text(
                   " " + targetDayData.elementAt(index)["subject"],
                   style: const TextStyle(color: Colors.black, fontSize: 8),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                ),
+                ),)
+                  ])
+                
               ]));
         },
         separatorBuilder: (context, index) {
@@ -789,6 +800,14 @@ class _CalendarState extends ConsumerState<Calendar> {
     } else {
       return const Center();
     }
+  }
+
+  Widget tagThumbnail(id){
+   if(returnTagColor(id, ref) == null){
+    return Container();
+   }else{
+    return Row(children:[const SizedBox(width:1),Container(width:4,height:8,color: returnTagColor(id, ref))]);
+   }
   }
 
   Widget menuPanel(IconData icon, String text, void Function() ontap){
@@ -866,7 +885,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           case 2: content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
           case 3: content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
           case 4: content = "友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
-          case 5: content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『タグとテンプレート』から";
+          case 5: content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
           case 6: content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
           case 7: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";
           case 8: content = "運営公式SNSで最新情報をチェック！  \n＞＞『使い方ガイドとサポート』から";

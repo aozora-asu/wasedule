@@ -89,7 +89,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
 
 
 
-          Container(
+          SizedBox(
             height: SizeConfig.blockSizeVertical! *10,
             child: TextFormField(
               controller: scheduleForm.scheduleController,

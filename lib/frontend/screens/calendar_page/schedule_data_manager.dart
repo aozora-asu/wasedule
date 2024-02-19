@@ -22,6 +22,7 @@ class CalendarData {
   var templateData = [];
   var tagData = [];
   var sortedDataByDay = {};
+  var sortedDataByMonth = {};
   CalendarData();
 
   void getData(List<Map<String, dynamic>> data) {
@@ -80,9 +81,24 @@ class CalendarData {
     targetList.addAll(validEvents);
 
     sortedDataByDay[targetKey] = targetList;
-   }
    
+   }
  }
+
+  void sortDataByMonth(){
+   var rawData = sortedDataByDay;
+   var result = {};
+   for(int i = 0; i < rawData.length; i++){
+    String targetKey = rawData.keys.elementAt(i).substring(0,7);
+    if(result.keys.contains(targetKey)){
+      result[targetKey][rawData.keys.elementAt(i)] = rawData.values.elementAt(i);
+    }else{
+      result[targetKey] = {rawData.keys.elementAt(i):rawData.values.elementAt(i)};
+    }
+   }
+   sortedDataByMonth = result;
+  }
+
 
   // int型からColor型への変換関数
   Color intToColor(int value) {

@@ -599,11 +599,22 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   }
 
   bool isConflict(String start , String end){
-    if(end == ""){return false;}else{
+    if(returnTagIsBeit(ref.watch(scheduleFormProvider).tagController.text,ref) == 1 && (start == "" || end == "")){
+      return true;
+    }else if(end == ""){
+      return false;
+    }else if(start == "" && end != ""){
+      return true;
+    }else{
+
     Duration startTime = Duration(hours: int.parse(start.substring(0,2)), minutes:int.parse(start.substring(3,5)));
     Duration endTime = Duration(hours: int.parse(end.substring(0,2)), minutes:int.parse(end.substring(3,5)));
 
-    if(startTime <= endTime){return false;}else{return true;}
+    if(startTime >= endTime){
+      return true;
+    }else{
+      return false;
+    }
     }
   }
 

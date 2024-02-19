@@ -1058,6 +1058,40 @@ String returnTagData(String id, WidgetRef ref){
  }
 }
 
+
+int returnTagIsBeit(String id, WidgetRef ref){
+    final data = ref.read(calendarDataProvider);
+    List tagMap = data.tagData;
+    if(id == ""){
+    return 0;
+  }else{
+    for (var data in tagMap) {
+      if (data["id"] == int.parse(id)) {
+        return data["isBeit"];
+      }
+    }
+  
+  return 0;
+ }
+}
+
+Color? returnTagColor(String id, WidgetRef ref){
+    final data = ref.read(calendarDataProvider);
+    List tagMap = data.tagData;
+    if(id == ""){
+    return null;
+  }else{
+    for (var data in tagMap) {
+      if (data["id"] == int.parse(id)) {
+        return data["color"];
+      }
+    }
+  return null;
+ }
+}
+
+
+
 Widget tagChip(String id, WidgetRef ref){
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
@@ -1071,7 +1105,7 @@ Widget tagChip(String id, WidgetRef ref){
           visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
           labelPadding: const EdgeInsets.only(left:10,),
           avatar:CircleAvatar(
-            backgroundColor: Colors.grey[600],
+            backgroundColor: Colors.grey[700],
           ),
           label: Text(
             data["title"],
@@ -1082,7 +1116,7 @@ Widget tagChip(String id, WidgetRef ref){
           ),
           backgroundColor: data["color"],
           elevation: 6.0, // 影の大きさ
-          shadowColor: Colors.grey[60], // 影の色
+          shadowColor: Colors.grey[80], // 影の色
           padding: const EdgeInsets.all(9),
         );// 指定の数字を含むMapが見つかった場合、trueを返す
 

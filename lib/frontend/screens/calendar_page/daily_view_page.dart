@@ -303,7 +303,6 @@ Column(
                 dateTimeData,
                 const SizedBox(width:15),
                 SizedBox(
-                  height:SizeConfig.blockSizeVertical! *3,
                   child:tagChip(targetDayData.elementAt(index)["tag"], ref))
                 
                 ]),
@@ -570,24 +569,28 @@ Column(
 
             TextButton(
               onPressed: () async{
-              Map<String,dynamic>newMap = {};
-              newMap["subject"] = titlecontroller.text;
-              newMap["startDate"] = dtStartcontroller; 
-              newMap["startTime"] = provider.timeStartController.text;
-              newMap["endDate"] = dtStartcontroller;
-              newMap["endTime"] = provider.timeEndController.text;
-              newMap["isPublic"] = targetData["isPublic"];
-              newMap["publicSubject"] = targetData["publicSubject"];
-              newMap["tag"] = provider.tagController.text;
-              newMap["id"] = targetData["id"];
-              await ScheduleDatabaseHelper().updateSchedule(newMap);
-              ref.read(taskDataProvider).isRenewed = true;
-              ref.read(calendarDataProvider.notifier).state = CalendarData();
-              while (ref.read(taskDataProvider).isRenewed != false) {
-                await Future.delayed(const Duration(microseconds:1));
-              }
-              setState((){});
-              Navigator.pop(context);
+                if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
+                  print("ボタン無効");
+                }else{
+                  Map<String,dynamic>newMap = {};
+                  newMap["subject"] = titlecontroller.text;
+                  newMap["startDate"] = dtStartcontroller; 
+                  newMap["startTime"] = provider.timeStartController.text;
+                  newMap["endDate"] = dtStartcontroller;
+                  newMap["endTime"] = provider.timeEndController.text;
+                  newMap["isPublic"] = targetData["isPublic"];
+                  newMap["publicSubject"] = targetData["publicSubject"];
+                  newMap["tag"] = provider.tagController.text;
+                  newMap["id"] = targetData["id"];
+                  await ScheduleDatabaseHelper().updateSchedule(newMap);
+                  ref.read(taskDataProvider).isRenewed = true;
+                  ref.read(calendarDataProvider.notifier).state = CalendarData();
+                  while (ref.read(taskDataProvider).isRenewed != false) {
+                    await Future.delayed(const Duration(microseconds:1));
+                  }
+                  setState((){});
+                  Navigator.pop(context);
+                }
               },
               child: const Text('変更'),
             ),
@@ -597,6 +600,25 @@ Column(
     );
   }
 
+  bool isConflict(String start , String end){
+    if(returnTagIsBeit(ref.watch(scheduleFormProvider).tagController.text,ref) == 1 && (start == "" || end == "")){
+      return true;
+    }else if(end == ""){
+      return false;
+    }else if(start == "" && end != ""){
+      return true;
+    }else{
+
+    Duration startTime = Duration(hours: int.parse(start.substring(0,2)), minutes:int.parse(start.substring(3,5)));
+    Duration endTime = Duration(hours: int.parse(end.substring(0,2)), minutes:int.parse(end.substring(3,5)));
+
+    if(startTime >= endTime){
+      return true;
+    }else{
+      return false;
+    }
+    }
+  }
 
 
   Widget timeInputPreview(String text){
