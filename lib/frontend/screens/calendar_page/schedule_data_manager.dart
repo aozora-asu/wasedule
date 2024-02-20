@@ -21,6 +21,7 @@ class CalendarData {
   var calendarData = [];
   var templateData = [];
   var tagData = [];
+  var arbeitData = [];
   var sortedDataByDay = {};
   var sortedDataByMonth = {};
   CalendarData();
@@ -48,6 +49,12 @@ class CalendarData {
       });
     }
     tagData = fixedData;
+  }
+
+  void getArbeitData(Future<List<Map<String, dynamic>>> data) async {
+    var fetchedTagData = await data;
+    arbeitData = fetchedTagData;
+    print("アルバイトデータだよ" + arbeitData.toString());
   }
 
   void sortDataByDay(){

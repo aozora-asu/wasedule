@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
@@ -161,6 +162,12 @@ class _CalendarState extends ConsumerState<Calendar> {
     return tagList;
   }
 
+  Future<List<Map<String, dynamic>>> _getArbeitDataSource() async {
+    List<Map<String, dynamic>> arbeitList =
+        await ArbeitDatabaseHelper().getArbeitFromDB();
+    return arbeitList;
+  }
+
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   String urlString = url_t;
   Future<List<Map<String, dynamic>>>? events;
@@ -264,17 +271,17 @@ class _CalendarState extends ConsumerState<Calendar> {
                   // データがないか、データが空の場合、空っぽのカレンダーを表示。
                   return calendarBody();
                 } else {
-                  
-                  // データが利用可能な場合、取得したデータを使用してカレンダーを構築します。
                   print("カレンダーの再読み");
                   if(ref.read(taskDataProvider).isRenewed){
                     print("データ更新時処理実行");
                     displayDB();
                     _getTemplateDataSource();
+                    ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                     ref.read(calendarDataProvider).getData(snapshot.data!);
                     ref.read(calendarDataProvider).sortDataByDay();
                     ref.read(taskDataProvider).isRenewed = false;
                   }
+                  ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                   ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                   ref.read(calendarDataProvider).getData(snapshot.data!);

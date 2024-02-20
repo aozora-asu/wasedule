@@ -4,6 +4,7 @@ import 'package:expandable/expandable.dart';
 import 'package:fk_toggle/fk_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
@@ -47,6 +48,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
     String year = widget.targetMonth.substring(0,4);
     String month = widget.targetMonth.substring(5,7);
+    String targetKey = year + "-" + month;
 
     return Scaffold(
         appBar: AppBar(
@@ -141,7 +143,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   children:[
                     Text(year + "年 年収見込み  ",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *7)),
                     Text(
-                    formatNumberWithComma(yearlyWageSum(widget.targetMonth))
+                    formatNumberWithComma(yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))
                     + " 円",
                     style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
                     ),
@@ -168,7 +170,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
               Text("平均月収",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *5)),
               Text(
-              formatNumberWithComma((yearlyWageSum(widget.targetMonth) / numberOfValidMonthNullsafe(widget.targetMonth)).round())+ 
+              formatNumberWithComma((yearlyWageSumWithAdditionalWorkTime(widget.targetMonth) / numberOfValidMonthNullsafe(widget.targetMonth)).round())+ 
               " 円",
               style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
               ),
@@ -187,7 +189,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     )
                 ]),
                 Text(
-                formatNumberWithComma(1030000 - yearlyWageSum(widget.targetMonth))+ 
+                formatNumberWithComma(1030000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))+ 
                 " 円",
                 style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
                 ),
@@ -196,7 +198,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               ]),
               Text(
               "目安  月収" +
-              formatNumberWithComma(((1030000 - yearlyWageSum(widget.targetMonth)) / (12 - numberOfValidMonth(widget.targetMonth))).round())+ 
+              formatNumberWithComma(((1030000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth)) / (12 - numberOfValidMonth(widget.targetMonth))).round())+ 
               " 円未満",
               style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *5)
               ),
@@ -217,7 +219,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     )
                 ]),
                 Text(
-                formatNumberWithComma(1300000 - yearlyWageSum(widget.targetMonth))+ 
+                formatNumberWithComma(1300000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))+ 
                 " 円",
                 style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
                 ),
@@ -227,7 +229,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                 ]),
                 Text(
                 "目安  月収" +
-                formatNumberWithComma(((1300000 - yearlyWageSum(widget.targetMonth)) / (12 - numberOfValidMonth(widget.targetMonth))).round())+ 
+                formatNumberWithComma(((1300000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth)) / (12 - numberOfValidMonth(widget.targetMonth))).round())+ 
                 " 円未満",
                 style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *5)
                 ),
@@ -461,7 +463,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               ),
              ]),
 
-            const SizedBox(height:7),
+            const SizedBox(height:15),
             collectingEntryList(tagData,targetKey)
           ])
         )
@@ -475,13 +477,11 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       year + "-07",year + "-08",year + "-09",year + "-10",year + "-11",year + "-12",
     ];
 
-    return ExpandablePanel(
-      header:const Align(
+    return 
+        Column(children:[const Align(
         alignment: Alignment.centerLeft,
         child:Text("修正記入",style:TextStyle(fontWeight: FontWeight.bold))),
-      collapsed:const SizedBox(),
-      expanded:
-        Column(children:[
+        const SizedBox(height:5),
           Row(children:[
                 const Text("   年/月   ",style: TextStyle(color:Colors.grey)),
                 const Spacer(),
@@ -494,9 +494,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           ListView.separated(
             itemBuilder:(cointext,index){
               TextEditingController controller = TextEditingController();
-              controller.text = culculateWage(
-                      monthlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKeys.elementAt(index)),tagData["wage"]
-                      ).toString();
+              controller.text = returnCorrectedWage(tagData,targetKeys.elementAt(index)).toString();
 
               return Row(children:[
                 Text(targetKeys.elementAt(index)),
@@ -518,7 +516,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                 height:SizeConfig.blockSizeVertical! *3,
                 child:TextField(
                   controller: controller,
-                  keyboardType: TextInputType.numberWithOptions(decimal: false),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: false),
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
@@ -526,25 +524,82 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   decoration: const InputDecoration.collapsed(
                     hintText: "実際の振込額",
                     border: OutlineInputBorder()),
-                  onSubmitted: (value){
 
-                  //ここに入力
+                  onSubmitted: (value)async{
+                    int targetTagId = tagData["id"];
+                    String targetMonth = targetKeys.elementAt(index);
+                    int wage = int.parse(value);
+                    bool found = false;
 
-                  },
-                )
-              ),
-              
+                    for (var data in ref.read(calendarDataProvider).arbeitData) {
+                      int id = data["id"];
+                      String month = data["month"];
+                      int tagId = data["tagId"];
+                      
+                      if (month == targetMonth && tagId == targetTagId) {
+                        found = true;
+                        await ArbeitDatabaseHelper().updateArbeit({
+                          "id" : id,
+                          "tagId" : targetTagId,
+                          "month" : targetMonth,
+                          "wage" : wage
+                        });
+                        ref.read(taskDataProvider).isRenewed = true;
+                        ref.read(calendarDataProvider.notifier).state = CalendarData();
+                        while (ref.read(taskDataProvider).isRenewed != false) {
+                        await Future.delayed(const Duration(microseconds:1));}
+                        setState((){});
+                        break;
+                    }
+                  }
+                    if (!found) {
+                      await ArbeitDatabaseHelper().resisterArbeitToDB({
+                        "tagId" : targetTagId,
+                        "month" : targetMonth,
+                        "wage" : wage
+                      });
+                      ref.read(taskDataProvider).isRenewed = true;
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      while (ref.read(taskDataProvider).isRenewed != false) {
+                      await Future.delayed(const Duration(milliseconds:1));
+                      }
+                      setState((){});
+                  }
+                },
+              )
+            ),     
               const Text(" 円"),
-                ]);
-            }, 
+            ]);
+          }, 
             separatorBuilder: (context,index){
               return Container(height:5);
             },
             physics:const  NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: 12),
-        ])
-    );
+        ]);
+  }
+
+  int returnCorrectedWage(tagData,targetKey){
+  bool found = false;
+  int result = 0;
+  
+  for(var data in ref.read(calendarDataProvider).arbeitData) {
+    String month = data["month"];
+    int tagId = data["tagId"];
+    int wage = data["wage"];
+    if (month == targetKey&& tagId == tagData["id"]) {
+      found = true;
+      result += wage;
+    }
+  }
+  
+    if (!found) {
+       result += culculateWage(
+                      monthlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKey),tagData["wage"]
+                      );
+    }
+  return result;
   }
 
   Duration monthlyWorkTimeSum(tagData,targetKey){
@@ -668,34 +723,38 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     return result;
   }
 
-  Duration yearlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKey){
+  int yearlyWageSumWithAdditionalWorkTime(targetKey){
+    List tagData = ref.watch(calendarDataProvider).tagData;
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    Duration result = Duration.zero;
+    int result = 0;
     String year = targetKey.substring(0,4);
     List<String> targetKeys = [
       year + "-01",year + "-02",year + "-03",year + "-04",year + "-05",year + "-06",
       year + "-07",year + "-08",year + "-09",year + "-10",year + "-11",year + "-12",
     ];
-
-    for(int i = 0; i < targetKeys.length; i++){
-      if(sortedDataByMonth[targetKeys.elementAt(i)] != null){
-        result += monthlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKeys.elementAt(i));
-      }
-    }
-
-    return result;
-  }
-
-  int yearlyWageSum(targetKey){
-    List tagData = ref.watch(calendarDataProvider).tagData;
-    int result = 0;
     for(int i = 0; i < tagData.length; i++){
      if(tagData.elementAt(i)["isBeit"] == 1){
-      result += culculateWage(yearlyWorkTimeSumWithAdditionalWorkTime(tagData.elementAt(i),targetKey),tagData.elementAt(i)["wage"]);
+      for(int ind = 0; ind < targetKeys.length; ind++){
+       if(sortedDataByMonth[targetKeys.elementAt(ind)] != null){
+        result += returnCorrectedWage(tagData.elementAt(i),targetKeys.elementAt(ind));
+       }
+      }
      }
+
     }
     return result;
   }
+
+  // int yearlyWageSum(targetKey){
+  //   List tagData = ref.watch(calendarDataProvider).tagData;
+  //   int result = 0;
+  //   for(int i = 0; i < tagData.length; i++){
+  //    if(tagData.elementAt(i)["isBeit"] == 1){
+  //     result += culculateWage(yearlyWorkTimeSumWithAdditionalWorkTime(tagData.elementAt(i),targetKey),tagData.elementAt(i)["wage"]);
+  //    }
+  //   }
+  //   return result;
+  // }
 
   int numberOfValidMonthNullsafe(targetKey){
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;

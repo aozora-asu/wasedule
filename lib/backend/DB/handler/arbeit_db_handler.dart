@@ -1,8 +1,6 @@
-import 'package:flutter_calandar_app/backend/DB/models/tag.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/backend/DB/models/arbeit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'dart:ui';
 
 class ArbeitDatabaseHelper {
   late Database _database;
@@ -30,13 +28,13 @@ class ArbeitDatabaseHelper {
   }
 
   // データベースの初期化
-  Future<void> insertArbeit(Tag tag) async {
+  Future<void> insertArbeit(Arbeit arbeit) async {
     await _initArbeitDatabase();
-    await _database.insert('arbeit', tag.toMap());
+    await _database.insert('arbeit', arbeit.toMap());
   }
 
   // タスクの削除
-  Future<int> deleteTag(int id) async {
+  Future<int> deleteArbeit(int id) async {
     await _initArbeitDatabase();
     return await _database.delete(
       'arbeit',
@@ -45,44 +43,34 @@ class ArbeitDatabaseHelper {
     );
   }
 
-  Future<void> updateTag(Map<String, dynamic> newTag) async {
+  Future<void> updateArbeit(Map<String, dynamic> newArbeit) async {
     await _initArbeitDatabase();
     await _database.update(
       'arbeit',
-      newTag, // 更新後の値
+      newArbeit, // 更新後の値
       where: 'id = ?',
-      whereArgs: [newTag["id"]],
+      whereArgs: [newArbeit["id"]],
     );
   }
 
-  Future<void> resisterTagToDB(Map<String, dynamic> newTag) async {
+  Future<void> resisterArbeitToDB(Map<String, dynamic> newArbeit) async {
     await _initArbeitDatabase();
-    Tag tag;
+    Arbeit arbeit;
 
     // 1. TaskItemオブジェクトを作成
-   tag = Tag(
-      title: newTag["title"],
-      color: colorToInt(newTag["color"]),
-      isBeit: newTag["isBeit"],
-      wage: newTag["wage"]
+   arbeit = Arbeit(
+      tagId: newArbeit["tagId"],
+      month: newArbeit["month"],
+      wage: newArbeit["wage"]
       );
-    await insertArbeit(tag);
+    await insertArbeit(arbeit);
   }
 
-  Future<List<Map<String, dynamic>>> getTagFromDB() async {
+  Future<List<Map<String, dynamic>>> getArbeitFromDB() async {
     await _initArbeitDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM arbeit');
     return data;
   }
-
-  
-  // Color型からint型への変換関数
-  int colorToInt(Color? color) {
-    if (color == null){color = MAIN_COLOR;}
-    // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
-    return (color.alpha << 24) | (color.red << 16) | (color.green << 8) | color.blue;
-  }
-
 
 }
