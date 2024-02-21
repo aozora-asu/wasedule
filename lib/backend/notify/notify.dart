@@ -21,7 +21,8 @@ const String darwinNotificationCategoryPlain = 'plainCategory';
 
 class Notify {
   int id = 0;
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   String? selectedNotificationPayload;
   Future<void> initializeNotifications() async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -34,9 +35,9 @@ class Notify {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  Notify() {
-    initializeNotifications();
-  }
+  // Notify() {
+  //   // initializeNotifications();
+  // }
 
   Future<void> scheduleDailyEightAMNotification() async {
     String todaysSchedule =

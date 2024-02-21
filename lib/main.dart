@@ -13,7 +13,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  await Notify().initializeNotifications();
+  // await Notify().initializeNotifications();
 
   await initializeDateFormatting(); // 初期化
   runApp(ProviderScope(child: MyApp()));
