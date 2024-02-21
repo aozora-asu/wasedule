@@ -10,7 +10,12 @@ import flutter_local_notifications
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     if #available(iOS 10.0, *) {
-  UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+if let notificationDelegate = self as? UNUserNotificationCenterDelegate {
+    UNUserNotificationCenter.current().delegate = notificationDelegate
+}
+
+
+
   
 }
   // This is required to make any communication available in the action isolate.
