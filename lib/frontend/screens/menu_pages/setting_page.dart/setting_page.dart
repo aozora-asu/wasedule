@@ -1,4 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../assist_files/colors.dart';
 import '../../../assist_files/size_config.dart';
 
@@ -36,15 +42,15 @@ class SettingsPage extends StatelessWidget {
 }
 
 //サイドメニュー//////////////////////////////////////////////////////
-class MyWidget extends StatefulWidget {
+class MyWidget extends ConsumerStatefulWidget {
 
   const MyWidget({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  ConsumerState<MyWidget> createState() => _MyWidgetState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _MyWidgetState extends ConsumerState<MyWidget> {
   int _selectedIndex = 0;
 
   @override
@@ -86,25 +92,31 @@ class _MyWidgetState extends State<MyWidget> {
   }
 }
 
-class MainContents extends StatelessWidget {
-  const MainContents({super.key, required this.index});
-
+class MainContents extends ConsumerStatefulWidget {
   final int index;
+  const MainContents({super.key, required this.index});
+  @override
+  ConsumerState<MainContents> createState() => _MainContentsState();
+}
+
+class _MainContentsState extends ConsumerState<MainContents> {
+ 
 
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
 //通知の設定画面////////////////////////////////////////////////
-    switch (index) {
+    switch (widget.index) {
       case 1:
     return Expanded(
       child: Stack(
-          children: [Scaffold(
+          children: [
+            const Scaffold(
             backgroundColor: BACKGROUND_COLOR,
-      body: Center(
-        child: Text('通知の設定…'),
-      ),
-    ),
+            body: Center(
+              child: Text('通知の設定…'),
+             ),
+            ),
             Positioned(
               top: 7,
               left: 10,
@@ -121,12 +133,13 @@ class MainContents extends StatelessWidget {
       case 2:
     return Expanded(
       child: Stack(
-          children: [Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Center(
-        child: Text('フレンドの設定…'),
-      ),
-    ),
+          children: [
+            const Scaffold(
+              backgroundColor: BACKGROUND_COLOR,
+              body: Center(
+                child: Text('フレンドの設定…'),
+              ),
+            ),
             Positioned(
               top: 7,
               left: 10,
@@ -139,28 +152,166 @@ class MainContents extends StatelessWidget {
           ],
         ),
         );
-//カレンダーの設定画面////////////////////////////////////////////////
       default:
-    return Expanded(
-      child: Stack(
-          children: [Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Center(
-        child: Text('カレンダーの設定…'),
-      ),
-    ),
-            Positioned(
-              top: 7,
-              left: 10,
-              child:  Text('カレンダー設定…',
-              style:TextStyle(
+    return Expanded(child:
+          Padding(
+            padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
+            child:calendarBody(),
+          )
+        );
+      }
+    } 
+    
+  Widget calendarBody(){
+    return 
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:[
+      Text('カレンダー設定…',
+        style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *7,
         fontWeight: FontWeight.bold
-        ),),
-            ),
-          ],
         ),
-        );
-}
-}
-}
+      ),
+      const SizedBox(height:10),
+      Text('カレンダー画面の表示カスタム',style:TextStyle(
+        fontSize: SizeConfig.blockSizeHorizontal! *4,
+        fontWeight: FontWeight.bold
+        ),
+      ),
+
+      const SizedBox(height:5),
+      configSwitch("Tipsとお知らせ","tips"),
+      const SizedBox(height:5),
+      configSwitch("きょうの予定","todaysSchedule"),
+      const SizedBox(height:5),
+      configSwitch("近日締切のタスク","taskList"),
+      const SizedBox(height:5),
+      configTextField("表示日数：","taskList"),
+      const SizedBox(height:5),
+    ]);
+  }
+
+  Widget configSwitch(String configText,String widgetName){
+     return Row(children:[
+      CupertinoSwitch(
+        value:searchConfigData(widgetName),
+        activeColor: ACCENT_COLOR,
+        onChanged:(value){
+            updateConfigData(widgetName, value);
+        }),
+      Text(configText,style:TextStyle(
+        fontSize: SizeConfig.blockSizeHorizontal! *4,
+        ),),
+     ]);
+  }
+
+    Widget configTextField(String configText,String widgetName){
+    TextEditingController controller = TextEditingController();
+    controller.text = searchConfigInfo(widgetName);
+     return Row(children:[
+      const Spacer(),
+        Text(configText,style:TextStyle(
+        fontSize: SizeConfig.blockSizeHorizontal! *4,
+        ),),
+      Expanded(child:CupertinoTextField(
+        controller:controller,
+        onSubmitted:(value){
+            updateConfigInfo(widgetName, value);
+        },
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')
+          ),
+        ]),
+        )
+       
+
+     ]);
+  }
+
+  bool searchConfigData(String widgetName) {
+    final calendarData = ref.watch(calendarDataProvider);
+      int result = 0;
+      for (var data in calendarData.configData) {
+      String targetWidgetName = data["widgetName"];
+      
+      if (targetWidgetName == widgetName) {
+        result = data["isVisible"];
+      }
+    }
+
+    if(result == 1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  String searchConfigInfo(String widgetName) {
+    final calendarData = ref.watch(calendarDataProvider);
+      String result = "";
+    for (var data in calendarData.configData) {
+      String targetWidgetName = data["widgetName"];
+      if (targetWidgetName == widgetName) {
+        result = data["info"];
+      }
+    }
+
+    return result;
+  }
+
+
+  Future<void> updateConfigData(String widgetName, bool value) async{
+    final calendarData = ref.watch(calendarDataProvider);
+      int result = 0;
+
+      if(value){
+        result = 1;
+      }
+
+      for (var data in calendarData.configData) {
+        String targetWidgetName = data["widgetName"];
+        
+        if (targetWidgetName == widgetName) {
+          await CalendarConfigDatabaseHelper().updateCalendarConfig({
+            "id" : data["id"],
+            "widgetName" : data["widgetName"],
+            "isVisible" : result,
+            "info" : "0"
+          });
+          ref.read(taskDataProvider).isRenewed = true;
+          ref.read(calendarDataProvider.notifier).state = CalendarData();
+          while (ref.read(taskDataProvider).isRenewed != false) {
+          await Future.delayed(const Duration(microseconds:1));}
+          setState((){});
+        }
+    }
+  }
+
+  Future<void> updateConfigInfo(String widgetName, String info) async{
+    final calendarData = ref.watch(calendarDataProvider);
+    if(info == ""){info = "0";}
+      for (var data in calendarData.configData) {
+        String targetWidgetName = data["widgetName"];
+
+        if (targetWidgetName == widgetName) {
+          await CalendarConfigDatabaseHelper().updateCalendarConfig({
+            "id" : data["id"],
+            "widgetName" : data["widgetName"],
+            "isVisible" :data["isVisible"],
+            "info" : info
+          });
+          ref.read(taskDataProvider).isRenewed = true;
+          ref.read(calendarDataProvider.notifier).state = CalendarData();
+          while (ref.read(taskDataProvider).isRenewed != false) {
+          await Future.delayed(const Duration(microseconds:1));}
+          setState((){});
+        }
+    }
+  }
+
+
+  }
+
+

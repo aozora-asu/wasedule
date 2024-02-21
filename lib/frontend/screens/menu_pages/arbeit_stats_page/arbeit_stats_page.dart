@@ -27,6 +27,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dar
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 
+
 class ArbeitStatsPage extends ConsumerStatefulWidget {
   String targetMonth;
   
@@ -38,7 +39,8 @@ class ArbeitStatsPage extends ConsumerStatefulWidget {
 }
 
 class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
-
+  Color charColor = Color.fromARGB(255, 200, 200, 200);
+  Color charColorLight = Color.fromARGB(255, 150, 150, 150);
 
 
   @override
@@ -78,12 +80,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       ),
 
 
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-          SizedBox(
+      body:
+      Column(children:[
+                SizedBox(
             child: Row(children: [
               IconButton(
                   onPressed: () {
@@ -110,6 +109,17 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               ),
 
               const Divider(height:1),
+       Expanded(child:Container(
+        decoration:  const BoxDecoration(
+         image: DecorationImage(
+         image: AssetImage('lib/assets/page_background/ookuma_statue.jpg'),
+          fit: BoxFit.cover,
+        )
+      ),
+      child:SingleChildScrollView(
+        child:Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
               const SizedBox(height:5),
               Align(
@@ -122,7 +132,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     '連結データ',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.grey),
+                        color:charColor ),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
               ]),
@@ -166,20 +176,42 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           ])
         ),
               
-              const SizedBox(height:25),
+              const SizedBox(height:60),
+              
 
-              Text("平均月収",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *5)),
-              Text(
-              formatNumberWithComma((yearlyWageSumWithAdditionalWorkTime(widget.targetMonth) / numberOfValidMonthNullsafe(widget.targetMonth)).round())+ 
-              " 円",
-              style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
-              ),
-
-              const SizedBox(height:15),
-
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal :SizeConfig.blockSizeHorizontal! *0),
+              child:Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children:[
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration:roundedBoxdecorationWithShadow(),
+                child:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[
+                  
+                Text("平均月収",style: TextStyle(color:Colors.grey ,fontSize:SizeConfig.blockSizeHorizontal! *5)),
+                const SizedBox(width:15),
+                Text(
+                formatNumberWithComma((yearlyWageSumWithAdditionalWorkTime(widget.targetMonth) / numberOfValidMonthNullsafe(widget.targetMonth)).round())+ 
+                " 円",
+                style:TextStyle(color:Colors.black ,fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
+                ),
+              ]),
+             ),
+             ])
+             ),
+
+            const SizedBox(height:15),
+
+            Container(
+                padding: const EdgeInsets.all(10),
+                decoration:roundedBoxdecorationWithShadow(),
+                child:Padding(
+                padding: EdgeInsets.symmetric(horizontal:SizeConfig.blockSizeVertical! *2),
                 child:Column(children:[
                 Row(children:[
                   Text("”103万円の壁”まで",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *5)),
@@ -202,14 +234,20 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               " 円未満",
               style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *5)
               ),
-              ]),
+              SizedBox(height:SizeConfig.blockSizeVertical! *1)
+             ]),
+             ),
             ),
+              
 
               const SizedBox(height:15),
+
 
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration:roundedBoxdecorationWithShadow(),
+                child:Padding(
+                padding: EdgeInsets.symmetric(horizontal:SizeConfig.blockSizeVertical! *2),
                 child:Column(children:[
                 Row(children:[
                   Text("”130万円の壁”まで",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *5)),
@@ -233,16 +271,18 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                 " 円未満",
                 style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *5)
                 ),
+                SizedBox(height:SizeConfig.blockSizeVertical! *1)
 
              ]),
-             ),
-             ])
             ),
+           )
+         ])
+        ),
             
 
 
 
-              const SizedBox(height:5),
+              const SizedBox(height:30),
 
               const Divider(thickness:3, indent: 10,endIndent: 10,),
 
@@ -257,7 +297,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     '個別データ',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.grey),
+                        color:charColor ),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
               ]),
@@ -265,8 +305,12 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             tagDataList(),
           SizedBox(height:SizeConfig.blockSizeVertical! *10),
           ])
-         
+          ),
         ),
+        )
+        ]),
+        
+           
         floatingActionButton:
             Row(
               children:[
@@ -342,7 +386,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         Text("当月アルバイトデータなし",
               style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! *7,
-              color:Colors.grey),
+              color: charColor),
         ))
         
        );

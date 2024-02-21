@@ -25,11 +25,10 @@ class TaskListByDtEnd extends ConsumerStatefulWidget {
 }
 
 class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
-late bool isInit;
+
 @override
 void initState() {
   super.initState();
-  isInit = true;
 }
 
 

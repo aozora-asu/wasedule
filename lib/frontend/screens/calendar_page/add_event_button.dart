@@ -14,7 +14,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import '../../assist_files/validators.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import '../../../backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

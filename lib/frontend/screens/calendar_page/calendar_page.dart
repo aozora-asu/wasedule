@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
@@ -16,16 +17,12 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_page.dart/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-
-import 'dart:math';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 
+import 'package:intl/intl.dart';
+import 'dart:math';
 import 'dart:async';
-// ignore: unnecessary_import
-
 import 'package:flutter/cupertino.dart';
 
 import '../../../backend/notify/notify_setting.dart';
@@ -168,6 +165,12 @@ class _CalendarState extends ConsumerState<Calendar> {
     return arbeitList;
   }
 
+  Future<List<Map<String, dynamic>>> _getConfigDataSource() async {
+    List<Map<String, dynamic>> arbeitList =
+        await CalendarConfigDatabaseHelper().getConfigFromDB();
+    return arbeitList;
+  }
+
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   String urlString = url_t;
   Future<List<Map<String, dynamic>>>? events;
@@ -217,6 +220,67 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+  void initConfig(){
+    createConfigData("tips",1);
+    createConfigData("todaysSchedule",0);
+    createConfigData("taskList",1);
+  }
+
+  Future<void> createConfigData(String widgetName , int defaultState) async{
+    final calendarData = ref.watch(calendarDataProvider);
+      bool found = false;
+      await ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
+      for (var data in calendarData.configData) {
+      String targetWidgetName = data["widgetName"];
+      
+      if (targetWidgetName == widgetName) {
+        found = true;
+        //print("指定されたデータが見つかりました: $widgetName");
+        break;
+      }
+    }
+    
+    if (!found) {
+      //print("指定されたデータが見つかりませんでした: $widgetName");
+      await CalendarConfigDatabaseHelper().resisterConfigToDB({
+        "widgetName" : widgetName,
+        "isVisible" : defaultState,
+        "info" : "3"
+      });
+      ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
+    }
+  }
+  
+  int searchConfigData(String widgetName) {
+    final calendarData = ref.watch(calendarDataProvider);
+      bool found = false;
+      int result = 0;
+      for (var data in calendarData.configData) {
+      String targetWidgetName = data["widgetName"];
+      
+      if (targetWidgetName == widgetName) {
+        found = true;
+        result = data["isVisible"];
+      }
+    }
+    return result;
+  }
+
+  int searchConfigInfo(String widgetName) {
+    final calendarData = ref.watch(calendarDataProvider);
+      bool found = false;
+      int result = 0;
+      for (var data in calendarData.configData) {
+      String targetWidgetName = data["widgetName"];
+      
+      if (targetWidgetName == widgetName) {
+        found = true;
+        result = int.parse(data["info"]);
+      }
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(calendarDataProvider);
@@ -232,37 +296,52 @@ class _CalendarState extends ConsumerState<Calendar> {
        child:ListView(
         children: [
 
-        SizedBox(height:SizeConfig.blockSizeVertical! *2,),
+
+        
         Padding(
           padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
           child:
-          tipsAndNewsPanel(randomNumber,""),
+          switchWidget(tipsAndNewsPanel(randomNumber,""),searchConfigData("tips")),
         ),
-        SizedBox(height:SizeConfig.blockSizeVertical! *1.5,),
+        
+      Row(
+        children:[
+          const Spacer(),
+          Padding(
+          padding: EdgeInsets.only(
+            left:SizeConfig.blockSizeHorizontal! *3,
+            right:SizeConfig.blockSizeHorizontal! *3,
+          ),
+          child:InkWell(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+            child:const Text("画面カスタマイズ",
+            style:TextStyle(
+            color:Colors.white,
+            fontSize:12.5,
+            fontWeight: FontWeight.bold
+          )
+         )
+        ),
+       ),
+      ]),
 
         Padding(
         padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
         child:
-         Container(
-            height: SizeConfig.blockSizeVertical! * 85,
-                  decoration: BoxDecoration(
-                  color:Colors.white,
-                  borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-                  boxShadow: [
-                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                      spreadRadius: 2, // 影の広がり
-                      blurRadius: 3, // ぼかしの強さ
-                      offset: const Offset(0, 3), // 影の方向（横、縦）
-                    ),
-                  ],
-                ),
-            child: FutureBuilder<List<Map<String, dynamic>>>(
+         FutureBuilder<List<Map<String, dynamic>>>(
               future: _getDataSource(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   // データが取得される間、ローディングインディケータを表示できます。
+                  initConfig();
+                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
+                  
+                  
                   return calendarBody();
                 } else if (snapshot.hasError) {
                   // エラーがある場合、エラーメッセージを表示します。
@@ -274,19 +353,22 @@ class _CalendarState extends ConsumerState<Calendar> {
                   print("カレンダーの再読み");
                   if(ref.read(taskDataProvider).isRenewed){
                     print("データ更新時処理実行");
+                    initConfig();
                     displayDB();
                     _getTemplateDataSource();
+                    ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
                     ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                     ref.read(calendarDataProvider).getData(snapshot.data!);
                     ref.read(calendarDataProvider).sortDataByDay();
                     ref.read(taskDataProvider).isRenewed = false;
                   }
+                  ref.read(calendarDataProvider).getData(snapshot.data!);
+                  ref.read(calendarDataProvider).sortDataByDay();
                   ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                   ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                   ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
-                  ref.read(calendarDataProvider).getData(snapshot.data!);
-                  ref.read(calendarDataProvider).sortDataByDay();
                   ref.read(taskDataProvider).getData(taskData);
+                  
                  
                   return calendarBody();
                   
@@ -294,7 +376,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               },
             ),
            ),
-          ),
+
 
           SizedBox(height:SizeConfig.blockSizeVertical! *3,),
 
@@ -386,11 +468,26 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-
   Widget calendarBody() {
     return Column(children: [
-      SizedBox(
-        child: Row(children: [
+      switchWidget(todaysScheduleListView(),searchConfigData("todaysSchedule")),
+      switchWidget(taskDataListList(searchConfigInfo("taskList")),searchConfigData("taskList")),
+      SizedBox(child:
+            Container(
+                  height: SizeConfig.blockSizeVertical! * 85,
+                  decoration: BoxDecoration(
+                  color:Colors.white,
+                  borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+                  boxShadow: [
+                     BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                      spreadRadius: 2, // 影の広がり
+                      blurRadius: 3, // ぼかしの強さ
+                      offset: const Offset(0, 3), // 影の方向（横、縦）
+                    ),
+                  ],
+                ),
+        child: Column(children:[Row(children: [
           IconButton(
               onPressed: () {
                 decreasePgNumber();
@@ -432,7 +529,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           ),
 
         ]),
-       ),
+      
       SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 100,
         height: SizeConfig.blockSizeVertical! * 3,
@@ -449,7 +546,9 @@ class _CalendarState extends ConsumerState<Calendar> {
             generateCalendarCells("friday"),
             generateCalendarCells("saturday")
           ]))
-    ]);
+    ])
+   ))
+   ]);
   }
 
   void increasePgNumber() {
@@ -495,6 +594,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     targetMonth = decreasedMonth;
     generateCalendarData();
   }
+
 
   Map<String, List<DateTime>> generateCalendarData() {
     DateTime firstDay = DateTime(int.parse(targetMonth.substring(0, 4)),
@@ -878,6 +978,14 @@ class _CalendarState extends ConsumerState<Calendar> {
  }
 
 
+  Widget switchWidget(Widget widget, int isVisible){
+    if(isVisible == 1){
+      return Column(children:[widget]);
+    }else{
+      return const SizedBox();
+    }
+  }
+
   Widget tipsAndNewsPanel(int rundomNum, String newsText){
      String today = DateFormat('MM月dd日').format(DateTime.now());
      String category = "TIPS";
@@ -902,7 +1010,9 @@ class _CalendarState extends ConsumerState<Calendar> {
       }
      
 
-     return Container(
+     return Padding(
+      padding:EdgeInsets.only(top:SizeConfig.blockSizeHorizontal! *2),
+      child:Container(
        width: SizeConfig.blockSizeHorizontal! *95,
       decoration: BoxDecoration(
         color:Colors.redAccent,
@@ -940,8 +1050,181 @@ class _CalendarState extends ConsumerState<Calendar> {
 
        ])
       ),
-  );
+  )) ;
  }
+
+
+
+
+  Widget todaysScheduleListView(){
+    DateTime target = DateTime.now();
+    final data = ref.read(calendarDataProvider);
+    ref.watch(calendarDataProvider);
+    String targetKey =  target.year.toString()+ "-" + target.month.toString().padLeft(2,"0") + "-" + target.day.toString().padLeft(2,"0");
+
+    if(data.sortedDataByDay[targetKey] == null){
+      return  const SizedBox();
+    }else{
+     List targetDayData = data.sortedDataByDay[targetKey];
+   return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children:[
+    Text(
+      'きょうの予定',
+      style: TextStyle(
+          fontSize: SizeConfig.blockSizeHorizontal! *7,
+          color:Colors.white ),
+    ),
+    ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+            if (targetDayData.elementAt(index)["startTime"].trim() != "" && targetDayData.elementAt(index)["endTime"].trim() != ""){
+              dateTimeData =
+                  Text(
+                    " " + targetDayData.elementAt(index)["startTime"] + "～" + targetDayData.elementAt(index)["endTime"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            } else if (targetDayData.elementAt(index)["startTime"].trim() != ""){
+              dateTimeData =
+                  Text(
+                    " " + targetDayData.elementAt(index)["startTime"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            } else {
+              dateTimeData = const Text(
+                    " 終日",
+                    style: TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                  );
+            }
+
+           return  Column(children:[
+            Container(
+             width: SizeConfig.blockSizeHorizontal! *95,
+             padding: const EdgeInsets.all(16.0),
+             decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child:
+            Row(children:[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[
+              Row(children:[
+                dateTimeData,
+                const SizedBox(width:15),
+                SizedBox(
+                  child:tagChip(targetDayData.elementAt(index)["tag"], ref))
+                ]),
+              
+              SizedBox(
+                width:SizeConfig.blockSizeHorizontal! *70,
+                child:Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
+                   overflow: TextOverflow.clip,
+                   style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),
+                )
+              )
+            ]),
+          ])
+         ),
+          const SizedBox(height:15)   
+         ]);    
+        },
+        itemCount:
+            data.sortedDataByDay[targetKey].length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+       )
+     ]);
+    }
+  }
+
+  Widget taskDataListList(int fromNow){
+   DateTime now = DateTime.now();
+   DateTime today = DateTime(now.year,now.month,now.day);
+
+   return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children:[
+    Text(
+    '近日締切の課題',
+    style: TextStyle(
+        fontSize: SizeConfig.blockSizeHorizontal! *7,
+        color:Colors.white ),
+    ),
+    const SizedBox(height:5),
+    ListView.builder(
+    itemBuilder:(context,index){
+      DateTime targetDay = today.add(Duration(days:index));
+      return taskDataList(targetDay,index);
+    },
+     itemCount: fromNow,
+     shrinkWrap: true,
+     physics: const NeverScrollableScrollPhysics(),
+     ),
+    SizedBox(height:SizeConfig.blockSizeVertical! *1)
+    ]);
+  }
+
+  Widget taskDataList(DateTime target,int fromNow){
+    final taskData = ref.watch(taskDataProvider);
+    Map<DateTime, List<Map<String, dynamic>>> sortedData = 
+    taskData.sortDataByDtEnd(taskData.taskDataList);
+
+    if(sortedData.keys.contains(target)){
+      return 
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+          Text("$fromNow日後",style:const TextStyle(color:Colors.white,fontSize:18)),
+          ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+            dateTimeData =
+                Text(
+                  sortedData[target]!.elementAt(index)["title"],
+                  style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                );
+
+           return  Column(children:[
+            Container(
+             width: SizeConfig.blockSizeHorizontal! *95,
+             padding: const EdgeInsets.all(16.0),
+             decoration: BoxDecoration(
+              color: Colors.white, // コンテナの背景色
+              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+              boxShadow: [
+               BoxShadow(
+                color:
+                    Colors.grey.withOpacity(0.5), // 影の色と透明度
+                spreadRadius: 2, // 影の広がり
+                blurRadius: 4, // 影のぼかし
+                offset: const Offset(0, 2), // 影の方向（横、縦）
+              ),
+            ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[
+              dateTimeData,
+              Text(sortedData[target]!.elementAt(index)["summary"] ?? "(詳細なし)",
+                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
+            ]),
+          ),
+          const SizedBox(height:7)   
+         ]);    
+        },
+        itemCount:sortedData[target]!.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+      )])
+        ;
+
+    }else{
+
+      return  const SizedBox();
+    }
+  }
 
 }
 

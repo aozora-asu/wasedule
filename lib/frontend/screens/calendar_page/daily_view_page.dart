@@ -296,7 +296,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ),
             child:
             Row(children:[
-Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
               Row(children:[
