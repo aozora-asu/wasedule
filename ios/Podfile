@@ -26,7 +26,9 @@ end
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
-install! 'cocoapods', :warn_for_unused_master_specs_repo => false
+# Remove the line below as it's already specified above.
+# install! 'cocoapods', :warn_for_unused_master_specs_repo => false
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
