@@ -292,6 +292,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   Future<void> updateConfigInfo(String widgetName, String info) async{
     final calendarData = ref.watch(calendarDataProvider);
     if(info == ""){info = "0";}
+    if(int.parse(info) > 100){info = "100";}
       for (var data in calendarData.configData) {
         String targetWidgetName = data["widgetName"];
 

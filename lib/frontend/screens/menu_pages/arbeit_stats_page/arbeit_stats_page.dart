@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:expandable/expandable.dart';
 import 'package:fk_toggle/fk_toggle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
@@ -558,16 +559,17 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               SizedBox(
                 width:SizeConfig.blockSizeHorizontal! *30,
                 height:SizeConfig.blockSizeVertical! *3,
-                child:TextField(
+                child:CupertinoTextField(
                   controller: controller,
                   keyboardType: const TextInputType.numberWithOptions(decimal: false),
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
                   textAlign: TextAlign.end,
-                  decoration: const InputDecoration.collapsed(
-                    hintText: "実際の振込額",
-                    border: OutlineInputBorder()),
+                  padding: const EdgeInsets.all(2),
+                  // decoration: const InputDecoration.collapsed(
+                  //   hintText: "実際の振込額",
+                  //   border: OutlineInputBorder()),
 
                   onSubmitted: (value)async{
                     int targetTagId = tagData["id"];

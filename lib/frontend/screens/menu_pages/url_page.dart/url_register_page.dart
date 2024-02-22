@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
@@ -15,7 +16,9 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         leading: const BackButton(color:Colors.white),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
@@ -47,12 +50,14 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [SizedBox(
             height:SizeConfig.blockSizeVertical! *5,
-            child:TextField(
+            child:CupertinoTextField(
               controller: _urlController,
-              decoration: const InputDecoration.collapsed(
-                border: OutlineInputBorder(),
-                hintText: 'Moodle URL',
-              ),
+              padding:const EdgeInsets.all(2),
+              
+              // decoration: const InputDecoration.collapsed(
+              //   border: OutlineInputBorder(),
+              //   hintText: 'Moodle URL',
+              // ),
              ), 
             ),
             const SizedBox(height: 16.0),
@@ -106,7 +111,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
                 fontSize: SizeConfig.blockSizeHorizontal! *4,
               ),),),
               const SizedBox(height: 16.0),
-              Divider(color: ACCENT_COLOR,thickness: 2,),
+              const Divider(color: ACCENT_COLOR,thickness: 2,),
               Align(alignment:Alignment.centerLeft,
               child:Text('登録完了！',
                style: TextStyle(

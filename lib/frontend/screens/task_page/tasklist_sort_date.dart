@@ -202,28 +202,6 @@ void initState() {
   }
 
 
-  String getDayOfWeek(int weekday) {
-    switch (weekday) {
-      case 0:
-        return '(月)';
-      case 1:
-        return '(火)';
-      case 2:
-        return '(水)';
-      case 3:
-        return '(木)';
-      case 4:
-        return '(金)';
-      case 5:
-        return '(土)';
-      case 6:
-        return '(日)';
-      default:
-        return '(不明な曜日)';
-    }
-  }
-
-
   Stream<String> getRemainingTimeStream(DateTime dtEnd) async* {
     while (dtEnd.isAfter(DateTime.now())) {
       Duration remainingTime = dtEnd.difference(DateTime.now());
@@ -700,3 +678,24 @@ void initState() {
     return formattedhour + ":" + formattedminute;
   }
 }
+
+  String getDayOfWeek(int weekday) {
+    switch (weekday) {
+      case 0:
+        return '(月)';
+      case 1:
+        return '(火)';
+      case 2:
+        return '(水)';
+      case 3:
+        return '(木)';
+      case 4:
+        return '(金)';
+      case 5:
+        return '(土)';
+      case 6:
+        return '(日)';
+      default:
+        return '(不明な曜日)';
+    }
+  }

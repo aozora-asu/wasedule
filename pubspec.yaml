@@ -43,7 +43,7 @@ dependencies:
   expandable: ^5.0.1
   fk_toggle: ^0.1.1
   url_launcher: ^6.2.4
-  syncfusion_flutter_datepicker: ^24.2.4
+  syncfusion_flutter_datepicker: ^23.2.7
   flutter_colorpicker: ^1.0.3
   flutter_localizations:
     sdk: flutter
