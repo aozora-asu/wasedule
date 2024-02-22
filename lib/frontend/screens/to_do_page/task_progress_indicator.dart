@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../common/float_button.dart';
 import 'dart:async';
 import 'to_do_page.dart';
@@ -24,7 +26,7 @@ DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
 DateTime lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
 
-String formattedDate = DateFormat('MM月dd日(EEE)').format(now);
+String formattedDate = DateFormat('MM月dd日').format(now);
 int circularIndicatorState = 2;
 
 class TaskProgressIndicator extends StatefulWidget {
@@ -89,7 +91,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
     if (circularIndicatorState == 1) {
       return CircularPercentIndicator(
           radius: SizeConfig.blockSizeHorizontal! * 20,
-          lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
+          lineWidth: SizeConfig.blockSizeVertical! * 3.5,
           percent: monthlyDoneTasks.length / monthlyTasks.length,
           animation: true,
           animationDuration: 1500,
@@ -194,11 +196,11 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 child: circularPercentIndicator()),
             Column(children: [
               Container(
-                  height: SizeConfig.blockSizeHorizontal! * 20,
-                  width: SizeConfig.blockSizeHorizontal! * 55,
+                   height: SizeConfig.blockSizeVertical! * 10,
+                   width: SizeConfig.blockSizeHorizontal! * 55,
                   child: Column(children: [
                     Text(
-                      "$formattedDate",
+                      "$formattedDate" + getDayOfWeek(now.weekday -1),
                       style: TextStyle(
                           fontSize: SizeConfig.blockSizeHorizontal! * 7.5,
                           fontWeight: FontWeight.w600),
@@ -222,7 +224,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                     child: Row(children: [
                       const Text("今週    "),
                       Container(
-                        height: SizeConfig.blockSizeHorizontal! * 3.5,
+                        height: SizeConfig.blockSizeVertical! *1.75,
                         width: SizeConfig.blockSizeHorizontal! * 40,
                         child: HpGauge3Color(
                             currentHp: weeklyDoneTasks.length,
@@ -231,7 +233,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                     ]),
                   )),
               Container(
-                height: SizeConfig.blockSizeHorizontal! * 8,
+                  height: SizeConfig.blockSizeVertical! * 4,
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -242,7 +244,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   child: Row(children: [
                     const Text("今月    "),
                     Container(
-                      height: SizeConfig.blockSizeHorizontal! * 3.5,
+                        height: SizeConfig.blockSizeVertical! *1.75,
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: monthlyDoneTasks.length,
@@ -252,7 +254,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 ),
               ),
               Container(
-                height: SizeConfig.blockSizeHorizontal! * 8,
+                  height: SizeConfig.blockSizeVertical! * 4,
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -263,7 +265,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   child: Row(children: [
                     const Text("全て    "),
                     Container(
-                      height: SizeConfig.blockSizeHorizontal! * 3.5,
+                        height: SizeConfig.blockSizeVertical! *1.75,
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: allDoneTasks.length,

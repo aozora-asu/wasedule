@@ -470,8 +470,11 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget calendarBody() {
     return Column(children: [
+
       switchWidget(todaysScheduleListView(),searchConfigData("todaysSchedule")),
+
       switchWidget(taskDataListList(searchConfigInfo("taskList")),searchConfigData("taskList")),
+
       SizedBox(child:
             Container(
                   height: SizeConfig.blockSizeVertical! * 85,
@@ -1146,17 +1149,26 @@ class _CalendarState extends ConsumerState<Calendar> {
    return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children:[
-    Text(
-    '近日締切の課題',
-    style: TextStyle(
-        fontSize: SizeConfig.blockSizeHorizontal! *7,
-        color:Colors.white ),
-    ),
-    const SizedBox(height:5),
+
     ListView.builder(
     itemBuilder:(context,index){
+      Widget title = const SizedBox();
       DateTime targetDay = today.add(Duration(days:index));
-      return taskDataList(targetDay,index);
+      if(index == 0){
+        title =
+          Text(
+          '近日締切の課題',
+          style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! *7,
+              color:Colors.white ),
+          );
+      }
+      return Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children:[
+        title,
+        taskDataList(targetDay,index)
+        ]);
     },
      itemCount: fromNow,
      shrinkWrap: true,
@@ -1196,7 +1208,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               boxShadow: [
                BoxShadow(
                 color:
-                    Colors.grey.withOpacity(0.5), // 影の色と透明度
+                    Colors.black.withOpacity(0.5), // 影の色と透明度
                 spreadRadius: 2, // 影の広がり
                 blurRadius: 4, // 影のぼかし
                 offset: const Offset(0, 2), // 影の方向（横、縦）
