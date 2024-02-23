@@ -25,7 +25,8 @@ class TagDatabaseHelper {
         title TEXT,
         color INTEGER,
         isBeit INTEGER,
-        wage INTEGER
+        wage INTEGER,
+        fee INTEGER
       )
     ''');
   }
@@ -65,7 +66,8 @@ class TagDatabaseHelper {
       title: newTag["title"],
       color: colorToInt(newTag["color"]),
       isBeit: newTag["isBeit"],
-      wage: newTag["wage"]
+      wage: newTag["wage"],
+      fee: newTag["fee"]
       );
     await insertSchedule(tag);
   }

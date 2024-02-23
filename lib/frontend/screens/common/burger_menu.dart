@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:intl/intl.dart';
 import 'app_bar.dart';
 import '../../assist_files/size_config.dart';
-import '../menu_pages/setting_page.dart/setting_page.dart';
-import '../menu_pages/url_page.dart/url_register_page.dart';
+import '../menu_pages/setting_page.dart';
+import '../menu_pages/url_register_page.dart';
 
 class burgerMenu extends StatelessWidget {
 
@@ -32,65 +37,71 @@ class burgerMenu extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.settings,
-              color: MAIN_COLOR,
-            ),
-            title: const Text(
-              "設定",
-              style: TextStyle(
-                fontSize: 22.5,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context); 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
+
+          menuPanel(
+            Icons.settings,
+            "設定",
+            MaterialPageRoute(builder: (context) => SettingsPage()),
+            context
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.school,
-              color: MAIN_COLOR,
-            ),
-            title: const Text(
-              "使い方ガイド",
-              style: TextStyle(
-                fontSize: 22.5,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
+
+          menuPanel(
+            Icons.school,
+            "使い方ガイド",
+            MaterialPageRoute(builder: (context) => HowToUsePage()),
+            context
           ),
-                    ListTile(
-            leading: const Icon(
-              Icons.add_link,
-              color: MAIN_COLOR,
-            ),
-            title: const Text(
-              "Moodle URLの登録",
-              style: TextStyle(
-                fontSize: 22.5,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context); 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-              );
-            },
+
+          menuPanel(
+            Icons.add_link,
+            "Moodle URLの登録",
+            MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+            context
           ),
+
+          menuPanel(
+            Icons.currency_yen_rounded,
+            "アルバイト",
+            MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:DateFormat('yyyy/MM').format(DateTime.now()))),
+            context
+          ),
+
+          menuPanel(
+            Icons.ios_share,
+            "SNS共有コンテンツ",
+            MaterialPageRoute(builder: (context) => SnsContentsPage()),
+            context
+          ),
+
+          menuPanel(
+            Icons.info_rounded,
+            "サポート",
+            MaterialPageRoute(builder: (context) => SnsLinkPage()),
+            context
+          ),
+
         ],
       ),
     );
+  }
+
+  Widget menuPanel(IconData icon, String title, MaterialPageRoute ontap, BuildContext context){
+    return ListTile(
+            leading: Icon(icon, color: MAIN_COLOR,),
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 22.5,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            onTap: () {
+              Navigator.pop(context); 
+              Navigator.push(
+                context,ontap
+              );
+            },
+          );
   }
 }
 

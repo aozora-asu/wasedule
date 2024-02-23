@@ -5,8 +5,8 @@ import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_h
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../assist_files/colors.dart';
-import '../../../assist_files/size_config.dart';
+import '../../assist_files/colors.dart';
+import '../../assist_files/size_config.dart';
 
 class SettingsPage extends StatelessWidget {
   @override

@@ -8,14 +8,15 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/temp_file.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page/sns_link_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_page.dart/url_register_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
@@ -295,8 +296,6 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
        child:ListView(
         children: [
-
-
         
         Padding(
           padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
@@ -388,7 +387,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
             Row(children:[
               expandedMenuPanel(
-                Icons.data_exploration_outlined,
+                Icons.currency_yen,
                 "アルバイト",
                 () {
                   Navigator.push(
@@ -426,8 +425,8 @@ class _CalendarState extends ConsumerState<Calendar> {
 
             Row(children:[
               menuPanel(
-                Icons.question_mark_rounded,
-                "使い方ガイドと\nサポート",
+                Icons.info,
+                "サポート",
                 () {
                   Navigator.push(
                   context,
@@ -444,6 +443,20 @@ class _CalendarState extends ConsumerState<Calendar> {
                   MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
               }),
+            ]),
+
+            const SizedBox(height:15),
+
+            Row(children:[
+              expandedMenuPanel(
+                Icons.school,
+                "使い方ガイド",
+                () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HowToUsePage()),
+                );
+              })
             ]),
 
             const SizedBox(height:30),
@@ -1152,10 +1165,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     ListView.builder(
     itemBuilder:(context,index){
-      Widget title = const SizedBox();
-      DateTime targetDay = today.add(Duration(days:index));
-      if(index == 0){
-        title =
+
+      Widget titlea = const SizedBox();
+      if(index == 0 ){
+        titlea =
           Text(
           '近日締切の課題',
           style: TextStyle(
@@ -1163,10 +1176,13 @@ class _CalendarState extends ConsumerState<Calendar> {
               color:Colors.white ),
           );
       }
+
+      DateTime targetDay = today.add(Duration(days:index));
+
       return Column(
        crossAxisAlignment: CrossAxisAlignment.start,
        children:[
-        title,
+        titlea,
         taskDataList(targetDay,index)
         ]);
     },
@@ -1184,6 +1200,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     taskData.sortDataByDtEnd(taskData.taskDataList);
 
     if(sortedData.keys.contains(target)){
+
       return 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1191,6 +1208,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           Text("$fromNow日後",style:const TextStyle(color:Colors.white,fontSize:18)),
           ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+
             Widget dateTimeData = Container();
             dateTimeData =
                 Text(
@@ -1198,7 +1216,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                   style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
                 );
 
-           return  Column(children:[
+           return  Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:[
             Container(
              width: SizeConfig.blockSizeHorizontal! *95,
              padding: const EdgeInsets.all(16.0),

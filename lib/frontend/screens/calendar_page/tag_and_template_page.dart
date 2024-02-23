@@ -311,10 +311,19 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   backgroundColor: Colors.red),
                 ),
                 const SizedBox(width:15),
-               Text(
+               Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children:[
+                Text(
                     "時給：" + sortedData.elementAt(index)["wage"].toString() + "円",
                     style: const TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
+                  ),
+                Text(
+                    "交通費：" + sortedData.elementAt(index)["fee"].toString() + "円",
+                    style: const TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
                   )
+                ])
+               
               ]);
             }
 
@@ -559,6 +568,7 @@ class TagDialog extends ConsumerStatefulWidget {
 class _TagDialogState extends ConsumerState<TagDialog> {
   TextEditingController titleController = TextEditingController();
   TextEditingController wageController = TextEditingController();
+  TextEditingController feeController = TextEditingController();
   late Color tagColor;
   late bool isBeit;
 
@@ -569,6 +579,7 @@ class _TagDialogState extends ConsumerState<TagDialog> {
     isBeit = false;
     tagColor = Colors.redAccent; // コンテナの背景色
     wageController.text = "0";
+    feeController.text = "0";
   }
 
   @override
@@ -643,12 +654,14 @@ class _TagDialogState extends ConsumerState<TagDialog> {
              ElevatedButton(
               style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
               onPressed: ()async{
-
+                if(wageController.text == ""){wageController.text = "0";}
+                if(feeController.text == ""){feeController.text = "0";}
                 await TagDatabaseHelper().resisterTagToDB({
                   "title" : titleController.text,
                   "color" : tagColor,
                   "isBeit" : boolToInt(isBeit),
-                  "wage" : int.parse(wageController.text)
+                  "wage" : int.parse(wageController.text),
+                  "fee" : int.parse(feeController.text)
                 });
                 ref.read(scheduleFormProvider).clearContents();
                 ref.read(taskDataProvider).isRenewed = true;
@@ -681,7 +694,8 @@ class _TagDialogState extends ConsumerState<TagDialog> {
 
   Widget wageField(){
     if(isBeit){
-       return SizedBox(
+       return Column(children:[
+        SizedBox(
         height:40,
         child:TextField(
               controller: wageController,
@@ -694,8 +708,25 @@ class _TagDialogState extends ConsumerState<TagDialog> {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
               ],
-            ))
-       ;
+            )
+          ),
+        const SizedBox(height:10),
+        SizedBox(
+        height:40,
+        child:TextField(
+              controller: feeController,
+              decoration: const InputDecoration(
+                labelText: "片道交通費",
+                labelStyle: TextStyle(color:Colors.grey),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
+              ],
+            )
+          )
+        ]);
     }else{
       return const Text("OFF",style:TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize:20));
     }
@@ -753,6 +784,7 @@ class EditTagDialog extends ConsumerStatefulWidget {
 class _EditTagDialogState extends ConsumerState<EditTagDialog> {
   TextEditingController titleController = TextEditingController();
   TextEditingController wageController = TextEditingController();
+  TextEditingController feeController = TextEditingController();
   late Color tagColor;
   late bool isBeit;
 
@@ -764,6 +796,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
     isBeit = intToBool(widget.tagData["isBeit"]);
     tagColor = widget.tagData["color"];
     wageController.text = widget.tagData["wage"].toString();
+    feeController.text = widget.tagData["fee"].toString();
   }
 
   @override
@@ -831,13 +864,15 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
              ElevatedButton(
               style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
               onPressed: ()async{
-
+                if(feeController.text == ""){feeController.text  = "0";}
+                if(wageController.text == ""){wageController.text = "0";}
                 await TagDatabaseHelper().updateTag({
                   "id" : widget.tagData["id"],
                   "title" : titleController.text,
                   "color" : colorToInt(tagColor),
                   "isBeit" : boolToInt(isBeit),
-                  "wage" : int.parse(wageController.text)
+                  "wage" : int.parse(wageController.text),
+                  "fee" : int.parse(feeController.text)
                 });
                 ref.read(scheduleFormProvider).clearContents();
                 ref.read(taskDataProvider).isRenewed = true;
@@ -883,7 +918,8 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
 
   Widget wageField(){
     if(isBeit){
-       return SizedBox(
+       return Column(children:[
+        SizedBox(
         height:40,
         child:TextField(
               controller: wageController,
@@ -896,8 +932,25 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
               ],
-            ))
-       ;
+            )
+          ),
+        const SizedBox(height:10),
+        SizedBox(
+        height:40,
+        child:TextField(
+              controller: feeController,
+              decoration: const InputDecoration(
+                labelText: "片道交通費",
+                labelStyle: TextStyle(color:Colors.grey),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // 半角数字のみ許可
+              ],
+            )
+          )
+        ]);
     }else{
       return const Text("OFF",style:TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize:20));
     }
@@ -982,10 +1035,19 @@ builder: (BuildContext context) {
                     backgroundColor: Colors.red),
                   ),
                   const SizedBox(width:15),
-                Text(
-                      "時給：" + data.tagData.elementAt(index)["wage"].toString() + "円",
-                      style: const TextStyle(color:Colors.white,fontSize: 10,fontWeight: FontWeight.bold),
-                    )
+                Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children:[                
+                  Text(
+                        "時給：" + data.tagData.elementAt(index)["wage"].toString() + "円",
+                        style: const TextStyle(color:Colors.white,fontSize: 10,fontWeight: FontWeight.bold),
+                      ),
+                  Text(
+                        "交通費：" + data.tagData.elementAt(index)["fee"].toString() + "円",
+                        style: const TextStyle(color:Colors.white,fontSize: 10,fontWeight: FontWeight.bold),
+                      )
+                  ])
+
                 ]);
               }
 

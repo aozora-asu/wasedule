@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/schedule_forcast.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../assist_files/colors.dart';
 import '../../../assist_files/size_config.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
-class SnsContentsPage extends StatefulWidget {
+class ScheduleForecastPage extends ConsumerStatefulWidget {
   @override
-  _SnsContentsPageState createState() => _SnsContentsPageState();
+  _ScheduleForecastPageState createState() => _ScheduleForecastPageState();
 }
 
-class _SnsContentsPageState extends State<SnsContentsPage> {
-  TextEditingController _urlController = TextEditingController();
+class _ScheduleForecastPageState extends ConsumerState<ScheduleForecastPage> {
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
-    return Scaffold(appBar: AppBar(
+    return Container(
+        decoration:  const BoxDecoration(
+         image: DecorationImage(
+         image: AssetImage('lib/assets/calendar_background/ookuma_morning.png'),
+          fit: BoxFit.cover,
+        )
+      ),
+      child:Scaffold(
+        appBar: AppBar(
         leading: const BackButton(color:Colors.white),
-        backgroundColor: MAIN_COLOR,
+        backgroundColor:Colors.transparent,
         elevation: 10,
         title: Column(
           children:<Widget>[
@@ -42,28 +45,24 @@ class _SnsContentsPageState extends State<SnsContentsPage> {
           ],
         ),
       ),
-      body: Center(child:
-       Padding(padding:const EdgeInsets.all(10),
+      body: Column(children:[
+
+       Padding(padding: const EdgeInsets.all(10),
                child:Column(children:[
                 const Text("SNSコンテンツにようこそ！友達などに共有してお楽しみください♬",
                 style: TextStyle(fontSize:20,fontWeight: FontWeight.bold),),
                 SizedBox(height:SizeConfig.blockSizeVertical!*3),
-                linkPanel(Icons.sunny,"#私の月間忙しさ予報", () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ScheduleForecastPage()),
-                  );
-                 }, Colors.orange,"いつ課題で余裕がないのか知らせておこう！"),
+                linkPanel(Icons.sunny,"#私の月間忙しさ予報", () { }, Colors.orange,"いつ課題で余裕がないのか知らせておこう！"),
                 SizedBox(height:SizeConfig.blockSizeVertical!*2),
                 linkPanel(Icons.calendar_month_rounded,"#この日は一日空いてます", () { }, Colors.red,"なにも予定がない日を画像でシェア。"),
                 SizedBox(height:SizeConfig.blockSizeVertical!*2),
                 // linkPanel(Icons.mood_bad_rounded,"オレ的忙しい授業ランキング", () { }, Colors.purple,"今学期最も課題が出された授業とは!?"),
                 // SizedBox(height:SizeConfig.blockSizeVertical!*2),
                 linkPanel(Icons.access_time_filled_sharp,"バイト王は 俺だ！", () { }, Colors.yellowAccent,"今月何時間働いた?皆で共有してみよう"),
-        ]))
-
+        ])
         )
-    );
+      ])
+    )) ;
   }
 
   Widget linkPanel(IconData icon, String text, void Function() ontap, Color iconColor, String description){

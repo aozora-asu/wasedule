@@ -47,6 +47,7 @@ class CalendarData {
         "color": intToColor(fetchedTagData.elementAt(i)["color"]),
         "isBeit": fetchedTagData.elementAt(i)["isBeit"],
         "wage": fetchedTagData.elementAt(i)["wage"],
+        "fee": fetchedTagData.elementAt(i)["fee"],
       });
     }
     tagData = fixedData;

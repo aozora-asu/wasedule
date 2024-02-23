@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.2.4
   syncfusion_flutter_datepicker: ^23.2.7
   flutter_colorpicker: ^1.0.3
+  share_plus: ^7.2.2
   flutter_localizations:
     sdk: flutter
 
@@ -93,6 +94,7 @@ flutter:
       - lib/assets/calendar_background/ookuma_day.png
       - lib/assets/calendar_background/ookuma_night.png
       - lib/assets/page_background/ookuma_statue.jpg
+      - lib/assets/page_background/sky_wallpaper.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -258,7 +258,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     )
                 ]),
                 Text(
-                formatNumberWithComma(1300000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))+ 
+                formatNumberWithComma(1300000 - yearlyWageSumWithAdditionalWorkTime(widget.targetMonth) - yearlyFeeSumOfAllTags(widget.targetMonth))+ 
                 " 円",
                 style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *10)
                 ),
@@ -395,10 +395,19 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       return ListView.builder(
           itemBuilder: (BuildContext context, int index) {
              
-          Widget dateTimeData =Text(
+          Widget dateTimeData =
+           Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children:[
+            Text(
               "時給：" + formatNumberWithComma(sortedData.elementAt(index)["wage"]) + "円",
               style: const TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
-            );
+            ),
+            Text(
+              "片道交通費：" + formatNumberWithComma(sortedData.elementAt(index)["fee"]) + "円",
+              style: const TextStyle(color:Colors.white,fontSize: 15,fontWeight: FontWeight.bold),
+            )
+          ]);
 
           if(sortedData.elementAt(index)["isBeit"] == 1){
            return  Column(children:[
@@ -485,6 +494,15 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               + " 円"
               ),
              ]),
+
+            const SizedBox(height:2),
+            Row(children:[
+              const Text("交通費総額  ",style: TextStyle(color:Colors.grey)),
+              Text(
+              formatNumberWithComma(monthlyFeeSum(tagData,targetKey))
+              + " 円"
+              ),
+             ]),
             const SizedBox(height:7),
 
             Text(targetYearForDisplay + " 通年のデータ",style:const TextStyle(fontWeight: FontWeight.bold)),
@@ -504,6 +522,15 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               const Text("給料見込み  ",style: TextStyle(color:Colors.grey)),
               Text(
               formatNumberWithComma(culculateWage(yearlyWorkTimeSum(tagData,targetKey),tagData["wage"]))
+              + " 円"
+              ),
+             ]),
+
+            const SizedBox(height:2),
+            Row(children:[
+              const Text("交通費総額  ",style: TextStyle(color:Colors.grey)),
+              Text(
+              formatNumberWithComma(yearlyFeeSum(tagData, targetKey))
               + " 円"
               ),
              ]),
@@ -539,7 +566,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           ListView.separated(
             itemBuilder:(cointext,index){
               TextEditingController controller = TextEditingController();
-              controller.text = returnCorrectedWage(tagData,targetKeys.elementAt(index)).toString();
+              controller.text = (returnCorrectedWage(tagData,targetKeys.elementAt(index))).toString();
 
               return Row(children:[
                 Text(targetKeys.elementAt(index)),
@@ -567,9 +594,6 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   ],
                   textAlign: TextAlign.end,
                   padding: const EdgeInsets.all(2),
-                  // decoration: const InputDecoration.collapsed(
-                  //   hintText: "実際の振込額",
-                  //   border: OutlineInputBorder()),
 
                   onSubmitted: (value)async{
                     int targetTagId = tagData["id"];
@@ -641,9 +665,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
   }
   
     if (!found) {
-       result += culculateWage(
+       result += (culculateWage(
                       monthlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKey),tagData["wage"]
-                      );
+                      )+ monthlyFeeSum(tagData,targetKey));
     }
   return result;
   }
@@ -746,6 +770,26 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     return Duration(hours: hours, minutes: minutes);
   }
 
+  int monthlyFeeSum(tagData,targetKey){
+   Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+   int result = 0;
+   if(sortedDataByMonth[targetKey] != null){
+    for(int i = 0; i < sortedDataByMonth[targetKey].length; i++){
+      for(int ind = 0; ind < sortedDataByMonth[targetKey].values.elementAt(i).length; ind++){
+        String tagId = sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind)["tag"];
+
+        if(tagId == tagData["id"].toString()){
+          int f = tagData["fee"];
+          result += f*2;
+        }
+
+      }
+    }
+   }else{
+   }
+   return result;
+  }
+
   int culculateWage(Duration duration, int multiplier) {
     int wage = ((duration.inMinutes * multiplier) / 60).round();
     return wage;
@@ -786,21 +830,49 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
        }
       }
      }
-
     }
     return result;
   }
 
-  // int yearlyWageSum(targetKey){
-  //   List tagData = ref.watch(calendarDataProvider).tagData;
-  //   int result = 0;
-  //   for(int i = 0; i < tagData.length; i++){
-  //    if(tagData.elementAt(i)["isBeit"] == 1){
-  //     result += culculateWage(yearlyWorkTimeSumWithAdditionalWorkTime(tagData.elementAt(i),targetKey),tagData.elementAt(i)["wage"]);
-  //    }
-  //   }
-  //   return result;
-  // }
+  int yearlyFeeSum(tagData,targetKey){
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    String year = targetKey.substring(0,4);
+    List<String> targetKeys = [
+      year + "-01",year + "-02",year + "-03",year + "-04",year + "-05",year + "-06",
+      year + "-07",year + "-08",year + "-09",year + "-10",year + "-11",year + "-12",
+    ];
+
+    for(int i = 0; i < targetKeys.length; i++){
+      if(sortedDataByMonth[targetKeys.elementAt(i)] != null){
+        result += monthlyFeeSum(tagData,targetKeys.elementAt(i));
+      }
+    }
+
+    return result;
+  }
+
+  int yearlyFeeSumOfAllTags(targetKey){
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    
+    int result = 0;
+    String year = targetKey.substring(0,4);
+    List<String> targetKeys = [
+      year + "-01",year + "-02",year + "-03",year + "-04",year + "-05",year + "-06",
+      year + "-07",year + "-08",year + "-09",year + "-10",year + "-11",year + "-12",
+    ];
+    for(int i = 0; i < tagData.length; i++){
+     if(tagData.elementAt(i)["isBeit"] == 1){
+      for(int ind = 0; ind < targetKeys.length; ind++){
+       if(sortedDataByMonth[targetKeys.elementAt(ind)] != null){
+        result +=  monthlyFeeSum(tagData.elementAt(i),targetKeys.elementAt(i));
+       }
+      }
+     }
+    }
+    return result;
+  }
 
   int numberOfValidMonthNullsafe(targetKey){
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
@@ -898,7 +970,8 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       },
     );
   }
-  
+
+}
   BoxDecoration roundedBoxdecorationWithShadow(){
     return BoxDecoration(
                   color: Colors.white, // コンテナの背景色
@@ -912,5 +985,3 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   )
                 ]);
   }
-}
-

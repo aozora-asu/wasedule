@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
-import '../../../assist_files/colors.dart';
-import '../../../assist_files/size_config.dart';
+import '../../assist_files/colors.dart';
+import '../../assist_files/size_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -31,7 +31,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
               ),
               SizedBox(width: SizeConfig.blockSizeHorizontal! *4,),
             Text(
-              '使い方ガイドとサポート',
+              'サポート',
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! *5,
                 fontWeight: FontWeight.w800,
