@@ -28,7 +28,7 @@ class CustomBottomBar extends StatelessWidget {
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.task),
+          icon: Icon(Icons.task_outlined),
           label: 'ToDo',
           backgroundColor: MAIN_COLOR
         ),
