@@ -31,7 +31,8 @@ class  _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
   @override
   Widget build(BuildContext context) {
     final data = ref.read(dataProvider);
-    return Scaffold(
+    return 
+    Scaffold(
       body:DaylyViewPageBody(
         events:widget.events,
         snapshot:widget.snapshot,
@@ -93,56 +94,57 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
     SizeConfig().init(context);
     final data = ref.read(dataProvider);
     
-    return SingleChildScrollView(
-      child:Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children:[
+    return 
+    SingleChildScrollView(
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:[
         
         TimerView(
           targetMonthData:data.sortDataByMonth()[thisMonth],
           events:widget.events,
           context:widget.context,
           snapshot: widget.snapshot,
-          ),
+        ),
 
         SizedBox(
-        child:Row(children:[
-        IconButton(
-          onPressed:(){
-            decreasePgNumber();
-          }, 
-          icon: const Icon(Icons.arrow_back_ios),iconSize:20),
-         Text(targetMonth,
-          style:const  TextStyle(fontSize:25,fontWeight:FontWeight.w700,),  
-         ),
-        IconButton(
-          onPressed:(){
-            setState((){increasePgNumber();});
-          }, 
-          icon:const  Icon(Icons.arrow_forward_ios),iconSize:20),
-        Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-         Text(timeSum(),style:const TextStyle(fontSize: 14,fontWeight: FontWeight.bold)),
-         Text(monthSum(),style:const TextStyle(fontSize: 10,color:Colors.grey)),
-        ]),
-        const Spacer(),
-
-        SizedBox(width:55,height:40,child: switchViewButton())
-       
-       ]),
-       ),
-       const Divider(height:1),
-       GestureDetector(
-        child:
-        Container(
-        height:SizeConfig.blockSizeVertical! *calculateHeight(),
-        child:pageBody(),
+          child: Row(
+            children:[
+              IconButton(
+                onPressed:(){
+                  decreasePgNumber();
+                }, 
+                icon:const  Icon(Icons.arrow_back_ios), 
+                iconSize: 20
+              ),
+              Text(
+                targetMonth,
+                style: const TextStyle(fontSize:25,fontWeight:FontWeight.w700,),  
+              ),
+              IconButton(
+                onPressed:(){
+                  setState((){increasePgNumber();});
+                }, 
+                icon: const Icon(Icons.arrow_forward_ios), 
+                iconSize: 20
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(timeSum(),style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold)),
+                  Text(monthSum(),style: const TextStyle(fontSize: 10,color:Colors.grey)),
+                ]
+              ),
+              const Spacer(),
+              SizedBox(width:55,height:40,child: switchViewButton())
+            ]
+          ),
         ),
-       ),  
-       //Container(height: 400)
-     ])
-    );    
+        const Divider(height:1),
+        pageBody(),
+      ]
+    ))
+    ;    
   }
 
   double calculateHeight(){
@@ -246,8 +248,9 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
             ref.read(dataProvider.notifier).state = Data();
             ref.read(dataProvider).isRenewed = true;
           },
-          child:const Text("ページの作成",style: TextStyle(color:Colors.white),),
+          
           style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+          child:const Text("ページの作成",style: TextStyle(color:Colors.white),),
         ),
         ])
        );
@@ -395,6 +398,8 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
 
       },
       itemCount: targetMonthData.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
      );
   }
 }
@@ -423,7 +428,6 @@ Widget dividerVertical(){
    return const SizedBox();
   }
  
-
 }
 
 

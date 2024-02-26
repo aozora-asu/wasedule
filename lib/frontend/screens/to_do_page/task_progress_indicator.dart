@@ -91,7 +91,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
     if (circularIndicatorState == 1) {
       return CircularPercentIndicator(
           radius: SizeConfig.blockSizeHorizontal! * 20,
-          lineWidth: SizeConfig.blockSizeVertical! * 3.5,
+          lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
           percent: monthlyDoneTasks.length / monthlyTasks.length,
           animation: true,
           animationDuration: 1500,

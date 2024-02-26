@@ -74,14 +74,14 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                     Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                   Text(
-                    'テンプレート',
+                    ' 入力テンプレート',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
                         color:Colors.grey),
                   ),
                 ]),
               ),
-              Container(
+             SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 100,
                 child: listView(),
               ),

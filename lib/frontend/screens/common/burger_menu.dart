@@ -66,12 +66,12 @@ class burgerMenu extends StatelessWidget {
             context
           ),
 
-          menuPanel(
-            Icons.ios_share,
-            "SNS共有コンテンツ",
-            MaterialPageRoute(builder: (context) => SnsContentsPage()),
-            context
-          ),
+          // menuPanel(
+          //   Icons.ios_share,
+          //   "SNS共有コンテンツ",
+          //   MaterialPageRoute(builder: (context) => SnsContentsPage()),
+          //   context
+          // ),
 
           menuPanel(
             Icons.info_rounded,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 import '../common/float_button.dart';
@@ -42,16 +43,14 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
       await displayDB();
     } else {
       if (urlString == "") {
-        // urlStringがない場合の処理
+
       } else {
-        noneTaskText();
+        NoTaskPage();
       }
     }
   }
 
-  Widget noneTaskText() {
-    return const Text("現在課題はありません。");
-  }
+
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> loadData() async {
@@ -126,7 +125,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     endIndent: 4,
                   ),
                   sortSwitch(),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 25)
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 60)
                 ]),
               ),
             ),
@@ -195,7 +194,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
-              return noneTaskText();
+              return NoTaskPage();
             }
           },
         );

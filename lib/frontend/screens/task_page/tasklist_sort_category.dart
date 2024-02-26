@@ -10,12 +10,8 @@ import 'dart:async';
 import 'package:expandable/expandable.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import '../common/loading.dart';
-import 'add_data_card_button.dart';
 import 'data_manager.dart';
 
-import '../../assist_files/colors.dart';
-import '../../../backend/temp_file.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListByCategory extends ConsumerStatefulWidget {

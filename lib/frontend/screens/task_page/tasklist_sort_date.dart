@@ -198,7 +198,8 @@ void initState() {
                 fontWeight: FontWeight.bold,
                 color: Colors.pinkAccent,
                 fontSize: fontSize),
-          ));
+          )
+          );
   }
 
 
@@ -350,7 +351,7 @@ void initState() {
           },
           child: Container(
               constraints: BoxConstraints(
-                maxWidth: SizeConfig.blockSizeHorizontal! * 84,
+                maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
               ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
@@ -395,13 +396,18 @@ void initState() {
                           SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 69,
                               child: Text(targetData["title"] ?? "(タイトルなし)",
-                                  style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeVertical! * 1.75,
-                                    color: Colors.grey,
-                                  )))
-                        ]),
-                  ]))))
+                              style: TextStyle(
+                                fontSize:
+                                    SizeConfig.blockSizeVertical! * 1.75,
+                                color: Colors.grey,
+                    )
+                  )
+                )
+              ]),
+            ])
+          )
+        )
+      )
     ]);
   }
 

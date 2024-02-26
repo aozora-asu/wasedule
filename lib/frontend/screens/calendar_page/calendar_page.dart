@@ -411,14 +411,23 @@ class _CalendarState extends ConsumerState<Calendar> {
               }),
               SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
               menuPanel(
-                Icons.ios_share_rounded,
-                "SNS共有コンテンツ",
+                Icons.school,
+                "使い方ガイド",
                 () {
                   Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SnsContentsPage()),
+                  MaterialPageRoute(builder: (context) => HowToUsePage()),
                 );
-              }),
+              })
+              // menuPanel(
+              //   Icons.ios_share_rounded,
+              //   "SNS共有コンテンツ",
+              //   () {
+              //     Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
+              //   );
+              // }),
             ]),
 
             const SizedBox(height:15),
@@ -447,17 +456,17 @@ class _CalendarState extends ConsumerState<Calendar> {
 
             const SizedBox(height:15),
 
-            Row(children:[
-              expandedMenuPanel(
-                Icons.school,
-                "使い方ガイド",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HowToUsePage()),
-                );
-              })
-            ]),
+            // Row(children:[
+            //   expandedMenuPanel(
+            //     Icons.school,
+            //     "使い方ガイド",
+            //     () {
+            //       Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => HowToUsePage()),
+            //     );
+            //   })
+            // ]),
 
             const SizedBox(height:30),
 
@@ -1015,7 +1024,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           case 1: content = "課題いつやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
           case 2: content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
           case 3: content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
-          case 4: content = "友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
+          case 4: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";//"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
           case 5: content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
           case 6: content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
           case 7: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";
@@ -1028,6 +1037,13 @@ class _CalendarState extends ConsumerState<Calendar> {
 
      return Padding(
       padding:EdgeInsets.only(top:SizeConfig.blockSizeHorizontal! *2),
+      child:InkWell(
+      onTap: (){
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HowToUsePage()),
+        );
+      },
       child:Container(
        width: SizeConfig.blockSizeHorizontal! *95,
       decoration: BoxDecoration(
@@ -1066,7 +1082,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
        ])
       ),
-  )) ;
+  ))) ;
  }
 
 
@@ -1165,24 +1181,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     ListView.builder(
     itemBuilder:(context,index){
-
-      Widget titlea = const SizedBox();
-      if(index == 0 ){
-        titlea =
-          Text(
-          '近日締切の課題',
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! *7,
-              color:Colors.white ),
-          );
-      }
-
       DateTime targetDay = today.add(Duration(days:index));
-
       return Column(
        crossAxisAlignment: CrossAxisAlignment.start,
        children:[
-        titlea,
         taskDataList(targetDay,index)
         ]);
     },
@@ -1196,15 +1198,27 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget taskDataList(DateTime target,int fromNow){
     final taskData = ref.watch(taskDataProvider);
-    Map<DateTime, List<Map<String, dynamic>>> sortedData = 
+    Map<DateTime, List<Map<String, dynamic>>> sortedData =
     taskData.sortDataByDtEnd(taskData.taskDataList);
+    Widget title = const SizedBox();      
 
-    if(sortedData.keys.contains(target)){
+    if(sortedData.keys.contains(target)){    
+    
+    if(fromNow == 0){
+      title =
+        Text(
+        '近日締切の課題',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! *7,
+            color:Colors.white ),
+      );
+    }
 
       return 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
+          title,
           Text("$fromNow日後",style:const TextStyle(color:Colors.white,fontSize:18)),
           ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -1249,14 +1263,36 @@ class _CalendarState extends ConsumerState<Calendar> {
         itemCount:sortedData[target]!.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-      )])
-        ;
+      )
+    ]);
 
     }else{
-
-      return  const SizedBox();
+    
+    if(fromNow == 0 && !isTaskDatanull(target)){
+      title =
+        Text(
+        '近日締切の課題',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! *7,
+            color:Colors.white ),
+      );
+    }
+      return  title;
     }
   }
 
-}
+  bool isTaskDatanull(DateTime target){
+    int numOfTasks =searchConfigInfo("taskList");
+    bool result = true;
+    final taskData = ref.watch(taskDataProvider);
+     Map<DateTime, List<Map<String, dynamic>>> sortedData = 
+      taskData.sortDataByDtEnd(taskData.taskDataList);
+    for(int i = 0; i < numOfTasks; i++){
+      if(sortedData[target.add(Duration(days:i))] != null){
+        result = false;
+      }
+    }
+    return result;
+  }
 
+ }

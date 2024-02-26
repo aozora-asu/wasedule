@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/screen_manager.dart';
 import '../common/float_button.dart';
 import 'task_progress_indicator.dart';
@@ -36,14 +37,11 @@ class _TaskPageState extends State<TaskPage> {
       if (urlString == "") {
         // urlStringがない場合の処理
       } else {
-        noneTaskText();
+        NoTaskPage();
       }
     }
   }
 
-  Widget noneTaskText() {
-    return const Text("現在課題はありません。");
-  }
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> _loadData() async {
@@ -83,7 +81,7 @@ class _TaskPageState extends State<TaskPage> {
                             events: events,
                             );
                         } else {
-                          return noneTaskText();
+                          return NoTaskPage();
                         }
                       },
                     ),
