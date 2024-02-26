@@ -359,6 +359,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                     ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                     ref.read(calendarDataProvider).getData(snapshot.data!);
                     ref.read(calendarDataProvider).sortDataByDay();
+                    ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                     ref.read(taskDataProvider).isRenewed = false;
                   }
                   ref.read(calendarDataProvider).getData(snapshot.data!);
@@ -1105,7 +1106,8 @@ class _CalendarState extends ConsumerState<Calendar> {
       'きょうの予定',
       style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! *7,
-          color:Colors.white ),
+          color:Colors.white,
+          fontWeight:FontWeight.bold),
     ),
     ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -1210,7 +1212,8 @@ class _CalendarState extends ConsumerState<Calendar> {
         '近日締切の課題',
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! *7,
-            color:Colors.white ),
+            color:Colors.white,
+            fontWeight:FontWeight.bold),
       );
     }
 
@@ -1274,7 +1277,8 @@ class _CalendarState extends ConsumerState<Calendar> {
         '近日締切の課題',
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! *7,
-            color:Colors.white ),
+            color:Colors.white,
+            fontWeight:FontWeight.bold),
       );
     }
       return  title;

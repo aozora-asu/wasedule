@@ -261,7 +261,11 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
               IconButton(
               icon: const Icon(Icons.delete,color:Colors.white),
               onPressed: ()async{
-                await ScheduleTemplateDatabaseHelper().deleteSchedule(
+               showDeleteDialogue(
+                context,
+                data.templateData.elementAt(index)["subject"],
+                () async{
+                  await ScheduleTemplateDatabaseHelper().deleteSchedule(
                   data.templateData.elementAt(index)["id"]
                   );
                 ref.read(scheduleFormProvider).clearContents();
@@ -271,6 +275,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   await Future.delayed(const Duration(microseconds:1));
                 }
                 setState((){});
+              });  
               },
               ),
             ])
@@ -360,8 +365,12 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
           const Spacer(),
             IconButton(
               icon: const Icon(Icons.delete,color:Colors.white),
-              onPressed: ()async{
-                await TagDatabaseHelper().deleteTag(
+              onPressed: (){
+               showDeleteDialogue(
+                context,
+                sortedData.elementAt(index)["title"] ?? "(詳細なし)",
+                ()async{
+                  await TagDatabaseHelper().deleteTag(
                   sortedData.elementAt(index)["id"]
                   );
                 ref.read(scheduleFormProvider).clearContents();
@@ -371,13 +380,13 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   await Future.delayed(const Duration(microseconds:1));
                 }
                 setState((){});
-              },
-            ),
-            
-            ]),
-          ),
-        ),
-            
+               }
+              );
+            },
+          ),      
+        ]),
+      ),
+    ),          
           const SizedBox(height:15)   
          ]);    
         },
@@ -1200,4 +1209,34 @@ Widget tagChip(String id, WidgetRef ref){
 
         );
  }
+}
+
+void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('削除の確認'),
+        content: Text('$name を削除しますか？'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // ダイアログを閉じる
+            },
+            child: const Text('キャンセル'),
+          ),
+          TextButton(
+            onPressed: () {
+              onTap();
+              Navigator.of(context).pop(); // ダイアログを閉じる
+            },
+            child: const Text(
+              '削除',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    }
+  );
 }

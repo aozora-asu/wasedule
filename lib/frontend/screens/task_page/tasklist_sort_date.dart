@@ -384,22 +384,22 @@ void initState() {
                       });
                     }),
                     Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 69,
-                              child: Text(targetData["summary"] ?? "(詳細なし)",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      fontWeight: FontWeight.w700))),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 69,
-                              child: Text(targetData["title"] ?? "(タイトルなし)",
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 69,
+                          child: Text(targetData["summary"] ?? "(詳細なし)",
                               style: TextStyle(
-                                fontSize:
-                                    SizeConfig.blockSizeVertical! * 1.75,
-                                color: Colors.grey,
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal! * 4.5,
+                                  fontWeight: FontWeight.w700))),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 69,
+                          child: Text(targetData["title"] ?? "(タイトルなし)",
+                          style: TextStyle(
+                            fontSize:
+                                SizeConfig.blockSizeVertical! * 1.75,
+                            color: Colors.grey,
                     )
                   )
                 )
@@ -467,7 +467,7 @@ void initState() {
                                   SizedBox(
                                     width: SizeConfig.blockSizeHorizontal! * 4,
                                   ),
-                                  Container(
+                                  SizedBox(
                                       width:
                                           SizeConfig.blockSizeHorizontal! * 92,
                                       child: Row(

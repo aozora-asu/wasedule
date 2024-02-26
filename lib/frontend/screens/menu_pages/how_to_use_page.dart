@@ -47,7 +47,7 @@ class _HowToUsePageState extends State<HowToUsePage> {
         howToUsePanel("わせジュールとは?","わせジュールとは、授業管理機能を中心とした早大生向けの学生生活アシストアプリです！"),
         categoryIndex(Icons.calendar_month,"カレンダー"),
         howToUsePanel("カレンダーとは?","大学生向けにカスタムされた便利なカレンダーです。授業課題とも連動し、あなたの学生生活をサポート。\n以下ではその機能をご紹介します"),
-        howToUsePanel("カレンダーの予定登録","①カレンダーページの[+]ボタンを押すか、カレンダーの任意の日付を押す。\n②「+ 予定の追加...」を押す。"),
+        howToUsePanel("予定の登録","①カレンダーページの[+]ボタンを押すか、カレンダーの任意の日付を押す。\n②「+ 予定の追加...」を押す。"),
         categoryIndex(Icons.splitscreen,"タスク"),
         categoryIndex(Icons.task_outlined,"ToDo"),
       ])
