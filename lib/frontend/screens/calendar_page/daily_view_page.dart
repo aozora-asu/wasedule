@@ -320,7 +320,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               IconButton(
               icon: const Icon(Icons.delete,color:Colors.white),
               onPressed: ()async{
-                await ScheduleDatabaseHelper().deleteSchedule(
+               showDeleteDialogue(
+                context,
+                data.sortedDataByDay[targetKey].elementAt(index)["subject"],
+                ()async{await ScheduleDatabaseHelper().deleteSchedule(
                   data.sortedDataByDay[targetKey].elementAt(index)["id"]
                   );
                   ref.read(taskDataProvider).isRenewed = true;
@@ -329,6 +332,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     await Future.delayed(const Duration(microseconds:1));
                   }
                   setState((){});
+                  }
+                );
               },
               ),
             ])
@@ -458,6 +463,15 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     provider.timeStartController.text = targetData["startTime"];
     provider.timeEndController.text = targetData["endTime"];
     provider.tagController.text = targetData["tag"];
+    provider.isPublic = izuPabu(targetData["isPublic"]);
+  }
+
+  bool izuPabu(int izuPab){
+    if(izuPab == 0){
+      return false;
+    }else{
+      return true;
+    }
   }
 
   Future<void> _showTextDialog(BuildContext context,Map targetData) async {
@@ -562,6 +576,26 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             timeInputPreview(returnTagData(provider.tagController.text,ref))
           ]),
 
+      Row(children:[
+          ElevatedButton(
+           onPressed: (){
+             setState(() {
+               if(provider.isPublic){
+                provider.isPublic = false;
+               }else{
+                provider.isPublic = true;
+               }
+             });
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("共有時表示",style:TextStyle(color:Colors.white))
+          ),
+          isPublicPreview(provider.isPublic)
+          ]),
+
+
           ]);
         },
       ),
@@ -572,13 +606,16 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
                   print("ボタン無効");
                 }else{
+                  bool boolIsPublic = false;
+                  if(targetData["isPublic"] == 1){boolIsPublic = true;}
+
                   Map<String,dynamic>newMap = {};
                   newMap["subject"] = titlecontroller.text;
                   newMap["startDate"] = dtStartcontroller; 
                   newMap["startTime"] = provider.timeStartController.text;
                   newMap["endDate"] = dtStartcontroller;
                   newMap["endTime"] = provider.timeEndController.text;
-                  newMap["isPublic"] = targetData["isPublic"];
+                  newMap["isPublic"] = provider.isPublic;
                   newMap["publicSubject"] = targetData["publicSubject"];
                   newMap["tag"] = provider.tagController.text;
                   newMap["id"] = targetData["id"];
@@ -624,6 +661,25 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget timeInputPreview(String text){
     String previewText = "なし";
     if(text != ""){previewText = text;}
+
+    return Expanded(
+      child:Center(
+        child:Text(
+          previewText,
+          style:const TextStyle(
+            color:Colors.grey,
+            fontWeight:FontWeight.bold,
+            fontSize:20
+            ),
+          overflow: TextOverflow.visible,
+        )
+      ) 
+    );
+  }
+
+  Widget isPublicPreview(bool isPublic){
+    String previewText = "表示しない";
+    if(isPublic){previewText = "表示する";}
 
     return Expanded(
       child:Center(

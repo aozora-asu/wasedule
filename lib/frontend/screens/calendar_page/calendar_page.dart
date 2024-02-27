@@ -561,7 +561,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               );
             },
             icon: const Icon(Icons.tag,size: 15,color:Colors.white),
-            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white)),
+            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white,fontWeight:FontWeight.bold)),
             style: const ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
               ),
@@ -572,7 +572,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       showOnlyScreenShot(LogoAndTitle(size:7))
 
     ]),
-      
+
       SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 100,
         height: SizeConfig.blockSizeVertical! * 3,
@@ -927,6 +927,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return SizedBox(
        child: ListView.separated(
         itemBuilder: (context, index) {
+         
           if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
               targetDayData.elementAt(index)["endTime"].trim() != "") {
             dateTimeData = Text(
@@ -947,7 +948,8 @@ class _CalendarState extends ConsumerState<Calendar> {
               style: TextStyle(color: Colors.grey, fontSize: 7),
             );
           }
-          return Container(
+          return publicContainScreenShot(
+            SizedBox(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -964,14 +966,21 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ),)
                   ])
                 
-              ]));
+              ])
+            ),
+          targetDayData.elementAt(index)["isPublic"]
+          );
         },
         separatorBuilder: (context, index) {
-          return const Divider(
+          return 
+          publicContainScreenShot(
+          const Divider(
             height: 0.7,
             indent: 2,
             endIndent: 2,
             thickness: 0.7,
+          ),
+          targetDayData.elementAt(index)["isPublic"]
           );
         },
         itemCount: targetDayData.length,
@@ -1142,6 +1151,20 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+  Widget publicContainScreenShot(Widget target, int isPublic){
+    bool boolIsPublic = true;
+    if(isPublic == 0){boolIsPublic = false;}
+
+    if(boolIsPublic){
+      return target;
+    }else{
+      if(isScreenShotBeingTaken){
+        return const SizedBox();
+      }else{
+        return target;
+      }
+    }
+  }
 
   Widget showOnlyScreenShot(Widget target){
     if(isScreenShotBeingTaken){
