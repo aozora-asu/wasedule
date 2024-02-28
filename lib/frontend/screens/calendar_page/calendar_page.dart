@@ -589,7 +589,12 @@ class _CalendarState extends ConsumerState<Calendar> {
             generateCalendarCells("friday"),
             generateCalendarCells("saturday")
           ])
-        )
+        ),
+        Row(children:[
+          const Spacer(),
+          showOnlyScreenShot(screenShotDateTime()),
+          const SizedBox(width:7)
+        ])
       ])
     )
    )
@@ -1000,6 +1005,13 @@ class _CalendarState extends ConsumerState<Calendar> {
    }else{
     return Row(children:[const SizedBox(width:1),Container(width:4,height:8,color: returnTagColor(id, ref))]);
    }
+  }
+
+  Widget screenShotDateTime(){
+    String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
+    return Text(date,
+    style:const TextStyle(fontSize:10)
+    );
   }
 
   Widget menuPanel(IconData icon, String text, void Function() ontap){
