@@ -27,17 +27,24 @@ class DaylyViewPage extends ConsumerStatefulWidget {
    _DaylyViewPageState createState() =>  _DaylyViewPageState();
 }
 
-class  _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
+class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
+  late String targetMonth = "";
+  String thisMonth = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0');
+  String today = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0') + "/" + DateTime.now().day.toString().padLeft(2, '0');
+
+  @override
+  void initState() {
+    super.initState();
+    targetMonth = thisMonth;
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = ref.read(dataProvider);
     return 
     Scaffold(
-      body:DaylyViewPageBody(
-        events:widget.events,
-        snapshot:widget.snapshot,
-        context:widget.context
-      ),
+      body:pageHead(),
+
       floatingActionButton:showButtonOrNot(context,ref),
     );
   }
@@ -61,52 +68,22 @@ class  _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
       );
     }
   }
-}
 
-
-class DaylyViewPageBody extends ConsumerStatefulWidget {
-  Future<List<Map<String, dynamic>>>? events;
-  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
-  BuildContext context;
-
-  DaylyViewPageBody({
-    this.events,
-    required this.snapshot,
-    required this.context
-  });
-  @override
-   _DaylyViewPageBodyState createState() =>  _DaylyViewPageBodyState();
-}
-
-class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
-  late String targetMonth = "";
-  String thisMonth = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0');
-  String today = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0') + "/" + DateTime.now().day.toString().padLeft(2, '0');
-
-  @override
-  void initState() {
-    super.initState();
-    targetMonth = thisMonth;
-  }
-
-  @override
-  Widget build(BuildContext context){
+  
+  Widget pageHead(){
     SizeConfig().init(context);
     final data = ref.read(dataProvider);
     
     return 
-    SingleChildScrollView(
-      child: Column(
+Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:[
-        
         TimerView(
           targetMonthData:data.sortDataByMonth()[thisMonth],
           events:widget.events,
           context:widget.context,
           snapshot: widget.snapshot,
         ),
-
         SizedBox(
           child: Row(
             children:[
@@ -142,19 +119,20 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
         ),
         const Divider(height:1),
         pageBody(),
+
       ]
-    ))
+    )
     ;    
   }
 
-  double calculateHeight(){
-   final data = ref.watch(dataProvider);
-   if(data.isTimerList.containsValue(true)){
-    return 50 - 17.75;
-   }else{
-    return 50;
-   }
-  }
+  // double calculateHeight(){
+  //  final data = ref.watch(dataProvider);
+  //  if(data.isTimerList.containsValue(true)){
+  //   return 50 - 17.75;
+  //  }else{
+  //   return 50;
+  //  }
+  // }
 
   Widget switchViewButton(){
    if(ref.watch(dataProvider).isVertical){
@@ -229,7 +207,7 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
       height:SizeConfig.blockSizeVertical! *70,
       width:SizeConfig.blockSizeHorizontal! *100,
       child:const Center(
-        child:CircularProgressIndicator(color: Colors.greenAccent,strokeWidth:7)
+        child:CircularProgressIndicator(color: MAIN_COLOR,strokeWidth:7)
         )
       );
    }else if(data.sortDataByMonth()[targetMonth] == null){
@@ -258,6 +236,7 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
      ref.read(dataProvider).isRenewed = false;
      List<Map<String,dynamic>> targetMonthData = data.sortDataByMonth()[targetMonth]!;
       return 
+       Expanded(child:
         ListView.separated(
         separatorBuilder: (context, index) {
          return const  Divider(height: 1);
@@ -399,8 +378,8 @@ class  _DaylyViewPageBodyState extends ConsumerState<DaylyViewPageBody> {
       },
       itemCount: targetMonthData.length,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-     );
+      //physics: const NeverScrollableScrollPhysics(),
+     ));
   }
 }
 

@@ -59,7 +59,7 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
     final data = ref.watch(dataProvider);
     ref.watch(dataProvider).targetMonth;
     print("WIDGET REBUILT");
-    return FutureBuilder(
+    return  FutureBuilder(
       future: events,
       builder: (BuildContext context,snapshot){
         if (snapshot.connectionState == ConnectionState.waiting) {
