@@ -212,13 +212,13 @@ Column(
       );
    }else if(data.sortDataByMonth()[targetMonth] == null){
      ref.read(dataProvider).isRenewed = false;
-     return Container(
-      height:SizeConfig.blockSizeVertical! *70,
-      width:SizeConfig.blockSizeHorizontal! *100,
-      child:
+     return 
+     Expanded(child:
+      Center(child:
        Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children:[
+        
         const Text("この月の学習記録はありません。",style:TextStyle(fontWeight:FontWeight.bold,fontSize:20)),
         ElevatedButton(
           onPressed:(){
@@ -231,7 +231,8 @@ Column(
           child:const Text("ページの作成",style: TextStyle(color:Colors.white),),
         ),
         ])
-       );
+       )
+      );
    }else{
      ref.read(dataProvider).isRenewed = false;
      List<Map<String,dynamic>> targetMonthData = data.sortDataByMonth()[targetMonth]!;
