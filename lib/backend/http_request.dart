@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import "./firebase_handler.dart";
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
   String s = iCalendarData.replaceAll("\\n\\n", "\\n");
@@ -33,9 +34,7 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
 
   // iCalInfoをJSONに変換
 
-  final iCalData = _pretterTask(iCalInfo);
-
-  return iCalData;
+  return iCalInfo;
 }
 
 Future<String> _getTask(String urlString) async {
@@ -67,9 +66,17 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 //@param String urlSttring
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   final taskString = await _getTask(urlString);
-  Map<String, dynamic> tasks = _parsedTaskData(taskString);
+  Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
+  resisterTaskToFB(iCalInfo);
 
+  final tasks = _pretterTask(iCalInfo);
   return tasks;
+}
+
+void resisterTaskToFB(Map<String, dynamic> taskMap) async {
+  for (int i = 0; i < taskMap["events"].length; i++) {
+    resisterTask(taskMap["events"][i]);
+  }
 }
 
 //@return {"events":[{
