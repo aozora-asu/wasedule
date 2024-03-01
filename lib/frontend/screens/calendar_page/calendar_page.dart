@@ -993,11 +993,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     return Text(date, style: const TextStyle(fontSize: 10));
   }
 
-  Widget screenShotDateTime() {
-    String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
-    return Text(date, style: const TextStyle(fontSize: 10));
-  }
-
   Widget menuPanel(IconData icon, String text, void Function() ontap) {
     return InkWell(
       onTap: ontap,
