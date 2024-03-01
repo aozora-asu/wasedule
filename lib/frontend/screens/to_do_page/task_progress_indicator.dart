@@ -1,3 +1,4 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
@@ -87,6 +88,14 @@ Widget buildTaskProgressIndicator(
 }
 
 class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
+  ExpandableController expController = ExpandableController();
+
+  @override
+  void initState() {
+    super.initState();
+     expController = ExpandableController(initialExpanded: true);
+  }
+  
   Widget circularPercentIndicator() {
     if (circularIndicatorState == 1) {
       return CircularPercentIndicator(
@@ -182,6 +191,38 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    return ExpandablePanel(
+      collapsed: const Divider(height: 1,),
+      header: headerItem(),
+      expanded: indicatorBody(),
+      controller: expController,
+    );
+  }
+
+  Widget headerItem(){
+   return SizedBox(
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+      const SizedBox(width:10),
+      Text(
+        "$formattedDate" + getDayOfWeek(now.weekday -1),
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.w600),
+      ),
+      const Spacer(),
+      Text(
+        "タスクの進捗度",
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 5,
+            fontWeight: FontWeight.w500),
+      )
+    ])
+  );
+  }
+
+  Widget indicatorBody(){
     return Column(children: [
       Container(
           height: SizeConfig.blockSizeVertical! * 2,
@@ -195,24 +236,8 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 height: SizeConfig.blockSizeHorizontal! * 45,
                 child: circularPercentIndicator()),
             Column(children: [
-              Container(
-                   height: SizeConfig.blockSizeVertical! * 10,
-                   width: SizeConfig.blockSizeHorizontal! * 55,
-                  child: Column(children: [
-                    Text(
-                      "$formattedDate" + getDayOfWeek(now.weekday -1),
-                      style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 7.5,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      "タスクの進捗度",
-                      style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ])),
-              Container(
+
+              SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
                   width: SizeConfig.blockSizeHorizontal! * 55,
                   child: InkWell(
@@ -275,7 +300,8 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 ),
               )
             ])
-          ])
+          ]),
+        const Divider(height: 1,),
     ]);
   }
 }

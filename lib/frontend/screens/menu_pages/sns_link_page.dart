@@ -77,7 +77,7 @@ class HomePageUrlLauncher extends StatelessWidget {
           onPressed: () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
-              "https://main--wase-dule.netlify.app/",
+              "https://wasedule.com/",
             );
           }
         );

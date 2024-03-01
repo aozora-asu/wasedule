@@ -1,3 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_extend/share_extend.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
@@ -18,6 +25,8 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 
@@ -47,6 +56,9 @@ class Calendar extends ConsumerStatefulWidget {
 
 class _CalendarState extends ConsumerState<Calendar> {
   bool _notificationsEnabled = false;
+  final ScreenshotController _screenShotController = ScreenshotController();
+  late bool isScreenShotBeingTaken;
+  
   final StreamController<ScheduleNotification>
       didScheduleLocalNotificationStream =
       StreamController<ScheduleNotification>.broadcast();
@@ -73,6 +85,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
+    isScreenShotBeingTaken = false;
   }
 
   testNotify() async {
@@ -282,6 +295,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
+
   @override
   Widget build(BuildContext context) {
     ref.watch(calendarDataProvider);
@@ -292,8 +306,8 @@ class _CalendarState extends ConsumerState<Calendar> {
          image: DecorationImage(
          image: calendarBackGroundImage(),
           fit: BoxFit.cover,
-        )
-      ),
+          )
+        ),
        child:ListView(
         children: [
         
@@ -477,7 +491,15 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
       ),
 
-      floatingActionButton: AddEventButton(),
+      floatingActionButton: Row(
+      
+      children:[
+        const Spacer(),
+        calendarShareButton(),
+        const SizedBox(width:10),
+        AddEventButton(),
+
+      ])
     );
   }
 
@@ -498,21 +520,12 @@ class _CalendarState extends ConsumerState<Calendar> {
 
       switchWidget(taskDataListList(searchConfigInfo("taskList")),searchConfigData("taskList")),
 
-      SizedBox(child:
-            Container(
-                  height: SizeConfig.blockSizeVertical! * 85,
-                  decoration: BoxDecoration(
-                  color:Colors.white,
-                  borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-                  boxShadow: [
-                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                      spreadRadius: 2, // 影の広がり
-                      blurRadius: 3, // ぼかしの強さ
-                      offset: const Offset(0, 3), // 影の方向（横、縦）
-                    ),
-                  ],
-                ),
+      Screenshot(
+        controller: _screenShotController,
+        child:SizedBox(
+          child:Container(
+            height: SizeConfig.blockSizeVertical! * 85,
+            decoration: switchDecoration(),
         child: Column(children:[Row(children: [
           IconButton(
               onPressed: () {
@@ -536,6 +549,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               icon: const Icon(Icons.arrow_forward_ios),
               iconSize: 20),
 
+        doNotContainScreenShot(
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 40,
             height: SizeConfig.blockSizeVertical! * 4,
@@ -547,15 +561,18 @@ class _CalendarState extends ConsumerState<Calendar> {
               );
             },
             icon: const Icon(Icons.tag,size: 15,color:Colors.white),
-            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white)),
+            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white,fontWeight:FontWeight.bold)),
             style: const ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
               ),
           ),
-          ),
+        ),
+      ),
 
-        ]),
-      
+      showOnlyScreenShot(LogoAndTitle(size:7))
+
+    ]),
+
       SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 100,
         height: SizeConfig.blockSizeVertical! * 3,
@@ -571,10 +588,47 @@ class _CalendarState extends ConsumerState<Calendar> {
             generateCalendarCells("thursday"),
             generateCalendarCells("friday"),
             generateCalendarCells("saturday")
-          ]))
-    ])
-   ))
+          ])
+        ),
+        Row(children:[
+          const Spacer(),
+          showOnlyScreenShot(screenShotDateTime()),
+          const SizedBox(width:7)
+        ])
+      ])
+    )
+   )
+   )
    ]);
+  }
+
+  Widget calendarShareButton(){
+    return FloatingActionButton(
+      backgroundColor: MAIN_COLOR,
+      child: const Icon(Icons.ios_share,color:Colors.white),
+      onPressed: () async {
+        setState(() {
+          isScreenShotBeingTaken = true;
+        });
+        final screenshot = await _screenShotController.capture(
+          delay: const Duration(milliseconds: 500),
+        );        
+        setState(() {
+          isScreenShotBeingTaken = false;
+        });
+        if (screenshot != null) {
+          final shareFile =
+              XFile.fromData(screenshot, mimeType: "image/png");
+          await Share.shareXFiles(
+            [
+              shareFile,
+            ],
+          );
+
+        }
+
+      }
+    );
   }
 
   void increasePgNumber() {
@@ -796,7 +850,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               alignment: Alignment.centerLeft,
                               child: Text(target.day.toString())),
                           const Spacer(),
-                          taskListLength(target, 9.0),
+                          doNotContainScreenShot(taskListLength(target, 9.0)),
                           const SizedBox(width: 3)
                         ]),
                         const Divider(
@@ -878,6 +932,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return SizedBox(
        child: ListView.separated(
         itemBuilder: (context, index) {
+         
           if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
               targetDayData.elementAt(index)["endTime"].trim() != "") {
             dateTimeData = Text(
@@ -898,13 +953,15 @@ class _CalendarState extends ConsumerState<Calendar> {
               style: TextStyle(color: Colors.grey, fontSize: 7),
             );
           }
-          return Container(
+          return publicContainScreenShot(
+            SizedBox(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Align(alignment: Alignment.centerLeft, child: dateTimeData),
                 Row(crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[tagThumbnail(targetDayData.elementAt(index)["tag"]),
+                  children:[
+                  tagThumbnail(targetDayData.elementAt(index)["tag"]),
                   Flexible(child:
                   Text(
                   " " + targetDayData.elementAt(index)["subject"],
@@ -914,14 +971,21 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ),)
                   ])
                 
-              ]));
+              ])
+            ),
+          targetDayData.elementAt(index)["isPublic"]
+          );
         },
         separatorBuilder: (context, index) {
-          return const Divider(
+          return 
+          publicContainScreenShot(
+          const Divider(
             height: 0.7,
             indent: 2,
             endIndent: 2,
             thickness: 0.7,
+          ),
+          targetDayData.elementAt(index)["isPublic"]
           );
         },
         itemCount: targetDayData.length,
@@ -941,6 +1005,13 @@ class _CalendarState extends ConsumerState<Calendar> {
    }else{
     return Row(children:[const SizedBox(width:1),Container(width:4,height:8,color: returnTagColor(id, ref))]);
    }
+  }
+
+  Widget screenShotDateTime(){
+    String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
+    return Text(date,
+    style:const TextStyle(fontSize:10)
+    );
   }
 
   Widget menuPanel(IconData icon, String text, void Function() ontap){
@@ -1079,13 +1150,61 @@ class _CalendarState extends ConsumerState<Calendar> {
               ),
               overflow: TextOverflow.clip,
             )
-
-
        ])
       ),
   ))) ;
  }
 
+  Widget doNotContainScreenShot(Widget target){
+    if(isScreenShotBeingTaken){
+      return const SizedBox();
+    }else{
+      return target;
+    }
+  }
+
+  Widget publicContainScreenShot(Widget target, int isPublic){
+    bool boolIsPublic = true;
+    if(isPublic == 0){boolIsPublic = false;}
+
+    if(boolIsPublic){
+      return target;
+    }else{
+      if(isScreenShotBeingTaken){
+        return const SizedBox();
+      }else{
+        return target;
+      }
+    }
+  }
+
+  Widget showOnlyScreenShot(Widget target){
+    if(isScreenShotBeingTaken){
+      return target;
+    }else{
+      return const SizedBox();
+    }
+  }
+
+  BoxDecoration switchDecoration(){
+    if(isScreenShotBeingTaken){
+      return const BoxDecoration(
+            color:Colors.white);
+    }else{
+      return BoxDecoration(
+            color:Colors.white,
+            borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+            boxShadow: [
+                BoxShadow(
+                color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                spreadRadius: 2, // 影の広がり
+                blurRadius: 3, // ぼかしの強さ
+                offset: const Offset(0, 3), // 影の方向（横、縦）
+              ),
+            ],
+          );
+    }
+  }
 
 
 

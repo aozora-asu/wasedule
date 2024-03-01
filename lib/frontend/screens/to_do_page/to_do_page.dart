@@ -61,12 +61,7 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-            backgroundColor: Colors.white,
-            body: Column(children:[
-                SizedBox(
-                  height:SizeConfig.blockSizeVertical! * 80,
-                  child: FutureBuilder<List<Map<String, dynamic>>>(
+    return FutureBuilder<List<Map<String, dynamic>>>(
                       future: events,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -84,9 +79,7 @@ class _TaskPageState extends State<TaskPage> {
                           return NoTaskPage();
                         }
                       },
-                    ),
-                  ),
-                ])
+                    
               );
  }
 }
