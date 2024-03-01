@@ -43,7 +43,7 @@ class ScheduleForm {
   TextEditingController timeEndController = TextEditingController();
   TextEditingController tagController = TextEditingController();
   bool isAllDay = false;
-  bool isPublic = false;
+  bool isPublic = true;
   TextEditingController publicScheduleController = TextEditingController();
 
   TextEditingController dateController = TextEditingController();
@@ -170,6 +170,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     super.initState();
     ref.read(scheduleFormProvider).clearContents();
     ref.read(scheduleFormProvider).dtStartList.add(DateFormat('yyyy-MM-dd').format(widget.target));
+    ref.read(scheduleFormProvider).isPublic = true;
   }
 
   @override
@@ -314,34 +315,33 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
 
           SizedBox(
               height: SizeConfig.blockSizeVertical! * 0.5,
-              width: SizeConfig.blockSizeHorizontal! * 80),           
-          // Container(
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     children: [
-          //       const Text(
-          //         'フレンドに共有',
-          //         style: TextStyle(fontSize: 20),
-          //       ),
-          //       const Spacer(),
-          //       CupertinoSwitch(
-          //           activeColor: ACCENT_COLOR,
-          //           value: scheduleForm.isPublic,
-          //           onChanged: (value) {
-          //             ref.read(scheduleFormProvider.notifier).toggleSwitch();
-          //             ref
-          //                 .read(scheduleFormProvider.notifier)
-          //                 .updateDateTimeFields();
-          //           }),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(
-          //   width: SizeConfig.blockSizeHorizontal! * 80,
-          //   height: SizeConfig.blockSizeHorizontal! * 3,
-          // ),
-          // publicScheduleField(ref),
+              width: SizeConfig.blockSizeHorizontal! * 80),    
+
+
+          Row(children:[
+          ElevatedButton(
+           onPressed: (){
+             setState(() {
+               if(scheduleForm.isPublic){
+                scheduleForm.isPublic = false;
+               }else{
+                scheduleForm.isPublic = true;
+               }
+             });
+           },
+           style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              ),
+           child: const Text("共有時表示",style:TextStyle(color:Colors.white))
+          ),
+          isPublicPreview(scheduleForm.isPublic)
+          ]),
           
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 80,
+            height: SizeConfig.blockSizeVertical! * 0.5,
+          ),
+
 
           addTemplateButton(),
 
@@ -503,6 +503,25 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   Widget timeInputPreview(String text){
     String previewText = "なし";
     if(text != ""){previewText = text;}
+
+    return Expanded(
+      child:Center(
+        child:Text(
+          previewText,
+          style:const TextStyle(
+            color:Colors.grey,
+            fontWeight:FontWeight.bold,
+            fontSize:30
+            ),
+          overflow: TextOverflow.visible,
+        )
+      ) 
+    );
+  }
+
+  Widget isPublicPreview(bool isPublic){
+    String previewText = "表示しない";
+    if(isPublic){previewText = "表示する";}
 
     return Expanded(
       child:Center(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
@@ -73,10 +74,10 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 icon: Icon(Icons.notifications_active),
                 label: Text('通知'),
               ),
-              NavigationRailDestination(
-                icon: Icon(Icons.people),
-                label: Text('フレンド'),
-              ),
+              // NavigationRailDestination(
+              //   icon: Icon(Icons.people),
+              //   label: Text('フレンド'),
+              // ),
             ],
             selectedIndex: _selectedIndex,
             onDestinationSelected: (index) {
@@ -105,54 +106,42 @@ class _MainContentsState extends ConsumerState<MainContents> {
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
-//通知の設定画面////////////////////////////////////////////////
+//通知の設定画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////
     switch (widget.index) {
       case 1:
-    return Expanded(
-      child: Stack(
-          children: [
-            const Scaffold(
-            backgroundColor: BACKGROUND_COLOR,
-            body: Center(
-              child: Text('通知の設定…'),
-             ),
-            ),
-            Positioned(
-              top: 7,
-              left: 10,
-              child:  Text('通知設定…',
-              style:TextStyle(
-        fontSize: SizeConfig.blockSizeHorizontal! *7,
-        fontWeight: FontWeight.bold
-        ),),
-            ),
-          ],
-        ),
-        );
+      return Expanded(child:
+            Padding(
+              padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
+              child:notificationBody(),
+            )
+          );
+
 //フレンドの設定画面////////////////////////////////////////////////////
-      case 2:
-    return Expanded(
-      child: Stack(
-          children: [
-            const Scaffold(
-              backgroundColor: BACKGROUND_COLOR,
-              body: Center(
-                child: Text('フレンドの設定…'),
-              ),
-            ),
-            Positioned(
-              top: 7,
-              left: 10,
-              child:  Text('フレンド設定…',
-              style:TextStyle(
-        fontSize: SizeConfig.blockSizeHorizontal! *7,
-        fontWeight: FontWeight.bold
-        ),),
-            ),
-          ],
-        ),
-        );
-      default:
+    //   case 2:
+    // return Expanded(
+    //   child: Stack(
+    //       children: [
+    //         const Scaffold(
+    //           backgroundColor: BACKGROUND_COLOR,
+    //           body: Center(
+    //             child: Text('フレンドの設定…'),
+    //           ),
+    //         ),
+    //         Positioned(
+    //           top: 7,
+    //           left: 10,
+    //           child:  Text('フレンド設定…',
+    //           style:TextStyle(
+    //     fontSize: SizeConfig.blockSizeHorizontal! *7,
+    //     fontWeight: FontWeight.bold
+    //          ),
+    //      　),
+    //      ),
+    //    ],
+    //  ),
+    //);
+
+   default:
     return Expanded(child:
           Padding(
             padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
@@ -174,6 +163,12 @@ class _MainContentsState extends ConsumerState<MainContents> {
         ),
       ),
       const SizedBox(height:10),
+      Container(
+        decoration: roundedBoxdecorationWithShadow(),
+        padding: const EdgeInsets.all(7.5),
+        child:Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children:[
       Text('カレンダー画面の表示カスタム',style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *4,
         fontWeight: FontWeight.bold
@@ -189,7 +184,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const SizedBox(height:5),
       configTextField("表示日数：","taskList"),
       const SizedBox(height:5),
-    ]);
+    ])
+    )
+   ]);
   }
 
   Widget configSwitch(String configText,String widgetName){
@@ -312,7 +309,43 @@ class _MainContentsState extends ConsumerState<MainContents> {
     }
   }
 
+  Widget notificationBody(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:[
+        
+      Text('通知設定…',
+          style:TextStyle(
+          fontSize: SizeConfig.blockSizeHorizontal! *7,
+          fontWeight: FontWeight.bold
+          ),
+        ),
+      const SizedBox(height:10),       
 
+      Container(
+        decoration: roundedBoxdecorationWithShadow(),
+        padding: const EdgeInsets.all(7.5),
+        child:Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children:[
+
+
+
+          Text('通知のON/OFF',style:TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! *4,
+            fontWeight: FontWeight.bold
+            ),
+          ),
+
+        
+      const SizedBox(height:5),
+      configSwitch("課題の通知(毎朝8時)","tips"),
+      const SizedBox(height:5),
+      configSwitch("予定の通知(毎朝8時)","tips"),
+      ])
+      )
+    ]); 
+   }
   }
 
 

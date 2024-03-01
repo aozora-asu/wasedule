@@ -46,30 +46,23 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(children: [
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 80,
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: events,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return LoadingScreen();
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (snapshot.hasData) {
-                  return ScreenBuilder(
-                    snapshot: snapshot,
-                    context: context,
-                    events: events,
-                  );
-                } else {
-                  return NoTaskPage();
-                }
-              },
-            ),
-          ),
-        ]));
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: events,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoadingScreen();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else if (snapshot.hasData) {
+          return ScreenBuilder(
+            snapshot: snapshot,
+            context: context,
+            events: events,
+          );
+        } else {
+          return NoTaskPage();
+        }
+      },
+    );
   }
 }

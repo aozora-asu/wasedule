@@ -46,6 +46,9 @@ dependencies:
   syncfusion_flutter_datepicker: ^23.2.7
   flutter_colorpicker: ^1.0.3
   share_plus: ^7.2.2
+  share_extend: ^2.0.0
+  screenshot: ^2.1.0
+
   flutter_localizations:
     sdk: flutter
 

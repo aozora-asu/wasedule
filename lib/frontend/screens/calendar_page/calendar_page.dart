@@ -1,3 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_extend/share_extend.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
@@ -19,6 +26,8 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 
@@ -48,6 +57,9 @@ class Calendar extends ConsumerStatefulWidget {
 
 class _CalendarState extends ConsumerState<Calendar> {
   bool _notificationsEnabled = false;
+  final ScreenshotController _screenShotController = ScreenshotController();
+  late bool isScreenShotBeingTaken;
+
   final StreamController<ScheduleNotification>
       didScheduleLocalNotificationStream =
       StreamController<ScheduleNotification>.broadcast();
@@ -72,6 +84,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
+    isScreenShotBeingTaken = false;
   }
 
   testNotify() async {
@@ -273,195 +286,203 @@ class _CalendarState extends ConsumerState<Calendar> {
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: calendarBackGroundImage(),
-          fit: BoxFit.cover,
-        )),
-        child: ListView(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                left: SizeConfig.blockSizeHorizontal! * 2.5,
-                right: SizeConfig.blockSizeHorizontal! * 2.5,
-              ),
-              child: switchWidget(
-                  tipsAndNewsPanel(randomNumber, ""), searchConfigData("tips")),
-            ),
-            Row(children: [
-              const Spacer(),
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: calendarBackGroundImage(),
+            fit: BoxFit.cover,
+          )),
+          child: ListView(
+            children: [
               Padding(
-                padding: EdgeInsets.only(
-                  left: SizeConfig.blockSizeHorizontal! * 3,
-                  right: SizeConfig.blockSizeHorizontal! * 3,
-                ),
-                child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SettingsPage()),
-                      );
-                    },
-                    child: const Text("画面カスタマイズ",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold))),
-              ),
-            ]),
-            Padding(
-              padding: EdgeInsets.only(
-                left: SizeConfig.blockSizeHorizontal! * 2.5,
-                right: SizeConfig.blockSizeHorizontal! * 2.5,
-              ),
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _getDataSource(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // データが取得される間、ローディングインディケータを表示できます。
-                    initConfig();
-                    ref
-                        .read(calendarDataProvider)
-                        .getTagData(_getTagDataSource());
-
-                    return calendarBody();
-                  } else if (snapshot.hasError) {
-                    // エラーがある場合、エラーメッセージを表示します。
-                    return Text('エラーだよい: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // データがないか、データが空の場合、空っぽのカレンダーを表示。
-                    return calendarBody();
-                  } else {
-                    print("カレンダーの再読み");
-                    if (ref.read(taskDataProvider).isRenewed) {
-                      print("データ更新時処理実行");
-                      initConfig();
-                      displayDB();
-                      _getTemplateDataSource();
-                      ref
-                          .read(calendarDataProvider)
-                          .getConfigData(_getConfigDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getArbeitData(_getArbeitDataSource());
-                      ref.read(calendarDataProvider).getData(snapshot.data!);
-                      ref.read(calendarDataProvider).sortDataByDay();
-                      ref
-                          .read(calendarDataProvider)
-                          .getTemplateData(_getTemplateDataSource());
-                      ref.read(taskDataProvider).isRenewed = false;
-                    }
-                    ref.read(calendarDataProvider).getData(snapshot.data!);
-                    ref.read(calendarDataProvider).sortDataByDay();
-                    ref
-                        .read(calendarDataProvider)
-                        .getArbeitData(_getArbeitDataSource());
-                    ref
-                        .read(calendarDataProvider)
-                        .getTagData(_getTagDataSource());
-                    ref
-                        .read(calendarDataProvider)
-                        .getTemplateData(_getTemplateDataSource());
-                    ref.read(taskDataProvider).getData(taskData);
-
-                    return calendarBody();
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 3,
-            ),
-            Padding(
                 padding: EdgeInsets.only(
                   left: SizeConfig.blockSizeHorizontal! * 2.5,
                   right: SizeConfig.blockSizeHorizontal! * 2.5,
                 ),
-                child: Column(children: [
-                  Row(children: [
-                    expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ArbeitStatsPage(
-                                  targetMonth: targetMonth,
-                                )),
-                      );
-                    }),
-                  ]),
+                child: switchWidget(tipsAndNewsPanel(randomNumber, ""),
+                    searchConfigData("tips")),
+              ),
+              Row(children: [
+                const Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: SizeConfig.blockSizeHorizontal! * 3,
+                    right: SizeConfig.blockSizeHorizontal! * 3,
+                  ),
+                  child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      },
+                      child: const Text("画面カスタマイズ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.bold))),
+                ),
+              ]),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: SizeConfig.blockSizeHorizontal! * 2.5,
+                  right: SizeConfig.blockSizeHorizontal! * 2.5,
+                ),
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _getDataSource(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // データが取得される間、ローディングインディケータを表示できます。
+                      initConfig();
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
 
-                  const SizedBox(height: 15),
+                      return calendarBody();
+                    } else if (snapshot.hasError) {
+                      // エラーがある場合、エラーメッセージを表示します。
+                      return Text('エラーだよい: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      // データがないか、データが空の場合、空っぽのカレンダーを表示。
+                      return calendarBody();
+                    } else {
+                      print("カレンダーの再読み");
+                      if (ref.read(taskDataProvider).isRenewed) {
+                        print("データ更新時処理実行");
+                        initConfig();
+                        displayDB();
+                        _getTemplateDataSource();
+                        ref
+                            .read(calendarDataProvider)
+                            .getConfigData(_getConfigDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getArbeitData(_getArbeitDataSource());
+                        ref.read(calendarDataProvider).getData(snapshot.data!);
+                        ref.read(calendarDataProvider).sortDataByDay();
+                        ref
+                            .read(calendarDataProvider)
+                            .getTemplateData(_getTemplateDataSource());
+                        ref.read(taskDataProvider).isRenewed = false;
+                      }
+                      ref.read(calendarDataProvider).getData(snapshot.data!);
+                      ref.read(calendarDataProvider).sortDataByDay();
+                      ref
+                          .read(calendarDataProvider)
+                          .getArbeitData(_getArbeitDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTemplateData(_getTemplateDataSource());
+                      ref.read(taskDataProvider).getData(taskData);
 
-                  Row(children: [
-                    menuPanel(Icons.link_rounded, "Moodle URL登録", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UrlRegisterPage()),
-                      );
-                    }),
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 5,
-                    ),
-                    menuPanel(Icons.school, "使い方ガイド", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HowToUsePage()),
-                      );
-                    })
-                    // menuPanel(
-                    //   Icons.ios_share_rounded,
-                    //   "SNS共有コンテンツ",
-                    //   () {
-                    //     Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
-                    //   );
-                    // }),
-                  ]),
+                      return calendarBody();
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical! * 3,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                    left: SizeConfig.blockSizeHorizontal! * 2.5,
+                    right: SizeConfig.blockSizeHorizontal! * 2.5,
+                  ),
+                  child: Column(children: [
+                    Row(children: [
+                      expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ArbeitStatsPage(
+                                    targetMonth: targetMonth,
+                                  )),
+                        );
+                      }),
+                    ]),
 
-                  const SizedBox(height: 15),
+                    const SizedBox(height: 15),
 
-                  Row(children: [
-                    menuPanel(Icons.info, "サポート", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SnsLinkPage()),
-                      );
-                    }),
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 5,
-                    ),
-                    menuPanel(Icons.settings, "設定", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SettingsPage()),
-                      );
-                    }),
-                  ]),
+                    Row(children: [
+                      menuPanel(Icons.link_rounded, "Moodle URL登録", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UrlRegisterPage()),
+                        );
+                      }),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 5,
+                      ),
+                      menuPanel(Icons.school, "使い方ガイド", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HowToUsePage()),
+                        );
+                      })
+                      // menuPanel(
+                      //   Icons.ios_share_rounded,
+                      //   "SNS共有コンテンツ",
+                      //   () {
+                      //     Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
+                      //   );
+                      // }),
+                    ]),
 
-                  const SizedBox(height: 15),
+                    const SizedBox(height: 15),
 
-                  // Row(children:[
-                  //   expandedMenuPanel(
-                  //     Icons.school,
-                  //     "使い方ガイド",
-                  //     () {
-                  //       Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(builder: (context) => HowToUsePage()),
-                  //     );
-                  //   })
-                  // ]),
+                    Row(children: [
+                      menuPanel(Icons.info, "サポート", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SnsLinkPage()),
+                        );
+                      }),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 5,
+                      ),
+                      menuPanel(Icons.settings, "設定", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      }),
+                    ]),
 
-                  const SizedBox(height: 30),
-                ]))
-          ],
+                    const SizedBox(height: 15),
+
+                    // Row(children:[
+                    //   expandedMenuPanel(
+                    //     Icons.school,
+                    //     "使い方ガイド",
+                    //     () {
+                    //       Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => HowToUsePage()),
+                    //     );
+                    //   })
+                    // ]),
+
+                    const SizedBox(height: 30),
+                  ]))
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: AddEventButton(),
-    );
+        floatingActionButton: Row(children: [
+          const Spacer(),
+          calendarShareButton(),
+          const SizedBox(width: 10),
+          AddEventButton(),
+        ]));
   }
 
   AssetImage calendarBackGroundImage() {
@@ -482,84 +503,111 @@ class _CalendarState extends ConsumerState<Calendar> {
           todaysScheduleListView(), searchConfigData("todaysSchedule")),
       switchWidget(taskDataListList(searchConfigInfo("taskList")),
           searchConfigData("taskList")),
-      SizedBox(
-          child: Container(
-              height: SizeConfig.blockSizeVertical! * 85,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                    spreadRadius: 2, // 影の広がり
-                    blurRadius: 3, // ぼかしの強さ
-                    offset: const Offset(0, 3), // 影の方向（横、縦）
-                  ),
-                ],
-              ),
-              child: Column(children: [
-                Row(children: [
-                  IconButton(
-                      onPressed: () {
-                        decreasePgNumber();
-                      },
-                      icon: const Icon(Icons.arrow_back_ios),
-                      iconSize: 20),
-                  Text(
-                    targetMonth,
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          increasePgNumber();
-                        });
-                      },
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      iconSize: 20),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal! * 40,
-                    height: SizeConfig.blockSizeVertical! * 4,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TagAndTemplatePage()),
-                        );
-                      },
-                      icon:
-                          const Icon(Icons.tag, size: 15, color: Colors.white),
-                      label: const Text('タグとテンプレート',
-                          style: TextStyle(fontSize: 10, color: Colors.white)),
-                      style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.blueAccent),
+      Screenshot(
+          controller: _screenShotController,
+          child: SizedBox(
+              child: Container(
+                  height: SizeConfig.blockSizeVertical! * 85,
+                  decoration: switchDecoration(),
+                  child: Column(children: [
+                    Row(children: [
+                      IconButton(
+                          onPressed: () {
+                            decreasePgNumber();
+                          },
+                          icon: const Icon(Icons.arrow_back_ios),
+                          iconSize: 20),
+                      Text(
+                        targetMonth,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              increasePgNumber();
+                            });
+                          },
+                          icon: const Icon(Icons.arrow_forward_ios),
+                          iconSize: 20),
+                      doNotContainScreenShot(
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 40,
+                          height: SizeConfig.blockSizeVertical! * 4,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TagAndTemplatePage()),
+                              );
+                            },
+                            icon: const Icon(Icons.tag,
+                                size: 15, color: Colors.white),
+                            label: const Text('タグとテンプレート',
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.blueAccent),
+                            ),
+                          ),
+                        ),
+                      ),
+                      showOnlyScreenShot(LogoAndTitle(size: 7))
+                    ]),
+                    SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! * 100,
+                      height: SizeConfig.blockSizeVertical! * 3,
+                      child: generateWeekThumbnail(),
                     ),
-                  ),
-                ]),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 100,
-                  height: SizeConfig.blockSizeVertical! * 3,
-                  child: generateWeekThumbnail(),
-                ),
-                SizedBox(
-                    width: SizeConfig.blockSizeHorizontal! * 100,
-                    child: Row(children: [
-                      generateCalendarCells("sunday"),
-                      generateCalendarCells("monday"),
-                      generateCalendarCells("tuesday"),
-                      generateCalendarCells("wednesday"),
-                      generateCalendarCells("thursday"),
-                      generateCalendarCells("friday"),
-                      generateCalendarCells("saturday")
-                    ]))
-              ])))
+                    SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 100,
+                        child: Row(children: [
+                          generateCalendarCells("sunday"),
+                          generateCalendarCells("monday"),
+                          generateCalendarCells("tuesday"),
+                          generateCalendarCells("wednesday"),
+                          generateCalendarCells("thursday"),
+                          generateCalendarCells("friday"),
+                          generateCalendarCells("saturday")
+                        ])),
+                    Row(children: [
+                      const Spacer(),
+                      showOnlyScreenShot(screenShotDateTime()),
+                      const SizedBox(width: 7)
+                    ])
+                  ]))))
     ]);
+  }
+
+  Widget calendarShareButton() {
+    return FloatingActionButton(
+        backgroundColor: MAIN_COLOR,
+        child: const Icon(Icons.ios_share, color: Colors.white),
+        onPressed: () async {
+          setState(() {
+            isScreenShotBeingTaken = true;
+          });
+          final screenshot = await _screenShotController.capture(
+            delay: const Duration(milliseconds: 500),
+          );
+          setState(() {
+            isScreenShotBeingTaken = false;
+          });
+          if (screenshot != null) {
+            final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
+            await Share.shareXFiles(
+              [
+                shareFile,
+              ],
+            );
+          }
+        });
   }
 
   void increasePgNumber() {
@@ -780,7 +828,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               alignment: Alignment.centerLeft,
                               child: Text(target.day.toString())),
                           const Spacer(),
-                          taskListLength(target, 9.0),
+                          doNotContainScreenShot(taskListLength(target, 9.0)),
                           const SizedBox(width: 3)
                         ]),
                         const Divider(
@@ -883,35 +931,43 @@ class _CalendarState extends ConsumerState<Calendar> {
                     style: TextStyle(color: Colors.grey, fontSize: 7),
                   );
                 }
-                return Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Align(
-                          alignment: Alignment.centerLeft, child: dateTimeData),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            tagThumbnail(targetDayData.elementAt(index)["tag"]),
-                            Flexible(
-                              child: Text(
-                                " " + targetDayData.elementAt(index)["subject"],
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 8),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ])
-                    ]));
+                return publicContainScreenShot(
+                    SizedBox(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: dateTimeData),
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                tagThumbnail(
+                                    targetDayData.elementAt(index)["tag"]),
+                                Flexible(
+                                  child: Text(
+                                    " " +
+                                        targetDayData
+                                            .elementAt(index)["subject"],
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 8),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              ])
+                        ])),
+                    targetDayData.elementAt(index)["isPublic"]);
               },
               separatorBuilder: (context, index) {
-                return const Divider(
-                  height: 0.7,
-                  indent: 2,
-                  endIndent: 2,
-                  thickness: 0.7,
-                );
+                return publicContainScreenShot(
+                    const Divider(
+                      height: 0.7,
+                      indent: 2,
+                      endIndent: 2,
+                      thickness: 0.7,
+                    ),
+                    targetDayData.elementAt(index)["isPublic"]);
               },
               itemCount: targetDayData.length,
               shrinkWrap: true,
@@ -930,6 +986,16 @@ class _CalendarState extends ConsumerState<Calendar> {
         Container(width: 4, height: 8, color: returnTagColor(id, ref))
       ]);
     }
+  }
+
+  Widget screenShotDateTime() {
+    String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
+    return Text(date, style: const TextStyle(fontSize: 10));
+  }
+
+  Widget screenShotDateTime() {
+    String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
+    return Text(date, style: const TextStyle(fontSize: 10));
   }
 
   Widget menuPanel(IconData icon, String text, void Function() ontap) {
@@ -1079,6 +1145,58 @@ class _CalendarState extends ConsumerState<Calendar> {
                         )
                       ])),
             )));
+  }
+
+  Widget doNotContainScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
+      return const SizedBox();
+    } else {
+      return target;
+    }
+  }
+
+  Widget publicContainScreenShot(Widget target, int isPublic) {
+    bool boolIsPublic = true;
+    if (isPublic == 0) {
+      boolIsPublic = false;
+    }
+
+    if (boolIsPublic) {
+      return target;
+    } else {
+      if (isScreenShotBeingTaken) {
+        return const SizedBox();
+      } else {
+        return target;
+      }
+    }
+  }
+
+  Widget showOnlyScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
+      return target;
+    } else {
+      return const SizedBox();
+    }
+  }
+
+  BoxDecoration switchDecoration() {
+    if (isScreenShotBeingTaken) {
+      return const BoxDecoration(color: Colors.white);
+    } else {
+      return BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      );
+    }
   }
 
   Widget todaysScheduleListView() {

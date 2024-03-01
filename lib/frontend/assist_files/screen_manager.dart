@@ -21,6 +21,7 @@ class AppPage extends ConsumerStatefulWidget {
 
 class _AppPageState extends ConsumerState<AppPage> {
   int _currentIndex = 0;
+
   void _onItemTapped(int index) {
     ref.read(taskDataProvider).isInit = true;
     setState(() {
@@ -44,11 +45,11 @@ class _AppPageState extends ConsumerState<AppPage> {
     return Scaffold(
       appBar: const CustomAppBar(),
       drawer: burgerMenu(),
-      body: body,
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _currentIndex,
         onItemTapped: _onItemTapped,
       ),
+      body: body,
     );
   }
 }
