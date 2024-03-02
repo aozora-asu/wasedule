@@ -344,9 +344,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           child: Container(
               // constraints: BoxConstraints(
               //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              // ), 
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),             
-                child: Container(
+              // ),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
+              child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -432,63 +432,61 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               child: Column(
                 children: [
                   Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                            spreadRadius: 2, // 影の広がり
-                            blurRadius: 4, // 影のぼかし
-                            offset: const Offset(0, 2), // 影の方向（横、縦）
-                          ),
-                        ],
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5), // 影の色と透明度
+                          spreadRadius: 2, // 影の広がり
+                          blurRadius: 4, // 影のぼかし
+                          offset: const Offset(0, 2), // 影の方向（横、縦）
+                        ),
+                      ],
                     ),
-                    child: SingleChildScrollView(
-                      child:Scrollbar(child:Column(
-
-                        children: [
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 92,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                73.5),
-                                    child: Text(
-                                      targetData["summary"] ?? "(詳細なし)",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  5,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  Text(
-                                    "  の詳細",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                        ],
-                      )),
+                  ),
+                  SingleChildScrollView(
+                      child: Scrollbar(
+                          child: Column(
+                    children: [
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 4,
+                      ),
+                      SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 92,
+                          child: Row(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        SizeConfig.blockSizeHorizontal! * 73.5),
+                                child: Text(
+                                  targetData["summary"] ?? "(詳細なし)",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 5,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              Text(
+                                "  の詳細",
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 5,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          )),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 4,
+                      ),
+                    ],
+                  ))),
                   SizedBox(
                     height: SizeConfig.blockSizeHorizontal! * 2,
                   ),
