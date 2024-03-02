@@ -29,7 +29,7 @@ class CustomBottomBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.task_outlined),
-          label: 'ToDo',
+          label: '学習管理',
           backgroundColor: MAIN_COLOR
         ),
         // BottomNavigationBarItem(

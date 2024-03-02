@@ -311,7 +311,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Container(
-      width: SizeConfig.blockSizeHorizontal! * 100,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -331,7 +330,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     DateTime dateEnd = widget.sortedData.keys.elementAt(keyIndex);
     List<Map<String, dynamic>> childData = widget.sortedData[dateEnd]!;
     Map<String, dynamic> targetData = childData.elementAt(valueIndex);
-
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
 
     return Row(children: [
@@ -344,11 +342,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             bottomSheet(targetData);
           },
           child: Container(
-              constraints: BoxConstraints(
-                maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              ),
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
-              child: Container(
+              // constraints: BoxConstraints(
+              //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
+              // ), 
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),             
+                child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -360,7 +358,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                         ),
                       ]),
-                  width: SizeConfig.blockSizeHorizontal! * 83,
                   child: Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
@@ -450,10 +447,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           ),
                         ],
                       ),
-                      alignment: Alignment.center,
-                      height: SizeConfig.blockSizeHorizontal! * 13,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    child: SingleChildScrollView(
+                      child:Scrollbar(child:Column(
+
                         children: [
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal! * 4,
