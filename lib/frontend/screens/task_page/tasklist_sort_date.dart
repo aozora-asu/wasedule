@@ -312,7 +312,6 @@ void initState() {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Container(
-      width: SizeConfig.blockSizeHorizontal! * 100,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -336,8 +335,6 @@ void initState() {
     DateTime dateEnd = widget.sortedData.keys.elementAt(keyIndex);
     List<Map<String, dynamic>> childData = widget.sortedData[dateEnd]!;
     Map<String, dynamic> targetData = childData.elementAt(valueIndex);
-
-
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
 
     return Row(children: [
@@ -350,11 +347,11 @@ void initState() {
              bottomSheet(targetData);
           },
           child: Container(
-              constraints: BoxConstraints(
-                maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              ),
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
-              child: Container(
+              // constraints: BoxConstraints(
+              //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
+              // ), 
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),             
+                child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -366,7 +363,6 @@ void initState() {
                           offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                         ),
                       ]),
-                  width: SizeConfig.blockSizeHorizontal! * 83,
                   child: Row(children: [
                     CupertinoCheckbox(
                       value: isChosen, onChanged: (value) {
@@ -438,9 +434,7 @@ void initState() {
                       ),
                     ),
                     child: SingleChildScrollView(
-                      child: 
-                      Scrollbar(child:Column(
-                        
+                      child:Scrollbar(child:Column(
                         children: [
                           Container(
                               decoration: BoxDecoration(

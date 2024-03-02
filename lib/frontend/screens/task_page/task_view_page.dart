@@ -76,10 +76,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskDataProvider);
     return Scaffold(
         backgroundColor: Colors.white, // BACKGROUND_COLOR,
-        body: //こっちにタスク進捗リスト
+        body: 
             Column(children: [
-          Container(
-            width: SizeConfig.blockSizeHorizontal! * 100,
+          SizedBox(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
