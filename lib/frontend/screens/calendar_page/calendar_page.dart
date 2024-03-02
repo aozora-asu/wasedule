@@ -12,7 +12,8 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
-import 'package:flutter_calandar_app/backend/temp_file.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
+
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
@@ -39,8 +40,8 @@ import '../../../backend/notify/notify_setting.dart';
 import '../../../backend/DB/models/notify_content.dart';
 import '../../../backend/notify/notify.dart';
 
-  var random = Random(DateTime.now().millisecondsSinceEpoch);
-  var randomNumber = random.nextInt(10); // 0から10までの整数を生成
+var random = Random(DateTime.now().millisecondsSinceEpoch);
+var randomNumber = random.nextInt(10); // 0から10までの整数を生成
 
 class Calendar extends ConsumerStatefulWidget {
   const Calendar({
@@ -49,7 +50,7 @@ class Calendar extends ConsumerStatefulWidget {
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
   // bool get didNotificationLaunchApp =>
   //     notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
-  
+
   @override
   _CalendarState createState() => _CalendarState();
 }
@@ -58,7 +59,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   bool _notificationsEnabled = false;
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isScreenShotBeingTaken;
-  
+
   final StreamController<ScheduleNotification>
       didScheduleLocalNotificationStream =
       StreamController<ScheduleNotification>.broadcast();
@@ -71,8 +72,6 @@ class _CalendarState extends ConsumerState<Calendar> {
       DateTime.now().month.toString().padLeft(2, '0') +
       "/" +
       DateTime.now().day.toString().padLeft(2, '0');
-
-
 
   @override
   void initState() {
@@ -186,7 +185,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
-  String urlString = url_t;
+  String? urlString;
   Future<List<Map<String, dynamic>>>? events;
 
   bool setIsAllDay(Map<String, dynamic> schedule) {
@@ -199,26 +198,16 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Future<void> _initializeData() async {
-    if (await databaseHelper.hasData() == true) {
+    urlString = await UserDatabaseHelper().getUrl();
+    if (urlString != null) {
       await displayDB();
     } else {
-      if (urlString == "") {
-        // urlStringがない場合の処理
-      } else {
-        noneTaskText();
-      }
+      noneTaskText();
     }
   }
 
   Widget noneTaskText() {
     return const Text("現在課題はありません。");
-  }
-
-  //データベースを更新する関数。主にボタンを押された時のみ
-  Future<void> loadData() async {
-    await databaseHelper.resisterTaskToDB(urlString);
-
-    await displayDB();
   }
 
   List<Map<String, dynamic>> taskData = [];
@@ -234,44 +223,41 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-  void initConfig(){
-    createConfigData("tips",1);
-    createConfigData("todaysSchedule",0);
-    createConfigData("taskList",1);
+  void initConfig() {
+    createConfigData("tips", 1);
+    createConfigData("todaysSchedule", 0);
+    createConfigData("taskList", 1);
   }
 
-  Future<void> createConfigData(String widgetName , int defaultState) async{
+  Future<void> createConfigData(String widgetName, int defaultState) async {
     final calendarData = ref.watch(calendarDataProvider);
-      bool found = false;
-      await ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-      for (var data in calendarData.configData) {
+    bool found = false;
+    await ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
+    for (var data in calendarData.configData) {
       String targetWidgetName = data["widgetName"];
-      
+
       if (targetWidgetName == widgetName) {
         found = true;
         //print("指定されたデータが見つかりました: $widgetName");
         break;
       }
     }
-    
+
     if (!found) {
       //print("指定されたデータが見つかりませんでした: $widgetName");
-      await CalendarConfigDatabaseHelper().resisterConfigToDB({
-        "widgetName" : widgetName,
-        "isVisible" : defaultState,
-        "info" : "3"
-      });
+      await CalendarConfigDatabaseHelper().resisterConfigToDB(
+          {"widgetName": widgetName, "isVisible": defaultState, "info": "3"});
       ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
     }
   }
-  
+
   int searchConfigData(String widgetName) {
     final calendarData = ref.watch(calendarDataProvider);
-      bool found = false;
-      int result = 0;
-      for (var data in calendarData.configData) {
+    bool found = false;
+    int result = 0;
+    for (var data in calendarData.configData) {
       String targetWidgetName = data["widgetName"];
-      
+
       if (targetWidgetName == widgetName) {
         found = true;
         result = data["isVisible"];
@@ -282,11 +268,11 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   int searchConfigInfo(String widgetName) {
     final calendarData = ref.watch(calendarDataProvider);
-      bool found = false;
-      int result = 0;
-      for (var data in calendarData.configData) {
+    bool found = false;
+    int result = 0;
+    for (var data in calendarData.configData) {
       String targetWidgetName = data["widgetName"];
-      
+
       if (targetWidgetName == widgetName) {
         found = true;
         result = int.parse(data["info"]);
@@ -295,340 +281,333 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
-
   @override
   Widget build(BuildContext context) {
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
     return Scaffold(
-      body:Container(
-        decoration:  BoxDecoration(
-         image: DecorationImage(
-         image: calendarBackGroundImage(),
-          fit: BoxFit.cover,
-          )
-        ),
-       child:ListView(
-        children: [
-        
-        Padding(
-          padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
-          child:
-          switchWidget(tipsAndNewsPanel(randomNumber,""),searchConfigData("tips")),
-        ),
-        
-      Row(
-        children:[
-          const Spacer(),
-          Padding(
-          padding: EdgeInsets.only(
-            left:SizeConfig.blockSizeHorizontal! *3,
-            right:SizeConfig.blockSizeHorizontal! *3,
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: calendarBackGroundImage(),
+            fit: BoxFit.cover,
+          )),
+          child: ListView(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  left: SizeConfig.blockSizeHorizontal! * 2.5,
+                  right: SizeConfig.blockSizeHorizontal! * 2.5,
+                ),
+                child: switchWidget(tipsAndNewsPanel(randomNumber, ""),
+                    searchConfigData("tips")),
+              ),
+              Row(children: [
+                const Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: SizeConfig.blockSizeHorizontal! * 3,
+                    right: SizeConfig.blockSizeHorizontal! * 3,
+                  ),
+                  child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      },
+                      child: const Text("画面カスタマイズ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.bold))),
+                ),
+              ]),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: SizeConfig.blockSizeHorizontal! * 2.5,
+                  right: SizeConfig.blockSizeHorizontal! * 2.5,
+                ),
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _getDataSource(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // データが取得される間、ローディングインディケータを表示できます。
+                      initConfig();
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
+
+                      return calendarBody();
+                    } else if (snapshot.hasError) {
+                      // エラーがある場合、エラーメッセージを表示します。
+                      return Text('エラーだよい: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      // データがないか、データが空の場合、空っぽのカレンダーを表示。
+                      return calendarBody();
+                    } else {
+                      print("カレンダーの再読み");
+                      if (ref.read(taskDataProvider).isRenewed) {
+                        print("データ更新時処理実行");
+                        initConfig();
+                        displayDB();
+                        _getTemplateDataSource();
+                        ref
+                            .read(calendarDataProvider)
+                            .getConfigData(_getConfigDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getArbeitData(_getArbeitDataSource());
+                        ref.read(calendarDataProvider).getData(snapshot.data!);
+                        ref.read(calendarDataProvider).sortDataByDay();
+                        ref
+                            .read(calendarDataProvider)
+                            .getTemplateData(_getTemplateDataSource());
+                        ref.read(taskDataProvider).isRenewed = false;
+                      }
+                      ref.read(calendarDataProvider).getData(snapshot.data!);
+                      ref.read(calendarDataProvider).sortDataByDay();
+                      ref
+                          .read(calendarDataProvider)
+                          .getArbeitData(_getArbeitDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTemplateData(_getTemplateDataSource());
+                      ref.read(taskDataProvider).getData(taskData);
+
+                      return calendarBody();
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical! * 3,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                    left: SizeConfig.blockSizeHorizontal! * 2.5,
+                    right: SizeConfig.blockSizeHorizontal! * 2.5,
+                  ),
+                  child: Column(children: [
+                    Row(children: [
+                      expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ArbeitStatsPage(
+                                    targetMonth: targetMonth,
+                                  )),
+                        );
+                      }),
+                    ]),
+
+                    const SizedBox(height: 15),
+
+                    Row(children: [
+                      menuPanel(Icons.link_rounded, "Moodle URL登録", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UrlRegisterPage()),
+                        );
+                      }),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 5,
+                      ),
+                      menuPanel(Icons.school, "使い方ガイド", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HowToUsePage()),
+                        );
+                      })
+                      // menuPanel(
+                      //   Icons.ios_share_rounded,
+                      //   "SNS共有コンテンツ",
+                      //   () {
+                      //     Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
+                      //   );
+                      // }),
+                    ]),
+
+                    const SizedBox(height: 15),
+
+                    Row(children: [
+                      menuPanel(Icons.info, "サポート", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SnsLinkPage()),
+                        );
+                      }),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 5,
+                      ),
+                      menuPanel(Icons.settings, "設定", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      }),
+                    ]),
+
+                    const SizedBox(height: 15),
+
+                    // Row(children:[
+                    //   expandedMenuPanel(
+                    //     Icons.school,
+                    //     "使い方ガイド",
+                    //     () {
+                    //       Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => HowToUsePage()),
+                    //     );
+                    //   })
+                    // ]),
+
+                    const SizedBox(height: 30),
+                  ]))
+            ],
           ),
-          child:InkWell(
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-            child:const Text("画面カスタマイズ",
-            style:TextStyle(
-            color:Colors.white,
-            fontSize:12.5,
-            fontWeight: FontWeight.bold
-          )
-         )
         ),
-       ),
-      ]),
-
-        Padding(
-        padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2.5,right:SizeConfig.blockSizeHorizontal! *2.5,),
-        child:
-         FutureBuilder<List<Map<String, dynamic>>>(
-              future: _getDataSource(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // データが取得される間、ローディングインディケータを表示できます。
-                  initConfig();
-                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
-                  
-                  
-                  return calendarBody();
-                } else if (snapshot.hasError) {
-                  // エラーがある場合、エラーメッセージを表示します。
-                  return Text('エラーだよい: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  // データがないか、データが空の場合、空っぽのカレンダーを表示。
-                  return calendarBody();
-                } else {
-                  print("カレンダーの再読み");
-                  if(ref.read(taskDataProvider).isRenewed){
-                    print("データ更新時処理実行");
-                    initConfig();
-                    displayDB();
-                    _getTemplateDataSource();
-                    ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-                    ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
-                    ref.read(calendarDataProvider).getData(snapshot.data!);
-                    ref.read(calendarDataProvider).sortDataByDay();
-                    ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
-                    ref.read(taskDataProvider).isRenewed = false;
-                  }
-                  ref.read(calendarDataProvider).getData(snapshot.data!);
-                  ref.read(calendarDataProvider).sortDataByDay();
-                  ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
-                  ref.read(calendarDataProvider).getTagData(_getTagDataSource());
-                  ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
-                  ref.read(taskDataProvider).getData(taskData);
-                  
-                 
-                  return calendarBody();
-                  
-                }
-              },
-            ),
-           ),
-
-
-          SizedBox(height:SizeConfig.blockSizeVertical! *3,),
-
-           Padding(
-            padding: EdgeInsets.only(
-              left:SizeConfig.blockSizeHorizontal! *2.5,
-              right:SizeConfig.blockSizeHorizontal! *2.5,),
-            child:Column(children:[
-
-            Row(children:[
-              expandedMenuPanel(
-                Icons.currency_yen,
-                "アルバイト",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:targetMonth,)),
-                );
-              }),
-            ]),
-
-            const SizedBox(height:15),
-
-            Row(children:[
-              menuPanel(
-                Icons.link_rounded,
-                "Moodle URL登録",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-                );
-              }),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
-              menuPanel(
-                Icons.school,
-                "使い方ガイド",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HowToUsePage()),
-                );
-              })
-              // menuPanel(
-              //   Icons.ios_share_rounded,
-              //   "SNS共有コンテンツ",
-              //   () {
-              //     Navigator.push(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
-              //   );
-              // }),
-            ]),
-
-            const SizedBox(height:15),
-
-            Row(children:[
-              menuPanel(
-                Icons.info,
-                "サポート",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SnsLinkPage()),
-                );
-              }),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! *5,),
-              menuPanel(
-                Icons.settings,
-                "設定",
-                () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
-                );
-              }),
-            ]),
-
-            const SizedBox(height:15),
-
-            // Row(children:[
-            //   expandedMenuPanel(
-            //     Icons.school,
-            //     "使い方ガイド",
-            //     () {
-            //       Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => HowToUsePage()),
-            //     );
-            //   })
-            // ]),
-
-            const SizedBox(height:30),
-
-           ])
-           )
-          ],
-        ),
-      ),
-
-      floatingActionButton: Row(
-      
-      children:[
-        const Spacer(),
-        calendarShareButton(),
-        const SizedBox(width:10),
-        AddEventButton(),
-
-      ])
-    );
+        floatingActionButton: Row(children: [
+          const Spacer(),
+          calendarShareButton(),
+          const SizedBox(width: 10),
+          AddEventButton(),
+        ]));
   }
 
-  AssetImage calendarBackGroundImage(){
-    if(DateTime.now().hour >= 5 &&DateTime.now().hour <= 9){
-      return const AssetImage('lib/assets/calendar_background/ookuma_morning.png');
-    }else if(DateTime.now().hour >= 9 &&DateTime.now().hour <= 17){
+  AssetImage calendarBackGroundImage() {
+    if (DateTime.now().hour >= 5 && DateTime.now().hour <= 9) {
+      return const AssetImage(
+          'lib/assets/calendar_background/ookuma_morning.png');
+    } else if (DateTime.now().hour >= 9 && DateTime.now().hour <= 17) {
       return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
-    }else {
-      return const AssetImage('lib/assets/calendar_background/ookuma_night.png');
+    } else {
+      return const AssetImage(
+          'lib/assets/calendar_background/ookuma_night.png');
     }
   }
 
   Widget calendarBody() {
     return Column(children: [
-
-      switchWidget(todaysScheduleListView(),searchConfigData("todaysSchedule")),
-
-      switchWidget(taskDataListList(searchConfigInfo("taskList")),searchConfigData("taskList")),
-
+      switchWidget(
+          todaysScheduleListView(), searchConfigData("todaysSchedule")),
+      switchWidget(taskDataListList(searchConfigInfo("taskList")),
+          searchConfigData("taskList")),
       Screenshot(
-        controller: _screenShotController,
-        child:SizedBox(
-          child:Container(
-            height: SizeConfig.blockSizeVertical! * 85,
-            decoration: switchDecoration(),
-        child: Column(children:[Row(children: [
-          IconButton(
-              onPressed: () {
-                decreasePgNumber();
-              },
-              icon: const Icon(Icons.arrow_back_ios),
-              iconSize: 20),
-          Text(
-            targetMonth,
-            style: const TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  increasePgNumber();
-                });
-              },
-              icon: const Icon(Icons.arrow_forward_ios),
-              iconSize: 20),
-
-        doNotContainScreenShot(
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 40,
-            height: SizeConfig.blockSizeVertical! * 4,
-            child: TextButton.icon(
-            onPressed: () {
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
-              );
-            },
-            icon: const Icon(Icons.tag,size: 15,color:Colors.white),
-            label: const Text('タグとテンプレート',style:TextStyle(fontSize: 10,color:Colors.white,fontWeight:FontWeight.bold)),
-            style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
-              ),
-          ),
-        ),
-      ),
-
-      showOnlyScreenShot(LogoAndTitle(size:7))
-
-    ]),
-
-      SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 100,
-        height: SizeConfig.blockSizeVertical! * 3,
-        child: generateWeekThumbnail(),
-      ),
-      SizedBox(
-          width: SizeConfig.blockSizeHorizontal! * 100,
-          child: Row(children: [
-            generateCalendarCells("sunday"),
-            generateCalendarCells("monday"),
-            generateCalendarCells("tuesday"),
-            generateCalendarCells("wednesday"),
-            generateCalendarCells("thursday"),
-            generateCalendarCells("friday"),
-            generateCalendarCells("saturday")
-          ])
-        ),
-        Row(children:[
-          const Spacer(),
-          showOnlyScreenShot(screenShotDateTime()),
-          const SizedBox(width:7)
-        ])
-      ])
-    )
-   )
-   )
-   ]);
+          controller: _screenShotController,
+          child: SizedBox(
+              child: Container(
+                  height: SizeConfig.blockSizeVertical! * 85,
+                  decoration: switchDecoration(),
+                  child: Column(children: [
+                    Row(children: [
+                      IconButton(
+                          onPressed: () {
+                            decreasePgNumber();
+                          },
+                          icon: const Icon(Icons.arrow_back_ios),
+                          iconSize: 20),
+                      Text(
+                        targetMonth,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              increasePgNumber();
+                            });
+                          },
+                          icon: const Icon(Icons.arrow_forward_ios),
+                          iconSize: 20),
+                      doNotContainScreenShot(
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 40,
+                          height: SizeConfig.blockSizeVertical! * 4,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TagAndTemplatePage()),
+                              );
+                            },
+                            icon: const Icon(Icons.tag,
+                                size: 15, color: Colors.white),
+                            label: const Text('タグとテンプレート',
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.blueAccent),
+                            ),
+                          ),
+                        ),
+                      ),
+                      showOnlyScreenShot(LogoAndTitle(size: 7))
+                    ]),
+                    SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! * 100,
+                      height: SizeConfig.blockSizeVertical! * 3,
+                      child: generateWeekThumbnail(),
+                    ),
+                    SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 100,
+                        child: Row(children: [
+                          generateCalendarCells("sunday"),
+                          generateCalendarCells("monday"),
+                          generateCalendarCells("tuesday"),
+                          generateCalendarCells("wednesday"),
+                          generateCalendarCells("thursday"),
+                          generateCalendarCells("friday"),
+                          generateCalendarCells("saturday")
+                        ])),
+                    Row(children: [
+                      const Spacer(),
+                      showOnlyScreenShot(screenShotDateTime()),
+                      const SizedBox(width: 7)
+                    ])
+                  ]))))
+    ]);
   }
 
-  Widget calendarShareButton(){
+  Widget calendarShareButton() {
     return FloatingActionButton(
-      backgroundColor: MAIN_COLOR,
-      child: const Icon(Icons.ios_share,color:Colors.white),
-      onPressed: () async {
-        setState(() {
-          isScreenShotBeingTaken = true;
-        });
-        final screenshot = await _screenShotController.capture(
-          delay: const Duration(milliseconds: 500),
-        );        
-        setState(() {
-          isScreenShotBeingTaken = false;
-        });
-        if (screenshot != null) {
-          final shareFile =
-              XFile.fromData(screenshot, mimeType: "image/png");
-          await Share.shareXFiles(
-            [
-              shareFile,
-            ],
+        backgroundColor: MAIN_COLOR,
+        child: const Icon(Icons.ios_share, color: Colors.white),
+        onPressed: () async {
+          setState(() {
+            isScreenShotBeingTaken = true;
+          });
+          final screenshot = await _screenShotController.capture(
+            delay: const Duration(milliseconds: 500),
           );
-
-        }
-
-      }
-    );
+          setState(() {
+            isScreenShotBeingTaken = false;
+          });
+          if (screenshot != null) {
+            final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
+            await Share.shareXFiles(
+              [
+                shareFile,
+              ],
+            );
+          }
+        });
   }
 
   void increasePgNumber() {
@@ -674,7 +653,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     targetMonth = decreasedMonth;
     generateCalendarData();
   }
-
 
   Map<String, List<DateTime>> generateCalendarData() {
     DateTime firstDay = DateTime(int.parse(targetMonth.substring(0, 4)),
@@ -797,7 +775,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return ListView.builder(
       itemBuilder: (context, index) {
         return SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
+            width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
             height: SizeConfig.blockSizeVertical! * 2,
             child: Center(
                 child: Text(
@@ -826,14 +804,14 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
+        width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
         child: ListView.builder(
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return InkWell(
               child: Container(
-                  width: SizeConfig.blockSizeHorizontal! * 13.571,//14.285,
+                  width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
                   height: SizeConfig.blockSizeVertical! * 12,
                   decoration: BoxDecoration(
                     color: cellColour(target),
@@ -930,492 +908,508 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (data.sortedDataByDay.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDay[targetKey];
       return SizedBox(
-       child: ListView.separated(
-        itemBuilder: (context, index) {
-         
-          if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-              targetDayData.elementAt(index)["endTime"].trim() != "") {
-            dateTimeData = Text(
-              " " +
-                  targetDayData.elementAt(index)["startTime"] +
-                  "～" +
-                  targetDayData.elementAt(index)["endTime"],
-              style: const TextStyle(color: Colors.grey, fontSize: 7),
-            );
-          } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-            dateTimeData = Text(
-              " " + targetDayData.elementAt(index)["startTime"],
-              style: const TextStyle(color: Colors.grey, fontSize: 7),
-            );
-          } else {
-            dateTimeData = const Text(
-              " 終日",
-              style: TextStyle(color: Colors.grey, fontSize: 7),
-            );
-          }
-          return publicContainScreenShot(
-            SizedBox(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Align(alignment: Alignment.centerLeft, child: dateTimeData),
-                Row(crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
-                  tagThumbnail(targetDayData.elementAt(index)["tag"]),
-                  Flexible(child:
-                  Text(
-                  " " + targetDayData.elementAt(index)["subject"],
-                  style: const TextStyle(color: Colors.black, fontSize: 8),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),)
-                  ])
-                
-              ])
-            ),
-          targetDayData.elementAt(index)["isPublic"]
-          );
-        },
-        separatorBuilder: (context, index) {
-          return 
-          publicContainScreenShot(
-          const Divider(
-            height: 0.7,
-            indent: 2,
-            endIndent: 2,
-            thickness: 0.7,
-          ),
-          targetDayData.elementAt(index)["isPublic"]
-          );
-        },
-        itemCount: targetDayData.length,
-        shrinkWrap: true,
-        physics:const ClampingScrollPhysics()
-      )
-     
-    );
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+                    targetDayData.elementAt(index)["endTime"].trim() != "") {
+                  dateTimeData = Text(
+                    " " +
+                        targetDayData.elementAt(index)["startTime"] +
+                        "～" +
+                        targetDayData.elementAt(index)["endTime"],
+                    style: const TextStyle(color: Colors.grey, fontSize: 7),
+                  );
+                } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+                    "") {
+                  dateTimeData = Text(
+                    " " + targetDayData.elementAt(index)["startTime"],
+                    style: const TextStyle(color: Colors.grey, fontSize: 7),
+                  );
+                } else {
+                  dateTimeData = const Text(
+                    " 終日",
+                    style: TextStyle(color: Colors.grey, fontSize: 7),
+                  );
+                }
+                return publicContainScreenShot(
+                    SizedBox(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: dateTimeData),
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                tagThumbnail(
+                                    targetDayData.elementAt(index)["tag"]),
+                                Flexible(
+                                  child: Text(
+                                    " " +
+                                        targetDayData
+                                            .elementAt(index)["subject"],
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 8),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              ])
+                        ])),
+                    targetDayData.elementAt(index)["isPublic"]);
+              },
+              separatorBuilder: (context, index) {
+                return publicContainScreenShot(
+                    const Divider(
+                      height: 0.7,
+                      indent: 2,
+                      endIndent: 2,
+                      thickness: 0.7,
+                    ),
+                    targetDayData.elementAt(index)["isPublic"]);
+              },
+              itemCount: targetDayData.length,
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics()));
     } else {
       return const Center();
     }
   }
 
-  Widget tagThumbnail(id){
-   if(returnTagColor(id, ref) == null){
-    return Container();
-   }else{
-    return Row(children:[const SizedBox(width:1),Container(width:4,height:8,color: returnTagColor(id, ref))]);
-   }
+  Widget tagThumbnail(id) {
+    if (returnTagColor(id, ref) == null) {
+      return Container();
+    } else {
+      return Row(children: [
+        const SizedBox(width: 1),
+        Container(width: 4, height: 8, color: returnTagColor(id, ref))
+      ]);
+    }
   }
 
-  Widget screenShotDateTime(){
+  Widget screenShotDateTime() {
     String date = DateFormat("yyyy年MM月dd日 HH時mm分 時点").format(DateTime.now());
-    return Text(date,
-    style:const TextStyle(fontSize:10)
+    return Text(date, style: const TextStyle(fontSize: 10));
+  }
+
+  Widget menuPanel(IconData icon, String text, void Function() ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Container(
+        width: SizeConfig.blockSizeHorizontal! * 45,
+        height: SizeConfig.blockSizeHorizontal! * 45,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              spreadRadius: 2, // 影の広がり
+              blurRadius: 3, // ぼかしの強さ
+              offset: const Offset(0, 3), // 影の方向（横、縦）
+            ),
+          ],
+        ),
+        child: Center(
+            child: Column(children: [
+          const Spacer(),
+          Icon(icon, color: MAIN_COLOR, size: 80),
+          Text(text, style: const TextStyle(fontSize: 15)),
+          const Spacer(),
+        ])),
+      ),
     );
   }
 
-  Widget menuPanel(IconData icon, String text, void Function() ontap){
-     return InkWell(
-      onTap:ontap,
-      child:Container(
-       width: SizeConfig.blockSizeHorizontal! *45,
-       height: SizeConfig.blockSizeHorizontal! *45,
-      decoration: BoxDecoration(
-        color:Colors.white,
-        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5), // 影の色と透明度
-            spreadRadius: 2, // 影の広がり
-            blurRadius: 3, // ぼかしの強さ
-            offset: const Offset(0, 3), // 影の方向（横、縦）
-          ),
-        ],
-      ),
-      child: Center(
-        child: Column(children:[
+  Widget expandedMenuPanel(IconData icon, String text, void Function() ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Container(
+        width: SizeConfig.blockSizeHorizontal! * 95,
+        height: SizeConfig.blockSizeHorizontal! * 45,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              spreadRadius: 2, // 影の広がり
+              blurRadius: 3, // ぼかしの強さ
+              offset: const Offset(0, 3), // 影の方向（横、縦）
+            ),
+          ],
+        ),
+        child: Center(
+            child: Column(children: [
           const Spacer(),
-          Icon(icon,color:MAIN_COLOR,size:80),
-          Text(text,style:const TextStyle(fontSize:15)),
+          Icon(icon, color: MAIN_COLOR, size: 80),
+          Text(text, style: const TextStyle(fontSize: 15)),
           const Spacer(),
-       ])
+        ])),
       ),
-    ),
-  );
- }
+    );
+  }
 
-  Widget expandedMenuPanel(IconData icon, String text, void Function() ontap){
-     return InkWell(
-      onTap:ontap,
-      child:Container(
-       width: SizeConfig.blockSizeHorizontal! *95,
-       height: SizeConfig.blockSizeHorizontal! *45,
-      decoration: BoxDecoration(
-        color:Colors.white,
-        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5), // 影の色と透明度
-            spreadRadius: 2, // 影の広がり
-            blurRadius: 3, // ぼかしの強さ
-            offset: const Offset(0, 3), // 影の方向（横、縦）
-          ),
-        ],
-      ),
-      child: Center(
-        child: Column(children:[
-          const Spacer(),
-          Icon(icon,color:MAIN_COLOR,size:80),
-          Text(text,style:const TextStyle(fontSize:15)),
-          const Spacer(),
-       ])
-      ),
-    ),
-  );
- }
-
-
-  Widget switchWidget(Widget widget, int isVisible){
-    if(isVisible == 1){
-      return Column(children:[widget]);
-    }else{
+  Widget switchWidget(Widget widget, int isVisible) {
+    if (isVisible == 1) {
+      return Column(children: [widget]);
+    } else {
       return const SizedBox();
     }
   }
 
-  Widget tipsAndNewsPanel(int rundomNum, String newsText){
-     String today = DateFormat('MM月dd日').format(DateTime.now());
-     String category = "TIPS";
-     String content = "";
-     if(newsText != ""){
+  Widget tipsAndNewsPanel(int rundomNum, String newsText) {
+    String today = DateFormat('MM月dd日').format(DateTime.now());
+    String category = "TIPS";
+    String content = "";
+    if (newsText != "") {
       category = "お知らせ";
       content = newsText;
-      }else{
-        switch (rundomNum){
-          case 0: content = "アルバイトタグを予定に紐づけて、一目で見込み月収をチェック！\n ＞＞『アルバイト』から";
-          case 1: content = "課題いつやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
-          case 2: content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
-          case 3: content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
-          case 4: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";//"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
-          case 5: content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
-          case 6: content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
-          case 7: content = "「このアプリいいね」と君が思うなら\n" + today +"は シェアだ記念日";
-          case 8: content = "運営公式SNSで最新情報をチェック！  \n＞＞『使い方ガイドとサポート』から";
-          case 9: content = "重要タスクやスケジュールは通知でお知らせ！ \n＞＞『設定』から";
-          case 10: content = "毎日お疲れ様です！";
-        }
+    } else {
+      switch (rundomNum) {
+        case 0:
+          content = "アルバイトタグを予定に紐づけて、一目で見込み月収をチェック！\n ＞＞『アルバイト』から";
+        case 1:
+          content = "課題いつやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
+        case 2:
+          content = "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
+        case 3:
+          content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
+        case 4:
+          content = "「このアプリいいね」と君が思うなら\n" +
+              today +
+              "は シェアだ記念日"; //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
+        case 5:
+          content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
+        case 6:
+          content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
+        case 7:
+          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+        case 8:
+          content = "運営公式SNSで最新情報をチェック！  \n＞＞『使い方ガイドとサポート』から";
+        case 9:
+          content = "重要タスクやスケジュールは通知でお知らせ！ \n＞＞『設定』から";
+        case 10:
+          content = "毎日お疲れ様です！";
       }
-     
+    }
 
-     return Padding(
-      padding:EdgeInsets.only(top:SizeConfig.blockSizeHorizontal! *2),
-      child:InkWell(
-      onTap: (){
-          Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HowToUsePage()),
-        );
-      },
-      child:Container(
-       width: SizeConfig.blockSizeHorizontal! *95,
-      decoration: BoxDecoration(
-        color:Colors.redAccent,
-        borderRadius: BorderRadius.circular(12.5), // 角丸の半径を指定
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5), // 影の色と透明度
-            spreadRadius: 2, // 影の広がり
-            blurRadius: 3, // ぼかしの強さ
-            offset: const Offset(0, 3), // 影の方向（横、縦）
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top:2,left:10,right:10,bottom:2),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:[
-            Text(category,
-             style: const TextStyle(
-              color:Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize:10
+    return Padding(
+        padding: EdgeInsets.only(top: SizeConfig.blockSizeHorizontal! * 2),
+        child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HowToUsePage()),
+              );
+            },
+            child: Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              decoration: BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.circular(12.5), // 角丸の半径を指定
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                    spreadRadius: 2, // 影の広がり
+                    blurRadius: 3, // ぼかしの強さ
+                    offset: const Offset(0, 3), // 影の方向（横、縦）
+                  ),
+                ],
               ),
-            ),
-            const Divider(color:Colors.white, height:2),
-            Text(content,
-             style: const TextStyle(
-              color:Colors.white,
-              fontSize:12.5
-              ),
-              overflow: TextOverflow.clip,
-            )
-       ])
-      ),
-  ))) ;
- }
+              child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 2, left: 10, right: 10, bottom: 2),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          category,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10),
+                        ),
+                        const Divider(color: Colors.white, height: 2),
+                        Text(
+                          content,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12.5),
+                          overflow: TextOverflow.clip,
+                        )
+                      ])),
+            )));
+  }
 
-  Widget doNotContainScreenShot(Widget target){
-    if(isScreenShotBeingTaken){
+  Widget doNotContainScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
       return const SizedBox();
-    }else{
+    } else {
       return target;
     }
   }
 
-  Widget publicContainScreenShot(Widget target, int isPublic){
+  Widget publicContainScreenShot(Widget target, int isPublic) {
     bool boolIsPublic = true;
-    if(isPublic == 0){boolIsPublic = false;}
+    if (isPublic == 0) {
+      boolIsPublic = false;
+    }
 
-    if(boolIsPublic){
+    if (boolIsPublic) {
       return target;
-    }else{
-      if(isScreenShotBeingTaken){
+    } else {
+      if (isScreenShotBeingTaken) {
         return const SizedBox();
-      }else{
+      } else {
         return target;
       }
     }
   }
 
-  Widget showOnlyScreenShot(Widget target){
-    if(isScreenShotBeingTaken){
+  Widget showOnlyScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
       return target;
-    }else{
+    } else {
       return const SizedBox();
     }
   }
 
-  BoxDecoration switchDecoration(){
-    if(isScreenShotBeingTaken){
-      return const BoxDecoration(
-            color:Colors.white);
-    }else{
+  BoxDecoration switchDecoration() {
+    if (isScreenShotBeingTaken) {
+      return const BoxDecoration(color: Colors.white);
+    } else {
       return BoxDecoration(
-            color:Colors.white,
-            borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-            boxShadow: [
-                BoxShadow(
-                color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                spreadRadius: 2, // 影の広がり
-                blurRadius: 3, // ぼかしの強さ
-                offset: const Offset(0, 3), // 影の方向（横、縦）
-              ),
-            ],
-          );
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      );
     }
   }
 
-
-
-  Widget todaysScheduleListView(){
+  Widget todaysScheduleListView() {
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
-    String targetKey =  target.year.toString()+ "-" + target.month.toString().padLeft(2,"0") + "-" + target.day.toString().padLeft(2,"0");
+    String targetKey = target.year.toString() +
+        "-" +
+        target.month.toString().padLeft(2, "0") +
+        "-" +
+        target.day.toString().padLeft(2, "0");
 
-    if(data.sortedDataByDay[targetKey] == null){
-      return  const SizedBox();
-    }else{
-     List targetDayData = data.sortedDataByDay[targetKey];
-   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children:[
-    Text(
-      'きょうの予定',
-      style: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! *7,
-          color:Colors.white,
-          fontWeight:FontWeight.bold),
-    ),
-    ListView.builder(
+    if (data.sortedDataByDay[targetKey] == null) {
+      return const SizedBox();
+    } else {
+      List targetDayData = data.sortedDataByDay[targetKey];
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          'きょうの予定',
+          style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! * 7,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
+        ),
+        ListView.builder(
           itemBuilder: (BuildContext context, int index) {
             Widget dateTimeData = Container();
-            if (targetDayData.elementAt(index)["startTime"].trim() != "" && targetDayData.elementAt(index)["endTime"].trim() != ""){
-              dateTimeData =
-                  Text(
-                    " " + targetDayData.elementAt(index)["startTime"] + "～" + targetDayData.elementAt(index)["endTime"],
-                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
-                  );
-            } else if (targetDayData.elementAt(index)["startTime"].trim() != ""){
-              dateTimeData =
-                  Text(
-                    " " + targetDayData.elementAt(index)["startTime"],
-                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
-                  );
+            if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+                targetDayData.elementAt(index)["endTime"].trim() != "") {
+              dateTimeData = Text(
+                " " +
+                    targetDayData.elementAt(index)["startTime"] +
+                    "～" +
+                    targetDayData.elementAt(index)["endTime"],
+                style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold),
+              );
+            } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+                "") {
+              dateTimeData = Text(
+                " " + targetDayData.elementAt(index)["startTime"],
+                style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold),
+              );
             } else {
               dateTimeData = const Text(
-                    " 終日",
-                    style: TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
-                  );
+                " 終日",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold),
+              );
             }
 
-           return  Column(children:[
-            Container(
-             width: SizeConfig.blockSizeHorizontal! *95,
-             padding: const EdgeInsets.all(16.0),
-             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child:
-            Row(children:[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-              Row(children:[
-                dateTimeData,
-                const SizedBox(width:15),
-                SizedBox(
-                  child:tagChip(targetDayData.elementAt(index)["tag"], ref))
-                ]),
-              
-              SizedBox(
-                width:SizeConfig.blockSizeHorizontal! *70,
-                child:Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
-                   overflow: TextOverflow.clip,
-                   style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),
-                )
-              )
-            ]),
-          ])
-         ),
-          const SizedBox(height:15)   
-         ]);    
-        },
-        itemCount:
-            data.sortedDataByDay[targetKey].length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-       )
-     ]);
+            return Column(children: [
+              Container(
+                  width: SizeConfig.blockSizeHorizontal! * 95,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Row(children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            dateTimeData,
+                            const SizedBox(width: 15),
+                            SizedBox(
+                                child: tagChip(
+                                    targetDayData.elementAt(index)["tag"], ref))
+                          ]),
+                          SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 70,
+                              child: Text(
+                                data.sortedDataByDay[targetKey]
+                                    .elementAt(index)["subject"],
+                                overflow: TextOverflow.clip,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
+                              ))
+                        ]),
+                  ])),
+              const SizedBox(height: 15)
+            ]);
+          },
+          itemCount: data.sortedDataByDay[targetKey].length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+        )
+      ]);
     }
   }
 
-  Widget taskDataListList(int fromNow){
-   DateTime now = DateTime.now();
-   DateTime today = DateTime(now.year,now.month,now.day);
+  Widget taskDataListList(int fromNow) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
 
-   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children:[
-
-    ListView.builder(
-    itemBuilder:(context,index){
-      DateTime targetDay = today.add(Duration(days:index));
-      return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children:[
-        taskDataList(targetDay,index)
-        ]);
-    },
-     itemCount: fromNow,
-     shrinkWrap: true,
-     physics: const NeverScrollableScrollPhysics(),
-     ),
-    SizedBox(height:SizeConfig.blockSizeVertical! *1)
-    ]);
-  }
-
-  Widget taskDataList(DateTime target,int fromNow){
-    final taskData = ref.watch(taskDataProvider);
-    Map<DateTime, List<Map<String, dynamic>>> sortedData =
-    taskData.sortDataByDtEnd(taskData.taskDataList);
-    Widget title = const SizedBox();      
-
-    if(sortedData.keys.contains(target)){    
-    
-    if(fromNow == 0){
-      title =
-        Text(
-        '近日締切の課題',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! *7,
-            color:Colors.white,
-            fontWeight:FontWeight.bold),
-      );
-    }
-
-      return 
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:[
-          title,
-          Text("$fromNow日後",style:const TextStyle(color:Colors.white,fontSize:18)),
-          ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-
-            Widget dateTimeData = Container();
-            dateTimeData =
-                Text(
-                  sortedData[target]!.elementAt(index)["title"],
-                  style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
-                );
-
-           return  Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children:[
-            Container(
-             width: SizeConfig.blockSizeHorizontal! *95,
-             padding: const EdgeInsets.all(16.0),
-             decoration: BoxDecoration(
-              color: Colors.white, // コンテナの背景色
-              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-              boxShadow: [
-               BoxShadow(
-                color:
-                    Colors.black.withOpacity(0.5), // 影の色と透明度
-                spreadRadius: 2, // 影の広がり
-                blurRadius: 4, // 影のぼかし
-                offset: const Offset(0, 2), // 影の方向（横、縦）
-              ),
-            ],
-            ),
-            child: Column(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ListView.builder(
+        itemBuilder: (context, index) {
+          DateTime targetDay = today.add(Duration(days: index));
+          return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-              dateTimeData,
-              Text(sortedData[target]!.elementAt(index)["summary"] ?? "(詳細なし)",
-                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
-            ]),
-          ),
-          const SizedBox(height:7)   
-         ]);    
+              children: [taskDataList(targetDay, index)]);
         },
-        itemCount:sortedData[target]!.length,
+        itemCount: fromNow,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-      )
+      ),
+      SizedBox(height: SizeConfig.blockSizeVertical! * 1)
     ]);
+  }
 
-    }else{
-    
-    if(fromNow == 0 && !isTaskDatanull(target)){
-      title =
-        Text(
-        '近日締切の課題',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! *7,
-            color:Colors.white,
-            fontWeight:FontWeight.bold),
-      );
-    }
-      return  title;
+  Widget taskDataList(DateTime target, int fromNow) {
+    final taskData = ref.watch(taskDataProvider);
+    Map<DateTime, List<Map<String, dynamic>>> sortedData =
+        taskData.sortDataByDtEnd(taskData.taskDataList);
+    Widget title = const SizedBox();
+
+    if (sortedData.keys.contains(target)) {
+      if (fromNow == 0) {
+        title = Text(
+          '近日締切の課題',
+          style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! * 7,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
+        );
+      }
+
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        title,
+        Text("$fromNow日後",
+            style: const TextStyle(color: Colors.white, fontSize: 18)),
+        ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Widget dateTimeData = Container();
+            dateTimeData = Text(
+              sortedData[target]!.elementAt(index)["title"],
+              style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold),
+            );
+
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: SizeConfig.blockSizeHorizontal! * 95,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // コンテナの背景色
+                      borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                          spreadRadius: 2, // 影の広がり
+                          blurRadius: 4, // 影のぼかし
+                          offset: const Offset(0, 2), // 影の方向（横、縦）
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          dateTimeData,
+                          Text(
+                            sortedData[target]!.elementAt(index)["summary"] ??
+                                "(詳細なし)",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ]),
+                  ),
+                  const SizedBox(height: 7)
+                ]);
+          },
+          itemCount: sortedData[target]!.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+        )
+      ]);
+    } else {
+      if (fromNow == 0 && !isTaskDatanull(target)) {
+        title = Text(
+          '近日締切の課題',
+          style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! * 7,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
+        );
+      }
+      return title;
     }
   }
 
-  bool isTaskDatanull(DateTime target){
-    int numOfTasks =searchConfigInfo("taskList");
+  bool isTaskDatanull(DateTime target) {
+    int numOfTasks = searchConfigInfo("taskList");
     bool result = true;
     final taskData = ref.watch(taskDataProvider);
-     Map<DateTime, List<Map<String, dynamic>>> sortedData = 
-      taskData.sortDataByDtEnd(taskData.taskDataList);
-    for(int i = 0; i < numOfTasks; i++){
-      if(sortedData[target.add(Duration(days:i))] != null){
+    Map<DateTime, List<Map<String, dynamic>>> sortedData =
+        taskData.sortDataByDtEnd(taskData.taskDataList);
+    for (int i = 0; i < numOfTasks; i++) {
+      if (sortedData[target.add(Duration(days: i))] != null) {
         result = false;
       }
     }
     return result;
   }
-
- }
+}

@@ -3,7 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
-import '../common/float_button.dart';
+
 import 'tasklist_sort_date.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
@@ -13,10 +13,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
 import 'add_data_card_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fk_toggle/fk_toggle.dart';
 
 import '../../assist_files/colors.dart';
-import '../../../backend/temp_file.dart';
+
+import "../../../backend/DB/handler/user_info_db_handler.dart";
 
 class TaskViewPage extends ConsumerStatefulWidget {
   @override
@@ -25,7 +25,7 @@ class TaskViewPage extends ConsumerStatefulWidget {
 
 class TaskViewPageState extends ConsumerState<TaskViewPage> {
   Future<List<Map<String, dynamic>>>? events;
-  String urlString = url_t;
+  late String? urlString;
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   late bool isButton;
 
@@ -37,26 +37,17 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     isButton = false;
   }
 
-
   Future<void> _initializeData() async {
-    if (await databaseHelper.hasData() == true) {
-      await displayDB();
-    } else {
-      if (urlString == "") {
-
-      } else {
-        NoTaskPage();
-      }
-    }
+    urlString = await UserDatabaseHelper().getUrl();
+    NoTaskPage();
   }
-
-
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> loadData() async {
-    await databaseHelper.resisterTaskToDB(urlString);
-
-    await displayDB();
+    if (urlString != null) {
+      await databaseHelper.resisterTaskToDB(urlString!);
+      await displayDB();
+    }
   }
 
   Future<void> displayDB() async {
@@ -151,7 +142,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         ));
   }
 
-
   Widget pages() {
     final taskData = ref.watch(taskDataProvider);
     List<Map<String, dynamic>> tempTaskDataList = [];
@@ -199,7 +189,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         );
 
       case 1:
-        return TaskListByCategory(sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+        return TaskListByCategory(
+            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
 
       default:
         return LoadingScreen();

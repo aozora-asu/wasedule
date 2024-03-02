@@ -40,10 +40,10 @@ class UserDatabaseHelper {
     await _initDatabase();
     List<Map<String, dynamic>> userInfo =
         await _database.rawQuery('SELECT * FROM user');
-    if (userInfo == []) {
+    if (userInfo.isEmpty) {
       return null;
     } else {
-      return userInfo[-1]["url"];
+      return userInfo.last["url"];
     }
   }
 
