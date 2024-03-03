@@ -587,6 +587,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget calendarShareButton() {
     return FloatingActionButton(
+        heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
         child: const Icon(Icons.ios_share, color: Colors.white),
         onPressed: () async {
