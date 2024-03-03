@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share_extend/share_extend.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
@@ -19,7 +18,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_temp
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
@@ -335,51 +333,55 @@ class _CalendarState extends ConsumerState<Calendar> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // データが取得される間、ローディングインディケータを表示できます。
                       initConfig();
-                      ref
-                          .read(calendarDataProvider)
-                          .getTagData(_getTagDataSource());
-
+                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
+
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
+
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      // データがないか、データが空の場合、空っぽのカレンダーを表示。
-                      return calendarBody();
-                    } else {
-                      print("カレンダーの再読み");
+
                       if (ref.read(taskDataProvider).isRenewed) {
-                        print("データ更新時処理実行");
                         initConfig();
                         displayDB();
                         _getTemplateDataSource();
-                        ref
-                            .read(calendarDataProvider)
-                            .getConfigData(_getConfigDataSource());
-                        ref
-                            .read(calendarDataProvider)
-                            .getArbeitData(_getArbeitDataSource());
-                        ref.read(calendarDataProvider).getData(snapshot.data!);
+                        ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
                         ref.read(calendarDataProvider).sortDataByDay();
-                        ref
-                            .read(calendarDataProvider)
-                            .getTemplateData(_getTemplateDataSource());
+                        ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                         ref.read(taskDataProvider).isRenewed = false;
                       }
+
+                      ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
+                      ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
+                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
+                      ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                      ref.read(calendarDataProvider).sortDataByDay();
+                      return calendarBody();
+
+                    } else {
+
+                      if (ref.read(taskDataProvider).isRenewed) {
+                        initConfig();
+                        displayDB();
+                        _getTemplateDataSource();
+                        ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
+                        ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
+                        ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                        ref.read(calendarDataProvider).getData(snapshot.data!);
+                        ref.read(calendarDataProvider).sortDataByDay();
+                        ref.read(taskDataProvider).isRenewed = false;
+                      }
+
+                      initConfig();
+                      ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
+                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
+                      ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).getData(snapshot.data!);
                       ref.read(calendarDataProvider).sortDataByDay();
-                      ref
-                          .read(calendarDataProvider)
-                          .getArbeitData(_getArbeitDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTagData(_getTagDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTemplateData(_getTemplateDataSource());
                       ref.read(taskDataProvider).getData(taskData);
-
                       return calendarBody();
+
                     }
                   },
                 ),
