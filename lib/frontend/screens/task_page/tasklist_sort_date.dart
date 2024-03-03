@@ -67,15 +67,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                             SizeConfig.blockSizeHorizontal! * 7,
                                         fontWeight: FontWeight.w800),
                                   ),
-                                  Text(
-                                      " ${sortedData.values.elementAt(keyIndex).length}件",
-
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  7,
-                                          fontWeight: FontWeight.w800),
-                                    ),
                                     Text(
                                         " ${sortedData.values.elementAt(keyIndex).length}件",
                                         style: TextStyle(

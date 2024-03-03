@@ -53,7 +53,10 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const Text("Waseda Moodleへのアクセスはこちらから！"),
          MoodleUrlLauncher(),
          const Spacer(),
-         const Row(children:[Spacer(),Text("Version: Beta 15.10.14"),SizedBox(width:7)]),
+         const Padding(
+          padding: EdgeInsets.all(10),
+          child:Row(children:[Spacer(),Text("Version: Beta 15.10.14"),SizedBox(width:7)]),
+          ),
          const SizedBox(height:3)
         ])
         )
