@@ -8,8 +8,6 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dar
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
-import  'package:keyboard_actions/keyboard_actions.dart';
-
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
