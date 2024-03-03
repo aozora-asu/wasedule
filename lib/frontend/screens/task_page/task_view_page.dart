@@ -39,6 +39,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   Future<void> _initializeData() async {
     urlString = await UserDatabaseHelper().getUrl();
+    if (urlString != null) {
+      await loadData();
+    }
     NoTaskPage();
   }
 
