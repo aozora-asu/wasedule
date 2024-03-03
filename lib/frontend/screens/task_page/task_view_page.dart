@@ -156,8 +156,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return LoadingScreen();
               } else {
                 return TaskListByDtEnd(
-                    sortedData:
-                        taskData.sortDataByDtEnd(taskData.taskDataList));
+                    sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
@@ -183,14 +182,56 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
+              //noUrlDialogue(context);
               return NoTaskPage();
+              // TaskListByDtEnd(
+              //     sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
+
             }
           },
         );
 
       case 1:
-        return TaskListByCategory(
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: events,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              if (ref.read(taskDataProvider).isInit) {
+                return LoadingScreen();
+              } else {
+                return TaskListByCategory(
             sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+              }
+            } else if (snapshot.hasError) {
+              return Text("Error: ${snapshot.error}");
+            } else if (snapshot.hasData) {
+              if (ref.watch(taskDataProvider).isInit) {
+                ref.read(taskDataProvider).isInit = false;
+              }
+
+              tempTaskDataList = snapshot.data!.toList();
+
+              // for(int i=0; i<tempTaskDataList.length; i++){
+              // tempTaskDataList[i]["DBindex"] = i;
+              // }
+
+              taskData.getData(tempTaskDataList);
+
+              if (ref.read(taskDataProvider).isRenewed) {
+                displayDB();
+                ref.read(taskDataProvider).isRenewed = false;
+              }
+
+              taskData.sortDataByDtEnd(taskData.taskDataList);
+              return TaskListByCategory(
+            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+            } else {
+              //noUrlDialogue(context);
+              return TaskListByCategory(
+            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+            }
+          },
+        );
 
       default:
         return LoadingScreen();

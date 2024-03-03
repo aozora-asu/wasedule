@@ -769,12 +769,12 @@ class _TagDialogState extends ConsumerState<TagDialog> {
   }
 
 
-  @override
-  void dispose() {
-    titleController.dispose();
-    wageController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   titleController.dispose();
+  //   wageController.dispose();
+  //   super.dispose();
+  // }
 }
 
 
@@ -993,12 +993,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
   }
 
 
-  @override
-  void dispose() {
-    titleController.dispose();
-    wageController.dispose();
-    super.dispose();
-  }
+
 }
 
 

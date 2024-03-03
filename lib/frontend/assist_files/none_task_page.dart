@@ -48,3 +48,40 @@ class _NoTaskPageState extends State<NoTaskPage> {
     );
   }
 }
+
+void noUrlDialogue(BuildContext context){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // ダイアログの内容を定義
+      return AlertDialog(
+        title: Text('Confirmation'),
+        content: Text('Are you sure you want to delete?'),
+        actions: [
+          // キャンセルボタン
+          TextButton(
+            onPressed: () {
+              // ダイアログを閉じる
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          // 削除ボタン
+          TextButton(
+            onPressed: () {
+              // 削除処理を実行
+              // ここに削除処理のコードを追加
+              // 例：deleteItem();
+              // ダイアログを閉じる
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
