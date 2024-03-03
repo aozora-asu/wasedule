@@ -349,9 +349,9 @@ void initState() {
              bottomSheet(targetData);
           },
           child: Container(
-              constraints: BoxConstraints(
-                maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              ),
+              // constraints: BoxConstraints(
+              //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
+              // ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
