@@ -72,6 +72,7 @@ class AddDataCardButton extends ConsumerWidget {
     final inputForm = ref.watch(inputFormProvider);
     return SizedBox(
       child: FloatingActionButton(
+        heroTag: "task_1",
         onPressed: () {
           inputForm.clearContents();
           Navigator.push(
@@ -325,7 +326,8 @@ class TaskInputForm extends ConsumerWidget {
                           TaskData(taskDataList: newList);
                       ref.read(taskDataProvider).isRenewed = true;
                       inputForm.clearContents();
-                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      ref.read(calendarDataProvider.notifier).state =
+                          CalendarData();
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
