@@ -67,8 +67,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskDataProvider);
     return Scaffold(
         backgroundColor: Colors.white, // BACKGROUND_COLOR,
-        body: 
-            Column(children: [
+        body: Column(children: [
           SizedBox(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -132,6 +131,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               height: SizeConfig.blockSizeVertical! * 5,
             ),
             FloatingActionButton(
+              heroTag: "task_2",
               onPressed: () {
                 loadData();
               },
@@ -156,7 +156,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return LoadingScreen();
               } else {
                 return TaskListByDtEnd(
-                    sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
+                    sortedData:
+                        taskData.sortDataByDtEnd(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
@@ -186,7 +187,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return NoTaskPage();
               // TaskListByDtEnd(
               //     sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
-
             }
           },
         );
@@ -200,7 +200,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return LoadingScreen();
               } else {
                 return TaskListByCategory(
-            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+                    sortedData:
+                        taskData.sortDataByCategory(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
@@ -224,11 +225,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
               taskData.sortDataByDtEnd(taskData.taskDataList);
               return TaskListByCategory(
-            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+                  sortedData:
+                      taskData.sortDataByCategory(taskData.taskDataList));
             } else {
               //noUrlDialogue(context);
               return TaskListByCategory(
-            sortedData: taskData.sortDataByCategory(taskData.taskDataList));
+                  sortedData:
+                      taskData.sortDataByCategory(taskData.taskDataList));
             }
           },
         );

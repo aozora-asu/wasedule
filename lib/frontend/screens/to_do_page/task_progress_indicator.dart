@@ -7,7 +7,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../common/float_button.dart';
+
 import 'dart:async';
 import 'to_do_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -70,17 +70,17 @@ Widget buildTaskProgressIndicator(
     }
   }
 
-  if(allTasks.isEmpty){
+  if (allTasks.isEmpty) {
     allTasks["仮データ"] = DateTime.now();
     allDoneTasks["仮データ"] = DateTime.now();
   }
 
-  if(monthlyTasks.isEmpty){
+  if (monthlyTasks.isEmpty) {
     monthlyTasks["仮データ"] = DateTime.now();
     monthlyDoneTasks["仮データ"] = DateTime.now();
   }
 
-  if(weeklyTasks.isEmpty){
+  if (weeklyTasks.isEmpty) {
     weeklyTasks["仮データ"] = DateTime.now();
     weeklyDoneTasks["仮データ"] = DateTime.now();
   }
@@ -93,9 +93,9 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
   @override
   void initState() {
     super.initState();
-     expController = ExpandableController(initialExpanded: true);
+    expController = ExpandableController(initialExpanded: true);
   }
-  
+
   Widget circularPercentIndicator() {
     if (circularIndicatorState == 1) {
       return CircularPercentIndicator(
@@ -192,21 +192,21 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return ExpandablePanel(
-      collapsed: const Divider(height: 1,),
+      collapsed: const Divider(
+        height: 1,
+      ),
       header: headerItem(),
       expanded: indicatorBody(),
       controller: expController,
     );
   }
 
-  Widget headerItem(){
-   return SizedBox(
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-      const SizedBox(width:10),
+  Widget headerItem() {
+    return SizedBox(
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      const SizedBox(width: 10),
       Text(
-        "$formattedDate" + getDayOfWeek(now.weekday -1),
+        "$formattedDate" + getDayOfWeek(now.weekday - 1),
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.w600),
@@ -218,11 +218,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
             fontSize: SizeConfig.blockSizeHorizontal! * 5,
             fontWeight: FontWeight.bold,),
       )
-    ])
-  );
+    ]));
   }
 
-  Widget indicatorBody(){
+  Widget indicatorBody() {
     return Column(children: [
       SizedBox(
           height: SizeConfig.blockSizeVertical! * 2,
@@ -237,6 +236,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 child: circularPercentIndicator()),
             Column(
             children: [
+
               SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
                   width: SizeConfig.blockSizeHorizontal! * 55,
@@ -257,8 +257,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                       )
                     ]),
                   )),
+
               SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
+
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -268,8 +270,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("今月    "),
+
                    SizedBox(
                         height: SizeConfig.blockSizeVertical! *1.75,
+
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: monthlyDoneTasks.length,
@@ -278,8 +282,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   ]),
                 ),
               ),
+
               SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
+
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -289,8 +295,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("全て    "),
+
                     SizedBox(
                         height: SizeConfig.blockSizeVertical! *1.75,
+
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: allDoneTasks.length,
@@ -301,7 +309,9 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
               )
             ])
           ]),
-        const Divider(height: 1,),
+      const Divider(
+        height: 1,
+      ),
     ]);
   }
 }
@@ -330,8 +340,7 @@ class HpGauge3Color extends StatelessWidget {
           ),
         ),
         Text('${currentHp.toString().padLeft(2, '  ')}/$maxHp',
-            style:TextStyle(fontSize:SizeConfig.blockSizeVertical! *1.5)
-        ),
+            style: TextStyle(fontSize: SizeConfig.blockSizeVertical! * 1.5)),
       ],
     );
   }

@@ -92,13 +92,13 @@ flutter_icons:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-      - lib/assets/eye_catch/eyecatch.png
-      - lib/assets/eye_catch/eyecatch_white.png
-      - lib/assets/calendar_background/ookuma_morning.png
-      - lib/assets/calendar_background/ookuma_day.png
-      - lib/assets/calendar_background/ookuma_night.png
-      - lib/assets/page_background/ookuma_statue.jpg
-      - lib/assets/page_background/sky_wallpaper.png
+    - lib/assets/eye_catch/eyecatch.png
+    - lib/assets/eye_catch/eyecatch_white.png
+    - lib/assets/calendar_background/ookuma_morning.png
+    - lib/assets/calendar_background/ookuma_day.png
+    - lib/assets/calendar_background/ookuma_night.png
+    - lib/assets/page_background/ookuma_statue.jpg
+    - lib/assets/page_background/sky_wallpaper.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
