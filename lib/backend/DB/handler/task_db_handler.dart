@@ -148,10 +148,12 @@ class TaskDatabaseHelper {
     // データベース内のテーブル名
     String tableName = 'tasks';
     int? count;
+
     // データのカウントを取得
     await _initDatabase();
-    count = Sqflite.firstIntValue(
-        await _database.rawQuery('SELECT COUNT(*) FROM $tableName'));
+
+    count = Sqflite.firstIntValue(await _database
+        .rawQuery('SELECT COUNT(*) FROM $tableName WHERE isDone = 0'));
 
     return count! > 0;
   }
