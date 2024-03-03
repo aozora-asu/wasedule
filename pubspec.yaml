@@ -48,6 +48,7 @@ dependencies:
   share_plus: ^7.2.2
   share_extend: ^2.0.0
   screenshot: ^2.1.0
+  keyboard_actions: ^4.2.0
 
   flutter_localizations:
     sdk: flutter

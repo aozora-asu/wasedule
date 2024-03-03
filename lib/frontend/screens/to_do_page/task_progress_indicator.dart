@@ -216,25 +216,27 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
         "タスクの進捗度",
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 5,
-            fontWeight: FontWeight.w500),
+            fontWeight: FontWeight.bold,),
       )
     ]));
   }
 
   Widget indicatorBody() {
     return Column(children: [
-      Container(
+      SizedBox(
           height: SizeConfig.blockSizeVertical! * 2,
           width: SizeConfig.blockSizeHorizontal! * 100),
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 45,
                 height: SizeConfig.blockSizeHorizontal! * 45,
                 child: circularPercentIndicator()),
-            Column(children: [
+            Column(
+            children: [
+
               SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
                   width: SizeConfig.blockSizeHorizontal! * 55,
@@ -246,8 +248,8 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                     },
                     child: Row(children: [
                       const Text("今週    "),
-                      Container(
-                        height: SizeConfig.blockSizeVertical! * 1.75,
+                      SizedBox(
+                        height: SizeConfig.blockSizeVertical! *1.75,
                         width: SizeConfig.blockSizeHorizontal! * 40,
                         child: HpGauge3Color(
                             currentHp: weeklyDoneTasks.length,
@@ -255,8 +257,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                       )
                     ]),
                   )),
-              Container(
-                height: SizeConfig.blockSizeVertical! * 4,
+
+              SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 4,
+
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -266,8 +270,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("今月    "),
-                    Container(
-                      height: SizeConfig.blockSizeVertical! * 1.75,
+
+                   SizedBox(
+                        height: SizeConfig.blockSizeVertical! *1.75,
+
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: monthlyDoneTasks.length,
@@ -276,8 +282,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   ]),
                 ),
               ),
-              Container(
-                height: SizeConfig.blockSizeVertical! * 4,
+
+              SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 4,
+
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -287,8 +295,10 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("全て    "),
-                    Container(
-                      height: SizeConfig.blockSizeVertical! * 1.75,
+
+                    SizedBox(
+                        height: SizeConfig.blockSizeVertical! *1.75,
+
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: allDoneTasks.length,

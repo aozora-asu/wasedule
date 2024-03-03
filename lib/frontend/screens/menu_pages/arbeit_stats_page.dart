@@ -1,31 +1,17 @@
 import 'dart:async';
 
-import 'package:expandable/expandable.dart';
-import 'package:fk_toggle/fk_toggle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:intl/intl.dart';
-import 'package:easy_autocomplete/easy_autocomplete.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 
 
@@ -154,7 +140,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   children:[
                     Text(year + "年 年収見込み  ",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *7)),
                     Text(
-                    formatNumberWithComma(yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))
+                    formatNumberWithComma(yearlyWageSumWithAdditionalWorkTime(widget.targetMonth)
+                     - yearlyFeeSumOfAllTags(widget.targetMonth)
+                     )
                     + " 円",
                     style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
                     ),
@@ -576,7 +564,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   formatNumberWithComma(
                     culculateWage(
                       monthlyWorkTimeSumWithAdditionalWorkTime(tagData,targetKeys.elementAt(index)),tagData["wage"]
-                      )
+                      ) + monthlyFeeSum(tagData,targetKeys.elementAt(index))
                     )
                   + " 円"
               ),
@@ -658,6 +646,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     String month = data["month"];
     int tagId = data["tagId"];
     int wage = data["wage"];
+
     if (month == targetKey&& tagId == tagData["id"]) {
       found = true;
       result += wage;

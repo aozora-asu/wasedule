@@ -42,26 +42,34 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       executeDeleteButton(),
       Expanded(
         child: ListView.builder(
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int keyIndex) {
-            DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
-            String adjustedDtEnd =
-                ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
-            return Container(
-                width: SizeConfig.blockSizeHorizontal! * 100,
-                padding: const EdgeInsets.only(
-                    left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ExpandablePanel(
-                          header: Row(children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(children: [
-                                    Text(
-                                      adjustedDtEnd,
+
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int keyIndex) {
+          DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
+          String adjustedDtEnd =
+              ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
+          return Container(
+              padding: const EdgeInsets.only(
+                  left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExpandablePanel(
+                        header: Row(children: [
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(children: [
+                                  Text(
+                                    adjustedDtEnd,
+                                    style: TextStyle(
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 7,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                  Text(
+                                      " ${sortedData.values.elementAt(keyIndex).length}件",
+
                                       style: TextStyle(
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal! *
@@ -310,7 +318,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Container(
-      width: SizeConfig.blockSizeHorizontal! * 100,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -343,9 +350,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             bottomSheet(targetData);
           },
           child: Container(
-              // constraints: BoxConstraints(
-              //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              // ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
@@ -359,7 +363,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                         ),
                       ]),
-                  width: SizeConfig.blockSizeHorizontal! * 83,
                   child: Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,

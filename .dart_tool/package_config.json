@@ -314,6 +314,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "keyboard_actions",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/keyboard_actions-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "lints",
       "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/lints-2.1.1",
       "packageUri": "lib/",
@@ -662,7 +668,9 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-03-03T06:24:30.566934Z",
+
+  "generated": "2024-03-03T06:11:04.662157Z",
+
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }

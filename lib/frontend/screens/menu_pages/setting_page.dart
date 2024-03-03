@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dar
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
+import  'package:keyboard_actions/keyboard_actions.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -37,7 +38,7 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      body:const MyWidget(),
+      body: const MyWidget(),
       );
   }
 }
@@ -54,6 +55,7 @@ class MyWidget extends ConsumerStatefulWidget {
 class _MyWidgetState extends ConsumerState<MyWidget> {
   int _selectedIndex = 0;
 
+  
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -101,7 +103,7 @@ class MainContents extends ConsumerStatefulWidget {
 }
 
 class _MainContentsState extends ConsumerState<MainContents> {
- 
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,11 +114,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
       return Expanded(child:
             Padding(
               padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
-              child:notificationBody(),
+              child: notificationBody(),
             )
-          );
+        );
 
-//フレンドの設定画面////////////////////////////////////////////////////
+//フレンドの設定画面///////////////////////////////////////////////////////////////////////////////////////////////////////////
     //   case 2:
     // return Expanded(
     //   child: Stack(
