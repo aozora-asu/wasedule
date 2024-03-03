@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'dart:io';
 import '../task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import '../../assist_files/screen_manager.dart';
@@ -39,7 +39,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 0),
+      duration: const Duration(seconds: 2),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
