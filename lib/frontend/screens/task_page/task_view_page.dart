@@ -35,11 +35,12 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     _initializeData();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
+    print("initです。");
   }
 
   Future<void> _initializeData() async {
     urlString = await UserDatabaseHelper().getUrl();
-    if (await TaskDatabaseHelper().hasData() || urlString != null) {
+    if (await databaseHelper.hasData() || urlString != null) {
       await loadData();
     } else {
       NoTaskPage();
@@ -48,7 +49,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> loadData() async {
-    await databaseHelper.resisterTaskToDB(urlString!);
+    if (urlString != null) {
+      await databaseHelper.resisterTaskToDB(urlString!);
+    }
+
     await displayDB();
   }
 
