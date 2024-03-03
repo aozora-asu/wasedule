@@ -618,12 +618,12 @@ int LengthOfMonth(String targetMonth){
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("計画を追加…"),
+          title:const  Text("計画を追加…"),
         actions:[
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            Text("テンプレート(ダブルタップで追加):",style:(TextStyle(fontWeight: FontWeight.bold))),
+            const Text("テンプレート(ダブルタップで追加):",style:(TextStyle(fontWeight: FontWeight.bold))),
             Container(
               child:ListView.separated(
                 separatorBuilder: (context, index) {
@@ -631,9 +631,9 @@ int LengthOfMonth(String targetMonth){
                   return const SizedBox();
                  }else{
                   if(tempLateMap.values.elementAt(index).trim() == ""){//ここにテンプレDBから呼び出し。
-                    return SizedBox();
+                    return const  SizedBox();
                   }else{
-                    return SizedBox(height:5);
+                    return const  SizedBox(height:5);
                   }
                  }
                 },
@@ -642,7 +642,7 @@ int LengthOfMonth(String targetMonth){
                    return const SizedBox();
                  }else{
                   if(tempLateMap.values.elementAt(index).trim() == ""){
-                    return SizedBox();
+                    return const SizedBox();
                   }else{
                     late TextEditingController controller = TextEditingController();
                     late String _textFieldValue;
@@ -652,7 +652,7 @@ int LengthOfMonth(String targetMonth){
                     return InkWell(
                       child:Container(
                       height:35,
-                      decoration: BoxDecoration(
+                      decoration:const  BoxDecoration(
                         color:Colors.blueAccent,
                         borderRadius: BorderRadius.all(Radius.circular(20))
                       ),
@@ -673,11 +673,11 @@ int LengthOfMonth(String targetMonth){
 
                             Navigator.pop(context);
                           },
-                          decoration: InputDecoration(
+                          decoration:const  InputDecoration(
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.only(left:10,bottom: 10,top:10)
                           ),
-                          style: TextStyle(fontSize: 20,color:Colors.white),
+                          style:const  TextStyle(fontSize: 20,color:Colors.white),
                         ),
                       ),
                   onDoubleTap:()async{
@@ -731,11 +731,12 @@ int LengthOfMonth(String targetMonth){
             ref.read(dataProvider).isRenewed = true;
              Navigator.pop(context);
             },
-            child: Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
-            style: ButtonStyle(
+
+            style:const  ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
               minimumSize: MaterialStatePropertyAll(Size(1000, 35))
               ),
+            child: const Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
             )
           ]),
         ],
@@ -750,40 +751,40 @@ int LengthOfMonth(String targetMonth){
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("完了アイテムを追加…"),
+          title:const  Text("完了アイテムを追加…"),
         actions:[
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             Container(
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                 if(targetDayData["plan"].elementAt(index).trim() == ""){
-                   return SizedBox();
+                   return const SizedBox();
                 }else{
-                  return SizedBox(height:5);
+                  return const SizedBox(height:5);
                   }
                 },
                 itemBuilder: (BuildContext context, index){
                 
                 if(targetDayData["plan"].elementAt(index).trim() == ""){
-                   return SizedBox();
+                   return const SizedBox();
                 }else{
                   return InkWell(child:Container(
                     height:35,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color:Colors.greenAccent,
                       borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     child:
                      Padding(
-                      padding:EdgeInsets.only(left:10,top:5,bottom:5),
+                      padding:const EdgeInsets.only(left:10,top:5,bottom:5),
                       child:SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child:Text(
                           targetDayData["plan"].elementAt(index).trim(),
-                          style: TextStyle(
+                          style:const  TextStyle(
                             color:Colors.white,
                             fontSize:20
                       ),
@@ -812,8 +813,8 @@ int LengthOfMonth(String targetMonth){
                 itemCount: targetDayData["plan"].length,
               )
             ),
-            SizedBox(height:5),
-            Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            const SizedBox(height:5),
+            const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
             ElevatedButton(
             onPressed:()async{
             List<String> newList = targetDayData["record"];
@@ -828,13 +829,14 @@ int LengthOfMonth(String targetMonth){
             );
             ref.read(dataProvider.notifier).state = Data();
             ref.read(dataProvider).isRenewed = true;
-             Navigator.pop(context);
+            Navigator.pop(context);
             },
-            child: Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
-            style: ButtonStyle(
+            
+            style:const  ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
               minimumSize: MaterialStatePropertyAll(Size(1000, 35))
               ),
+            child:const Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
             )
           ]),
         ],
@@ -857,7 +859,7 @@ int LengthOfMonth(String targetMonth){
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('新規テンプレートを追加…'),
+          title: const Text('新規テンプレートを追加…'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -873,7 +875,7 @@ int LengthOfMonth(String targetMonth){
                    filled: true,
                    fillColor: Colors.greenAccent,
                   ),
-                  style: TextStyle(color:Colors.white,fontSize:20),
+                  style:const TextStyle(color:Colors.white,fontSize:20),
                 ),
               ),
             ],
@@ -883,8 +885,8 @@ int LengthOfMonth(String targetMonth){
               onPressed: () {
                 Navigator.of(context).pop(); // ダイアログを閉じる
               },
-              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.redAccent)),
-              child: Text('戻る',style:TextStyle(color:Colors.white)),
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.redAccent)),
+              child: const Text('戻る',style:TextStyle(color:Colors.white)),
             ),
             ElevatedButton(
               onPressed: () async{
@@ -917,10 +919,10 @@ int LengthOfMonth(String targetMonth){
                       ref.read(dataProvider.notifier).state = Data();
                       ref.read(dataProvider).isRenewed = true;
 
-                Navigator.of(context).pop();
+                       Navigator.of(context).pop();
               },
-              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.greenAccent)),
-              child: Text('ＯＫ',style:TextStyle(color:Colors.white)),
+              style:const  ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.greenAccent)),
+              child:const  Text('ＯＫ',style:TextStyle(color:Colors.white)),
             ),
           ],
         );
@@ -957,9 +959,9 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
       child:ListView.separated(
         separatorBuilder: (context, index) {
         if(widget.targetDayData[widget.targetCategory].elementAt(index).trim() == ""){
-            return SizedBox();
+            return const SizedBox();
         }else{
-          return SizedBox(width:6,height:3);
+          return const SizedBox(width:6,height:3);
         }
         },
         itemBuilder: (BuildContext context, index){
@@ -1074,14 +1076,14 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
  Widget build(BuildContext context){
   _updateTextFieldWidth();
   if(widget.textData.trim() == ""){
-   return SizedBox();
+   return const SizedBox();
   }else{
    return Container(
     width: _textFieldWidth,
     height:15,
     decoration: BoxDecoration(
       color:widget.backGroundColor,
-      borderRadius: BorderRadius.all(Radius.circular(20))
+      borderRadius: const BorderRadius.all(Radius.circular(20))
     ),
     child:TextField(
       controller: controller,
@@ -1115,12 +1117,14 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
         }
 
       },
-      style: TextStyle(
+      style: const TextStyle(
        fontSize: 10, // フォントサイズ
-       color: Colors.white, // 文字色
+       color: Colors.white, // 文字色,
+       fontWeight:FontWeight.bold
       ),
-      scrollPhysics: NeverScrollableScrollPhysics(),
-      decoration: InputDecoration(
+      scrollPhysics: const NeverScrollableScrollPhysics(),
+      decoration: 
+      const InputDecoration(
         contentPadding: EdgeInsets.only(left: 4,right: 4),
         border: InputBorder.none,
         isDense: true

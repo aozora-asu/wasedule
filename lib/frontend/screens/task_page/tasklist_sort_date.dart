@@ -50,7 +50,6 @@ void initState() {
           String adjustedDtEnd =
               ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
           return Container(
-              width: SizeConfig.blockSizeHorizontal! * 100,
               padding: const EdgeInsets.only(
                   left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
               child: Column(
@@ -311,7 +310,6 @@ void initState() {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Container(
-      width: SizeConfig.blockSizeHorizontal! * 100,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -349,9 +347,6 @@ void initState() {
              bottomSheet(targetData);
           },
           child: Container(
-              // constraints: BoxConstraints(
-              //   maxWidth: SizeConfig.blockSizeHorizontal! * 84.5,
-              // ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
@@ -365,7 +360,6 @@ void initState() {
                           offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
                         ),
                       ]),
-                  width: SizeConfig.blockSizeHorizontal! * 83,
                   child: Row(children: [
                     CupertinoCheckbox(
                       value: isChosen, onChanged: (value) {

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SnsLinkPage extends StatefulWidget {
@@ -13,7 +9,6 @@ class SnsLinkPage extends StatefulWidget {
 }
 
 class _SnsLinkPageState extends State<SnsLinkPage> {
-  TextEditingController _urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
@@ -54,7 +49,12 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
          XUrlLauncher(),
+         const SizedBox(height:20),
+         const Text("Waseda Moodleへのアクセスはこちらから！"),
+         MoodleUrlLauncher(),
          const Spacer(),
+         const Row(children:[Spacer(),Text("Version: Beta 15.10.14"),SizedBox(width:7)]),
+         const SizedBox(height:3)
         ])
         )
     );
@@ -125,6 +125,29 @@ class XUrlLauncher extends StatelessWidget {
             //   context,
             //   "https://main--silver-alpaca-276a52.netlify.app/",
             // );
+          }
+        );
+  }
+}
+
+class MoodleUrlLauncher extends StatelessWidget {
+  MoodleUrlLauncher({Key? key}) : super(key: key);
+
+  final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return  ElevatedButton(
+          style:  ButtonStyle(
+            backgroundColor: const MaterialStatePropertyAll(Colors.orange),
+            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
+            ),
+          child: const Text('Waseda Moodle リンク',style:TextStyle(color:Colors.white)),
+          onPressed: () {
+            _urlLaunchWithStringButton.launchUriWithString(
+              context,
+              "https://wsdmoodle.waseda.jp/",
+            );
           }
         );
   }
