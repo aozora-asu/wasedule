@@ -39,18 +39,17 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   Future<void> _initializeData() async {
     urlString = await UserDatabaseHelper().getUrl();
-    if (urlString != null) {
+    if (await TaskDatabaseHelper().hasData() || urlString != null) {
       await loadData();
+    } else {
+      NoTaskPage();
     }
-    NoTaskPage();
   }
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> loadData() async {
-    if (urlString != null) {
-      await databaseHelper.resisterTaskToDB(urlString!);
-      await displayDB();
-    }
+    await databaseHelper.resisterTaskToDB(urlString!);
+    await displayDB();
   }
 
   Future<void> displayDB() async {
