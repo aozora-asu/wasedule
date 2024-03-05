@@ -5,7 +5,6 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.da
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 
 import 'tasklist_sort_date.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'data_manager.dart';
 
@@ -132,7 +131,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             AddDataCardButton(),
-            Container(
+            SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 2,
               height: SizeConfig.blockSizeVertical! * 5,
             ),
@@ -189,10 +188,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
-              //noUrlDialogue(context);
               return NoTaskPage();
-              // TaskListByDtEnd(
-              //     sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             }
           },
         );

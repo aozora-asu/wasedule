@@ -113,7 +113,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
                 fontSize: SizeConfig.blockSizeHorizontal! *4,
               ),),),
               const SizedBox(height: 8.0),
-              MoodleUrlLauncher(),
+              MoodleUrlLauncher(width:100),
               const SizedBox(height: 16.0),
               const Divider(color: ACCENT_COLOR,thickness: 2,),
               Align(alignment:Alignment.centerLeft,

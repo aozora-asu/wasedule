@@ -225,6 +225,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     createConfigData("tips", 1);
     createConfigData("todaysSchedule", 0);
     createConfigData("taskList", 1);
+    createConfigData("moodleLink", 0);
   }
 
   Future<void> createConfigData(String widgetName, int defaultState) async {
@@ -236,13 +237,11 @@ class _CalendarState extends ConsumerState<Calendar> {
 
       if (targetWidgetName == widgetName) {
         found = true;
-        //print("指定されたデータが見つかりました: $widgetName");
         break;
       }
     }
 
     if (!found) {
-      //print("指定されたデータが見つかりませんでした: $widgetName");
       await CalendarConfigDatabaseHelper().resisterConfigToDB(
           {"widgetName": widgetName, "isVisible": defaultState, "info": "3"});
       ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
@@ -481,9 +480,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         floatingActionButton: Row(children: [
           const Spacer(),
-          calendarShareButton(),
-          const SizedBox(width: 10),
           AddEventButton(),
+          const SizedBox(width: 10),
+          calendarShareButton(),
         ]));
   }
 
@@ -505,6 +504,10 @@ class _CalendarState extends ConsumerState<Calendar> {
           todaysScheduleListView(), searchConfigData("todaysSchedule")),
       switchWidget(taskDataListList(searchConfigInfo("taskList")),
           searchConfigData("taskList")),
+      switchWidget(
+          Column(children:[MoodleUrlLauncher(width:100),const SizedBox(height:5)]),
+          searchConfigData("moodleLink")),
+      
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(

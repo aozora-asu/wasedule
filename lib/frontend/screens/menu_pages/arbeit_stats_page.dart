@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 
 
@@ -26,9 +27,15 @@ class ArbeitStatsPage extends ConsumerStatefulWidget {
 }
 
 class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
-  Color charColor = Color.fromARGB(255, 200, 200, 200);
-  Color charColorLight = Color.fromARGB(255, 150, 150, 150);
+  Color charColor = const Color.fromARGB(255, 200, 200, 200);
+  Color charColorLight = const Color.fromARGB(255, 150, 150, 150);
+  late int includeFee;
 
+  @override
+  void initState() {
+    super.initState();
+    includeFee = 1;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +45,26 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     String year = widget.targetMonth.substring(0,4);
     String month = widget.targetMonth.substring(5,7);
     String targetKey = year + "-" + month;
+    Widget estimatedMonthlyIncome = Container();
 
-    return Scaffold(
+    if(includeFee == 1){
+      estimatedMonthlyIncome = 
+      Text(
+          formatNumberWithComma(monthlyWageSum(widget.targetMonth) + monthlyFeeSumOfAllTags(targetKey))+ 
+          " 円",
+          style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
+          );
+    }else if(includeFee == 0){
+      estimatedMonthlyIncome =
+            Text(
+          formatNumberWithComma(monthlyWageSum(widget.targetMonth)) + 
+          " 円",
+          style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
+          );
+    }
+
+    return 
+       Scaffold(
         appBar: AppBar(
         leading: const BackButton(color:Colors.white),
         backgroundColor: MAIN_COLOR,
@@ -68,7 +93,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
 
       body:
-      Column(children:[
+            Column(children:[
                 SizedBox(
             child: Row(children: [
               IconButton(
@@ -141,18 +166,18 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     Text(year + "年 年収見込み  ",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *7)),
                     Text(
                     formatNumberWithComma(yearlyWageSumWithAdditionalWorkTime(widget.targetMonth)
-                     - yearlyFeeSumOfAllTags(widget.targetMonth)
                      )
                     + " 円",
                     style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
                     ),
 
                     Text(month +"月 月収見込み  ",style: TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! *7)),
-                    Text(
-                    formatNumberWithComma(monthlyWageSum(widget.targetMonth))+ 
-                    " 円",
-                    style:TextStyle(fontWeight: FontWeight.bold,fontSize:SizeConfig.blockSizeHorizontal! *15)
-                    ),
+                    estimatedMonthlyIncome,
+
+                  Row(children:[
+                    const Spacer(),
+                    includeFeeSwitch()
+                  ]),
 
                   Row(children:[
                     const Spacer(),
@@ -290,7 +315,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
               ]),
-            ),
+            ), 
             tagDataList(),
           SizedBox(height:SizeConfig.blockSizeVertical! *10),
           ])
@@ -317,6 +342,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                       )
                 ),
               ])
+      
       );
   }
 
@@ -361,6 +387,29 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     widget.targetMonth = decreasedMonth;
   }
 
+  Widget includeFeeSwitch(){
+    String buttonText = "交通費：含む";
+    Function()  onPress = (){
+      setState(() {
+        includeFee = 0;
+      });
+    };
+
+  if(includeFee == 0){
+    buttonText = "交通費：含まない";
+    onPress = (){
+      setState(() {
+        includeFee = 1;
+      });
+    };
+  }
+
+   return TextButton(
+    onPressed: onPress,
+    style: const ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+    child: Text(buttonText));
+  }
+
   Widget tagDataList(){
     final tagData = ref.watch(calendarDataProvider);
     List sortedData = tagData.tagData;
@@ -380,9 +429,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         
        );
       }else{
-      return ListView.builder(
+      return
+        ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-             
           Widget dateTimeData =
            Column(
            crossAxisAlignment: CrossAxisAlignment.start,
@@ -530,6 +579,53 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       );
   }
 
+  final FocusNode _nodeText1 = FocusNode();
+  KeyboardActionsConfig _buildConfig(BuildContext context,) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.white,
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+          toolbarAlignment: MainAxisAlignment.start,
+          displayArrows: false,
+          toolbarButtons: [
+            (node) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Stack(
+                  children: [
+                    Container(
+                      margin:const EdgeInsets.only(left: 0),
+                      child: Row(children:[
+                        SizedBox(width:SizeConfig.blockSizeHorizontal! *80),
+                        GestureDetector(
+                          onTap: () {
+
+                            node.unfocus();
+                            },
+                          child: const Text(
+                            "完了",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ])
+                      
+                    ),
+                  ],
+                ),
+              );
+            }
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget collectingEntryList(tagData,targetKey){
     String year = targetKey.substring(0,4);
     List<String> targetKeys = [
@@ -576,8 +672,10 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                 height:SizeConfig.blockSizeVertical! *3,
                 child:CupertinoTextField(
                   controller: controller,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: false),
+                  textInputAction: TextInputAction.done,
+                  keyboardType: const TextInputType.numberWithOptions(decimal:false),
                   inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+$')),
                     FilteringTextInputFormatter.digitsOnly,
                   ],
                   textAlign: TextAlign.end,
@@ -776,6 +874,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     }
    }else{
    }
+   print(result);
    return result;
   }
 
@@ -857,6 +956,22 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
        if(sortedDataByMonth[targetKeys.elementAt(ind)] != null){
         result +=  monthlyFeeSum(tagData.elementAt(i),targetKeys.elementAt(i));
        }
+      }
+     }
+    }
+    return result;
+  }
+
+  int monthlyFeeSumOfAllTags(targetKey){
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    
+    int result = 0;
+
+    for(int i = 0; i < tagData.length; i++){
+     if(tagData.elementAt(i)["isBeit"] == 1){
+       if(sortedDataByMonth[targetKey] != null){
+        result +=  monthlyFeeSum(tagData.elementAt(i),targetKey);
       }
      }
     }
@@ -963,14 +1078,14 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 }
   BoxDecoration roundedBoxdecorationWithShadow(){
     return BoxDecoration(
-                  color: Colors.white, // コンテナの背景色
-                  borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-                  boxShadow: [
-                  BoxShadow(
-                    color:Colors.grey.withOpacity(0.5), // 影の色と透明度
-                    spreadRadius: 2, // 影の広がり
-                    blurRadius: 4, // 影のぼかし
-                    offset: const Offset(0, 2), // 影の方向（横、縦）
-                  )
-                ]);
+      color: Colors.white, // コンテナの背景色
+      borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+      boxShadow: [
+      BoxShadow(
+        color:Colors.grey.withOpacity(0.5), // 影の色と透明度
+        spreadRadius: 2, // 影の広がり
+        blurRadius: 4, // 影のぼかし
+        offset: const Offset(0, 2), // 影の方向（横、縦）
+      )
+    ]);
   }

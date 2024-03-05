@@ -51,7 +51,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          XUrlLauncher(),
          const SizedBox(height:20),
          const Text("Waseda Moodleへのアクセスはこちらから！"),
-         MoodleUrlLauncher(),
+         MoodleUrlLauncher(width:80),
          const Spacer(),
          const Padding(
           padding: EdgeInsets.all(10),
@@ -134,16 +134,20 @@ class XUrlLauncher extends StatelessWidget {
 }
 
 class MoodleUrlLauncher extends StatelessWidget {
-  MoodleUrlLauncher({Key? key}) : super(key: key);
+  int width;
+  MoodleUrlLauncher({
+    Key? key,
+    required this.width
+    }) : super(key: key);
 
   final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
 
   @override
   Widget build(BuildContext context) {
-    return  ElevatedButton(
+    return ElevatedButton(
           style:  ButtonStyle(
             backgroundColor: const MaterialStatePropertyAll(Colors.orange),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
+            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal!*width,25))
             ),
           child: const Text('Waseda Moodle リンク',style:TextStyle(color:Colors.white)),
           onPressed: () {
