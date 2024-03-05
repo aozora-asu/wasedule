@@ -24,7 +24,7 @@ class Data {
   bool isRenewed = false;
   bool isInit = true;
   var  isTimerList = {};
-  bool isVertical = false;
+  bool isVertical = true;
   var timerTargetMonthData = [];
   var templateDataList = {};
 

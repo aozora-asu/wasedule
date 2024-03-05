@@ -7,7 +7,6 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 
-import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
 
 class TaskPage extends StatefulWidget {

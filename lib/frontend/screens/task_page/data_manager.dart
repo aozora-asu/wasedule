@@ -30,6 +30,7 @@ class TaskData {
   int taskPageIndex = 0;
   int foldState = 0;
   var chosenTaskIdList = [];
+  var sortedDataByDTEnd = {};
 
   TaskData({
     List<Map<String, dynamic>> taskDataList = const [],
@@ -89,11 +90,13 @@ class TaskData {
         deletedTaskDataList.add(TDList.elementAt(i));
       }
     }
+  sortedDataByDTEnd = sortedData;
    return sortedData;
   }
 
   Map<String, List<Map<String, dynamic>>> sortDataByCategory(TDList) {
     Map<String, List<Map<String, dynamic>>> sortedData = {};
+    sortedDataByDTEnd = {};
     for (int i = 0; i < TDList.length; i++) {
       String targetCategory = TDList[i]["title"];
       if (TDList.elementAt(i)["isDone"] == 0) {
@@ -104,6 +107,7 @@ class TaskData {
         }
       }
     }
+
    return sortedData;
   }
 

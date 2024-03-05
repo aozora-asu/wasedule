@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 class SettingsPage extends StatelessWidget {
@@ -101,7 +102,52 @@ class MainContents extends ConsumerStatefulWidget {
 }
 
 class _MainContentsState extends ConsumerState<MainContents> {
-
+  final FocusNode _nodeText1 = FocusNode();
+  KeyboardActionsConfig _buildConfig(BuildContext context, TextEditingController controller) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.white,
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+          toolbarAlignment: MainAxisAlignment.start,
+          displayArrows: false,
+          toolbarButtons: [
+            (node) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Stack(
+                  children: [
+                    Container(
+                      margin:const EdgeInsets.only(left: 0),
+                      child: Row(children:[
+                        SizedBox(width:SizeConfig.blockSizeHorizontal! *80),
+                        GestureDetector(
+                          onTap: () {
+                            updateConfigInfo("taskList",controller.text);
+                            node.unfocus();
+                            },
+                          child: const Text(
+                            "完了",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ])
+                      
+                    ),
+                  ],
+                ),
+              );
+            }
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +198,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
     } 
     
   Widget calendarBody(){
-    return 
+    TextEditingController controller = TextEditingController();
+    return KeyboardActions(
+    config: _buildConfig(context,controller),
+    child: 
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:[
@@ -169,7 +218,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         child:Column(
          crossAxisAlignment: CrossAxisAlignment.start,
          children:[
-      Text('カレンダー画面の表示カスタム',style:TextStyle(
+      Text('カレンダー画面の表示ウィジェット',style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *4,
         fontWeight: FontWeight.bold
         ),
@@ -182,11 +231,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const SizedBox(height:5),
       configSwitch("近日締切のタスク","taskList"),
       const SizedBox(height:5),
-      configTextField("表示日数：","taskList"),
+      configTextField("表示日数：","taskList",controller),
+      const SizedBox(height:5),
+      configSwitch("Waseda Moodle リンク","moodleLink"),
       const SizedBox(height:5),
     ])
     )
-   ]);
+   ])
+   );
   }
 
   Widget configSwitch(String configText,String widgetName){
@@ -203,16 +255,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
      ]);
   }
 
-    Widget configTextField(String configText,String widgetName){
-    TextEditingController controller = TextEditingController();
+    Widget configTextField(String configText,String widgetName,TextEditingController controller){
+
     controller.text = searchConfigInfo(widgetName);
      return Row(children:[
       const Spacer(),
         Text(configText,style:TextStyle(
         fontSize: SizeConfig.blockSizeHorizontal! *4,
         ),),
-      Expanded(child:CupertinoTextField(
+      Expanded(
+        child:CupertinoTextField(
         controller:controller,
+        focusNode: _nodeText1,
         onSubmitted:(value){
             updateConfigInfo(widgetName, value);
         },
@@ -222,8 +276,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
           ),
         ]),
         )
-       
-
      ]);
   }
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/stats_page/stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/timer_view.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+
+import 'package:intl/intl.dart';
 
 
 class DaylyViewPage extends ConsumerStatefulWidget {
@@ -44,7 +48,6 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
     return 
     Scaffold(
       body:pageHead(),
-
       floatingActionButton:showButtonOrNot(context,ref),
     );
   }
@@ -124,15 +127,6 @@ Column(
     )
     ;    
   }
-
-  // double calculateHeight(){
-  //  final data = ref.watch(dataProvider);
-  //  if(data.isTimerList.containsValue(true)){
-  //   return 50 - 17.75;
-  //  }else{
-  //   return 50;
-  //  }
-  // }
 
   Widget switchViewButton(){
    if(ref.watch(dataProvider).isVertical){
@@ -254,11 +248,13 @@ Column(
           child:Column(children:[
            Row(
             children:[
-            Text(
+            Column(
+             
+             children:<Widget>[
+              Text(
               " " + targetDayData["date"].substring(5,10) + weekDay(formattedDateData.weekday),
               style: highLightToday(targetDayData["date"]),
             ),
-            const VerticalDivider(thickness: 10,width: 10,color: Colors.grey,indent: 0,endIndent: 0,),
             Column(children:[
              InkWell(
               child:Text(formattedDuration),
@@ -288,6 +284,7 @@ Column(
               child:timerButton(targetDayData)
             )
           ]),
+        ]),    
             Expanded(
             child:Column(
              crossAxisAlignment:CrossAxisAlignment.start,
@@ -351,9 +348,9 @@ Column(
                 ),
               ]),
 
-              const SizedBox(height:1),
-              dividerVertical(),
-              const SizedBox(height:1),
+              const SizedBox(height:1.5),
+              //dividerVertical(),
+              const SizedBox(height:1.5),
 
               Row(children:[
                 const SizedBox(width:4),
@@ -368,10 +365,9 @@ Column(
                 backGroundColor:Colors.blueAccent ,
                 )]),
 
-            ]))
-            
-          ]
-         ),
+            ])
+           ) 
+         ]),
         ]
        )
        );
@@ -456,7 +452,7 @@ TextStyle highLightToday(String date){
  if(isToday(date) == true){
    return const TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold);
  }else{
-   return const TextStyle();
+   return const TextStyle(fontWeight: FontWeight.bold);
  }
 }
 
@@ -612,7 +608,8 @@ int LengthOfMonth(String targetMonth){
 
   Future<void> showTemplateDialogue (targetDayData) async{
     final data = ref.read(dataProvider);
-    Map tempLateMap = data.templateDataList;
+    final taskData = ref.read(taskDataProvider);
+    Map taskMap = taskData.sortedDataByDTEnd;
 
     showDialog(
       context: context,
@@ -623,66 +620,59 @@ int LengthOfMonth(String targetMonth){
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            const Text("テンプレート(ダブルタップで追加):",style:(TextStyle(fontWeight: FontWeight.bold))),
-            Container(
+            const Text("タスクから選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical! *30,
               child:ListView.separated(
                 separatorBuilder: (context, index) {
-                 if(tempLateMap.isEmpty){
+                 if(taskMap.isEmpty){
                   return const SizedBox();
                  }else{
-                  if(tempLateMap.values.elementAt(index).trim() == ""){//ここにテンプレDBから呼び出し。
-                    return const  SizedBox();
-                  }else{
                     return const  SizedBox(height:5);
                   }
-                 }
                 },
                 itemBuilder: (BuildContext context, index){
-                 if(tempLateMap.isEmpty){
+                 if(taskMap.isEmpty){
                    return const SizedBox();
                  }else{
-                  if(tempLateMap.values.elementAt(index).trim() == ""){
-                    return const SizedBox();
-                  }else{
-                    late TextEditingController controller = TextEditingController();
-                    late String _textFieldValue;
-                    _textFieldValue = tempLateMap.values.elementAt(index).trim();
-                    controller = TextEditingController(text:_textFieldValue.trim()); 
 
-                    return InkWell(
-                      child:Container(
-                      height:35,
-                      decoration:const  BoxDecoration(
-                        color:Colors.blueAccent,
-                        borderRadius: BorderRadius.all(Radius.circular(20))
-                      ),
-                      child:TextField(
-                          controller: controller,
-                          onSubmitted: (value) async{
-                            int i = tempLateMap.keys.elementAt(index);
-                            String enteredText = value;
-
-                            await TemplateDataBaseHelper().upDateDB(
-                              i,
-                              enteredText
-                            );
-                            setState((){
-                              ref.read(dataProvider.notifier).state = Data();
-                              ref.read(dataProvider).isRenewed = true;
-                            });
-
-                            Navigator.pop(context);
-                          },
-                          decoration:const  InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left:10,bottom: 10,top:10)
+                  late String date;
+                  date = DateFormat('yyyy年MM月dd日').format(taskMap.keys.elementAt(index));
+                  
+                  return Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children:[
+                    Text(date),
+                    ListView.separated(
+                    itemBuilder:(context,ind){
+                    String taskCategory = taskMap.values.elementAt(index).elementAt(ind)["title"];
+                    String taskTitle = taskMap.values.elementAt(index).elementAt(ind)["summary"];
+                     return InkWell(
+                      child:
+                        Container(
+                          padding: const EdgeInsets.all(7.5),
+                          decoration:const  BoxDecoration(
+                            color:Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(20))
                           ),
-                          style:const  TextStyle(fontSize: 20,color:Colors.white),
+                          child:SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child:Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:[
+                                Text(taskCategory,
+                                    style:const TextStyle(fontSize: 10,color:Colors.grey),
+                                  ),
+                                Text(taskTitle,
+                                    style:const TextStyle(fontSize: 15,color:Colors.black),
+                                  ),
+                            ])
+                              
+                          )            
                         ),
-                      ),
-                  onDoubleTap:()async{
+                  onTap:()async{
                     List<String> newList = targetDayData["plan"];
-                      newList.add(tempLateMap.values.elementAt(index).trim());
+                      newList.add("【" + truncateString(taskCategory)+ "】"  +taskTitle);
                           await DataBaseHelper().upDateDB(
                           targetDayData["date"],
                           targetDayData["time"], 
@@ -696,42 +686,37 @@ int LengthOfMonth(String targetMonth){
                           Navigator.pop(context);
                         }
                       );
-                    }
+                    },
+                    separatorBuilder:(context,ind){
+                      return const SizedBox(height:5);
+                    },
+                    itemCount: taskMap.values.elementAt(index).length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    )]);
                   }
                 },
                 shrinkWrap: true,
-                itemCount: tempLateMap.length,
+                itemCount: taskMap.length,
               )
-            ),
-            ElevatedButton(
-            onPressed:()async{
-              showMyalog(context,targetDayData);
-            },
-            
-            style: const  ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
-              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
-              ),
-            child: const Text("+ テンプレートを追加…",style:TextStyle(color:Colors.white)),
             ),
             const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
             ElevatedButton(
             onPressed:()async{
-            List<String> newList = targetDayData["plan"];
-            newList.add("ここに入力…");
-            await DataBaseHelper().upDateDB(
-            targetDayData["date"],
-            targetDayData["time"], 
-            targetDayData["schedule"],
-            newList,
-            targetDayData["record"], 
-            targetDayData["timeStamp"]
-            );
-            ref.read(dataProvider.notifier).state = Data();
-            ref.read(dataProvider).isRenewed = true;
-             Navigator.pop(context);
+              List<String> newList = targetDayData["plan"];
+                newList.add("ここに入力…");
+                await DataBaseHelper().upDateDB(
+                  targetDayData["date"],
+                  targetDayData["time"], 
+                  targetDayData["schedule"],
+                  newList,
+                  targetDayData["record"], 
+                  targetDayData["timeStamp"]
+                );
+              ref.read(dataProvider.notifier).state = Data();
+              ref.read(dataProvider).isRenewed = true;
+              Navigator.pop(context);
             },
-
             style:const  ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
               minimumSize: MaterialStatePropertyAll(Size(1000, 35))
@@ -741,9 +726,16 @@ int LengthOfMonth(String targetMonth){
           ]),
         ],
       );
- 
       }
     );
+  }
+
+  String truncateString(String input, {int maxLength = 10}) {
+    if (input.length <= maxLength) {
+      return input;
+    } else {
+      return input.substring(0, maxLength - 3) + '…';
+    }
   }
 
   void showImputDialogue (targetDayData){
@@ -757,7 +749,7 @@ int LengthOfMonth(String targetMonth){
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
             const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
-            Container(
+            SizedBox(
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                 if(targetDayData["plan"].elementAt(index).trim() == ""){
@@ -805,9 +797,10 @@ int LengthOfMonth(String targetMonth){
                   ref.read(dataProvider.notifier).state = Data();
                   ref.read(dataProvider).isRenewed = true;
                   Navigator.pop(context);
-                }
-                );
-                }
+                  showTaskDeleteDialogue(targetDayData); 
+                      }
+                    );
+                  }
                 },
                 shrinkWrap: true,
                 itemCount: targetDayData["plan"].length,
@@ -847,7 +840,107 @@ int LengthOfMonth(String targetMonth){
 
   }
 
+  Future<void> showTaskDeleteDialogue(targetDayData) async{
+    final taskData = ref.read(taskDataProvider);
+    Map taskMap = taskData.sortedDataByDTEnd;
 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:const  Text("タスクを完了状態にしますか？"),
+        actions:[
+         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+            const Text("完了したタスクを選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical! *30,
+              child:ListView.separated(
+                separatorBuilder: (context, index) {
+                 if(taskMap.isEmpty){
+                  return const SizedBox();
+                 }else{
+                    return const  SizedBox(height:5);
+                  }
+                },
+                itemBuilder: (BuildContext context, index){
+                 if(taskMap.isEmpty){
+                   return const SizedBox();
+                 }else{
+                  late String date;
+                  date = DateFormat('yyyy年MM月dd日').format(taskMap.keys.elementAt(index));
+                  
+                  return Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children:[
+                    Text(date),
+                    ListView.separated(
+                    itemBuilder:(context,ind){
+                    String taskCategory = taskMap.values.elementAt(index).elementAt(ind)["title"];
+                    String taskTitle = taskMap.values.elementAt(index).elementAt(ind)["summary"];
+                     return InkWell(
+                      child:
+                        Container(
+                          padding: const EdgeInsets.all(7.5),
+                          decoration:const  BoxDecoration(
+                            color:Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child:SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child:Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:[
+                                Text(taskCategory,
+                                    style:const TextStyle(fontSize: 10,color:Colors.grey),
+                                  ),
+                                Text(taskTitle,
+                                    style:const TextStyle(fontSize: 15,color:Colors.black),
+                                  ),
+                            ])
+                              
+                          )            
+                        ),
+                  onTap:()async{
+                          await TaskDatabaseHelper().unDisplay(
+                            taskMap.values.elementAt(index).elementAt(ind)["id"]
+                          );
+                          ref.read(dataProvider.notifier).state = Data();
+                          ref.read(dataProvider).isRenewed = true;
+                          Navigator.pop(context);
+                        }
+                      );
+                    },
+                    separatorBuilder:(context,ind){
+                      return const SizedBox(height:5);
+                    },
+                    itemCount: taskMap.values.elementAt(index).length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    )]);
+                  }
+                },
+                shrinkWrap: true,
+                itemCount: taskMap.length,
+              )
+            ),
+            ElevatedButton(
+              onPressed:(){
+                Navigator.pop(context);
+              },
+            style:const  ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
+              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+              ),
+            child:const Text("とじる",style:TextStyle(color:Colors.white)),
+            )
+          ]),
+        ],
+      );
+      }
+    );
+  }
 
 
   Future<void> showMyalog(BuildContext context,targetDayData) async {
@@ -951,34 +1044,37 @@ class TextFieldList extends ConsumerStatefulWidget {
 }
 
 class  _TextFieldListState extends ConsumerState<TextFieldList> {
-  
+  @override
   Widget build(BuildContext context){
-    return Container(
-      height: switchWidth(ref.read(dataProvider).isVertical),
-      width:SizeConfig.blockSizeHorizontal! *52,
-      child:ListView.separated(
-        separatorBuilder: (context, index) {
-        if(widget.targetDayData[widget.targetCategory].elementAt(index).trim() == ""){
-            return const SizedBox();
-        }else{
-          return const SizedBox(width:6,height:3);
-        }
+    return  Container(
+       height: switchHeight(ref.read(dataProvider).isVertical),
+       width:SizeConfig.blockSizeHorizontal! *67,
+       child:SizedBox(
+        child:ListView.separated(
+          separatorBuilder: (context, index) {
+            if(widget.targetDayData[widget.targetCategory].elementAt(index).trim() == ""){
+                return const SizedBox();
+            }else{
+              return const SizedBox(width:6,height:3);
+            }
+          },
+          itemBuilder: (BuildContext context, index){
+            return TextFieldObject(
+              textData:modifyTextLsit(widget.targetDayData[widget.targetCategory]).elementAt(index),
+              index:index,
+              targetDayData:widget.targetDayData,
+              backGroundColor:widget.backGroundColor
+             
+             
+            );
+          
         },
-        itemBuilder: (BuildContext context, index){
-          return Row(children:[
-          TextFieldObject(
-            textData:modifyTextLsit(widget.targetDayData[widget.targetCategory]).elementAt(index),
-            index:index,
-            targetDayData:widget.targetDayData,
-            backGroundColor:widget.backGroundColor
-          ),
-        ]);
-        
-      },
-     itemCount: widget.targetDayData[widget.targetCategory].length,
-     scrollDirection: switchAxis(ref.read(dataProvider).isVertical),
-     shrinkWrap: true,
-    )
+      itemCount: widget.targetDayData[widget.targetCategory].length,
+      scrollDirection: switchAxis(ref.read(dataProvider).isVertical),
+      shrinkWrap: true,
+      physics:  switchPhysics(ref.read(dataProvider).isVertical),
+      )
+   ),
   );
   }
 
@@ -990,11 +1086,27 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
     }
   } 
 
-  double? switchWidth(bool isVertical){
+  ScrollPhysics switchPhysics(bool isVertical){
+    if(isVertical){
+     return const NeverScrollableScrollPhysics();
+    }else{
+     return const AlwaysScrollableScrollPhysics();
+    }
+  } 
+
+  double? switchHeight(bool isVertical){
     if(isVertical){
      return  null;
     }else{
      return SizeConfig.blockSizeVertical! *2.2;
+    }
+  } 
+
+  double? switchWidth(bool isVertical){
+    if(isVertical){
+     return SizeConfig.blockSizeVertical! *52;
+    }else{
+     return  null;
     }
   } 
 
@@ -1073,6 +1185,23 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
   return count;
   }
 
+
+  Axis switchAxis(bool isVertical){
+    if(isVertical){
+     return  Axis.vertical;
+    }else{
+     return Axis.horizontal;
+    }
+  } 
+
+  ScrollPhysics switchPhysics(bool isVertical){
+    if(isVertical){
+     return const AlwaysScrollableScrollPhysics();
+    }else{
+     return const NeverScrollableScrollPhysics();
+    }
+  } 
+
  Widget build(BuildContext context){
   _updateTextFieldWidth();
   if(widget.textData.trim() == ""){
@@ -1085,7 +1214,10 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
       color:widget.backGroundColor,
       borderRadius: const BorderRadius.all(Radius.circular(20))
     ),
-    child:TextField(
+    // child:SingleChildScrollView(
+    //  scrollDirection: switchAxis(ref.read(dataProvider).isVertical),
+    //  physics: switchPhysics(ref.read(dataProvider).isVertical),
+     child:TextField(
       controller: controller,
       onSubmitted: (value) async{
         if(widget.backGroundColor == Colors.greenAccent){
@@ -1122,7 +1254,7 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
        color: Colors.white, // 文字色,
        fontWeight:FontWeight.bold
       ),
-      scrollPhysics: const NeverScrollableScrollPhysics(),
+      scrollPhysics:  switchPhysics(ref.read(dataProvider).isVertical),
       decoration: 
       const InputDecoration(
         contentPadding: EdgeInsets.only(left: 4,right: 4),

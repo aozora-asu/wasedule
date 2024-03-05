@@ -1,17 +1,14 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
-import 'dart:async';
-import 'to_do_page.dart';
+
+
 import 'package:percent_indicator/percent_indicator.dart';
-import 'dart:math';
 
 Map<String, DateTime> allTasks = {};
 Map<String, DateTime> allDoneTasks = {};
@@ -180,12 +177,12 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
 
   Color getCurrentHpColor(int hp, int max) {
     if (hp > max / 2) {
-      return Color.fromARGB(255, 139, 255, 143);
+      return const Color.fromARGB(255, 139, 255, 143);
     }
     if (hp > max / 5) {
-      return Color.fromARGB(255, 255, 225, 135);
+      return const Color.fromARGB(255, 255, 225, 135);
     }
-    return Color.fromARGB(255, 255, 159, 159);
+    return const Color.fromARGB(255, 255, 159, 159);
   }
 
   @override
@@ -347,11 +344,11 @@ class HpGauge3Color extends StatelessWidget {
 
   Color getCurrentHpColor(int hp) {
     if (hp > maxHp / 2) {
-      return Color.fromARGB(255, 139, 255, 143);
+      return const Color.fromARGB(255, 139, 255, 143);
     }
     if (hp > maxHp / 5) {
-      return Color.fromARGB(255, 255, 225, 135);
+      return const Color.fromARGB(255, 255, 225, 135);
     }
-    return Color.fromARGB(255, 255, 159, 159);
+    return const Color.fromARGB(255, 255, 159, 159);
   }
 }
