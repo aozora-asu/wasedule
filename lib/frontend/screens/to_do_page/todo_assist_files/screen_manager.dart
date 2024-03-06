@@ -6,13 +6,13 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScreenBuilder extends ConsumerStatefulWidget{
-  Future<List<Map<String, dynamic>>>? events;
-  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  // Future<List<Map<String, dynamic>>>? events;
+  // AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
   ScreenBuilder ({
-    this.events,
-    required this.snapshot,
+    // this.events,
+    // required this.snapshot,
     required this.context
   });
   @override
@@ -63,9 +63,9 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
       builder: (BuildContext context,snapshot){
         if (snapshot.connectionState == ConnectionState.waiting) {
           return DaylyViewPage(
-            snapshot: widget.snapshot,
+            //snapshot: widget.snapshot,
             context: widget.context,
-            events: widget.events,
+            //events: widget.events,
             );
         }else if(snapshot.hasError){
           final error  = snapshot.error;
@@ -81,9 +81,9 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
           }
           data.getData(snapshot.data!);
           return DaylyViewPage(
-            snapshot: widget.snapshot,
+            //snapshot: widget.snapshot,
             context: widget.context,
-            events: widget.events,
+            //events: widget.events,
             );
         } else {
           
@@ -91,9 +91,9 @@ class  ScreenBuilderState extends ConsumerState<ScreenBuilder> {
             displayDB();
           }
           return DaylyViewPage(
-            snapshot: widget.snapshot,
+           // snapshot: widget.snapshot,
             context: widget.context,
-            events: widget.events,
+           // events: widget.events,
             );
      }
     }

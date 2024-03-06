@@ -1,4 +1,4 @@
-package com.example.wase_dule
+package com.wasedule.wase_dule
 
 import io.flutter.embedding.android.FlutterActivity
 

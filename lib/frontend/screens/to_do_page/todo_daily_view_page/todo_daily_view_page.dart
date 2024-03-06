@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/stats_page/stats_page.dart';
@@ -17,13 +16,13 @@ import 'package:intl/intl.dart';
 
 
 class DaylyViewPage extends ConsumerStatefulWidget {
-  Future<List<Map<String, dynamic>>>? events;
-  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  //Future<List<Map<String, dynamic>>>? events;
+  //AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
   DaylyViewPage({
-    this.events,
-    required this.snapshot,
+    //this.events,
+    //required this.snapshot,
     required this.context
   });
 
@@ -83,9 +82,9 @@ Column(
       children:[
         TimerView(
           targetMonthData:data.sortDataByMonth()[thisMonth],
-          events:widget.events,
+          //events:widget.events,
           context:widget.context,
-          snapshot: widget.snapshot,
+          //snapshot: widget.snapshot,
         ),
         SizedBox(
           child: Row(

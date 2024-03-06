@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/task_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/data_receiver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,14 +11,14 @@ import 'dart:async';
 
 class TimerView extends ConsumerStatefulWidget {
   List<Map<String,dynamic>>? targetMonthData;
-  Future<List<Map<String, dynamic>>>? events;
-  AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
+  // Future<List<Map<String, dynamic>>>? events;
+  // AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
   TimerView({
     this.targetMonthData,
-    this.events,
-    required this.snapshot,
+    // this.events,
+    // required this.snapshot,
     required this.context
   });
 
@@ -51,10 +52,10 @@ class  _TimerViewState extends ConsumerState<TimerView> {
    SizeConfig().init(context);
    if(widget.targetMonthData == null){
     return buildTaskProgressIndicator(
-                              widget.context, widget.snapshot.data!);
+                              widget.context, ref.read(taskDataProvider).taskDataList);
    }else{
     data.generateIsTimerList(widget.targetMonthData!);
-    return Container(
+    return SizedBox(
       child:ListView.builder(itemBuilder:(context,index){
         final String date = widget.targetMonthData!.elementAt(index)["date"];
         Map<String,dynamic> targetDayData = widget.targetMonthData!.elementAt(index);
@@ -62,7 +63,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
         DateTime? startTime = targetDayData["timeStamp"].elementAt(targetDayData["timeStamp"].length-1) ?? DateTime.now();
 
         if(widget.targetMonthData!.elementAt(index)["timeStamp"].length.isEven){
-         return Container(
+         return SizedBox(
           height:SizeConfig.blockSizeVertical! *40,
           child: Column(children:[          
             Row(children:[
@@ -128,7 +129,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
         }else{
          if(index == 1 && data.isTimerList.values.contains(true) == false){
          return buildTaskProgressIndicator(
-                              widget.context, widget.snapshot.data!);
+                              widget.context,  ref.read(taskDataProvider).taskDataList);
          }else{
           return const SizedBox();
          }
@@ -192,7 +193,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
             Row(
              crossAxisAlignment: CrossAxisAlignment.start, 
              children:[
-              Icon(Icons.warning_amber_rounded,color: Colors.red,size:40),
+              const Icon(Icons.warning_amber_rounded,color: Colors.red,size:40),
               Expanded(child:
                Text(
                 "今回の記録 " + 
@@ -217,24 +218,25 @@ class  _TimerViewState extends ConsumerState<TimerView> {
                 targetDayData["record"],
                 newList,
                 );
-                print(newList);
                 ref.read(dataProvider.notifier).state = Data();
                 ref.read(dataProvider).isRenewed = true;
              Navigator.pop(context);
             },
-            child: Row(children:[Spacer(),Text("はい",style:TextStyle(color:Colors.white)),Spacer(),]),
-            style: ButtonStyle(
+            
+            style:const  ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.redAccent),
               ),
+            child:const  Row(children:[Spacer(),Text("はい",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),
           ElevatedButton(
             onPressed:(){
              Navigator.pop(context);
             },
-            child: Row(children:[Spacer(),Text("もどる",style:TextStyle(color:Colors.white)),Spacer(),]),
-            style: ButtonStyle(
+            
+            style: const ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
               ),
+            child: const Row(children:[Spacer(),Text("もどる",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),
           ]
         );
