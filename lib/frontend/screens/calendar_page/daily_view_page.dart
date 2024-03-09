@@ -10,7 +10,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_temp
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../common/app_bar.dart';
@@ -19,7 +18,6 @@ import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;

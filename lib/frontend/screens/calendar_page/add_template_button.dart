@@ -3,19 +3,11 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_han
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:easy_autocomplete/easy_autocomplete.dart';
-import '../../../backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 

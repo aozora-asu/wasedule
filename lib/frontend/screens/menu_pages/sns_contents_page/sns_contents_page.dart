@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/schedule_forcast.dart';
 import '../../../assist_files/colors.dart';
 import '../../../assist_files/size_config.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class SnsContentsPage extends StatefulWidget {
   @override
