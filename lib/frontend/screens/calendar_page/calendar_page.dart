@@ -478,7 +478,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           const Spacer(),
           AddEventButton(),
           const SizedBox(width: 10),
-          calendarShareButton(),
+          calendarShareButton(context),
         ]));
   }
 
@@ -588,7 +588,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     ]);
   }
 
-  Widget calendarShareButton() {
+  Widget calendarShareButton(BuildContext context) {
     return FloatingActionButton(
         heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
@@ -605,12 +605,10 @@ class _CalendarState extends ConsumerState<Calendar> {
           });
           if (screenshot != null) {
             final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
-
-            await Share.shareXFiles(
-              [
-                shareFile,
-              ],
-            );
+            final RenderBox box = context.findRenderObject() as RenderBox;
+            await Share.shareXFiles([
+              shareFile,
+            ], sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
           }
         });
   }
