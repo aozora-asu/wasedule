@@ -605,10 +605,15 @@ class _CalendarState extends ConsumerState<Calendar> {
           });
           if (screenshot != null) {
             final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
-            final RenderBox box = context.findRenderObject() as RenderBox;
+
             await Share.shareXFiles([
               shareFile,
-            ], sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+            ],
+                sharePositionOrigin: Rect.fromLTWH(
+                    0,
+                    0,
+                    MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height / 2));
           }
         });
   }
