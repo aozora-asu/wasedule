@@ -213,7 +213,8 @@ class NotifyContent {
 
   Future<void> scheduleNotification() async {
     // 5秒後
-    String taskDueToday = await TaskDatabaseHelper().taskDueTodayForNotify();
+    String taskDueToday =
+        await ScheduleDatabaseHelper().todaysScheduleForNotify();
     int id = 0;
     var scheduleNotificationDateTime =
         DateTime.now().add(const Duration(seconds: 10));
@@ -248,7 +249,7 @@ class NotifyContent {
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
-      'Test Title',
+      'Testy Scheduleの方',
       taskDueToday,
       tz.TZDateTime.from(scheduleNotificationDateTime, tz.local), // 5秒後に表示
       platformChannelSpecifics,
