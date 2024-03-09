@@ -50,7 +50,6 @@ class Calendar extends ConsumerStatefulWidget {
 }
 
 class _CalendarState extends ConsumerState<Calendar> {
-  bool _notificationsEnabled = false;
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isScreenShotBeingTaken;
 
@@ -70,35 +69,16 @@ class _CalendarState extends ConsumerState<Calendar> {
   @override
   void initState() {
     super.initState();
-    _isAndroidPermissionGranted();
-    _requestPermissions();
-    _configureDidReceiveLocalNotificationSubject();
-    _configureSelectNotificationSubject();
-    testNotify();
+    LocalNotificationSetting().requestIOSPermission();
+    LocalNotificationSetting().requestAndroidPermission();
+    LocalNotificationSetting().initializePlatformSpecifics();
+    NotifyContent().taskDueTodayNotification();
+    NotifyContent().scheduleDailyEightAMNotification();
+    NotifyContent().scheduleNotification();
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
     isScreenShotBeingTaken = false;
-  }
-
-  testNotify() async {
-    await Notify().scheduleDailyEightAMNotification();
-    await Notify().taskDueTodayNotification();
-  }
-
-  Future<void> _isAndroidPermissionGranted() async {
-    final bool granted = await isAndroidPermissionGranted();
-
-    setState(() {
-      _notificationsEnabled = granted;
-    });
-  }
-
-  Future<void> _requestPermissions() async {
-    final bool? grantedNotificationPermission = await requestPermissions();
-    setState(() {
-      _notificationsEnabled = grantedNotificationPermission ?? false;
-    });
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -328,55 +308,75 @@ class _CalendarState extends ConsumerState<Calendar> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // データが取得される間、ローディングインディケータを表示できます。
                       initConfig();
-                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
-
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
-
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
                         displayDB();
                         _getTemplateDataSource();
-                        ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getArbeitData(_getArbeitDataSource());
                         ref.read(calendarDataProvider).sortDataByDay();
-                        ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getTemplateData(_getTemplateDataSource());
                         ref.read(taskDataProvider).isRenewed = false;
                       }
 
-                      ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-                      ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
-                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
-                      ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getConfigData(_getConfigDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getArbeitData(_getArbeitDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).sortDataByDay();
                       return calendarBody();
-
                     } else {
-
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
                         displayDB();
                         _getTemplateDataSource();
-                        ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-                        ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
-                        ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getConfigData(_getConfigDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getArbeitData(_getArbeitDataSource());
+                        ref
+                            .read(calendarDataProvider)
+                            .getTemplateData(_getTemplateDataSource());
                         ref.read(calendarDataProvider).getData(snapshot.data!);
                         ref.read(calendarDataProvider).sortDataByDay();
                         ref.read(taskDataProvider).isRenewed = false;
                       }
 
                       initConfig();
-                      ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
-                      ref.read(calendarDataProvider).getTagData(_getTagDataSource());
-                      ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getArbeitData(_getArbeitDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).getData(snapshot.data!);
                       ref.read(calendarDataProvider).sortDataByDay();
                       ref.read(taskDataProvider).getData(taskData);
                       return calendarBody();
-
                     }
                   },
                 ),
@@ -501,9 +501,11 @@ class _CalendarState extends ConsumerState<Calendar> {
       switchWidget(taskDataListList(searchConfigInfo("taskList")),
           searchConfigData("taskList")),
       switchWidget(
-          Column(children:[MoodleUrlLauncher(width:100),const SizedBox(height:5)]),
+          Column(children: [
+            MoodleUrlLauncher(width: 100),
+            const SizedBox(height: 5)
+          ]),
           searchConfigData("moodleLink")),
-      
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(
@@ -603,6 +605,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           });
           if (screenshot != null) {
             final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
+
             await Share.shareXFiles(
               [
                 shareFile,

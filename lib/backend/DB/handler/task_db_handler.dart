@@ -181,9 +181,7 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
   }
 
-  Future<List<Map<String, dynamic>>> withinNdaysTask() async {
-    int n = 2;
-    await Notify().initializeNotifications();
+  Future<List<Map<String, dynamic>>> withinNdaysTask(int n) async {
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
       where: 'dtEnd >= ? AND dtEnd < ?',
@@ -196,40 +194,27 @@ class TaskDatabaseHelper {
     return withinNdaysTask;
   }
 
-  Future<List<Map<String, dynamic>>> getTaskDueTody() async {
-    await _initDatabase();
-    List<Map<String, dynamic>> taskDueToday = await _database.query(
-      'tasks',
-      where: 'dtEnd = ?',
-      whereArgs: [DateFormat("yyyy-MM-dd").format(DateTime.now())],
-    );
-
-    return taskDueToday;
-  }
-
   Future<String> taskDueTodayForNotify() async {
     await _initDatabase();
-    List<Map<String, dynamic>> taskDueTodayList = await getTaskDueTody();
-
+    List<Map<String, dynamic>> taskDueTodayList = await withinNdaysTask(1);
     late String taskDueToday = "";
-    List<Map<String, dynamic>> tasks = taskDueTodayList;
-    bool hasIncompleteTasks =
-        false; // Flag to check if any incomplete tasks are found
-
-    for (var task in tasks) {
-      if (task["isDone"] == 0) {
-        hasIncompleteTasks =
-            true; // Set the flag to true if an incomplete task is found
-
-        String due = task["DtEnd"] ?? "";
-        String title = task["title"] ?? "";
-        String summary = task["summary"] ?? "";
-        taskDueToday += "$due  $title\n   $summary\n";
-      }
-    }
-
-    if (!hasIncompleteTasks) {
+    if (taskDueTodayList.isEmpty) {
       taskDueToday = "本日が期限の課題はありません";
+    } else {
+      for (var task in taskDueTodayList) {
+        String due = "";
+        if (task["isDone"] == 0) {
+          try {
+            due = DateFormat("HH:mm")
+                .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
+          } catch (e) {
+            due = "";
+          }
+          String title = task["title"] ?? "";
+          String summary = task["summary"] ?? "";
+          taskDueToday += "$dueまで  $title\n   $summary\n";
+        }
+      }
     }
 
     taskDueToday = taskDueToday.trimRight(); // Trim trailing whitespaces
