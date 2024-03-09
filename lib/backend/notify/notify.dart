@@ -181,7 +181,7 @@ class NotifyContent {
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
         TASK_NOTIFICATION_ID,
-        '今日が期限の課題',
+        '期限が今日の課題',
         taskDueToday,
         _nextInstanceOfEightAM(),
         NotificationDetails(
