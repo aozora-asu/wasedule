@@ -34,7 +34,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     _initializeData();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
-    print("initです。");
   }
 
   Future<void> _initializeData() async {
