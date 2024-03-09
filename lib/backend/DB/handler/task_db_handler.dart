@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 import '../models/task.dart';
 import "../../status_code.dart";
 import "../../http_request.dart";
-import "../../notify/notify.dart";
+
 import 'package:intl/intl.dart';
 
 class TaskDatabaseHelper {
@@ -182,12 +182,14 @@ class TaskDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> withinNdaysTask(int n) async {
+    await _initDatabase();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
-      where: 'dtEnd >= ? AND dtEnd < ?',
+      where: 'dtEnd >= ? AND dtEnd < ? AND isDone=?',
       whereArgs: [
         DateTime.now().millisecondsSinceEpoch,
-        DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch
+        DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch,
+        0
       ],
     );
 
@@ -212,7 +214,7 @@ class TaskDatabaseHelper {
           }
           String title = task["title"] ?? "";
           String summary = task["summary"] ?? "";
-          taskDueToday += "$dueまで  $title\n   $summary\n";
+          taskDueToday += "$dueまで $title   $summary\n";
         }
       }
     }
