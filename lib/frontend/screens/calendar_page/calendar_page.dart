@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -24,7 +21,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';

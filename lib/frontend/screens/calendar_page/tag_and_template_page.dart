@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -11,19 +10,9 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:intl/intl.dart';
-import 'package:easy_autocomplete/easy_autocomplete.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
-import '../common/app_bar.dart';
-import '../common/burger_menu.dart';
-import '../../../backend/DB/models/task.dart';
-import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 
 
 class TagAndTemplatePage extends ConsumerStatefulWidget {

@@ -1,19 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
-
-import '../to_do_page/task_progress_indicator.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'package:expandable/expandable.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import '../common/loading.dart';
-import 'add_data_card_button.dart';
 import 'data_manager.dart';
-
-import '../../assist_files/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {

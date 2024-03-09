@@ -1,4 +1,3 @@
-import 'package:flutter_calandar_app/backend/DB/models/arbeit.dart';
 import 'package:flutter_calandar_app/backend/DB/models/calendar_config.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
