@@ -159,25 +159,12 @@ Future<bool> requestPermissions() async {
   return false;
 }
 
-Future<bool> isAndroidPermissionGranted() async {
-  if (Platform.isAndroid) {
-    final bool granted = await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
-            ?.areNotificationsEnabled() ??
-        false;
-
-    return granted;
-  }
-  return false;
-}
-
 class LocalNotificationSetting {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  void requestIOSPermission() {
+  Future<void> requestIOSPermission() async {
     if (Platform.isIOS) {
-      flutterLocalNotificationsPlugin
+      await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
@@ -188,16 +175,16 @@ class LocalNotificationSetting {
     }
   }
 
-  void requestAndroidPermission() {
+  Future<void> requestAndroidPermission() async {
     if (Platform.isAndroid) {
       final androidImplementation =
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidImplementation != null) {
-        androidImplementation.requestNotificationsPermission();
+        await androidImplementation.requestNotificationsPermission();
       }
-      flutterLocalNotificationsPlugin
+      await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
                   AndroidFlutterLocalNotificationsPlugin>()
               ?.areNotificationsEnabled() ??
@@ -205,11 +192,11 @@ class LocalNotificationSetting {
     }
   }
 
-  void cancelAllNotifications() {
-    flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  void initializePlatformSpecifics() {
+  Future<void> initializePlatformSpecifics() async {
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('icon');
 
@@ -225,7 +212,7 @@ class LocalNotificationSetting {
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse res) {
       print('payload:${res.payload}');
     });
