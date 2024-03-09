@@ -142,7 +142,7 @@ Future<void> configureLocalTimeZone() async {
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
-Future<bool?> requestPermissions() async {
+Future<bool> requestPermissions() async {
   if (Platform.isIOS || Platform.isMacOS) {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -189,6 +189,45 @@ Future<bool> isAndroidPermissionGranted() async {
   return false;
 }
 
-Future<void> _cancelAllNotifications() async {
-  await flutterLocalNotificationsPlugin.cancelAll();
+class LocalNotificationSetting {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  void requestIOSPermission() {
+    if (Platform.isIOS) {
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: false,
+            badge: true,
+            sound: false,
+          );
+    }
+  }
+
+  void cancelAllNotifications() {
+    flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  void initializePlatformSpecifics() {
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('icon');
+
+    var initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        // your call back to the UI
+      },
+    );
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse res) {
+      print('payload:${res.payload}');
+    });
+  }
 }

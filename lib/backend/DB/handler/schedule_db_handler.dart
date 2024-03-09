@@ -54,7 +54,6 @@ class ScheduleDatabaseHelper {
   Future<void> updateSchedule(Map<String, dynamic> newSchedule) async {
     // 'tasks' テーブル内の特定の行を更新
     await _initScheduleDatabase();
-    print(newSchedule);
     await _database.update(
       'schedule',
       newSchedule, // 更新後の値
@@ -102,18 +101,22 @@ class ScheduleDatabaseHelper {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> todaysScheduleList = await _getTodaysSchedule();
 
-    late String todaysSchedule = "";
-    List<Map<String, dynamic>> schedules = todaysScheduleList;
-    if (schedules.isEmpty) {
+    String todaysSchedule = "";
+
+    if (todaysScheduleList.isEmpty) {
       todaysSchedule = "本日の予定はありません";
     } else {
-      for (var schedule in schedules) {
+      for (var schedule in todaysScheduleList) {
         String startTime = schedule["startTime"] ?? "";
         String endTime = schedule["endTime"] ?? "";
         String subject = schedule["subject"] ?? "";
-        todaysSchedule += "$startTime~$endTime  $subject\n";
-        todaysSchedule.trimRight();
+        if (endTime == "" && startTime == "") {
+          todaysSchedule += "終日の予定   $subject\n";
+        } else {
+          todaysSchedule += "$startTime~$endTime  $subject\n";
+        }
       }
+      todaysSchedule.trimRight();
     }
 
     return todaysSchedule;
