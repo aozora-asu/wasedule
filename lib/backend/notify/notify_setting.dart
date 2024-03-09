@@ -143,24 +143,7 @@ Future<void> configureLocalTimeZone() async {
 }
 
 Future<bool> requestPermissions() async {
-  if (Platform.isIOS || Platform.isMacOS) {
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-  } else if (Platform.isAndroid) {
+  if (Platform.isAndroid) {
     final androidImplementation =
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
@@ -202,6 +185,23 @@ class LocalNotificationSetting {
             badge: true,
             sound: false,
           );
+    }
+  }
+
+  void requestAndroidPermission() {
+    if (Platform.isAndroid) {
+      final androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      if (androidImplementation != null) {
+        androidImplementation.requestNotificationsPermission();
+      }
+      flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.areNotificationsEnabled() ??
+          false;
     }
   }
 
