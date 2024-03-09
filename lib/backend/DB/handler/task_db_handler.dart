@@ -25,7 +25,7 @@ class TaskDatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT UNIQUE, -- UNIQUE,
         title TEXT,
-        dtEnd TEXT,
+        dtEnd INTEGER,
         summary TEXT,
         description TEXT,
         isDone INTEGER
