@@ -163,10 +163,10 @@ class NotifyContent {
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
-                'daily schedule notification channel id', '今日の予定',
-                channelDescription: todaysSchedule,
-                sound: const RawResourceAndroidNotificationSound(
-                    'slow_spring_board')),
+              'daily schedule notification channel id',
+              '今日の予定',
+              channelDescription: todaysSchedule,
+            ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
             )),
@@ -186,10 +186,10 @@ class NotifyContent {
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
-                'daily task notification channel id', '期限が今日の課題',
-                channelDescription: taskDueToday,
-                sound: const RawResourceAndroidNotificationSound(
-                    'slow_spring_board')),
+              'daily task notification channel id',
+              '期限が今日の課題',
+              channelDescription: taskDueToday,
+            ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
             )),

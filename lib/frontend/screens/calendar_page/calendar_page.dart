@@ -74,9 +74,11 @@ class _CalendarState extends ConsumerState<Calendar> {
   void initState() {
     super.initState();
     LocalNotificationSetting().requestIOSPermission();
+    LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
     NotifyContent().taskDueTodayNotification();
     NotifyContent().scheduleDailyEightAMNotification();
+    NotifyContent().scheduleNotification();
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
