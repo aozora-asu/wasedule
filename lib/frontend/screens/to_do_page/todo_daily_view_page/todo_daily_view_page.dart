@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
@@ -621,11 +622,12 @@ int LengthOfMonth(String targetMonth){
           children:[
             const Text("タスクから選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! *30,
+              width: double.maxFinite,
+              height:listViewHeight(40,targetDayData["plan"].length),
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                  if(taskMap.isEmpty){
-                  return const SizedBox();
+                  return const SizedBox(child:Center(child:Text("登録されているタスクはありません。")));
                  }else{
                     return const  SizedBox(height:5);
                   }
@@ -749,6 +751,8 @@ int LengthOfMonth(String targetMonth){
           children:[
             const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
+              width: double.maxFinite,
+              height:listViewHeight(40,targetDayData["plan"].length),
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                 if(targetDayData["plan"].elementAt(index).trim() == ""){
@@ -854,6 +858,7 @@ int LengthOfMonth(String targetMonth){
           children:[
             const Text("完了したタスクを選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
+              width: double.maxFinite,
               height: SizeConfig.blockSizeVertical! *30,
               child:ListView.separated(
                 separatorBuilder: (context, index) {

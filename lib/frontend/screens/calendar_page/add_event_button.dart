@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_temp
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/main.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import '../../../backend/DB/handler/schedule_db_handler.dart';
@@ -673,18 +674,19 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("テンプレート選択"),
-          content: SizedBox(
-            width: double.maxFinite,
+          actions:[ 
+            SizedBox(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   "テンプレート:",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
-                Expanded(
+                SizedBox(
+                  width: double.maxFinite,
+                  height:listViewHeight(50, tempLateMap.length),
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 5),
@@ -735,10 +737,13 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     ),
                   ),
                 ),
-                ElevatedButton(
+             SizedBox(
+              width:1700,
+                child:ElevatedButton(
                   style: const ButtonStyle(
                       backgroundColor:
                           MaterialStatePropertyAll(Colors.blueAccent)),
+      
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.of(context).push(
@@ -752,10 +757,12 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     "+ テンプレートを追加…",
                     style: TextStyle(color: Colors.white),
                   ),
-                ),
+                ),)
               ],
             ),
           ),
+
+            ],
         );
       },
     );
@@ -785,5 +792,16 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
               .templateData
               .elementAt(index)["endTime"];
     }
+  }
+}
+
+double listViewHeight(double itemHeight, int itemLength){
+  switch (itemLength){
+    case 0: return 0;
+    case 1: return itemHeight;
+    case 2: return itemHeight * 2;
+    case 3: return itemHeight *3;
+    case 4: return itemHeight *4;
+    default : return itemHeight *5;
   }
 }
