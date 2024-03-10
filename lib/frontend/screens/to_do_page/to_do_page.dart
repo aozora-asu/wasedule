@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/none_task_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/screen_manager.dart';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
-
-import '../common/loading.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
   @override

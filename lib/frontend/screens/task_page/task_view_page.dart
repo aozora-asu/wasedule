@@ -27,6 +27,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   late String? urlString;
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   late bool isButton;
+  late bool isLoad;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     _initializeData();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
+    isLoad = false;
   }
 
   Future<void> _initializeData() async {
@@ -50,7 +52,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     if (urlString != null) {
       await databaseHelper.resisterTaskToDB(urlString!);
     }
-
     await displayDB();
   }
 
@@ -137,7 +138,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             FloatingActionButton(
               heroTag: "task_2",
               onPressed: () {
+               if(isLoad == false){
                 loadData();
+                isLoad = true;}
               },
               backgroundColor: MAIN_COLOR,
               child: const Icon(Icons.get_app, color: Colors.white),

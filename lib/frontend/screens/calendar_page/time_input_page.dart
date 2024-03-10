@@ -58,7 +58,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
                       child: Text(
                         " 時間を入力(24時間)…",
                         style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 8,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 6,
                           fontWeight: FontWeight.w700,
                         ),
                       ))
