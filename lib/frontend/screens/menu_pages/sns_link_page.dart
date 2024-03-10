@@ -99,12 +99,12 @@ class InstaUrlLauncher extends StatelessWidget {
             backgroundColor: const MaterialStatePropertyAll(Colors.pinkAccent),
             fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
             ),
-          child: const Text('Instagram   ...coming soon!',style:TextStyle(color:Colors.white)),
+          child: const Text('Instagram',style:TextStyle(color:Colors.white)),
           onPressed: () {
-            // _urlLaunchWithStringButton.launchUriWithString(
-            //   context,
-            //   "https://main--silver-alpaca-276a52.netlify.app/",
-            // );
+            _urlLaunchWithStringButton.launchUriWithString(
+              context,
+              "https://www.instagram.com/wasedule/",
+            );
           }
         );
   }
@@ -122,12 +122,12 @@ class XUrlLauncher extends StatelessWidget {
             backgroundColor: const MaterialStatePropertyAll(Colors.lightBlue),
             fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
             ),
-          child: const Text('X(旧Twitter)   ...coming soon!',style:TextStyle(color:Colors.white)),
+          child: const Text('X(旧Twitter)',style:TextStyle(color:Colors.white)),
           onPressed: () {
-            // _urlLaunchWithStringButton.launchUriWithString(
-            //   context,
-            //   "https://main--silver-alpaca-276a52.netlify.app/",
-            // );
+            _urlLaunchWithStringButton.launchUriWithString(
+              context,
+              "https://twitter.com/wasedule",
+            );
           }
         );
   }
