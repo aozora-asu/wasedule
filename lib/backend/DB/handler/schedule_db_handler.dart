@@ -116,7 +116,7 @@ class ScheduleDatabaseHelper {
           todaysSchedule += "$startTime~$endTime  $subject\n";
         }
       }
-      todaysSchedule.trimRight();
+      todaysSchedule = todaysSchedule.trimRight();
     }
 
     return todaysSchedule;

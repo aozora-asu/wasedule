@@ -52,10 +52,6 @@ class Calendar extends ConsumerStatefulWidget {
 class _CalendarState extends ConsumerState<Calendar> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isScreenShotBeingTaken;
-
-  final StreamController<ScheduleNotification>
-      didScheduleLocalNotificationStream =
-      StreamController<ScheduleNotification>.broadcast();
   late String targetMonth = "";
   String thisMonth = DateTime.now().year.toString() +
       "/" +
@@ -74,57 +70,17 @@ class _CalendarState extends ConsumerState<Calendar> {
     LocalNotificationSetting().initializePlatformSpecifics();
     NotifyContent().taskDueTodayNotification();
     NotifyContent().scheduleDailyEightAMNotification();
-    NotifyContent().scheduleNotification();
+
+    NotifyContent().sampleNotification("task");
+    NotifyContent().sampleNotification("schedule");
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
     isScreenShotBeingTaken = false;
   }
 
-  void _configureDidReceiveLocalNotificationSubject() {
-    didScheduleLocalNotificationStream.stream
-        .listen((ScheduleNotification receivedNotification) async {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title!)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body!)
-              : null,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                await Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const Calendar(),
-                  ),
-                );
-              },
-              child: const Text('Ok'),
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  //通知からアプリを開いた時の処理
-  void _configureSelectNotificationSubject() {
-    selectNotificationStream.stream.listen((String? payload) async {
-      await Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (BuildContext context) => const Calendar(),
-      ));
-    });
-  }
-
   @override
   void dispose() {
-    didScheduleLocalNotificationStream.close();
-    selectNotificationStream.close();
     super.dispose();
   }
 
@@ -478,7 +434,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           const Spacer(),
           AddEventButton(),
           const SizedBox(width: 10),
-          calendarShareButton(),
+          calendarShareButton(context),
         ]));
   }
 
@@ -588,7 +544,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     ]);
   }
 
-  Widget calendarShareButton() {
+  Widget calendarShareButton(BuildContext context) {
     return FloatingActionButton(
         heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
@@ -606,11 +562,14 @@ class _CalendarState extends ConsumerState<Calendar> {
           if (screenshot != null) {
             final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
 
-            await Share.shareXFiles(
-              [
-                shareFile,
-              ],
-            );
+            await Share.shareXFiles([
+              shareFile,
+            ],
+                sharePositionOrigin: Rect.fromLTWH(
+                    0,
+                    0,
+                    MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height / 2));
           }
         });
   }
