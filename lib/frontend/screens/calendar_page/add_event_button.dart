@@ -669,93 +669,96 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     List tempLateMap = data.templateData;
 
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("テンプレート選択"),
-            actions: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text("テンプレート:",
-                    style: (TextStyle(fontWeight: FontWeight.bold))),
-                SizedBox(
-                    child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    if (tempLateMap.isEmpty) {
-                      return const SizedBox();
-                    } else {
-                      return const SizedBox(height: 5);
-                    }
-                  },
-                  itemBuilder: (BuildContext context, index) {
-                    if (tempLateMap.isEmpty) {
-                      return const SizedBox();
-                    } else {
-                      return InkWell(
-                          onTap: () async {
-                            setState(() {
-                              final inputform = ref.watch(scheduleFormProvider);
-                              inputform.scheduleController.text =
-                                  data.templateData.elementAt(index)["subject"];
-                              inputform.timeStartController.text = data
-                                  .templateData
-                                  .elementAt(index)["startTime"];
-                              inputform.timeEndController.text =
-                                  data.templateData.elementAt(index)["endTime"];
-                              inputform.tagController.text =
-                                  data.templateData.elementAt(index)["tag"];
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              height: 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue[100],
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(20))),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      timedata(index),
-                                      style: const TextStyle(
-                                          fontSize: 10, color: Colors.white),
-                                    ),
-                                    Text(
-                                      "  " +
-                                          ref
-                                              .read(calendarDataProvider)
-                                              .templateData
-                                              .elementAt(index)["subject"],
-                                      style: const TextStyle(
-                                          fontSize: 20, color: Colors.white),
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                                  ])));
-                    }
-                  },
-                  shrinkWrap: true,
-                  itemCount: tempLateMap.length,
-                )),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("テンプレート選択"),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "テンプレート:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 5),
+                    itemCount: tempLateMap.length,
+                    itemBuilder: (BuildContext context, index) => InkWell(
+                      onTap: () async {
+                        setState(() {
+                          final inputform = ref.watch(scheduleFormProvider);
+                          inputform.scheduleController.text =
+                              data.templateData.elementAt(index)["subject"];
+                          inputform.timeStartController.text =
+                              data.templateData.elementAt(index)["startTime"];
+                          inputform.timeEndController.text =
+                              data.templateData.elementAt(index)["endTime"];
+                          inputform.tagController.text =
+                              data.templateData.elementAt(index)["tag"];
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              timedata(index),
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.white),
+                            ),
+                            Text(
+                              "  " +
+                                  ref
+                                      .read(calendarDataProvider)
+                                      .templateData
+                                      .elementAt(index)["subject"],
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 ElevatedButton(
                   style: const ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.blueAccent),
-                      minimumSize: MaterialStatePropertyAll(Size(1000, 35))),
+                          MaterialStatePropertyAll(Colors.blueAccent)),
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) =>
-                              TemplateInputForm(setosute: setState)),
+                        builder: (context) =>
+                            TemplateInputForm(setosute: setState),
+                      ),
                     );
                   },
-                  child: const Text("+ テンプレートを追加…",
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    "+ テンプレートを追加…",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              ]),
-            ],
-          );
-        });
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   String timedata(index) {

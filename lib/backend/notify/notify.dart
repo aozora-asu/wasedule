@@ -36,68 +36,6 @@ class Notify {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  // Notify() {
-  //   // initializeNotifications();
-  // }
-
-  Future<void> scheduleDailyEightAMNotification() async {
-    String todaysSchedule =
-        await ScheduleDatabaseHelper().todaysScheduleForNotify();
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        '今日の予定',
-        todaysSchedule,
-        _nextInstanceOfEightAM(),
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-                'daily notification channel id', '今日の予定',
-                channelDescription: todaysSchedule,
-                sound: const RawResourceAndroidNotificationSound(
-                    'slow_spring_board')),
-            iOS: const DarwinNotificationDetails(
-              sound: 'slow_spring_board.aiff',
-            )),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
-  }
-
-  Future<void> taskDueTodayNotification() async {
-    String taskDueToday = await TaskDatabaseHelper().taskDueTodayForNotify();
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        '今日が期限の課題',
-        taskDueToday,
-        _nextInstanceOfEightAM(),
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-                'daily notification channel id', '今日が期限の課題',
-                channelDescription: taskDueToday,
-                sound: const RawResourceAndroidNotificationSound(
-                    'slow_spring_board')),
-            iOS: const DarwinNotificationDetails(
-              sound: 'slow_spring_board.aiff',
-            )),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
-  }
-
-  tz.TZDateTime _nextInstanceOfEightAM() {
-    tz.initializeTimeZones();
-    tz.Location _local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(_local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-        _local, now.year, now.month, now.day, now.hour, now.minute, 0);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(minutes: 1));
-    }
-    return scheduledDate;
-  }
-
   Future<void> _showNotificationWithActions() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
@@ -195,8 +133,8 @@ class NotifyContent {
             )),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
+            UILocalNotificationDateInterpretation.absoluteTime);
+    //  matchDateTimeComponents: DateTimeComponents.time);
   }
 
   tz.TZDateTime _nextInstanceOfEightAM() {
@@ -205,17 +143,27 @@ class NotifyContent {
     final tz.TZDateTime now = tz.TZDateTime.now(_local);
     tz.TZDateTime scheduledDate =
         tz.TZDateTime(_local, now.year, now.month, now.day, 8);
+
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
+
     return scheduledDate;
   }
 
-  Future<void> scheduleNotification() async {
+  Future<void> sampleNotification(String type) async {
     // 5秒後
-    String taskDueToday =
-        await ScheduleDatabaseHelper().todaysScheduleForNotify();
+    String data = "";
     int id = 0;
+    if (type == "task") {
+      data = await TaskDatabaseHelper().taskDueTodayForNotify();
+      id = 10;
+    }
+    if (type == "schedule") {
+      data = await ScheduleDatabaseHelper().todaysScheduleForNotify();
+      id = 20;
+    }
+
     var scheduleNotificationDateTime =
         DateTime.now().add(const Duration(seconds: 10));
 
@@ -249,8 +197,8 @@ class NotifyContent {
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
-      'Testy Scheduleの方',
-      taskDueToday,
+      'Testify $typeの方',
+      data,
       tz.TZDateTime.from(scheduleNotificationDateTime, tz.local), // 5秒後に表示
       platformChannelSpecifics,
       payload: 'Test Payload',
@@ -258,6 +206,5 @@ class NotifyContent {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
-    id++;
   }
 }
