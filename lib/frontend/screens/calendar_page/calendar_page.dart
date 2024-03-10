@@ -71,8 +71,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     NotifyContent().taskDueTodayNotification();
     NotifyContent().scheduleDailyEightAMNotification();
 
-    NotifyContent().sampleNotification("task");
-    NotifyContent().sampleNotification("schedule");
+    // NotifyContent().sampleNotification("task");
+    // NotifyContent().sampleNotification("schedule");
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
