@@ -1002,7 +1002,7 @@ builder: (BuildContext context) {
       const Text("登録  タグ一覧",style:(TextStyle(fontWeight: FontWeight.bold))),
       SizedBox(
         width: double.maxFinite,
-        height:listViewHeight(50,tagMap.length),
+        height:listViewHeight(65,tagMap.length),
         child:ListView.separated(
           separatorBuilder: (context, index) {
             if(tagMap.isEmpty){

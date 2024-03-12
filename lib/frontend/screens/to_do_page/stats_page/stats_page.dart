@@ -20,11 +20,14 @@ class StatsPage extends ConsumerStatefulWidget {
 class  _StatsPageState extends ConsumerState<StatsPage> {
   @override
   Widget build(BuildContext context) {
-    final data = ref.read(dataProvider);
-    return Scaffold(
-      appBar:const  CustomAppBar(),
-      body:StatsPageBody(),
-      floatingActionButton: backButton(),
+    SizeConfig().init(context);
+    return SizedBox(
+      height:SizeConfig.blockSizeVertical! *100,///calculateHeight(),
+      child:Scaffold(
+        appBar:const  CustomAppBar(),
+        body:StatsPageBody(),
+        floatingActionButton: backButton(),
+      )
     );
   }
   Widget backButton(){
@@ -76,14 +79,12 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
     topThreeDays = findTopTen(timeOfAllDays);
     
 
-    return Container(
-      child:
-      Column(children:[
+    return 
+      //Column(children:[
         //TimerView(targetMonthData:data.sortDataByMonth()[thisMonth]),
         
-        SizedBox(
-         height:SizeConfig.blockSizeVertical! *calculateHeight(),
-         child:Column(children:[
+
+         Column(children:[
           ExpandablePanel(
             header: const Padding(
               padding: EdgeInsets.only(top:6),
@@ -111,11 +112,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
             itemCount: sortedData.length,
             shrinkWrap: true,
             ))
-          ])
-          
-          )
-
-      ])
+          ]  
       
     );
   }

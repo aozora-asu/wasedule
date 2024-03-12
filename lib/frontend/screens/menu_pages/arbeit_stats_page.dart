@@ -155,6 +155,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                 fontSize: SizeConfig
                                                         .blockSizeHorizontal! *
                                                     7)),
+                                        correctIndicator(),
                                         Text(
                                             formatNumberWithComma(
                                                     yearlyWageSumWithAdditionalWorkTime(
@@ -405,6 +406,22 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     child: Text('戻る', style: TextStyle(color: Colors.white)),
                   ))),
         ]));
+  }
+
+  Widget correctIndicator(){
+   if(ref.read(calendarDataProvider).arbeitData.isEmpty){
+    return const SizedBox();
+   }else{
+    return Row(children:[
+      const Spacer(),
+      Text("(修正分を含む)      ",
+      style: TextStyle(
+          color: Colors.grey,
+          fontSize: SizeConfig
+                  .blockSizeHorizontal! *
+              3.5)),
+    ]);
+    }
   }
 
   void increasePgNumber() {
