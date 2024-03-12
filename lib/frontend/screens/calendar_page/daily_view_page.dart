@@ -212,7 +212,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             onTap: (){
               Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TaskInputForm()),
+              MaterialPageRoute(builder: (context) => TaskInputForm(setosute: setState,)),
             );
             }
           ),
