@@ -5,11 +5,11 @@ import '../task_page/data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import '../../assist_files/screen_manager.dart';
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       // localizationsDelegates: [
       //   GlobalMaterialLocalizations.delegate,
       //   GlobalWidgetsLocalizations.delegate,],

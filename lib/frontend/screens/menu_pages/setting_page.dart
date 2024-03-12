@@ -102,8 +102,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   final FocusNode _nodeText1 = FocusNode();
   TextEditingController controller = TextEditingController();
 
-  KeyboardActionsConfig _buildConfig(
-      BuildContext context, TextEditingController controller) {
+  KeyboardActionsConfig _buildConfig(TextEditingController controller) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       keyboardBarColor: Colors.white,
@@ -195,7 +194,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
   Widget calendarBody() {
     return KeyboardActions(
-        config: _buildConfig(context, controller),
+        config: _buildConfig(controller),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
             'カレンダー設定…',
