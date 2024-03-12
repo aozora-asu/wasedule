@@ -192,15 +192,12 @@ Column(
     }
   }
 
-
   Widget pageBody(){
    final data = ref.read(dataProvider);
 
    if(ref.read(dataProvider).isRenewed && data.sortDataByMonth()[targetMonth] == null){
-    return Container(
-      height:SizeConfig.blockSizeVertical! *70,
-      width:SizeConfig.blockSizeHorizontal! *100,
-      child:const Center(
+    return const Expanded(
+      child: Center(
         child:CircularProgressIndicator(color: MAIN_COLOR,strokeWidth:7)
         )
       );
@@ -610,12 +607,12 @@ int LengthOfMonth(String targetMonth){
     final data = ref.read(dataProvider);
     final taskData = ref.read(taskDataProvider);
     Map taskMap = taskData.sortedDataByDTEnd;
-
+   
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title:const  Text("計画を追加…"),
+      builder: (BuildContext context) { 
+      return AlertDialog(
+        title:const  Text("計画を追加…"),
         actions:[
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,20 +620,21 @@ int LengthOfMonth(String targetMonth){
             const Text("タスクから選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
               width: double.maxFinite,
-              height:listViewHeight(40,targetDayData["plan"].length),
+              height:200,  //listViewHeight(40,targetDayData["plan"].length),
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                  if(taskMap.isEmpty){
-                  return const SizedBox(child:Center(child:Text("登録されているタスクはありません。")));
+                  return const SizedBox();
                  }else{
                     return const  SizedBox(height:5);
                   }
                 },
                 itemBuilder: (BuildContext context, index){
                  if(taskMap.isEmpty){
-                   return const SizedBox();
+                   return const SizedBox(height:200,child:Center(child:Text("登録されているタスクはありません。")));
+                 }else if(taskData.taskDataList.isEmpty){
+                    return const SizedBox(height:200,child:Center(child:Text("登録されているタスクはありません。")));
                  }else{
-
                   late String date;
                   date = DateFormat('yyyy年MM月dd日').format(taskMap.keys.elementAt(index));
                   
@@ -648,6 +646,8 @@ int LengthOfMonth(String targetMonth){
                     itemBuilder:(context,ind){
                     String taskCategory = taskMap.values.elementAt(index).elementAt(ind)["title"];
                     String taskTitle = taskMap.values.elementAt(index).elementAt(ind)["summary"];
+                    int isDone = taskMap.values.elementAt(index).elementAt(ind)["isDone"];
+                    if(isDone == 0){
                      return InkWell(
                       child:
                         Container(
@@ -671,22 +671,25 @@ int LengthOfMonth(String targetMonth){
                               
                           )            
                         ),
-                  onTap:()async{
-                    List<String> newList = targetDayData["plan"];
-                      newList.add("【" + truncateString(taskCategory)+ "】"  +taskTitle);
-                          await DataBaseHelper().upDateDB(
-                          targetDayData["date"],
-                          targetDayData["time"], 
-                          targetDayData["schedule"],
-                          newList,
-                          targetDayData["record"], 
-                          targetDayData["timeStamp"]
-                          );
-                          ref.read(dataProvider.notifier).state = Data();
-                          ref.read(dataProvider).isRenewed = true;
-                          Navigator.pop(context);
-                        }
-                      );
+                        onTap:()async{
+                          List<String> newList = targetDayData["plan"];
+                            newList.add("【" + truncateString(taskCategory)+ "】"  +taskTitle);
+                                await DataBaseHelper().upDateDB(
+                                targetDayData["date"],
+                                targetDayData["time"], 
+                                targetDayData["schedule"],
+                                newList,
+                                targetDayData["record"], 
+                                targetDayData["timeStamp"]
+                                );
+                                ref.read(dataProvider.notifier).state = Data();
+                                ref.read(dataProvider).isRenewed = true;
+                                Navigator.pop(context);
+                              }
+                         );
+                    }else{
+                        return const SizedBox();
+                      }
                     },
                     separatorBuilder:(context,ind){
                       return const SizedBox(height:5);
@@ -698,7 +701,7 @@ int LengthOfMonth(String targetMonth){
                   }
                 },
                 shrinkWrap: true,
-                itemCount: taskMap.length,
+                itemCount: notToBeZero(taskMap.length),
               )
             ),
             const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
@@ -731,6 +734,24 @@ int LengthOfMonth(String targetMonth){
     );
   }
 
+  int notToBeZero(int length){
+   if(length == 0){
+    return 1;
+   }else{
+    return length;
+   }
+  }
+
+  int accurateLength(List<String> rawList){
+    int result = 0;
+    for(int i = 0; i < rawList.length; i++){
+     if(rawList.elementAt(i).trim() != ""){
+      result++;
+     }
+    }
+    return result;
+  }
+
   String truncateString(String input, {int maxLength = 10}) {
     if (input.length <= maxLength) {
       return input;
@@ -752,7 +773,7 @@ int LengthOfMonth(String targetMonth){
             const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
               width: double.maxFinite,
-              height:listViewHeight(40,targetDayData["plan"].length),
+              height:listViewHeight(40,notToBeZero(accurateLength(targetDayData["plan"]))),
               child:ListView.separated(
                 separatorBuilder: (context, index) {
                 if(targetDayData["plan"].elementAt(index).trim() == ""){
@@ -762,8 +783,9 @@ int LengthOfMonth(String targetMonth){
                   }
                 },
                 itemBuilder: (BuildContext context, index){
-                
-                if(targetDayData["plan"].elementAt(index).trim() == ""){
+                if(accurateLength(targetDayData["plan"]) == 0){
+                  return const SizedBox(height:40,child:Center(child:Text("登録されている計画はありません。")));
+                }else if(targetDayData["plan"].elementAt(index).trim() == ""){
                    return const SizedBox();
                 }else{
                   return InkWell(child:Container(
@@ -870,11 +892,12 @@ int LengthOfMonth(String targetMonth){
                 },
                 itemBuilder: (BuildContext context, index){
                  if(taskMap.isEmpty){
-                   return const SizedBox();
+                   return const SizedBox(height:200,child:Center(child:Text("登録されているタスクはありません。")));
+                 }else if(taskData.taskDataList.isEmpty){
+                   return const SizedBox(height:200,child:Center(child:Text("登録されているタスクはありません。")));
                  }else{
                   late String date;
                   date = DateFormat('yyyy年MM月dd日').format(taskMap.keys.elementAt(index));
-                  
                   return Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children:[
@@ -883,6 +906,8 @@ int LengthOfMonth(String targetMonth){
                     itemBuilder:(context,ind){
                     String taskCategory = taskMap.values.elementAt(index).elementAt(ind)["title"];
                     String taskTitle = taskMap.values.elementAt(index).elementAt(ind)["summary"];
+                    int isDone = taskMap.values.elementAt(index).elementAt(ind)["isDone"];
+                    if(isDone == 0){
                      return InkWell(
                       child:
                         Container(
@@ -915,6 +940,9 @@ int LengthOfMonth(String targetMonth){
                           Navigator.pop(context);
                         }
                       );
+                    }else{
+                     return const SizedBox();
+                     }
                     },
                     separatorBuilder:(context,ind){
                       return const SizedBox(height:5);
@@ -926,7 +954,7 @@ int LengthOfMonth(String targetMonth){
                   }
                 },
                 shrinkWrap: true,
-                itemCount: taskMap.length,
+                itemCount: notToBeZero( taskMap.length),
               )
             ),
             ElevatedButton(
