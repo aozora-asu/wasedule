@@ -45,6 +45,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const Spacer(),
          const Text("使い方ガイドやお問い合わせはこちら"),
          HomePageUrlLauncher(),
+         PrivacyPolicyLauncher(),
          const SizedBox(height:20),
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
@@ -159,6 +160,32 @@ class MoodleUrlLauncher extends StatelessWidget {
         );
   }
 }
+
+class PrivacyPolicyLauncher extends StatelessWidget {
+  PrivacyPolicyLauncher({
+    Key? key,
+    }) : super(key: key);
+
+  final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+          style:  ButtonStyle(
+            backgroundColor: const MaterialStatePropertyAll(ACCENT_COLOR),
+            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
+            ),
+          child: const Text('プライバシーポリシー',style:TextStyle(color:Colors.white)),
+          onPressed: () {
+            _urlLaunchWithStringButton.launchUriWithString(
+              context,
+              "https://wasedule.com/privacy",
+            );
+          }
+        );
+  }
+}
+
 
 class UrlLaunchWithStringButton {
   final alertSnackBar = SnackBar(

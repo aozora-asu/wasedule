@@ -378,16 +378,16 @@ class _MainContentsState extends ConsumerState<MainContents> {
           padding: const EdgeInsets.all(7.5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '通知のON/OFF',
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 5),
-            configSwitch("課題の通知(毎朝8時)", "tips"),
-            const SizedBox(height: 5),
-            configSwitch("予定の通知(毎朝8時)", "tips"),
+            // Text(
+            //   '通知のON/OFF',
+            //   style: TextStyle(
+            //       fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            //       fontWeight: FontWeight.bold),
+            // ),
+            // const SizedBox(height: 5),
+            // configSwitch("課題の通知(毎朝8時)", "tips"),
+            // const SizedBox(height: 5),
+            // configSwitch("予定の通知(毎朝8時)", "tips"),
           ]))
     ]);
   }

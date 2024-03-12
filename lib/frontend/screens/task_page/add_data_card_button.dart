@@ -64,9 +64,21 @@ class InputForm {
   }
 }
 
-class AddDataCardButton extends ConsumerWidget {
+
+class AddDataCardButton extends ConsumerStatefulWidget {
+  late StateSetter setosute;
+
+  AddDataCardButton({
+   required this.setosute
+  });
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  AddDataCardButtonState createState() => AddDataCardButtonState();
+}
+
+class AddDataCardButtonState extends ConsumerState<AddDataCardButton>{
+  @override
+  Widget build(BuildContext context) {
     final inputForm = ref.watch(inputFormProvider);
     return SizedBox(
       child: FloatingActionButton(
@@ -75,7 +87,7 @@ class AddDataCardButton extends ConsumerWidget {
           inputForm.clearContents();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TaskInputForm()),
+            MaterialPageRoute(builder: (context) => TaskInputForm(setosute: widget.setosute,)),
           );
         },
         foregroundColor: Colors.white,
@@ -86,12 +98,20 @@ class AddDataCardButton extends ConsumerWidget {
   }
 }
 
-class TaskInputForm extends ConsumerWidget {
+class TaskInputForm extends ConsumerStatefulWidget {
+  late StateSetter setosute;
+  TaskInputForm({
+   required this.setosute
+  });
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  TaskInputFormState createState() => TaskInputFormState();
+}
+
+class TaskInputFormState extends ConsumerState<TaskInputForm> {
+  @override
+  Widget build(BuildContext context) {
     final inputForm = ref.watch(inputFormProvider);
     final taskData = ref.read(taskDataProvider);
-
     return Scaffold(
         appBar: const CustomAppBar(),
         drawer: burgerMenu(),
@@ -302,7 +322,7 @@ class TaskInputForm extends ConsumerWidget {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
                     if (inputForm.dtEndController.text.isEmpty ||
                         inputForm.titleController.text.isEmpty) {
                       print("ボタン無効");
@@ -316,17 +336,20 @@ class TaskInputForm extends ConsumerWidget {
                       taskItem["dtEnd"] =
                           DateTime.parse(inputForm.dtEndController.text)
                               .millisecondsSinceEpoch;
-                      registeTaskToDB(taskItem);
+                      await registeTaskToDB(taskItem);
 
                       final list = ref.read(taskDataProvider).taskDataList;
                       final newList = [...list, taskItem];
                       ref.read(taskDataProvider.notifier).state =
                           TaskData(taskDataList: newList);
+                     
                       ref.read(taskDataProvider).isRenewed = true;
                       inputForm.clearContents();
                       ref.read(calendarDataProvider.notifier).state =
                           CalendarData();
+                      
                       Navigator.of(context).popUntil((route) => route.isFirst);
+                      
                     }
                   },
                   style: ButtonStyle(

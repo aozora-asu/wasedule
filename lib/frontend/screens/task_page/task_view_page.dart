@@ -66,7 +66,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final taskData = ref.watch(taskDataProvider);
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
@@ -130,7 +129,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            AddDataCardButton(),
+            AddDataCardButton(setosute: setState),
             SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 2,
               height: SizeConfig.blockSizeVertical! * 5,
@@ -190,6 +189,12 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
+
+              if (ref.read(taskDataProvider).isRenewed) {
+                displayDB();
+                ref.read(taskDataProvider).isRenewed = false;
+              }
+
               return NoTaskPage();
             }
           },
