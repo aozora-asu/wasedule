@@ -90,8 +90,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider);
     return Scaffold(
-        appBar: const CustomAppBar(),
-        drawer: burgerMenu(),
+        appBar: CustomAppBar(backButton: true,),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -219,29 +218,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           const SizedBox(height:15) 
           ]),
             const Divider(thickness:3, indent: 10,endIndent: 10,),
-
             SizedBox(height:SizeConfig.blockSizeVertical! *10),
           ])
         ),
-        floatingActionButton:
-            Row(
-              children:[
-                const Spacer(),
-                FloatingActionButton.extended(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  backgroundColor: ACCENT_COLOR,
-                  label: 
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *80,
-                      child:const 
-                       Center(child:Text('戻る', style: TextStyle(color: Colors.white)),)
-                      )
-                ),
-              ])
-              
-                
       );
   }
 

@@ -43,7 +43,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     }
 
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(backButton: false,),
       drawer: burgerMenu(),
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _currentIndex,

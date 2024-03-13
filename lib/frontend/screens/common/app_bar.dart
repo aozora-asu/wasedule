@@ -5,8 +5,12 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  late bool backButton;
 
-  const CustomAppBar({Key? key}) : super(key: key);
+  CustomAppBar({
+    required this.backButton,
+    Key? key
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +39,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-         leading: IconButton(
+         leading: switchLeading(context)
+      ),
+    );
+  }
+
+  Widget switchLeading(context){
+   if(backButton){
+    return const BackButton(color:Colors.white);
+   }else{
+    return IconButton(
           icon: const Icon(Icons.menu,color:Colors.white),
           onPressed: () {
             Scaffold.of(context).openDrawer();
-          },
-        ),
-      ),
-    );
+       },
+     );
+   }
   }
 }

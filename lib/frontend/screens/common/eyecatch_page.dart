@@ -10,12 +10,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+        builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler:const  TextScaler.linear(1)),
+          child: child!,
+        );
+      },
       // localizationsDelegates: [
       //   GlobalMaterialLocalizations.delegate,
       //   GlobalWidgetsLocalizations.delegate,],
       // supportedLocales: [const Locale('en'),],
       // locale: const Locale('en'),
-      home: FadingImage(),
+      home: FadingImage()
     );
   }
 }
@@ -68,7 +74,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
 
     // インターバルごとにloadingTextを更新
 
-    Timer.periodic(Duration(milliseconds: 500), (timer) {
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!mounted) {
         // Check if the widget is still part of the tree
         timer
@@ -114,7 +120,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             SizedBox(
               width: 200,
               height: 5,
@@ -123,7 +129,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
                 backgroundColor: Colors.pink[50],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               loadingText,
               style: const TextStyle(

@@ -113,7 +113,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
     final inputForm = ref.watch(inputFormProvider);
     final taskData = ref.read(taskDataProvider);
     return Scaffold(
-        appBar: const CustomAppBar(),
+        appBar: CustomAppBar(backButton: true,),
         drawer: burgerMenu(),
         body: SingleChildScrollView(
           child: Column(

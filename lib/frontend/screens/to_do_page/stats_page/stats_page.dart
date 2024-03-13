@@ -25,7 +25,7 @@ class  _StatsPageState extends ConsumerState<StatsPage> {
     return SizedBox(
       height:SizeConfig.blockSizeVertical! *100,///calculateHeight(),
       child:Scaffold(
-        appBar:const  CustomAppBar(),
+        appBar: CustomAppBar(backButton: true,),
         body:StatsPageBody(),
         floatingActionButton: backButton(),
         drawer: burgerMenu(),
