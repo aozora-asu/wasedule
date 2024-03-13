@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_calandar_app/main.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -178,6 +179,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     scheduleForm.isAllDay = false;
     return Scaffold(
         appBar: const CustomAppBar(),
+        drawer: burgerMenu(),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
