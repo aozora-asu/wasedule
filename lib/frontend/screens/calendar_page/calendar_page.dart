@@ -65,6 +65,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   @override
   void initState() {
     super.initState();
+    displayDB();
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
@@ -228,36 +229,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                   left: SizeConfig.blockSizeHorizontal! * 2.5,
                   right: SizeConfig.blockSizeHorizontal! * 2.5,
                 ),
-                child: switchWidget(tipsAndNewsPanel(randomNumber, ""),
-                    searchConfigData("tips")),
-              ),
-              Row(children: [
-                const Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: SizeConfig.blockSizeHorizontal! * 3,
-                    right: SizeConfig.blockSizeHorizontal! * 3,
-                  ),
-                  child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage()),
-                        );
-                      },
-                      child: const Text("画面カスタマイズ",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.bold))),
-                ),
-              ]),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: SizeConfig.blockSizeHorizontal! * 2.5,
-                  right: SizeConfig.blockSizeHorizontal! * 2.5,
-                ),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
                   future: _getDataSource(),
                   builder: (context, snapshot) {
@@ -267,10 +238,15 @@ class _CalendarState extends ConsumerState<Calendar> {
                       ref
                           .read(calendarDataProvider)
                           .getTagData(_getTagDataSource());
+                      ref
+                          .read(calendarDataProvider)
+                          .getConfigData(_getConfigDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
+                      
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
+
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
@@ -288,9 +264,6 @@ class _CalendarState extends ConsumerState<Calendar> {
 
                       ref
                           .read(calendarDataProvider)
-                          .getConfigData(_getConfigDataSource());
-                      ref
-                          .read(calendarDataProvider)
                           .getArbeitData(_getArbeitDataSource());
                       ref
                           .read(calendarDataProvider)
@@ -300,7 +273,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).sortDataByDay();
                       return calendarBody();
+
                     } else {
+
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
                         displayDB();
@@ -318,8 +293,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                         ref.read(calendarDataProvider).sortDataByDay();
                         ref.read(taskDataProvider).isRenewed = false;
                       }
-
-                      initConfig();
                       ref
                           .read(calendarDataProvider)
                           .getArbeitData(_getArbeitDataSource());
@@ -332,6 +305,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       ref.read(calendarDataProvider).getData(snapshot.data!);
                       ref.read(calendarDataProvider).sortDataByDay();
                       ref.read(taskDataProvider).getData(taskData);
+
                       return calendarBody();
                     }
                   },
@@ -452,6 +426,30 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget calendarBody() {
     return Column(children: [
+      switchWidget(tipsAndNewsPanel(randomNumber, ""),
+            searchConfigData("tips")),
+      Row(children: [
+        const Spacer(),
+        Padding(
+          padding: EdgeInsets.only(
+            left: SizeConfig.blockSizeHorizontal! * 3,
+            right: SizeConfig.blockSizeHorizontal! * 3,
+          ),
+          child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsPage()),
+                );
+              },
+              child: const Text("画面カスタマイズ",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.bold))),
+        ),
+      ]),
       switchWidget(
           todaysScheduleListView(), searchConfigData("todaysSchedule")),
       switchWidget(taskDataListList(searchConfigInfo("taskList")),
@@ -1215,7 +1213,15 @@ class _CalendarState extends ConsumerState<Calendar> {
             }
 
             return Column(children: [
-              Container(
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DailyViewPage(target: target)),
+                  );
+                },
+                child:Container(
                   width: SizeConfig.blockSizeHorizontal! * 95,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -1243,9 +1249,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                                     color: Colors.black,
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold),
-                              ))
-                        ]),
-                  ])),
+                        ))
+                      ]),
+                    ])
+                  ),
+                ),
               const SizedBox(height: 15)
             ]);
           },
