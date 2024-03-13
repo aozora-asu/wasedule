@@ -408,19 +408,17 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         ]));
   }
 
-  Widget correctIndicator(){
-   if(ref.read(calendarDataProvider).arbeitData.isEmpty){
-    return const SizedBox();
-   }else{
-    return Row(children:[
-      const Spacer(),
-      Text("(修正分を含む)      ",
-      style: TextStyle(
-          color: Colors.grey,
-          fontSize: SizeConfig
-                  .blockSizeHorizontal! *
-              3.5)),
-    ]);
+  Widget correctIndicator() {
+    if (ref.read(calendarDataProvider).arbeitData.isEmpty) {
+      return const SizedBox();
+    } else {
+      return Row(children: [
+        const Spacer(),
+        Text("(修正分を含む)      ",
+            style: TextStyle(
+                color: Colors.grey,
+                fontSize: SizeConfig.blockSizeHorizontal! * 3.5)),
+      ]);
     }
   }
 
@@ -649,33 +647,6 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             ])));
   }
 
-  static final TextEditingController controller1 = TextEditingController();
-  static final TextEditingController controller2 = TextEditingController();
-  static final TextEditingController controller3 = TextEditingController();
-  static final TextEditingController controller4 = TextEditingController();
-  static final TextEditingController controller5 = TextEditingController();
-  static final TextEditingController controller6 = TextEditingController();
-  static final TextEditingController controller7 = TextEditingController();
-  static final TextEditingController controller8 = TextEditingController();
-  static final TextEditingController controller9 = TextEditingController();
-  static final TextEditingController controller10 = TextEditingController();
-  static final TextEditingController controller11 = TextEditingController();
-  static final TextEditingController controller12 = TextEditingController();
-
-  static final List<TextEditingController> controllerList = [
-    controller1,
-    controller2,
-    controller3,
-    controller4,
-    controller5,
-    controller6,
-    controller7,
-    controller8,
-    controller9,
-    controller10,
-    controller11,
-    controller12,
-  ];
   KeyboardActionsConfig _buildConfig(tagData, targetKey,
       TextEditingController controller, List<FocusNode> _nodeList) {
     return KeyboardActionsConfig(
