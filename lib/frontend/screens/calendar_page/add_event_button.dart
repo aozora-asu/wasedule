@@ -178,7 +178,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     final scheduleForm = ref.watch(scheduleFormProvider);
     scheduleForm.isAllDay = false;
     return Scaffold(
-        appBar: const CustomAppBar(),
+        appBar: CustomAppBar(backButton: true,),
         drawer: burgerMenu(),
         body: SingleChildScrollView(
             child: Padding(

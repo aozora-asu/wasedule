@@ -24,7 +24,7 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
     ref.watch(taskDataProvider);
 
     return Scaffold(
-        appBar: const CustomAppBar(),
+        appBar: CustomAppBar(backButton: true,),
         drawer: burgerMenu(),
         body: SizedBox(
             child:

@@ -31,7 +31,7 @@ class  TimeInputPageState extends ConsumerState<TimeInputPage> {
   Widget build(BuildContext context){
   SizeConfig().init(context);
    return Scaffold(
-    appBar:const CustomAppBar(),
+    appBar:CustomAppBar(backButton: true,),
     floatingActionButton: backButton(),
     body: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
