@@ -1139,24 +1139,41 @@ Widget tagChip(String id, WidgetRef ref){
     for (var data in tagMap) {
       if (data["id"] == int.parse(id)) {
         
-        return Chip(
-          visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
-          labelPadding: const EdgeInsets.only(left:10,),
-          avatar:CircleAvatar(
-            backgroundColor: Colors.grey[700],
+        return Container(
+          height: 25,
+          decoration: BoxDecoration(
+            color: data["color"],
+            borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[700]!,
+                  spreadRadius: 1,
+                  blurRadius: 0,
+                  offset: const Offset(0, 0)
+                ),
+              ],
           ),
-          label: Text(
-            data["title"],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
+          padding: const EdgeInsets.only(right:15,left:5),
+          child:Row(children:[
+          Container(
+                      width: 10,
+                      height: 10,
+                      decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+            Text(
+              "  " + data["title"],
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                overflow: TextOverflow.ellipsis
+              ),
             ),
-          ),
-          backgroundColor: data["color"],
-          elevation: 6.0, // 影の大きさ
-          shadowColor: Colors.grey[80], // 影の色
-          padding: const EdgeInsets.all(9),
-        );// 指定の数字を含むMapが見つかった場合、trueを返す
+          ]),
+
+        );
 
       }
     }

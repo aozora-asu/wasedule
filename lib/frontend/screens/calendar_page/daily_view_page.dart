@@ -90,45 +90,82 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   @override
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider);
-    return Scaffold(
-        appBar: CustomAppBar(backButton: true,),
-        body: SingleChildScrollView(
+    return GestureDetector(
+      child:Center(child:pageBody()),
+      onTap: (){Navigator.pop(context);},
+      );
+      
+  }
+
+  Widget pageBody(){
+    return SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 4),
               Row(
                 children: [
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                  Image.asset('lib/assets/eye_catch/eyecatch.png',
-                      height: 30, width: 30),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "    " + widget.target.year.toString() + "年",
+                        style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.w700,
+                          color:Colors.white
+                        ),
+                      )
+                    )
+                ],
+              ),
+              Row(
+                children: [
                   Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "  " + widget.target.month.toString() + "月" + widget.target.day.toString() +"日 " + weekDay(widget.target.weekday),
                         style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 8,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 10,
                           fontWeight: FontWeight.w700,
+                          color:Colors.white
                         ),
                       )
                     )
                 ],
               ),
 
-            const Divider(thickness:3, indent: 10,endIndent: 10,),
+              SizedBox(height:SizeConfig.blockSizeVertical! *2),
 
               Align(
                 alignment: Alignment.centerLeft,
                 child:
-                    Row(children: [
+                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                  
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                  calendarIcon(Colors.grey, 25),
+                  calendarIcon(Colors.white, 30),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                   Text(
-                    'カレンダー',
+                    'この日の予定',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.grey),
+                        color:Colors.white),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color:Colors.white,
+                      )
+                  ),
+
                 ]),
               ),
               SizedBox(
@@ -140,41 +177,40 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 height: SizeConfig.blockSizeHorizontal! * 3,
               ),
             
-            Column(children:[
-             InkWell(
-              child:Container(
-               width: SizeConfig.blockSizeHorizontal! *95,
-               padding: const EdgeInsets.all(16.0),
-               decoration: BoxDecoration(
-                color: Colors.redAccent, // コンテナの背景色
-                borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        Colors.grey.withOpacity(0.5), // 影の色と透明度
-                    spreadRadius: 2, // 影の広がり
-                    blurRadius: 4, // 影のぼかし
-                    offset: const Offset(0, 2), // 影の方向（横、縦）
-                  ),
-                ],
-               ),
+          //   Column(children:[
+          //    InkWell(
+          //     child:Container(
+          //      width: SizeConfig.blockSizeHorizontal! *95,
+          //      padding: const EdgeInsets.all(16.0),
+          //      decoration: BoxDecoration(
+          //       color: Colors.redAccent, // コンテナの背景色
+          //       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color:
+          //               Colors.grey.withOpacity(0.5), // 影の色と透明度
+          //           spreadRadius: 2, // 影の広がり
+          //           blurRadius: 4, // 影のぼかし
+          //           offset: const Offset(0, 2), // 影の方向（横、縦）
+          //         ),
+          //       ],
+          //      ),
 
-              child:Row(
-                children:[
-                const Text(" +   予定の追加...",
-                     style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
-              ]),
-            ),
-            onTap: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
-              );
-            }
-          ),
-          const SizedBox(height:15) 
-          ]),
+          //     child:Row(
+          //       children:[
+          //       const Text(" +   予定の追加...",
+          //            style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
+          //     ]),
+          //   ),
+          //   onTap: (){
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
+          //     );
+          //   }
+          // ),
+          // const SizedBox(height:15) 
+          // ]),
 
-            const Divider(thickness:3, indent: 10,endIndent: 10,),
 
               const SizedBox(height:5),
               Align(
@@ -183,16 +219,16 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   Row(
                   children: [
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                   taskIcon(Colors.grey, 25),
+                   taskIcon(Colors.white, 25),
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                    Text(
                     'この日が期限のタスク',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.grey),
+                        color:Colors.white),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
-                  taskListLength(18.0),
+                  taskListLength(24.0),
               ]),
             ),
             taskDataList(),
@@ -235,7 +271,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             SizedBox(height:SizeConfig.blockSizeVertical! *10),
           ])
         ]),
-      ));
+      );
   }
 
   Widget listView(){

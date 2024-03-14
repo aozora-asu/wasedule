@@ -855,11 +855,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                         holidayName(target),
                       ])),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DailyViewPage(target: target)),
-                );
+              showDialog(
+                context: context,
+                builder: (BuildContext context){
+                  return DailyViewPage(target: target);
+                });
               },
             );
           },
@@ -1274,10 +1274,11 @@ class _CalendarState extends ConsumerState<Calendar> {
             return Column(children: [
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DailyViewPage(target: target)),
+              showDialog(
+                context: context,
+                builder: (BuildContext context){
+                  return DailyViewPage(target: target);
+                }
                   );
                 },
                 child:Container(
