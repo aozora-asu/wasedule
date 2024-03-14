@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -118,10 +119,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               Align(
                 alignment: Alignment.centerLeft,
                 child:
-                    Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                    Row(children: [
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
+                  calendarIcon(Colors.grey, 25),
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                   Text(
-                    '予定',
+                    'カレンダー',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
                         color:Colors.grey),
@@ -145,11 +148,20 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                decoration: BoxDecoration(
                 color: Colors.redAccent, // コンテナの背景色
                 borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        Colors.grey.withOpacity(0.5), // 影の色と透明度
+                    spreadRadius: 2, // 影の広がり
+                    blurRadius: 4, // 影のぼかし
+                    offset: const Offset(0, 2), // 影の方向（横、縦）
+                  ),
+                ],
                ),
-              child:const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+              child:Row(
                 children:[
-                Text("  +   予定の追加...",
+                const Text(" +   予定の追加...",
                      style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
               ]),
             ),
@@ -170,9 +182,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 child:
                   Row(
                   children: [
-                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
+                   taskIcon(Colors.grey, 25),
+                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                    Text(
-                    '期限のタスク',
+                    'この日が期限のタスク',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
                         color:Colors.grey),
@@ -184,44 +198,44 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             taskDataList(),
             SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                         Column(children:[
-             InkWell(
-              child:Container(
-               width: SizeConfig.blockSizeHorizontal! *95,
-               padding: const EdgeInsets.all(16.0),
-               decoration: BoxDecoration(
-                color: Colors.white, // コンテナの背景色
-                borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-                boxShadow: [
-                BoxShadow(
-                  color:
-                      Colors.grey.withOpacity(0.5), // 影の色と透明度
-                  spreadRadius: 2, // 影の広がり
-                  blurRadius: 4, // 影のぼかし
-                  offset: const Offset(0, 2), // 影の方向（横、縦）
-                ),
-            ],
-               ),
-              child:const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                Text("  +   タスクの追加...",
-                     style:TextStyle(color:Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),)
-              ]),
-            ),
-            onTap: (){
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TaskInputForm(setosute: setState,)),
-            );
-            }
-          ),
-          const SizedBox(height:15) 
-          ]),
-            const Divider(thickness:3, indent: 10,endIndent: 10,),
+          //    InkWell(
+          //     child:Container(
+          //      width: SizeConfig.blockSizeHorizontal! *95,
+          //      padding: const EdgeInsets.all(16.0),
+          //      decoration: BoxDecoration(
+          //       color: Colors.white, // コンテナの背景色
+          //       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+          //       boxShadow: [
+          //       BoxShadow(
+          //         color:
+          //             Colors.grey.withOpacity(0.5), // 影の色と透明度
+          //         spreadRadius: 2, // 影の広がり
+          //         blurRadius: 4, // 影のぼかし
+          //         offset: const Offset(0, 2), // 影の方向（横、縦）
+          //       ),
+          //   ],
+          //      ),
+          //     child:const Row(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children:[
+          //       Text("  +   タスクの追加...",
+          //            style:TextStyle(color:Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),)
+          //     ]),
+          //   ),
+          //   onTap: (){
+          //     Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => TaskInputForm(setosute: setState,)),
+          //   );
+          //   }
+          // ),
+          // const SizedBox(height:15) 
+          // ]),
+          //   const Divider(thickness:3, indent: 10,endIndent: 10,),
             SizedBox(height:SizeConfig.blockSizeVertical! *10),
           ])
-        ),
-      );
+        ]),
+      ));
   }
 
   Widget listView(){
@@ -259,43 +273,58 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
 
            return  Column(children:[
-            InkWell(
-             onTap:(){
-              inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
-              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
-             },
-             child:Container(
+            Container(
              width: SizeConfig.blockSizeHorizontal! *95,
-             padding: const EdgeInsets.all(16.0),
              decoration: BoxDecoration(
-              color: Colors.redAccent, // コンテナの背景色
+              color: Colors.white, // コンテナの背景色
               borderRadius: BorderRadius.circular(12.0), // 角丸の半径
+              boxShadow: [
+                  BoxShadow(
+                    color:
+                        Colors.grey.withOpacity(0.5), // 影の色と透明度
+                    spreadRadius: 2, // 影の広がり
+                    blurRadius: 4, // 影のぼかし
+                    offset: const Offset(0, 2), // 影の方向（横、縦）
+                  ),
+                ],
             ),
-            child:
-            Row(children:[
-            Column(
+            child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              Row(children:[
-                dateTimeData,
-                const SizedBox(width:15),
-                SizedBox(
-                  child:tagChip(targetDayData.elementAt(index)["tag"], ref))
-                
-                ]),
-              
-              SizedBox(
-                width:SizeConfig.blockSizeHorizontal! *70,
+              Container(
+              color: Colors.redAccent,
+              child:Row(
+                children:[
+                  const SizedBox(width:10,height:30),
+                  dateTimeData,
+                  const SizedBox(width:15),
+                  SizedBox(
+                    child:tagChip(targetDayData.elementAt(index)["tag"], ref)),
+                  ]),
+              ),
+            Row(children:[    
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                width:SizeConfig.blockSizeHorizontal! *65,
                 child:Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
                    overflow: TextOverflow.clip,
-                   style: const TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),
+                   style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),
                 )
-              )
-            ]),
+              ),
+
             const Spacer(),
-            Column(children:[
+
               IconButton(
-              icon: const Icon(Icons.delete,color:Colors.white),
+              icon: const Icon(Icons.edit,color:Colors.grey),
+              onPressed: (){
+              inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
+              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
+              },
+             ),
+
+
+              IconButton(
+              icon: const Icon(Icons.delete,color:Colors.grey),
               onPressed: ()async{
                showDeleteDialogue(
                 context,
@@ -312,11 +341,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   }
                 );
               },
-              ),
-            ])
-
+             ),
+            
           ])
-         )
+         ])
         ),
           const SizedBox(height:15)   
          ]);    

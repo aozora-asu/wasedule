@@ -1,5 +1,7 @@
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:nholiday_jp/nholiday_jp.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
@@ -159,6 +161,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     createConfigData("todaysSchedule", 0);
     createConfigData("taskList", 1);
     createConfigData("moodleLink", 0);
+    createConfigData("holidayPaint", 0);
+    createConfigData("holidayName", 1);
   }
 
   Future<void> createConfigData(String widgetName, int defaultState) async {
@@ -425,6 +429,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget calendarBody() {
+    generateHoliday();
     return Column(children: [
       switchWidget(tipsAndNewsPanel(randomNumber, ""),
             searchConfigData("tips")),
@@ -764,6 +769,53 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
+  List<bool>isHoliday =[];
+  List<int> holidayDay = [];
+
+  void generateHoliday(){
+    isHoliday =[];
+    holidayDay = [];
+    DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
+      int.parse(targetMonth.substring(5, 7)));
+    var holidaysOfMonth = NHolidayJp.getByMonth(targetmonthDT.year,targetmonthDT.month);
+    
+    for(int i = 0; i < holidaysOfMonth.length; i++){
+     if(targetmonthDT.month >= 10){
+      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(3,5)));
+     }else{
+      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(2,4)));
+     }
+    }
+
+    for(int i = 0; i < LengthOfMonth(targetMonth) +1; i++){
+      if(holidayDay.contains(i)){
+        isHoliday.add(true);
+      }else{
+        isHoliday.add(false);
+      }
+    }
+
+  }
+
+  Widget holidayName(DateTime target){
+    if(target.month == int.parse(targetMonth.substring(5))&&
+    searchConfigData("holidayName") == 1){
+      if(isHoliday.elementAt(target.day)){
+        return Column(children:[Text(
+          NHolidayJp.getName(target.year,target.month,target.day),
+          style: const TextStyle(color: Colors.red,fontSize:10),
+          ),
+        const SizedBox(height:5)  
+        ]);
+      }else{
+        return const SizedBox();
+      }
+    }else{
+        return const SizedBox();
+    }
+
+  }
+
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
@@ -799,7 +851,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                           endIndent: 2,
                           thickness: 0.7,
                         ),
-                        Expanded(child: calendarCellsChild(target))
+                        Expanded(child: calendarCellsChild(target)),
+                        holidayName(target),
                       ])),
               onTap: () {
                 Navigator.push(
@@ -817,19 +870,25 @@ class _CalendarState extends ConsumerState<Calendar> {
         ));
   }
 
+
+
   Color cellColour(DateTime target) {
+    
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-        int.parse(targetMonth.substring(5, 7)));
+      int.parse(targetMonth.substring(5, 7)));
+
     if (target.year == DateTime.now().year &&
         target.month == DateTime.now().month &&
         target.day == DateTime.now().day) {
-      return const Color.fromARGB(255, 255, 207, 207);
+      return const Color.fromRGBO(255, 204, 204, 1);
     } else if (target.month != targetmonthDT.month) {
       return const Color.fromARGB(255, 242, 242, 242);
-    } else if (target.weekday == 6) {
-      return Colors.white; //Color.fromARGB(255, 227, 238, 255);
-    } else if (target.weekday == 7) {
-      return Colors.white; //Color.fromARGB(255, 255, 239, 239);
+    } else if(isHoliday.elementAt(target.day) &&searchConfigData("holidayPaint") == 1){
+      return const Color.fromARGB(255, 255, 239, 239);
+    } else if (target.weekday == 6 && searchConfigData("holidayPaint") == 1) {
+      return const Color.fromARGB(255, 227, 238, 255);
+    } else if (target.weekday == 7 && searchConfigData("holidayPaint") == 1) {
+      return const Color.fromARGB(255, 255, 239, 239);
     } else {
       return Colors.white;
     }
@@ -1384,4 +1443,22 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
     return result;
   }
+}
+
+Widget calendarIcon(Color color,double size){
+  return 
+    Icon(
+      Icons.calendar_month,
+      color:color,
+      size: size
+    );
+}
+
+Widget taskIcon(Color color,double size){
+  return 
+    Icon(
+      Icons.check,
+      color:color,
+      size: size
+    );
 }

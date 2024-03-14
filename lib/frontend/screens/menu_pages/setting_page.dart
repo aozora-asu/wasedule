@@ -210,9 +210,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'カレンダー画面の表示ウィジェット',
+                      '画面表示のカスタマイズ',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
@@ -226,7 +226,29 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const SizedBox(height: 5),
                     configSwitch("Waseda Moodle リンク", "moodleLink"),
                     const SizedBox(height: 5),
+                  ])),
+                
+                const SizedBox(height:10),
+
+          Container(
+              decoration: roundedBoxdecorationWithShadow(),
+              padding: const EdgeInsets.all(7.5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'カレンダーの設定',
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    configSwitch("土日祝日の着色", "holidayPaint"),
+                    const SizedBox(height: 5),
+                    configSwitch("祝日名の表示", "holidayName"),
+                    const SizedBox(height: 5),
                   ]))
+
         ]));
   }
 
