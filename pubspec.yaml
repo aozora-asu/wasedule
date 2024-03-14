@@ -43,6 +43,7 @@ dependencies:
   share_extend: ^2.0.0
   screenshot: ^2.1.0
   keyboard_actions: ^4.2.0
+  nholiday_jp: ^1.0.2
 
   flutter_localizations:
     sdk: flutter

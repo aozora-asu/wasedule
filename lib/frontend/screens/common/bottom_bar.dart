@@ -23,12 +23,12 @@ class CustomBottomBar extends StatelessWidget {
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.splitscreen),
+          icon: Icon(Icons.check),
           label: 'タスク',
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.task_outlined),
+          icon: Icon(Icons.edit),
           label: '学習管理',
           backgroundColor: MAIN_COLOR
         ),

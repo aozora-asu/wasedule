@@ -445,6 +445,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  nholiday_jp:
+    dependency: "direct main"
+    description:
+      name: nholiday_jp
+      sha256: a30c5ef12060d58cf2de0504e4790c31c81a0c819d2ceeb653e7a8f6c399c44b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   path:
     dependency: "direct main"
     description:
