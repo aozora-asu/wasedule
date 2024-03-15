@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
@@ -224,6 +226,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                 ),
               ),
             ),
+
             Row(children: [
               ElevatedButton(
                   onPressed: () async {
@@ -239,6 +242,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               dateInputPreview(scheduleForm.dtStartList)
             ]),
+
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -258,6 +262,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeStartController.text)
             ]),
+
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -277,7 +282,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeEndController.text)
             ]),
-            Row(children: [
+
+            tagEmptyFlag(ref, Row(children: [
               ElevatedButton(
                   onPressed: () {
                     showTagDialogue(ref, context, setState);
@@ -290,10 +296,10 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(
                   returnTagData(scheduleForm.tagController.text, ref))
-            ]),
-            SizedBox(
-                height: SizeConfig.blockSizeVertical! * 0.5,
-                width: SizeConfig.blockSizeHorizontal! * 80),
+            ]),),
+            
+
+            
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -313,15 +319,21 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               isPublicPreview(scheduleForm.isPublic)
             ]),
-            SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 80,
-              height: SizeConfig.blockSizeVertical! * 0.5,
+
+            templateEmptyFlag(ref,
+              Column(children:[
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 80,
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+                addTemplateButton(),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 80,
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+              ])
             ),
-            addTemplateButton(),
-            SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 80,
-              height: SizeConfig.blockSizeVertical! * 0.5,
-            ),
+            
             const Divider(indent: 7, endIndent: 7, thickness: 3),
             SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
@@ -378,10 +390,11 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                               scheduleForm.publicScheduleController =
                                   scheduleForm.scheduleController;
                             }
-
+                            
                             for (int i = 0;
                                 i < scheduleForm.dtStartList.length;
                                 i++) {
+                              
                               Map<String, dynamic> schedule = {
                                 "subject": scheduleForm.scheduleController.text,
                                 "startDate":
@@ -389,7 +402,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                                 "startTime":
                                     scheduleForm.timeStartController.text,
                                 "endDate": scheduleForm.dtStartList
-                                    .elementAt(i), //ここでは仮で開始日を代入
+                                    .elementAt(i),
                                 "endTime": scheduleForm.timeEndController.text,
                                 "isPublic": intIspublic,
                                 "publicSubject":
@@ -411,6 +424,9 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                             }
                             widget.setosute(() {});
                             Navigator.pop(context);
+                            if(ref.read(calendarDataProvider).calendarData.last["id"] == 1){
+                              showTagAndTemplateGuide(context);
+                            }
                           }
                         }
                       }
@@ -796,6 +812,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     }
   }
 }
+
+
 
 double listViewHeight(double itemHeight, int itemLength){
   switch (itemLength){

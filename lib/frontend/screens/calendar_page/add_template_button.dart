@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
@@ -141,27 +143,25 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
           timeInputPreview(scheduleForm.timeEndController.text)
           ]),
           
-
-          Row(children:[         
-            ElevatedButton(
-            onPressed: (){
-             showTagDialogue(ref, context, setState);
-            },
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                ),
-            child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
-            ),
-            timeInputPreview(returnTagData(scheduleForm.tagController.text,ref))
-          ]),
-
-
-
-
-
+          tagEmptyFlag(ref,
+            Row(children:[         
+              ElevatedButton(
+              onPressed: (){
+              showTagDialogue(ref, context, setState);
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                  ),
+              child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
+              ),
+              timeInputPreview(returnTagData(scheduleForm.tagController.text,ref))
+            ]),
+          ),
+          
           SizedBox(
               height: SizeConfig.blockSizeVertical! * 0.5,
-              width: SizeConfig.blockSizeHorizontal! * 80),           
+              width: SizeConfig.blockSizeHorizontal! * 80),      
+
           // Container(
           //   child: Row(
           //     mainAxisAlignment: MainAxisAlignment.start,
@@ -255,7 +255,11 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                       }
                       widget.setosute((){});
                       Navigator.pop(context);
+                      if(ref.read(calendarDataProvider).templateData.last["id"] == 1){
+                        showTemplateGuide(context);
                       }
+                      
+                    }
                       
                   }
             },
@@ -273,7 +277,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                       if(isConflict(scheduleForm.timeStartController.text, scheduleForm.timeEndController.text)){
                         return Colors.grey;
                       }else {
-                        return MAIN_COLOR; // ボタンが通常の場合の色
+                        return MAIN_COLOR;
                       }
                     }
                   }

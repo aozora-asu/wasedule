@@ -325,15 +325,19 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                   child: Column(children: [
                     Row(children: [
-                      expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
+                      tagEmptyFlag(ref,
+                        expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
                               builder: (context) => ArbeitStatsPage(
-                                    targetMonth: targetMonth,
-                                  )),
-                        );
-                      }),
+                                      targetMonth: targetMonth,
+                            )),
+                          );
+                        }),
+                      )
+                      
+
                     ]),
 
                     const SizedBox(height: 15),
@@ -495,30 +499,32 @@ class _CalendarState extends ConsumerState<Calendar> {
                           icon: const Icon(Icons.arrow_forward_ios),
                           iconSize: 20),
                       doNotContainScreenShot(
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 40,
-                          height: SizeConfig.blockSizeVertical! * 4,
-                          child: TextButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TagAndTemplatePage()),
-                              );
-                            },
-                            icon: const Icon(Icons.tag,
-                                size: 15, color: Colors.white),
-                            label: const Text('タグとテンプレート',
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                            style: const ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.blueAccent),
+                        scheduleEmptyFlag(ref,
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 40,
+                            height: SizeConfig.blockSizeVertical! * 4,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TagAndTemplatePage()),
+                                );
+                              },
+                              icon: const Icon(Icons.tag,
+                                  size: 15, color: Colors.white),
+                                  label: const Text('タグとテンプレート',
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                  style: const ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStatePropertyAll(Colors.blueAccent),
+                                  ),
                             ),
                           ),
-                        ),
+                        )
                       ),
                       showOnlyScreenShot(LogoAndTitle(size: 7))
                     ]),
@@ -1462,4 +1468,30 @@ Widget taskIcon(Color color,double size){
       color:color,
       size: size
     );
+}
+
+Widget scheduleEmptyFlag(WidgetRef ref, Widget widget){
+  print(ref.read(calendarDataProvider).calendarData);
+  if(ref.read(calendarDataProvider).calendarData.isEmpty){
+   
+    return const SizedBox();
+  }else{
+    return widget;
+  }
+}
+
+Widget tagEmptyFlag(WidgetRef ref, Widget widget){
+  if(ref.read(calendarDataProvider).tagData.isEmpty){
+    return const SizedBox();
+  }else{
+    return widget;
+  }
+}
+
+Widget templateEmptyFlag(WidgetRef ref, Widget widget){
+  if(ref.read(calendarDataProvider).templateData.isEmpty){
+    return const SizedBox();
+  }else{
+    return widget;
+  }
 }

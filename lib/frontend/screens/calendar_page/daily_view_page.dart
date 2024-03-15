@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -150,10 +151,38 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
                     const Spacer(),
                     ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
-                      );
+                    onPressed: () async{
+
+                     String startDate = DateFormat('yyyy-MM-dd').format(widget.target);
+                     Map<String, dynamic> schedule = {
+                        "subject": "",
+                        "startDate": startDate,
+                        "startTime": "",
+                        "endDate": startDate,
+                        "endTime": "",
+                        "isPublic": 1,
+                        "publicSubject": "",
+                        "tag": ""
+                      };
+                      await ScheduleDatabaseHelper()
+                            .resisterScheduleToDB(schedule);
+                      
+                      ref.read(scheduleFormProvider).clearContents();
+
+                      ref.read(calendarDataProvider.notifier).state =
+                          CalendarData();
+                      ref.read(taskDataProvider).isRenewed = true;
+                      while (
+                          ref.read(taskDataProvider).isRenewed != false) {
+                        await Future.delayed(
+                            const Duration(milliseconds: 1));
+                      }
+                      setState(() {});
+                      final data = ref.read(calendarDataProvider);
+                      List dateData = data.sortedDataByDay[startDate];
+
+                      inittodaiarogu(data.calendarData.last);
+                      _showTextDialog(context,data.calendarData.last,"予定の追加…");
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
@@ -190,7 +219,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   Row(
                   children: [
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                   taskIcon(Colors.black, 25),
+                   taskIcon(Colors.grey, 25),
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                    Text(
                     'この日が期限の課題',
@@ -306,10 +335,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               },
               onSelected: (value) async{
                 if(value == "edit"){
-                  
+
                   inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
-                  _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
-                
+                  _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index),"予定の編集…");
+
                 }else if(value == "delete"){
 
                   showDeleteDialogue(
@@ -500,6 +529,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   void inittodaiarogu(Map targetData){
     final provider = ref.watch(scheduleFormProvider);
+    ref.read(scheduleFormProvider).clearContents();
     provider.timeStartController.text = targetData["startTime"];
     provider.timeEndController.text = targetData["endTime"];
     provider.tagController.text = targetData["tag"];
@@ -514,7 +544,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     }
   }
 
-  Future<void> _showTextDialog(BuildContext context,Map targetData) async {
+  Future<void> _showTextDialog(BuildContext context,Map targetData,String title) async {
     final provider = ref.watch(scheduleFormProvider);
     TextEditingController titlecontroller = TextEditingController();
     titlecontroller.text = targetData["subject"];
@@ -525,7 +555,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       builder: (BuildContext context) {
         ref.watch(scheduleFormProvider.notifier);
         return AlertDialog(
-          title: const Text('予定の編集...'),
+          title: Text(title),
           actions: <Widget>[StatefulBuilder(
            builder: (BuildContext context, StateSetter setState) {
             ref.watch(scheduleFormProvider.notifier);
@@ -602,19 +632,21 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           timeInputPreview(provider.timeEndController.text)
           ]),
           
-
-          Row(children:[         
-            ElevatedButton(
-            onPressed: (){
-             showTagDialogue(ref, context, setState);
-            },
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                ),
-            child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
-            ),
-            timeInputPreview(returnTagData(provider.tagController.text,ref))
-          ]),
+          tagEmptyFlag(ref,
+            Row(children:[         
+              ElevatedButton(
+              onPressed: (){
+              showTagDialogue(ref, context, setState);
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                  ),
+              child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
+              ),
+              timeInputPreview(returnTagData(provider.tagController.text,ref))
+            ]),
+          ),
+          
 
       Row(children:[
           ElevatedButton(
@@ -634,6 +666,21 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           ),
           isPublicPreview(provider.isPublic)
           ]),
+
+
+          templateEmptyFlag(ref,
+            Column(children:[
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeVertical! * 0.5,
+              ),
+              addTemplateButton(setState),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeVertical! * 0.5,
+              ),
+            ])
+          ),
 
 
           ]);
@@ -669,11 +716,29 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('変更'),
+              child: const Text('登録'),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget addTemplateButton(StateSetter setosute) {
+    return ElevatedButton(
+      onPressed: () {
+        showTemplateDialogue(setosute);
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
+      ),
+      child: const Row(children: [
+        Spacer(),
+        Icon(Icons.add, color: Colors.white),
+        SizedBox(width: 10),
+        Text('テンプレート', style: TextStyle(color: Colors.white)),
+        Spacer(),
+      ]),
     );
   }
 
@@ -736,53 +801,181 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     );
   }
 
-Future<String?> _selectDateMultipul(BuildContext context, String controller, StateSetter setState) async {
-  Completer<String?> completer = Completer<String?>();
-
-  await showDialog(
-    context: context,
-    builder: (_) {
-      return SimpleDialog(
-        contentPadding: const EdgeInsets.all(0.0),
-        titlePadding: const EdgeInsets.all(0.0),
-        title: SizedBox(
-          height: 400,
-          child: Scaffold(
-            body: SizedBox(
-              child: SfDateRangePicker(
-                headerHeight: 60,
-                todayHighlightColor: MAIN_COLOR,
-                selectionColor: MAIN_COLOR,
-                headerStyle: const DateRangePickerHeaderStyle(
-                  backgroundColor: MAIN_COLOR,
-                  textStyle: TextStyle(color: Colors.white)
+  Future<String?> _selectDateMultipul(BuildContext context, String controller, StateSetter setState) async {
+    Completer<String?> completer = Completer<String?>();
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(0.0),
+          titlePadding: const EdgeInsets.all(0.0),
+          title: SizedBox(
+            height: 400,
+            child: Scaffold(
+              body: SizedBox(
+                child: SfDateRangePicker(
+                  headerHeight: 60,
+                  todayHighlightColor: MAIN_COLOR,
+                  selectionColor: MAIN_COLOR,
+                  headerStyle: const DateRangePickerHeaderStyle(
+                    backgroundColor: MAIN_COLOR,
+                    textStyle: TextStyle(color: Colors.white)
+                  ),
+                  view: DateRangePickerView.month,
+                  initialSelectedDate: DateTime.now(),
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  allowViewNavigation: true,
+                  navigationMode: DateRangePickerNavigationMode.snap,
+                  showNavigationArrow: true,
+                  showActionButtons: true,
+                  onSubmit: (dynamic value) {
+                    String result = DateFormat('yyyy-MM-dd').format(value);
+                    completer.complete(result);
+                    Navigator.pop(context);
+                  },
+                  onCancel: () {
+                    completer.complete(null);
+                    Navigator.pop(context);
+                  },
+                  confirmText: "ＯＫ",
+                  cancelText: "戻る",
                 ),
-                view: DateRangePickerView.month,
-                initialSelectedDate: DateTime.now(),
-                selectionMode: DateRangePickerSelectionMode.single,
-                allowViewNavigation: true,
-                navigationMode: DateRangePickerNavigationMode.snap,
-                showNavigationArrow: true,
-                showActionButtons: true,
-                onSubmit: (dynamic value) {
-                  String result = DateFormat('yyyy-MM-dd').format(value);
-                  completer.complete(result);
-                  Navigator.pop(context);
-                },
-                onCancel: () {
-                  completer.complete(null);
-                  Navigator.pop(context);
-                },
-                confirmText: "ＯＫ",
-                cancelText: "戻る",
               ),
             ),
           ),
-        ),
-      );
-    }
-  );
+        );
+      }
+    );
+    return completer.future;
+  }
 
-  return completer.future;
- }
+  Future<void> showTemplateDialogue(StateSetter setosute) async {
+    final data = ref.read(calendarDataProvider);
+    List tempLateMap = data.templateData;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("テンプレート選択"),
+          actions:[ 
+            SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "テンプレート:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                SizedBox(
+                  width: double.maxFinite,
+                  height:listViewHeight(50, tempLateMap.length),
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 5),
+                    itemCount: tempLateMap.length,
+                    itemBuilder: (BuildContext context, index) => InkWell(
+                      onTap: () async {
+                        setosute(() {
+                          final inputform = ref.watch(scheduleFormProvider);
+                          inputform.scheduleController.text =
+                              data.templateData.elementAt(index)["subject"];
+                          inputform.timeStartController.text =
+                              data.templateData.elementAt(index)["startTime"];
+                          inputform.timeEndController.text =
+                              data.templateData.elementAt(index)["endTime"];
+                          inputform.tagController.text =
+                              data.templateData.elementAt(index)["tag"];
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              timedata(index),
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.white),
+                            ),
+                            Text(
+                              "  " +
+                                  ref
+                                      .read(calendarDataProvider)
+                                      .templateData
+                                      .elementAt(index)["subject"],
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width:1700,
+                    child:ElevatedButton(
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.blueAccent)),
+          
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                TemplateInputForm(setosute: setosute),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "+ テンプレートを追加…",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),)
+                  ],
+                ),
+              ),
+
+          ],
+        );
+      },
+    );
+  }
+
+  String timedata(index) {
+    if (ref
+                .read(calendarDataProvider)
+                .templateData
+                .elementAt(index)["startTime"] ==
+            "" &&
+        ref
+                .read(calendarDataProvider)
+                .templateData
+                .elementAt(index)["endTime"] ==
+            "") {
+      return "      終日";
+    } else {
+      return "      " +
+          ref
+              .read(calendarDataProvider)
+              .templateData
+              .elementAt(index)["startTime"] +
+          " ～ " +
+          ref
+              .read(calendarDataProvider)
+              .templateData
+              .elementAt(index)["endTime"];
+    }
+  } 
+
 }

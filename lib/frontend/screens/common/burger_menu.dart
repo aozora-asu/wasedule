@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../assist_files/size_config.dart';
 import '../menu_pages/setting_page.dart';
 import '../menu_pages/url_register_page.dart';
 
-class burgerMenu extends StatelessWidget {
+class burgerMenu extends ConsumerWidget {
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -38,9 +40,9 @@ class burgerMenu extends StatelessWidget {
           ),
 
           menuPanel(
-            Icons.settings,
-            "設定",
-            MaterialPageRoute(builder: (context) => SettingsPage()),
+            Icons.add_link,
+            "Moodle URLの登録",
+            MaterialPageRoute(builder: (context) => UrlRegisterPage()),
             context
           ),
 
@@ -51,26 +53,20 @@ class burgerMenu extends StatelessWidget {
             context
           ),
 
-          menuPanel(
-            Icons.add_link,
-            "Moodle URLの登録",
-            MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-            context
-          ),
-
-          menuPanel(
-            Icons.currency_yen_rounded,
-            "アルバイト",
-            MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:DateFormat('yyyy/MM').format(DateTime.now()))),
-            context
-          ),
-
-          menuPanel(
+          scheduleEmptyFlag(ref,menuPanel(
             Icons.tag_rounded,
             "タグとテンプレート",
             MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
             context
-          ),
+          ),),
+
+          tagEmptyFlag(ref,menuPanel(
+            Icons.currency_yen_rounded,
+            "アルバイト",
+            MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:DateFormat('yyyy/MM').format(DateTime.now()))),
+            context
+          ),),
+
 
           // menuPanel(
           //   Icons.ios_share,
@@ -83,6 +79,13 @@ class burgerMenu extends StatelessWidget {
             Icons.info_rounded,
             "サポート",
             MaterialPageRoute(builder: (context) => SnsLinkPage()),
+            context
+          ),
+
+          menuPanel(
+            Icons.settings,
+            "設定",
+            MaterialPageRoute(builder: (context) => SettingsPage()),
             context
           ),
 

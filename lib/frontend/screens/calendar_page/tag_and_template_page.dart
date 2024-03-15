@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
@@ -85,7 +86,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                width: SizeConfig.blockSizeHorizontal! *95,
                padding: const EdgeInsets.all(16.0),
                decoration: BoxDecoration(
-                color: Colors.blue[100], // コンテナの背景色
+                color: Colors.blue[100],
                 borderRadius: BorderRadius.circular(12.0), // 角丸の半径
                ),
               child:const Row(
@@ -650,7 +651,9 @@ class _TagDialogState extends ConsumerState<TagDialog> {
                 }
                 widget.setosute((){});
                 Navigator.pop(context);
-                
+                if(ref.read(calendarDataProvider).tagData.last["id"] == 1){
+                   showTagGuide(context);
+                }
                 
               },
               child:  const Text('追加',style:TextStyle(color:Colors.white)),

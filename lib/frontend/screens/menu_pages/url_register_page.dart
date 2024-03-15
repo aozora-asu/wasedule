@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -141,16 +142,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
       title: const Text('登録失敗'),
       content: const Text('無効なURLです。'),
       actions: <Widget>[
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // ダイアログを閉じる
-          },
-          style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-            visualDensity: VisualDensity.standard
-            ),
-          child:const Text('OK',style:TextStyle(color: Colors.white),),
-        ),
+        okButton(context, 500.0)
       ],
      );
     }
