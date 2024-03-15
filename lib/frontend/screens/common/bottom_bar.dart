@@ -24,7 +24,7 @@ class CustomBottomBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.check),
-          label: 'タスク',
+          label: '課題',
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(
