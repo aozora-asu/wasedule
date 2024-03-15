@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -99,58 +102,54 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget pageBody(){
     return SingleChildScrollView(
-          child: Column(
-            children: [
+      child:Padding(
+        padding: const EdgeInsets.only(left:5,right:5,top:40),
+        child:Column(
+          children: [
+
+            Container(
+             decoration: roundedBoxdecorationWithShadow(),
+             child:Column(
+              children:[
+                Container(
+                  height:40,
+                  color:Colors.redAccent,
+                  child:Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(width:10),
+                      calendarIcon(Colors.white, 25),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          " " + widget.target.year.toString() + "/" + widget.target.month.toString(),
+                          style: TextStyle(
+                            fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                            fontWeight: FontWeight.w700,
+                            color:Colors.white
+                          ),
+                        )
+                      )
+                  ],
+                ),
+              ),
+
               Row(
                 children: [
                   Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "    " + widget.target.year.toString() + "年",
+                        " "+ widget.target.day.toString(), //+ weekDayEng(widget.target.weekday),
                         style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 15,
                           fontWeight: FontWeight.w700,
-                          color:Colors.white
+                          color:Colors.black
                         ),
                       )
-                    )
-                ],
-              ),
-              Row(
-                children: [
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "  " + widget.target.month.toString() + "月" + widget.target.day.toString() +"日 " + weekDay(widget.target.weekday),
-                        style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 10,
-                          fontWeight: FontWeight.w700,
-                          color:Colors.white
-                        ),
-                      )
-                    )
-                ],
-              ),
+                    ),
 
-              SizedBox(height:SizeConfig.blockSizeVertical! *2),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child:
-                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                  
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                  calendarIcon(Colors.white, 30),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                  Text(
-                    'この日の予定',
-                    style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.white),
-                  ),
-                  ElevatedButton(
+                    const Spacer(),
+                    ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
@@ -165,113 +164,54 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       color:Colors.white,
                       )
                   ),
+                ],
+              ),
 
-                ]),
-              ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 100,
-                child: listView(),
-              ),
-              SizedBox(
+
+            SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
+                child: listView(),
+            ),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 90,
+              height: SizeConfig.blockSizeHorizontal! * 2,
+            ),
+            ])
+          ),
             
-          //   Column(children:[
-          //    InkWell(
-          //     child:Container(
-          //      width: SizeConfig.blockSizeHorizontal! *95,
-          //      padding: const EdgeInsets.all(16.0),
-          //      decoration: BoxDecoration(
-          //       color: Colors.redAccent, // コンテナの背景色
-          //       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-          //       boxShadow: [
-          //         BoxShadow(
-          //           color:
-          //               Colors.grey.withOpacity(0.5), // 影の色と透明度
-          //           spreadRadius: 2, // 影の広がり
-          //           blurRadius: 4, // 影のぼかし
-          //           offset: const Offset(0, 2), // 影の方向（横、縦）
-          //         ),
-          //       ],
-          //      ),
+          const SizedBox(height:50),
 
-          //     child:Row(
-          //       children:[
-          //       const Text(" +   予定の追加...",
-          //            style:TextStyle(color:Colors.white,fontSize: 25,fontWeight: FontWeight.bold),)
-          //     ]),
-          //   ),
-          //   onTap: (){
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(builder: (context) => CalendarInputForm(target: widget.target, setosute: setState,)),
-          //     );
-          //   }
-          // ),
-          // const SizedBox(height:15) 
-          // ]),
-
-
-              const SizedBox(height:5),
-              Align(
+            Container(
+              decoration: roundedBoxdecorationWithShadow(),
+              child:Column(children:[
+               Align(
                 alignment: Alignment.centerLeft,
                 child:
                   Row(
                   children: [
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                   taskIcon(Colors.white, 25),
+                   taskIcon(Colors.black, 25),
                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                    Text(
-                    'この日が期限のタスク',
+                    'この日が期限の課題',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! *7,
-                        color:Colors.white),
+                        color:Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                   taskListLength(24.0),
               ]),
             ),
+            const Divider(height:1,),
+            SizedBox(height:SizeConfig.blockSizeVertical! * 1.5),
             taskDataList(),
-            SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                        Column(children:[
-          //    InkWell(
-          //     child:Container(
-          //      width: SizeConfig.blockSizeHorizontal! *95,
-          //      padding: const EdgeInsets.all(16.0),
-          //      decoration: BoxDecoration(
-          //       color: Colors.white, // コンテナの背景色
-          //       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-          //       boxShadow: [
-          //       BoxShadow(
-          //         color:
-          //             Colors.grey.withOpacity(0.5), // 影の色と透明度
-          //         spreadRadius: 2, // 影の広がり
-          //         blurRadius: 4, // 影のぼかし
-          //         offset: const Offset(0, 2), // 影の方向（横、縦）
-          //       ),
-          //   ],
-          //      ),
-          //     child:const Row(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children:[
-          //       Text("  +   タスクの追加...",
-          //            style:TextStyle(color:Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),)
-          //     ]),
-          //   ),
-          //   onTap: (){
-          //     Navigator.push(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => TaskInputForm(setosute: setState,)),
-          //   );
-          //   }
-          // ),
-          // const SizedBox(height:15) 
-          // ]),
-          //   const Divider(thickness:3, indent: 10,endIndent: 10,),
-            SizedBox(height:SizeConfig.blockSizeVertical! *10),
+
           ])
-        ]),
-      );
+         )
+       ]),
+      )     
+    );
   }
 
   Widget listView(){
@@ -280,8 +220,16 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     ref.watch(calendarDataProvider);
     String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
 
-    if(data.sortedDataByDay[targetKey] == null){
-      return  const SizedBox();
+      if(data.sortedDataByDay[targetKey] == null){
+        return  Column(children:[
+          const Divider(height:2,thickness: 2,),
+          SizedBox( height: SizeConfig.blockSizeHorizontal! * 8,),
+          const Text(
+              "予定はありません。",
+              style: TextStyle(fontSize: 20,color: Colors.grey),
+          ),
+           SizedBox( height: SizeConfig.blockSizeHorizontal! * 5,),
+      ]);
     }else{
      List targetDayData = data.sortedDataByDay[targetKey];
    return
@@ -291,102 +239,106 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             if (targetDayData.elementAt(index)["startTime"].trim() != "" && targetDayData.elementAt(index)["endTime"].trim() != ""){
               dateTimeData =
                   Text(
-                    " " + targetDayData.elementAt(index)["startTime"] + "～" + targetDayData.elementAt(index)["endTime"],
-                    style: const TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                    targetDayData.elementAt(index)["startTime"] + "～" + targetDayData.elementAt(index)["endTime"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 20,fontWeight: FontWeight.bold),
                   );
             } else if (targetDayData.elementAt(index)["startTime"].trim() != ""){
               dateTimeData =
                   Text(
-                    " " + targetDayData.elementAt(index)["startTime"],
-                    style: const TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                    targetDayData.elementAt(index)["startTime"],
+                    style: const TextStyle(color:Colors.grey,fontSize: 20,fontWeight: FontWeight.bold),
                   );
             } else {
               dateTimeData = const Text(
-                    " 終日",
-                    style: TextStyle(color:Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+                    "終日",
+                    style: TextStyle(color:Colors.grey,fontSize: 20,fontWeight: FontWeight.bold),
                   );
             }
 
-
            return  Column(children:[
+            const Divider(height:2,thickness: 2,),
             Container(
              width: SizeConfig.blockSizeHorizontal! *95,
              decoration: BoxDecoration(
-              color: Colors.white, // コンテナの背景色
-              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-              boxShadow: [
-                  BoxShadow(
-                    color:
-                        Colors.grey.withOpacity(0.5), // 影の色と透明度
-                    spreadRadius: 2, // 影の広がり
-                    blurRadius: 4, // 影のぼかし
-                    offset: const Offset(0, 2), // 影の方向（横、縦）
-                  ),
-                ],
+              color: Colors.white, 
+              borderRadius: BorderRadius.circular(12.0),
             ),
             child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-              Container(
-              color: Colors.redAccent,
-              child:Row(
+
+              Row(
                 children:[
-                  const SizedBox(width:10,height:30),
+                  const SizedBox(width:10,),
                   dateTimeData,
-                  const SizedBox(width:15),
-                  SizedBox(
-                    child:tagChip(targetDayData.elementAt(index)["tag"], ref)),
-                  ]),
-              ),
-            Row(children:[    
+                  const SizedBox(width:15,height:40),
+                  tagChip(targetDayData.elementAt(index)["tag"], ref),
+                  const Spacer(),
+              ]),
+
+            Row(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children:[
               Container(
-                padding: const EdgeInsets.all(8.0),
-                width:SizeConfig.blockSizeHorizontal! *65,
+                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                width:SizeConfig.blockSizeHorizontal! *75,
                 child:Text(data.sortedDataByDay[targetKey].elementAt(index)["subject"],
                    overflow: TextOverflow.clip,
-                   style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),
+                   style: const TextStyle(color:Colors.black,fontSize: 30,fontWeight: FontWeight.bold),
                 )
               ),
 
             const Spacer(),
 
-              IconButton(
-              icon: const Icon(Icons.edit,color:Colors.grey),
-              onPressed: (){
-              inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
-              _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
+            PopupMenuButton(
+              icon:const Icon(Icons.edit,color:Colors.grey),
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(children:[Icon(Icons.edit,),SizedBox(width:15),Text('編集')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(children:[Icon(Icons.delete,),SizedBox(width:15),Text('削除')]),
+                  ),
+                ];
               },
-             ),
+              onSelected: (value) async{
+                if(value == "edit"){
+                  
+                  inittodaiarogu(data.sortedDataByDay[targetKey].elementAt(index));
+                  _showTextDialog(context,data.sortedDataByDay[targetKey].elementAt(index));
+                
+                }else if(value == "delete"){
 
-
-              IconButton(
-              icon: const Icon(Icons.delete,color:Colors.grey),
-              onPressed: ()async{
-               showDeleteDialogue(
-                context,
-                data.sortedDataByDay[targetKey].elementAt(index)["subject"],
-                ()async{await ScheduleDatabaseHelper().deleteSchedule(
-                  data.sortedDataByDay[targetKey].elementAt(index)["id"]
+                  showDeleteDialogue(
+                    context,
+                    data.sortedDataByDay[targetKey].elementAt(index)["subject"],
+                    ()async{
+                      await ScheduleDatabaseHelper().deleteSchedule(
+                      data.sortedDataByDay[targetKey].elementAt(index)["id"]
+                      );
+                      ref.read(taskDataProvider).isRenewed = true;
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                      while (ref.read(taskDataProvider).isRenewed != false) {
+                        await Future.delayed(const Duration(microseconds:1));
+                      }
+                      setState((){});
+                    }
                   );
-                  ref.read(taskDataProvider).isRenewed = true;
-                  ref.read(calendarDataProvider.notifier).state = CalendarData();
-                  while (ref.read(taskDataProvider).isRenewed != false) {
-                    await Future.delayed(const Duration(microseconds:1));
-                  }
-                  setState((){});
-                  }
-                );
+
+                }
               },
-             ),
-            
+            ),
           ])
          ])
         ),
-          const SizedBox(height:15)   
-         ]);    
+
+        ]);
         },
         itemCount:
-            data.sortedDataByDay[targetKey].length,
+             data.sortedDataByDay[targetKey].length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       );
@@ -421,7 +373,33 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
    return dayOfWeek;
   }
 
-
+  String weekDayEng(weekday){
+    String dayOfWeek = '';
+      switch (weekday) {
+    case 1:
+      dayOfWeek = 'Mon.';
+      break;
+    case 2:
+      dayOfWeek = 'Tue.';
+      break;
+    case 3:
+      dayOfWeek = 'Wed.';
+      break;
+    case 4:
+      dayOfWeek = 'Thu.';
+      break;
+    case 5:
+      dayOfWeek = 'Fri.';
+      break;
+    case 6:
+      dayOfWeek = 'Sat.';
+      break;
+    case 7:
+      dayOfWeek = 'Sun.';
+      break;
+    }
+   return dayOfWeek;
+  }
 
   Widget taskListLength(fontSize){
     final taskData = ref.watch(taskDataProvider);
@@ -449,6 +427,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     Map<DateTime, List<Map<String, dynamic>>> sortedData = 
     taskData.sortDataByDtEnd(taskData.taskDataList);
 
+
     if(sortedData.keys.contains(widget.target)){
       return ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -456,34 +435,48 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               dateTimeData =
                   Text(
                     sortedData[widget.target]!.elementAt(index)["title"],
-                    style: const TextStyle(color:Colors.grey,fontSize: 13,fontWeight: FontWeight.bold),
+                    style: const TextStyle(color:Colors.grey,fontSize: 15,fontWeight: FontWeight.bold),
                   );
+           DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(sortedData[widget.target]!.elementAt(index)["dtEnd"]);
 
            return  Column(children:[
-            Container(
-             width: SizeConfig.blockSizeHorizontal! *95,
-             padding: const EdgeInsets.all(16.0),
-             decoration: BoxDecoration(
-              color: Colors.white, // コンテナの背景色
-              borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-              boxShadow: [
-               BoxShadow(
-                color:
-                    Colors.grey.withOpacity(0.5), // 影の色と透明度
-                spreadRadius: 2, // 影の広がり
-                blurRadius: 4, // 影のぼかし
-                offset: const Offset(0, 2), // 影の方向（横、縦）
+            Row(children:[
+              const Spacer(),
+
+              Text(dtEnd.hour.toString().padLeft(2,"0") + ":" + dtEnd.minute.toString().padLeft(2,"0"),
+                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize:15),),
+              
+              const Spacer(),
+
+              Container(
+                width: SizeConfig.blockSizeHorizontal! *80,
+                padding: const EdgeInsets.symmetric(vertical:4.0,horizontal:15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                  BoxShadow(
+                    color:
+                        Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2, 
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+                  Text(sortedData[widget.target]!.elementAt(index)["summary"] ?? "(詳細なし)",
+                                style: const TextStyle(color:Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+                  dateTimeData,
+                ]),
               ),
-            ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-              dateTimeData,
-              Text(sortedData[widget.target]!.elementAt(index)["summary"] ?? "(詳細なし)",
-                            style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight: FontWeight.bold),)
+
+            const Spacer(),
+
             ]),
-          ),
+
           const SizedBox(height:15)   
          ]);    
         },
@@ -494,8 +487,14 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       );
 
     }else{
-
-      return  const SizedBox();
+      return Column(children:[
+          SizedBox( height: SizeConfig.blockSizeHorizontal! * 4,),
+          const Text(
+              "課題はありません。",
+              style: TextStyle(fontSize: 20,color: Colors.grey),
+          ),
+           SizedBox( height: SizeConfig.blockSizeHorizontal! * 6,),
+      ]);
     }
   }
 

@@ -1164,7 +1164,7 @@ Widget tagChip(String id, WidgetRef ref){
                       ),
                     ),
             Text(
-              "  " + data["title"],
+              "  " + truncateString(data["title"]),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 15,
@@ -1177,22 +1177,50 @@ Widget tagChip(String id, WidgetRef ref){
 
       }
     }
-  return  Chip(
-          visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
-          labelPadding: EdgeInsets.zero,
-          label: const Text(
-            "！ 削除されたタグ",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-            ),
+  return  Container(
+          height: 25,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[700]!,
+                  spreadRadius: 1,
+                  blurRadius: 0,
+                  offset: const Offset(0, 0)
+                ),
+              ],
           ),
-          backgroundColor: Colors.grey,
-          elevation: 6.0, // 影の大きさ
-          shadowColor: Colors.grey[60], // 影の色
+          padding: const EdgeInsets.only(right:15,left:5),
+          child:Row(children:[
+          Container(
+                      width: 10,
+                      height: 10,
+                      decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+           const Text(
+              " ! 無効なタグ",
+              style:  TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                overflow: TextOverflow.ellipsis
+              ),
+            ),
+          ]),
 
         );
  }
+}
+
+String truncateString(String input) {
+  if (input.length <= 8) {
+    return input;
+  } else {
+    return input.substring(0, 8) + "…";
+  }
 }
 
 void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
