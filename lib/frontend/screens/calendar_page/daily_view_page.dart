@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -536,6 +537,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     provider.isPublic = izuPabu(targetData["isPublic"]);
   }
 
+
   bool izuPabu(int izuPab){
     if(izuPab == 0){
       return false;
@@ -543,6 +545,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       return true;
     }
   }
+
+  String errorCause = "";
 
   Future<void> _showTextDialog(BuildContext context,Map targetData,String title) async {
     final provider = ref.watch(scheduleFormProvider);
@@ -557,7 +561,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         return AlertDialog(
           title: Text(title),
           actions: <Widget>[StatefulBuilder(
-           builder: (BuildContext context, StateSetter setState) {
+           builder: (BuildContext context, StateSetter setoState) {
             ref.watch(scheduleFormProvider.notifier);
 
             String tagcontroller = targetData["tag"];
@@ -569,12 +573,28 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               border:OutlineInputBorder()
               ),
             ),
-          
+
+
+          templateEmptyFlag(ref,
+            Column(children:[
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeVertical! * 0.5,
+              ),
+              addTemplateButton(setoState,titlecontroller),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 80,
+                height: SizeConfig.blockSizeVertical! * 0.5,
+              ),
+            ])
+          ),
+
+
         Row(children:[
          ElevatedButton(
           onPressed: () async {
              dtStartcontroller = await _selectDateMultipul(context,dtStartcontroller,setState) ?? dtStartcontroller;
-             setState((){});
+             setoState((){});
           },
            style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -588,14 +608,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
          Row(children:[
           ElevatedButton(
            onPressed: () {
-           
               Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
                 TimeInputPage(
                  target:widget.target,
                  inputCategory:"startTime",
-                 setState: setState,
+                 setState: setoState,
                 )
               ),
             );
@@ -619,7 +638,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 TimeInputPage(
                  target:widget.target,
                  inputCategory:"endTime",
-                 setState: setState,
+                 setState: setoState,
                 )
               ),
             );
@@ -631,12 +650,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           ),
           timeInputPreview(provider.timeEndController.text)
           ]),
-          
+
+
           tagEmptyFlag(ref,
             Row(children:[         
               ElevatedButton(
               onPressed: (){
-              showTagDialogue(ref, context, setState);
+              showTagDialogue(ref, context, setoState);
               },
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -651,7 +671,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       Row(children:[
           ElevatedButton(
            onPressed: (){
-             setState(() {
+             setoState(() {
                if(provider.isPublic){
                 provider.isPublic = false;
                }else{
@@ -664,73 +684,116 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               ),
            child: const Text("共有時表示",style:TextStyle(color:Colors.white))
           ),
-          isPublicPreview(provider.isPublic)
+          isPublicPreview(provider.isPublic),
           ]),
-
-
-          templateEmptyFlag(ref,
-            Column(children:[
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeVertical! * 0.5,
-              ),
-              addTemplateButton(setState),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                height: SizeConfig.blockSizeVertical! * 0.5,
-              ),
-            ])
-          ),
 
 
           ]);
         },
       ),
 
+      const SizedBox(height:50),
 
-            TextButton(
-              onPressed: () async{
-                if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
-                  print("ボタン無効");
-                }else{
-                  bool boolIsPublic = false;
-                  if(targetData["isPublic"] == 1){boolIsPublic = true;}
 
-                  Map<String,dynamic>newMap = {};
-                  newMap["subject"] = titlecontroller.text;
-                  newMap["startDate"] = dtStartcontroller; 
-                  newMap["startTime"] = provider.timeStartController.text;
-                  newMap["endDate"] = dtStartcontroller;
-                  newMap["endTime"] = provider.timeEndController.text;
-                  newMap["isPublic"] = provider.isPublic;
-                  newMap["publicSubject"] = targetData["publicSubject"];
-                  newMap["tag"] = provider.tagController.text;
-                  newMap["id"] = targetData["id"];
-                  await ScheduleDatabaseHelper().updateSchedule(newMap);
-                  ref.read(taskDataProvider).isRenewed = true;
-                  ref.read(calendarDataProvider.notifier).state = CalendarData();
-                  while (ref.read(taskDataProvider).isRenewed != false) {
-                    await Future.delayed(const Duration(microseconds:1));
+            // TextButton(
+            //   onPressed: () async{
+            //     if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
+            //       print("ボタン無効");
+            //     }else{
+            //       bool boolIsPublic = false;
+            //       if(targetData["isPublic"] == 1){boolIsPublic = true;}
+
+            //       Map<String,dynamic>newMap = {};
+            //       newMap["subject"] = titlecontroller.text;
+            //       newMap["startDate"] = dtStartcontroller; 
+            //       newMap["startTime"] = provider.timeStartController.text;
+            //       newMap["endDate"] = dtStartcontroller;
+            //       newMap["endTime"] = provider.timeEndController.text;
+            //       newMap["isPublic"] = provider.isPublic;
+            //       newMap["publicSubject"] = targetData["publicSubject"];
+            //       newMap["tag"] = provider.tagController.text;
+            //       newMap["id"] = targetData["id"];
+            //       await ScheduleDatabaseHelper().updateSchedule(newMap);
+            //       ref.read(taskDataProvider).isRenewed = true;
+            //       ref.read(calendarDataProvider.notifier).state = CalendarData();
+            //       while (ref.read(taskDataProvider).isRenewed != false) {
+            //         await Future.delayed(const Duration(microseconds:1));
+            //       }
+            //       setState((){});
+            //       Navigator.pop(context);
+            //       if(ref.read(calendarDataProvider).calendarData.last["id"] == 1){
+            //         showTagAndTemplateGuide(context);
+            //       }
+            //     }
+            //   },
+            //   child: const Text('登録'),
+            // ),
+
+
+            ElevatedButton(
+              onPressed: () async {
+
+                  if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
+                    print("ボタン無効");
+                  } else {
+
+                    Map<String,dynamic>newMap = {};
+                      newMap["subject"] = titlecontroller.text;
+                      newMap["startDate"] = dtStartcontroller; 
+                      newMap["startTime"] = provider.timeStartController.text;
+                      newMap["endDate"] = dtStartcontroller;
+                      newMap["endTime"] = provider.timeEndController.text;
+                      newMap["isPublic"] = provider.isPublic;
+                      newMap["publicSubject"] = targetData["publicSubject"];
+                      newMap["tag"] = provider.tagController.text;
+                      newMap["id"] = targetData["id"];
+                    await ScheduleDatabaseHelper().updateSchedule(newMap);
+                      ref.read(taskDataProvider).isRenewed = true;
+                      ref.read(calendarDataProvider.notifier).state = CalendarData();
+                    while (ref.read(taskDataProvider).isRenewed != false) {
+                      await Future.delayed(const Duration(microseconds:1));
+                    }
+                    setState((){});
+                    Navigator.pop(context);
+                    if(ref.read(calendarDataProvider).calendarData.last["id"] == 1){
+                      showTagAndTemplateGuide(context);
                   }
-                  setState((){});
-                  Navigator.pop(context);
                 }
               },
-              child: const Text('登録'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                  (Set<MaterialState> states) {
+                    if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
+                      print("ボタン無効");
+                      return Colors.grey; // ボタンが無効の場合の色
+                    } else {
+                      return MAIN_COLOR;    // ボタンが通常の場合の色
+                    }
+                  }
+                ),
+                fixedSize: MaterialStateProperty.all<Size>(Size(
+                  SizeConfig.blockSizeHorizontal! * 100,
+                  SizeConfig.blockSizeHorizontal! * 7.5,
+                )),
+              ),
+              child:
+                  const Text('登録', style: TextStyle(color: Colors.white)),
             ),
+
+
           ],
         );
       },
     );
   }
 
-  Widget addTemplateButton(StateSetter setosute) {
+  Widget addTemplateButton(StateSetter setosute,TextEditingController titleController) {
     return ElevatedButton(
       onPressed: () {
-        showTemplateDialogue(setosute);
+        showTemplateDialogue(setosute,titleController);
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
+        backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
       ),
       child: const Row(children: [
         Spacer(),
@@ -743,11 +806,14 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   }
 
   bool isConflict(String start , String end){
+    errorCause = "";
     if(returnTagIsBeit(ref.watch(scheduleFormProvider).tagController.text,ref) == 1 && (start == "" || end == "")){
+      errorCause = "*開始時間と終了時間の両方を入力してください。";
       return true;
     }else if(end == ""){
       return false;
     }else if(start == "" && end != ""){
+      errorCause = "*開始時間を入力してください。";
       return true;
     }else{
 
@@ -755,6 +821,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     Duration endTime = Duration(hours: int.parse(end.substring(0,2)), minutes:int.parse(end.substring(3,5)));
 
     if(startTime >= endTime){
+      errorCause = "*開始時を終了時間より前にしてください。";
       return true;
     }else{
       return false;
@@ -849,7 +916,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     return completer.future;
   }
 
-  Future<void> showTemplateDialogue(StateSetter setosute) async {
+  Future<void> showTemplateDialogue(StateSetter setosute, TextEditingController titleController) async {
     final data = ref.read(calendarDataProvider);
     List tempLateMap = data.templateData;
 
@@ -877,17 +944,20 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     itemCount: tempLateMap.length,
                     itemBuilder: (BuildContext context, index) => InkWell(
                       onTap: () async {
-                        setosute(() {
-                          final inputform = ref.watch(scheduleFormProvider);
-                          inputform.scheduleController.text =
-                              data.templateData.elementAt(index)["subject"];
-                          inputform.timeStartController.text =
-                              data.templateData.elementAt(index)["startTime"];
-                          inputform.timeEndController.text =
-                              data.templateData.elementAt(index)["endTime"];
-                          inputform.tagController.text =
-                              data.templateData.elementAt(index)["tag"];
-                        });
+                        
+                        final inputform = ref.watch(scheduleFormProvider);
+                        inputform.scheduleController.text =
+                            data.templateData.elementAt(index)["subject"];
+                        titleController.text =
+                            data.templateData.elementAt(index)["subject"];
+                        inputform.timeStartController.text =
+                            data.templateData.elementAt(index)["startTime"];
+                        inputform.timeEndController.text =
+                            data.templateData.elementAt(index)["endTime"];
+                        inputform.tagController.text =
+                            data.templateData.elementAt(index)["tag"];
+                        setosute((){});
+
                         Navigator.pop(context);
                       },
                       child: Container(
