@@ -1098,7 +1098,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 0:
           content = "アルバイトタグを予定に紐づけて、一目で見込み月収をチェック！\n ＞＞『アルバイト』から";
         case 1:
-          content = "課題いつやるか？ToDoページで管理でしょ \n＞＞『ToDo』から";
+          content = "今日は何時間勉強した？学習記録ページで管理しよう \n＞＞『学習管理』から";
         case 2:
          content = "「このアプリいいね」と君が思うなら\n"+today+"は シェアだ記念日";
            // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
