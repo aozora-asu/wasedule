@@ -82,7 +82,8 @@ Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:[
         TimerView(
-          targetMonthData:data.sortDataByMonth()[thisMonth],
+          targetMonthData: data.sortDataByMonth()[targetMonth],
+          thisMonthData:data.sortDataByMonth()[thisMonth],
           //events:widget.events,
           context:widget.context,
           //snapshot: widget.snapshot,
@@ -556,7 +557,20 @@ void AddNewPage(String targetMonth){
       child:ElevatedButton(
       onPressed: () async{
         if(color == Colors.greenAccent){
-           showTemplateDialogue (targetDayData);
+
+              List<String> newList = targetDayData["plan"];
+                newList.add("ここに入力…");
+                await DataBaseHelper().upDateDB(
+                  targetDayData["date"],
+                  targetDayData["time"], 
+                  targetDayData["schedule"],
+                  newList,
+                  targetDayData["record"], 
+                  targetDayData["timeStamp"]
+                );
+              ref.read(dataProvider.notifier).state = Data();
+              ref.read(dataProvider).isRenewed = true;
+
         }else{
             showImputDialogue(targetDayData);
         } 
@@ -582,7 +596,7 @@ void AddNewPage(String targetMonth){
         if(color == Colors.greenAccent){
           return "  計画 +  ";
         }else{
-          return "  完了 +  ";
+          return "  達成 +  ";
         } 
   }
 
@@ -748,12 +762,12 @@ void AddNewPage(String targetMonth){
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:const  Text("完了アイテムを追加…"),
+          title:const  Text("達成した計画を選択:"),
         actions:[
          Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
-            const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            //const Text("計画から選択:",style:(TextStyle(fontWeight: FontWeight.bold))),
             SizedBox(
               width: double.maxFinite,
               height:listViewHeight(40,notToBeZero(accurateLength(targetDayData["plan"]))),
@@ -767,7 +781,7 @@ void AddNewPage(String targetMonth){
                 },
                 itemBuilder: (BuildContext context, index){
                 if(accurateLength(targetDayData["plan"]) == 0){
-                  return const SizedBox(height:40,child:Center(child:Text("登録されている計画はありません。")));
+                  return const SizedBox(height:40,child:Center(child:Text("この日の計画はありません。")));
                 }else if(targetDayData["plan"].elementAt(index).trim() == ""){
                    return const SizedBox();
                 }else{
@@ -805,7 +819,6 @@ void AddNewPage(String targetMonth){
                   ref.read(dataProvider.notifier).state = Data();
                   ref.read(dataProvider).isRenewed = true;
                   Navigator.pop(context);
-                  showTaskDeleteDialogue(targetDayData); 
                       }
                     );
                   }
@@ -814,31 +827,31 @@ void AddNewPage(String targetMonth){
                 itemCount: targetDayData["plan"].length,
               )
             ),
-            const SizedBox(height:5),
-            const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
-            ElevatedButton(
-            onPressed:()async{
-            List<String> newList = targetDayData["record"];
-            newList.add("ここに入力…");
-            await DataBaseHelper().upDateDB(
-            targetDayData["date"],
-            targetDayData["time"], 
-            targetDayData["schedule"], 
-            targetDayData["plan"], 
-            newList,
-            targetDayData["timeStamp"]
-            );
-            ref.read(dataProvider.notifier).state = Data();
-            ref.read(dataProvider).isRenewed = true;
-            Navigator.pop(context);
-            },
+            // const SizedBox(height:5),
+            // const Text("新規追加:",style:(TextStyle(fontWeight: FontWeight.bold))),
+            // ElevatedButton(
+            // onPressed:()async{
+            // List<String> newList = targetDayData["record"];
+            // newList.add("ここに入力…");
+            // await DataBaseHelper().upDateDB(
+            // targetDayData["date"],
+            // targetDayData["time"], 
+            // targetDayData["schedule"], 
+            // targetDayData["plan"], 
+            // newList,
+            // targetDayData["timeStamp"]
+            // );
+            // ref.read(dataProvider.notifier).state = Data();
+            // ref.read(dataProvider).isRenewed = true;
+            // Navigator.pop(context);
+            // },
             
-            style:const  ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
-              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
-              ),
-            child:const Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
-            )
+            // style:const  ButtonStyle(
+            //   backgroundColor: MaterialStatePropertyAll(Colors.blueAccent),
+            //   minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+            //   ),
+            // child:const Text("+ アイテムを追加…",style:TextStyle(color:Colors.white)),
+            // )
           ]),
         ],
       );

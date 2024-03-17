@@ -172,7 +172,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
                   Text(totalPlanSum.toString() + "個"),
                 ]),
                 Row(children:[
-                  const Text("  「完了」の総数：",style:TextStyle(color:Colors.grey)),
+                  const Text("  「達成」の総数：",style:TextStyle(color:Colors.grey)),
                   Text(totalDoneSum.toString() + "個 "),
                 ]),
                 const Row(children:[
@@ -580,7 +580,7 @@ Widget monthlyLanking(){
       Text(numOfPlanSum(targetMonthData).toString() + "個"),
     ]),
     Row(children:[
-      const Text("  こなしたタスクの総数：",style:TextStyle(color:Colors.grey)),
+      const Text("  うち達成した総数：",style:TextStyle(color:Colors.grey)),
       Text(numOfDoneSum(targetMonthData).toString() + "個 " + donePercentage(targetMonthData)),
     ]),
    LineChartView(targetMonthData:targetMonthData)

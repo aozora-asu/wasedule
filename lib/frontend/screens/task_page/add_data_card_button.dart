@@ -259,43 +259,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
     final taskData = ref.read(taskDataProvider);
     return SingleChildScrollView(
       child: Column(children:[
-        
-        Align(
-          alignment: Alignment.centerLeft,
-          child:Text("プレビュー",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize :SizeConfig.blockSizeHorizontal! *8,
-                color:Colors.white
-            ),
-          ),
-        ),
-          
-        InkWell(
-          onTap: (){
-            descriptionBottomSheet();
-          },
-          child:preview()),
-
-
-        InkWell(
-          onTap: (){
-            descriptionBottomSheet();
-          },
-          child:Align(
-            alignment: Alignment.centerRight,
-            child:Text("タップで詳細表示  ",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize :SizeConfig.blockSizeHorizontal! *3,
-                  color:Colors.white
-              ),
-            ),
-          ),
-        ),
-
-        const Icon(Icons.keyboard_double_arrow_up_rounded,size:75,color:Colors.orange),
-
+ 
      GestureDetector(
         onTap: (){},
         child:Container(
@@ -303,6 +267,8 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
           padding: const EdgeInsets.symmetric(horizontal:20),
           child: Column(
             children: [
+
+            const SizedBox(height:10),
 
               Align(
                 alignment: Alignment.centerLeft,
@@ -446,37 +412,6 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                 ]),
 
-
-              // Container(
-              //     width: SizeConfig.blockSizeHorizontal! * 90,
-              //     height: SizeConfig.blockSizeHorizontal! * 10,
-              //     padding: const EdgeInsets.all(5),
-              //     child: SizedBox(
-              //       width: SizeConfig.blockSizeHorizontal! * 90,
-              //       child: Row(children: [
-              //         Text(
-              //           categoryText(inputForm.titleController.text),
-              //           maxLines: 1,
-              //           overflow: TextOverflow.ellipsis,
-              //         ),
-              //         Container(
-              //           padding: const EdgeInsets.only(
-              //               top: 3, bottom: 3, left: 10, right: 10),
-              //           decoration: BoxDecoration(
-              //               color:
-              //                   categoryColour(inputForm.titleController.text),
-              //               borderRadius: BorderRadius.circular(20)),
-              //           child: Text(inputForm.titleController.text,
-              //               style: TextStyle(
-              //                   fontSize: SizeConfig.blockSizeHorizontal! * 4,
-              //                   fontWeight: FontWeight.w700,
-              //                   color: Colors.white)),
-              //         ),
-              //         const Spacer()
-              //       ]),
-              //     )),
-
-
                 ElevatedButton(
                   onPressed: () async{
                     if (inputForm.dtEndController.text.isEmpty ||
@@ -531,7 +466,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
 
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 3,
+                  height: SizeConfig.blockSizeHorizontal! * 5,
                 ),
 
               ])

@@ -674,7 +674,6 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                               onTap: () {
                                 upDateConfigInfo(tagData, targetKey,
                                     controller.text, _nodeList.indexOf(_node));
-                                print("textController${controller.text}");
                                 node.unfocus();
                               },
                               child: const Text(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/to_do_page/task_progress_indicator.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/study_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/data_receiver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
@@ -11,12 +11,14 @@ import 'dart:async';
 
 class TimerView extends ConsumerStatefulWidget {
   List<Map<String,dynamic>>? targetMonthData;
+  List<Map<String,dynamic>>? thisMonthData;
   // Future<List<Map<String, dynamic>>>? events;
   // AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
   TimerView({
     this.targetMonthData,
+    this.thisMonthData,
     // this.events,
     // required this.snapshot,
     required this.context
@@ -45,15 +47,25 @@ class  _TimerViewState extends ConsumerState<TimerView> {
     super.dispose();
   }
 
-
+  @override
   Widget build(BuildContext context){
   final data = ref.watch(dataProvider);
 
    SizeConfig().init(context);
-   if(widget.targetMonthData == null){
-    return buildTaskProgressIndicator(
-                              widget.context, ref.read(taskDataProvider).taskDataList);
+   if(widget.targetMonthData == null && widget.thisMonthData == null){
+
+    return buildStudyProgressIndicator(widget.context, [],[]);
+
+   }else if(widget.targetMonthData != null && widget.thisMonthData == null){
+
+    return buildStudyProgressIndicator(widget.context, widget.targetMonthData!,[]);
+
+   }else if(widget.targetMonthData == null && widget.thisMonthData != null){
+
+    return buildStudyProgressIndicator(widget.context,[],widget.thisMonthData!);
+
    }else{
+
     data.generateIsTimerList(widget.targetMonthData!);
     return SizedBox(
       child:ListView.builder(itemBuilder:(context,index){
@@ -102,7 +114,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
                 SizedBox(width:20),
                 Text("記録に加算して停止",style:TextStyle(color:Colors.white)),
                 Spacer(),
-                ]), // ボタンのテキスト
+                ]),
           ),
           ElevatedButton(
               onPressed: () {
@@ -128,8 +140,10 @@ class  _TimerViewState extends ConsumerState<TimerView> {
          );
         }else{
          if(index == 1 && data.isTimerList.values.contains(true) == false){
-         return buildTaskProgressIndicator(
-                              widget.context,  ref.read(taskDataProvider).taskDataList);
+         return buildStudyProgressIndicator(
+                              widget.context,
+                              widget.targetMonthData!,
+                              widget.thisMonthData!);
          }else{
           return const SizedBox();
          }
@@ -163,14 +177,14 @@ class  _TimerViewState extends ConsumerState<TimerView> {
       SizedBox(height:SizeConfig.blockSizeVertical! *4),
       Text(
       hours.toString() + "h " + fixedMinutes + "m " + fixedSeconds + "s",
-      style: TextStyle(fontSize: 60,fontWeight: FontWeight.bold),
+      style:const TextStyle(fontSize: 60,fontWeight: FontWeight.bold),
      ),
      SizedBox(height:SizeConfig.blockSizeVertical! *4),
      Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children:[
-      Text("+ この日の勉強記録 " + formattedDuration + " = ",style: TextStyle(color:Colors.grey,fontSize:17),),
-      Text(formattedEstSum + " ↓",style: TextStyle(color:Colors.redAccent,fontSize:17,fontWeight: FontWeight.bold),),
+      Text("+ この日の勉強記録 " + formattedDuration + " = ",style:const TextStyle(color:Colors.grey,fontSize:17),),
+      Text(formattedEstSum + " ↓",style:const TextStyle(color:Colors.redAccent,fontSize:17,fontWeight: FontWeight.bold),),
       ])
      
     ]);
@@ -261,12 +275,12 @@ class  _TimerViewState extends ConsumerState<TimerView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:Text("お疲れさまでした！",style: TextStyle(fontWeight: FontWeight.bold),),
+          title:const Text("お疲れさまでした！",style: TextStyle(fontWeight: FontWeight.bold),),
           content:
             Row(
              crossAxisAlignment: CrossAxisAlignment.start, 
              children:[
-              Icon(Icons.edit_document,color: Colors.greenAccent,size:40),
+              const Icon(Icons.edit_document,color: Colors.greenAccent,size:40),
               Expanded(child:
                Text(
                 "今日の勉強時間 " +
@@ -286,10 +300,11 @@ class  _TimerViewState extends ConsumerState<TimerView> {
             onPressed:(){
              Navigator.pop(context);
             },
-            child: Row(children:[Spacer(),Text("OK",style:TextStyle(color:Colors.white)),Spacer(),]),
-            style: ButtonStyle(
+            
+            style:const ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
               ),
+            child:const Row(children:[Spacer(),Text("OK",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),
           ]
         );

@@ -79,16 +79,6 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
           ),
         ),
           
-          Row(children: [
-            const SizedBox(width: 7),
-            ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("戻る", style: TextStyle(color: Colors.white)))
-          ])
         ])
       )
     );

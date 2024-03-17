@@ -1471,7 +1471,6 @@ Widget taskIcon(Color color,double size){
 }
 
 Widget scheduleEmptyFlag(WidgetRef ref, Widget widget){
-  print(ref.read(calendarDataProvider).calendarData);
   if(ref.read(calendarDataProvider).calendarData.isEmpty){
    
     return const SizedBox();
