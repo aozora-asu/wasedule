@@ -247,10 +247,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getConfigData(_getConfigDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
-                      
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
-
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
@@ -277,9 +275,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).sortDataByDay();
                       return calendarBody();
-
                     } else {
-
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
                         displayDB();
@@ -325,19 +321,18 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                   child: Column(children: [
                     Row(children: [
-                      tagEmptyFlag(ref,
+                      tagEmptyFlag(
+                        ref,
                         expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ArbeitStatsPage(
+                                builder: (context) => ArbeitStatsPage(
                                       targetMonth: targetMonth,
-                            )),
+                                    )),
                           );
                         }),
                       )
-                      
-
                     ]),
 
                     const SizedBox(height: 15),
@@ -435,8 +430,8 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
-      switchWidget(tipsAndNewsPanel(randomNumber, ""),
-            searchConfigData("tips")),
+      switchWidget(
+          tipsAndNewsPanel(randomNumber, ""), searchConfigData("tips")),
       Row(children: [
         const Spacer(),
         Padding(
@@ -448,8 +443,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => SettingsPage()),
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
               },
               child: const Text("画面カスタマイズ",
@@ -498,34 +492,33 @@ class _CalendarState extends ConsumerState<Calendar> {
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
                           iconSize: 20),
-                      doNotContainScreenShot(
-                        scheduleEmptyFlag(ref,
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 40,
-                            height: SizeConfig.blockSizeVertical! * 4,
-                            child: TextButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TagAndTemplatePage()),
-                                );
-                              },
-                              icon: const Icon(Icons.tag,
-                                  size: 15, color: Colors.white),
-                                  label: const Text('タグとテンプレート',
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  style: const ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll(Colors.blueAccent),
-                                  ),
+                      doNotContainScreenShot(scheduleEmptyFlag(
+                        ref,
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 40,
+                          height: SizeConfig.blockSizeVertical! * 4,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TagAndTemplatePage()),
+                              );
+                            },
+                            icon: const Icon(Icons.tag,
+                                size: 15, color: Colors.white),
+                            label: const Text('タグとテンプレート',
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.blueAccent),
                             ),
                           ),
-                        )
-                      ),
+                        ),
+                      )),
                       showOnlyScreenShot(LogoAndTitle(size: 7))
                     ]),
                     SizedBox(
@@ -775,51 +768,53 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
-  List<bool>isHoliday =[];
+  List<bool> isHoliday = [];
   List<int> holidayDay = [];
 
-  void generateHoliday(){
-    isHoliday =[];
+  void generateHoliday() {
+    isHoliday = [];
     holidayDay = [];
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-      int.parse(targetMonth.substring(5, 7)));
-    var holidaysOfMonth = NHolidayJp.getByMonth(targetmonthDT.year,targetmonthDT.month);
-    
-    for(int i = 0; i < holidaysOfMonth.length; i++){
-     if(targetmonthDT.month >= 10){
-      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(3,5)));
-     }else{
-      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(2,4)));
-     }
+        int.parse(targetMonth.substring(5, 7)));
+    var holidaysOfMonth =
+        NHolidayJp.getByMonth(targetmonthDT.year, targetmonthDT.month);
+
+    for (int i = 0; i < holidaysOfMonth.length; i++) {
+      if (targetmonthDT.month >= 10) {
+        holidayDay.add(
+            int.parse(holidaysOfMonth.elementAt(i).toString().substring(3, 5)));
+      } else {
+        holidayDay.add(
+            int.parse(holidaysOfMonth.elementAt(i).toString().substring(2, 4)));
+      }
     }
 
-    for(int i = 0; i < LengthOfMonth(targetMonth) +1; i++){
-      if(holidayDay.contains(i)){
+    for (int i = 0; i < LengthOfMonth(targetMonth) + 1; i++) {
+      if (holidayDay.contains(i)) {
         isHoliday.add(true);
-      }else{
+      } else {
         isHoliday.add(false);
       }
     }
-
   }
 
-  Widget holidayName(DateTime target){
-    if(target.month == int.parse(targetMonth.substring(5))&&
-    searchConfigData("holidayName") == 1){
-      if(isHoliday.elementAt(target.day)){
-        return Column(children:[Text(
-          NHolidayJp.getName(target.year,target.month,target.day),
-          style: const TextStyle(color: Colors.red,fontSize:10),
+  Widget holidayName(DateTime target) {
+    if (target.month == int.parse(targetMonth.substring(5)) &&
+        searchConfigData("holidayName") == 1) {
+      if (isHoliday.elementAt(target.day)) {
+        return Column(children: [
+          Text(
+            NHolidayJp.getName(target.year, target.month, target.day),
+            style: const TextStyle(color: Colors.red, fontSize: 10),
           ),
-        const SizedBox(height:5)  
+          const SizedBox(height: 5)
         ]);
-      }else{
+      } else {
         return const SizedBox();
       }
-    }else{
-        return const SizedBox();
+    } else {
+      return const SizedBox();
     }
-
   }
 
   Widget generateCalendarCells(String dayOfWeek) {
@@ -861,11 +856,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                         holidayName(target),
                       ])),
               onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context){
-                  return DailyViewPage(target: target);
-                });
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DailyViewPage(target: target);
+                    });
               },
             );
           },
@@ -876,12 +871,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         ));
   }
 
-
-
   Color cellColour(DateTime target) {
-    
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-      int.parse(targetMonth.substring(5, 7)));
+        int.parse(targetMonth.substring(5, 7)));
 
     if (target.year == DateTime.now().year &&
         target.month == DateTime.now().month &&
@@ -889,7 +881,8 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const Color.fromRGBO(255, 204, 204, 1);
     } else if (target.month != targetmonthDT.month) {
       return const Color.fromARGB(255, 242, 242, 242);
-    } else if(isHoliday.elementAt(target.day) &&searchConfigData("holidayPaint") == 1){
+    } else if (isHoliday.elementAt(target.day) &&
+        searchConfigData("holidayPaint") == 1) {
       return const Color.fromARGB(255, 255, 239, 239);
     } else if (target.weekday == 6 && searchConfigData("holidayPaint") == 1) {
       return const Color.fromARGB(255, 227, 238, 255);
@@ -1100,13 +1093,13 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 1:
           content = "今日は何時間勉強した？学習記録ページで管理しよう \n＞＞『学習管理』から";
         case 2:
-         content = "「このアプリいいね」と君が思うなら\n"+today+"は シェアだ記念日";
-           // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
+          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+        // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
         case 3:
           content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
         case 4:
-          content = "「このアプリいいね」と君が思うなら\n"+today+"は シェアだ記念日"; 
-          //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
+          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+        //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
         case 5:
           content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
         case 6:
@@ -1280,46 +1273,45 @@ class _CalendarState extends ConsumerState<Calendar> {
             return Column(children: [
               InkWell(
                 onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context){
-                  return DailyViewPage(target: target);
-                }
-                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DailyViewPage(target: target);
+                      });
                 },
-                child:Container(
-                  width: SizeConfig.blockSizeHorizontal! * 95,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Row(children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(children: [
-                            dateTimeData,
-                            const SizedBox(width: 15),
+                child: Container(
+                    width: SizeConfig.blockSizeHorizontal! * 95,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Row(children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              dateTimeData,
+                              const SizedBox(width: 15),
+                              SizedBox(
+                                  child: tagChip(
+                                      targetDayData.elementAt(index)["tag"],
+                                      ref))
+                            ]),
                             SizedBox(
-                                child: tagChip(
-                                    targetDayData.elementAt(index)["tag"], ref))
+                                width: SizeConfig.blockSizeHorizontal! * 70,
+                                child: Text(
+                                  data.sortedDataByDay[targetKey]
+                                      .elementAt(index)["subject"],
+                                  overflow: TextOverflow.clip,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ))
                           ]),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 70,
-                              child: Text(
-                                data.sortedDataByDay[targetKey]
-                                    .elementAt(index)["subject"],
-                                overflow: TextOverflow.clip,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                        ))
-                      ]),
-                    ])
-                  ),
-                ),
+                    ])),
+              ),
               const SizedBox(height: 15)
             ]);
           },
@@ -1452,45 +1444,34 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 }
 
-Widget calendarIcon(Color color,double size){
-  return 
-    Icon(
-      Icons.calendar_month,
-      color:color,
-      size: size
-    );
+Widget calendarIcon(Color color, double size) {
+  return Icon(Icons.calendar_month, color: color, size: size);
 }
 
-Widget taskIcon(Color color,double size){
-  return 
-    Icon(
-      Icons.check,
-      color:color,
-      size: size
-    );
+Widget taskIcon(Color color, double size) {
+  return Icon(Icons.check, color: color, size: size);
 }
 
-Widget scheduleEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).calendarData.isEmpty){
-   
+Widget scheduleEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).calendarData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }
 
-Widget tagEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).tagData.isEmpty){
+Widget tagEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).tagData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }
 
-Widget templateEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).templateData.isEmpty){
+Widget templateEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).templateData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }
