@@ -321,76 +321,51 @@ class _CalendarState extends ConsumerState<Calendar> {
                     right: SizeConfig.blockSizeHorizontal! * 2.5,
                   ),
                   child: Column(children: [
-
-                    Row(children: [
-                      tagEmptyFlag(
-                        ref,
-                        expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ArbeitStatsPage(
-                                      targetMonth: targetMonth,
-                                    )),
-
-
-
-                    menuList(
-                      Icons.calendar_month,
-                      "カレンダー",
-                      [
-
+                    menuList(Icons.calendar_month, "カレンダー", [
                       menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(initIndex: 2,)
-                          ),
+                              builder: (context) => SettingsPage(
+                                    initIndex: 2,
+                                  )),
                         );
                       }),
-
-
                       menuListChild(Icons.backup, "バックアップ", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(initIndex: 2,)
-                          ),
+                              builder: (context) => SettingsPage(
+                                    initIndex: 2,
+                                  )),
                         );
                       }),
-
-                      
-                      scheduleEmptyFlag(ref,
-                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ", () {
-                            Navigator.push(
+                      scheduleEmptyFlag(
+                        ref,
+                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+                            () {
+                          Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SnsContentsPage()),
-
+                            MaterialPageRoute(
+                                builder: (context) => SnsContentsPage()),
                           );
-                        }), 
+                        }),
                       )
-
-
                     ]),
-
                     const SizedBox(height: 15),
-
-                    tagEmptyFlag(ref,
+                    tagEmptyFlag(
+                      ref,
                       expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ArbeitStatsPage(
+                              builder: (context) => ArbeitStatsPage(
                                     targetMonth: targetMonth,
-                          )),
+                                  )),
                         );
                       }),
                     ),
-
-
                     const SizedBox(height: 15),
-
-
                     Row(children: [
                       menuPanel(Icons.link_rounded, "Moodle URL登録", () {
                         Navigator.push(
@@ -409,15 +384,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                               builder: (context) => HowToUsePage()),
                         );
                       })
-
-
                     ]),
-
                     const SizedBox(height: 15),
-
-                    menuList(
-                      Icons.info,
-                      "その他",[
+                    menuList(Icons.info, "その他", [
                       menuListChild(Icons.info, "サポート", () {
                         Navigator.push(
                           context,
@@ -435,9 +404,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               builder: (context) => SettingsPage()),
                         );
                       }),
-                    ]
-
-                  ),
+                    ]),
                     const SizedBox(height: 15),
                     const SizedBox(height: 30),
                   ]))
@@ -938,20 +905,19 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (sortedData[target] == null) {
       return const SizedBox();
     } else {
-    return Container(
-        decoration: const BoxDecoration(
-          color: Colors.redAccent,
-          shape: BoxShape.circle,
-        ),
-        padding: EdgeInsets.all(fontSize / 3),
-        child: Text(
-          (sortedData[target]?.length ?? 0).toString(),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: fontSize),
-        )
-      );
+      return Container(
+          decoration: const BoxDecoration(
+            color: Colors.redAccent,
+            shape: BoxShape.circle,
+          ),
+          padding: EdgeInsets.all(fontSize / 3),
+          child: Text(
+            (sortedData[target]?.length ?? 0).toString(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: fontSize),
+          ));
     }
   }
 
@@ -1109,31 +1075,28 @@ class _CalendarState extends ConsumerState<Calendar> {
     );
   }
 
-
   Widget menuListChild(IconData icon, String text, void Function() ontap) {
     return InkWell(
-      onTap: ontap,
-      child:Column(children:[
-       Container(
-        width: SizeConfig.blockSizeHorizontal! * 95,
-        height: SizeConfig.blockSizeVertical! * 6,
-        color: Colors.white,
-        child: 
-          Center(
-            child: Row(children: [
-              const SizedBox(width:30),
-              Icon(icon, color: MAIN_COLOR, size: 40),
-              const Spacer(),
-              Text(text, style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,)),
-              const Spacer(),
-          ])  
-        )
-      ),
-      const Divider(height:1)
-      ])
-    );
+        onTap: ontap,
+        child: Column(children: [
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              height: SizeConfig.blockSizeVertical! * 6,
+              color: Colors.white,
+              child: Center(
+                  child: Row(children: [
+                const SizedBox(width: 30),
+                Icon(icon, color: MAIN_COLOR, size: 40),
+                const Spacer(),
+                Text(text,
+                    style: TextStyle(
+                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                    )),
+                const Spacer(),
+              ]))),
+          const Divider(height: 1)
+        ]));
   }
-
 
   Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
     return Container(
@@ -1150,31 +1113,33 @@ class _CalendarState extends ConsumerState<Calendar> {
             ),
           ],
         ),
-        child: Column(children:[
-            SizedBox(
-              height:SizeConfig.safeBlockVertical! *2,
-              child:Row(children:[
-                const SizedBox(width:10),
-                Icon(headerIcon,size:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),
-                Text(headerText,style:TextStyle(fontSize:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),)
-              ])
-            ),
-            const Divider(height:1),
-            ListView.builder(
-              itemBuilder: (context,index){
-                return child.elementAt(index);
-              },
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: child.length,
+        child: Column(children: [
+          SizedBox(
+              height: SizeConfig.safeBlockVertical! * 2,
+              child: Row(children: [
+                const SizedBox(width: 10),
+                Icon(headerIcon,
+                    size: SizeConfig.safeBlockVertical! * 1.5,
+                    color: Colors.grey),
+                Text(
+                  headerText,
+                  style: TextStyle(
+                      fontSize: SizeConfig.safeBlockVertical! * 1.5,
+                      color: Colors.grey),
+                )
+              ])),
+          const Divider(height: 1),
+          ListView.builder(
+            itemBuilder: (context, index) {
+              return child.elementAt(index);
+            },
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: child.length,
           ),
-          SizedBox(height:SizeConfig.safeBlockVertical! *2),
-        ])
-       
-    );
+          SizedBox(height: SizeConfig.safeBlockVertical! * 2),
+        ]));
   }
-
-
 
   Widget switchWidget(Widget widget, int isVisible) {
     if (isVisible == 1) {
