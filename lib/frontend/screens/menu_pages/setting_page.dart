@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
@@ -11,6 +12,12 @@ import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 
 class SettingsPage extends StatelessWidget {
+  int? initIndex;
+  SettingsPage({
+    this.initIndex
+  });
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,14 +43,18 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      body: const MyWidget(),
+      body: MyWidget(initIndex: initIndex ?? 0),
     );
   }
 }
 
 //サイドメニュー//////////////////////////////////////////////////////
 class MyWidget extends ConsumerStatefulWidget {
-  const MyWidget({super.key});
+  int initIndex = 0;
+  
+  MyWidget({
+    required this.initIndex,
+    super.key});
 
   @override
   ConsumerState<MyWidget> createState() => _MyWidgetState();
@@ -51,6 +62,12 @@ class MyWidget extends ConsumerStatefulWidget {
 
 class _MyWidgetState extends ConsumerState<MyWidget> {
   int _selectedIndex = 0;
+
+    @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +93,10 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
               //   icon: Icon(Icons.people),
               //   label: Text('フレンド'),
               // ),
+              NavigationRailDestination(
+                icon: Icon(Icons.backup),
+                label: Text('バックアップ'),
+              ),
             ],
             selectedIndex: _selectedIndex,
             onDestinationSelected: (index) {
@@ -149,8 +170,16 @@ class _MainContentsState extends ConsumerState<MainContents> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-//通知の設定画面//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     switch (widget.index) {
+
+      case 0:
+        return Expanded(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: calendarBody(),
+        ));
+
       case 1:
         return Expanded(
             child: Padding(
@@ -158,37 +187,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child: notificationBody(),
         ));
 
-//フレンドの設定画面///////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //   case 2:
-      // return Expanded(
-      //   child: Stack(
-      //       children: [
-      //         const Scaffold(
-      //           backgroundColor: BACKGROUND_COLOR,
-      //           body: Center(
-      //             child: Text('フレンドの設定…'),
-      //           ),
-      //         ),
-      //         Positioned(
-      //           top: 7,
-      //           left: 10,
-      //           child:  Text('フレンド設定…',
-      //           style:TextStyle(
-      //     fontSize: SizeConfig.blockSizeHorizontal! *7,
-      //     fontWeight: FontWeight.bold
-      //          ),
-      //      　),
-      //      ),
-      //    ],
-      //  ),
-      //);
-
-      default:
-        return Expanded(
+      default: return Expanded(
             child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: calendarBody(),
+          child: backupBody(),
         ));
+
+
     }
   }
 
@@ -250,6 +255,60 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   ]))
 
         ]));
+  }
+
+  Widget notificationBody() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        '通知設定…',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 10),
+      Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.all(7.5),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Text(
+            //   '通知のON/OFF',
+            //   style: TextStyle(
+            //       fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            //       fontWeight: FontWeight.bold),
+            // ),
+            // const SizedBox(height: 5),
+            // configSwitch("課題の通知(毎朝8時)", "tips"),
+            // const SizedBox(height: 5),
+            // configSwitch("予定の通知(毎朝8時)", "tips"),
+          ]))
+    ]);
+  }
+
+  Widget backupBody() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'データのバックアップ',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 10),
+      Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.all(7.5),
+          child:
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("・今お使いの端末から一度サーバー上にデータをバックアップし、他の端末などにダウンロードしていただけます。"),
+                  const Text("・バックアップに際して、発行されるユーザーIDが必要です。スクリーンショットなどで保管しておいてください。"
+                            ,style:TextStyle(color:Colors.red)),
+                  const SizedBox(height:10),
+                  backUpUploadButton(),
+                  backUpDownloadButton()
+          ]))
+    ]);
   }
 
   Widget configSwitch(String configText, String widgetName) {
@@ -386,31 +445,144 @@ class _MainContentsState extends ConsumerState<MainContents> {
     }
   }
 
-  Widget notificationBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        '通知設定…',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
-            fontWeight: FontWeight.bold),
+  Widget backUpUploadButton(){
+    return ElevatedButton(
+      onPressed: (){
+        String id = "2A8D24E9023F2DAC33";//仮ID
+
+
+        //ここにバックアップの実行処理を書き込む（アップロード）
+
+
+        showBackUpDoneDialogue(id);
+      },
+      style:const ButtonStyle(
+        backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
       ),
-      const SizedBox(height: 10),
-      Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.all(7.5),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // Text(
-            //   '通知のON/OFF',
-            //   style: TextStyle(
-            //       fontSize: SizeConfig.blockSizeHorizontal! * 4,
-            //       fontWeight: FontWeight.bold),
-            // ),
-            // const SizedBox(height: 5),
-            // configSwitch("課題の通知(毎朝8時)", "tips"),
-            // const SizedBox(height: 5),
-            // configSwitch("予定の通知(毎朝8時)", "tips"),
-          ]))
-    ]);
+      child:const Row(children:[
+        Icon(Icons.backup,color:Colors.white),
+        SizedBox(width:20),
+        Text("データをバックアップ",style:TextStyle(color:Colors.white))
+      ])
+    );
   }
+
+  void showBackUpDoneDialogue(String id){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title:const Text('バックアップ完了'),
+        actions: <Widget>[
+          const Text("バックアップの復元に際して、こちらのユーザーIDが必要です。スクリーンショットなどで保管しておいてください。"
+          ,style:TextStyle(color:Colors.red)),
+          const SizedBox(height:10),
+          const Align(alignment: Alignment.centerLeft, child:Text("ユーザーID:")),
+          Text(id,style:const TextStyle(fontSize:25,fontWeight:FontWeight.bold)),
+          okButton(context,500.0)
+        ],
+      );
+    },
+   );
+  }
+
+
+  Widget backUpDownloadButton(){
+    return ElevatedButton(
+      onPressed: (){
+        showDownloadConfirmDialogue();
+      },
+      style:const ButtonStyle(
+        backgroundColor:MaterialStatePropertyAll(ACCENT_COLOR),
+      ),
+      child:const Row(children:[
+        Icon(Icons.downloading_outlined,color:Colors.white),
+        SizedBox(width:20),
+        Text("バックアップを復元",style:TextStyle(color:Colors.white))
+      ])
+    );
+  }
+
+  void showDownloadConfirmDialogue(){
+    TextEditingController idController = TextEditingController();
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title:const Text('バックアップを復元しますか？'),
+        actions: <Widget>[
+          const Align(alignment: Alignment.centerLeft, 
+          child:Text("ダウンロードを行うと、サーバーにバックアップしたデータが全てあなたの端末へ追加されます。"
+          ,style:TextStyle(color:Colors.red))),
+          const SizedBox(height:10),
+          CupertinoTextField(
+            controller: idController,
+            placeholder: 'IDを入力',
+            onChanged:(value){setState((){});},
+          ),
+          const SizedBox(height:10),
+          ElevatedButton(
+            onPressed: (){
+              String id = idController.text;
+              if(id.isNotEmpty){
+
+
+              //ここにバックアップの実行処理を書き込む（ダウンロード）
+
+
+                Navigator.pop(context);
+                showDownloadDoneDialogue();
+              }else{
+                showDownloadFailDialogue();
+              }
+            },
+            style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR)
+            ),
+            child:const Row(children:[
+              Icon(Icons.downloading_outlined,color:Colors.white),
+              SizedBox(width:20),
+              Text("ダウンロード実行",style:TextStyle(color:Colors.white))
+            ])
+          )
+        ],
+      );
+    },
+   );
+  }
+
+    void showDownloadDoneDialogue(){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title:const Text('ダウンロード完了'),
+        actions: <Widget>[
+          const Align(alignment: Alignment.centerLeft, 
+          child:Text("データが復元されました！")),
+          const SizedBox(height:10),
+          okButton(context,500.0)
+        ],
+      );
+    },
+   );
+  }
+
+   void showDownloadFailDialogue(){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title:const Text('ダウンロード失敗'),
+        actions: <Widget>[
+          const Align(alignment: Alignment.centerLeft, 
+          child:Text("データが復元できませんでした。IDが無効です。")),
+          const SizedBox(height:10),
+          okButton(context,500.0)
+        ],
+      );
+    },
+   );
+  }
+
 }
