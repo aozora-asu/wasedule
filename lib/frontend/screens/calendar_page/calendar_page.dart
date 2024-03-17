@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
@@ -324,23 +325,61 @@ class _CalendarState extends ConsumerState<Calendar> {
                     right: SizeConfig.blockSizeHorizontal! * 2.5,
                   ),
                   child: Column(children: [
-                    Row(children: [
-                      tagEmptyFlag(ref,
-                        expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ArbeitStatsPage(
-                                      targetMonth: targetMonth,
-                            )),
-                          );
-                        }),
-                      )
-                      
 
+
+                    menuList(
+                      Icons.calendar_month,
+                      "カレンダー",
+                      [
+
+                      menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsPage(initIndex: 2,)
+                          ),
+                        );
+                      }),
+
+
+                      menuListChild(Icons.backup, "バックアップ", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsPage(initIndex: 2,)
+                          ),
+                        );
+                      }),
+
+                      
+                      scheduleEmptyFlag(ref,
+                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ", () {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SnsContentsPage()),
+                          );
+                        }), 
+                      )
+                    
                     ]),
 
                     const SizedBox(height: 15),
+
+                    tagEmptyFlag(ref,
+                      expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ArbeitStatsPage(
+                                    targetMonth: targetMonth,
+                          )),
+                        );
+                      }),
+                    ),
+
+
+                    const SizedBox(height: 15),
+
 
                     Row(children: [
                       menuPanel(Icons.link_rounded, "Moodle URL登録", () {
@@ -360,21 +399,16 @@ class _CalendarState extends ConsumerState<Calendar> {
                               builder: (context) => HowToUsePage()),
                         );
                       })
-                      // menuPanel(
-                      //   Icons.ios_share_rounded,
-                      //   "SNS共有コンテンツ",
-                      //   () {
-                      //     Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(builder: (context) => SnsContentsPage()),
-                      //   );
-                      // }),
+
+
                     ]),
 
                     const SizedBox(height: 15),
 
-                    Row(children: [
-                      menuPanel(Icons.info, "サポート", () {
+                    menuList(
+                      Icons.info,
+                      "その他",[
+                      menuListChild(Icons.info, "サポート", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -384,29 +418,17 @@ class _CalendarState extends ConsumerState<Calendar> {
                       SizedBox(
                         width: SizeConfig.blockSizeHorizontal! * 5,
                       ),
-                      menuPanel(Icons.settings, "設定", () {
+                      menuListChild(Icons.settings, "設定", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => SettingsPage()),
                         );
                       }),
-                    ]),
+                    ]
 
+                  ),
                     const SizedBox(height: 15),
-
-                    // Row(children:[
-                    //   expandedMenuPanel(
-                    //     Icons.school,
-                    //     "使い方ガイド",
-                    //     () {
-                    //       Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => HowToUsePage()),
-                    //     );
-                    //   })
-                    // ]),
-
                     const SizedBox(height: 30),
                   ]))
             ],
@@ -908,19 +930,20 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (sortedData[target] == null) {
       return const SizedBox();
     } else {
-      return Container(
-          decoration: const BoxDecoration(
-            color: Colors.redAccent,
-            shape: BoxShape.circle,
-          ),
-          padding: EdgeInsets.all(fontSize / 3),
-          child: Text(
-            (sortedData[target]?.length ?? 0).toString(),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: fontSize),
-          ));
+    return Container(
+        decoration: const BoxDecoration(
+          color: Colors.redAccent,
+          shape: BoxShape.circle,
+        ),
+        padding: EdgeInsets.all(fontSize / 3),
+        child: Text(
+          (sortedData[target]?.length ?? 0).toString(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: fontSize),
+        )
+      );
     }
   }
 
@@ -1077,6 +1100,73 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
     );
   }
+
+
+  Widget menuListChild(IconData icon, String text, void Function() ontap) {
+    return InkWell(
+      onTap: ontap,
+      child:Column(children:[
+       Container(
+        width: SizeConfig.blockSizeHorizontal! * 95,
+        height: SizeConfig.blockSizeVertical! * 6,
+        color: Colors.white,
+        child: 
+          Center(
+            child: Row(children: [
+              const SizedBox(width:30),
+              Icon(icon, color: MAIN_COLOR, size: 40),
+              const Spacer(),
+              Text(text, style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,)),
+              const Spacer(),
+          ])  
+        )
+      ),
+      const Divider(height:1)
+      ])
+    );
+  }
+
+
+  Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
+    return Container(
+        width: SizeConfig.blockSizeHorizontal! * 95,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              spreadRadius: 2, // 影の広がり
+              blurRadius: 3, // ぼかしの強さ
+              offset: const Offset(0, 3), // 影の方向（横、縦）
+            ),
+          ],
+        ),
+        child: Column(children:[
+            SizedBox(
+              height:SizeConfig.safeBlockVertical! *2,
+              child:Row(children:[
+                const SizedBox(width:10),
+                Icon(headerIcon,size:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),
+                Text(headerText,style:TextStyle(fontSize:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),)
+              ])
+            ),
+            const Divider(height:1),
+            ListView.builder(
+              itemBuilder: (context,index){
+                return child.elementAt(index);
+              },
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: child.length,
+          ),
+          SizedBox(height:SizeConfig.safeBlockVertical! *2),
+        ])
+       
+    );
+  }
+
+
 
   Widget switchWidget(Widget widget, int isVisible) {
     if (isVisible == 1) {
