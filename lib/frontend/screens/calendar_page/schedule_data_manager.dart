@@ -17,6 +17,8 @@ class CalendarDataNotifier extends StateNotifier<CalendarData> {
   }
 }
 
+  bool hasDialogShown = false;
+  
 class CalendarData {
   var calendarData = [];
   var templateData = [];
@@ -25,6 +27,7 @@ class CalendarData {
   var configData = [];
   var sortedDataByDay = {};
   var sortedDataByMonth = {};
+
   CalendarData();
 
   void getData(List<Map<String, dynamic>> data) {

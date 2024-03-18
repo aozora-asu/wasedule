@@ -12,7 +12,9 @@ import '../screens/task_page/data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
 class AppPage extends ConsumerStatefulWidget {
-  const AppPage({
+  int ? initIndex;
+  AppPage({
+    this.initIndex,
     Key? key,
   }) : super(key: key);
   @override
@@ -20,7 +22,14 @@ class AppPage extends ConsumerStatefulWidget {
 }
 
 class _AppPageState extends ConsumerState<AppPage> {
-  int _currentIndex = 0;
+  int _currentIndex =0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initIndex ?? 0;
+  }
+
 
   void _onItemTapped(int index) {
     ref.read(taskDataProvider).isInit = true;

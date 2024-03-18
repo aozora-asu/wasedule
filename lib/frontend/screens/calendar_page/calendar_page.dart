@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 
@@ -216,8 +218,31 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
+  void _showTutorial(BuildContext context) async {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getBool('hasCompletedIntro') != true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const IntroPage(),
+          fullscreenDialog: true,
+        ),
+      );
+      pref.setBool('hasCompletedIntro', true);
+    }else if(pref.getBool('hasCompletedCalendarIntro') != true){
+      showScheduleGuide(context);
+      pref.setBool('hasCompletedCalendarIntro', true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _showTutorial(context);
+      }  
+    );
+
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
     return Scaffold(
@@ -275,6 +300,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .read(calendarDataProvider)
                           .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).sortDataByDay();
+
                       return calendarBody();
                     } else {
                       if (ref.read(taskDataProvider).isRenewed) {
@@ -417,6 +443,8 @@ class _CalendarState extends ConsumerState<Calendar> {
           const SizedBox(width: 10),
           calendarShareButton(context),
         ]));
+
+    
   }
 
   AssetImage calendarBackGroundImage() {
@@ -1137,8 +1165,11 @@ class _CalendarState extends ConsumerState<Calendar> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: child.length,
           ),
-          SizedBox(height: SizeConfig.safeBlockVertical! * 2),
-        ]));
+          SizedBox(height:SizeConfig.safeBlockVertical! *2),
+        ])
+       
+    );
+    
   }
 
   Widget switchWidget(Widget widget, int isVisible) {
@@ -1512,6 +1543,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
     return result;
   }
+
 }
 
 Widget calendarIcon(Color color, double size) {
