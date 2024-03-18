@@ -1,5 +1,241 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
+import 'package:introduction_screen/introduction_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class IntroPage extends StatefulWidget {
+  const IntroPage({Key? key}) : super(key: key);
+
+  @override
+  State<IntroPage> createState() => _IntroPageState();
+}
+
+class _IntroPageState extends State<IntroPage> {
+  PageDecoration decoration =
+    PageDecoration(
+      titleTextStyle:
+          TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *5, fontWeight: FontWeight.w700),
+      bodyTextStyle: const TextStyle(fontSize: 17.0),
+      pageColor: Colors.white,
+      imagePadding: const EdgeInsets.only(top:100),
+      imageFlex:5,
+      bodyFlex: 2
+    );
+
+  List<PageViewModel> getPages() {
+    return [
+
+
+      PageViewModel(
+        title: "わせジュールへようこそ",
+        body: "あなたの生活に、\nわせジュールがやってきました。",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/eye_catch/eyecatch.png",
+          ),
+        ),
+        decoration: const PageDecoration(
+          titleTextStyle:
+              TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
+          bodyTextStyle: TextStyle(fontSize: 17.0),
+          pageColor: Colors.white,
+          imagePadding: EdgeInsets.only(top:100),
+          imageFlex:3,
+          bodyFlex: 2
+        )
+      ),
+
+
+
+      PageViewModel(
+        title: "①「カレンダー」ページ",
+        body: "日々の予定は「カレンダー」ページで管理",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/tutorial_images/calendar_introduction.png",
+          ),
+        ),
+        decoration: decoration
+      ),
+
+
+
+      PageViewModel(
+        title: "②「課題」ページ",
+        body: "授業課題やToDoは「課題」ページで管理",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/tutorial_images/task_introduction.png",
+          ),
+        ),
+        decoration: decoration
+      ),
+
+
+
+      PageViewModel(
+        title: "③「学習記録」ページ",
+        body: "勉強などの計画は「学習記録」ページで管理",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/tutorial_images/study_introduction.png",
+          ),
+        ),
+        decoration: decoration
+      ),
+
+
+      PageViewModel(
+        title: "使ってみましょう！",
+        bodyWidget: Column(children:[
+          const Text("あなたは早稲田大学の学生ですか？",style:TextStyle(fontSize:20)),
+          const SizedBox(height:20),
+          SizedBox(
+            width:1000,
+            child:ElevatedButton(
+              onPressed:(){
+                showUrlRegisterGuide(context);
+              },
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+              child: const Text("はい",style:TextStyle(color:Colors.white),),
+            ),
+          ),
+          const SizedBox(height:10),
+          SizedBox(
+            width:1000,
+            child:ElevatedButton(
+              onPressed:(){
+                introKey.currentState?.animateScroll(5);
+              },
+              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+              child: const Text("いいえ",style:TextStyle(color:Colors.white),),
+            ),
+          ),
+        ]),
+        image: Center(
+          child: Image.asset(
+            "lib/assets/eye_catch/eyecatch.png",
+            height: 200.0,
+          ),
+        ),
+        decoration: const PageDecoration(
+          titleTextStyle:
+              TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
+          bodyTextStyle: TextStyle(fontSize: 20.0),
+          imagePadding: EdgeInsets.only(top:200),
+          pageColor: Colors.white,
+        ),
+      ),
+
+
+      PageViewModel(
+        title: "早速課題を登録してみましょう！",
+        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題が表示されます。",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/tutorial_images/task_add_button.png",
+          ),
+        ),
+        decoration: const PageDecoration(
+          titleTextStyle:
+              TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
+          bodyTextStyle: TextStyle(fontSize: 17.0),
+          pageColor: Colors.white,
+          imagePadding: EdgeInsets.only(top:100),
+          imageFlex:3,
+          bodyFlex: 2
+        )
+      ),
+
+
+    ];
+  }
+
+  Future<void> setCompleteIntro(bool value) async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    await _prefs.setBool('hasCompletedIntro', value);
+  }
+
+  final introKey = GlobalKey<IntroductionScreenState>();
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return IntroductionScreen(
+      key: introKey,
+      controlsPadding : const EdgeInsets.all(0),
+      pages: getPages(),
+      onDone: () async {
+        await setCompleteIntro(true);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) =>  AppPage(initIndex: 1),
+          ),
+        );
+      },
+      onSkip: () async {
+        await setCompleteIntro(true);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) =>  AppPage(initIndex: 1),
+          ),
+        );
+      },
+      showSkipButton: false,
+      next: const Icon(Icons.keyboard_arrow_right),
+      done: const Text("使ってみる", style: TextStyle(fontWeight: FontWeight.w600)),
+      dotsDecorator: DotsDecorator(
+        size: const Size.square(10.0),
+        activeSize: const Size(20.0, 10.0),
+        activeColor: Theme.of(context).primaryColor,
+        color: Colors.black26,
+        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+      ),
+    );
+  }
+
+  Future<void> showUrlRegisterGuide(context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title : const Text("URLを登録してみましょう"), 
+          actions: <Widget>[
+          Column(children:[
+            const Text("ガイドに従って、「Waseda Moodle」のURLをアプリに登録しましょう！登録すると、以降はアプリに課題が自動取得されます。"),
+            SizedBox(
+              width:1000,
+              child:ElevatedButton(
+                onPressed:(){
+                  Navigator.pop(context);
+                  introKey.currentState?.animateScroll(5);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => UrlRegisterPage(),
+                    ),
+                  );
+                },
+                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                child: const Text("登録画面へ    →",style:TextStyle(color:Colors.white),),
+              ),
+            ),
+          ]) ,
+          ],
+        );
+      },
+    );
+  }
+
+}
+
+
 
 Widget okButton(context,width){
     return ElevatedButton(
@@ -20,6 +256,30 @@ Widget okButton(context,width){
     ),
   );
 }
+
+
+
+Future<void> showScheduleGuide(context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title : const Text("予定を登録してみましょう！"), 
+          actions: <Widget>[
+          Column(children:[
+            SizedBox(
+                  width: 200,
+                  child: Image.asset('lib/assets/tutorial_images/schedule_add_button.png')),
+            const Text("\nカレンダーに予定を登録してみましょう！画面右下の[+]ボタン、または各日付のマスから追加できます。\n"),
+            okButton(context, 500.0)
+          ]) ,
+          ],
+        );
+      },
+    );
+  }
+
 
 Future<void> showTagAndTemplateGuide(context) {
     return showDialog(
