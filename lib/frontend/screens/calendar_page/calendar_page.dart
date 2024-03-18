@@ -273,10 +273,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getConfigData(_getConfigDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
-                      
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
-
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
@@ -304,10 +302,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       ref.read(calendarDataProvider).sortDataByDay();
 
                       return calendarBody();
-
-
                     } else {
-
                       if (ref.read(taskDataProvider).isRenewed) {
                         initConfig();
                         displayDB();
@@ -352,62 +347,51 @@ class _CalendarState extends ConsumerState<Calendar> {
                     right: SizeConfig.blockSizeHorizontal! * 2.5,
                   ),
                   child: Column(children: [
-
-
-                    menuList(
-                      Icons.calendar_month,
-                      "カレンダー",
-                      [
-
+                    menuList(Icons.calendar_month, "カレンダー", [
                       menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(initIndex: 2,)
-                          ),
+                              builder: (context) => SettingsPage(
+                                    initIndex: 2,
+                                  )),
                         );
                       }),
-
-
                       menuListChild(Icons.backup, "バックアップ", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(initIndex: 2,)
-                          ),
+                              builder: (context) => SettingsPage(
+                                    initIndex: 2,
+                                  )),
                         );
                       }),
-
-                      
-                      scheduleEmptyFlag(ref,
-                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ", () {
-                            Navigator.push(
+                      scheduleEmptyFlag(
+                        ref,
+                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+                            () {
+                          Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SnsContentsPage()),
+                            MaterialPageRoute(
+                                builder: (context) => SnsContentsPage()),
                           );
-                        }), 
+                        }),
                       )
-                    
                     ]),
-
                     const SizedBox(height: 15),
-
-                    tagEmptyFlag(ref,
+                    tagEmptyFlag(
+                      ref,
                       expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ArbeitStatsPage(
+                              builder: (context) => ArbeitStatsPage(
                                     targetMonth: targetMonth,
-                          )),
+                                  )),
                         );
                       }),
                     ),
-
-
                     const SizedBox(height: 15),
-
-
                     Row(children: [
                       menuPanel(Icons.link_rounded, "Moodle URL登録", () {
                         Navigator.push(
@@ -426,15 +410,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                               builder: (context) => HowToUsePage()),
                         );
                       })
-
-
                     ]),
-
                     const SizedBox(height: 15),
-
-                    menuList(
-                      Icons.info,
-                      "その他",[
+                    menuList(Icons.info, "その他", [
                       menuListChild(Icons.info, "サポート", () {
                         Navigator.push(
                           context,
@@ -452,9 +430,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               builder: (context) => SettingsPage()),
                         );
                       }),
-                    ]
-
-                  ),
+                    ]),
                     const SizedBox(height: 15),
                     const SizedBox(height: 30),
                   ]))
@@ -486,8 +462,8 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
-      switchWidget(tipsAndNewsPanel(randomNumber, ""),
-            searchConfigData("tips")),
+      switchWidget(
+          tipsAndNewsPanel(randomNumber, ""), searchConfigData("tips")),
       Row(children: [
         const Spacer(),
         Padding(
@@ -499,8 +475,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => SettingsPage()),
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
               },
               child: const Text("画面カスタマイズ",
@@ -549,34 +524,33 @@ class _CalendarState extends ConsumerState<Calendar> {
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
                           iconSize: 20),
-                      doNotContainScreenShot(
-                        scheduleEmptyFlag(ref,
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 40,
-                            height: SizeConfig.blockSizeVertical! * 4,
-                            child: TextButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TagAndTemplatePage()),
-                                );
-                              },
-                              icon: const Icon(Icons.tag,
-                                  size: 15, color: Colors.white),
-                                  label: const Text('タグとテンプレート',
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                  style: const ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll(Colors.blueAccent),
-                                  ),
+                      doNotContainScreenShot(scheduleEmptyFlag(
+                        ref,
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 40,
+                          height: SizeConfig.blockSizeVertical! * 4,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TagAndTemplatePage()),
+                              );
+                            },
+                            icon: const Icon(Icons.tag,
+                                size: 15, color: Colors.white),
+                            label: const Text('タグとテンプレート',
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.blueAccent),
                             ),
                           ),
-                        )
-                      ),
+                        ),
+                      )),
                       showOnlyScreenShot(LogoAndTitle(size: 7))
                     ]),
                     SizedBox(
@@ -826,51 +800,53 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
-  List<bool>isHoliday =[];
+  List<bool> isHoliday = [];
   List<int> holidayDay = [];
 
-  void generateHoliday(){
-    isHoliday =[];
+  void generateHoliday() {
+    isHoliday = [];
     holidayDay = [];
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-      int.parse(targetMonth.substring(5, 7)));
-    var holidaysOfMonth = NHolidayJp.getByMonth(targetmonthDT.year,targetmonthDT.month);
-    
-    for(int i = 0; i < holidaysOfMonth.length; i++){
-     if(targetmonthDT.month >= 10){
-      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(3,5)));
-     }else{
-      holidayDay.add(int.parse(holidaysOfMonth.elementAt(i).toString().substring(2,4)));
-     }
+        int.parse(targetMonth.substring(5, 7)));
+    var holidaysOfMonth =
+        NHolidayJp.getByMonth(targetmonthDT.year, targetmonthDT.month);
+
+    for (int i = 0; i < holidaysOfMonth.length; i++) {
+      if (targetmonthDT.month >= 10) {
+        holidayDay.add(
+            int.parse(holidaysOfMonth.elementAt(i).toString().substring(3, 5)));
+      } else {
+        holidayDay.add(
+            int.parse(holidaysOfMonth.elementAt(i).toString().substring(2, 4)));
+      }
     }
 
-    for(int i = 0; i < LengthOfMonth(targetMonth) +1; i++){
-      if(holidayDay.contains(i)){
+    for (int i = 0; i < LengthOfMonth(targetMonth) + 1; i++) {
+      if (holidayDay.contains(i)) {
         isHoliday.add(true);
-      }else{
+      } else {
         isHoliday.add(false);
       }
     }
-
   }
 
-  Widget holidayName(DateTime target){
-    if(target.month == int.parse(targetMonth.substring(5))&&
-    searchConfigData("holidayName") == 1){
-      if(isHoliday.elementAt(target.day)){
-        return Column(children:[Text(
-          NHolidayJp.getName(target.year,target.month,target.day),
-          style: const TextStyle(color: Colors.red,fontSize:10),
+  Widget holidayName(DateTime target) {
+    if (target.month == int.parse(targetMonth.substring(5)) &&
+        searchConfigData("holidayName") == 1) {
+      if (isHoliday.elementAt(target.day)) {
+        return Column(children: [
+          Text(
+            NHolidayJp.getName(target.year, target.month, target.day),
+            style: const TextStyle(color: Colors.red, fontSize: 10),
           ),
-        const SizedBox(height:5)  
+          const SizedBox(height: 5)
         ]);
-      }else{
+      } else {
         return const SizedBox();
       }
-    }else{
-        return const SizedBox();
+    } else {
+      return const SizedBox();
     }
-
   }
 
   Widget generateCalendarCells(String dayOfWeek) {
@@ -912,11 +888,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                         holidayName(target),
                       ])),
               onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context){
-                  return DailyViewPage(target: target);
-                });
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DailyViewPage(target: target);
+                    });
               },
             );
           },
@@ -927,12 +903,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         ));
   }
 
-
-
   Color cellColour(DateTime target) {
-    
     DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
-      int.parse(targetMonth.substring(5, 7)));
+        int.parse(targetMonth.substring(5, 7)));
 
     if (target.year == DateTime.now().year &&
         target.month == DateTime.now().month &&
@@ -940,7 +913,8 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const Color.fromRGBO(255, 204, 204, 1);
     } else if (target.month != targetmonthDT.month) {
       return const Color.fromARGB(255, 242, 242, 242);
-    } else if(isHoliday.elementAt(target.day) &&searchConfigData("holidayPaint") == 1){
+    } else if (isHoliday.elementAt(target.day) &&
+        searchConfigData("holidayPaint") == 1) {
       return const Color.fromARGB(255, 255, 239, 239);
     } else if (target.weekday == 6 && searchConfigData("holidayPaint") == 1) {
       return const Color.fromARGB(255, 227, 238, 255);
@@ -959,20 +933,19 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (sortedData[target] == null) {
       return const SizedBox();
     } else {
-    return Container(
-        decoration: const BoxDecoration(
-          color: Colors.redAccent,
-          shape: BoxShape.circle,
-        ),
-        padding: EdgeInsets.all(fontSize / 3),
-        child: Text(
-          (sortedData[target]?.length ?? 0).toString(),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: fontSize),
-        )
-      );
+      return Container(
+          decoration: const BoxDecoration(
+            color: Colors.redAccent,
+            shape: BoxShape.circle,
+          ),
+          padding: EdgeInsets.all(fontSize / 3),
+          child: Text(
+            (sortedData[target]?.length ?? 0).toString(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: fontSize),
+          ));
     }
   }
 
@@ -1130,31 +1103,28 @@ class _CalendarState extends ConsumerState<Calendar> {
     );
   }
 
-
   Widget menuListChild(IconData icon, String text, void Function() ontap) {
     return InkWell(
-      onTap: ontap,
-      child:Column(children:[
-       Container(
-        width: SizeConfig.blockSizeHorizontal! * 95,
-        height: SizeConfig.blockSizeVertical! * 6,
-        color: Colors.white,
-        child: 
-          Center(
-            child: Row(children: [
-              const SizedBox(width:30),
-              Icon(icon, color: MAIN_COLOR, size: 40),
-              const Spacer(),
-              Text(text, style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,)),
-              const Spacer(),
-          ])  
-        )
-      ),
-      const Divider(height:1)
-      ])
-    );
+        onTap: ontap,
+        child: Column(children: [
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              height: SizeConfig.blockSizeVertical! * 6,
+              color: Colors.white,
+              child: Center(
+                  child: Row(children: [
+                const SizedBox(width: 30),
+                Icon(icon, color: MAIN_COLOR, size: 40),
+                const Spacer(),
+                Text(text,
+                    style: TextStyle(
+                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                    )),
+                const Spacer(),
+              ]))),
+          const Divider(height: 1)
+        ]));
   }
-
 
   Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
     return Container(
@@ -1171,23 +1141,29 @@ class _CalendarState extends ConsumerState<Calendar> {
             ),
           ],
         ),
-        child: Column(children:[
-            SizedBox(
-              height:SizeConfig.safeBlockVertical! *2,
-              child:Row(children:[
-                const SizedBox(width:10),
-                Icon(headerIcon,size:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),
-                Text(headerText,style:TextStyle(fontSize:SizeConfig.safeBlockVertical! *1.5,color:Colors.grey),)
-              ])
-            ),
-            const Divider(height:1),
-            ListView.builder(
-              itemBuilder: (context,index){
-                return child.elementAt(index);
-              },
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: child.length,
+        child: Column(children: [
+          SizedBox(
+              height: SizeConfig.safeBlockVertical! * 2,
+              child: Row(children: [
+                const SizedBox(width: 10),
+                Icon(headerIcon,
+                    size: SizeConfig.safeBlockVertical! * 1.5,
+                    color: Colors.grey),
+                Text(
+                  headerText,
+                  style: TextStyle(
+                      fontSize: SizeConfig.safeBlockVertical! * 1.5,
+                      color: Colors.grey),
+                )
+              ])),
+          const Divider(height: 1),
+          ListView.builder(
+            itemBuilder: (context, index) {
+              return child.elementAt(index);
+            },
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: child.length,
           ),
           SizedBox(height:SizeConfig.safeBlockVertical! *2),
         ])
@@ -1195,8 +1171,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     );
     
   }
-
-
 
   Widget switchWidget(Widget widget, int isVisible) {
     if (isVisible == 1) {
@@ -1220,13 +1194,13 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 1:
           content = "今日は何時間勉強した？学習記録ページで管理しよう \n＞＞『学習管理』から";
         case 2:
-         content = "「このアプリいいね」と君が思うなら\n"+today+"は シェアだ記念日";
-           // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
+          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+        // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
         case 3:
           content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
         case 4:
-          content = "「このアプリいいね」と君が思うなら\n"+today+"は シェアだ記念日"; 
-          //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
+          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+        //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
         case 5:
           content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
         case 6:
@@ -1400,46 +1374,45 @@ class _CalendarState extends ConsumerState<Calendar> {
             return Column(children: [
               InkWell(
                 onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context){
-                  return DailyViewPage(target: target);
-                }
-                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DailyViewPage(target: target);
+                      });
                 },
-                child:Container(
-                  width: SizeConfig.blockSizeHorizontal! * 95,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Row(children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(children: [
-                            dateTimeData,
-                            const SizedBox(width: 15),
+                child: Container(
+                    width: SizeConfig.blockSizeHorizontal! * 95,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Row(children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              dateTimeData,
+                              const SizedBox(width: 15),
+                              SizedBox(
+                                  child: tagChip(
+                                      targetDayData.elementAt(index)["tag"],
+                                      ref))
+                            ]),
                             SizedBox(
-                                child: tagChip(
-                                    targetDayData.elementAt(index)["tag"], ref))
+                                width: SizeConfig.blockSizeHorizontal! * 70,
+                                child: Text(
+                                  data.sortedDataByDay[targetKey]
+                                      .elementAt(index)["subject"],
+                                  overflow: TextOverflow.clip,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ))
                           ]),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 70,
-                              child: Text(
-                                data.sortedDataByDay[targetKey]
-                                    .elementAt(index)["subject"],
-                                overflow: TextOverflow.clip,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                        ))
-                      ]),
-                    ])
-                  ),
-                ),
+                    ])),
+              ),
               const SizedBox(height: 15)
             ]);
           },
@@ -1573,45 +1546,34 @@ class _CalendarState extends ConsumerState<Calendar> {
 
 }
 
-Widget calendarIcon(Color color,double size){
-  return 
-    Icon(
-      Icons.calendar_month,
-      color:color,
-      size: size
-    );
+Widget calendarIcon(Color color, double size) {
+  return Icon(Icons.calendar_month, color: color, size: size);
 }
 
-Widget taskIcon(Color color,double size){
-  return 
-    Icon(
-      Icons.check,
-      color:color,
-      size: size
-    );
+Widget taskIcon(Color color, double size) {
+  return Icon(Icons.check, color: color, size: size);
 }
 
-Widget scheduleEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).calendarData.isEmpty){
-   
+Widget scheduleEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).calendarData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }
 
-Widget tagEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).tagData.isEmpty){
+Widget tagEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).tagData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }
 
-Widget templateEmptyFlag(WidgetRef ref, Widget widget){
-  if(ref.read(calendarDataProvider).templateData.isEmpty){
+Widget templateEmptyFlag(WidgetRef ref, Widget widget) {
+  if (ref.read(calendarDataProvider).templateData.isEmpty) {
     return const SizedBox();
-  }else{
+  } else {
     return widget;
   }
 }

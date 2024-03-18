@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../DB/handler/schedule_db_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:intl/intl.dart';
 
 /// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';
@@ -92,18 +93,17 @@ class NotifyContent {
   static const int TASK_NOTIFICATION_ID = 1;
 
   Future<void> scheduleDailyEightAMNotification() async {
-    String todaysSchedule =
-        await ScheduleDatabaseHelper().todaysScheduleForNotify();
     await flutterLocalNotificationsPlugin.zonedSchedule(
         SCHEDULE_NOTIFICATION_ID,
-        '今日の予定',
-        todaysSchedule,
+        '今日 ${DateFormat('MM-dd').format(DateTime.now())} の予定',
+        await ScheduleDatabaseHelper().todaysScheduleForNotify(),
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
               'daily schedule notification channel id',
               '今日の予定',
-              channelDescription: todaysSchedule,
+              channelDescription:
+                  await ScheduleDatabaseHelper().todaysScheduleForNotify(),
             ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
@@ -115,18 +115,17 @@ class NotifyContent {
   }
 
   Future<void> taskDueTodayNotification() async {
-    String taskDueToday = await TaskDatabaseHelper().taskDueTodayForNotify();
-
     await flutterLocalNotificationsPlugin.zonedSchedule(
         TASK_NOTIFICATION_ID,
-        '期限が今日の課題',
-        taskDueToday,
+        '期限が今日 ${DateFormat('MM-dd').format(DateTime.now())} の課題',
+        await TaskDatabaseHelper().taskDueTodayForNotify(),
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
               'daily task notification channel id',
               '期限が今日の課題',
-              channelDescription: taskDueToday,
+              channelDescription:
+                  await TaskDatabaseHelper().taskDueTodayForNotify(),
             ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
@@ -151,21 +150,27 @@ class NotifyContent {
     return scheduledDate;
   }
 
-  Future<void> sampleNotification(String type) async {
+  tz.TZDateTime _nextInstance() {
+    tz.initializeTimeZones();
+    tz.Location _local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(_local);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+        _local, now.year, now.month, now.day, now.hour, now.minute, 0);
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(minutes: 1));
+    }
+
+    return scheduledDate;
+  }
+
+  Future<void> sampleNotification() async {
     // 5秒後
     String data = "";
     int id = 0;
-    if (type == "task") {
-      data = await TaskDatabaseHelper().taskDueTodayForNotify();
-      id = 10;
-    }
-    if (type == "schedule") {
-      data = await ScheduleDatabaseHelper().todaysScheduleForNotify();
-      id = 20;
-    }
 
-    var scheduleNotificationDateTime =
-        DateTime.now().add(const Duration(seconds: 10));
+    data = "${DateTime.now().minute}分${DateTime.now().second}秒";
+    id = 100;
 
     var androidChannelSpecifics = const AndroidNotificationDetails(
       'CHANNEL_ID 1',
@@ -196,15 +201,10 @@ class NotifyContent {
     );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      'Testify $typeの方',
-      data,
-      tz.TZDateTime.from(scheduleNotificationDateTime, tz.local), // 5秒後に表示
-      platformChannelSpecifics,
-      payload: 'Test Payload',
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        id, 'Testify', data, _nextInstance(), platformChannelSpecifics,
+        payload: 'Test Payload',
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.wallClockTime);
   }
 }
