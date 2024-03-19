@@ -404,9 +404,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           "info": "0"
         });
         ref.read(calendarDataProvider.notifier).state = CalendarData();
+        ref.read(calendarDataProvider).getTagData(TagDataLoader().getTagDataSource());
         await ConfigDataLoader().initConfig(ref);
         await CalendarDataLoader().insertDataToProvider(ref);
-        await TagDataLoader().insertDataToProvider(ref);
+        
         setState(() {});
       }
     }
@@ -431,9 +432,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           "info": info
         });
         ref.read(calendarDataProvider.notifier).state = CalendarData();
+        ref.read(calendarDataProvider).getTagData(TagDataLoader().getTagDataSource());
         await ConfigDataLoader().initConfig(ref);
         await CalendarDataLoader().insertDataToProvider(ref);
-        await TagDataLoader().insertDataToProvider(ref);
+
         setState(() {});
       }
     }
