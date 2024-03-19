@@ -161,6 +161,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       showScheduleGuide(context);
       pref.setBool('hasCompletedCalendarIntro', true);
     }
+
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ConfigDataLoader {
 
@@ -99,7 +100,7 @@ class TagDataLoader{
   }
 
   Future<void> insertDataToProvider(ref) async{
-    List<Map<String, dynamic>> tagList = await getTagDataSource();
+    List<Map<String, dynamic>> tagList = await getTagDataSource();   
     await ref.read(calendarDataProvider).getTagData(tagList);
   }
 
