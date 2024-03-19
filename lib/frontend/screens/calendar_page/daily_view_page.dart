@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';

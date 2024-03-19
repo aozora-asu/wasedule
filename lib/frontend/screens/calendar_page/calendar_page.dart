@@ -1,5 +1,6 @@
-import 'package:flutter_calandar_app/frontend/assist_files/logo_and_title.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
@@ -7,8 +8,6 @@ import 'package:nholiday_jp/nholiday_jp.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
@@ -41,6 +40,7 @@ import '../../../backend/notify/notify.dart';
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
+
 
 class Calendar extends ConsumerStatefulWidget {
   const Calendar({
@@ -90,11 +90,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     super.dispose();
   }
 
-  Future<List<Map<String, dynamic>>> _getDataSource() async {
-    List<Map<String, dynamic>> scheduleList =
-        await ScheduleDatabaseHelper().getScheduleFromDB();
-    return scheduleList;
-  }
 
   Future<List<Map<String, dynamic>>> _getTemplateDataSource() async {
     List<Map<String, dynamic>> templateList =
@@ -102,11 +97,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     return templateList;
   }
 
-  Future<List<Map<String, dynamic>>> _getTagDataSource() async {
-    List<Map<String, dynamic>> tagList =
-        await TagDatabaseHelper().getTagFromDB();
-    return tagList;
-  }
 
   Future<List<Map<String, dynamic>>> _getArbeitDataSource() async {
     List<Map<String, dynamic>> arbeitList =
@@ -114,11 +104,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     return arbeitList;
   }
 
-  Future<List<Map<String, dynamic>>> _getConfigDataSource() async {
-    List<Map<String, dynamic>> arbeitList =
-        await CalendarConfigDatabaseHelper().getConfigFromDB();
-    return arbeitList;
-  }
 
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   String? urlString;
@@ -159,64 +144,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-  void initConfig() {
-    createConfigData("tips", 1);
-    createConfigData("todaysSchedule", 0);
-    createConfigData("taskList", 1);
-    createConfigData("moodleLink", 0);
-    createConfigData("holidayPaint", 0);
-    createConfigData("holidayName", 1);
-  }
 
-  Future<void> createConfigData(String widgetName, int defaultState) async {
-    final calendarData = ref.watch(calendarDataProvider);
-    bool found = false;
-    await ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-    for (var data in calendarData.configData) {
-      String targetWidgetName = data["widgetName"];
-
-      if (targetWidgetName == widgetName) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      await CalendarConfigDatabaseHelper().resisterConfigToDB(
-          {"widgetName": widgetName, "isVisible": defaultState, "info": "3"});
-      ref.read(calendarDataProvider).getConfigData(_getConfigDataSource());
-    }
-  }
-
-  int searchConfigData(String widgetName) {
-    final calendarData = ref.watch(calendarDataProvider);
-    bool found = false;
-    int result = 0;
-    for (var data in calendarData.configData) {
-      String targetWidgetName = data["widgetName"];
-
-      if (targetWidgetName == widgetName) {
-        found = true;
-        result = data["isVisible"];
-      }
-    }
-    return result;
-  }
-
-  int searchConfigInfo(String widgetName) {
-    final calendarData = ref.watch(calendarDataProvider);
-    bool found = false;
-    int result = 0;
-    for (var data in calendarData.configData) {
-      String targetWidgetName = data["widgetName"];
-
-      if (targetWidgetName == widgetName) {
-        found = true;
-        result = int.parse(data["info"]);
-      }
-    }
-    return result;
-  }
 
   void _showTutorial(BuildContext context) async {
     final pref = await SharedPreferences.getInstance();
@@ -260,24 +188,23 @@ class _CalendarState extends ConsumerState<Calendar> {
                   right: SizeConfig.blockSizeHorizontal! * 2.5,
                 ),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _getDataSource(),
+                  future: CalendarDataLoader().getDataSource(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // データが取得される間、ローディングインディケータを表示できます。
-                      initConfig();
+                      ConfigDataLoader().initConfig(ref);
                       ref
                           .read(calendarDataProvider)
-                          .getTagData(_getTagDataSource());
+                          .getTagData(TagDataLoader().getTagDataSource());
                       ref
                           .read(calendarDataProvider)
-                          .getConfigData(_getConfigDataSource());
+                          .getConfigData(ConfigDataLoader().getConfigDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
                       // エラーがある場合、エラーメッセージを表示します。
                       return Text('エラーだよい: ${snapshot.error}');
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       if (ref.read(taskDataProvider).isRenewed) {
-                        initConfig();
                         displayDB();
                         _getTemplateDataSource();
                         ref
@@ -295,7 +222,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getArbeitData(_getArbeitDataSource());
                       ref
                           .read(calendarDataProvider)
-                          .getTagData(_getTagDataSource());
+                          .getTagData(TagDataLoader().getTagDataSource());
                       ref
                           .read(calendarDataProvider)
                           .getTemplateData(_getTemplateDataSource());
@@ -304,12 +231,12 @@ class _CalendarState extends ConsumerState<Calendar> {
                       return calendarBody();
                     } else {
                       if (ref.read(taskDataProvider).isRenewed) {
-                        initConfig();
+                        //ConfigData().initConfig(ref);
                         displayDB();
                         _getTemplateDataSource();
                         ref
                             .read(calendarDataProvider)
-                            .getConfigData(_getConfigDataSource());
+                            .getConfigData(ConfigDataLoader().getConfigDataSource());
                         ref
                             .read(calendarDataProvider)
                             .getArbeitData(_getArbeitDataSource());
@@ -325,7 +252,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           .getArbeitData(_getArbeitDataSource());
                       ref
                           .read(calendarDataProvider)
-                          .getTagData(_getTagDataSource());
+                          .getTagData(TagDataLoader().getTagDataSource());
                       ref
                           .read(calendarDataProvider)
                           .getTemplateData(_getTemplateDataSource());
@@ -338,102 +265,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                   },
                 ),
               ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 3,
-              ),
-              Padding(
-                  padding: EdgeInsets.only(
-                    left: SizeConfig.blockSizeHorizontal! * 2.5,
-                    right: SizeConfig.blockSizeHorizontal! * 2.5,
-                  ),
-                  child: Column(children: [
-                    menuList(Icons.calendar_month, "カレンダー", [
-                      menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage(
-                                    initIndex: 2,
-                                  )),
-                        );
-                      }),
-                      menuListChild(Icons.backup, "バックアップ", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage(
-                                    initIndex: 2,
-                                  )),
-                        );
-                      }),
-                      scheduleEmptyFlag(
-                        ref,
-                        menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SnsContentsPage()),
-                          );
-                        }),
-                      )
-                    ]),
-                    const SizedBox(height: 15),
-                    tagEmptyFlag(
-                      ref,
-                      expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ArbeitStatsPage(
-                                    targetMonth: targetMonth,
-                                  )),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(children: [
-                      menuPanel(Icons.link_rounded, "Moodle URL登録", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UrlRegisterPage()),
-                        );
-                      }),
-                      SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 5,
-                      ),
-                      menuPanel(Icons.school, "使い方ガイド", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HowToUsePage()),
-                        );
-                      })
-                    ]),
-                    const SizedBox(height: 15),
-                    menuList(Icons.info, "その他", [
-                      menuListChild(Icons.info, "サポート", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SnsLinkPage()),
-                        );
-                      }),
-                      SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 5,
-                      ),
-                      menuListChild(Icons.settings, "設定", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage()),
-                        );
-                      }),
-                    ]),
-                    const SizedBox(height: 15),
-                    const SizedBox(height: 30),
-                  ]))
             ],
           ),
         ),
@@ -442,9 +273,9 @@ class _CalendarState extends ConsumerState<Calendar> {
           AddEventButton(),
           const SizedBox(width: 10),
           calendarShareButton(context),
-        ]));
-
-    
+        ]
+      )
+    );
   }
 
   AssetImage calendarBackGroundImage() {
@@ -463,7 +294,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     generateHoliday();
     return Column(children: [
       switchWidget(
-          tipsAndNewsPanel(randomNumber, ""), searchConfigData("tips")),
+          tipsAndNewsPanel(randomNumber, ""), ConfigDataLoader().searchConfigData("tips",ref)),
       Row(children: [
         const Spacer(),
         Padding(
@@ -486,15 +317,15 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
       ]),
       switchWidget(
-          todaysScheduleListView(), searchConfigData("todaysSchedule")),
-      switchWidget(taskDataListList(searchConfigInfo("taskList")),
-          searchConfigData("taskList")),
+          todaysScheduleListView(), ConfigDataLoader().searchConfigData("todaysSchedule",ref)),
+      switchWidget(taskDataListList(ConfigDataLoader().searchConfigInfo("taskList",ref)),
+          ConfigDataLoader().searchConfigData("taskList",ref)),
       switchWidget(
           Column(children: [
             MoodleUrlLauncher(width: 100),
             const SizedBox(height: 5)
           ]),
-          searchConfigData("moodleLink")),
+          ConfigDataLoader().searchConfigData("moodleLink",ref)),
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(
@@ -574,9 +405,110 @@ class _CalendarState extends ConsumerState<Calendar> {
                       showOnlyScreenShot(screenShotDateTime()),
                       const SizedBox(width: 7)
                     ])
-                  ]))))
+                  ])
+                )
+              )
+            ),
+      menu()
     ]);
   }
+
+ Widget menu(){
+   return Column(children:[
+    SizedBox(
+      height: SizeConfig.blockSizeVertical! * 3,
+    ),
+    Column(children: [
+          menuList(Icons.calendar_month, "カレンダー", [
+            menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SettingsPage(
+                          initIndex: 2,
+                        )),
+              );
+            }),
+            menuListChild(Icons.backup, "バックアップ", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SettingsPage(
+                          initIndex: 2,
+                        )),
+              );
+            }),
+            scheduleEmptyFlag(
+              ref,
+              menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+                  () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SnsContentsPage()),
+                );
+              }),
+            )
+          ]),
+          const SizedBox(height: 15),
+          tagEmptyFlag(
+            ref,
+            expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ArbeitStatsPage(
+                          targetMonth: targetMonth,
+                        )),
+              );
+            }),
+          ),
+          const SizedBox(height: 15),
+          Row(children: [
+            menuPanel(Icons.link_rounded, "Moodle URL登録", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UrlRegisterPage()),
+              );
+            }),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 5,
+            ),
+            menuPanel(Icons.school, "使い方ガイド", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HowToUsePage()),
+              );
+            })
+          ]),
+          const SizedBox(height: 15),
+          menuList(Icons.info, "その他", [
+            menuListChild(Icons.info, "サポート", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SnsLinkPage()),
+              );
+            }),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 5,
+            ),
+            menuListChild(Icons.settings, "設定", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SettingsPage()),
+              );
+            }),
+          ]),
+          const SizedBox(height: 15),
+          const SizedBox(height: 30),
+      ])
+   ]);
+  }
+
 
   Widget calendarShareButton(BuildContext context) {
     return FloatingActionButton(
@@ -832,7 +764,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget holidayName(DateTime target) {
     if (target.month == int.parse(targetMonth.substring(5)) &&
-        searchConfigData("holidayName") == 1) {
+        ConfigDataLoader().searchConfigData("holidayName",ref) == 1) {
       if (isHoliday.elementAt(target.day)) {
         return Column(children: [
           Text(
@@ -914,11 +846,11 @@ class _CalendarState extends ConsumerState<Calendar> {
     } else if (target.month != targetmonthDT.month) {
       return const Color.fromARGB(255, 242, 242, 242);
     } else if (isHoliday.elementAt(target.day) &&
-        searchConfigData("holidayPaint") == 1) {
+        ConfigDataLoader().searchConfigData("holidayPaint",ref) == 1) {
       return const Color.fromARGB(255, 255, 239, 239);
-    } else if (target.weekday == 6 && searchConfigData("holidayPaint") == 1) {
+    } else if (target.weekday == 6 && ConfigDataLoader().searchConfigData("holidayPaint",ref) == 1) {
       return const Color.fromARGB(255, 227, 238, 255);
-    } else if (target.weekday == 7 && searchConfigData("holidayPaint") == 1) {
+    } else if (target.weekday == 7 && ConfigDataLoader().searchConfigData("holidayPaint",ref) == 1) {
       return const Color.fromARGB(255, 255, 239, 239);
     } else {
       return Colors.white;
@@ -1531,7 +1463,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   bool isTaskDatanull(DateTime target) {
-    int numOfTasks = searchConfigInfo("taskList");
+    int numOfTasks = ConfigDataLoader().searchConfigInfo("taskList",ref);
     bool result = true;
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime, List<Map<String, dynamic>>> sortedData =

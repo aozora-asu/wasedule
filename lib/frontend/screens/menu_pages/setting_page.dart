@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import '../../assist_files/colors.dart';
@@ -89,10 +89,6 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 icon: Icon(Icons.notifications_active),
                 label: Text('通知'),
               ),
-              // NavigationRailDestination(
-              //   icon: Icon(Icons.people),
-              //   label: Text('フレンド'),
-              // ),
               NavigationRailDestination(
                 icon: Icon(Icons.backup),
                 label: Text('バックアップ'),
@@ -407,11 +403,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           "isVisible": result,
           "info": "0"
         });
-        ref.read(taskDataProvider).isRenewed = true;
         ref.read(calendarDataProvider.notifier).state = CalendarData();
-        while (ref.read(taskDataProvider).isRenewed != false) {
-          await Future.delayed(const Duration(microseconds: 1));
-        }
+        await ConfigDataLoader().initConfig(ref);
+        await CalendarDataLoader().insertDataToProvider(ref);
+        await TagDataLoader().insertDataToProvider(ref);
         setState(() {});
       }
     }
@@ -435,11 +430,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           "isVisible": data["isVisible"],
           "info": info
         });
-        ref.read(taskDataProvider).isRenewed = true;
         ref.read(calendarDataProvider.notifier).state = CalendarData();
-        while (ref.read(taskDataProvider).isRenewed != false) {
-          await Future.delayed(const Duration(microseconds: 1));
-        }
+        await ConfigDataLoader().initConfig(ref);
+        await CalendarDataLoader().insertDataToProvider(ref);
+        await TagDataLoader().insertDataToProvider(ref);
         setState(() {});
       }
     }
