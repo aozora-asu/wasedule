@@ -123,7 +123,7 @@
     },
     {
       "name": "dots_indicator",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/dots_indicator-2.1.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/dots_indicator-2.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -201,37 +201,37 @@
     },
     {
       "name": "flutter_keyboard_visibility",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility-5.4.1",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility-5.4.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_keyboard_visibility_linux",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_linux-1.0.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_linux-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_keyboard_visibility_macos",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_macos-1.0.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_macos-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_keyboard_visibility_platform_interface",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_platform_interface-2.0.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_platform_interface-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_keyboard_visibility_web",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_web-2.0.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_web-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "flutter_keyboard_visibility_windows",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_windows-1.0.0",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_windows-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -321,7 +321,7 @@
     },
     {
       "name": "introduction_screen",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/introduction_screen-3.1.12",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/introduction_screen-3.1.12",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -501,43 +501,43 @@
     },
     {
       "name": "shared_preferences",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences-2.2.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences-2.2.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.2.1",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_android-2.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "shared_preferences_foundation",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_foundation-2.3.5",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.3.5",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "shared_preferences_linux",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_linux-2.3.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_linux-2.3.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "shared_preferences_platform_interface",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_platform_interface-2.3.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_platform_interface-2.3.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "shared_preferences_web",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_web-2.2.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_web-2.2.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "shared_preferences_windows",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_windows-2.3.2",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/shared_preferences_windows-2.3.2",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -746,7 +746,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-03-18T06:26:12.191079Z",
+  "generated": "2024-03-19T05:33:08.902577Z",
   "generator": "pub",
   "generatorVersion": "3.3.0"
 }

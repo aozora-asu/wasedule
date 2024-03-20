@@ -181,14 +181,15 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
   }
 
-  Future<List<Map<String, dynamic>>> withinNdaysTask(int n) async {
+  Future<List<Map<String, dynamic>>> withinNdaysTask(
+      DateTime today, int n) async {
     await _initDatabase();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
       where: 'dtEnd >= ? AND dtEnd < ? AND isDone=?',
       whereArgs: [
-        DateTime.now().millisecondsSinceEpoch,
-        DateTime.now().add(Duration(days: n)).millisecondsSinceEpoch,
+        today.millisecondsSinceEpoch,
+        today.add(Duration(days: n)).millisecondsSinceEpoch,
         0
       ],
     );
@@ -196,9 +197,10 @@ class TaskDatabaseHelper {
     return withinNdaysTask;
   }
 
-  Future<String> taskDueTodayForNotify() async {
+  Future<String> taskDueTodayForNotify(DateTime today) async {
     await _initDatabase();
-    List<Map<String, dynamic>> taskDueTodayList = await withinNdaysTask(1);
+    List<Map<String, dynamic>> taskDueTodayList =
+        await withinNdaysTask(today, 1);
     late String taskDueToday = "";
     if (taskDueTodayList.isEmpty) {
       taskDueToday = "本日が期限の課題はありません";

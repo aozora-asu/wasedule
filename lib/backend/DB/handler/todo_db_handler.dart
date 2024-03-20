@@ -7,53 +7,52 @@ class DataBaseHelper {
   late Database database;
 
   // データベースの初期化
-Future<void> initializeDB() async {
-  String path = await getDatabasesPath();
-  database = await openDatabase(
-    join(path, 'my_database.db'),
-    onCreate: (db, version) async {
-      await db.execute(
+  Future<void> initializeDB() async {
+    String path = await getDatabasesPath();
+    database = await openDatabase(
+      join(path, 'my_database.db'),
+      onCreate: (db, version) async {
+        await db.execute(
+          '''CREATE TABLE IF NOT EXISTS my_table(
+          date TEXT PRIMARY KEY, 
+          time TEXT, 
+          schedule TEXT, 
+          plan TEXT, 
+          record TEXT, 
+          timeStamp TEXT)''',
+        );
+      },
+      version: 1,
+    );
+
+    try {
+      // 既存のテーブルがない場合、このクエリはエラーをスローする
+      await database.rawQuery('SELECT * FROM my_table LIMIT 1');
+    } catch (e) {
+      // エラーが発生した場合はテーブルが存在しないとみなし、作成する
+      await database.execute(
         '''CREATE TABLE IF NOT EXISTS my_table(date TEXT PRIMARY KEY, time TEXT, schedule TEXT, plan TEXT, record TEXT, timeStamp TEXT)''',
       );
-    },
-    version: 1,
-  );
+    }
+  }
 
-  try {
-    // 既存のテーブルがない場合、このクエリはエラーをスローする
-    await database.rawQuery('SELECT * FROM my_table LIMIT 1');
-  } catch (e) {
-    // エラーが発生した場合はテーブルが存在しないとみなし、作成する
-    await database.execute(
-      '''CREATE TABLE IF NOT EXISTS my_table(date TEXT PRIMARY KEY, time TEXT, schedule TEXT, plan TEXT, record TEXT, timeStamp TEXT)''',
+  Future<void> insertNewData(String date, Duration time, String schedule,
+      List<String> plan, List<String> record, List<DateTime> timeStamp) async {
+    await initializeDB();
+    String durationAsString =
+        "${time.inHours}h${(time.inMinutes % 60).toString().padLeft(2, '0')}m";
+    await database.insert(
+      'my_table', // テーブル名
+      {
+        'date': date, // カラム名: 値
+        'time': durationAsString,
+        'schedule': schedule,
+        'plan': plan.toString(),
+        'record': record.toString(),
+        'timeStamp': timeStamp.toString()
+      },
     );
   }
-}
-
-
-
-Future<void> insertNewData (
-  String date,
-  Duration time, 
-  String schedule, 
-  List<String> plan,
-  List<String> record,
-  List<DateTime> timeStamp
-   )async{
-    await initializeDB();
-    String durationAsString = "${time.inHours}h${(time.inMinutes % 60).toString().padLeft(2, '0')}m";
-await database.insert(
-  'my_table', // テーブル名
-  {
-    'date': date, // カラム名: 値
-		'time': durationAsString,
-    'schedule': schedule,
-    'plan': plan.toString(),
-    'record': record.toString(),
-    'timeStamp': timeStamp.toString()
-  },
-  );
- }
 
   // テーブル内の全データを取得するメソッド
   Future<List<Map<String, dynamic>>> getAllDataFromMyTable() async {
@@ -61,34 +60,33 @@ await database.insert(
     return await database.rawQuery('SELECT * FROM my_table');
   }
 
-Future<List<Map<String, dynamic>>> getFixedData() async {
+  Future<List<Map<String, dynamic>>> getFixedData() async {
+    List<Map<String, dynamic>> fixedDataList = await getAllDataFromMyTable();
+    List<Map<String, dynamic>> result = [];
+    for (int i = 0; i < fixedDataList.length; i++) {
+      String durationAsString = fixedDataList[i]["time"];
+      RegExp regex = RegExp(r'(\d+)h(\d+)m');
+      Duration duration = const Duration(hours: 0, minutes: 0);
+      RegExpMatch? match = regex.firstMatch(durationAsString);
+      if (match != null) {
+        int hours = int.parse(match.group(1)!);
+        int minutes = int.parse(match.group(2)!);
+        duration = Duration(hours: hours, minutes: minutes);
+      }
 
-  List<Map<String, dynamic>> fixedDataList = await getAllDataFromMyTable();
-  List<Map<String, dynamic>> result =  [];
-  for (int i = 0; i < fixedDataList.length; i++) {
-    String durationAsString = fixedDataList[i]["time"];
-    RegExp regex = RegExp(r'(\d+)h(\d+)m');
-    Duration duration = const Duration(hours: 0, minutes: 0);
-    RegExpMatch? match = regex.firstMatch(durationAsString);
-    if (match != null) {
-      int hours = int.parse(match.group(1)!);
-      int minutes = int.parse(match.group(2)!);
-      duration = Duration(hours: hours, minutes: minutes);
+      // 修正済みのMapオブジェクトを作成
+      Map<String, dynamic> modifiedData = {
+        ...fixedDataList[i], // 既存のデータをコピー
+        "time": duration,
+        "plan": stringToListString(fixedDataList[i]["plan"]),
+        "record": stringToListString(fixedDataList[i]["record"]),
+        "timeStamp": stringToListDateTime(fixedDataList[i]["timeStamp"]),
+      };
+      result.add(modifiedData);
     }
 
-    // 修正済みのMapオブジェクトを作成
-    Map<String, dynamic> modifiedData = {
-      ...fixedDataList[i], // 既存のデータをコピー
-      "time": duration,
-      "plan": stringToListString(fixedDataList[i]["plan"]),
-      "record": stringToListString(fixedDataList[i]["record"]),
-      "timeStamp": stringToListDateTime(fixedDataList[i]["timeStamp"]),
-    };
-    result.add(modifiedData);
+    return result;
   }
-
-  return result;
-}
 
   Future<bool> hasData() async {
     // データベースファイルのパスを取得します（パスはアプリ固有のものに変更してください）
@@ -103,8 +101,7 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
     return count! > 0;
   }
 
-  List<dynamic> stringToListString(String target){
-
+  List<dynamic> stringToListString(String target) {
     String newTarget = target.substring(1, target.length - 1);
 
     List<String> stringList = newTarget.split(',');
@@ -117,49 +114,45 @@ Future<List<Map<String, dynamic>>> getFixedData() async {
     }
   }
 
-  List<dynamic> stringToListDateTime(String dateString){
-  String newdateString = dateString.substring(1, dateString.length - 1);
-  List<String> dateStrings = newdateString.split(',');
-  List<dynamic>? dateList = dateStrings.map((string) {
-  try {
-    return DateTime.parse(string.trim());
-  } catch (e) {
-    [];
-  }
-  }).toList();
+  List<dynamic> stringToListDateTime(String dateString) {
+    String newdateString = dateString.substring(1, dateString.length - 1);
+    List<String> dateStrings = newdateString.split(',');
+    List<dynamic>? dateList = dateStrings.map((string) {
+      try {
+        return DateTime.parse(string.trim());
+      } catch (e) {
+        [];
+      }
+    }).toList();
 
-  if (dateList.isEmpty) {
-    return [];
-  } else {
-    return dateList;
-  }
+    if (dateList.isEmpty) {
+      return [];
+    } else {
+      return dateList;
+    }
   }
 
-  Future<void> upDateDB(
-   String date,
-   Duration time, 
-   String schedule, 
-   List<String> plan,
-   List<String> record,
-   List<DateTime?> timeStamp
-  )async{
+  Future<void> upDateDB(String date, Duration time, String schedule,
+      List<String> plan, List<String> record, List<DateTime?> timeStamp) async {
     await initializeDB();
-    String durationAsString = "${time.inHours}h${(time.inMinutes % 60).toString().padLeft(2, '0')}m";
-    Map<String,String> updateData = 
-    {"date":date,
-     "time":durationAsString,
-     "schedule":schedule,
-     "plan":plan.toString(),
-     "record":record.toString(),
-     "timeStamp":timeStamp.toString()
+    String durationAsString =
+        "${time.inHours}h${(time.inMinutes % 60).toString().padLeft(2, '0')}m";
+    Map<String, String> updateData = {
+      "date": date,
+      "time": durationAsString,
+      "schedule": schedule,
+      "plan": plan.toString(),
+      "record": record.toString(),
+      "timeStamp": timeStamp.toString()
     };
-    await database.update('my_table',updateData, where:'date = ?', whereArgs: [date]);
+    await database
+        .update('my_table', updateData, where: 'date = ?', whereArgs: [date]);
   }
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class TemplateDataBaseHelper{
+class TemplateDataBaseHelper {
   late Database templateDB;
 
   Future<void> initializeDB() async {
@@ -185,27 +178,23 @@ class TemplateDataBaseHelper{
     }
   }
 
-  Future<void> insertNewTemplateData (
-    int index,
-    String template
-    )async{
-      await initializeDB();
-      String strIndex = index.toString();
-  await templateDB.insert(
-    'plan_template', // テーブル名
-    {
-      'template_index': strIndex, // カラム名: 値
-      'template': template,
-    },
+  Future<void> insertNewTemplateData(int index, String template) async {
+    await initializeDB();
+    String strIndex = index.toString();
+    await templateDB.insert(
+      'plan_template', // テーブル名
+      {
+        'template_index': strIndex, // カラム名: 値
+        'template': template,
+      },
     );
   }
 
-   // テーブル内の全データを取得するメソッド
+  // テーブル内の全データを取得するメソッド
   Future<List<Map<String, Object?>>> getAllDataFromMyTable() async {
     await initializeDB();
     return await templateDB.rawQuery('SELECT * FROM plan_template');
   }
-
 
   Future<bool> hasData() async {
     // データベースファイルのパスを取得します（パスはアプリ固有のものに変更してください）
@@ -220,36 +209,32 @@ class TemplateDataBaseHelper{
     return count! > 0;
   }
 
-Future<void> upDateDB(
-  int index,
-  String template,
-) async {
-  String strIndex = index.toString();
-  await initializeDB();
-  Map<String, Object?> updateData = {
-    'template': template, // 列名に変更
-  };
-  await templateDB.update(
-    'plan_template',
-    updateData,
-    where: 'template_index = ?',
-    whereArgs: [strIndex],
-  );
-}
-
-  Future<void> deleteDB(
+  Future<void> upDateDB(
     int index,
-    String template)async{
-      String strIndex = index.toString();
+    String template,
+  ) async {
+    String strIndex = index.toString();
+    await initializeDB();
+    Map<String, Object?> updateData = {
+      'template': template, // 列名に変更
+    };
+    await templateDB.update(
+      'plan_template',
+      updateData,
+      where: 'template_index = ?',
+      whereArgs: [strIndex],
+    );
+  }
 
-      await templateDB.delete(
-        'plan_template',
-        where: 'id = ?',
-        whereArgs: [strIndex], // "?"に代入する値
-      );
-    }
-  
+  Future<void> deleteDB(int index, String template) async {
+    String strIndex = index.toString();
 
+    await templateDB.delete(
+      'plan_template',
+      where: 'id = ?',
+      whereArgs: [strIndex], // "?"に代入する値
+    );
+  }
 }
 
 // ////////以下はえぐざんぽー/////////////////////////////////////////////////////////////////////////////////////////////////////////
