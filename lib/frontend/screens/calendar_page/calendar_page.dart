@@ -410,7 +410,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 )
               )
             ),
-      menu()
+       menu()
     ]);
   }
 
@@ -420,8 +420,10 @@ class _CalendarState extends ConsumerState<Calendar> {
       height: SizeConfig.blockSizeVertical! * 3,
     ),
     Column(children: [
+
           menuList(Icons.calendar_month, "カレンダー", [
-            menuListChild(Icons.install_mobile, "カレンダーの配信/受信", () {
+
+            menuListChild(Icons.send_to_mobile_rounded, "カレンダーの送信", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -430,7 +432,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                         )),
               );
             }),
-            menuListChild(Icons.backup, "バックアップ", () {
+
+            menuListChild(Icons.install_mobile, "カレンダーの受信", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -439,6 +442,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                         )),
               );
             }),
+
             scheduleEmptyFlag(
               ref,
               menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
