@@ -79,9 +79,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               initialExpanded:
                                   isLimitOver(dateEnd, sortedData, dateEnd))),
                       const Divider(
-                        thickness: 2.5,
-                        indent: 7,
-                        endIndent: 7,
+                        thickness: 1,
+                        indent: 3,
+                        endIndent: 3,
                       )
                     ]));
           },

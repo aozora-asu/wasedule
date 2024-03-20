@@ -56,7 +56,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const Spacer(),
          const Padding(
           padding: EdgeInsets.all(10),
-          child:Row(children:[Spacer(),Text("Version: Beta 15.10.14"),SizedBox(width:7)]),
+          child:Row(children:[Spacer(),Text(""),SizedBox(width:7)]),
           ),
          const SizedBox(height:3)
         ])

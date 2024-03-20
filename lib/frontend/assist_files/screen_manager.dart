@@ -23,6 +23,7 @@ class AppPage extends ConsumerStatefulWidget {
 
 class _AppPageState extends ConsumerState<AppPage> {
   int _currentIndex =0;
+  PageController pageController =  PageController(initialPage:0);
 
   @override
   void initState() {
@@ -36,27 +37,36 @@ class _AppPageState extends ConsumerState<AppPage> {
     setState(() {
       _currentIndex = index;
     });
+    pageController .jumpToPage(index);
+  }
+
+  Widget pageView(int initialPage){
+    return PageView(
+        controller: pageController ,
+        children: [const Calendar(),
+                   TaskViewPage(),
+                   TaskPage(),],
+        onPageChanged: (value){
+          setState((){
+            _currentIndex = value;
+          });  
+        },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
   ref.watch(taskDataProvider);
-    Widget body;
-    if (_currentIndex == 0) {
-      body = const Calendar();
-    } else if (_currentIndex == 2){
-      body = TaskPage();
-    } else {
-      ref.read(taskDataProvider).taskPageIndex = 0;
-      body = TaskViewPage();
-    }
+  Widget body;
+  body = pageView(0);
 
     return Scaffold(
       appBar: CustomAppBar(backButton: false,),
       drawer: burgerMenu(),
-      bottomNavigationBar: CustomBottomBar(
-        currentIndex: _currentIndex,
-        onItemTapped: _onItemTapped,
+      bottomNavigationBar: customBottomBar(
+         _currentIndex,
+         _onItemTapped,
+         setState
       ),
       body: body,
     );

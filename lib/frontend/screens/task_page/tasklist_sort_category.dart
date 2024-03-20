@@ -87,9 +87,9 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
                               initialExpanded:
                                   isLimitOver(sortedData, categoryName))),
                       const Divider(
-                        thickness: 2.5,
-                        indent: 7,
-                        endIndent: 7,
+                        thickness: 2,
+                        indent: 0,
+                        endIndent: 0,
                       )
                     ]));
           },
