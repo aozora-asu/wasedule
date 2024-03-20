@@ -1,6 +1,8 @@
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_download_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_upload_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
@@ -356,7 +358,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
                           iconSize: 20),
-                      doNotContainScreenShot(scheduleEmptyFlag(
+                      doNotContainScreenShot(
+                       scheduleEmptyFlag(
                         ref,
                         SizedBox(
                           width: SizeConfig.blockSizeHorizontal! * 40,
@@ -423,23 +426,24 @@ class _CalendarState extends ConsumerState<Calendar> {
 
           menuList(Icons.calendar_month, "カレンダー", [
 
-            menuListChild(Icons.send_to_mobile_rounded, "カレンダーの送信", () {
+          tagEmptyFlag(
+            ref,
+            menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SettingsPage(
-                          initIndex: 2,
-                        )),
+                    builder: (context) =>DataUploadPage()
+                ),
               );
-            }),
+            })
+          ),
 
-            menuListChild(Icons.install_mobile, "カレンダーの受信", () {
+            menuListChild(Icons.install_mobile, "予定のダウンロード", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SettingsPage(
-                          initIndex: 2,
-                        )),
+                    builder: (context) => DataDownloadPage()
+                ),
               );
             }),
 
@@ -455,7 +459,9 @@ class _CalendarState extends ConsumerState<Calendar> {
               }),
             )
           ]),
+          
           const SizedBox(height: 15),
+
           tagEmptyFlag(
             ref,
             expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
@@ -464,7 +470,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                 MaterialPageRoute(
                     builder: (context) => ArbeitStatsPage(
                           targetMonth: targetMonth,
-                        )),
+                  )
+                ),
               );
             }),
           ),
