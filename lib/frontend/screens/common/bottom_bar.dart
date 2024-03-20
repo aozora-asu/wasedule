@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
-class CustomBottomBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onItemTapped;
-  const CustomBottomBar(
-      {Key? key, required this.currentIndex, required this.onItemTapped})
-      : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
+  Widget customBottomBar(
+      int currentIndex,
+      ValueChanged<int> onItemTapped,
+      StateSetter setosute
+    ) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onItemTapped,
@@ -38,8 +35,8 @@ class CustomBottomBar extends StatelessWidget {
         //   backgroundColor: MAIN_COLOR
         // ),
       ],
-        selectedFontSize: 17.0, // 選択されたアイテムのテキストサイズ
-  unselectedFontSize: 12.0, // 選択されていないアイテムのテキストサイズ
+      selectedFontSize: 17.0, 
+      unselectedFontSize: 12.0,
     );
   }
-}
+
