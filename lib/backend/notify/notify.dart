@@ -91,19 +91,20 @@ class NotifyContent {
       FlutterLocalNotificationsPlugin();
   static const int SCHEDULE_NOTIFICATION_ID = 0;
   static const int TASK_NOTIFICATION_ID = 1;
+  DateTime today = DateTime.now();
 
   Future<void> scheduleDailyEightAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         SCHEDULE_NOTIFICATION_ID,
-        '今日 ${DateFormat('MM-dd').format(DateTime.now())} の予定',
-        await ScheduleDatabaseHelper().todaysScheduleForNotify(),
+        '今日 ${DateFormat('MM/dd').format(today)} の予定',
+        await ScheduleDatabaseHelper().todaysScheduleForNotify(today),
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
               'daily schedule notification channel id',
               '今日の予定',
               channelDescription:
-                  await ScheduleDatabaseHelper().todaysScheduleForNotify(),
+                  await ScheduleDatabaseHelper().todaysScheduleForNotify(today),
             ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
@@ -117,15 +118,15 @@ class NotifyContent {
   Future<void> taskDueTodayNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         TASK_NOTIFICATION_ID,
-        '期限が今日 ${DateFormat('MM-dd').format(DateTime.now())} の課題',
-        await TaskDatabaseHelper().taskDueTodayForNotify(),
+        '期限が今日 ${DateFormat('MM/dd').format(today)} の課題',
+        await TaskDatabaseHelper().taskDueTodayForNotify(today),
         _nextInstanceOfEightAM(),
         NotificationDetails(
             android: AndroidNotificationDetails(
               'daily task notification channel id',
               '期限が今日の課題',
               channelDescription:
-                  await TaskDatabaseHelper().taskDueTodayForNotify(),
+                  await TaskDatabaseHelper().taskDueTodayForNotify(today),
             ),
             iOS: const DarwinNotificationDetails(
               sound: 'slow_spring_board.aiff',
@@ -146,6 +147,9 @@ class NotifyContent {
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
+    if (today.isBefore(now)) {
+      today = today.add(const Duration(days: 1));
+    }
 
     return scheduledDate;
   }
@@ -159,6 +163,9 @@ class NotifyContent {
 
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(minutes: 1));
+    }
+    if (today.isBefore(DateTime.now())) {
+      today = today.add(const Duration(days: 1));
     }
 
     return scheduledDate;
