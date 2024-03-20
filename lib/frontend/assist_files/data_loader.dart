@@ -12,8 +12,8 @@ class ConfigDataLoader {
     await createConfigData("todaysSchedule",0,ref);
     await createConfigData("taskList",1,ref);
     await createConfigData("moodleLink",0,ref);
-    await createConfigData("holidayPaint",0,ref);
-    await createConfigData("holidayName",1,ref);
+    await createConfigData("holidayPaint",1,ref);
+    await createConfigData("holidayName",0,ref);
   }
 
   Future<void> createConfigData(String widgetName, int defaultState,WidgetRef ref) async {

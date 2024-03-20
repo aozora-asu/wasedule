@@ -23,12 +23,13 @@ class AppPage extends ConsumerStatefulWidget {
 
 class _AppPageState extends ConsumerState<AppPage> {
   int _currentIndex =0;
-  PageController pageController =  PageController(initialPage:0);
+  PageController pageController =  PageController();
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initIndex ?? 0;
+    pageController = PageController(initialPage:widget.initIndex ?? 0);
   }
 
 
@@ -40,7 +41,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     pageController .jumpToPage(index);
   }
 
-  Widget pageView(int initialPage){
+  Widget pageView(){
     return PageView(
         controller: pageController ,
         children: [const Calendar(),
@@ -58,7 +59,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget build(BuildContext context) {
   ref.watch(taskDataProvider);
   Widget body;
-  body = pageView(0);
+  body = pageView();
 
     return Scaffold(
       appBar: CustomAppBar(backButton: false,),
