@@ -46,6 +46,7 @@ dependencies:
   nholiday_jp: ^1.0.2
   introduction_screen: ^3.1.12
   shared_preferences: ^2.2.2
+  toggle_switch: ^2.2.1
 
   flutter_localizations:
     sdk: flutter
@@ -107,6 +108,11 @@ flutter:
     - lib/assets/tutorial_images/study_introduction.png
     - lib/assets/tutorial_images/task_add_button.png
     - lib/assets/tutorial_images/schedule_add_button.png
+
+    - lib/assets/schedule_share/schedule_backup_upload.png
+    - lib/assets/schedule_share/schedule_backup_download.png
+    - lib/assets/schedule_share/schedule_broadcast_upload.png
+    - lib/assets/schedule_share/schedule_broadcast_download.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

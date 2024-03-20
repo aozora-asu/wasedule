@@ -89,10 +89,6 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 icon: Icon(Icons.notifications_active),
                 label: Text('通知'),
               ),
-              NavigationRailDestination(
-                icon: Icon(Icons.backup),
-                label: Text('バックアップ'),
-              ),
             ],
             selectedIndex: _selectedIndex,
             onDestinationSelected: (index) {
@@ -176,17 +172,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child: calendarBody(),
         ));
 
-      case 1:
+       default:
         return Expanded(
             child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: notificationBody(),
-        ));
-
-      default: return Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: backupBody(),
         ));
 
 
@@ -281,31 +271,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
-  Widget backupBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        'データのバックアップ',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
-            fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 10),
-      Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.all(7.5),
-          child:
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("・今お使いの端末から一度サーバー上にデータをバックアップし、他の端末などにダウンロードしていただけます。"),
-                  const Text("・バックアップに際して、発行されるユーザーIDが必要です。スクリーンショットなどで保管しておいてください。"
-                            ,style:TextStyle(color:Colors.red)),
-                  const SizedBox(height:10),
-                  backUpUploadButton(),
-                  backUpDownloadButton()
-          ]))
-    ]);
-  }
 
   Widget configSwitch(String configText, String widgetName) {
     return Row(children: [
@@ -439,146 +404,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
         setState(() {});
       }
     }
-  }
-
-  Widget backUpUploadButton(){
-    return ElevatedButton(
-      onPressed: (){
-        String id = "2A8D24E9023F2DAC33";//仮ID
-
-
-        //ここにバックアップの実行処理を書き込む（アップロード）
-
-
-        showBackUpDoneDialogue(id);
-      },
-      style:const ButtonStyle(
-        backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
-      ),
-      child:const Row(children:[
-        Icon(Icons.backup,color:Colors.white),
-        SizedBox(width:20),
-        Text("データをバックアップ",style:TextStyle(color:Colors.white))
-      ])
-    );
-  }
-
-  void showBackUpDoneDialogue(String id){
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('バックアップ完了'),
-        actions: <Widget>[
-          const Text("バックアップの復元に際して、こちらのユーザーIDが必要です。スクリーンショットなどで保管しておいてください。"
-          ,style:TextStyle(color:Colors.red)),
-          const SizedBox(height:10),
-          const Align(alignment: Alignment.centerLeft, child:Text("ユーザーID:")),
-          Text(id,style:const TextStyle(fontSize:25,fontWeight:FontWeight.bold)),
-          okButton(context,500.0)
-        ],
-      );
-    },
-   );
-  }
-
-
-  Widget backUpDownloadButton(){
-    return ElevatedButton(
-      onPressed: (){
-        showDownloadConfirmDialogue();
-      },
-      style:const ButtonStyle(
-        backgroundColor:MaterialStatePropertyAll(ACCENT_COLOR),
-      ),
-      child:const Row(children:[
-        Icon(Icons.downloading_outlined,color:Colors.white),
-        SizedBox(width:20),
-        Text("バックアップを復元",style:TextStyle(color:Colors.white))
-      ])
-    );
-  }
-
-  void showDownloadConfirmDialogue(){
-    TextEditingController idController = TextEditingController();
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('バックアップを復元しますか？'),
-        actions: <Widget>[
-          const Align(alignment: Alignment.centerLeft, 
-          child:Text("ダウンロードを行うと、サーバーにバックアップしたデータが全てあなたの端末へ追加されます。"
-          ,style:TextStyle(color:Colors.red))),
-          const SizedBox(height:10),
-          CupertinoTextField(
-            controller: idController,
-            placeholder: 'IDを入力',
-            onChanged:(value){setState((){});},
-          ),
-          const SizedBox(height:10),
-          ElevatedButton(
-            onPressed: (){
-              String id = idController.text;
-              if(id.isNotEmpty){
-
-
-              //ここにバックアップの実行処理を書き込む（ダウンロード）
-
-
-                Navigator.pop(context);
-                showDownloadDoneDialogue();
-              }else{
-                showDownloadFailDialogue();
-              }
-            },
-            style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR)
-            ),
-            child:const Row(children:[
-              Icon(Icons.downloading_outlined,color:Colors.white),
-              SizedBox(width:20),
-              Text("ダウンロード実行",style:TextStyle(color:Colors.white))
-            ])
-          )
-        ],
-      );
-    },
-   );
-  }
-
-    void showDownloadDoneDialogue(){
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('ダウンロード完了'),
-        actions: <Widget>[
-          const Align(alignment: Alignment.centerLeft, 
-          child:Text("データが復元されました！")),
-          const SizedBox(height:10),
-          okButton(context,500.0)
-        ],
-      );
-    },
-   );
-  }
-
-   void showDownloadFailDialogue(){
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('ダウンロード失敗'),
-        actions: <Widget>[
-          const Align(alignment: Alignment.centerLeft, 
-          child:Text("データが復元できませんでした。IDが無効です。")),
-          const SizedBox(height:10),
-          okButton(context,500.0)
-        ],
-      );
-    },
-   );
   }
 
 }
