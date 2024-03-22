@@ -255,8 +255,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
       Container(
           decoration: roundedBoxdecorationWithShadow(),
           padding: const EdgeInsets.all(7.5),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            //child:
+            //Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // Text(
             //   '通知のON/OFF',
             //   style: TextStyle(
@@ -267,7 +267,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
             // configSwitch("課題の通知(毎朝8時)", "tips"),
             // const SizedBox(height: 5),
             // configSwitch("予定の通知(毎朝8時)", "tips"),
-          ]))
+            //])
+      )
     ]);
   }
 

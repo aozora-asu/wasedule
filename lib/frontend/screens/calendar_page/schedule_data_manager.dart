@@ -17,8 +17,6 @@ class CalendarDataNotifier extends StateNotifier<CalendarData> {
   }
 }
 
-  bool hasDialogShown = false;
-  
 class CalendarData {
   var calendarData = [];
   var templateData = [];
@@ -27,6 +25,10 @@ class CalendarData {
   var configData = [];
   var sortedDataByDay = {};
   var sortedDataByMonth = {};
+
+  var userID = "";
+  var uploadData = {};
+  var downloadData = {};
 
   CalendarData();
 
@@ -37,6 +39,21 @@ class CalendarData {
   void getTemplateData(Future<List<Map<String, dynamic>>> data) async {
     List<Map<String, dynamic>> fetchedTemplateData = await data;
     templateData = fetchedTemplateData;
+  }
+
+  void getUserID(Future<String> data) async {
+    String fetchedData = await data;
+    userID =  fetchedData;
+  }
+
+  void getUploadData(Future<Map<String, dynamic>> data) async {
+    Map<String, dynamic> fetchedData = await data;
+    uploadData = fetchedData;
+  }
+
+  void getDownloadData(Future<Map<String, dynamic>> data) async {
+    Map<String, dynamic> fetchedData = await data;
+    downloadData = fetchedData;
   }
 
   void getTagData(Future<List<Map<String, dynamic>>> data) async {

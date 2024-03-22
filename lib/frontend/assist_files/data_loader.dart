@@ -3,7 +3,6 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ConfigDataLoader {
 
@@ -44,13 +43,11 @@ class ConfigDataLoader {
 
   int searchConfigData(String widgetName,WidgetRef ref) {
     final calendarData = ref.watch(calendarDataProvider);
-    bool found = false;
     int result = 0;
     for (var data in calendarData.configData) {
       String targetWidgetName = data["widgetName"];
 
       if (targetWidgetName == widgetName) {
-        found = true;
         result = data["isVisible"];
       }
     }
@@ -59,13 +56,11 @@ class ConfigDataLoader {
 
   int searchConfigInfo(String widgetName,WidgetRef ref) {
     final calendarData = ref.watch(calendarDataProvider);
-    bool found = false;
     int result = 0;
     for (var data in calendarData.configData) {
       String targetWidgetName = data["widgetName"];
 
       if (targetWidgetName == widgetName) {
-        found = true;
         result = int.parse(data["info"]);
       }
     }
@@ -102,6 +97,46 @@ class TagDataLoader{
   Future<void> insertDataToProvider(ref) async{
     List<Map<String, dynamic>> tagList = await getTagDataSource();   
     await ref.read(calendarDataProvider).getTagData(tagList);
+  }
+
+}
+
+
+class UserInfoLoader{
+  Future<String> getUserIDSource() async {
+    String userID = "c539ed57-9119-4a20-862d-e3c74861c9c1";
+    //仮のIDです。ここにDBから受け渡して下さい。
+   //await UserInfoDatabaseHelper().getUserIDFromDB();
+
+    return userID;
+  }
+
+  Future<void> insertDataToProvider(ref) async{
+    Future<String> userID = getUserIDSource();   
+    await ref.read(calendarDataProvider).getUserID(userID);
+  }
+
+}
+
+class BroadcastLoader{
+
+  Future<Map<String,dynamic>> getUploadDataSource() async {
+    Map<String,dynamic> data = {
+      "c539ed57-9119-4a20-862d-e3c74861c9c1":
+        [{"subject":"予定１","tag":"1"},{"subject":"予定２","tag":"1"}],
+      "d722ac73-7365-9e27-442e-a2a65357b2d2":
+        [{"subject":"予定３","tag":"2"},{"subject":"予定４","tag":"2"}],
+    };
+
+   //仮のデータです。変数dataにDBから受け渡して下さい。
+   //await HogeHogeDatabaseHelper().getHogeHogeFromDB();
+   
+    return data;
+  }
+
+  Future<void> insertUploadDataToProvider(ref) async{
+    Future<Map<String,dynamic>> data = getUploadDataSource();   
+    await ref.read(calendarDataProvider).getUploadData(data);
   }
 
 }

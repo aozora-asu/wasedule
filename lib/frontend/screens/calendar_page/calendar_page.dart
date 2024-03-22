@@ -447,17 +447,17 @@ class _CalendarState extends ConsumerState<Calendar> {
               );
             }),
 
-            scheduleEmptyFlag(
-              ref,
-              menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
-                  () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SnsContentsPage()),
-                );
-              }),
-            )
+            // scheduleEmptyFlag(
+            //   ref,
+            //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+            //       () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => SnsContentsPage()),
+            //     );
+            //   }),
+            // )
           ]),
           
           const SizedBox(height: 15),

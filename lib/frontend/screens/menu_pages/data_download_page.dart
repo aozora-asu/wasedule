@@ -127,7 +127,7 @@ Widget scheduleBroadcastPage(){
         ),
         const SizedBox(height: 25),
         scheduleReceiveButton(idController),
-        const SizedBox(height: 25),
+        const SizedBox(height: 15),
       ],
     ),
   );

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
@@ -128,6 +130,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           broadcastUploadButton(),
           tagThumbnail(),
           shereScheduleListView(),
+          showUploadDataView(),
       ])
     );
   }
@@ -245,7 +248,7 @@ Widget chooseTagButton() {
 
 
         //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
-        showBackUpDoneDialogue(id);
+        showUploadDoneDialogue(id);
       },
       style:const ButtonStyle(
         backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
@@ -253,7 +256,7 @@ Widget chooseTagButton() {
       child:const Row(children:[
         Icon(Icons.backup,color:Colors.white),
         SizedBox(width:20),
-        Text("データをアップロード",style:TextStyle(color:Colors.white))
+        Text("予定をアップロード",style:TextStyle(color:Colors.white))
       ])
     );
     
@@ -264,6 +267,104 @@ Widget chooseTagButton() {
     }
   }
 
+  void showUploadDoneDialogue(String id){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title:const Text('アップロード完了'),
+        actions: <Widget>[
+          const Text("他の人に以下の共有コードをシェアして、いま配信した予定を受信してもらいましょう！"
+          ,style:TextStyle(color:Colors.red)),
+          const SizedBox(height:10),
+          const Align(alignment: Alignment.centerLeft, child:Text("共有コード:")),
+          Text(id,style:const TextStyle(fontSize:25,fontWeight:FontWeight.bold)),
+          okButton(context,500.0)
+        ],
+      );
+    },
+   );
+  }
+
+  Widget showUploadDataView(){
+    return FutureBuilder(
+      future: BroadcastLoader().getUploadDataSource(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(color: MAIN_COLOR,);
+        }else if (snapshot.hasError) {
+          return Text('エラー: ${snapshot.error}');
+        }else {
+          BroadcastLoader().insertUploadDataToProvider(ref);
+          return uploadDataView(snapshot.data);
+        }
+      },
+    );
+  }
+
+  Widget uploadDataView(Map<String,dynamic> data){
+    if(data.isEmpty){
+      return const SizedBox();
+    }else{
+      return Column(children:[
+        const SizedBox(height:20),
+        Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+          child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start, 
+          children:[
+            const Text("アップロード済みデータ:",
+              style:TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              )
+            ),
+            const SizedBox(height:10),
+            const Divider(height:1),
+            uploadDataList(data),
+            const Divider(height:1),
+            const SizedBox(height:10),
+          ])
+         )
+       ]);
+    }
+  }
+
+  Widget uploadDataList(Map<String,dynamic> data){
+    return ListView.separated(
+      itemBuilder:(context,index){
+        String id = data.keys.elementAt(index);
+        return Container(
+          child: Column(children:[
+            Text(id),
+            Row(children:[
+              IconButton(
+                onPressed:()async{
+                  final data =ClipboardData(text:id);
+                  await Clipboard.setData(data);
+                },
+                icon:const Icon(Icons.copy,color:Colors.grey)),
+              IconButton(
+                onPressed:()async{
+                  final data =ClipboardData(text:id);
+                  await Clipboard.setData(data);
+                },
+                icon:const Icon(Icons.qr_code_2_outlined,color:Colors.grey)),
+            ])
+          ]),
+        );
+      },
+      separatorBuilder:(context,index){
+        return const Divider(height:1);
+      },
+      shrinkWrap: true,
+      physics:const NeverScrollableScrollPhysics(),
+      itemCount: data.length,
+    );
+  }
+
+
 
 
 
@@ -273,13 +374,14 @@ Widget chooseTagButton() {
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("・今お使いの端末からサーバー上に「カレンダー」「課題」「学習記録」のすべてのデータをバックアップします。のちに他の端末などに復元していただけます。",
+          const Text("・今お使いの端末からサーバー上に「カレンダー」「課題」「学習記録」のすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
                     style:TextStyle(fontSize: 17)),
           const SizedBox(height:10),
           const Text("・バックアップに際して、発行されるIDが必要です。スクリーンショットなどで保管しておいてください。"
                     ,style:TextStyle(color:Colors.red,fontSize: 17)),
           const SizedBox(height:10),
           backUpUploadButton(),
+          showIDView(),
       ])
     );
   }
@@ -287,14 +389,20 @@ Widget chooseTagButton() {
   Widget backUpUploadButton(){
     return ElevatedButton(
       onPressed: (){
-        String id = "2A8D24E9023F2DAC33";//仮のIDです。
+        //DBから呼び出されたID。まだデータがなければ空文字が入る予定。
+        String id = ref.watch(calendarDataProvider).userID;  
+        //今は仮で入れてます、仮IDはdata_loader.dart内に記述
 
 
         //ここにバックアップの実行処理を書き込む（アップロード処理）
 
 
         //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
+      
+        //バックアップ成功！ダイアログを表示
+        //(初回バックアップ時)ここで発行されたバックアップIDをＤＢに追加する処理。
         showBackUpDoneDialogue(id);
+        setState((){});
       },
       style:const ButtonStyle(
         backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
@@ -343,6 +451,61 @@ Widget chooseTagButton() {
    );
   }
 
+  Widget showIDView(){
+    return FutureBuilder(
+      future: UserInfoLoader().getUserIDSource(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(color: MAIN_COLOR,);
+        }else if (snapshot.hasError) {
+          return Text('エラー: ${snapshot.error}');
+        }else {
+          UserInfoLoader().insertDataToProvider(ref);
+          return iDView(snapshot.data);
+        }
+      },
+    );
+  }
+
+  Widget iDView(String id){
+    if(id.isEmpty){
+      return const SizedBox();
+    }else{
+      return Column(children:[
+        const SizedBox(height:20),
+        Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+          child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start, 
+          children:[
+            Row(children:[
+              const Text("あなたのバックアップID:",
+                style:TextStyle(
+                  fontSize: 15
+                )
+              ),
+              IconButton(
+                onPressed:()async{
+                  final data =ClipboardData(text:id);
+                  await Clipboard.setData(data);
+                },
+                icon:const Icon(Icons.copy,color:Colors.grey))
+            ]),
+            Text(id,
+            style:const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25
+              )
+            ),
+          ])
+         )
+       ])
+      
+      ;
+    }
+
+  }
 
 }
 
