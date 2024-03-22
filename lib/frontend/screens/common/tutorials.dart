@@ -2,7 +2,6 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +14,7 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
+
   PageDecoration decoration =
     PageDecoration(
       titleTextStyle:
@@ -27,137 +27,115 @@ class _IntroPageState extends State<IntroPage> {
     );
 
   List<PageViewModel> getPages() {
+
     return [
-
-
-      PageViewModel(
-        title: "わせジュールへようこそ",
-        body: "あなたの生活に、\nわせジュールがやってきました。",
-        image: Center(
-          child: Image.asset(
-            "lib/assets/eye_catch/eyecatch.png",
-          ),
-        ),
-        decoration: const PageDecoration(
-          titleTextStyle:
-              TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
-          bodyTextStyle: TextStyle(fontSize: 17.0),
-          pageColor: Colors.white,
-          imagePadding: EdgeInsets.only(top:100),
-          imageFlex:3,
-          bodyFlex: 2
-        )
-      ),
-
-
-
-      PageViewModel(
-        title: "①「カレンダー」ページ",
-        body: "日々の予定は「カレンダー」ページで管理",
-        image: Center(
-          child: Image.asset(
-            "lib/assets/tutorial_images/calendar_introduction.png",
-          ),
-        ),
-        decoration: decoration
-      ),
-
-
-
-      PageViewModel(
-        title: "②「課題」ページ",
-        body: "授業課題やToDoは「課題」ページで管理",
-        image: Center(
-          child: Image.asset(
-            "lib/assets/tutorial_images/task_introduction.png",
-          ),
-        ),
-        decoration: decoration
-      ),
-
-
-
-      PageViewModel(
-        title: "③「学習記録」ページ",
-        body: "勉強などの計画は「学習記録」ページで管理",
-        image: Center(
-          child: Image.asset(
-            "lib/assets/tutorial_images/study_introduction.png",
-          ),
-        ),
-        decoration: decoration
-      ),
-
-
-      PageViewModel(
-        title: "使ってみましょう！",
-        bodyWidget: Column(children:[
-          const Text("あなたは早稲田大学の学生ですか？",style:TextStyle(fontSize:20)),
-          const SizedBox(height:20),
-          SizedBox(
-            width:1000,
-            child:ElevatedButton(
-              onPressed:(){
-                showUrlRegisterGuide(context);
-              },
-              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-              child: const Text("はい",style:TextStyle(color:Colors.white),),
+        PageViewModel(
+          title: "わせジュールへようこそ",
+          body: "あなたの生活に、\nわせジュールがやってきました。",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/eye_catch/eyecatch.png",
             ),
           ),
-          const SizedBox(height:10),
-          SizedBox(
-            width:1000,
-            child:ElevatedButton(
-              onPressed:(){
-                introKey.currentState?.animateScroll(5);
-              },
-              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-              child: const Text("いいえ",style:TextStyle(color:Colors.white),),
+          decoration: const PageDecoration(
+            titleTextStyle:
+                TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
+            bodyTextStyle: TextStyle(fontSize: 17.0),
+            pageColor: Colors.white,
+            imagePadding: EdgeInsets.only(top:100),
+            imageFlex:3,
+            bodyFlex: 2
+          )
+        ),
+
+
+
+        PageViewModel(
+          title: "①「カレンダー」ページ",
+          body: "日々の予定は「カレンダー」ページで管理",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/calendar_introduction.png",
             ),
           ),
-        ]),
-        image: Center(
-          child: Image.asset(
-            "lib/assets/eye_catch/eyecatch.png",
-            height: 200.0,
+          decoration: decoration
+        ),
+
+
+
+        PageViewModel(
+          title: "②「課題」ページ",
+          body: "授業課題やToDoは「課題」ページで管理",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/task_introduction.png",
+            ),
+          ),
+          decoration: decoration
+        ),
+
+
+
+        PageViewModel(
+          title: "③「学習記録」ページ",
+          body: "勉強などの計画は「学習記録」ページで管理",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/study_introduction.png",
+            ),
+          ),
+          decoration: decoration
+        ),
+
+
+        PageViewModel(
+          title: "使ってみましょう！",
+          useScrollView: false,
+          bodyWidget: Column(children:[
+            const Text("あなたは早稲田大学の学生ですか？",style:TextStyle(fontSize:20)),
+            const SizedBox(height:20),
+            SizedBox(
+              width:1000,
+              child:ElevatedButton(
+                onPressed:(){
+                  showUrlRegisterGuide(context);
+                },
+                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                child: const Text("はい",style:TextStyle(color:Colors.white),),
+              ),
+            ),
+            const SizedBox(height:10),
+            SizedBox(
+              width:1000,
+              child:ElevatedButton(
+                onPressed:(){
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => const IntroLastPage(),
+                    ),
+                  );
+                },
+                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+                child: const Text("いいえ",style:TextStyle(color:Colors.white),),
+              ),
+            ),
+          ]),
+          image: Center(
+            child: Image.asset(
+              "lib/assets/eye_catch/eyecatch.png",
+              height: 200.0,
+            ),
+          ),
+          decoration: const PageDecoration(
+            titleTextStyle:
+                TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
+            bodyTextStyle: TextStyle(fontSize: 20.0),
+            imagePadding: EdgeInsets.only(top:200),
+            pageColor: Colors.white,
           ),
         ),
-        decoration: const PageDecoration(
-          titleTextStyle:
-              TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
-          bodyTextStyle: TextStyle(fontSize: 20.0),
-          imagePadding: EdgeInsets.only(top:200),
-          pageColor: Colors.white,
-        ),
-      ),
 
-
-      PageViewModel(
-        title: "早速課題を登録してみましょう！",
-        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題が表示されます。",
-        image: Center(
-          child: Image.asset(
-            "lib/assets/tutorial_images/task_add_button.png",
-          ),
-        ),
-        decoration: const PageDecoration(
-          titleTextStyle:
-              TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
-          bodyTextStyle: TextStyle(fontSize: 17.0),
-          pageColor: Colors.white,
-          imagePadding: EdgeInsets.only(top:100),
-          imageFlex:3,
-          bodyFlex: 2
-        )
-      ),
-
-
-    ];
-  }
-
-  Future<void> setCompleteIntro(bool value) async {
-    final SharedPreferences _prefs = await SharedPreferences.getInstance();
-    await _prefs.setBool('hasCompletedIntro', value);
+      ];
   }
 
   final introKey = GlobalKey<IntroductionScreenState>();
@@ -169,25 +147,9 @@ class _IntroPageState extends State<IntroPage> {
       key: introKey,
       controlsPadding : const EdgeInsets.all(0),
       pages: getPages(),
-      onDone: () async {
-        await setCompleteIntro(true);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) =>  AppPage(initIndex: 1),
-          ),
-        );
-      },
-      onSkip: () async {
-        await setCompleteIntro(true);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) =>  AppPage(initIndex: 1),
-          ),
-        );
-      },
       showSkipButton: false,
+      showDoneButton: false,
       next: const Icon(Icons.keyboard_arrow_right),
-      done: const Text("使ってみる", style: TextStyle(fontWeight: FontWeight.w600)),
       dotsDecorator: DotsDecorator(
         size: const Size.square(10.0),
         activeSize: const Size(20.0, 10.0),
@@ -215,7 +177,11 @@ class _IntroPageState extends State<IntroPage> {
               child:ElevatedButton(
                 onPressed:(){
                   Navigator.pop(context);
-                  introKey.currentState?.animateScroll(5);
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => const IntroLastPage(),
+                    ),
+                  );
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => UrlRegisterPage(),
@@ -230,6 +196,68 @@ class _IntroPageState extends State<IntroPage> {
           ],
         );
       },
+    );
+  }
+}
+
+
+class IntroLastPage extends StatefulWidget {
+  const IntroLastPage({Key? key}) : super(key: key);
+  @override
+  State<IntroLastPage> createState() => _IntroLastPageState();
+}
+
+class _IntroLastPageState extends State<IntroLastPage> {
+
+  List<PageViewModel>lastPage(){
+    return [
+      PageViewModel(
+        title: "早速課題を登録してみましょう！",
+        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題が表示されます。",
+        image: Center(
+          child: Image.asset(
+            "lib/assets/tutorial_images/task_add_button.png",
+          ),
+        ),
+        decoration: const PageDecoration(
+          titleTextStyle:
+              TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
+          bodyTextStyle: TextStyle(fontSize: 17.0),
+          pageColor: Colors.white,
+          imagePadding: EdgeInsets.only(top:100),
+          imageFlex:3,
+          bodyFlex: 2
+        )
+    )];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return IntroductionScreen(
+      controlsPadding : const EdgeInsets.all(0),
+      pages: lastPage(),
+      done: Text("使ってみる"),
+      onDone: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) =>  AppPage(initIndex: 1),
+          ),
+        );
+      },
+      showSkipButton: false,
+      showDoneButton: true,
+      next: const Icon(Icons.keyboard_arrow_right),
+      dotsDecorator: DotsDecorator(
+        size: const Size.square(10.0),
+        activeSize: const Size(20.0, 10.0),
+        activeColor: Theme.of(context).primaryColor,
+        color: Colors.black26,
+        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+      ),
     );
   }
 
@@ -377,3 +405,5 @@ Future<void> showTagAndTemplateGuide(context) {
     },
   );
 }
+
+
