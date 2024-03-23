@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/code_share_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -241,14 +242,20 @@ Widget chooseTagButton() {
    if(shareScheduleList.isNotEmpty){
     return ElevatedButton(
       onPressed: (){
-        String id = "2A8D24E9023F2DAC33";//仮のIDです。
 
 
         //ここにデータ配信の実行処理を書き込む（アップロード処理）
 
 
         //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
+        
+        //アップロード処理成功時
+        String id = "2A8D24E9023F2DAC33";//仮のIDです。
         showUploadDoneDialogue(id);
+
+        //処理が完了したら、ここでIDをローカルDBにぶち込む処理
+        
+        setState((){});
       },
       style:const ButtonStyle(
         backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
@@ -335,25 +342,52 @@ Widget chooseTagButton() {
     return ListView.separated(
       itemBuilder:(context,index){
         String id = data.keys.elementAt(index);
-        return Container(
-          child: Column(children:[
+        return Column(children:[
             Text(id),
             Row(children:[
+              Expanded(child:
+                Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children:[
+                  Text(data.values.elementAt(index).elementAt(0)["subject"],
+                  style: const TextStyle(color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                  ),
+                  Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
+                  style: const TextStyle(color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                  )
+                ]),
+              ),
+              
               IconButton(
                 onPressed:()async{
                   final data =ClipboardData(text:id);
                   await Clipboard.setData(data);
                 },
                 icon:const Icon(Icons.copy,color:Colors.grey)),
-              IconButton(
+              ElevatedButton(
                 onPressed:()async{
-                  final data =ClipboardData(text:id);
-                  await Clipboard.setData(data);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CodeSharePage(id:id)
+                    ),
+                  );
                 },
-                icon:const Icon(Icons.qr_code_2_outlined,color:Colors.grey)),
-            ])
-          ]),
-        );
+                child:const Row(children:[
+                  Icon(Icons.qr_code_2_outlined,color:MAIN_COLOR),
+                  SizedBox(width:5),
+                  Text("共有",
+                  style: TextStyle(
+                    color: MAIN_COLOR,
+                    fontWeight: FontWeight.bold,
+                    )
+                  ),
+                ])
+            ),
+          ])
+        ]);
       },
       separatorBuilder:(context,index){
         return const Divider(height:1);

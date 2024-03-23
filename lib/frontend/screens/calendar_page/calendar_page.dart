@@ -11,7 +11,6 @@ import 'package:nholiday_jp/nholiday_jp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 
@@ -34,7 +33,6 @@ import 'add_event_button.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 
 import '../../../backend/notify/notify_setting.dart';
 import '../../../backend/DB/models/notify_content.dart';
