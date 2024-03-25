@@ -19,11 +19,13 @@ class CalendarDataNotifier extends StateNotifier<CalendarData> {
 
 class CalendarData {
   var calendarData = [];
+  var dataForShare = [];
   var templateData = [];
   var tagData = [];
   var arbeitData = [];
   var configData = [];
   var sortedDataByDay = {};
+  var sortedDataByDayForShare = {};
   var sortedDataByMonth = {};
 
   var userID = "";
@@ -34,6 +36,10 @@ class CalendarData {
 
   void getData(List<Map<String, dynamic>> data) {
     calendarData = data;
+  }
+
+  void getDataForShare(List<dynamic> data) {
+    dataForShare  = data;
   }
 
   void getTemplateData(Future<List<Map<String, dynamic>>> data) async {
@@ -117,6 +123,43 @@ class CalendarData {
    
    }
  }
+
+
+  void sortDataByDayForShare(){
+   sortedDataByDayForShare = {};
+
+    for(int i = 0; i < dataForShare.length; i++){
+      if(sortedDataByDayForShare.keys.contains(dataForShare .elementAt(i)["startDate"])){
+        sortedDataByDayForShare[dataForShare .elementAt(i)["startDate"]]!.add(dataForShare .elementAt(i));
+      }else{
+        sortedDataByDayForShare[dataForShare .elementAt(i)["startDate"]] = [dataForShare .elementAt(i)];
+      }
+   }
+
+   for(int i = 0; i < sortedDataByDayForShare.length; i++){
+    List targetList = sortedDataByDayForShare.values.elementAt(i);
+    String targetKey = sortedDataByDayForShare.keys.elementAt(i);
+
+    List validEvents = targetList.where((event) => event['startTime'] != "").toList();
+    List invalidEvents = targetList.where((event) => event['startTime'] == "").toList();
+
+    // "startTime"でソート
+    validEvents.sort((a, b) {
+      // "startTime"を時間型に変換して比較
+      Duration timeA = Duration(hours:int.parse(a['startTime'].substring(0,2)),minutes:int.parse(a['startTime'].substring(3,5)));
+      Duration timeB = Duration(hours:int.parse(b['startTime'].substring(0,2)),minutes:int.parse(b['startTime'].substring(3,5)));
+      return timeA.compareTo(timeB);
+    });
+    
+    targetList = invalidEvents;
+    targetList.addAll(validEvents);
+
+    sortedDataByDayForShare[targetKey] = targetList;
+   
+   }
+ }
+
+
 
   void sortDataByMonth(){
    var rawData = sortedDataByDay;
