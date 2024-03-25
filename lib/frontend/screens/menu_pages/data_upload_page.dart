@@ -281,10 +281,10 @@ Widget chooseTagButton() {
       return AlertDialog(
         title:const Text('アップロード完了'),
         actions: <Widget>[
-          const Text("他の人に以下の共有コードをシェアして、いま配信した予定を受信してもらいましょう！"
+          const Text("他の人に以下のスケジュールIDをシェアして、いま配信した予定を受信してもらいましょう！"
           ,style:TextStyle(color:Colors.red)),
           const SizedBox(height:10),
-          const Align(alignment: Alignment.centerLeft, child:Text("共有コード:")),
+          const Align(alignment: Alignment.centerLeft, child:Text("スケジュールID")),
           Text(id,style:const TextStyle(fontSize:25,fontWeight:FontWeight.bold)),
           okButton(context,500.0)
         ],
@@ -371,16 +371,22 @@ Widget chooseTagButton() {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CodeSharePage(id:id)
+                      builder: (context) => CodeSharePage(
+                        id:id,
+                        scheduleData:data.values.elementAt(index),
+                      )
                     ),
                   );
                 },
+                style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)
+                ),
                 child:const Row(children:[
-                  Icon(Icons.qr_code_2_outlined,color:MAIN_COLOR),
+                  Icon(Icons.qr_code_2_outlined,color:Colors.white,),
                   SizedBox(width:5),
                   Text("共有",
                   style: TextStyle(
-                    color: MAIN_COLOR,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     )
                   ),
@@ -408,7 +414,7 @@ Widget chooseTagButton() {
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("・今お使いの端末からサーバー上に「カレンダー」「課題」「学習記録」のすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
+          const Text("・今お使いの端末からサーバー上に「カレンダー」のすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
                     style:TextStyle(fontSize: 17)),
           const SizedBox(height:10),
           const Text("・バックアップに際して、発行されるIDが必要です。スクリーンショットなどで保管しておいてください。"
