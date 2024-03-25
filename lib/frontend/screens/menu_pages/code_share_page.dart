@@ -53,8 +53,6 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
   
   @override
   Widget build(BuildContext context){
-    print(colorTheme);
-    print(backgroundColorTheme);
     SizeConfig().init(context);
     return Scaffold(
       appBar: CustomAppBar(backButton:true),
@@ -120,7 +118,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
       child:Container(
         width: SizeConfig.blockSizeHorizontal! *95,
         height: SizeConfig.blockSizeHorizontal! *95,
-        color: backgroundColorTheme.withOpacity(0.8),
+        color: backgroundColorTheme.withOpacity(0.6),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal! *5),
           child:Column(children:[
