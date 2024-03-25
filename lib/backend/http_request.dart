@@ -67,7 +67,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
-  resisterTaskToFB(iCalInfo);
+  //resisterTaskToFB(iCalInfo);
 
   final tasks = _pretterTask(iCalInfo);
   return tasks;
