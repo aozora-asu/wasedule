@@ -122,4 +122,16 @@ class ScheduleDatabaseHelper {
 
     return todaysSchedule;
   }
+
+  Future<String> postScheduleToFB(String tag) async {
+    await _initScheduleDatabase();
+    List<Map<String, dynamic>> postSchedule = await _database.query(
+      'schedule',
+      where: 'tag = ?',
+      whereArgs: [tag],
+    );
+
+    String scheduleID = "";
+    return scheduleID;
+  }
 }
