@@ -137,6 +137,23 @@ class BroadcastLoader{
     await ref.read(calendarDataProvider).getUploadData(data);
   }
 
+
+  Future<Map<String,dynamic>> getDownloadDataSource() async {
+    Map<String,dynamic> data = {
+      "c539ed57-9119-4a20-862d-e3c74861c9c1":sample1,
+      "d722ac73-7365-9e27-442e-a2a65357b2d2":sample1,
+    };
+
+   //仮のデータです。変数dataにDBから受け渡して下さい。
+   //await HogeHogeDatabaseHelper().getHogeHogeFromDB();
+   
+    return data;
+  }
+
+  Future<void> insertDownloadDataToProvider(ref) async{
+    Future<Map<String,dynamic>> data = getDownloadDataSource();   
+    await ref.read(calendarDataProvider).getDownloadData(data);
+  }
 }
 
 List<dynamic> sample1 = [
