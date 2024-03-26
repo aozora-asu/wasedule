@@ -422,41 +422,41 @@ class _CalendarState extends ConsumerState<Calendar> {
     ),
     Column(children: [
 
-          // menuList(Icons.calendar_month, "カレンダー", [
+          menuList(Icons.calendar_month, "カレンダー", [
 
-          // tagEmptyFlag(
-          //   ref,
-          //   menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) =>DataUploadPage()
-          //       ),
-          //     );
-          //   })
-          // ),
+          tagEmptyFlag(
+            ref,
+            menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>DataUploadPage()
+                ),
+              );
+            })
+          ),
 
-          //   menuListChild(Icons.install_mobile, "予定のダウンロード", () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => DataDownloadPage()
-          //       ),
-          //     );
-          //   }),
+            menuListChild(Icons.install_mobile, "予定のダウンロード", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DataDownloadPage()
+                ),
+              );
+            }),
 
-          //   // scheduleEmptyFlag(
-          //   //   ref,
-          //   //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
-          //   //       () {
-          //   //     Navigator.push(
-          //   //       context,
-          //   //       MaterialPageRoute(
-          //   //           builder: (context) => SnsContentsPage()),
-          //   //     );
-          //   //   }),
-          //   // )
-          // ]),
+            // scheduleEmptyFlag(
+            //   ref,
+            //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+            //       () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => SnsContentsPage()),
+            //     );
+            //   }),
+            // )
+          ]),
           
           const SizedBox(height: 15),
 
