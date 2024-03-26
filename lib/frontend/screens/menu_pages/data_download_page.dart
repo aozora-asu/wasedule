@@ -152,33 +152,11 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget scheduleReceiveButton(TextEditingController idController) {
-
-   return ElevatedButton(
-    onPressed: () {
-      String id = idController.text;
-      if(id.isNotEmpty){
-
-        receiveSchedule(id);
-
-        Navigator.pop(context);
-        showDownloadDoneDialogue("データが受信されました。");
-      }else{
-        showDownloadFailDialogue("IDを入力してください。");
-      }
-    },
-    style: const ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-    ),
-    child: const Row(
-      children: [
-        Icon(Icons.install_mobile, color: Colors.white),
-        SizedBox(width: 20),
-        Text("予定を受信登録する", style: TextStyle(color: Colors.white)),
-      ],
-    ),
-  );
-}
-
+    return ElevatedButton(
+      onPressed: () {
+        String id = idController.text;
+        if (id.isNotEmpty) {
+          receiveSchedule(id);
 
           Navigator.pop(context);
           showDownloadDoneDialogue();
@@ -231,38 +209,22 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   void showDownloadConfirmDialogue() {
     TextEditingController idController = TextEditingController();
     showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('バックアップを復元しますか？'),
-        actions: <Widget>[
-          const Align(alignment: Alignment.centerLeft, 
-          child:Text("ダウンロードを行うと今端末内にあるデータが全て削除され、バックアップしたデータが復元されます。"
-          ,style:TextStyle(color:Colors.red))),
-          const SizedBox(height:10),
-          CupertinoTextField(
-            controller: idController,
-            placeholder: 'IDを入力',
-            onChanged:(value){setState((){});},
-          ),
-          const SizedBox(height:10),
-          ElevatedButton(
-            onPressed: (){
-              String id = idController.text;
-              if(id.isNotEmpty){
-
-
-              //ここにバックアップの実行処理を書き込む（ダウンロード）
-
-
-                Navigator.pop(context);
-                showDownloadDoneDialogue("データが復元されました！");
-              }else{
-                showDownloadFailDialogue("IDを入力してください。");
-              }
-            },
-            style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR)
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('バックアップを復元しますか？'),
+          actions: <Widget>[
+            const Align(
+                alignment: Alignment.centerLeft,
+                child: Text("ダウンロードを行うと今端末内にあるデータが全て削除され、バックアップしたデータが復元されます。",
+                    style: TextStyle(color: Colors.red))),
+            const SizedBox(height: 10),
+            CupertinoTextField(
+              controller: idController,
+              placeholder: 'IDを入力',
+              onChanged: (value) {
+                setState(() {});
+              },
             ),
             const SizedBox(height: 10),
             ElevatedButton(
@@ -291,23 +253,21 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     );
   }
 
-
-  void showDownloadDoneDialogue(String text){
+  void showDownloadDoneDialogue() {
     showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title:const Text('ダウンロード完了'),
-        actions: <Widget>[
-          Align(alignment: Alignment.centerLeft, 
-          child:Text(text)),
-          const SizedBox(height:10),
-          okButton(context,500.0)
-        ],
-      );
-    },
-   );
-
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('ダウンロード完了'),
+          actions: <Widget>[
+            const Align(
+                alignment: Alignment.centerLeft, child: Text("データが復元されました！")),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
   }
 
   void showDownloadFailDialogue(String errorMessage) {
