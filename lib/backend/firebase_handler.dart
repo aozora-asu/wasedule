@@ -8,7 +8,8 @@ void resisterTask(String categories, String uid, taskMap) async {
   //     print('DocumentSnapshot added with ID: ${doc.id}'));
 }
 
-Future<String> postScheduleToFB(int tagID) async {
+Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
+    int tagID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
@@ -25,7 +26,10 @@ Future<String> postScheduleToFB(int tagID) async {
       break;
     }
   }
-  return scheduleID;
+  Map<String, List<Map<String, dynamic>>> schedule = {
+    scheduleID: postScheduleList
+  };
+  return schedule;
 }
 
 Future<List<Map<String, dynamic>>> receiveSchedule(String scheduleID) async {
