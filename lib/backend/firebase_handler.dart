@@ -34,8 +34,8 @@ Future<List<Map<String, dynamic>>> receiveSchedule(String scheduleID) async {
 
   try {
     DocumentSnapshot doc = await docRef.get();
-    final data = doc.data() as List<Map<String, dynamic>>;
-    return data;
+    final data = doc.data() as Map<String, List<Map<String, dynamic>>>;
+    return data["schedule"]!;
   } catch (e) {
     return []; // エラーが発生した場合は空のリストを返す
   }
