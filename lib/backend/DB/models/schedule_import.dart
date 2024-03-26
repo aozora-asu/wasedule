@@ -1,4 +1,4 @@
-class ScheduleImportItem {
+class ImportedScheduleItem {
   String subject;
 
   String startDate;
@@ -9,7 +9,7 @@ class ScheduleImportItem {
   String? publicSubject;
   String? tag;
 
-  ScheduleImportItem(
+  ImportedScheduleItem(
       {required this.subject,
       required this.startDate,
       this.startTime,
