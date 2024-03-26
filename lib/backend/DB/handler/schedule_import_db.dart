@@ -27,7 +27,8 @@ class ImportedScheduleDatabaseHelper {
         endTime TEXT,
         isPublic INTEGER, 
         publicSubject TEXT,
-        tag TEXT
+        tag TEXT,
+        hash TEXT UNIQUE, -- UNIQUE,
       )
     ''');
   }
@@ -48,7 +49,18 @@ class ImportedScheduleDatabaseHelper {
       List<Map<String, dynamic>> importedScheduleList) async {
     await _initImportedScheduleDatabase();
     for (var importedSchedule in importedScheduleList) {
-      await _database.insert('schedule', importedSchedule);
+      ImportedScheduleItem importedScheduleItem = ImportedScheduleItem(
+        subject: importedSchedule["subject"],
+        startDate: importedSchedule["startDate"],
+        startTime: importedSchedule["startTime"],
+        endDate: importedSchedule["endDate"],
+        endTime: importedSchedule["endTime"],
+        isPublic: importedSchedule["isPublic"],
+        publicSubject: importedSchedule["publicSubject"],
+        tag: importedSchedule["tag"],
+      );
+
+      await insertSchedule(importedScheduleItem);
     }
   }
 }
