@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 import '../models/schedule.dart';
-
+import './tag_db_handler.dart';
 import 'package:intl/intl.dart';
 
 class ScheduleDatabaseHelper {
@@ -123,13 +123,15 @@ class ScheduleDatabaseHelper {
     return todaysSchedule;
   }
 
-  Future<List<Map<String, dynamic>>> pickScheduleByTag(String tag) async {
+  Future<List<Map<String, dynamic>>> pickScheduleByTag(int tagID) async {
     await _initScheduleDatabase();
+    String tagName = await TagDatabaseHelper()
+        .getTagName(tagID); // 指定したIDに対応するタイトルを取得するクエリを実行し、結果を取得する
 
     List<Map<String, dynamic>> postSchedule = await _database.query(
       'schedule',
       where: 'tag = ?',
-      whereArgs: [tag],
+      whereArgs: [tagName],
     );
 
     return postSchedule;

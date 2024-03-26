@@ -62,14 +62,29 @@ class TagDatabaseHelper {
     Tag tag;
 
     // 1. TaskItemオブジェクトを作成
-   tag = Tag(
-      title: newTag["title"],
-      color: colorToInt(newTag["color"]),
-      isBeit: newTag["isBeit"],
-      wage: newTag["wage"],
-      fee: newTag["fee"]
-      );
+    tag = Tag(
+        title: newTag["title"],
+        color: colorToInt(newTag["color"]),
+        isBeit: newTag["isBeit"],
+        wage: newTag["wage"],
+        fee: newTag["fee"]);
     await insertSchedule(tag);
+  }
+
+  Future<String> getTagName(int id) async {
+    await _initTagDatabase();
+    // 指定したIDに対応するタイトルを取得するクエリを実行し、結果を取得する
+    List<Map<String, dynamic>> result = await _database.rawQuery('''
+    SELECT title FROM tag WHERE id = ?
+  ''', [id]);
+
+    // 結果が存在しない場合はnullを返す
+    if (result.isEmpty) {
+      return "";
+    }
+
+    // 結果が存在する場合は、タイトルを取得して返す
+    return result[0]['title'];
   }
 
   Future<List<Map<String, dynamic>>> getTagFromDB() async {
@@ -79,13 +94,15 @@ class TagDatabaseHelper {
     return data;
   }
 
-  
   // Color型からint型への変換関数
   int colorToInt(Color? color) {
-    if (color == null){color = MAIN_COLOR;}
+    if (color == null) {
+      color = MAIN_COLOR;
+    }
     // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
-    return (color.alpha << 24) | (color.red << 16) | (color.green << 8) | color.blue;
+    return (color.alpha << 24) |
+        (color.red << 16) |
+        (color.green << 8) |
+        color.blue;
   }
-
-
 }
