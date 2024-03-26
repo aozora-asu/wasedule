@@ -243,13 +243,13 @@ Widget chooseTagButton() {
     return ElevatedButton(
       onPressed: ()async{
 
-      await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
-
+      Map<String, List<Map<String, dynamic>>> result =
+        await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
 
         //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
         
         //アップロード処理成功時
-        String id = "2A8D24E9023F2DAC33";//仮のIDです。
+        String id = result.keys.last;
         showUploadDoneDialogue(id);
 
         //処理が完了したら、ここでIDをローカルDBにぶち込む処理
