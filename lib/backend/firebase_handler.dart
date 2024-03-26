@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_import_db.dart';
 import "./DB/handler/schedule_db_handler.dart";
 import 'package:uuid/uuid.dart';
 
@@ -34,15 +35,18 @@ Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
   return schedule;
 }
 
-Future<List<Map<String, dynamic>>> receiveSchedule(String scheduleID) async {
+Future<Map<String, List<Map<String, dynamic>>>> receiveSchedule(
+    String scheduleID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("schedule").doc(scheduleID);
 
   try {
     DocumentSnapshot doc = await docRef.get();
-    final data = doc.data() as Map<String, List<Map<String, dynamic>>>;
-    return data["schedule"]!;
+    final data = doc.data() as List<Map<String, dynamic>>;
+
+    ImportedScheduleDatabaseHelper().importScheduleToDB(data);
+    return {scheduleID: data};
   } catch (e) {
-    return []; // エラーが発生した場合は空のリストを返す
+    return {}; // エラーが発生した場合は空のリストを返す
   }
 }

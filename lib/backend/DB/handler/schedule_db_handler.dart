@@ -125,13 +125,11 @@ class ScheduleDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> pickScheduleByTag(int tagID) async {
     await _initScheduleDatabase();
-
     List<Map<String, dynamic>> postSchedule = await _database.query(
       'schedule',
       where: 'tag = ?',
       whereArgs: ["$tagID"],
     );
-
     return postSchedule;
   }
 }
