@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -166,9 +167,7 @@ Widget scheduleBroadcastPage(){
       String id = idController.text;
       if(id.isNotEmpty){
 
-
-      //ここに予定受信の実行処理を書き込む（ダウンロード）
-
+        receiveSchedule(id);
 
         Navigator.pop(context);
         showDownloadDoneDialogue();
