@@ -170,7 +170,7 @@ Widget scheduleBroadcastPage(){
         receiveSchedule(id);
 
         Navigator.pop(context);
-        showDownloadDoneDialogue();
+        showDownloadDoneDialogue("データが受信されました。");
       }else{
         showDownloadFailDialogue("IDを入力してください。");
       }
@@ -250,7 +250,7 @@ Widget scheduleBroadcastPage(){
 
 
                 Navigator.pop(context);
-                showDownloadDoneDialogue();
+                showDownloadDoneDialogue("データが復元されました！");
               }else{
                 showDownloadFailDialogue("IDを入力してください。");
               }
@@ -270,15 +270,15 @@ Widget scheduleBroadcastPage(){
    );
   }
 
-  void showDownloadDoneDialogue(){
+  void showDownloadDoneDialogue(String text){
     showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         title:const Text('ダウンロード完了'),
         actions: <Widget>[
-          const Align(alignment: Alignment.centerLeft, 
-          child:Text("データが復元されました！")),
+          Align(alignment: Alignment.centerLeft, 
+          child:Text(text)),
           const SizedBox(height:10),
           okButton(context,500.0)
         ],
