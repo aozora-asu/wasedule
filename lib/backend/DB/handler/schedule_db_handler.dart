@@ -125,13 +125,11 @@ class ScheduleDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> pickScheduleByTag(int tagID) async {
     await _initScheduleDatabase();
-    String tagName = await TagDatabaseHelper()
-        .getTagName(tagID); // 指定したIDに対応するタイトルを取得するクエリを実行し、結果を取得する
 
     List<Map<String, dynamic>> postSchedule = await _database.query(
       'schedule',
       where: 'tag = ?',
-      whereArgs: [tagName],
+      whereArgs: ["$tagID"],
     );
 
     return postSchedule;

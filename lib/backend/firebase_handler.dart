@@ -13,12 +13,14 @@ Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
+
   Map<String, List<Map<String, dynamic>>> postSchedule = {
     "schedule": postScheduleList
   };
   String scheduleID = "";
   while (true) {
     scheduleID = const Uuid().v4();
+
     final docRef = db.collection("schedule").doc(scheduleID);
     final snapshot = await docRef.get();
     if (!snapshot.exists) {
