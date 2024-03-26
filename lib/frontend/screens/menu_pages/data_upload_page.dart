@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
@@ -240,10 +241,9 @@ Widget chooseTagButton() {
   Widget broadcastUploadButton(){
    if(shareScheduleList.isNotEmpty){
     return ElevatedButton(
-      onPressed: (){
+      onPressed: ()async{
 
-
-        //ここにデータ配信の実行処理を書き込む（アップロード処理）
+      await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
 
 
         //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
