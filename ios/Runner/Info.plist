@@ -31,6 +31,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>画像を保存します。</string>
+	<key>NSCameraUsageDescription</key>
+	<string>QRコードをスキャンするために、「わせジュール」にカメラの使用を許可しますか？</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

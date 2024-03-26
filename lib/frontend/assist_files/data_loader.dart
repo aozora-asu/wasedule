@@ -122,10 +122,8 @@ class BroadcastLoader{
 
   Future<Map<String,dynamic>> getUploadDataSource() async {
     Map<String,dynamic> data = {
-      "c539ed57-9119-4a20-862d-e3c74861c9c1":
-        [{"subject":"予定１","tag":"1"},{"subject":"予定２","tag":"1"}],
-      "d722ac73-7365-9e27-442e-a2a65357b2d2":
-        [{"subject":"予定３","tag":"2"},{"subject":"予定４","tag":"2"}],
+      "c539ed57-9119-4a20-862d-e3c74861c9c1":sample1,
+      "d722ac73-7365-9e27-442e-a2a65357b2d2":sample1,
     };
 
    //仮のデータです。変数dataにDBから受け渡して下さい。
@@ -140,3 +138,35 @@ class BroadcastLoader{
   }
 
 }
+
+List<dynamic> sample1 = [
+ {"id": 1, 
+  "subject": "予定１",
+  "startDate": "2024-03-08",
+  "startTime": "18:15",
+  "endDate": "2024-02-08",
+  "endTime": "21:05",
+  "hash": "予定１2024-03-08"},
+ {"id": 2, 
+  "subject": "予定2",
+  "startDate": "2024-03-11",
+  "startTime": "",
+  "endDate": "2024-02-08",
+  "endTime": "",
+  "hash": "予定22024-03-11"},
+ {"id": 3, 
+  "subject": "予定3",
+  "startDate": "2024-03-12",
+  "startTime": "18:15",
+  "endDate": "2024-02-08",
+  "endTime": "",
+  "hash": "予定32024-03-12"},
+ {"id": 4, 
+  "subject": "予定4",
+  "startDate": "2024-03-12",
+  "startTime": "18:15",
+  "endDate": "2024-02-08",
+  "endTime": "21:05",
+  "hash": "予定42024-03-12"},
+];
+

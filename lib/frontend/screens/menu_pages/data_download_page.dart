@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -108,6 +109,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       return dataBackupPage();
     }
   }
+
 TextEditingController idController = TextEditingController();
 Widget scheduleBroadcastPage(){
   
@@ -125,7 +127,28 @@ Widget scheduleBroadcastPage(){
           controller: idController,
           placeholder: 'IDを入力',
         ),
-        const SizedBox(height: 25),
+          Row(children:[
+            const Text("もしくは"),
+            TextButton.icon(
+              onPressed:(){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>ScannerWidget(
+                      idController: idController,
+                    ),
+                  )
+                );
+              },
+              icon:const Icon(Icons.qr_code_2,color:Colors.blue),
+              label:const Text("QRを読み込み",
+                          style:TextStyle(
+                          fontWeight:FontWeight.bold,
+                          color: Colors.blue
+                        )
+                      ),
+                    )
+          ]),
+        const SizedBox(height: 20),
         scheduleReceiveButton(idController),
         const SizedBox(height: 15),
       ],
