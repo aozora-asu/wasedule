@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-
+import 'package:uuid/uuid.dart';
 import '../models/schedule.dart';
 
 import 'package:intl/intl.dart';
@@ -121,5 +121,17 @@ class ScheduleDatabaseHelper {
     }
 
     return todaysSchedule;
+  }
+
+  Future<List<Map<String, dynamic>>> pickScheduleByTag(String tag) async {
+    await _initScheduleDatabase();
+
+    List<Map<String, dynamic>> postSchedule = await _database.query(
+      'schedule',
+      where: 'tag = ?',
+      whereArgs: [tag],
+    );
+
+    return postSchedule;
   }
 }
