@@ -9,15 +9,16 @@ class ImportedScheduleItem {
   String? publicSubject;
   String? tag;
 
-  ImportedScheduleItem(
-      {required this.subject,
-      required this.startDate,
-      this.startTime,
-      this.endDate,
-      this.endTime,
-      required this.isPublic,
-      this.publicSubject,
-      this.tag});
+  ImportedScheduleItem({
+    required this.subject,
+    required this.startDate,
+    this.startTime,
+    this.endDate,
+    this.endTime,
+    required this.isPublic,
+    this.publicSubject,
+    this.tag,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,7 +29,17 @@ class ImportedScheduleItem {
       'endTime': endTime,
       'isPublic': isPublic,
       "publicSubject": publicSubject,
-      "tag": tag
+      "tag": tag,
+      "hash": {
+        'subject': subject,
+        'startDate': startDate,
+        'startTime': startTime,
+        'endDate': endDate,
+        'endTime': endTime,
+        'isPublic': isPublic,
+        "publicSubject": publicSubject,
+        "tag": tag,
+      }.hashCode.toString()
     };
   }
 }
