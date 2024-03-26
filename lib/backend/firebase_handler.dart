@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_import_db.dart';
 import "./DB/handler/schedule_db_handler.dart";
 import 'package:uuid/uuid.dart';
+import "./DB/handler/schedule_id_db_handler.dart";
 
 void resisterTask(String categories, String uid, taskMap) async {
 // Add a new document with a generated ID
@@ -32,6 +33,8 @@ Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
   Map<String, List<Map<String, dynamic>>> schedule = {
     scheduleID: postScheduleList
   };
+  ScheduleIDDatabaseHelper()
+      .insertScheduleID({"scheduleID": scheduleID, "tagID": tagID});
   return schedule;
 }
 

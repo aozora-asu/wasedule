@@ -35,7 +35,6 @@ class ScheduleDatabaseHelper {
     ''');
   }
 
-  // データベースの初期化
   Future<void> insertSchedule(ScheduleItem schedule) async {
     await _initScheduleDatabase();
     await _database.insert('schedule', schedule.toMap());

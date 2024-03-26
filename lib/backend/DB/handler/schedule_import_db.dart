@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/schedule_import.dart';
+import "./schedule_id_db_handler.dart";
+import "./schedule_db_handler.dart";
 
 class ImportedScheduleDatabaseHelper {
   late Database _database;
@@ -64,5 +66,21 @@ class ImportedScheduleDatabaseHelper {
 
       await insertSchedule(importedScheduleItem);
     }
+  }
+
+  Future<List<Map<String, List<Map<String, dynamic>>>>>
+      getScheduleForID() async {
+    List<Map<String, dynamic>> scheduleIDTagList =
+        await ScheduleIDDatabaseHelper().getScheduleIDFromDB();
+    List<Map<String, List<Map<String, dynamic>>>> list = [];
+    for (var scheduleIDTag in scheduleIDTagList) {
+      List<Map<String, dynamic>> scheduleList = await ScheduleDatabaseHelper()
+          .pickScheduleByTag(scheduleIDTag["tagID"]);
+      Map<String, List<Map<String, dynamic>>> map = {
+        scheduleIDTag["scheduleID"]: scheduleList
+      };
+      list.add(map);
+    }
+    return list;
   }
 }
