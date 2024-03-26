@@ -12,7 +12,7 @@ class ImportedScheduleDatabaseHelper {
   Future<void> _initImportedScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule_import.db');
     _database =
-        await openDatabase(path, version: 1, onCreate: _createScheduleDatabase);
+        await openDatabase(path, version: 2, onCreate: _createScheduleDatabase);
   }
 
   // データベースの作成
@@ -20,6 +20,7 @@ class ImportedScheduleDatabaseHelper {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS schedule_import(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         hash TEXT UNIQUE, -- UNIQUE,
         subject TEXT,
         startDate TEXT,
         startTime TEXT,
@@ -27,21 +28,22 @@ class ImportedScheduleDatabaseHelper {
         endTime TEXT,
         isPublic INTEGER, 
         publicSubject TEXT,
-        tag TEXT,
-        hash TEXT UNIQUE, -- UNIQUE,
+        tag TEXT
+       
       )
     ''');
   }
 
   Future<void> insertSchedule(ImportedScheduleItem importedSchedule) async {
     await _initImportedScheduleDatabase();
-    await _database.insert('schedule', importedSchedule.toMap());
+    await _database.insert('schedule_import', importedSchedule.toMap());
   }
 
   Future<List<Map<String, dynamic>>> getImportedScheduleFromDB() async {
     await _initImportedScheduleDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule_import');
+
     return data;
   }
 

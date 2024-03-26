@@ -76,9 +76,12 @@ class CalendarDataLoader {
     List<Map<String, dynamic>> importedSchedule =
         await ImportedScheduleDatabaseHelper().getImportedScheduleFromDB();
 
-    scheduleList.addAll(importedSchedule);
+    List<Map<String, dynamic>> combinedList =
+        List.from(scheduleList); // スケジュールリストを複製
 
-    return scheduleList;
+    combinedList.addAll(importedSchedule);
+
+    return combinedList;
   }
 
   Future<void> insertDataToProvider(ref) async {

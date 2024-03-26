@@ -42,10 +42,16 @@ Future<Map<String, List<Map<String, dynamic>>>> receiveSchedule(
 
   try {
     DocumentSnapshot doc = await docRef.get();
-    final data = doc.data() as List<Map<String, dynamic>>;
+    final data = doc.data();
+    if (data is Map<String, dynamic>) {
+      final datalist = data["schedule"] as List<dynamic>;
+      ImportedScheduleDatabaseHelper()
+          .importScheduleToDB(datalist.cast<Map<String, dynamic>>());
 
-    ImportedScheduleDatabaseHelper().importScheduleToDB(data);
-    return {scheduleID: data};
+      return {scheduleID: datalist.cast<Map<String, dynamic>>()};
+    } else {
+      throw "データが予期せず不正な形式です";
+    }
   } catch (e) {
     return {}; // エラーが発生した場合は空のリストを返す
   }
