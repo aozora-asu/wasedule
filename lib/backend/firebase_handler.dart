@@ -27,3 +27,16 @@ Future<String> postScheduleToFB(String tag) async {
   }
   return scheduleID;
 }
+
+Future<List<Map<String, dynamic>>> receiveSchedule(String scheduleID) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final docRef = db.collection("schedule").doc(scheduleID);
+
+  try {
+    DocumentSnapshot doc = await docRef.get();
+    final data = doc.data() as List<Map<String, dynamic>>;
+    return data;
+  } catch (e) {
+    return []; // エラーが発生した場合は空のリストを返す
+  }
+}
