@@ -33,20 +33,6 @@ class ImportedScheduleItem {
     }.hashCode;
   }
 
-  @override
-  bool operator ==(other) {
-    if (identical(this, other)) return true;
-    if (other is! ImportedScheduleItem) return false;
-    return subject == other.subject &&
-        startDate == other.startDate &&
-        startTime == other.startTime &&
-        endDate == other.endDate &&
-        endTime == other.endTime &&
-        isPublic == other.isPublic &&
-        publicSubject == other.publicSubject &&
-        tag == other.tag;
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'subject': subject,
