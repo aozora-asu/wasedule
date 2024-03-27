@@ -19,6 +19,19 @@ class ImportedScheduleItem {
     this.publicSubject,
     this.tag,
   });
+  @override
+  int get hashCode {
+    return {
+      'subject': subject,
+      'startDate': startDate,
+      'startTime': startTime,
+      'endDate': endDate,
+      'endTime': endTime,
+      'isPublic': isPublic,
+      "publicSubject": publicSubject,
+      "tag": tag,
+    }.hashCode;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,16 +43,7 @@ class ImportedScheduleItem {
       'isPublic': isPublic,
       "publicSubject": publicSubject,
       "tag": tag,
-      "hash": {
-        'subject': subject,
-        'startDate': startDate,
-        'startTime': startTime,
-        'endDate': endDate,
-        'endTime': endTime,
-        'isPublic': isPublic,
-        "publicSubject": publicSubject,
-        "tag": tag,
-      }.hashCode.toString()
+      "hash": hashCode.toString(),
     };
   }
 }
