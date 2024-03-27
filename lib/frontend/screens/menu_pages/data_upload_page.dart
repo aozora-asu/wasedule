@@ -337,7 +337,6 @@ Widget chooseTagButton() {
   }
 
   Widget uploadDataList(Map<String,dynamic> data){
-    print(data);
     return ListView.separated(
       itemBuilder:(context,index){
         String id = data.keys.elementAt(index);
@@ -352,10 +351,16 @@ Widget chooseTagButton() {
                   style: const TextStyle(color: Colors.grey),
                   overflow: TextOverflow.ellipsis,
                   ),
-                  Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
-                  style: const TextStyle(color: Colors.grey),
-                  overflow: TextOverflow.ellipsis,
-                  )
+                  InkWell(
+                    onTap:() {
+                      showSchedulesDialogue(context,"アップロード済みデータ",
+                        data.values.elementAt(index));
+                    },
+                    child:Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
+                      style: const TextStyle(color: Colors.blue),
+                      overflow: TextOverflow.ellipsis,
+                  ))
+                  
                 ]),
               ),
               
@@ -548,3 +553,64 @@ Widget chooseTagButton() {
 
 }
 
+  void showSchedulesDialogue(context,String text,List<dynamic> data){
+   showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(text),
+        actions: <Widget>[
+          ListView.separated(
+            itemBuilder: (context, index) {
+            Map targetDayData = data.elementAt(index);
+            Text dateTimeData = const Text("");
+              if (targetDayData["startTime"].trim() != "" &&
+                targetDayData["endTime"].trim() != "") {
+              dateTimeData = Text(
+                  " " +
+                      targetDayData["startTime"] +
+                      "～" +
+                      targetDayData["endTime"],
+                  style: const TextStyle(color: Colors.grey),
+                );
+              } else if (targetDayData["startTime"].trim() !=
+                  "") {
+                dateTimeData = Text(
+                  " " + targetDayData["startTime"],
+                  style: const TextStyle(color: Colors.grey),
+                );
+              } else {
+                dateTimeData = const Text(
+                  " 終日",
+                  style: TextStyle(color: Colors.grey),
+                );
+              }
+
+            return Container(
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  Row(children:[
+                  Text(data.elementAt(index)["startDate"],
+                  style:const TextStyle(color:Colors.grey),),
+                  const SizedBox(width:10),
+                  dateTimeData
+                  ]),
+                  Text(data.elementAt(index)["subject"]),
+                ]) 
+              );
+            },
+            separatorBuilder: (context,index){
+              return const Divider(height:1);
+            },
+            itemCount:data.length,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+          ),
+          const SizedBox(height:10),
+          okButton(context,500.0)
+        ],
+      );
+    },
+   );
+  }
