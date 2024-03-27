@@ -288,7 +288,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
 
   Widget showDownloadDataView() {
     return FutureBuilder(
-      future: BroadcastLoader().getUploadDataSource(),
+      future: BroadcastLoader().getDownloadDataSource(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(
