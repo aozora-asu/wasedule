@@ -246,13 +246,12 @@ Widget chooseTagButton() {
       Map<String, List<Map<String, dynamic>>> result =
         await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
 
-        //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
+        //処理の失敗時
+        //showBackupFailDialogue("エラーメッセージ");
         
         //アップロード処理成功時
         String id = result.keys.last;
         showUploadDoneDialogue(id);
-
-        //処理が完了したら、ここでIDをローカルDBにぶち込む処理
         
         setState((){});
       },
@@ -309,7 +308,7 @@ Widget chooseTagButton() {
   }
 
   Widget uploadDataView(Map<String,dynamic> data){
-    if(data.isEmpty){
+    if(data.isEmpty || data.values.elementAt(0).isEmpty){
       return const SizedBox();
     }else{
       return Column(children:[
@@ -338,6 +337,7 @@ Widget chooseTagButton() {
   }
 
   Widget uploadDataList(Map<String,dynamic> data){
+    print(data);
     return ListView.separated(
       itemBuilder:(context,index){
         String id = data.keys.elementAt(index);
@@ -348,7 +348,7 @@ Widget chooseTagButton() {
                 Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children:[
-                  Text(data.values.elementAt(index).elementAt(0)["subject"],
+                  Text(data.values.elementAt(index).elementAt(0)["subject"] ?? "",
                   style: const TextStyle(color: Colors.grey),
                   overflow: TextOverflow.ellipsis,
                   ),
