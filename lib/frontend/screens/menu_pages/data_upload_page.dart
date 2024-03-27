@@ -319,7 +319,7 @@ Widget chooseTagButton() {
           child:Column(
           crossAxisAlignment: CrossAxisAlignment.start, 
           children:[
-            const Text("アップロード済みデータ:",
+            const Text("アップロード中データ:",
               style:TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold
@@ -353,11 +353,11 @@ Widget chooseTagButton() {
                   ),
                   InkWell(
                     onTap:() {
-                      showSchedulesDialogue(context,"アップロード済みデータ",
+                      showSchedulesDialogue(context,"アップロード中データ",
                         data.values.elementAt(index));
                     },
                     child:Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
-                      style: const TextStyle(color: Colors.blue),
+                      style: const TextStyle(color: Colors.blueAccent),
                       overflow: TextOverflow.ellipsis,
                   ))
                   

@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_upload_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
@@ -315,7 +316,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text("ダウンロード登録中データ:",
+              const Text("ダウンロード登録中のデータ:",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               const Divider(height: 1),
@@ -343,12 +344,18 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                       style: const TextStyle(color: Colors.grey),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
+                    InkWell(
+                    onTap:() {
+                      showSchedulesDialogue(context,"ダウンロード登録中のデータ",
+                        data.values.elementAt(index));
+                    },
+                    child:Text(
                       "ほか" +
                           (data.values.elementAt(index).length - 1).toString() +
                           "件",
-                      style: const TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.blueAccent),
                       overflow: TextOverflow.ellipsis,
+                      )
                     )
                   ]),
             ),
