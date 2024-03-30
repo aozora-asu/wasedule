@@ -122,7 +122,7 @@ class UserInfoLoader {
 
 class BroadcastLoader {
   Future<Map<String, dynamic>> getUploadDataSource() async {
-    //仮のデータです。ここにDBから受け渡して下さい。
+    //★仮のデータです。ここにDBから受け渡して下さい。
     Map<String, dynamic> data = sample;
 
     // List<Map<String, List<Map<String, dynamic>>>> dataSause =
