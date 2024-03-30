@@ -357,7 +357,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         "endTime": "",
         "isPublic": 1,
         "publicSubject": "",
-        "tag": ""
+        "tag": "",
+        //★ "tagID" : ""
       };
       await ScheduleDatabaseHelper()
             .resisterScheduleToDB(schedule);
@@ -754,6 +755,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       newMap["publicSubject"] = targetData["publicSubject"];
                       newMap["tag"] = provider.tagController.text;
                       newMap["id"] = targetData["id"];
+                    
+                      //★ IDからtagIDを返す関数です！
+                      //newMap["tagID"] = returnTagIdFromID(scheduleForm.tagController.text, ref)
+
                     await ScheduleDatabaseHelper().updateSchedule(newMap);
                       ref.read(taskDataProvider).isRenewed = true;
                       ref.read(calendarDataProvider.notifier).state = CalendarData();

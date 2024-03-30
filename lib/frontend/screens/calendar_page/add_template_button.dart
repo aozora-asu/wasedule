@@ -244,7 +244,11 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                         "endTime": scheduleForm.timeEndController.text,
                         "isPublic": intIspublic,
                         "publicSubject":scheduleForm.publicScheduleController.text,
-                        "tag": scheduleForm.tagController.text
+                        "tag": scheduleForm.tagController.text,
+                        
+                        // ★　IDからtagIDを返す関数です！　★
+                        //"tagID" : returnTagIdFromID(scheduleForm.tagController.text, ref)
+                        
                       };
                       await ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
                       ref.read(scheduleFormProvider).clearContents();

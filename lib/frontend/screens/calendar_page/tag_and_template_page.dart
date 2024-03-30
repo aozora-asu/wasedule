@@ -383,8 +383,6 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
     TextEditingController titlecontroller = TextEditingController();
     titlecontroller.text = targetData["subject"];
 
-
-
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -477,6 +475,10 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
               newMap["publicSubject"] = targetData["publicSubject"];
               newMap["tag"] = provider.tagController.text;
               newMap["id"] = targetData["id"];
+              
+              //★ IDからtagIDを返す関数です！
+              //newMap["tagID"] = returnTagIdFromID(scheduleForm.tagController.text, ref)
+              
               await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
               ref.read(scheduleFormProvider).clearContents();
               ref.read(taskDataProvider).isRenewed = true;
@@ -855,6 +857,10 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
                   "isBeit" : boolToInt(isBeit),
                   "wage" : int.parse(wageController.text),
                   "fee" : int.parse(feeController.text)
+
+                  //★ Tagの編集ダイアログ。編集前の値をそのまま渡します。
+                  //"tagId" : widget.tagData["tagId"],
+                  
                 });
                 ref.read(scheduleFormProvider).clearContents();
                 ref.read(taskDataProvider).isRenewed = true;
@@ -1288,7 +1294,7 @@ String truncateString(String input) {
 
 ///////////////ここから下が旧処理です//////////////////////////////////////////////////////////////////////////////////////
 
-//DB竣工時に以下の関数は一斉削除し、上の関数名から「~fromTagID」を除去します。
+//★　DB竣工時に以下の関数は一斉削除し、上の関数名から「~fromTagID」を除去します。
 
 String returnTagData(String id, WidgetRef ref){
     final data = ref.read(calendarDataProvider);

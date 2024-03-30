@@ -242,7 +242,7 @@ Widget chooseTagButton() {
    if(shareScheduleList.isNotEmpty){
     return ElevatedButton(
       onPressed: ()async{
-        //この "tagID" 変数をバックエンド（postScheduleToFB）に受け渡します!
+        //★この "tagID" 変数をバックエンド（postScheduleToFB）に受け渡します!
         String tagID = returnTagIdFromID(ref.watch(scheduleFormProvider).tagController.text, ref) ?? "";
 
         Map<String, List<Map<String, dynamic>>> result =
