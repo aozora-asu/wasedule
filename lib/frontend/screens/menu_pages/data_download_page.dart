@@ -119,7 +119,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("・ほかの人が配信した予定データを、共有ＩＤを入力して受信登録することができます！",
+          const Text("・ほかの人が配信した予定データを、スケジュールＩＤを入力して受信登録することができます！",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           CupertinoTextField(
