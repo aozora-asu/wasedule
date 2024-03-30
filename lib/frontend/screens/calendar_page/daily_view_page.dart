@@ -149,37 +149,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     const Spacer(),
                     ElevatedButton(
                     onPressed: () async{
-
-                     String startDate = DateFormat('yyyy-MM-dd').format(widget.target);
-                     Map<String, dynamic> schedule = {
-                        "subject": "",
-                        "startDate": startDate,
-                        "startTime": "",
-                        "endDate": startDate,
-                        "endTime": "",
-                        "isPublic": 1,
-                        "publicSubject": "",
-                        "tag": ""
-                      };
-                      await ScheduleDatabaseHelper()
-                            .resisterScheduleToDB(schedule);
-                      
-                      ref.read(scheduleFormProvider).clearContents();
-
-                      ref.read(calendarDataProvider.notifier).state =
-                          CalendarData();
-                      ref.read(taskDataProvider).isRenewed = true;
-                      while (
-                          ref.read(taskDataProvider).isRenewed != false) {
-                        await Future.delayed(
-                            const Duration(milliseconds: 1));
-                      }
-                      setState(() {});
-                      final data = ref.read(calendarDataProvider);
-                      List dateData = data.sortedDataByDay[startDate];
-
-                      inittodaiarogu(data.calendarData.last);
-                      _showTextDialog(context,data.calendarData.last,"予定の追加…");
+                      await addEmptyData();
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
@@ -247,15 +217,20 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     String targetKey =  widget.target.year.toString()+ "-" + widget.target.month.toString().padLeft(2,"0") + "-" + widget.target.day.toString().padLeft(2,"0");
 
       if(data.sortedDataByDay[targetKey] == null){
-        return  Column(children:[
-          const Divider(height:2,thickness: 2,),
-          SizedBox( height: SizeConfig.blockSizeHorizontal! * 8,),
-          const Text(
-              "予定はありません。",
-              style: TextStyle(fontSize: 20,color: Colors.grey),
-          ),
-           SizedBox( height: SizeConfig.blockSizeHorizontal! * 5,),
-      ]);
+        return GestureDetector(
+          onTap:()async{
+            await addEmptyData();
+          },
+          child:Column(children:[
+            const Divider(height:2,thickness: 2,),
+            SizedBox(height: SizeConfig.blockSizeHorizontal! * 8,),
+            const Text(
+                "予定はありません。",
+                style: TextStyle(fontSize: 20,color: Colors.grey),
+            ),
+            SizedBox( height: SizeConfig.blockSizeHorizontal! * 5,),
+          ])
+        );
     }else{
      List targetDayData = data.sortedDataByDay[targetKey];
    return
@@ -370,6 +345,42 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       );
     }
   }
+
+  Future<void> addEmptyData() async{
+   
+    String startDate = DateFormat('yyyy-MM-dd').format(widget.target);
+      Map<String, dynamic> schedule = {
+        "subject": "",
+        "startDate": startDate,
+        "startTime": "",
+        "endDate": startDate,
+        "endTime": "",
+        "isPublic": 1,
+        "publicSubject": "",
+        "tag": ""
+      };
+      await ScheduleDatabaseHelper()
+            .resisterScheduleToDB(schedule);
+      
+       ref.read(scheduleFormProvider).clearContents();
+
+      ref.read(calendarDataProvider.notifier).state =
+          CalendarData();
+      ref.read(taskDataProvider).isRenewed = true;
+      while (
+          ref.read(taskDataProvider).isRenewed != false) {
+        await Future.delayed(
+            const Duration(milliseconds: 1));
+      }
+      setState(() {});
+      final data = ref.read(calendarDataProvider);
+      List dateData = data.sortedDataByDay[startDate];
+
+      inittodaiarogu(data.calendarData.last);
+      _showTextDialog(context,data.calendarData.last,"予定の追加…");
+  }
+
+
 
   String weekDay(weekday){
     String dayOfWeek = '';
