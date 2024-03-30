@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_upload_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
@@ -145,8 +143,6 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           const SizedBox(height: 20),
           scheduleReceiveButton(idController),
           const SizedBox(height: 5),
-          showDownloadDataView(),
-          const SizedBox(height: 10),
         ],
       ),
     );
@@ -160,7 +156,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           receiveSchedule(id);
 
           Navigator.pop(context);
-          showDownloadDoneDialogue();
+          showDownloadDoneDialogue("データがダウンロードされました！");
         } else {
           showDownloadFailDialogue("IDを入力してください。");
         }
@@ -235,7 +231,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                     //ここにバックアップの実行処理を書き込む（ダウンロード）
 
                     Navigator.pop(context);
-                    showDownloadDoneDialogue();
+                    showDownloadDoneDialogue("データが復元されました！");
                   } else {
                     showDownloadFailDialogue("IDを入力してください。");
                   }
@@ -254,15 +250,15 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     );
   }
 
-  void showDownloadDoneDialogue() {
+  void showDownloadDoneDialogue(String text) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('ダウンロード完了'),
           actions: <Widget>[
-            const Align(
-                alignment: Alignment.centerLeft, child: Text("データが復元されました！")),
+            Align(
+                alignment: Alignment.centerLeft, child: Text(text)),
             const SizedBox(height: 10),
             okButton(context, 500.0)
           ],
@@ -287,93 +283,4 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     );
   }
 
-  Widget showDownloadDataView() {
-    return FutureBuilder(
-      future: BroadcastLoader().getDownloadDataSource(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(
-            color: MAIN_COLOR,
-          );
-        } else if (snapshot.hasError) {
-          return Text('エラー: ${snapshot.error}');
-        } else {
-          BroadcastLoader().insertUploadDataToProvider(ref);
-          return donwloadDataView(snapshot.data);
-        }
-      },
-    );
-  }
-
-  Widget donwloadDataView(Map<String, dynamic> data) {
-    if (data.isEmpty) {
-      return const SizedBox();
-    } else {
-      return Column(children: [
-        const SizedBox(height: 20),
-        Container(
-            decoration: roundedBoxdecorationWithShadow(),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text("ダウンロード登録中のデータ:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              const Divider(height: 1),
-              downloadDataList(data),
-              const Divider(height: 1),
-              const SizedBox(height: 10),
-            ]))
-      ]);
-    }
-  }
-
-  Widget downloadDataList(Map<String, dynamic> data) {
-    return ListView.separated(
-      itemBuilder: (context, index) {
-        String id = data.keys.elementAt(index);
-        return Column(children: [
-          Text(id),
-          Row(children: [
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.values.elementAt(index).elementAt(0)["subject"],
-                      style: const TextStyle(color: Colors.grey),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    InkWell(
-                    onTap:() {
-                      showSchedulesDialogue(context,"ダウンロード登録中のデータ",
-                        data.values.elementAt(index));
-                    },
-                    child:Text(
-                      "ほか" +
-                          (data.values.elementAt(index).length - 1).toString() +
-                          "件",
-                      style: const TextStyle(color: Colors.blueAccent),
-                      overflow: TextOverflow.ellipsis,
-                      )
-                    )
-                  ]),
-            ),
-            IconButton(
-                onPressed: () async {
-                  final data = ClipboardData(text: id);
-                  await Clipboard.setData(data);
-                },
-                icon: const Icon(Icons.copy, color: Colors.grey)),
-          ])
-        ]);
-      },
-      separatorBuilder: (context, index) {
-        return const Divider(height: 1);
-      },
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: data.length,
-    );
-  }
 }

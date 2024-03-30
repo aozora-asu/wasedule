@@ -1083,6 +1083,213 @@ builder: (BuildContext context) {
 );
 }
 
+void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('削除の確認'),
+        content: Text('$name を削除しますか？'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // ダイアログを閉じる
+            },
+            child: const Text('キャンセル'),
+          ),
+          TextButton(
+            onPressed: () {
+              onTap();
+              Navigator.of(context).pop(); // ダイアログを閉じる
+            },
+            child: const Text(
+              '削除',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    }
+  );
+}
+
+
+String returnTagTitleFromTagID(String tagId, WidgetRef ref){
+  final data = ref.read(calendarDataProvider);
+  List tagMap = data.tagData;
+  if(tagId == ""){
+    return "";
+  }else{
+    for (var data in tagMap) {
+      if (data["tagId"] == tagId) {
+        return data["title"];
+      }
+    }
+  return "無効なタグです";
+ }
+}
+
+
+int returnTagIsBeitFromTagID(String tagId, WidgetRef ref){
+  final data = ref.read(calendarDataProvider);
+  List tagMap = data.tagData;
+  if(tagId == ""){
+    return 0;
+  }else{
+    for (var data in tagMap) {
+      if (data["tagId"] == tagId) {
+        return data["isBeit"];
+      }
+    }
+  return 0;
+ }
+}
+
+Color? returnTagColorFromTagID(String tagId, WidgetRef ref){
+    final data = ref.read(calendarDataProvider);
+    List tagMap = data.tagData;
+    if(tagId == ""){
+    return null;
+  }else{
+    for (var data in tagMap) {
+      if (data["tagId"] == tagId) {
+        return data["color"];
+      }
+    }
+  return null;
+ }
+}
+
+String? returnTagIdFromID(String id, WidgetRef ref){
+  final data = ref.read(calendarDataProvider);
+  List tagMap = data.tagData;
+  if(id == ""){
+    return null;
+  }else{
+    for (var data in tagMap) {
+      if (data["id"] == int.parse(id)) {
+        return data["tagID"];
+      }
+    }
+  return null;
+ }
+}
+
+
+Widget tagChipFromTagID(String tagID, WidgetRef ref){
+  final data = ref.read(calendarDataProvider);
+  List tagMap = data.tagData;
+  if(tagID == ""){
+    return const SizedBox();
+  }else{
+    for (var data in tagMap) {
+      if (data["tagId"] == tagID) {
+        return validTagChip(data);
+      }
+    }
+  return invalidTagChip();
+ }
+}
+
+
+Widget validTagChip(Map data){
+  var color = data["color"];
+  if(color.runtimeType == int){
+    color = intToColor(color);
+  }
+
+  return  Container(
+    height: 25,
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[700]!,
+            spreadRadius: 1,
+            blurRadius: 0,
+            offset: const Offset(0, 0)
+          ),
+        ],
+    ),
+    padding: const EdgeInsets.only(right:15,left:5),
+    child:Row(children:[
+    Container(
+                width: 10,
+                height: 10,
+                decoration:  BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[700],
+                ),
+              ),
+      Text(
+        "  " + truncateString(data["title"]),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          overflow: TextOverflow.ellipsis
+        ),
+      ),
+    ]),
+  );
+}
+
+Widget invalidTagChip(){
+  return Container(
+    height: 25,
+    decoration: BoxDecoration(
+      color: Colors.grey,
+      borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[700]!,
+            spreadRadius: 1,
+            blurRadius: 0,
+            offset: const Offset(0, 0)
+          ),
+        ],
+    ),
+    padding: const EdgeInsets.only(right:15,left:5),
+    child:Row(children:[
+    Container(
+                width: 10,
+                height: 10,
+                decoration:  BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[700],
+                ),
+              ),
+      const Text(
+        " ! 無効なタグ",
+        style:  TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          overflow: TextOverflow.ellipsis
+        ),
+      ),
+    ]),
+  );
+}
+
+Color intToColor(int colorValue) {
+  // 0xFF000000から0xFFFFFFの範囲の整数をColorオブジェクトに変換する
+  return Color(colorValue);
+}
+
+String truncateString(String input) {
+  if (input.length <= 8) {
+    return input;
+  } else {
+    return input.substring(0, 8) + "…";
+  }
+}
+
+
+
+///////////////ここから下が旧処理です//////////////////////////////////////////////////////////////////////////////////////
+
+//DB竣工時に以下の関数は一斉削除し、上の関数名から「~fromTagID」を除去します。
+
 String returnTagData(String id, WidgetRef ref){
     final data = ref.read(calendarDataProvider);
     List tagMap = data.tagData;
@@ -1130,7 +1337,6 @@ Color? returnTagColor(String id, WidgetRef ref){
   return null;
  }
 }
-
 
 
 Widget tagChip(String id, WidgetRef ref){
@@ -1218,40 +1424,3 @@ Widget tagChip(String id, WidgetRef ref){
  }
 }
 
-String truncateString(String input) {
-  if (input.length <= 8) {
-    return input;
-  } else {
-    return input.substring(0, 8) + "…";
-  }
-}
-
-void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('削除の確認'),
-        content: Text('$name を削除しますか？'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // ダイアログを閉じる
-            },
-            child: const Text('キャンセル'),
-          ),
-          TextButton(
-            onPressed: () {
-              onTap();
-              Navigator.of(context).pop(); // ダイアログを閉じる
-            },
-            child: const Text(
-              '削除',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      );
-    }
-  );
-}

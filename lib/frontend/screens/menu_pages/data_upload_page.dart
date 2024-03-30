@@ -242,9 +242,11 @@ Widget chooseTagButton() {
    if(shareScheduleList.isNotEmpty){
     return ElevatedButton(
       onPressed: ()async{
+        //この "tagID" 変数をバックエンド（postScheduleToFB）に受け渡します!
+        String tagID = returnTagIdFromID(ref.watch(scheduleFormProvider).tagController.text, ref) ?? "";
 
-      Map<String, List<Map<String, dynamic>>> result =
-        await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
+        Map<String, List<Map<String, dynamic>>> result =
+          await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
 
         //処理の失敗時
         //showBackupFailDialogue("エラーメッセージ");
@@ -340,23 +342,27 @@ Widget chooseTagButton() {
     return ListView.separated(
       itemBuilder:(context,index){
         String id = data.keys.elementAt(index);
+        Map tag = data.values.elementAt(index)["tag"];
+        List scheduleList = data.values.elementAt(index)["schedule"];
         return Column(children:[
+            const SizedBox(height:4),
+            Row(children:[validTagChip(tag)]), 
             Text(id),
             Row(children:[
               Expanded(child:
                 Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children:[
-                  Text(data.values.elementAt(index).elementAt(0)["subject"] ?? "",
+                  Text(scheduleList.elementAt(0)["subject"] ?? "",
                   style: const TextStyle(color: Colors.grey),
                   overflow: TextOverflow.ellipsis,
                   ),
                   InkWell(
                     onTap:() {
                       showSchedulesDialogue(context,"アップロード中データ",
-                        data.values.elementAt(index));
+                        scheduleList);
                     },
-                    child:Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
+                    child:Text("ほか" +(scheduleList.length-1).toString() + "件",
                       style: const TextStyle(color: Colors.blueAccent),
                       overflow: TextOverflow.ellipsis,
                   ))
@@ -376,8 +382,9 @@ Widget chooseTagButton() {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CodeSharePage(
-                        id:id,
-                        scheduleData:data.values.elementAt(index),
+                        id : id,
+                        tagName : tag["title"],
+                        scheduleData : scheduleList,
                       )
                     ),
                   );
