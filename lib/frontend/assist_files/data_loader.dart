@@ -146,7 +146,7 @@ class BroadcastLoader {
 
 Map<String,dynamic> sample = {
   "ee0171cf-dcf5-411e-8e63-206e712ee709":
-  {
+  { "dtEnd" : "2024-05-31 23:59:00.000",
     "tag" : {
         "id" : 1,
         "title" : "サンプルプル1",
@@ -196,6 +196,7 @@ Map<String,dynamic> sample = {
     ],
   },
   "443e50a1-a12c-4daa-9029-4e981c731fc6" : {
+    "dtEnd" : "2024-04-30 23:59:00.000",
     "tag" : {
         "id" : 2,
         "title" : "サンプル2",
@@ -235,8 +236,8 @@ Map<String,dynamic> sample = {
       },
     ],
   },
-  "ae0171cf-dcf5-411e-8d63-206e712ee709":
-  {
+  "ae0171cf-dcf5-411e-8d63-206e712ee709":{
+    "dtEnd" : "2029-03-15 23:59:00.000",
     "tag" : {
         "id" : 3,
         "title" : "サンプル3",
