@@ -8,7 +8,7 @@ class ScheduleItem {
   int isPublic;
   String? publicSubject;
   String? tag;
-  String? tagID;
+  String tagID;
 
   ScheduleItem(
       {required this.subject,
@@ -19,7 +19,7 @@ class ScheduleItem {
       required this.isPublic,
       this.publicSubject,
       this.tag,
-      this.tagID});
+      required this.tagID});
   @override
   int get hashCode {
     return subject.hashCode ^
