@@ -179,7 +179,9 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     final scheduleForm = ref.watch(scheduleFormProvider);
     scheduleForm.isAllDay = false;
     return Scaffold(
-        appBar: CustomAppBar(backButton: true,),
+        appBar: CustomAppBar(
+          backButton: true,
+        ),
         drawer: burgerMenu(),
         body: SingleChildScrollView(
             child: Padding(
@@ -225,7 +227,6 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                 ),
               ),
             ),
-
             Row(children: [
               ElevatedButton(
                   onPressed: () async {
@@ -241,7 +242,6 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               dateInputPreview(scheduleForm.dtStartList)
             ]),
-
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -261,7 +261,6 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeStartController.text)
             ]),
-
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -281,24 +280,23 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeEndController.text)
             ]),
-
-            tagEmptyFlag(ref, Row(children: [
-              ElevatedButton(
-                  onPressed: () {
-                    showTagDialogue(ref, context, setState);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                  ),
-                  child: const Text("+    タグ     ",
-                      style: TextStyle(color: Colors.white))),
-              timeInputPreview(
-                  returnTagData(scheduleForm.tagController.text, ref))
-            ]),),
-            
-
-            
+            tagEmptyFlag(
+              ref,
+              Row(children: [
+                ElevatedButton(
+                    onPressed: () {
+                      showTagDialogue(ref, context, setState);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                    ),
+                    child: const Text("+    タグ     ",
+                        style: TextStyle(color: Colors.white))),
+                timeInputPreview(
+                    returnTagData(scheduleForm.tagController.text, ref))
+              ]),
+            ),
             Row(children: [
               ElevatedButton(
                   onPressed: () {
@@ -318,21 +316,19 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               isPublicPreview(scheduleForm.isPublic)
             ]),
-
-            templateEmptyFlag(ref,
-              Column(children:[
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 80,
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
-                addTemplateButton(),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 80,
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
-              ])
-            ),
-            
+            templateEmptyFlag(
+                ref,
+                Column(children: [
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal! * 80,
+                    height: SizeConfig.blockSizeVertical! * 0.5,
+                  ),
+                  addTemplateButton(),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal! * 80,
+                    height: SizeConfig.blockSizeVertical! * 0.5,
+                  ),
+                ])),
             const Divider(indent: 7, endIndent: 7, thickness: 3),
             SizedBox(
               width: SizeConfig.blockSizeHorizontal! * 80,
@@ -389,28 +385,27 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                               scheduleForm.publicScheduleController =
                                   scheduleForm.scheduleController;
                             }
-                            
+
                             for (int i = 0;
                                 i < scheduleForm.dtStartList.length;
                                 i++) {
-                              
                               Map<String, dynamic> schedule = {
                                 "subject": scheduleForm.scheduleController.text,
                                 "startDate":
                                     scheduleForm.dtStartList.elementAt(i),
                                 "startTime":
                                     scheduleForm.timeStartController.text,
-                                "endDate": scheduleForm.dtStartList
-                                    .elementAt(i),
+                                "endDate":
+                                    scheduleForm.dtStartList.elementAt(i),
                                 "endTime": scheduleForm.timeEndController.text,
                                 "isPublic": intIspublic,
                                 "publicSubject":
                                     scheduleForm.publicScheduleController.text,
                                 "tag": scheduleForm.tagController.text,
-                                
-                                //★ IDからtagIDを返す関数です！
-                                //"tagID" : returnTagIdFromID(scheduleForm.tagController.text, ref)
 
+                                // ★ IDからtagIDを返す関数です！
+                                "tagID": returnTagId(
+                                    scheduleForm.tagController.text, ref)
                               };
                               await ScheduleDatabaseHelper()
                                   .resisterScheduleToDB(schedule);
@@ -427,7 +422,11 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                             }
                             widget.setosute(() {});
                             Navigator.pop(context);
-                            if(ref.read(calendarDataProvider).calendarData.last["id"] == 1){
+                            if (ref
+                                    .read(calendarDataProvider)
+                                    .calendarData
+                                    .last["id"] ==
+                                1) {
                               showTagAndTemplateGuide(context);
                             }
                           }
@@ -695,95 +694,94 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("テンプレート選択"),
-          actions:[ 
+          actions: [
             SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "テンプレート:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                SizedBox(
-                  width: double.maxFinite,
-                  height:listViewHeight(50, tempLateMap.length),
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 5),
-                    itemCount: tempLateMap.length,
-                    itemBuilder: (BuildContext context, index) => InkWell(
-                      onTap: () async {
-                        setState(() {
-                          final inputform = ref.watch(scheduleFormProvider);
-                          inputform.scheduleController.text =
-                              data.templateData.elementAt(index)["subject"];
-                          inputform.timeStartController.text =
-                              data.templateData.elementAt(index)["startTime"];
-                          inputform.timeEndController.text =
-                              data.templateData.elementAt(index)["endTime"];
-                          inputform.tagController.text =
-                              data.templateData.elementAt(index)["tag"];
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              timedata(index),
-                              style: const TextStyle(
-                                  fontSize: 10, color: Colors.white),
-                            ),
-                            Text(
-                              "  " +
-                                  ref
-                                      .read(calendarDataProvider)
-                                      .templateData
-                                      .elementAt(index)["subject"],
-                              style: const TextStyle(
-                                  fontSize: 20, color: Colors.white),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "テンプレート:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
+                  SizedBox(
+                    width: double.maxFinite,
+                    height: listViewHeight(50, tempLateMap.length),
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 5),
+                      itemCount: tempLateMap.length,
+                      itemBuilder: (BuildContext context, index) => InkWell(
+                        onTap: () async {
+                          setState(() {
+                            final inputform = ref.watch(scheduleFormProvider);
+                            inputform.scheduleController.text =
+                                data.templateData.elementAt(index)["subject"];
+                            inputform.timeStartController.text =
+                                data.templateData.elementAt(index)["startTime"];
+                            inputform.timeEndController.text =
+                                data.templateData.elementAt(index)["endTime"];
+                            inputform.tagController.text =
+                                data.templateData.elementAt(index)["tag"];
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.blue[100],
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                timedata(index),
+                                style: const TextStyle(
+                                    fontSize: 10, color: Colors.white),
+                              ),
+                              Text(
+                                "  " +
+                                    ref
+                                        .read(calendarDataProvider)
+                                        .templateData
+                                        .elementAt(index)["subject"],
+                                style: const TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-             SizedBox(
-              width:1700,
-                child:ElevatedButton(
-                  style: const ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.blueAccent)),
-      
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            TemplateInputForm(setosute: setState),
+                  SizedBox(
+                    width: 1700,
+                    child: ElevatedButton(
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.blueAccent)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                TemplateInputForm(setosute: setState),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "+ テンプレートを追加…",
+                        style: TextStyle(color: Colors.white),
                       ),
-                    );
-                  },
-                  child: const Text(
-                    "+ テンプレートを追加…",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),)
-              ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-
-            ],
+          ],
         );
       },
     );
@@ -816,15 +814,19 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
   }
 }
 
-
-
-double listViewHeight(double itemHeight, int itemLength){
-  switch (itemLength){
-    case 0: return 0;
-    case 1: return itemHeight;
-    case 2: return itemHeight * 2;
-    case 3: return itemHeight *3;
-    case 4: return itemHeight *4;
-    default : return itemHeight *5;
+double listViewHeight(double itemHeight, int itemLength) {
+  switch (itemLength) {
+    case 0:
+      return 0;
+    case 1:
+      return itemHeight;
+    case 2:
+      return itemHeight * 2;
+    case 3:
+      return itemHeight * 3;
+    case 4:
+      return itemHeight * 4;
+    default:
+      return itemHeight * 5;
   }
 }

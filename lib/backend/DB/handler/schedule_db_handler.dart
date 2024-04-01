@@ -68,7 +68,7 @@ class ScheduleDatabaseHelper {
         startTime: schedule['startTime'] as String,
         endDate: schedule['endDate'] as String,
         endTime: schedule['endTime'] as String,
-        isPublic: schedule['isPublic'] as int ?? 0,
+        isPublic: schedule['isPublic'] as int,
         publicSubject: schedule['publicSubject'] as String,
         tagID: tagID ?? "",
       );
@@ -121,7 +121,7 @@ class ScheduleDatabaseHelper {
         endTime: schedule["endTime"],
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],
-        tagID: schedule["tagID"]);
+        tagID: schedule["tagID"] ?? "");
     await insertSchedule(scheduleItem);
   }
 
