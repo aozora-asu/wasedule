@@ -10,8 +10,11 @@ class Tag {
       this.color,
       required this.isBeit,
       this.wage,
-      this.fee
-      });
+      this.fee});
+  @override
+  int get hashCode {
+    return DateTime.now().hashCode;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -19,7 +22,8 @@ class Tag {
       'color': color,
       'isBeit': isBeit,
       "wage": wage,
-      "fee" : fee
+      "fee": fee,
+      "tagID": hashCode.toString()
     };
   }
 }

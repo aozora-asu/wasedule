@@ -4,6 +4,9 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'dart:async';
+
 class TagDatabaseHelper {
   late Database _database;
   // データベースの初期化
@@ -13,22 +16,75 @@ class TagDatabaseHelper {
 
   Future<void> _initTagDatabase() async {
     String path = join(await getDatabasesPath(), 'tag.db');
-    _database =
-        await openDatabase(path, version: 1, onCreate: _createTagDatabase);
+    _database = await openDatabase(path,
+        version: 2,
+        onCreate: _createTagDatabase,
+        onUpgrade: _upgradeTagDatabase);
   }
 
-  // データベースの作成
   Future<void> _createTagDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS tag(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        color INTEGER,
-        isBeit INTEGER,
-        wage INTEGER,
-        fee INTEGER
-      )
-    ''');
+    CREATE TABLE IF NOT EXISTS tag(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      color INTEGER,
+      isBeit INTEGER,
+      wage INTEGER,
+      fee INTEGER
+    )
+  ''');
+  }
+
+  Future<void> _upgradeTagDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    // 新しい列を含む新しいテーブルを作成
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS tag_new(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tagID TEXT UNIQUE,
+      title TEXT,
+      color INTEGER,
+      isBeit INTEGER,
+      wage INTEGER,
+      fee INTEGER
+    )
+  ''');
+
+    // 既存のデータを新しいテーブルに移行
+    var tags = await db.query('tag');
+    for (var tag in tags) {
+      await db.insert('tag_new', {
+        'id': tag["id"],
+        'tagID': (DateTime.now().microsecondsSinceEpoch + tag["id"].hashCode)
+            .hashCode
+            .toString(),
+        'title': tag['title'],
+        'color': tag['color'],
+        'isBeit': tag['isBeit'],
+        'wage': tag['wage'],
+        'fee': tag['fee']
+      });
+    }
+
+    // 既存のテーブルを削除
+    await db.execute('DROP TABLE tag');
+
+    // 新しいテーブルの名前を既存のテーブルの名前に変更
+    await db.execute('ALTER TABLE tag_new RENAME TO tag');
+  }
+
+  Future<String?> getTagIDFromId(int id) async {
+    await _initTagDatabase();
+    List<Map<String, dynamic>> results = await _database.query(
+      'tag',
+      columns: ['tagID'],
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (results.isNotEmpty) {
+      return results.first['tagID'] as String?;
+    }
+    return null; // 該当する id が見つからない場合は null を返す
   }
 
   // データベースの初期化

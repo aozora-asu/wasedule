@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:uuid/uuid.dart';
+
 import '../models/schedule.dart';
 import './tag_db_handler.dart';
 import 'package:intl/intl.dart';
@@ -14,25 +14,72 @@ class ScheduleDatabaseHelper {
 
   Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
-    _database =
-        await openDatabase(path, version: 1, onCreate: _createScheduleDatabase);
+    _database = await openDatabase(path,
+        version: 2,
+        onCreate: _createScheduleDatabase,
+        onUpgrade: _upgradeScheduleDatabase);
   }
 
-  // データベースの作成
   Future<void> _createScheduleDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS schedule(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        subject TEXT,
-        startDate TEXT,
-        startTime TEXT,
-        endDate TEXT,
-        endTime TEXT,
-        isPublic INTEGER, 
-        publicSubject TEXT,
-        tag TEXT
-      )
-    ''');
+    CREATE TABLE IF NOT EXISTS schedule(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      subject TEXT,
+      startDate TEXT,
+      startTime TEXT,
+      endDate TEXT,
+      endTime TEXT,
+      isPublic INTEGER, 
+      publicSubject TEXT,
+      tag TEXT
+
+     
+    )
+  ''');
+  }
+
+  Future<void> _upgradeScheduleDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS schedule_new(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      hash TEXT UNIQUE,
+      subject TEXT,
+      startDate TEXT,
+      startTime TEXT,
+      endDate TEXT,
+      endTime TEXT,
+      isPublic INTEGER, 
+      publicSubject TEXT,
+      tag TEXT,
+      tagID TEXT
+     
+    )
+  ''');
+    // 既存のデータを新しいテーブルに移行
+    var schedules = await db.query('schedule');
+    for (var schedule in schedules) {
+      int tagid = schedule["tag"] as int;
+      var tagID = await TagDatabaseHelper().getTagIDFromId(tagid);
+      ScheduleItem scheduleItem = ScheduleItem(
+        subject: schedule['subject'] as String,
+        startDate: schedule['startDate'] as String,
+        startTime: schedule['startTime'] as String,
+        endDate: schedule['endDate'] as String,
+        endTime: schedule['endTime'] as String,
+        isPublic: schedule['isPublic'] as int,
+        publicSubject: schedule['publicSubject'] as String,
+        tagID: tagID,
+      );
+      await db.insert('schedule_new', scheduleItem.toMap());
+    }
+
+    // 既存のテーブルを削除
+    await db.execute('DROP TABLE schedule');
+
+    // 新しいテーブルの名前を既存のテーブルの名前に変更
+    await db.execute('ALTER TABLE schedule_new RENAME TO schedule');
   }
 
   Future<void> insertSchedule(ScheduleItem schedule) async {
@@ -67,14 +114,14 @@ class ScheduleDatabaseHelper {
 
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
-        subject: schedule["subject"],
-        startDate: schedule["startDate"].replaceAll("/", "-"),
-        startTime: schedule["startTime"],
-        endDate: schedule["endDate"].replaceAll("/", "-"),
-        endTime: schedule["endTime"],
-        isPublic: schedule["isPublic"],
-        publicSubject: schedule["publicSubject"],
-        tag: schedule["tag"]);
+      subject: schedule["subject"],
+      startDate: schedule["startDate"].replaceAll("/", "-"),
+      startTime: schedule["startTime"],
+      endDate: schedule["endDate"].replaceAll("/", "-"),
+      endTime: schedule["endTime"],
+      isPublic: schedule["isPublic"],
+      publicSubject: schedule["publicSubject"],
+    );
     await insertSchedule(scheduleItem);
   }
 
