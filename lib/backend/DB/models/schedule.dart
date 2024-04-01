@@ -22,7 +22,14 @@ class ScheduleItem {
       required this.tagID});
   @override
   int get hashCode {
-    return DateTime.now().microsecondsSinceEpoch.hashCode;
+    return subject.hashCode ^
+        startDate.hashCode ^
+        startTime.hashCode ^
+        endDate.hashCode ^
+        endTime.hashCode ^
+        isPublic.hashCode ^
+        publicSubject.hashCode ^
+        tagID.hashCode;
   }
 
   @override
