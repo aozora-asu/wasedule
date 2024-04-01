@@ -945,13 +945,17 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget tagThumbnail(id) {
-    if (returnTagColor(id, ref) == null) {
+    if (id == null) {
       return Container();
     } else {
-      return Row(children: [
-        const SizedBox(width: 1),
-        Container(width: 4, height: 8, color: returnTagColor(id, ref))
-      ]);
+      if (returnTagColor(id, ref) == null) {
+        return Container();
+      } else {
+        return Row(children: [
+          const SizedBox(width: 1),
+          Container(width: 4, height: 8, color: returnTagColor(id, ref))
+        ]);
+      }
     }
   }
 

@@ -68,9 +68,9 @@ class ScheduleDatabaseHelper {
         startTime: schedule['startTime'] as String,
         endDate: schedule['endDate'] as String,
         endTime: schedule['endTime'] as String,
-        isPublic: schedule['isPublic'] as int,
+        isPublic: schedule['isPublic'] as int ?? 0,
         publicSubject: schedule['publicSubject'] as String,
-        tagID: tagID,
+        tagID: tagID ?? "",
       );
       await db.insert('schedule_new', scheduleItem.toMap());
     }
@@ -114,14 +114,14 @@ class ScheduleDatabaseHelper {
 
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
-      subject: schedule["subject"],
-      startDate: schedule["startDate"].replaceAll("/", "-"),
-      startTime: schedule["startTime"],
-      endDate: schedule["endDate"].replaceAll("/", "-"),
-      endTime: schedule["endTime"],
-      isPublic: schedule["isPublic"],
-      publicSubject: schedule["publicSubject"],
-    );
+        subject: schedule["subject"],
+        startDate: schedule["startDate"].replaceAll("/", "-"),
+        startTime: schedule["startTime"],
+        endDate: schedule["endDate"].replaceAll("/", "-"),
+        endTime: schedule["endTime"],
+        isPublic: schedule["isPublic"],
+        publicSubject: schedule["publicSubject"],
+        tagID: schedule["tagID"]);
     await insertSchedule(scheduleItem);
   }
 
