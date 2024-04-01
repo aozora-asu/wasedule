@@ -406,7 +406,11 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                                 "isPublic": intIspublic,
                                 "publicSubject":
                                     scheduleForm.publicScheduleController.text,
-                                "tag": scheduleForm.tagController.text
+                                "tag": scheduleForm.tagController.text,
+                                
+                                //★ IDからtagIDを返す関数です！
+                                //"tagID" : returnTagIdFromID(scheduleForm.tagController.text, ref)
+
                               };
                               await ScheduleDatabaseHelper()
                                   .resisterScheduleToDB(schedule);

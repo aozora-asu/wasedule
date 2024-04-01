@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
@@ -21,12 +22,14 @@ class DataUploadPage extends ConsumerStatefulWidget {
 class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   late int currentIndex;
   List<Map<String,dynamic>> shareScheduleList = [];
+  late TextEditingController dtEndController;
 
   @override
   void initState() {
   super.initState();
   currentIndex = 0;
   ref.read(scheduleFormProvider).clearContents();
+  dtEndController = TextEditingController(text: "30");
  }
 
   @override
@@ -129,6 +132,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           const SizedBox(height:10),
           chooseTagButton(),
           broadcastUploadButton(),
+          const SizedBox(height:5),
+          dtEndField(60),
           tagThumbnail(),
           shereScheduleListView(),
           showUploadDataView(),
@@ -154,6 +159,30 @@ Widget chooseTagButton() {
     ),
   );
 }
+
+Widget dtEndField(int maxDay){
+  if(shareScheduleList.isEmpty){
+    return const SizedBox();
+  }else{
+    return Row(children:[
+      Text("有効期限(~" + maxDay.toString() +"日)"),
+      const Spacer(),
+      SizedBox(
+        width: SizeConfig.blockSizeHorizontal! *20,
+        child:CupertinoTextField(
+          controller: dtEndController,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+        )
+      ),
+      SizedBox(width: SizeConfig.blockSizeHorizontal! *1),
+      const Text("日"),
+      SizedBox(width: SizeConfig.blockSizeHorizontal! *3),
+    ]);
+  }
+}
+
 
   Widget tagThumbnail(){
     String tagID = ref.watch(scheduleFormProvider).tagController.text;
@@ -242,18 +271,25 @@ Widget chooseTagButton() {
    if(shareScheduleList.isNotEmpty){
     return ElevatedButton(
       onPressed: ()async{
+        int dtEnd = int.parse(dtEndController.text);
 
-      Map<String, List<Map<String, dynamic>>> result =
-        await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
+        if(dtEnd > 60 || 0 >= dtEnd){
+          showBackupFailDialogue("有効期限は1日以上60日以下に設定してください。");
+        }else{
+          //★この "tagID" 変数をバックエンド（postScheduleToFB）に受け渡します!
+          String tagID = returnTagIdFromID(ref.watch(scheduleFormProvider).tagController.text, ref) ?? "";
+          Map<String, List<Map<String, dynamic>>> result =
+            await postScheduleToFB(int.parse(ref.watch(scheduleFormProvider).tagController.text));
 
-        //処理の失敗時
-        //showBackupFailDialogue("エラーメッセージ");
-        
-        //アップロード処理成功時
-        String id = result.keys.last;
-        showUploadDoneDialogue(id);
-        
-        setState((){});
+          //処理の失敗時
+          //showBackupFailDialogue("エラーメッセージ");
+          
+          //アップロード処理成功時
+          String id = result.keys.last;
+          showUploadDoneDialogue(id);
+          
+          setState((){});
+        }
       },
       style:const ButtonStyle(
         backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),
@@ -340,27 +376,41 @@ Widget chooseTagButton() {
     return ListView.separated(
       itemBuilder:(context,index){
         String id = data.keys.elementAt(index);
-        return Column(children:[
+        Map tag = data.values.elementAt(index)["tag"];
+        String rawDtEnd = data.values.elementAt(index)["dtEnd"];
+        DateTime dtEnd = DateTime.parse(rawDtEnd);
+        List scheduleList = data.values.elementAt(index)["schedule"];
+
+        Widget listChild = Column(children:[
+            const SizedBox(height:4),
+            Row(children:[validTagChip(tag)]), 
             Text(id),
             Row(children:[
               Expanded(child:
                 Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children:[
-                  Text(data.values.elementAt(index).elementAt(0)["subject"] ?? "",
+                  Text(scheduleList.elementAt(0)["subject"] ?? "",
                   style: const TextStyle(color: Colors.grey),
                   overflow: TextOverflow.ellipsis,
                   ),
-                  InkWell(
-                    onTap:() {
-                      showSchedulesDialogue(context,"アップロード中データ",
-                        data.values.elementAt(index));
-                    },
-                    child:Text("ほか" +(data.values.elementAt(index).length-1).toString() + "件",
-                      style: const TextStyle(color: Colors.blueAccent),
+                  Row(children:[
+                    InkWell(
+                      onTap:() {
+                        showSchedulesDialogue(context,"アップロード中データ",
+                          scheduleList);
+                      },
+                      child:Text("ほか" +(scheduleList.length-1).toString() + "件",
+                        style: const TextStyle(color: Colors.blue),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ),
+                  const Spacer(),
+                  Text("あと" + dtEnd.difference(DateTime.now()).inDays.toString() + "日",
+                      style: const TextStyle(color: Colors.redAccent),
                       overflow: TextOverflow.ellipsis,
-                  ))
-                  
+                  )
+                  ])
                 ]),
               ),
               
@@ -376,8 +426,9 @@ Widget chooseTagButton() {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CodeSharePage(
-                        id:id,
-                        scheduleData:data.values.elementAt(index),
+                        id : id,
+                        tagName : tag["title"],
+                        scheduleData : scheduleList,
                       )
                     ),
                   );
@@ -398,6 +449,13 @@ Widget chooseTagButton() {
             ),
           ])
         ]);
+
+        if(dtEnd.isBefore(DateTime.now())){
+          return const SizedBox();
+        }else{
+          return listChild;
+        }
+
       },
       separatorBuilder:(context,index){
         return const Divider(height:1);

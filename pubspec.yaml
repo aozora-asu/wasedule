@@ -49,6 +49,7 @@ dependencies:
   toggle_switch: ^2.2.1
   qr_flutter: ^4.1.0
   mobile_scanner: ^4.0.1
+  flutter_datetime_picker_plus: ^2.1.0
 
   flutter_localizations:
     sdk: flutter

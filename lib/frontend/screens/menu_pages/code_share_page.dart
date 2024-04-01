@@ -13,10 +13,12 @@ import 'package:share_plus/share_plus.dart';
 
 class CodeSharePage extends ConsumerStatefulWidget{
   late String id;
+  late String tagName;
   late List<dynamic> scheduleData;
 
   CodeSharePage({
     required this.id,
+    required this.tagName,
     required this.scheduleData
   });
   
@@ -38,6 +40,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
       DateTime.now().day.toString().padLeft(2, '0');
   late Color colorTheme;
   late Color backgroundColorTheme;
+  late TextEditingController textController;
 
   @override
   void initState() {
@@ -48,6 +51,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
     backgroundColorTheme = Colors.white;
     generateCalendarData();
     ref.read(calendarDataProvider).getDataForShare(widget.scheduleData);
+    textController = TextEditingController(text: widget.tagName);
   }
 
   
@@ -134,6 +138,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
             Row(children:[
             Expanded(
                 child:TextField(
+                  controller: textController,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.all(0),
                     hintText: "予定",

@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfigDataLoader {
+
   Future<void> initConfig(WidgetRef ref) async {
     await createConfigData("tips", 1, ref);
     await createConfigData("todaysSchedule", 0, ref);
@@ -70,6 +71,7 @@ class ConfigDataLoader {
 }
 
 class CalendarDataLoader {
+
   Future<List<Map<String, dynamic>>> getDataSource() async {
     List<Map<String, dynamic>> scheduleList =
         await ScheduleDatabaseHelper().getScheduleFromDB();
@@ -77,9 +79,9 @@ class CalendarDataLoader {
         await ImportedScheduleDatabaseHelper().getImportedScheduleFromDB();
 
     List<Map<String, dynamic>> combinedList =
-        List.from(scheduleList); // スケジュールリストを複製
+        List.from(scheduleList);
 
-    combinedList.addAll(importedSchedule);
+    combinedList.insertAll(0,importedSchedule);
 
     return combinedList;
   }
@@ -120,15 +122,17 @@ class UserInfoLoader {
 
 class BroadcastLoader {
   Future<Map<String, dynamic>> getUploadDataSource() async {
-    Map<String, dynamic> data = {};
-    List<Map<String, List<Map<String, dynamic>>>> dataSause =
-        await ImportedScheduleDatabaseHelper().getScheduleForID();
+    //★仮のデータです。ここにDBから受け渡して下さい。
+    Map<String, dynamic> data = sample;
 
-    for (int i = 0; i < dataSause.length; i++) {
-      String key = dataSause.elementAt(i).keys.elementAt(0);
-      List value = dataSause.elementAt(i).values.elementAt(0);
-      data[key] = value;
-    }
+    // List<Map<String, List<Map<String, dynamic>>>> dataSause =
+    //     await ImportedScheduleDatabaseHelper().getScheduleForID();
+
+    // for (int i = 0; i < dataSause.length; i++) {
+    //   String key = dataSause.elementAt(i).keys.elementAt(0);
+    //   List value = dataSause.elementAt(i).values.elementAt(0);
+    //   data[key] = value;
+    // }
 
     return data;
   }
@@ -138,59 +142,121 @@ class BroadcastLoader {
     await ref.read(calendarDataProvider).getUploadData(data);
   }
 
-  Future<Map<String, dynamic>> getDownloadDataSource() async {
-    Map<String, dynamic> data = {
-      "c539ed57-9119-4a20-862d-e3c74861c9c1": sample1,
-      "d722ac73-7365-9e27-442e-a2a65357b2d2": sample1,
-    };
-
-    //仮のデータです。変数dataにDBから受け渡して下さい。
-    //await HogeHogeDatabaseHelper().getHogeHogeFromDB();
-
-    return data;
-  }
-
-  Future<void> insertDownloadDataToProvider(ref) async {
-    Future<Map<String, dynamic>> data = getDownloadDataSource();
-    await ref.read(calendarDataProvider).getDownloadData(data);
-  }
 }
 
-List<dynamic> sample1 = [
-  {
-    "id": 1,
-    "subject": "予定１",
-    "startDate": "2024-03-08",
-    "startTime": "18:15",
-    "endDate": "2024-02-08",
-    "endTime": "21:05",
-    "hash": "予定１2024-03-08"
+Map<String,dynamic> sample = {
+  "ee0171cf-dcf5-411e-8e63-206e712ee709":
+  { "dtEnd" : "2024-05-31 23:59:00.000",
+    "tag" : {
+        "id" : 1,
+        "title" : "サンプルプル1",
+        "color" : 4294961979,
+        "isBeit" : 0,
+        "wage" : 0,
+        "fee" : 0,
+        "tagID" : "2024030914155319"
+      },
+    "schedule":[
+      {
+        "id": 1,
+        "subject": "予定１",
+        "startDate": "2024-03-08",
+        "startTime": "18:15",
+        "endDate": "2024-02-08",
+        "endTime": "21:05",
+        "hash": "0187464823"
+      },
+      {
+        "id": 2,
+        "subject": "予定2",
+        "startDate": "2024-03-11",
+        "startTime": "",
+        "endDate": "2024-02-08",
+        "endTime": "",
+        "hash": "972849263"
+      },
+      {
+        "id": 3,
+        "subject": "予定3",
+        "startDate": "2024-03-12",
+        "startTime": "18:15",
+        "endDate": "2024-02-08",
+        "endTime": "",
+        "hash": "693756593"
+      },
+      {
+        "id": 4,
+        "subject": "予定4",
+        "startDate": "2024-03-12",
+        "startTime": "18:15",
+        "endDate": "2024-02-08",
+        "endTime": "21:05",
+        "hash": "603929574"
+      }
+    ],
   },
-  {
-    "id": 2,
-    "subject": "予定2",
-    "startDate": "2024-03-11",
-    "startTime": "",
-    "endDate": "2024-02-08",
-    "endTime": "",
-    "hash": "予定22024-03-11"
+  "443e50a1-a12c-4daa-9029-4e981c731fc6" : {
+    "dtEnd" : "2024-04-30 23:59:00.000",
+    "tag" : {
+        "id" : 2,
+        "title" : "サンプル2",
+        "color" : 4294961979,
+        "isBeit" : 1,
+        "wage" : 1200,
+        "fee" : 356,
+        "tagID" : "2024031120300124"
+      },
+    "schedule":[
+      {
+        "id": 1,
+        "subject": "バイト",
+        "startDate": "2024-03-08",
+        "startTime": "18:15",
+        "endDate": "",
+        "endTime": "21:05",
+        "hash": "593782659"
+      },
+      {
+        "id": 2,
+        "subject": "バイト2",
+        "startDate": "2024-03-11",
+        "startTime": "12:00",
+        "endDate": "",
+        "endTime": "15:00",
+        "hash": "583726592"
+      },
+      {
+        "id": 3,
+        "subject": "バイト3",
+        "startDate": "2024-03-12",
+        "startTime": "18:15",
+        "endDate": "",
+        "endTime": "22:00",
+        "hash": "6937826596"
+      },
+    ],
   },
-  {
-    "id": 3,
-    "subject": "予定3",
-    "startDate": "2024-03-12",
-    "startTime": "18:15",
-    "endDate": "2024-02-08",
-    "endTime": "",
-    "hash": "予定32024-03-12"
+  "ae0171cf-dcf5-411e-8d63-206e712ee709":{
+    "dtEnd" : "2029-03-15 23:59:00.000",
+    "tag" : {
+        "id" : 3,
+        "title" : "サンプル3",
+        "color" : 4294961979,
+        "isBeit" : 0,
+        "wage" : 0,
+        "fee" : 0,
+        "tagID" : "2024031214155319"
+      },
+    "schedule":[
+      {
+        "id": 1,
+        "subject": "予定１",
+        "startDate": "2024-03-08",
+        "startTime": "18:15",
+        "endDate": "2024-02-08",
+        "endTime": "21:05",
+        "hash": "649274927"
+      },
+    ],
   },
-  {
-    "id": 4,
-    "subject": "予定4",
-    "startDate": "2024-03-12",
-    "startTime": "18:15",
-    "endDate": "2024-02-08",
-    "endTime": "21:05",
-    "hash": "予定42024-03-12"
-  },
-];
+};
