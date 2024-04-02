@@ -1133,7 +1133,7 @@ int returnTagIsBeit(String tagId, WidgetRef ref) {
     return 0;
   } else {
     for (var data in tagMap) {
-      if (data["tagId"] == tagId) {
+      if (data["tagID"] == tagId) {
         return data["isBeit"];
       }
     }
