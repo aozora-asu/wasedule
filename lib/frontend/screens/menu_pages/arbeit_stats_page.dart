@@ -903,11 +903,11 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           String tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tag"];
+              .elementAt(ind)["tagID"];
           Map targetScheduleData =
               sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
 
-          if (tagId == tagData["id"].toString()) {
+          if (tagId == tagData["tagID"].toString()) {
             Duration start =
                 parseTimeToDuration(targetScheduleData["startTime"]);
             Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
@@ -931,6 +931,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
   Duration monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey) {
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    print(sortedDataByMonth);
     Duration result = Duration.zero;
     if (sortedDataByMonth[targetKey] != null) {
       for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
@@ -940,11 +941,11 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           String tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tag"];
+              .elementAt(ind)["tagID"];
           Map targetScheduleData =
               sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
 
-          if (tagId == tagData["id"].toString()) {
+          if (tagId == tagData["tagID"].toString()) {
             Duration start =
                 parseTimeToDuration(targetScheduleData["startTime"]);
             Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
@@ -1015,9 +1016,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           String tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tag"];
+              .elementAt(ind)["tagID"];
 
-          if (tagId == tagData["id"].toString()) {
+          if (tagId == tagData["tagID"].toString()) {
             int f = tagData["fee"];
             result += f * 2;
           }

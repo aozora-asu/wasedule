@@ -281,7 +281,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         dateTimeData,
                         const SizedBox(width: 15, height: 40),
                         tagChip(
-                            targetDayData.elementAt(index)["tag"] ?? "", ref),
+                            targetDayData.elementAt(index)["tagID"] ?? "", ref),
                         const Spacer(),
                       ]),
                       Row(

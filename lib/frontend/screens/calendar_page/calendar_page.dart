@@ -910,7 +910,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 tagThumbnail(
-                                    targetDayData.elementAt(index)["tag"]),
+                                    targetDayData.elementAt(index)["tagID"]),
                                 Flexible(
                                   child: Text(
                                     " " +
@@ -1312,7 +1312,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               const SizedBox(width: 15),
                               SizedBox(
                                   child: tagChip(
-                                      targetDayData.elementAt(index)["tag"],
+                                      targetDayData.elementAt(index)["tagID"],
                                       ref))
                             ]),
                             SizedBox(
