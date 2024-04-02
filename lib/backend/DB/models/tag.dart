@@ -13,7 +13,7 @@ class Tag {
       this.fee});
   @override
   int get hashCode {
-    return DateTime.now().hashCode;
+    return DateTime.now().microsecondsSinceEpoch.hashCode;
   }
 
   Map<String, dynamic> toMap() {
