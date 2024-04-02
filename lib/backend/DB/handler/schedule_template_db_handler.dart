@@ -72,7 +72,7 @@ class ScheduleTemplateDatabaseHelper {
       });
     }
     // 既存のテーブルを削除
-    await db.execute('DROP TABLE schedule_teplate');
+    await db.execute('DROP TABLE schedule_template');
 
     // 新しいテーブルの名前を既存のテーブルの名前に変更
     await db.execute(
