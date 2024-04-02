@@ -34,7 +34,6 @@ class ScheduleDatabaseHelper {
       publicSubject TEXT,
       tag TEXT
 
-     
     )
   ''');
   }
@@ -62,17 +61,21 @@ class ScheduleDatabaseHelper {
     for (var schedule in schedules) {
       int tagid = int.parse(schedule["tag"] as String);
       var tagID = await TagDatabaseHelper().getTagIDFromId(tagid);
-      ScheduleItem scheduleItem = ScheduleItem(
-        subject: schedule['subject'] as String,
-        startDate: schedule['startDate'] as String,
-        startTime: schedule['startTime'] as String,
-        endDate: schedule['endDate'] as String,
-        endTime: schedule['endTime'] as String,
-        isPublic: schedule['isPublic'] as int,
-        publicSubject: schedule['publicSubject'] as String,
-        tagID: tagID ?? "",
-      );
-      await db.insert('schedule_new', scheduleItem.toMap());
+
+      await db.insert('schedule_new', {
+        "subject": schedule['subject'] as String,
+        "startDate": schedule['startDate'] as String,
+        "startTime": schedule['startTime'] as String,
+        "endDate": schedule['endDate'] as String,
+        "endTime": schedule['endTime'] as String,
+        "isPublic": schedule['isPublic'] as int,
+        "publicSubject": schedule['publicSubject'] as String,
+        "tagID": tagID ?? "",
+        "hash": (DateTime.now().microsecondsSinceEpoch +
+                schedules.indexOf(schedule).hashCode)
+            .hashCode
+            .toString()
+      });
     }
 
     // 既存のテーブルを削除
