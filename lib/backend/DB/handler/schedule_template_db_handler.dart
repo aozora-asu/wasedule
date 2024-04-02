@@ -118,7 +118,7 @@ class ScheduleTemplateDatabaseHelper {
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],
         tag: schedule["tag"],
-        tagID: schedule["tagID"]);
+        tagID: schedule["tagID"] ?? "");
     await insertSchedule(scheduleItem);
   }
 
