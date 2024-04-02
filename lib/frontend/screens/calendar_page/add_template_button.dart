@@ -245,9 +245,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                         "isPublic": intIspublic,
                         "publicSubject":scheduleForm.publicScheduleController.text,
                         "tag": scheduleForm.tagController.text,
-                        
-                        // ★　IDからtagIDを返す関数です！　★
-                        //"tagID" : returnTagIdFromID(scheduleForm.tagController.text, ref)
+                        "tagID" : returnTagId(scheduleForm.tagController.text, ref)
                         
                       };
                       await ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
@@ -295,9 +293,6 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
           ),
         ],
        ),
-
-
-
      ]),
     )  
    )

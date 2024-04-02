@@ -223,7 +223,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                             dateTimeData,
                             const SizedBox(width: 15),
                             tagChip(
-                                data.templateData.elementAt(index)["tag"], ref)
+                                data.templateData.elementAt(index)["tagID"], ref)
                           ]),
                           SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 70,
