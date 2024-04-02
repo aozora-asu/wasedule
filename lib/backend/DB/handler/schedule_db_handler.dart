@@ -60,7 +60,7 @@ class ScheduleDatabaseHelper {
     // 既存のデータを新しいテーブルに移行
     var schedules = await db.query('schedule');
     for (var schedule in schedules) {
-      int tagid = schedule["tag"] as int;
+      int tagid = int.parse(schedule["tag"] as String);
       var tagID = await TagDatabaseHelper().getTagIDFromId(tagid);
       ScheduleItem scheduleItem = ScheduleItem(
         subject: schedule['subject'] as String,
