@@ -24,7 +24,6 @@ class ScheduleDatabaseHelper {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS schedule(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-
       subject TEXT,
       startDate TEXT,
       startTime TEXT,
@@ -33,7 +32,6 @@ class ScheduleDatabaseHelper {
       isPublic INTEGER, 
       publicSubject TEXT,
       tag TEXT
-
     )
   ''');
   }
@@ -53,7 +51,6 @@ class ScheduleDatabaseHelper {
       publicSubject TEXT,
       tag TEXT,
       tagID TEXT
-     
     )
   ''');
     // 既存のデータを新しいテーブルに移行

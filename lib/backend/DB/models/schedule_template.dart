@@ -6,6 +6,7 @@ class ScheduleTemplateItem {
   int isPublic;
   String? publicSubject;
   String? tag;
+  String tagID;
 
   ScheduleTemplateItem(
       {required this.subject,
@@ -13,7 +14,8 @@ class ScheduleTemplateItem {
       this.endTime,
       required this.isPublic,
       this.publicSubject,
-      this.tag});
+      this.tag,
+      required this.tagID});
 
   Map<String, dynamic> toMap() {
     return {
@@ -22,7 +24,8 @@ class ScheduleTemplateItem {
       'endTime': endTime,
       'isPublic': isPublic,
       "publicSubject": publicSubject,
-      "tag": tag
+      "tag": tag,
+      "tagID": tagID
     };
   }
 }
