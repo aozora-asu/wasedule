@@ -22,28 +22,7 @@ class ScheduleItem {
       required this.tagID});
   @override
   int get hashCode {
-    return subject.hashCode ^
-        startDate.hashCode ^
-        startTime.hashCode ^
-        endDate.hashCode ^
-        endTime.hashCode ^
-        isPublic.hashCode ^
-        publicSubject.hashCode ^
-        tagID.hashCode;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is ScheduleItem &&
-        other.subject == subject &&
-        other.startDate == startDate &&
-        other.startTime == startTime &&
-        other.endDate == endDate &&
-        other.endTime == endTime &&
-        other.isPublic == isPublic &&
-        other.publicSubject == publicSubject &&
-        other.tagID == tagID;
+    return DateTime.now().microsecondsSinceEpoch.hashCode;
   }
 
   Map<String, dynamic> toMap() {
