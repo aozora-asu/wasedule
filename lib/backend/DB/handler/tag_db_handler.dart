@@ -87,6 +87,21 @@ class TagDatabaseHelper {
     return null; // 該当する id が見つからない場合は null を返す
   }
 
+  Future<Map<String, dynamic>> getTagByTagID(String tagID) async {
+    await _initTagDatabase();
+    List<Map<String, dynamic>> result = await _database.query(
+      'tag',
+      where: 'tagID = ?',
+      whereArgs: [tagID],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return {}; // 該当する行が見つからない場合は null を返す
+    }
+  }
+
   // データベースの初期化
   Future<void> insertSchedule(Tag tag) async {
     await _initTagDatabase();
