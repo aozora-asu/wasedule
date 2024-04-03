@@ -4,13 +4,15 @@ class Tag {
   int isBeit;
   int? wage;
   int? fee;
+  String? tagID;
 
   Tag(
       {required this.title,
       this.color,
       required this.isBeit,
       this.wage,
-      this.fee});
+      this.fee,
+      this.tagID});
   @override
   int get hashCode {
     return DateTime.now().microsecondsSinceEpoch.hashCode;
@@ -23,7 +25,7 @@ class Tag {
       'isBeit': isBeit,
       "wage": wage,
       "fee": fee,
-      "tagID": hashCode.toString()
+      "tagID": tagID ?? hashCode.toString()
     };
   }
 }
