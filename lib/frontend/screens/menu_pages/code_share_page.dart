@@ -325,6 +325,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                     
                       Expanded(
                           child:TextField(
+                            controller: textController,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(0),
                               hintText: "予定",
