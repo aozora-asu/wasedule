@@ -46,4 +46,17 @@ class ScheduleMetaDatabaseHelper {
         scheduleType: exportSchedule["scheduleType"] as String);
     await _database.insert('schedule_metaInfo', scheduleMetaInfo.toMap());
   }
+
+  Future<List<Map<String, dynamic>>> getScheduleMetaInfoListByScheduleType(
+      String scheduleType) async {
+    await _initScheduleMetaDatabase();
+
+    List<Map<String, dynamic>> records = await _database.query(
+      'schedule_metaInfo',
+      where: 'scheduleType = ?',
+      whereArgs: [scheduleType],
+    );
+
+    return records;
+  }
 }
