@@ -834,7 +834,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   bool isConflict(String start, String end) {
     errorCause = "";
     if (returnTagIsBeit(
-                ref.watch(scheduleFormProvider).tagController.text, ref) ==
+                returnTagId(ref.watch(scheduleFormProvider).tagController.text,ref) ?? "", ref) ==
             1 &&
         (start == "" || end == "")) {
       errorCause = "*開始時間と終了時間の両方を入力してください。";

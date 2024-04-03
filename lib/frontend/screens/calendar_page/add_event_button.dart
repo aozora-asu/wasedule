@@ -601,7 +601,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
 
   bool isConflict(String start, String end) {
     if (returnTagIsBeit(
-                ref.watch(scheduleFormProvider).tagController.text, ref) ==
+                returnTagId(ref.watch(scheduleFormProvider).tagController.text,ref) ?? "", ref) ==
             1 &&
         (start == "" || end == "")) {
       return true;
