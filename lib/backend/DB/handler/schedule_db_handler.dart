@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import '../models/schedule.dart';
 import './tag_db_handler.dart';
 import 'package:intl/intl.dart';
+import "./schedule_metaInfo_db_handler.dart";
 
 class ScheduleDatabaseHelper {
   late Database _database;
@@ -190,5 +191,36 @@ class ScheduleDatabaseHelper {
       whereArgs: [tagID],
     );
     return postSchedule;
+  }
+
+  Future<Map<String, dynamic>> getExportedSchedule() async {
+    // List<Map<String, dynamic>> exportedScheduleList = [];
+    Map<String, dynamic> exportedSchedule = {};
+    List<Map<String, dynamic>> exportedScehduleMetaInfoList =
+        await ScheduleMetaDatabaseHelper()
+            .getScheduleMetaInfoListByScheduleType("export");
+    for (var exportedScehduleMetaInfo in exportedScehduleMetaInfoList) {
+      Map<String, dynamic> tagData = await TagDatabaseHelper()
+          .getTagByTagID(exportedScehduleMetaInfo["tagID"]);
+      List<Map<String, dynamic>> scheduleList =
+          await pickScheduleByTag(exportedScehduleMetaInfo["tagID"]);
+      Map<String, dynamic> scheduleInfo = {
+        "tag": tagData,
+        "schedule": scheduleList,
+        "dtEnd": exportedScehduleMetaInfo["dtEnd"]
+      };
+
+      exportedSchedule[exportedScehduleMetaInfo["scheduleID"]] = scheduleInfo;
+      //これは新バージョンで
+      // Map<String, dynamic> exportedSchedule = {
+      //   "scheduleID": exportedScehduleMetaInfo["scheduleID"],
+      //   "tag": tag,
+      //   "schedule": schedule,
+      //   "dtEnd": exportedScehduleMetaInfo["dtEnd"]
+      // };
+      // exportedScehduleMetaInfoList.add(exportedSchedule);
+    }
+
+    return exportedSchedule;
   }
 }
