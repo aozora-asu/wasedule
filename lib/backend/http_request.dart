@@ -73,14 +73,7 @@ Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   return tasks;
 }
 
-void resisterTaskToFB(Map<String, dynamic> taskMap) async {
-  try {
-    for (int i = 0; i < taskMap["events"].length; i++) {
-      resisterTask(taskMap["events"][i]["CATEGORIES"],
-          taskMap["events"][i]["UID"], taskMap["events"][i]);
-    }
-  } catch (e) {}
-}
+
 
 //@return {"events":[{
 // 						"SUMMARY":"#1 アンケート (アンケート開始)",

@@ -272,16 +272,15 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                       ref.watch(scheduleFormProvider).tagController.text,
                       ref) ??
                   "";
-              Map<String, List<Map<String, dynamic>>> result =
-                  await postScheduleToFB(int.parse(
-                      ref.watch(scheduleFormProvider).tagController.text));
+              String scheduleID = await postScheduleToFB(tagID, dtEnd);
 
               //処理の失敗時
               //showBackupFailDialogue("エラーメッセージ");
 
               //アップロード処理成功時
-              String id = result.keys.last;
-              showUploadDoneDialogue(id);
+              //ここいらない？？
+              //String id = result.keys.last;
+              showUploadDoneDialogue(scheduleID);
 
               setState(() {});
             }

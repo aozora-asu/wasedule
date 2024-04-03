@@ -6,7 +6,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_dat
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfigDataLoader {
-
   Future<void> initConfig(WidgetRef ref) async {
     await createConfigData("tips", 1, ref);
     await createConfigData("todaysSchedule", 0, ref);
@@ -71,19 +70,11 @@ class ConfigDataLoader {
 }
 
 class CalendarDataLoader {
-
   Future<List<Map<String, dynamic>>> getDataSource() async {
     List<Map<String, dynamic>> scheduleList =
         await ScheduleDatabaseHelper().getScheduleFromDB();
-    List<Map<String, dynamic>> importedSchedule =
-        await ImportedScheduleDatabaseHelper().getImportedScheduleFromDB();
 
-    List<Map<String, dynamic>> combinedList =
-        List.from(scheduleList);
-
-    combinedList.insertAll(0,importedSchedule);
-
-    return combinedList;
+    return scheduleList;
   }
 
   Future<void> insertDataToProvider(ref) async {
@@ -141,22 +132,21 @@ class BroadcastLoader {
     Future<Map<String, dynamic>> data = getUploadDataSource();
     await ref.read(calendarDataProvider).getUploadData(data);
   }
-
 }
 
-Map<String,dynamic> sample = {
-  "ee0171cf-dcf5-411e-8e63-206e712ee709":
-  { "dtEnd" : "2024-05-31 23:59:00.000",
-    "tag" : {
-        "id" : 1,
-        "title" : "サンプルプル1",
-        "color" : 4294961979,
-        "isBeit" : 0,
-        "wage" : 0,
-        "fee" : 0,
-        "tagID" : "2024030914155319"
-      },
-    "schedule":[
+Map<String, dynamic> sample = {
+  "ee0171cf-dcf5-411e-8e63-206e712ee709": {
+    "dtEnd": "2024-05-31 23:59:00.000",
+    "tag": {
+      "id": 1,
+      "title": "サンプルプル1",
+      "color": 4294961979,
+      "isBeit": 0,
+      "wage": 0,
+      "fee": 0,
+      "tagID": "2024030914155319"
+    },
+    "schedule": [
       {
         "id": 1,
         "subject": "予定１",
@@ -195,18 +185,18 @@ Map<String,dynamic> sample = {
       }
     ],
   },
-  "443e50a1-a12c-4daa-9029-4e981c731fc6" : {
-    "dtEnd" : "2024-04-30 23:59:00.000",
-    "tag" : {
-        "id" : 2,
-        "title" : "サンプル2",
-        "color" : 4294961979,
-        "isBeit" : 1,
-        "wage" : 1200,
-        "fee" : 356,
-        "tagID" : "2024031120300124"
-      },
-    "schedule":[
+  "443e50a1-a12c-4daa-9029-4e981c731fc6": {
+    "dtEnd": "2024-04-30 23:59:00.000",
+    "tag": {
+      "id": 2,
+      "title": "サンプル2",
+      "color": 4294961979,
+      "isBeit": 1,
+      "wage": 1200,
+      "fee": 356,
+      "tagID": "2024031120300124"
+    },
+    "schedule": [
       {
         "id": 1,
         "subject": "バイト",
@@ -236,18 +226,18 @@ Map<String,dynamic> sample = {
       },
     ],
   },
-  "ae0171cf-dcf5-411e-8d63-206e712ee709":{
-    "dtEnd" : "2029-03-15 23:59:00.000",
-    "tag" : {
-        "id" : 3,
-        "title" : "サンプル3",
-        "color" : 4294961979,
-        "isBeit" : 0,
-        "wage" : 0,
-        "fee" : 0,
-        "tagID" : "2024031214155319"
-      },
-    "schedule":[
+  "ae0171cf-dcf5-411e-8d63-206e712ee709": {
+    "dtEnd": "2029-03-15 23:59:00.000",
+    "tag": {
+      "id": 3,
+      "title": "サンプル3",
+      "color": 4294961979,
+      "isBeit": 0,
+      "wage": 0,
+      "fee": 0,
+      "tagID": "2024031214155319"
+    },
+    "schedule": [
       {
         "id": 1,
         "subject": "予定１",

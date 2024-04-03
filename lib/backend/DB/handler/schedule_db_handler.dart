@@ -131,6 +131,13 @@ class ScheduleDatabaseHelper {
     await insertSchedule(scheduleItem);
   }
 
+  Future<void> resisterScheduleListToDB(
+      List<Map<String, dynamic>> scheduleList) async {
+    for (var schedule in scheduleList) {
+      await resisterScheduleToDB(schedule);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
     await _initScheduleDatabase();
     final List<Map<String, dynamic>> data =
@@ -175,12 +182,12 @@ class ScheduleDatabaseHelper {
     return todaysSchedule;
   }
 
-  Future<List<Map<String, dynamic>>> pickScheduleByTag(int tagID) async {
+  Future<List<Map<String, dynamic>>> pickScheduleByTag(String tagID) async {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> postSchedule = await _database.query(
       'schedule',
-      where: 'tag = ?',
-      whereArgs: ["$tagID"],
+      where: 'tagID = ?',
+      whereArgs: [tagID],
     );
     return postSchedule;
   }

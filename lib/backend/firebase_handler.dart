@@ -1,23 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_import_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import 'package:intl/intl.dart';
 import "./DB/handler/schedule_db_handler.dart";
 import 'package:uuid/uuid.dart';
-import "./DB/handler/schedule_id_db_handler.dart";
+import "DB/handler/schedule_metaInfo_db_handler.dart";
 
-void resisterTask(String categories, String uid, taskMap) async {
-// Add a new document with a generated ID
-  // await db.collection(categories).add(taskMap).then((DocumentReference doc) =>
-  //     print('DocumentSnapshot added with ID: ${doc.id}'));
-}
-
-Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
-    int tagID) async {
+Future<String> postScheduleToFB(String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
-
-  Map<String, List<Map<String, dynamic>>> postSchedule = {
-    "schedule": postScheduleList
+  Map<String, dynamic> tag = await TagDatabaseHelper().getTagByTagID(tagID);
+  String expireDate = DateTime.now().add(Duration(days: remainDay)).toString();
+  Map<String, dynamic> postSchedule = {
+    "schedule": postScheduleList,
+    "tag": tag,
+    "dtEnd": expireDate
   };
   String scheduleID = "";
   while (true) {
@@ -30,16 +28,17 @@ Future<Map<String, List<Map<String, dynamic>>>> postScheduleToFB(
       break;
     }
   }
-  Map<String, List<Map<String, dynamic>>> schedule = {
-    scheduleID: postScheduleList
-  };
-  ScheduleIDDatabaseHelper()
-      .insertScheduleID({"scheduleID": scheduleID, "tagID": tagID});
-  return schedule;
+
+  await ScheduleMetaDatabaseHelper().exportSchedule({
+    "scheduleID": scheduleID,
+    "tagID": tagID,
+    "scheduleType": "export",
+    "dtEnd": expireDate
+  });
+  return scheduleID;
 }
 
-Future<Map<String, List<Map<String, dynamic>>>> receiveSchedule(
-    String scheduleID) async {
+Future<void> receiveSchedule(String scheduleID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("schedule").doc(scheduleID);
 
@@ -47,15 +46,24 @@ Future<Map<String, List<Map<String, dynamic>>>> receiveSchedule(
     DocumentSnapshot doc = await docRef.get();
     final data = doc.data();
     if (data is Map<String, dynamic>) {
-      final datalist = data["schedule"] as List<dynamic>;
-      ImportedScheduleDatabaseHelper()
-          .importScheduleToDB(datalist.cast<Map<String, dynamic>>());
+      final scheduleList = data["schedule"] as List<dynamic>;
+      final tagData = data["tag"] as Map<String, dynamic>;
+      final dtEnd = data["dtEnd"] as String;
+      await TagDatabaseHelper().resisterTagToDB(tagData);
+      await ScheduleDatabaseHelper()
+          .resisterScheduleListToDB(scheduleList.cast<Map<String, dynamic>>());
+      await ScheduleMetaDatabaseHelper().importSchedule({
+        "scheduleID": scheduleID,
+        "tagID": tagData["tagID"],
+        "scheduleType": "import",
+        "dtEnd": dtEnd
+      });
 
-      return {scheduleID: datalist.cast<Map<String, dynamic>>()};
+      return;
     } else {
       throw "データが予期せず不正な形式です";
     }
   } catch (e) {
-    return {}; // エラーが発生した場合は空のリストを返す
+    return; // エラーが発生した場合は空のリストを返す
   }
 }
