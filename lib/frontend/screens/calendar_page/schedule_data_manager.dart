@@ -69,6 +69,7 @@ class CalendarData {
     for (int i = 0; i < fetchedTagData.length; i++) {
       fixedData.add({
         "id": fetchedTagData.elementAt(i)["id"],
+        "tagID" : fetchedTagData.elementAt(i)["tagID"],
         "title": fetchedTagData.elementAt(i)["title"],
         "color": intToColor(fetchedTagData.elementAt(i)["color"]),
         "isBeit": fetchedTagData.elementAt(i)["isBeit"],

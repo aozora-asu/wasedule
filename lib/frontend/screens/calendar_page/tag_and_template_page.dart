@@ -223,7 +223,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                             dateTimeData,
                             const SizedBox(width: 15),
                             tagChip(
-                                data.templateData.elementAt(index)["tag"], ref)
+                                data.templateData.elementAt(index)["tagID"], ref)
                           ]),
                           SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 70,
@@ -1133,7 +1133,7 @@ int returnTagIsBeit(String tagId, WidgetRef ref) {
     return 0;
   } else {
     for (var data in tagMap) {
-      if (data["tagId"] == tagId) {
+      if (data["tagID"] == tagId) {
         return data["isBeit"];
       }
     }
