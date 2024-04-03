@@ -180,7 +180,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget tagThumbnail() {
-    String tagID = ref.watch(scheduleFormProvider).tagController.text;
+    String tagID = returnTagId(ref.watch(scheduleFormProvider).tagController.text, ref) ?? "";
     if (tagID.isEmpty) {
       return const SizedBox();
     } else {
@@ -204,7 +204,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     List calendarList = ref.watch(calendarDataProvider).calendarData;
     if (id.isNotEmpty) {
       for (int i = 0; i < calendarList.length; i++) {
-        if (calendarList.elementAt(i)["tag"] == id) {
+        if (calendarList.elementAt(i)["tagID"] ==  returnTagId(id,ref)) {
           result.add(calendarList.elementAt(i));
         }
       }
@@ -277,9 +277,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               //処理の失敗時
               //showBackupFailDialogue("エラーメッセージ");
 
-              //アップロード処理成功時
-              //ここいらない？？
-              //String id = result.keys.last;
+              //処理の成功時
               showUploadDoneDialogue(scheduleID);
 
               setState(() {});

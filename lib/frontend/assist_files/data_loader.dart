@@ -113,18 +113,7 @@ class UserInfoLoader {
 
 class BroadcastLoader {
   Future<Map<String, dynamic>> getUploadDataSource() async {
-    //★仮のデータです。ここにDBから受け渡して下さい。
-    Map<String, dynamic> data = sample;
-
-    // List<Map<String, List<Map<String, dynamic>>>> dataSause =
-    //     await ImportedScheduleDatabaseHelper().getScheduleForID();
-
-    // for (int i = 0; i < dataSause.length; i++) {
-    //   String key = dataSause.elementAt(i).keys.elementAt(0);
-    //   List value = dataSause.elementAt(i).values.elementAt(0);
-    //   data[key] = value;
-    // }
-
+    Map<String, dynamic> data = await ScheduleDatabaseHelper().getExportedSchedule();
     return data;
   }
 

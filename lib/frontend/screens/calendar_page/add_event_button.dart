@@ -402,13 +402,12 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                                 "publicSubject":
                                     scheduleForm.publicScheduleController.text,
                                 "tag": scheduleForm.tagController.text,
-
-                                // ★ IDからtagIDを返す関数です！
                                 "tagID": returnTagId(
                                     scheduleForm.tagController.text, ref)
                               };
                               await ScheduleDatabaseHelper()
                                   .resisterScheduleToDB(schedule);
+                              await Future.delayed(const Duration(milliseconds: 1));
                             }
                             ref.read(scheduleFormProvider).clearContents();
 
