@@ -137,7 +137,8 @@ class TagDatabaseHelper {
           color: newTag["color"],
           isBeit: newTag["isBeit"],
           wage: newTag["wage"],
-          fee: newTag["fee"]);
+          fee: newTag["fee"],
+          tagID: newTag["tagID"]);
     } else {
       // 1. TaskItemオブジェクトを作成
       tag = Tag(
@@ -145,7 +146,8 @@ class TagDatabaseHelper {
           color: colorToInt(newTag["color"]),
           isBeit: newTag["isBeit"],
           wage: newTag["wage"],
-          fee: newTag["fee"]);
+          fee: newTag["fee"],
+          tagID: newTag["tagID"]);
     }
 
     await insertSchedule(tag);

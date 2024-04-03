@@ -9,6 +9,7 @@ class ScheduleItem {
   String? publicSubject;
   String? tag;
   String tagID;
+  String? hash;
 
   ScheduleItem(
       {required this.subject,
@@ -19,7 +20,8 @@ class ScheduleItem {
       required this.isPublic,
       this.publicSubject,
       this.tag,
-      required this.tagID});
+      required this.tagID,
+      this.hash});
   @override
   int get hashCode {
     return DateTime.now().microsecondsSinceEpoch.hashCode;
@@ -34,7 +36,7 @@ class ScheduleItem {
       'endTime': endTime,
       'isPublic': isPublic,
       "publicSubject": publicSubject,
-      "hash": hashCode.toString(),
+      "hash": hash ?? hashCode.toString(),
       "tagID": tagID
     };
   }

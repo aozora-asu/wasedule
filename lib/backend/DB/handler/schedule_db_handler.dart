@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -128,7 +129,8 @@ class ScheduleDatabaseHelper {
         endTime: schedule["endTime"],
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],
-        tagID: schedule["tagID"] ?? "");
+        tagID: schedule["tagID"] ?? "",
+        hash: schedule["hash"]);
     await insertSchedule(scheduleItem);
   }
 
