@@ -46,12 +46,14 @@ Future<void> receiveSchedule(String scheduleID) async {
     DocumentSnapshot doc = await docRef.get();
     final data = doc.data();
     if (data is Map<String, dynamic>) {
-      final scheduleList = data["schedule"] as List<dynamic>;
+      final scheduleList = (data["schedule"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
       final tagData = data["tag"] as Map<String, dynamic>;
       final dtEnd = data["dtEnd"] as String;
+
       await TagDatabaseHelper().resisterTagToDB(tagData);
-      await ScheduleDatabaseHelper()
-          .resisterScheduleListToDB(scheduleList.cast<Map<String, dynamic>>());
+      await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
       await ScheduleMetaDatabaseHelper().importSchedule({
         "scheduleID": scheduleID,
         "tagID": tagData["tagID"],

@@ -131,14 +131,23 @@ class TagDatabaseHelper {
   Future<void> resisterTagToDB(Map<String, dynamic> newTag) async {
     await _initTagDatabase();
     Tag tag;
+    if (newTag["color"].runtimeType == int) {
+      tag = Tag(
+          title: newTag["title"],
+          color: newTag["color"],
+          isBeit: newTag["isBeit"],
+          wage: newTag["wage"],
+          fee: newTag["fee"]);
+    } else {
+      // 1. TaskItemオブジェクトを作成
+      tag = Tag(
+          title: newTag["title"],
+          color: colorToInt(newTag["color"]),
+          isBeit: newTag["isBeit"],
+          wage: newTag["wage"],
+          fee: newTag["fee"]);
+    }
 
-    // 1. TaskItemオブジェクトを作成
-    tag = Tag(
-        title: newTag["title"],
-        color: colorToInt(newTag["color"]),
-        isBeit: newTag["isBeit"],
-        wage: newTag["wage"],
-        fee: newTag["fee"]);
     await insertSchedule(tag);
   }
 
