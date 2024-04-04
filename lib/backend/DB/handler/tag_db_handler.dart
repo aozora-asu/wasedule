@@ -26,6 +26,7 @@ class TagDatabaseHelper {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS tag(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tagID TEXT UNIQUE,
       title TEXT,
       color INTEGER,
       isBeit INTEGER,
