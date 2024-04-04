@@ -25,9 +25,8 @@ class _NoTaskPageState extends State<NoTaskPage> {
           const SizedBox(height:15),
           urlPageButton(),
           const Spacer(),
-          ])
-        )
-        
+        ])
+      )
     );
   }
 

@@ -925,7 +925,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           }
         }
       }
-    } else {}
+    }
     return result;
   }
 

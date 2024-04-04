@@ -213,7 +213,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           actions: <Widget>[
             const Align(
                 alignment: Alignment.centerLeft,
-                child: Text("ダウンロードを行うと今端末内にあるデータが全て削除され、バックアップしたデータが復元されます。",
+                child: Text("ダウンロードを行うと、端末内にあるデータにバックアップしたデータが全て追加されます。",
                     style: TextStyle(color: Colors.red))),
             const SizedBox(height: 10),
             CupertinoTextField(
