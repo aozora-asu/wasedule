@@ -29,7 +29,8 @@ class ScheduleTemplateDatabaseHelper {
       endTime TEXT,
       isPublic INTEGER, 
       publicSubject TEXT,
-      tag TEXT
+      tag TEXT,
+      tagID TEXT
     )
   ''');
   }

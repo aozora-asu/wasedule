@@ -25,6 +25,7 @@ class ScheduleDatabaseHelper {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS schedule(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       hash TEXT UNIQUE,
       subject TEXT,
       startDate TEXT,
       startTime TEXT,
@@ -32,7 +33,8 @@ class ScheduleDatabaseHelper {
       endTime TEXT,
       isPublic INTEGER, 
       publicSubject TEXT,
-      tag TEXT
+      tag TEXT,
+      tagID TEXT
     )
   ''');
   }
