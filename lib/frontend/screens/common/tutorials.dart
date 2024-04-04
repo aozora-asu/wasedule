@@ -2,6 +2,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_download_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,12 +32,36 @@ class _IntroPageState extends State<IntroPage> {
     return [
         PageViewModel(
           title: "わせジュールへようこそ",
-          body: "あなたの生活に、\nわせジュールがやってきました。",
           image: Center(
             child: Image.asset(
               "lib/assets/eye_catch/eyecatch.png",
             ),
           ),
+          bodyWidget: Column(children:[
+            const Text(
+              "あなたの生活に、\nわせジュールがやってきました。",
+              style: TextStyle(fontSize:20),
+              ),
+            const SizedBox(height:20),
+            Row(children:[
+              const Spacer(),
+              InkWell(
+                onTap:(){
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: 
+                      (_) => DataDownloadPage(),
+                    )
+                  );
+                },
+                child:const Text(
+                  "バックアップの復元",
+                  style:TextStyle(
+                    color:Colors.blue,
+                  )
+                )
+              )
+            ])
+          ]) ,
           decoration: const PageDecoration(
             titleTextStyle:
                 TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
@@ -238,7 +263,9 @@ class _IntroLastPageState extends State<IntroLastPage> {
       controlsPadding : const EdgeInsets.all(0),
       pages: lastPage(),
       done: Text("使ってみる"),
-      onDone: () {
+      onDone: () async{
+        final pref = await SharedPreferences.getInstance();
+        pref.setBool('hasCompletedIntro', true);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) =>  AppPage(initIndex: 1),

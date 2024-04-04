@@ -151,7 +151,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           fullscreenDialog: true,
         ),
       );
-      pref.setBool('hasCompletedIntro', true);
+      //pref.setBool('hasCompletedIntro', true);
     } else if (pref.getBool('hasCompletedCalendarIntro') != true) {
       showScheduleGuide(context);
       pref.setBool('hasCompletedCalendarIntro', true);
@@ -160,6 +160,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showTutorial(context);
     });

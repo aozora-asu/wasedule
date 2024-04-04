@@ -222,48 +222,47 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               if (scheduleForm.scheduleController.text.isEmpty) {
                 print("ボタン無効");
               } else {
-                    if(isConflict(scheduleForm.timeStartController.text, scheduleForm.timeEndController.text)){
-                      print("ボタン無効");
-                      }else{
-                    int intIspublic;
-                    if (scheduleForm.isPublic) {
-                      intIspublic = 1;
-                    } else {
-                      intIspublic = 0;
-                    }
+                if(isConflict(scheduleForm.timeStartController.text, scheduleForm.timeEndController.text)){
+                  print("ボタン無効");
+                  }else{
+                int intIspublic;
+                if (scheduleForm.isPublic) {
+                  intIspublic = 1;
+                } else {
+                  intIspublic = 0;
+                }
 
-                    //共有用予定が空だったら、個人用予定と揃える
-                    if (scheduleForm.publicScheduleController.text.isEmpty) {
-                      scheduleForm.publicScheduleController =
-                          scheduleForm.scheduleController;
-                    }
+                //共有用予定が空だったら、個人用予定と揃える
+                if (scheduleForm.publicScheduleController.text.isEmpty) {
+                  scheduleForm.publicScheduleController =
+                      scheduleForm.scheduleController;
+                }
 
-                      Map<String, dynamic> schedule = {
-                        "subject": scheduleForm.scheduleController.text,
-                        "startTime": scheduleForm.timeStartController.text,
-                        "endTime": scheduleForm.timeEndController.text,
-                        "isPublic": intIspublic,
-                        "publicSubject":scheduleForm.publicScheduleController.text,
-                        "tag": scheduleForm.tagController.text,
-                        "tagID" : returnTagId(scheduleForm.tagController.text, ref)
-                        
-                      };
-                      await ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
-                      ref.read(scheduleFormProvider).clearContents();
-                      ref.read(calendarDataProvider.notifier).state = CalendarData();
-                      ref.read(taskDataProvider).isRenewed = true;
-                      while (ref.read(taskDataProvider).isRenewed != false) {
-                        await Future.delayed(const Duration(microseconds:1));
-                      }
-                      widget.setosute((){});
-                      Navigator.pop(context);
-                      if(ref.read(calendarDataProvider).templateData.last["id"] == 1){
-                        showTemplateGuide(context);
-                      }
-                      
-                    }
-                      
+                  Map<String, dynamic> schedule = {
+                    "subject": scheduleForm.scheduleController.text,
+                    "startTime": scheduleForm.timeStartController.text,
+                    "endTime": scheduleForm.timeEndController.text,
+                    "isPublic": intIspublic,
+                    "publicSubject":scheduleForm.publicScheduleController.text,
+                    "tag": scheduleForm.tagController.text,
+                    "tagID" : returnTagId(scheduleForm.tagController.text, ref)
+                  };
+                  await ScheduleTemplateDatabaseHelper().resisterScheduleToDB(schedule);
+                  ref.read(scheduleFormProvider).clearContents();
+                  ref.read(calendarDataProvider.notifier).state = CalendarData();
+                  ref.read(taskDataProvider).isRenewed = true;
+                  while (ref.read(taskDataProvider).isRenewed != false) {
+                    await Future.delayed(const Duration(microseconds:1));
                   }
+                  widget.setosute((){});
+                  Navigator.pop(context);
+                  if(ref.read(calendarDataProvider).templateData.last["id"] == 1){
+                    showTemplateGuide(context);
+                  }
+                  
+                }
+                  
+              }
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith<Color?>(
