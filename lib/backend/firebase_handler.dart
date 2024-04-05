@@ -1,17 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_import_db.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
-import 'package:intl/intl.dart';
-import "./DB/handler/schedule_db_handler.dart";
+import "package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart";
+import "package:intl/intl.dart";
 import 'package:uuid/uuid.dart';
+
 import "DB/handler/schedule_metaInfo_db_handler.dart";
+import "DB/handler/arbeit_db_handler.dart";
+import "DB/handler/schedule_template_db_handler.dart";
+import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import "./DB/handler/schedule_db_handler.dart";
+import "DB/handler/todo_db_handler.dart";
+import "DB/handler/user_info_db_handler.dart";
 
 Future<String> postScheduleToFB(String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
   Map<String, dynamic> tag = await TagDatabaseHelper().getTagByTagID(tagID);
-  String expireDate = DateTime.now().add(Duration(days: remainDay)).toString();
+  String expireDate = DateFormat("yyyy-mm-dd 00:00 000")
+      .format(DateTime.now().add(Duration(days: remainDay + 1)));
   Map<String, dynamic> postSchedule = {
     "schedule": postScheduleList,
     "tag": tag,
@@ -50,7 +56,6 @@ Future<void> receiveSchedule(String scheduleID) async {
           .map((item) => item as Map<String, dynamic>)
           .toList();
       final tagData = data["tag"] as Map<String, dynamic>;
-      final dtEnd = data["dtEnd"] as String;
 
       await TagDatabaseHelper().resisterTagToDB(tagData);
       await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
@@ -58,7 +63,7 @@ Future<void> receiveSchedule(String scheduleID) async {
         "scheduleID": scheduleID,
         "tagID": tagData["tagID"],
         "scheduleType": "import",
-        "dtEnd": dtEnd
+        "dtEnd": null
       });
 
       return;
@@ -69,3 +74,54 @@ Future<void> receiveSchedule(String scheduleID) async {
     return; // エラーが発生した場合は空のリストを返す
   }
 }
+
+Future<String?> backup() async {
+  const int remainDay = 10;
+  Map<String, String?> backupInfo = await UserDatabaseHelper().getBackupInfo();
+  String? backupID = backupInfo["backupID"];
+  late String expireDate;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> scheduleList =
+      await ScheduleDatabaseHelper().getScheduleFromDB();
+  List<Map<String, dynamic>> tagList = await TagDatabaseHelper().getTagFromDB();
+  List<Map<String, dynamic>> scheduleTemplateList =
+      await ScheduleTemplateDatabaseHelper().getScheduleTemplateFromDB();
+  List<Map<String, dynamic>> scheduleMetaInfoList =
+      await ScheduleMetaDatabaseHelper().getScheduleMetaInfoFromDB();
+  List<Map<String, dynamic>> toDoList =
+      await DataBaseHelper().getAllDataFromMyTable();
+  List<Map<String, dynamic>> arbeitList =
+      await ArbeitDatabaseHelper().getArbeitFromDB();
+  List<Map<String, dynamic>> taskList =
+      await TaskDatabaseHelper().getTaskFromDB();
+
+  if (backupID == null) {
+    while (true) {
+      backupID = const Uuid().v4();
+      final docRef = db.collection("backup").doc(backupID);
+      final snapshot = await docRef.get();
+      if (!snapshot.exists) {
+        break;
+      }
+    }
+    await UserDatabaseHelper().setBackupID(backupID);
+  }
+  expireDate = DateFormat("yyyy-mm-dd 00:00 000")
+      .format(DateTime.now().add(const Duration(days: remainDay + 1)));
+
+  db.collection("backup").doc(backupID).set({
+    "dtEnd": expireDate,
+    "schedule": scheduleList,
+    "tag": tagList,
+    "schedule_template": scheduleTemplateList,
+    "schedule_metaInfo": scheduleMetaInfoList,
+    "toDo": toDoList,
+    "arbeit": arbeitList,
+    "task": taskList
+  });
+  await UserDatabaseHelper().setExpireDate(expireDate);
+
+  return backupID;
+}
+
+Future<void> recoveryBackup(String backupID) async {}

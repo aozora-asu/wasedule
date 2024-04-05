@@ -2,12 +2,12 @@ class ScheduleMetaInfo {
   String scheduleID;
   String tagID;
   String scheduleType;
-  String dtEnd;
+  String? dtEnd;
 
   ScheduleMetaInfo(
       {required this.scheduleID,
       required this.scheduleType,
-      required this.dtEnd,
+      this.dtEnd,
       required this.tagID});
 
   Map<String, dynamic> toMap() {

@@ -1,10 +1,11 @@
 class UserInfo {
-  String url;
-  UserInfo({required this.url});
+  String? url;
+  String? dtEnd;
+  String? backupID;
+
+  UserInfo({this.url, this.dtEnd, this.backupID});
 
   Map<String, dynamic> toMap() {
-    return {
-      "url": url,
-    };
+    return {"url": url, "backupID": backupID, "dtEnd": dtEnd};
   }
 }
