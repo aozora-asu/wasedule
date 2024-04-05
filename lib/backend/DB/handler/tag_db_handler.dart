@@ -129,6 +129,12 @@ class TagDatabaseHelper {
     );
   }
 
+  Future<void> resisterTagListToDB(List<Map<String, dynamic>> tagList) async {
+    for (var tag in tagList) {
+      await resisterTagToDB(tag);
+    }
+  }
+
   Future<void> resisterTagToDB(Map<String, dynamic> newTag) async {
     await _initTagDatabase();
     Tag tag;
