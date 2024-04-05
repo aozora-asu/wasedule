@@ -12,7 +12,8 @@ class UserDatabaseHelper {
 
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
-    _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
+    _database = await openDatabase(path,
+        version: 1, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   // データベースの作成
@@ -20,20 +21,58 @@ class UserDatabaseHelper {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS $TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        url TEXT
+        url TEXT,
+        backupID TEXT,
+        dtEnd TEXT
       )
     ''');
+  }
+
+  Future<void> _upgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+      ALTER TABLE $TABLE_NAME
+      ADD COLUMN dtEnd TEXT,
+      ADD COLUMN backupID TEXT
+    ''');
+    }
   }
 
   // urlばりデートを行い、DBに追加できればtrue、追加できなければfalseを返す
   Future<bool> resisterUserInfo(String url) async {
     await _initDatabase();
     if (_isValidUrl(url)) {
-      userInfo = UserInfo(url: url);
-      return await _database.insert(TABLE_NAME, userInfo.toMap()) > 0;
+      return await _database.update(
+            TABLE_NAME,
+            {'url': url},
+            where: 'id = ?',
+            whereArgs: [0],
+          ) >
+          0;
     } else {
       return false;
     }
+  }
+
+  Future<void> setBackupID(String backupID) async {
+    await _initDatabase();
+    await _database.update(
+      TABLE_NAME,
+      {'backupID': backupID},
+      where: 'id = ?',
+      whereArgs: [0],
+    );
+  }
+
+  Future<void> setExpireDate(String dtEnd) async {
+    await _initDatabase();
+    await _database.update(
+      TABLE_NAME,
+      {'dtEnd': dtEnd},
+      where: 'id = ?',
+      whereArgs: [0],
+    );
   }
 
   Future<String?> getUrl() async {
@@ -43,8 +82,29 @@ class UserDatabaseHelper {
     if (userInfo.isEmpty) {
       return null;
     } else {
-      return userInfo.last["url"];
+      return userInfo[0]["url"];
     }
+  }
+
+  Future<String?> getBackupID() async {
+    await _initDatabase();
+    List<Map<String, dynamic>> userInfo =
+        await _database.rawQuery('SELECT * FROM user');
+    if (userInfo.isEmpty) {
+      return null;
+    } else {
+      return userInfo[0]["backupID"];
+    }
+  }
+
+  Future<Map<String, String?>> getBackupInfo() async {
+    await _initDatabase();
+    List<Map<String, dynamic>> userInfo =
+        await _database.rawQuery('SELECT * FROM user');
+    return {
+      "backupID": userInfo[0]["backupID"] as String?,
+      "dtEnd": userInfo[0]["dtEnd"] as String?
+    };
   }
 
   Future<bool> hasData() async {

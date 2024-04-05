@@ -91,7 +91,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Future<List<Map<String, dynamic>>> _getTemplateDataSource() async {
     List<Map<String, dynamic>> templateList =
-        await ScheduleTemplateDatabaseHelper().getScheduleFromDB();
+        await ScheduleTemplateDatabaseHelper().getScheduleTemplateFromDB();
 
     return templateList;
   }
@@ -160,7 +160,6 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showTutorial(context);
     });

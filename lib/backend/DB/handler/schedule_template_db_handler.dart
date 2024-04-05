@@ -123,7 +123,7 @@ class ScheduleTemplateDatabaseHelper {
     await insertSchedule(scheduleItem);
   }
 
-  Future<List<Map<String, dynamic>>> getScheduleFromDB() async {
+  Future<List<Map<String, dynamic>>> getScheduleTemplateFromDB() async {
     await _initScheduleDatabase();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM schedule_template');
