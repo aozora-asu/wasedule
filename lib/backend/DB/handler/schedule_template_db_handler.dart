@@ -123,6 +123,13 @@ class ScheduleTemplateDatabaseHelper {
     await insertSchedule(scheduleItem);
   }
 
+  Future<void> resisterScheduleTemplateListToDB(
+      List<Map<String, dynamic>> scheduleTemplateList) async {
+    for (var scheduleTemplate in scheduleTemplateList) {
+      await resisterScheduleToDB(scheduleTemplate);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getScheduleTemplateFromDB() async {
     await _initScheduleDatabase();
     final List<Map<String, dynamic>> data =

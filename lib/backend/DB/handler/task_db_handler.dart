@@ -181,6 +181,19 @@ class TaskDatabaseHelper {
     await _orderByDateTime();
   }
 
+  Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
+    for (var task in taskList) {
+      TaskItem taskItem = TaskItem(
+          title: task["title"],
+          dtEnd: task["dtEnd"],
+          isDone: task["isDone"],
+          uid: task["uid"],
+          description: task["description"],
+          summary: task["summary"]);
+      await insertTask(taskItem);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> withinNdaysTask(
       DateTime today, int n) async {
     await _initDatabase();

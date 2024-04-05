@@ -58,12 +58,18 @@ class ArbeitDatabaseHelper {
     Arbeit arbeit;
 
     // 1. TaskItemオブジェクトを作成
-   arbeit = Arbeit(
-      tagId: newArbeit["tagId"],
-      month: newArbeit["month"],
-      wage: newArbeit["wage"]
-      );
+    arbeit = Arbeit(
+        tagId: newArbeit["tagId"],
+        month: newArbeit["month"],
+        wage: newArbeit["wage"]);
     await insertArbeit(arbeit);
+  }
+
+  Future<void> resisterArbeitListToDB(
+      List<Map<String, dynamic>> arbeitList) async {
+    for (var arbeit in arbeitList) {
+      await resisterArbeitToDB(arbeit);
+    }
   }
 
   Future<List<Map<String, dynamic>>> getArbeitFromDB() async {
@@ -72,5 +78,4 @@ class ArbeitDatabaseHelper {
         await _database.rawQuery('SELECT * FROM arbeit');
     return data;
   }
-
 }

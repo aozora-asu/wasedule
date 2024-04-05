@@ -39,6 +39,24 @@ class ScheduleMetaDatabaseHelper {
     );
   }
 
+  // データベースの初期化
+  Future<void> _resisterScheduleMetaInfo(Map<String, dynamic> metaInfo) async {
+    await _initScheduleMetaDatabase();
+    ScheduleMetaInfo schedulemetaInfo = ScheduleMetaInfo(
+        scheduleID: metaInfo["scheduleID"],
+        scheduleType: metaInfo["scheduleType"],
+        tagID: metaInfo["tagID"],
+        dtEnd: metaInfo["dtEnd"]);
+    await _database.insert('schedule_metaInfo', schedulemetaInfo.toMap());
+  }
+
+  Future<void> resisterSchedulemetaInfoListToDB(
+      List<Map<String, dynamic>> metaInfoList) async {
+    for (var metaInfo in metaInfoList) {
+      await _resisterScheduleMetaInfo(metaInfo);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getScheduleMetaInfoFromDB() async {
     await _initScheduleMetaDatabase();
     final List<Map<String, dynamic>> data =

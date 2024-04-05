@@ -94,6 +94,7 @@ Future<String?> backup() async {
       await ArbeitDatabaseHelper().getArbeitFromDB();
   List<Map<String, dynamic>> taskList =
       await TaskDatabaseHelper().getTaskFromDB();
+  String? url = await UserDatabaseHelper().getUrl();
 
   if (backupID == null) {
     while (true) {
@@ -117,11 +118,60 @@ Future<String?> backup() async {
     "schedule_metaInfo": scheduleMetaInfoList,
     "toDo": toDoList,
     "arbeit": arbeitList,
-    "task": taskList
+    "task": taskList,
+    "url": url
   });
   await UserDatabaseHelper().setExpireDate(expireDate);
 
   return backupID;
 }
 
-Future<void> recoveryBackup(String backupID) async {}
+Future<void> recoveryBackup(String backupID) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final docRef = db.collection("schedule").doc(backupID);
+
+  try {
+    DocumentSnapshot doc = await docRef.get();
+    final data = doc.data();
+    if (data is Map<String, dynamic>) {
+      final scheduleList = (data["schedule"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
+      final tagList = (data["tag"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await TagDatabaseHelper().resisterTagListToDB(tagList);
+      final scheduleTemplateList = (data["schedule_template"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await ScheduleTemplateDatabaseHelper()
+          .resisterScheduleTemplateListToDB(scheduleTemplateList);
+      final scheduleMetaInfoList = (data["schedule_metaInfo"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await ScheduleMetaDatabaseHelper()
+          .resisterSchedulemetaInfoListToDB(scheduleMetaInfoList);
+      final toDoList = (data["toDo"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+
+      final arbeitList = (data["arbeit"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await ArbeitDatabaseHelper().resisterArbeitListToDB(arbeitList);
+      final taskList = (data["task"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await TaskDatabaseHelper().resisterTaskListToDB(taskList);
+      final url = data["url"] as String;
+      await UserDatabaseHelper().resisterUserInfo(url);
+
+      return;
+    } else {
+      throw "データが予期せず不正な形式です";
+    }
+  } catch (e) {
+    return; // エラーが発生した場合は空のリストを返す
+  }
+}
