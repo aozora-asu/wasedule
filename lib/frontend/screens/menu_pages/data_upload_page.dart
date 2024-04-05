@@ -122,7 +122,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Text(
-              "・共有コードを知っている人に向けて、予定を配信することができます。サークルやゼミなどで、スケジュールの共有にお使いください。",
+              "・「スケジュールID」を知っている人に向けて、予定を配信することができます。サークルやゼミなどで、スケジュールの共有にお使いください。",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           const Text("・選択したタグが紐付いている予定のみが共有されます。",
@@ -168,6 +168,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             width: SizeConfig.blockSizeHorizontal! * 20,
             child: CupertinoTextField(
               controller: dtEndController,
+              placeholder: "半角数字",
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
               ],
@@ -267,7 +268,6 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             if (dtEnd > 60 || 0 >= dtEnd) {
               showBackupFailDialogue("有効期限は1日以上60日以下に設定してください。");
             } else {
-              //★この "tagID" 変数をバックエンド（postScheduleToFB）に受け渡します!
               String tagID = returnTagId(
                       ref.watch(scheduleFormProvider).tagController.text,
                       ref) ??
@@ -459,7 +459,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Text(
-              "・今お使いの端末からサーバー上に「カレンダー」のすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
+              "・今お使いの端末からサーバー上にすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           const Text("・バックアップに際して、発行されるIDが必要です。スクリーンショットなどで保管しておいてください。",
@@ -473,16 +473,21 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   Widget backUpUploadButton() {
     return ElevatedButton(
         onPressed: () {
-          //DBから呼び出されたID。まだデータがなければ空文字が入る予定。
-          String id = ref.watch(calendarDataProvider).userID;
+
+          //DBから呼び出されたID。まだデータがなければnullが入る予定。
+          String? id = ref.watch(calendarDataProvider).userID;
           //今は仮で入れてます、仮IDはdata_loader.dart内に記述
 
           //ここにバックアップの実行処理を書き込む（アップロード処理）
 
           //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
 
-          //バックアップ成功！ダイアログを表示
+          //とってきたIDで変数を書き換え　
+          // id = 新しいID;
+
           //(初回バックアップ時)ここで発行されたバックアップIDをＤＢに追加する処理。
+
+          //バックアップ成功！ダイアログを表示
           showBackUpDoneDialogue(id);
           setState(() {});
         },
@@ -551,8 +556,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     );
   }
 
-  Widget iDView(String id) {
-    if (id.isEmpty) {
+  Widget iDView(String? id) {
+    if (id == null || id.isEmpty) {
       return const SizedBox();
     } else {
       return Column(children: [

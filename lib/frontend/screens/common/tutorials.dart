@@ -180,7 +180,7 @@ class _IntroPageState extends State<IntroPage> {
         activeSize: const Size(20.0, 10.0),
         activeColor: Theme.of(context).primaryColor,
         color: Colors.black26,
-        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+        spacing: const EdgeInsets.symmetric(horizontal: 3.0,vertical:40),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
         ),
@@ -238,7 +238,7 @@ class _IntroLastPageState extends State<IntroLastPage> {
     return [
       PageViewModel(
         title: "早速課題を登録してみましょう！",
-        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題が表示されます。",
+        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題がこの画面に表示されます。",
         image: Center(
           child: Image.asset(
             "lib/assets/tutorial_images/task_add_button.png",
@@ -262,7 +262,7 @@ class _IntroLastPageState extends State<IntroLastPage> {
     return IntroductionScreen(
       controlsPadding : const EdgeInsets.all(0),
       pages: lastPage(),
-      done: Text("使ってみる"),
+      done: const Text("使ってみる"),
       onDone: () async{
         final pref = await SharedPreferences.getInstance();
         pref.setBool('hasCompletedIntro', true);
@@ -275,16 +275,6 @@ class _IntroLastPageState extends State<IntroLastPage> {
       showSkipButton: false,
       showDoneButton: true,
       next: const Icon(Icons.keyboard_arrow_right),
-      dotsDecorator: DotsDecorator(
-        size: const Size.square(10.0),
-        activeSize: const Size(20.0, 10.0),
-        activeColor: Theme.of(context).primaryColor,
-        color: Colors.black26,
-        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-        activeShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
-        ),
-      ),
     );
   }
 

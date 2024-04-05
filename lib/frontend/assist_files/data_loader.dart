@@ -1,6 +1,5 @@
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_import_db.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,8 +96,9 @@ class TagDataLoader {
 }
 
 class UserInfoLoader {
-  Future<String> getUserIDSource() async {
-    String userID = "c539ed57-9119-4a20-862d-e3c74861c9c1";
+  Future<String?> getUserIDSource() async {
+    String? userID = "c539ed57-9119-4a20-862d-e3c74861c9c1";
+
     //仮のIDです。ここにDBから受け渡して下さい。
     //await UserInfoDatabaseHelper().getUserIDFromDB();
 
@@ -106,7 +106,7 @@ class UserInfoLoader {
   }
 
   Future<void> insertDataToProvider(ref) async {
-    Future<String> userID = getUserIDSource();
+    Future<String?> userID = getUserIDSource();
     await ref.read(calendarDataProvider).getUserID(userID);
   }
 }
@@ -122,120 +122,3 @@ class BroadcastLoader {
     await ref.read(calendarDataProvider).getUploadData(data);
   }
 }
-
-Map<String, dynamic> sample = {
-  "ee0171cf-dcf5-411e-8e63-206e712ee709": {
-    "dtEnd": "2024-05-31 23:59:00.000",
-    "tag": {
-      "id": 1,
-      "title": "サンプルプル1",
-      "color": 4294961979,
-      "isBeit": 0,
-      "wage": 0,
-      "fee": 0,
-      "tagID": "2024030914155319"
-    },
-    "schedule": [
-      {
-        "id": 1,
-        "subject": "予定１",
-        "startDate": "2024-03-08",
-        "startTime": "18:15",
-        "endDate": "2024-02-08",
-        "endTime": "21:05",
-        "hash": "0187464823"
-      },
-      {
-        "id": 2,
-        "subject": "予定2",
-        "startDate": "2024-03-11",
-        "startTime": "",
-        "endDate": "2024-02-08",
-        "endTime": "",
-        "hash": "972849263"
-      },
-      {
-        "id": 3,
-        "subject": "予定3",
-        "startDate": "2024-03-12",
-        "startTime": "18:15",
-        "endDate": "2024-02-08",
-        "endTime": "",
-        "hash": "693756593"
-      },
-      {
-        "id": 4,
-        "subject": "予定4",
-        "startDate": "2024-03-12",
-        "startTime": "18:15",
-        "endDate": "2024-02-08",
-        "endTime": "21:05",
-        "hash": "603929574"
-      }
-    ],
-  },
-  "443e50a1-a12c-4daa-9029-4e981c731fc6": {
-    "dtEnd": "2024-04-30 23:59:00.000",
-    "tag": {
-      "id": 2,
-      "title": "サンプル2",
-      "color": 4294961979,
-      "isBeit": 1,
-      "wage": 1200,
-      "fee": 356,
-      "tagID": "2024031120300124"
-    },
-    "schedule": [
-      {
-        "id": 1,
-        "subject": "バイト",
-        "startDate": "2024-03-08",
-        "startTime": "18:15",
-        "endDate": "",
-        "endTime": "21:05",
-        "hash": "593782659"
-      },
-      {
-        "id": 2,
-        "subject": "バイト2",
-        "startDate": "2024-03-11",
-        "startTime": "12:00",
-        "endDate": "",
-        "endTime": "15:00",
-        "hash": "583726592"
-      },
-      {
-        "id": 3,
-        "subject": "バイト3",
-        "startDate": "2024-03-12",
-        "startTime": "18:15",
-        "endDate": "",
-        "endTime": "22:00",
-        "hash": "6937826596"
-      },
-    ],
-  },
-  "ae0171cf-dcf5-411e-8d63-206e712ee709": {
-    "dtEnd": "2029-03-15 23:59:00.000",
-    "tag": {
-      "id": 3,
-      "title": "サンプル3",
-      "color": 4294961979,
-      "isBeit": 0,
-      "wage": 0,
-      "fee": 0,
-      "tagID": "2024031214155319"
-    },
-    "schedule": [
-      {
-        "id": 1,
-        "subject": "予定１",
-        "startDate": "2024-03-08",
-        "startTime": "18:15",
-        "endDate": "2024-02-08",
-        "endTime": "21:05",
-        "hash": "649274927"
-      },
-    ],
-  },
-};
