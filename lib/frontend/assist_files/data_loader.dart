@@ -1,6 +1,7 @@
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -97,16 +98,13 @@ class TagDataLoader {
 
 class UserInfoLoader {
   Future<String?> getUserIDSource() async {
-    String? userID = "c539ed57-9119-4a20-862d-e3c74861c9c1";
-
-    //仮のIDです。ここにDBから受け渡して下さい。
-    //await UserInfoDatabaseHelper().getUserIDFromDB();
-
+    Map<String,String?> userInfoMap = await UserDatabaseHelper().getBackupInfo(); 
+    String? userID = userInfoMap["backupID"];
     return userID;
   }
 
   Future<void> insertDataToProvider(ref) async {
-    Future<String?> userID = getUserIDSource();
+    String? userID = await getUserIDSource();
     await ref.read(calendarDataProvider).getUserID(userID);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -472,33 +473,26 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
   Widget backUpUploadButton() {
     return ElevatedButton(
-        onPressed: () {
+      onPressed: () async{
+        String? id = await backup();
 
-          //DBから呼び出されたID。まだデータがなければnullが入る予定。
-          String? id = ref.watch(calendarDataProvider).userID;
-          //今は仮で入れてます、仮IDはdata_loader.dart内に記述
-
-          //ここにバックアップの実行処理を書き込む（アップロード処理）
-
-          //showBackupFailDialogue("エラーメッセージ"); //←処理の失敗時にお使いください。
-
-          //とってきたIDで変数を書き換え　
-          // id = 新しいID;
-
-          //(初回バックアップ時)ここで発行されたバックアップIDをＤＢに追加する処理。
-
-          //バックアップ成功！ダイアログを表示
+        if(id == null){
+          showBackupFailDialogue("バックアップが失敗しました。"); 
+        }else{
           showBackUpDoneDialogue(id);
-          setState(() {});
-        },
-        style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-        ),
-        child: const Row(children: [
-          Icon(Icons.backup, color: Colors.white),
-          SizedBox(width: 20),
-          Text("データをバックアップ", style: TextStyle(color: Colors.white))
-        ]));
+        }
+  
+        setState(() {});
+      },
+      style: const ButtonStyle(
+        backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+      ),
+      child: const Row(children: [
+        Icon(Icons.backup, color: Colors.white),
+        SizedBox(width: 20),
+        Text("データをバックアップ", style: TextStyle(color: Colors.white))
+      ])
+    );
   }
 
   void showBackUpDoneDialogue(String id) {

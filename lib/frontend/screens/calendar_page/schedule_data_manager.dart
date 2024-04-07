@@ -28,7 +28,7 @@ class CalendarData {
   var sortedDataByDayForShare = {};
   var sortedDataByMonth = {};
 
-  var userID = "";
+  String? userID;
   var uploadData = {};
   var downloadData = {};
 
@@ -47,8 +47,8 @@ class CalendarData {
     templateData = fetchedTemplateData;
   }
 
-  void getUserID(Future<String> data) async {
-    String fetchedData = await data;
+  void getUserID(String? data) async {
+    String? fetchedData = data;
     userID =  fetchedData;
   }
 
