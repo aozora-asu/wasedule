@@ -229,7 +229,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                   String id = idController.text;
                   if (id.isNotEmpty) {
                     //ここにバックアップの実行処理を書き込む（ダウンロード）
-
+                    recoveryBackup(id);
                     Navigator.pop(context);
                     showDownloadDoneDialogue("データが復元されました！");
                   } else {
