@@ -76,7 +76,7 @@ Future<void> receiveSchedule(String scheduleID) async {
 }
 
 Future<String?> backup() async {
-  const int remainDay = 10;
+  const int remainDay = 31;
   Map<String, String?> backupInfo = await UserDatabaseHelper().getBackupInfo();
   String? backupID = backupInfo["backupID"];
   late String expireDate;
