@@ -40,13 +40,21 @@ class UserDatabaseHelper {
   Future<bool> resisterUserInfo(String url) async {
     await _initDatabase();
     if (_isValidUrl(url)) {
-      return await _database.update(
-            TABLE_NAME,
-            {'url': url},
-            where: 'id = ?',
-            whereArgs: [0],
-          ) >
-          0;
+      if (!await hasData()) {
+        return await _database.insert(
+              TABLE_NAME,
+              {'url': url},
+            ) >
+            0;
+      } else {
+        return await _database.update(
+              TABLE_NAME,
+              {'url': url},
+              where: 'id = ?',
+              whereArgs: [0],
+            ) >
+            0;
+      }
     } else {
       return false;
     }
@@ -54,22 +62,36 @@ class UserDatabaseHelper {
 
   Future<void> setBackupID(String backupID) async {
     await _initDatabase();
-    await _database.update(
-      TABLE_NAME,
-      {'backupID': backupID},
-      where: 'id = ?',
-      whereArgs: [0],
-    );
+    if (!await hasData()) {
+      await _database.insert(
+        TABLE_NAME,
+        {'backupID': backupID},
+      );
+    } else {
+      await _database.update(
+        TABLE_NAME,
+        {'backupID': backupID},
+        where: 'id = ?',
+        whereArgs: [0],
+      );
+    }
   }
 
   Future<void> setExpireDate(String dtEnd) async {
     await _initDatabase();
-    await _database.update(
-      TABLE_NAME,
-      {'dtEnd': dtEnd},
-      where: 'id = ?',
-      whereArgs: [0],
-    );
+    if (!await hasData()) {
+      await _database.insert(
+        TABLE_NAME,
+        {'dtEnd': dtEnd},
+      );
+    } else {
+      await _database.update(
+        TABLE_NAME,
+        {'dtEnd': dtEnd},
+        where: 'id = ?',
+        whereArgs: [0],
+      );
+    }
   }
 
   Future<String?> getUrl() async {

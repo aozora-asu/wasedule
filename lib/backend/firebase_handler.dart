@@ -78,6 +78,7 @@ Future<void> receiveSchedule(String scheduleID) async {
 Future<String?> backup() async {
   const int remainDay = 31;
   Map<String, String?> backupInfo = await UserDatabaseHelper().getBackupInfo();
+
   String? backupID = backupInfo["backupID"];
   late String expireDate;
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -109,7 +110,7 @@ Future<String?> backup() async {
     }
     await UserDatabaseHelper().setBackupID(backupID);
   }
-  expireDate = DateFormat("yyyy-mm-dd 00:00 000")
+  expireDate = DateFormat("yyyy-MM-DD 00:00:00.000000")
       .format(DateTime.now().add(const Duration(days: remainDay + 1)));
 
   db.collection("backup").doc(backupID).set({
