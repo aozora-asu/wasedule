@@ -148,6 +148,14 @@ class DataBaseHelper {
     await database
         .update('my_table', updateData, where: 'date = ?', whereArgs: [date]);
   }
+
+  Future<void> resisterToDoListToDB(
+      List<Map<String, dynamic>> toDoDataList) async {
+    await initializeDB();
+    for (var toDoData in toDoDataList) {
+      database.insert("my_table", toDoData);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,6 +242,14 @@ class TemplateDataBaseHelper {
       where: 'id = ?',
       whereArgs: [strIndex], // "?"に代入する値
     );
+  }
+
+  Future<void> resisterToDoTemplateDB(
+      List<Map<String, dynamic>> toDoTemplateDataList) async {
+    await initializeDB();
+    for (var toDoTemplateData in toDoTemplateDataList) {
+      templateDB.insert("plan_template", toDoTemplateData);
+    }
   }
 }
 

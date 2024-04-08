@@ -90,6 +90,8 @@ Future<String?> backup() async {
       await ScheduleMetaDatabaseHelper().getScheduleMetaInfoFromDB();
   List<Map<String, dynamic>> toDoList =
       await DataBaseHelper().getAllDataFromMyTable();
+  List<Map<String, dynamic>> toDoTemplateList =
+      await TemplateDataBaseHelper().getAllDataFromMyTable();
   List<Map<String, dynamic>> arbeitList =
       await ArbeitDatabaseHelper().getArbeitFromDB();
   List<Map<String, dynamic>> taskList =
@@ -117,6 +119,7 @@ Future<String?> backup() async {
     "schedule_template": scheduleTemplateList,
     "schedule_metaInfo": scheduleMetaInfoList,
     "toDo": toDoList,
+    "toDoTemplate": toDoTemplateList,
     "arbeit": arbeitList,
     "task": taskList,
     "url": url
@@ -155,6 +158,11 @@ Future<void> recoveryBackup(String backupID) async {
       final toDoList = (data["toDo"] as List<dynamic>)
           .map((item) => item as Map<String, dynamic>)
           .toList();
+      await DataBaseHelper().resisterToDoListToDB(toDoList);
+      final toDoTemplateList = (data["toDoTemplate"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      await TemplateDataBaseHelper().resisterToDoTemplateDB(toDoTemplateList);
 
       final arbeitList = (data["arbeit"] as List<dynamic>)
           .map((item) => item as Map<String, dynamic>)
