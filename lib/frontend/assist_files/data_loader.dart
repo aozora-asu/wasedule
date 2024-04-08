@@ -98,7 +98,9 @@ class TagDataLoader {
 
 class UserInfoLoader {
   Future<String?> getUserIDSource() async {
-    Map<String,String?> userInfoMap = await UserDatabaseHelper().getBackupInfo(); 
+    Map<String, String?> userInfoMap =
+        await UserDatabaseHelper().getBackupInfo();
+
     String? userID = userInfoMap["backupID"];
     return userID;
   }
@@ -111,7 +113,8 @@ class UserInfoLoader {
 
 class BroadcastLoader {
   Future<Map<String, dynamic>> getUploadDataSource() async {
-    Map<String, dynamic> data = await ScheduleDatabaseHelper().getExportedSchedule();
+    Map<String, dynamic> data =
+        await ScheduleDatabaseHelper().getExportedSchedule();
     return data;
   }
 

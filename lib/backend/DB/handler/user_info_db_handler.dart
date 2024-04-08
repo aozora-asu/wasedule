@@ -13,7 +13,7 @@ class UserDatabaseHelper {
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
     _database = await openDatabase(path,
-        version: 1, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   // データベースの作成
@@ -31,11 +31,8 @@ class UserDatabaseHelper {
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      await db.execute('''
-      ALTER TABLE $TABLE_NAME
-      ADD COLUMN dtEnd TEXT,
-      ADD COLUMN backupID TEXT
-    ''');
+      await db.execute('ALTER TABLE $TABLE_NAME ADD COLUMN dtEnd TEXT');
+      await db.execute('ALTER TABLE $TABLE_NAME ADD COLUMN backupID TEXT');
     }
   }
 
@@ -101,10 +98,14 @@ class UserDatabaseHelper {
     await _initDatabase();
     List<Map<String, dynamic>> userInfo =
         await _database.rawQuery('SELECT * FROM user');
-    return {
-      "backupID": userInfo[0]["backupID"] as String?,
-      "dtEnd": userInfo[0]["dtEnd"] as String?
-    };
+    if (userInfo.isEmpty) {
+      return {"backupID": null, "dtEnd": null};
+    } else {
+      return {
+        "backupID": userInfo[0]["backupID"],
+        "dtEnd": userInfo[0]["dtEnd"]
+      };
+    }
   }
 
   Future<bool> hasData() async {
