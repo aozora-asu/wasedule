@@ -110,8 +110,8 @@ Future<String?> backup() async {
     }
     await UserDatabaseHelper().setBackupID(backupID);
   }
-  expireDate = DateFormat("yyyy-MM-DD 00:00:00.000000")
-      .format(DateTime.now().add(const Duration(days: remainDay + 1)));
+  expireDate = DateFormat("yyyy-MM-dd 00:00:00.000000")
+      .format(DateTime.now().add(const Duration(days: (remainDay + 1))));
 
   db.collection("backup").doc(backupID).set({
     "dtEnd": expireDate,
