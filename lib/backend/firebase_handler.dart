@@ -11,7 +11,7 @@ import "./DB/handler/schedule_db_handler.dart";
 import "DB/handler/todo_db_handler.dart";
 import "DB/handler/user_info_db_handler.dart";
 
-Future<String> postScheduleToFB(String tagID, int remainDay) async {
+Future<String?> postScheduleToFB(String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
@@ -23,7 +23,7 @@ Future<String> postScheduleToFB(String tagID, int remainDay) async {
     "tag": tag,
     "dtEnd": expireDate
   };
-  String scheduleID = "";
+  String? scheduleID;
   while (true) {
     scheduleID = const Uuid().v4();
 
@@ -44,7 +44,7 @@ Future<String> postScheduleToFB(String tagID, int remainDay) async {
   return scheduleID;
 }
 
-Future<void> receiveSchedule(String scheduleID) async {
+Future<bool> receiveSchedule(String scheduleID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("schedule").doc(scheduleID);
 
@@ -66,12 +66,12 @@ Future<void> receiveSchedule(String scheduleID) async {
         "dtEnd": null
       });
 
-      return;
+      return true;
     } else {
       throw "データが予期せず不正な形式です";
     }
   } catch (e) {
-    return; // エラーが発生した場合は空のリストを返す
+    return false; // エラーが発生した場合は空のリストを返す
   }
 }
 
@@ -130,7 +130,7 @@ Future<String?> backup() async {
   return backupID;
 }
 
-Future<void> recoveryBackup(String backupID) async {
+Future<bool> recoveryBackup(String backupID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("schedule").doc(backupID);
 
@@ -176,11 +176,11 @@ Future<void> recoveryBackup(String backupID) async {
       final url = data["url"] as String;
       await UserDatabaseHelper().resisterUserInfo(url);
 
-      return;
+      return true;
     } else {
       throw "データが予期せず不正な形式です";
     }
   } catch (e) {
-    return; // エラーが発生した場合は空のリストを返す
+    return false; // エラーが発生した場合は空のリストを返す
   }
 }

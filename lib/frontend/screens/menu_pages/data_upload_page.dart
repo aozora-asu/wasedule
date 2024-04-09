@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/models/schedule.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -182,7 +183,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget tagThumbnail() {
-    String tagID = returnTagId(ref.watch(scheduleFormProvider).tagController.text, ref) ?? "";
+    String tagID =
+        returnTagId(ref.watch(scheduleFormProvider).tagController.text, ref) ??
+            "";
     if (tagID.isEmpty) {
       return const SizedBox();
     } else {
@@ -206,7 +209,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     List calendarList = ref.watch(calendarDataProvider).calendarData;
     if (id.isNotEmpty) {
       for (int i = 0; i < calendarList.length; i++) {
-        if (calendarList.elementAt(i)["tagID"] ==  returnTagId(id,ref)) {
+        if (calendarList.elementAt(i)["tagID"] == returnTagId(id, ref)) {
           result.add(calendarList.elementAt(i));
         }
       }
@@ -273,13 +276,14 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                       ref.watch(scheduleFormProvider).tagController.text,
                       ref) ??
                   "";
-              String scheduleID = await postScheduleToFB(tagID, dtEnd);
-
-              //処理の失敗時
-              //showBackupFailDialogue("エラーメッセージ");
+              String? scheduleID = await postScheduleToFB(tagID, dtEnd);
 
               //処理の成功時
-              showUploadDoneDialogue(scheduleID);
+              if (scheduleID == null) {
+                showBackupFailDialogue("アップロードに失敗しました");
+              } else {
+                showUploadDoneDialogue(scheduleID);
+              }
 
               setState(() {});
             }
@@ -473,26 +477,25 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
   Widget backUpUploadButton() {
     return ElevatedButton(
-      onPressed: () async{
-        String? id = await backup();
+        onPressed: () async {
+          String? id = await backup();
 
-        if(id == null){
-          showBackupFailDialogue("バックアップが失敗しました。"); 
-        }else{
-          showBackUpDoneDialogue(id);
-        }
-  
-        setState(() {});
-      },
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-      ),
-      child: const Row(children: [
-        Icon(Icons.backup, color: Colors.white),
-        SizedBox(width: 20),
-        Text("データをバックアップ", style: TextStyle(color: Colors.white))
-      ])
-    );
+          if (id == null) {
+            showBackupFailDialogue("バックアップが失敗しました。");
+          } else {
+            showBackUpDoneDialogue(id);
+          }
+
+          setState(() {});
+        },
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+        ),
+        child: const Row(children: [
+          Icon(Icons.backup, color: Colors.white),
+          SizedBox(width: 20),
+          Text("データをバックアップ", style: TextStyle(color: Colors.white))
+        ]));
   }
 
   void showBackUpDoneDialogue(String id) {
