@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
@@ -349,11 +350,21 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.white),
                   onPressed: () {
+                    final data = ref.watch(calendarDataProvider);
                     showDeleteDialogue(context,
                         sortedData.elementAt(index)["title"] ?? "(詳細なし)",
                         () async {
                       await TagDatabaseHelper()
                           .deleteTag(sortedData.elementAt(index)["id"]);
+
+                      showDeleteDialogue(
+                        context,
+                        "タグ「" + returnTagTitle(sortedData.elementAt(index)["tagID"],ref)
+                        + "」が紐づいているすべての予定",
+                        () async {
+                          deleteAllScheduleWithTag(sortedData.elementAt(index)["tagID"],ref);
+                        }
+                      );
                       ref.read(scheduleFormProvider).clearContents();
                       ref.read(calendarDataProvider.notifier).state =
                           CalendarData();

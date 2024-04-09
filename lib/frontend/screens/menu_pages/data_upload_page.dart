@@ -373,80 +373,82 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         DateTime dtEnd = DateTime.parse(rawDtEnd);
         List scheduleList = data.values.elementAt(index)["schedule"];
 
-        Widget listChild = Column(children: [
-          const SizedBox(height: 4),
-          Row(children: [validTagChip(tag)]),
-          Text(id),
-          Row(children: [
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      scheduleList.elementAt(0)["subject"] ?? "",
-                      style: const TextStyle(color: Colors.grey),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(children: [
-                      InkWell(
-                          onTap: () {
-                            showSchedulesDialogue(
-                                context, "アップロード中データ", scheduleList);
-                          },
-                          child: Text(
-                            "ほか" + (scheduleList.length - 1).toString() + "件",
-                            style: const TextStyle(color: Colors.blue),
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                      const Spacer(),
-                      Text(
-                        "あと" +
-                            dtEnd.difference(DateTime.now()).inDays.toString() +
-                            "日",
-                        style: const TextStyle(color: Colors.redAccent),
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ])
-                  ]),
-            ),
-            IconButton(
-                onPressed: () async {
-                  final data = ClipboardData(text: id);
-                  await Clipboard.setData(data);
-                },
-                icon: const Icon(Icons.copy, color: Colors.grey)),
-            ElevatedButton(
-                onPressed: () async {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CodeSharePage(
-                              id: id,
-                              tagName: tag["title"],
-                              scheduleData: scheduleList,
-                            )),
-                  );
-                },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                child: const Row(children: [
-                  Icon(
-                    Icons.qr_code_2_outlined,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 5),
-                  Text("共有",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ])),
-          ])
-        ]);
-
         if (dtEnd.isBefore(DateTime.now())) {
           return const SizedBox();
+        }else if(scheduleList.isEmpty){
+          return const SizedBox();
         } else {
+          Widget listChild = Column(children: [
+            const SizedBox(height: 4),
+            Row(children: [validTagChip(tag)]),
+            Text(id),
+            Row(children: [
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        scheduleList.elementAt(0)["subject"] ?? "",
+                        style: const TextStyle(color: Colors.grey),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Row(children: [
+                        InkWell(
+                            onTap: () {
+                              showSchedulesDialogue(
+                                  context, "アップロード中データ", scheduleList);
+                            },
+                            child: Text(
+                              "ほか" + (scheduleList.length - 1).toString() + "件",
+                              style: const TextStyle(color: Colors.blue),
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                        const Spacer(),
+                        Text(
+                          "あと" +
+                              dtEnd.difference(DateTime.now()).inDays.toString() +
+                              "日",
+                          style: const TextStyle(color: Colors.redAccent),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ])
+                    ]),
+              ),
+              IconButton(
+                  onPressed: () async {
+                    final data = ClipboardData(text: id);
+                    await Clipboard.setData(data);
+                  },
+                  icon: const Icon(Icons.copy, color: Colors.grey)),
+              ElevatedButton(
+                  onPressed: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CodeSharePage(
+                                id: id,
+                                tagName: tag["title"],
+                                scheduleData: scheduleList,
+                              )),
+                    );
+                  },
+                  style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                  child: const Row(children: [
+                    Icon(
+                      Icons.qr_code_2_outlined,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 5),
+                    Text("共有",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ])),
+            ])
+          ]);
+
           return listChild;
         }
       },
