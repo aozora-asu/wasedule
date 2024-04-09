@@ -9,6 +9,37 @@ class UserDatabaseHelper {
   UserDatabaseHelper() {
     _initDatabase();
   }
+  Future<void> _initScheduleDatabase() async {
+    String path = join(await getDatabasesPath(), '$TABLE_NAME.db');
+    _database = await openDatabase(path,
+        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+  }
+
+  Future<void> _upgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS ${TABLE_NAME}_new(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+        url TEXT,
+        backupID TEXT,
+        dtEnd TEXT
+      tagID TEXT
+    )
+  ''');
+    // 既存のデータを新しいテーブルに移行
+    var userInfo = await db.query(TABLE_NAME);
+    await db.insert(TABLE_NAME, {
+      "url": userInfo[0]["url"],
+      "backupID": userInfo[0]["backupID"],
+      "dtEnd": userInfo[0]["dtEnd"]
+    });
+
+    // 既存のテーブルを削除
+    await db.execute('DROP TABLE $TABLE_NAME');
+
+    // 新しいテーブルの名前を既存のテーブルの名前に変更
+    await db.execute('ALTER TABLE ${TABLE_NAME}_new RENAME TO $TABLE_NAME');
+  }
 
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'user.db');
@@ -26,14 +57,6 @@ class UserDatabaseHelper {
         dtEnd TEXT
       )
     ''');
-  }
-
-  Future<void> _upgradeDatabase(
-      Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute('ALTER TABLE $TABLE_NAME ADD COLUMN dtEnd TEXT');
-      await db.execute('ALTER TABLE $TABLE_NAME ADD COLUMN backupID TEXT');
-    }
   }
 
   // urlばりデートを行い、DBに追加できればtrue、追加できなければfalseを返す
