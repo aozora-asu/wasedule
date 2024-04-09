@@ -325,6 +325,19 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                       Text('削除')
                                     ]),
                                   ),
+                                  PopupMenuItem(
+                                    enabled: isPanelEnable(data
+                                            .sortedDataByDay[targetKey]
+                                            .elementAt(index)["tagID"]),
+                                    value: 'deleteAll',
+                                    child:const Row(children: [
+                                      Icon(
+                                        Icons.tag,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text('一括削除')
+                                    ]),
+                                  ),
                                 ];
                               },
                               onSelected: (value) async {
@@ -358,11 +371,25 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                     }
                                     setState(() {});
                                   });
-                                }
-                              },
-                            ),
-                          ])
-                    ])),
+                                } else if(value == "deleteAll"){
+                                  showDeleteDialogue(
+                                    context,
+                                    "タグ「" + returnTagTitle(data.sortedDataByDay[targetKey]
+                                          .elementAt(index)["tagID"],ref)
+                                    + "」が紐づいているすべての予定",
+                                    () async {
+                                      deleteAllScheduleWithTag(data
+                                                .sortedDataByDay[targetKey]
+                                                .elementAt(index)["tagID"], ref);
+                                      setState(() {});
+                                    }
+                                  );
+                      }
+                    },
+                  ),
+                ])
+              ])
+            ),
           ]);
         },
         itemCount: data.sortedDataByDay[targetKey].length,
@@ -1069,5 +1096,31 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               .templateData
               .elementAt(index)["endTime"];
     }
+  }
+}
+
+Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref)async{
+  List allData = ref.read(calendarDataProvider).calendarData;
+  for(int i = 0; i < allData.length; i++){
+    if(allData.elementAt(i)["tagID"] == tagID){
+        await ScheduleDatabaseHelper()
+          .deleteSchedule(allData.elementAt(i)["id"]);
+      }
+    }
+      ref.read(taskDataProvider).isRenewed = true;
+      ref.read(calendarDataProvider.notifier).state = CalendarData();
+      while (
+          ref.read(taskDataProvider).isRenewed !=
+              false) {
+      await Future.delayed(
+          const Duration(microseconds: 1));
+  }
+}
+
+bool isPanelEnable(String? tagID){
+  if(tagID == null || tagID == ""){
+    return false;
+  }else{
+    return true;
   }
 }
