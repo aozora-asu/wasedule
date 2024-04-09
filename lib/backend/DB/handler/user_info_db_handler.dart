@@ -9,7 +9,7 @@ class UserDatabaseHelper {
   UserDatabaseHelper() {
     _initDatabase();
   }
-  Future<void> _initScheduleDatabase() async {
+  Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), '$TABLE_NAME.db');
     _database = await openDatabase(path,
         version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
@@ -29,9 +29,9 @@ class UserDatabaseHelper {
     // 既存のデータを新しいテーブルに移行
     var userInfo = await db.query(TABLE_NAME);
     await db.insert(TABLE_NAME, {
-      "url": userInfo[0]["url"],
-      "backupID": userInfo[0]["backupID"],
-      "dtEnd": userInfo[0]["dtEnd"]
+      "url": userInfo.last["url"] as String,
+      "backupID": userInfo.last["backupID"] as String,
+      "dtEnd": userInfo.last["dtEnd"] as String
     });
 
     // 既存のテーブルを削除
@@ -39,12 +39,6 @@ class UserDatabaseHelper {
 
     // 新しいテーブルの名前を既存のテーブルの名前に変更
     await db.execute('ALTER TABLE ${TABLE_NAME}_new RENAME TO $TABLE_NAME');
-  }
-
-  Future<void> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'user.db');
-    _database = await openDatabase(path,
-        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   // データベースの作成
