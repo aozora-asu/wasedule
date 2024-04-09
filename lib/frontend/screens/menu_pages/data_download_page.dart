@@ -150,13 +150,16 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
 
   Widget scheduleReceiveButton(TextEditingController idController) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         String id = idController.text;
         if (id.isNotEmpty) {
-          receiveSchedule(id);
-
           Navigator.pop(context);
-          showDownloadDoneDialogue("データがダウンロードされました！");
+          bool isScheduleDownloadSuccess = await receiveSchedule(id);
+          if (isScheduleDownloadSuccess) {
+            showDownloadDoneDialogue("データがダウンロードされました！");
+          } else {
+            showDownloadFailDialogue("ダウンロードに失敗しました");
+          }
         } else {
           showDownloadFailDialogue("IDを入力してください。");
         }
@@ -225,13 +228,17 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   String id = idController.text;
                   if (id.isNotEmpty) {
                     //ここにバックアップの実行処理を書き込む（ダウンロード）
-                    recoveryBackup(id);
+                    bool isBackupSuccess = await recoveryBackup(id);
                     Navigator.pop(context);
-                    showDownloadDoneDialogue("データが復元されました！");
+                    if (isBackupSuccess) {
+                      showDownloadDoneDialogue("データが復元されました！");
+                    } else {
+                      showDownloadFailDialogue("データの復元に失敗しました");
+                    }
                   } else {
                     showDownloadFailDialogue("IDを入力してください。");
                   }
@@ -257,8 +264,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         return AlertDialog(
           title: const Text('ダウンロード完了'),
           actions: <Widget>[
-            Align(
-                alignment: Alignment.centerLeft, child: Text(text)),
+            Align(alignment: Alignment.centerLeft, child: Text(text)),
             const SizedBox(height: 10),
             okButton(context, 500.0)
           ],
@@ -282,5 +288,4 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       },
     );
   }
-
 }
