@@ -56,6 +56,7 @@ class UserDatabaseHelper {
   // urlばりデートを行い、DBに追加できればtrue、追加できなければfalseを返す
   Future<bool> resisterUserInfo(String url) async {
     await _initDatabase();
+
     if (_isValidUrl(url)) {
       if (!await hasData()) {
         return await _database.insert(
@@ -68,7 +69,7 @@ class UserDatabaseHelper {
               TABLE_NAME,
               {'url': url},
               where: 'id = ?',
-              whereArgs: [0],
+              whereArgs: [1],
             ) >
             0;
       }
@@ -89,7 +90,7 @@ class UserDatabaseHelper {
         TABLE_NAME,
         {'backupID': backupID},
         where: 'id = ?',
-        whereArgs: [0],
+        whereArgs: [1],
       );
     }
   }
@@ -106,7 +107,7 @@ class UserDatabaseHelper {
         TABLE_NAME,
         {'dtEnd': dtEnd},
         where: 'id = ?',
-        whereArgs: [0],
+        whereArgs: [1],
       );
     }
   }
