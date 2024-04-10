@@ -154,7 +154,7 @@ class DataBaseHelper {
     await initializeDB();
     for (var toDoData in toDoDataList) {
       try {
-        database.insert("my_table", toDoData);
+        await database.insert("my_table", toDoData);
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
@@ -256,7 +256,7 @@ class TemplateDataBaseHelper {
     await initializeDB();
     for (var toDoTemplateData in toDoTemplateDataList) {
       try {
-        templateDB.insert("plan_template", toDoTemplateData);
+        await templateDB.insert("plan_template", toDoTemplateData);
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {

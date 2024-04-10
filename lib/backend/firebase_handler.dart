@@ -11,12 +11,19 @@ import "./DB/handler/schedule_db_handler.dart";
 import "DB/handler/todo_db_handler.dart";
 import "DB/handler/user_info_db_handler.dart";
 
+Future<bool> isDuplicateID(String scheduleID) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final docRef = db.collection("schedule").doc(scheduleID);
+  final snapshot = await docRef.get();
+  return snapshot.exists;
+}
+
 Future<String?> postScheduleToFB(String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
   Map<String, dynamic> tag = await TagDatabaseHelper().getTagByTagID(tagID);
-  String expireDate = DateFormat("yyyy-mm-dd 00:00 000")
+  String expireDate = DateFormat("yyyy-MM-dd 00:00:00.000000")
       .format(DateTime.now().add(Duration(days: remainDay + 1)));
   Map<String, dynamic> postSchedule = {
     "schedule": postScheduleList,
