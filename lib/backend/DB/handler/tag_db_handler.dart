@@ -131,7 +131,14 @@ class TagDatabaseHelper {
 
   Future<void> resisterTagListToDB(List<Map<String, dynamic>> tagList) async {
     for (var tag in tagList) {
-      await resisterTagToDB(tag);
+      try {
+        await resisterTagToDB(tag);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 
