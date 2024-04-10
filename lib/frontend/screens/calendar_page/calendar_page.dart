@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_download_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_upload_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
@@ -410,19 +411,33 @@ class _CalendarState extends ConsumerState<Calendar> {
         menuList(Icons.calendar_month, "カレンダー", [
           tagEmptyFlag(
               ref,
-              menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DataUploadPage()),
-                );
-              })),
+              menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード",
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DataUploadPage()),
+                  );
+                }
+                )
+              ),
 
-          menuListChild(Icons.install_mobile, "予定のダウンロード", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataDownloadPage()),
-            );
-          }),
+          menuListChild(Icons.install_mobile, "予定のダウンロード",
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DataDownloadPage()),
+              );
+            }
+          ),
+
+          // menuListChild(Icons.school, "年間行事予定",
+          //   () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+          //     );
+          //   }
+          // ),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -460,7 +475,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
           ),
-          menuPanel(Icons.school, "使い方ガイド", () {
+          menuPanel(Icons.lightbulb, "使い方ガイド", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HowToUsePage()),

@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/models/schedule.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
