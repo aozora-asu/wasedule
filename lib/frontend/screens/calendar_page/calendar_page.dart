@@ -1317,6 +1317,14 @@ class _CalendarState extends ConsumerState<Calendar> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                          spreadRadius: 2, // 影の広がり
+                          blurRadius: 3, // ぼかしの強さ
+                          offset: const Offset(0, 3), // 影の方向（横、縦）
+                        ),
+                      ],
                     ),
                     child: Row(children: [
                       Column(
