@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class ConfigDataLoader {
   Future<void> initConfig(WidgetRef ref) async {
@@ -97,16 +98,25 @@ class TagDataLoader {
 }
 
 class UserInfoLoader {
-  Future<String?> getUserIDSource() async {
+  Future<String?> getUserIDSource(ref) async {
     Map<String, String?> userInfoMap =
         await UserDatabaseHelper().getBackupInfo();
-
+    
+    String? rawDtEnd = userInfoMap["dtEnd"];
     String? userID = userInfoMap["backupID"];
+    insertDtEndToProvider(rawDtEnd,ref);
     return userID;
   }
 
+  void insertDtEndToProvider(String? rawDtEnd, WidgetRef ref){
+   if(rawDtEnd != null){
+    DateTime dtEnd = DateTime.parse(rawDtEnd);
+    ref.read(calendarDataProvider).backUpDtEnd = dtEnd;
+   }
+  }
+
   Future<void> insertDataToProvider(ref) async {
-    String? userID = await getUserIDSource();
+    String? userID = await getUserIDSource(ref);
     await ref.read(calendarDataProvider).getUserID(userID);
   }
 }
