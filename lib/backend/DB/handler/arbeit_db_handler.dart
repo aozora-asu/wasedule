@@ -68,7 +68,14 @@ class ArbeitDatabaseHelper {
   Future<void> resisterArbeitListToDB(
       List<Map<String, dynamic>> arbeitList) async {
     for (var arbeit in arbeitList) {
-      await resisterArbeitToDB(arbeit);
+      try {
+        await resisterArbeitToDB(arbeit);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 

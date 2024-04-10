@@ -153,7 +153,14 @@ class DataBaseHelper {
       List<Map<String, dynamic>> toDoDataList) async {
     await initializeDB();
     for (var toDoData in toDoDataList) {
-      database.insert("my_table", toDoData);
+      try {
+        database.insert("my_table", toDoData);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 }
@@ -248,7 +255,14 @@ class TemplateDataBaseHelper {
       List<Map<String, dynamic>> toDoTemplateDataList) async {
     await initializeDB();
     for (var toDoTemplateData in toDoTemplateDataList) {
-      templateDB.insert("plan_template", toDoTemplateData);
+      try {
+        templateDB.insert("plan_template", toDoTemplateData);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 }

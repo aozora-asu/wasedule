@@ -53,7 +53,14 @@ class ScheduleMetaDatabaseHelper {
   Future<void> resisterSchedulemetaInfoListToDB(
       List<Map<String, dynamic>> metaInfoList) async {
     for (var metaInfo in metaInfoList) {
-      await _resisterScheduleMetaInfo(metaInfo);
+      try {
+        await _resisterScheduleMetaInfo(metaInfo);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 

@@ -183,14 +183,21 @@ class TaskDatabaseHelper {
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
     for (var task in taskList) {
-      TaskItem taskItem = TaskItem(
-          title: task["title"],
-          dtEnd: task["dtEnd"],
-          isDone: task["isDone"],
-          uid: task["uid"],
-          description: task["description"],
-          summary: task["summary"]);
-      await insertTask(taskItem);
+      try {
+        TaskItem taskItem = TaskItem(
+            title: task["title"],
+            dtEnd: task["dtEnd"],
+            isDone: task["isDone"],
+            uid: task["uid"],
+            description: task["description"],
+            summary: task["summary"]);
+        await insertTask(taskItem);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 

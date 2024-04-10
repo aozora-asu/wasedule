@@ -138,7 +138,14 @@ class ScheduleDatabaseHelper {
   Future<void> resisterScheduleListToDB(
       List<Map<String, dynamic>> scheduleList) async {
     for (var schedule in scheduleList) {
-      await resisterScheduleToDB(schedule);
+      try {
+        await resisterScheduleToDB(schedule);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
   }
 
