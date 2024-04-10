@@ -29,6 +29,23 @@ class ScheduleMetaDatabaseHelper {
     ''');
   }
 
+  Future<String?> getScheduleIDByTagID(String tagID) async {
+    await _initScheduleMetaDatabase();
+    List<Map<String, dynamic>> rows = await _database.query(
+      'schedule_metaInfo',
+      columns: ['scheduleID'],
+      where: 'tagID = ?',
+      whereArgs: [tagID],
+      limit: 1, // 1行のみ取得
+    );
+
+    if (rows.isNotEmpty) {
+      return rows.first['scheduleID'] as String?;
+    } else {
+      return null; // 合致する行が見つからなかった場合はnullを返す
+    }
+  }
+
   Future<void> _deleteExpiredSchedules() async {
     final formattedNow = DateFormat("yyyy-MM-dd HH:mm:ss")
         .format(DateTime.now()); // SQLiteの日付時刻形式に変換

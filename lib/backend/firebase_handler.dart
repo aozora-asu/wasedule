@@ -11,14 +11,25 @@ import "./DB/handler/schedule_db_handler.dart";
 import "DB/handler/todo_db_handler.dart";
 import "DB/handler/user_info_db_handler.dart";
 
-Future<bool> isDuplicateID(String scheduleID) async {
+Future<bool> isResisteredScheduleID(String scheduleID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("schedule").doc(scheduleID);
   final snapshot = await docRef.get();
   return snapshot.exists;
 }
 
-Future<String?> postScheduleToFB(String tagID, int remainDay) async {
+Future<bool> isAlreadyPosted(String tagID) async {
+  String? scheduleID =
+      await ScheduleMetaDatabaseHelper().getScheduleIDByTagID(tagID);
+  if (scheduleID == null) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+Future<bool> postScheduleToFB(
+    String scheduleID, String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> postScheduleList =
       await ScheduleDatabaseHelper().pickScheduleByTag(tagID);
@@ -30,25 +41,19 @@ Future<String?> postScheduleToFB(String tagID, int remainDay) async {
     "tag": tag,
     "dtEnd": expireDate
   };
-  String? scheduleID;
-  while (true) {
-    scheduleID = const Uuid().v4();
+  try {
+    await db.collection("schedule").doc(scheduleID).set(postSchedule);
 
-    final docRef = db.collection("schedule").doc(scheduleID);
-    final snapshot = await docRef.get();
-    if (!snapshot.exists) {
-      db.collection("schedule").doc(scheduleID).set(postSchedule);
-      break;
-    }
+    await ScheduleMetaDatabaseHelper().exportSchedule({
+      "scheduleID": scheduleID,
+      "tagID": tagID,
+      "scheduleType": "export",
+      "dtEnd": expireDate
+    });
+    return true;
+  } catch (e) {
+    return false;
   }
-
-  await ScheduleMetaDatabaseHelper().exportSchedule({
-    "scheduleID": scheduleID,
-    "tagID": tagID,
-    "scheduleType": "export",
-    "dtEnd": expireDate
-  });
-  return scheduleID;
 }
 
 Future<bool> receiveSchedule(String scheduleID) async {
@@ -188,7 +193,6 @@ Future<bool> recoveryBackup(String backupID) async {
       throw "データが予期せず不正な形式です";
     }
   } catch (e) {
-    print(e);
     return false; // エラーが発生した場合は空のリストを返す
   }
 }
