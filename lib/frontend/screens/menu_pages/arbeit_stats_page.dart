@@ -931,7 +931,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
   Duration monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey) {
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    print(sortedDataByMonth);
+
     Duration result = Duration.zero;
     if (sortedDataByMonth[targetKey] != null) {
       for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
