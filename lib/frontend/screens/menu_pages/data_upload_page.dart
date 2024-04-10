@@ -472,6 +472,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           const Text("・バックアップに際して、発行されるIDが必要です。スクリーンショットなどで保管しておいてください。",
               style: TextStyle(color: Colors.red, fontSize: 17)),
           const SizedBox(height: 10),
+          const Text("・バックアップは復元後、もしくはアップロードから一定期間後にサーバー上から自動削除されます。",
+              style: TextStyle(color: Colors.red, fontSize: 17)),
+          const SizedBox(height: 15),
           backUpUploadButton(),
           showIDView(),
         ]));
@@ -539,7 +542,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
   Widget showIDView() {
     return FutureBuilder(
-      future: UserInfoLoader().getUserIDSource(),
+      future: UserInfoLoader().getUserIDSource(ref),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(
@@ -556,7 +559,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget iDView(String? id) {
-    if (id == null || id.isEmpty) {
+    DateTime dtEnd = ref.watch(calendarDataProvider).backUpDtEnd;
+    if (id == null || id.isEmpty || dtEnd.isBefore(DateTime.now())) {
       return const SizedBox();
     } else {
       return Column(children: [
@@ -565,7 +569,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             decoration: roundedBoxdecorationWithShadow(),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+             Column(crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
               Row(children: [
                 const Text("あなたのバックアップID:", style: TextStyle(fontSize: 15)),
                 IconButton(
@@ -578,7 +583,15 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               Text(id,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 25)),
-            ]))
+              Text(
+                "あと" +
+                    dtEnd.difference(DateTime.now()).inDays.toString() +
+                    "日",
+                style: const TextStyle(color: Colors.redAccent),
+                overflow: TextOverflow.ellipsis,
+              )
+            ])
+          )
       ]);
     }
   }
