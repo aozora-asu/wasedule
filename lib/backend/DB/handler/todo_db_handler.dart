@@ -154,7 +154,7 @@ class DataBaseHelper {
     await initializeDB();
     for (var toDoData in toDoDataList) {
       try {
-        database.insert("my_table", toDoData);
+        await database.insert("my_table", toDoData);
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
