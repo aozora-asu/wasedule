@@ -132,7 +132,7 @@ Future<String?> backup() async {
 
 Future<bool> recoveryBackup(String backupID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final docRef = db.collection("schedule").doc(backupID);
+  final docRef = db.collection("backup").doc(backupID);
 
   try {
     DocumentSnapshot doc = await docRef.get();
@@ -181,6 +181,7 @@ Future<bool> recoveryBackup(String backupID) async {
       throw "データが予期せず不正な形式です";
     }
   } catch (e) {
+    print(e);
     return false; // エラーが発生した場合は空のリストを返す
   }
 }
