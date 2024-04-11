@@ -37,30 +37,11 @@ class _IntroPageState extends State<IntroPage> {
               "lib/assets/eye_catch/eyecatch.png",
             ),
           ),
-          bodyWidget: Column(children:[
-            const Text(
+          bodyWidget:const Column(children:[
+             Text(
               "あなたの生活に、\nわせジュールがやってきました。",
               style: TextStyle(fontSize:20),
               ),
-            const SizedBox(height:20),
-            Row(children:[
-              const Spacer(),
-              InkWell(
-                onTap:(){
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: 
-                      (_) => DataDownloadPage(),
-                    )
-                  );
-                },
-                child:const Text(
-                  "バックアップの復元",
-                  style:TextStyle(
-                    color:Colors.blue,
-                  )
-                )
-              )
-            ])
           ]) ,
           decoration: const PageDecoration(
             titleTextStyle:
@@ -238,7 +219,28 @@ class _IntroLastPageState extends State<IntroLastPage> {
     return [
       PageViewModel(
         title: "早速課題を登録してみましょう！",
-        body: "課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題がこの画面に表示されます。",
+        bodyWidget: Column(children:[
+          const Text("課題ページ「+」ボタンから課題を入力してみましょう。\n先ほどURLを登録した方は、自動取得された課題がこの画面に表示されます。",),
+          const SizedBox(height:20),
+          Row(children:[
+            const Spacer(),
+            InkWell(
+              onTap:(){
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: 
+                    (_) => DataDownloadPage(),
+                  )
+                );
+              },
+              child:const Text(
+                "バックアップの復元",
+                style:TextStyle(
+                  color:Colors.blue,
+                )
+              )
+            )
+          ])
+        ]),
         image: Center(
           child: Image.asset(
             "lib/assets/tutorial_images/task_add_button.png",

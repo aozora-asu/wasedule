@@ -531,8 +531,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
           if (sortedData.elementAt(index)["isBeit"] == 1) {
             return Column(children: [
-              InkWell(
-                child: Container(
+                Container(
                     width: SizeConfig.blockSizeHorizontal! * 95,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -551,17 +550,20 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                       Row(children: [
                         dateTimeData,
                         const SizedBox(width: 15),
+                        Expanded(child:
                         Text(
                           sortedData.elementAt(index)["title"] ?? "(詳細なし)",
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 25,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.clip
+                              ),
+                        )
                         )
                       ]),
                       separetedDataStats(sortedData.elementAt(index))
                     ])),
-              ),
               const SizedBox(height: 15)
             ]);
           } else {
