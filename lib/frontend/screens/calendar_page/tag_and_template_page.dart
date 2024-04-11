@@ -335,18 +335,20 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   ),
                 ],
               ),
-              child: Row(children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              child:Row(children: [
+                Expanded(child:
+                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   dateTimeData,
                   Text(
-                    sortedData.elementAt(index)["title"] ?? "(詳細なし)",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  )
-                ]),
-                const Spacer(),
+                      sortedData.elementAt(index)["title"] ?? "(詳細なし)",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.clip
+                        ),
+                      )
+                ]),),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.white),
                   onPressed: () {
@@ -737,12 +739,6 @@ class _TagDialogState extends ConsumerState<TagDialog> {
         });
   }
 
-  // @override
-  // void dispose() {
-  //   titleController.dispose();
-  //   wageController.dispose();
-  //   super.dispose();
-  // }
 }
 
 class EditTagDialog extends ConsumerStatefulWidget {
