@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -11,22 +10,19 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
-class CodeSharePage extends ConsumerStatefulWidget{
+class CodeSharePage extends ConsumerStatefulWidget {
   late String id;
   late String tagName;
   late List<dynamic> scheduleData;
 
-  CodeSharePage({
-    required this.id,
-    required this.tagName,
-    required this.scheduleData
-  });
-  
+  CodeSharePage(
+      {required this.id, required this.tagName, required this.scheduleData});
+
   @override
   CodeSharePageState createState() => CodeSharePageState();
 }
 
-class CodeSharePageState extends ConsumerState<CodeSharePage>{
+class CodeSharePageState extends ConsumerState<CodeSharePage> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isPreview;
   late String targetMonth = "";
@@ -54,164 +50,151 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
     textController = TextEditingController(text: widget.tagName);
   }
 
-  
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: CustomAppBar(backButton:true),
+      appBar: CustomAppBar(backButton: true),
       body: pageBody(context),
     );
-
   }
 
-  Widget pageBody(context){
-    return 
-      Container(
+  Widget pageBody(context) {
+    return Container(
         decoration: const BoxDecoration(
-          image: DecorationImage(
-           image: AssetImage('lib/assets/page_background/sky_wallpaper.png'),
-           fit: BoxFit.cover,
+            image: DecorationImage(
+          image: AssetImage('lib/assets/page_background/sky_wallpaper.png'),
+          fit: BoxFit.cover,
         )),
-        child: Column(children:[
+        child: Column(children: [
           const Spacer(),
           Center(
-            child: Screenshot(
-              controller: _screenShotController, 
-              child: switchScreen()
-            )
+              child: Screenshot(
+                  controller: _screenShotController, child: switchScreen())),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: shareButton(context),
           ),
-         const Spacer(),
-         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child:shareButton(context), 
+          const SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: previewButton(),
           ),
-          const SizedBox(height:5),
-         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child:previewButton(), 
+          const SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: colorPickButton(),
           ),
-          const SizedBox(height:5),
-         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child:colorPickButton(), 
-          ),
-         const Spacer(),
-        ]) 
-    );
-
+          const Spacer(),
+        ]));
   }
 
-  Widget switchScreen(){
-    if(isPreview){
+  Widget switchScreen() {
+    if (isPreview) {
       return calendarBody();
-    }else{
+    } else {
       return qrcodeView();
     }
   }
 
-
-  Widget qrcodeView(){
+  Widget qrcodeView() {
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
           image: AssetImage('lib/assets/calendar_background/ookuma_day.png'),
           fit: BoxFit.cover,
-        )
-      ),
-      child:Container(
-        width: SizeConfig.blockSizeHorizontal! *95,
-        height: SizeConfig.blockSizeHorizontal! *95,
-        color: backgroundColorTheme.withOpacity(0.6),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal! *5),
-          child:Column(children:[
-            Row(children:[
-              Text("わせジュールで",
-                style:TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! *5,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-            ]),
-            Row(children:[
-            Expanded(
-                child:TextField(
-                  controller: textController,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(0),
-                    hintText: "予定",
-                    isCollapsed: true,
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color:colorTheme),)
-                  ),
-                ),
-              ),
-              Text("を共有中！",
-                style:TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! *5,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ]),
-            const Spacer(),
-            QrImageView(
-              data: widget.id,
-              version: QrVersions.auto,
-              size: SizeConfig.blockSizeHorizontal! *55,
-              backgroundColor: Colors.white,
-              eyeStyle: QrEyeStyle(
-                eyeShape: QrEyeShape.square,
-                color:colorTheme),
-              dataModuleStyle: QrDataModuleStyle(
-                dataModuleShape: QrDataModuleShape.square,
-                color: colorTheme
-              ),
-            ),
-            const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start, 
-                children:[
-                  Text("スケジュールID:",
-                      style:TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! *4
-                      )
+        )),
+        child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 95,
+            height: SizeConfig.blockSizeHorizontal! * 95,
+            color: backgroundColorTheme.withOpacity(0.6),
+            child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: SizeConfig.blockSizeHorizontal! * 5),
+                child: Column(children: [
+                  Row(children: [
+                    Text(
+                      "わせジュールで",
+                      style: TextStyle(
+                        fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  Text(widget.id,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize:  SizeConfig.blockSizeHorizontal! *4,
-                    overflow: TextOverflow.clip
-                    )
-                  ),
-                Row(
-                  children: [
                     const Spacer(),
-                    LogoAndTitle(size:SizeConfig.blockSizeHorizontal! *1.5),
-                  ]
-                )
-              ])
-          ])
-        )
-      )
-    );
+                  ]),
+                  Row(children: [
+                    Expanded(
+                      child: TextField(
+                        controller: textController,
+                        decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(0),
+                            hintText: "予定",
+                            isCollapsed: true,
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: colorTheme),
+                            )),
+                      ),
+                    ),
+                    Text(
+                      "を共有中！",
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                  const Spacer(),
+                  QrImageView(
+                    data: widget.id,
+                    version: QrVersions.auto,
+                    size: SizeConfig.blockSizeHorizontal! * 55,
+                    backgroundColor: Colors.white,
+                    eyeStyle: QrEyeStyle(
+                        eyeShape: QrEyeShape.square, color: colorTheme),
+                    dataModuleStyle: QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: colorTheme),
+                  ),
+                  const Spacer(),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("スケジュールID:",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4)),
+                        Text(widget.id,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                overflow: TextOverflow.clip)),
+                        Row(children: [
+                          const Spacer(),
+                          LogoAndTitle(
+                              size: SizeConfig.blockSizeHorizontal! * 1.5),
+                        ])
+                      ])
+                ]))));
   }
 
   Widget shareButton(BuildContext context) {
     String text = "QRコードをシェア";
-    if(isPreview){
+    if (isPreview) {
       text = "プレビューをシェア";
     }
 
     return ElevatedButton(
         style: const ButtonStyle(
-          backgroundColor:MaterialStatePropertyAll(MAIN_COLOR),),
-        child: Row(children:[
+          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+        ),
+        child: Row(children: [
           const Icon(Icons.ios_share, color: Colors.white),
-          const SizedBox(width:10),
-          Text(text,style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)
-        ]) ,
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          )
+        ]),
         onPressed: () async {
           final screenshot = await _screenShotController.capture(
             delay: const Duration(milliseconds: 0),
@@ -231,86 +214,90 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
         });
   }
 
-    Widget previewButton() {
-      IconData icon = Icons.calendar_month;
-      String text = "予定のプレビュー";
+  Widget previewButton() {
+    IconData icon = Icons.calendar_month;
+    String text = "予定のプレビュー";
 
-      if(isPreview){
-        icon = Icons.qr_code_2;
-      }
-      if(isPreview){
-        text = "QRコードを表示";
-      }
+    if (isPreview) {
+      icon = Icons.qr_code_2;
+    }
+    if (isPreview) {
+      text = "QRコードを表示";
+    }
 
     return ElevatedButton(
         style: const ButtonStyle(
-          backgroundColor:MaterialStatePropertyAll(ACCENT_COLOR),),
-        child: Row(children:[
+          backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
+        ),
+        child: Row(children: [
           Icon(icon, color: Colors.white),
-          const SizedBox(width:10),
-          Text(text,style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)
-        ]) ,
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          )
+        ]),
         onPressed: () async {
           setState(() {
-            if(isPreview){
+            if (isPreview) {
               isPreview = false;
-            }else{
+            } else {
               isPreview = true;
             }
-          }
-        );
-      }
-    );
+          });
+        });
   }
 
-  Widget colorPickButton(){
-          return Row(children:[
-              ElevatedButton(
-              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-              onPressed: (){
-               changeColorTheme();
-              },
-              child: const Text("テーマ色",style: TextStyle(color:Colors.white)),
-              ),
-              const SizedBox(width:10),
-              ElevatedButton(
-              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-              onPressed: (){
-                changeBackgroundColorTheme();
-              },
-              child: const Text("背景色",style: TextStyle(color:Colors.white)),
-              ),
-            ]);
+  Widget colorPickButton() {
+    return Row(children: [
+      ElevatedButton(
+        style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+        onPressed: () {
+          changeColorTheme();
+        },
+        child: const Text("テーマ色", style: TextStyle(color: Colors.white)),
+      ),
+      const SizedBox(width: 10),
+      ElevatedButton(
+        style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+        onPressed: () {
+          changeBackgroundColorTheme();
+        },
+        child: const Text("背景色", style: TextStyle(color: Colors.white)),
+      ),
+    ]);
   }
 
   Widget calendarBody() {
     return Column(children: [
       Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('lib/assets/calendar_background/ookuma_day.png'),
-          fit: BoxFit.cover,
-        )
-      ),
-      child:Container(
-        width: SizeConfig.blockSizeHorizontal! *95,
-        height: SizeConfig.blockSizeHorizontal! *95,
-        color: backgroundColorTheme.withOpacity(0.8),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal! *2.5),
-          child:Column(children: [
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('lib/assets/calendar_background/ookuma_day.png'),
+            fit: BoxFit.cover,
+          )),
+          child: Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              height: SizeConfig.blockSizeHorizontal! * 95,
+              color: backgroundColorTheme.withOpacity(0.8),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: SizeConfig.blockSizeHorizontal! * 2.5),
+                  child: Column(children: [
                     Row(children: [
                       IconButton(
                           onPressed: () {
                             decreasePgNumber();
                           },
-                          
                           icon: const Icon(Icons.arrow_back_ios),
-                          iconSize:  SizeConfig.blockSizeHorizontal! *3),
+                          iconSize: SizeConfig.blockSizeHorizontal! * 3),
                       Text(
                         targetMonth,
                         style: TextStyle(
-                          fontSize:  SizeConfig.blockSizeHorizontal! *5,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -321,29 +308,25 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                             });
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
-                          iconSize: SizeConfig.blockSizeHorizontal! *3),
-                    
+                          iconSize: SizeConfig.blockSizeHorizontal! * 3),
                       Expanded(
-                          child:TextField(
-                            controller: textController,
-                            decoration: InputDecoration(
+                        child: TextField(
+                          controller: textController,
+                          decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(0),
                               hintText: "予定",
                               isCollapsed: true,
                               enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color:colorTheme),)
-                            ),
-                          ),
+                                borderSide: BorderSide(color: colorTheme),
+                              )),
                         ),
-
+                      ),
                     ]),
-
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 100,
                       height: SizeConfig.blockSizeHorizontal! * 4,
                       child: generateWeekThumbnail(),
                     ),
-
                     SizedBox(
                         width: SizeConfig.blockSizeHorizontal! * 100,
                         child: Row(children: [
@@ -355,13 +338,9 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
                         ])),
-                  ])
-                )
-              )
-            )
-          ]);
+                  ]))))
+    ]);
   }
-
 
   void increasePgNumber() {
     String increasedMonth = "";
@@ -535,8 +514,8 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                 child: Text(
               days.elementAt(index),
               style: TextStyle(
-                color: colorTheme,
-                fontSize: SizeConfig.blockSizeHorizontal! * 3),
+                  color: colorTheme,
+                  fontSize: SizeConfig.blockSizeHorizontal! * 3),
             )));
       },
       itemCount: 7,
@@ -566,34 +545,31 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return Container(
-                  width: SizeConfig.blockSizeHorizontal! * 12.857,
-                  height: SizeConfig.blockSizeHorizontal! * 12.857,
-                  decoration: BoxDecoration(
-                    color: cellColour(target),
-                    border: Border.all(
-                      color: colorTheme,
-                      width: 0.5,
+              width: SizeConfig.blockSizeHorizontal! * 12.857,
+              height: SizeConfig.blockSizeHorizontal! * 12.857,
+              decoration: BoxDecoration(
+                color: cellColour(target),
+                border: Border.all(
+                  color: colorTheme,
+                  width: 0.5,
+                ),
+              ),
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Row(children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      target.day.toString(),
+                      style: TextStyle(
+                        fontSize: SizeConfig.blockSizeHorizontal! * 2,
+                      ),
                     ),
                   ),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                target.day.toString(),
-                                style: TextStyle(
-                                  fontSize: SizeConfig.blockSizeHorizontal! *2,
-                                ),
-                                ),
-                                ),
-                          const Spacer(),
-                        ]),
-                        Expanded(child:
-                          calendarCellsChild(target)
-                        ),
-                      ]),
+                  const Spacer(),
+                ]),
+                Expanded(child: calendarCellsChild(target)),
+              ]),
             );
           },
           itemCount: generateCalendarData()[dayOfWeek]!.length,
@@ -609,11 +585,9 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
     if (target.month != targetmonthDT.month) {
       return const Color.fromARGB(255, 242, 242, 242);
     } else {
-      return  Colors.white;
+      return Colors.white;
     }
-    
   }
-
 
   Widget calendarCellsChild(DateTime target) {
     Widget dateTimeData = Container();
@@ -636,29 +610,26 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                         "～" +
                         targetDayData.elementAt(index)["endTime"],
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: SizeConfig.blockSizeHorizontal! *1.5,
-                      fontWeight: FontWeight.bold
-                    ),
+                        color: Colors.grey,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 1.5,
+                        fontWeight: FontWeight.bold),
                   );
                 } else if (targetDayData.elementAt(index)["startTime"].trim() !=
                     "") {
                   dateTimeData = Text(
                     " " + targetDayData.elementAt(index)["startTime"],
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: SizeConfig.blockSizeHorizontal! *1.5,
-                      fontWeight: FontWeight.bold
-                    ),
+                        color: Colors.grey,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 1.5,
+                        fontWeight: FontWeight.bold),
                   );
                 } else {
                   dateTimeData = Container();
                 }
-                return
-                  SizedBox(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                return SizedBox(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Align(
                             alignment: Alignment.centerLeft,
                             child: dateTimeData),
@@ -668,20 +639,19 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
                               Flexible(
                                 child: Text(
                                   " " +
-                                      targetDayData
-                                          .elementAt(index)["subject"],
-                                  style:TextStyle(
+                                      targetDayData.elementAt(index)["subject"],
+                                  style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: SizeConfig.blockSizeHorizontal! *1.5,
-                                      fontWeight: FontWeight.bold
-                                      ),
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 1.5,
+                                      fontWeight: FontWeight.bold),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )
                             ])
-                          ]),
-                        );
+                      ]),
+                );
               },
               separatorBuilder: (context, index) {
                 return const SizedBox();
@@ -694,7 +664,6 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
     }
   }
 
-  
   Future<Color?> colorPickerDialogue(Color target) async {
     return showDialog<Color>(
       context: context,
@@ -740,5 +709,4 @@ class CodeSharePageState extends ConsumerState<CodeSharePage>{
       });
     }
   }
-
 }
