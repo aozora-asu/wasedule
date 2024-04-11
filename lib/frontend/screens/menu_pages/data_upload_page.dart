@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_metaInfo_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/models/schedule_meta_data.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:uuid/uuid.dart';
 
 class DataUploadPage extends ConsumerStatefulWidget {
   @override
@@ -272,35 +275,15 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             } else {
               String tagID = returnTagId(
                       ref.watch(scheduleFormProvider).tagController.text,
-                      ref) ?? "";                
-              String? scheduleID;
+                      ref) ??
+                  "";
+              String? scheduleID = await ScheduleMetaDatabaseHelper()
+                  .getScheduleIDByTagID(tagID);
 
-                // if(isタグが既にFB上に存在){
-                // →ダイアログ２を表示
-                // confirmDataReplaceDialogue(
-                //  ()async{
-                //    scheduleID = await repostScheduleToFB(tagID)
-                //  }
-                // );
-                // }else{
-                //  →存在しなければダイアログ１を表示
-                //  imputScheduleIDDialogue(
-                //   ()async{
-                //    scheduleID = await postScheduleToFB(tagID, dtEnd);
-                //   },
-                //  "初期値ID"
-                // );
-                // }                
-
-
-              if (scheduleID == null) {
-                //処理の失敗時
-                showBackupFailDialogue("アップロードに失敗しました");
+              if (scheduleID != null) {
+                confirmDataReplaceDialogue(scheduleID, tagID, dtEnd);
               } else {
-                ref.watch(scheduleFormProvider).clearContents();
-                //処理の成功時
-                //アップロード完了を知らせるダイアログ
-                showUploadDoneDialogue(scheduleID);
+                inputScheduleIDDialogue(context, tagID, dtEnd);
               }
 
               setState(() {});
@@ -319,115 +302,143 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     }
   }
 
-  void imputScheduleIDDialogue(Function() postFunction , String initValue) {
-    bool  isIDValid = true;
+  void inputScheduleIDDialogue(BuildContext context, String tagID, int dtEnd) {
+    bool isIDValid = true;
     Color textColor = Colors.green;
     String validatorText = "このIDは登録可能です";
     TextEditingController scheduleIDController = TextEditingController();
-    scheduleIDController.text = initValue;
+    scheduleIDController.text = const Uuid().v4();
+    bool isSuccessed;
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-        return AlertDialog(
-          title: const Text('予定のアップロード'),
-          actions: <Widget>[
-            const Align(
-                alignment: Alignment.centerLeft,
-                child: Text("共有する予定のスケジュールIDを設定しましょう。")
-              ),
-            const SizedBox(height: 10),
-            CupertinoTextField(
-              controller: scheduleIDController,
-              placeholder: 'スケジュールIDを入力',
-              onChanged: (value) {
-                if(scheduleIDController.text.isEmpty){
-                  isIDValid = false;
-                  textColor = Colors.red;
-                  validatorText = "1文字以上入力してください。";
-                // }else if(FBデータ重複バリデーション){
-                //   isIDValid = false;
-                //   textColor = Colors.red;
-                //   validatorText = "このIDはすでに登録されています。";
-                }else{
-                  isIDValid = true;
-                  textColor = Colors.green;
-                  validatorText = "このIDは登録可能です";
-                }
-                setState(() {});
-              },
-            ),
-            const SizedBox(height: 5),
-            Text(validatorText,style:TextStyle(color: textColor)),
-            const SizedBox(height:5),
-            ElevatedButton(
-                onPressed: () async {
-                  String id = scheduleIDController.text;
-                  if (isIDValid) {
-                    postFunction();
-                    Navigator.pop(context);
-                  }
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (!isIDValid){
-                        return Colors.grey; //無効時の色
-                      }else{ 
-                      return MAIN_COLOR; // デフォルトカラー
+            return AlertDialog(
+              title: const Text('予定のアップロード'),
+              actions: <Widget>[
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("共有する予定のスケジュールIDを設定しましょう。"),
+                ),
+                const SizedBox(height: 10),
+                CupertinoTextField(
+                  controller: scheduleIDController,
+                  placeholder: 'スケジュールIDを入力',
+                  onChanged: (value) async {
+                    if (scheduleIDController.text.isEmpty) {
+                      isIDValid = false;
+                      textColor = Colors.red;
+                      validatorText = "1文字以上入力してください。";
+                    } else if (await isResisteredScheduleID(
+                        scheduleIDController.text)) {
+                      isIDValid = false;
+                      textColor = Colors.red;
+                      validatorText = "このIDはすでに登録されています。";
+                    } else {
+                      isIDValid = true;
+                      textColor = Colors.green;
+                      validatorText = "このIDは登録可能です";
+                    }
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(height: 5),
+                Text(validatorText, style: TextStyle(color: textColor)),
+                const SizedBox(height: 5),
+                ElevatedButton(
+                  onPressed: () async {
+                    String id = scheduleIDController.text;
+                    if (isIDValid && !await isResisteredScheduleID(id)) {
+                      isSuccessed = await postScheduleToFB(id, tagID, dtEnd);
+                      Navigator.pop(context);
+                      if (!isSuccessed) {
+                        //処理の失敗時
+                        showBackupFailDialogue("アップロードに失敗しました");
+                      } else {
+                        ref.watch(scheduleFormProvider).clearContents();
+                        //処理の成功時
+                        //アップロード完了を知らせるダイアログ
+                        showUploadDoneDialogue(id);
                       }
-                    },
+                    } else {
+                      showBackupFailDialogue("アップロードに失敗しました");
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (!isIDValid) {
+                          return Colors.grey; //無効時の色
+                        } else {
+                          return MAIN_COLOR; // デフォルトカラー
+                        }
+                      },
+                    ),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.downloading_outlined, color: Colors.white),
+                      SizedBox(width: 20),
+                      Text("アップロード", style: TextStyle(color: Colors.white)),
+                    ],
                   ),
                 ),
-                child: const Row(children: [
-                  Icon(Icons.downloading_outlined, color: Colors.white),
-                  SizedBox(width: 20),
-                  Text("アップロード", style: TextStyle(color: Colors.white))
-                ]))
-          ],
+              ],
+            );
+          },
         );
       },
     );
   }
-  );
-  }
 
-  void confirmDataReplaceDialogue(Function() repostFunction) async{
+  void confirmDataReplaceDialogue(
+      String scheduleID, String tagID, int dtEnd) async {
+    bool isSuccessed;
     await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('この予定はすでに配信されています'),
-          content: const Text('配信中の予定を上書きしますか？'),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                repostFunction();
-                Navigator.of(context).pop();
-              },
-              style:const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-              child: const Text(
-                ' はい ',
-                style: TextStyle(color:Colors.white),
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('この予定はすでに配信されています'),
+            content: const Text('配信中の予定を上書きしますか？'),
+            actions: [
+              ElevatedButton(
+                onPressed: () async {
+                  isSuccessed =
+                      await postScheduleToFB(scheduleID, tagID, dtEnd);
+                  Navigator.of(context).pop();
+                  if (!isSuccessed) {
+                    //処理の失敗時
+                    showBackupFailDialogue("アップロードに失敗しました");
+                  } else {
+                    ref.watch(scheduleFormProvider).clearContents();
+                    //処理の成功時
+                    //アップロード完了を知らせるダイアログ
+                    showUploadDoneDialogue(scheduleID);
+                  }
+                },
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                child: const Text(
+                  ' はい ',
+                  style: TextStyle(color: Colors.white),
                 ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style:const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-              child: const Text(
-                'いいえ',
-                style: TextStyle(color:Colors.white),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+                child: const Text(
+                  'いいえ',
+                  style: TextStyle(color: Colors.white),
                 ),
-            ),
-          ],
-        );
-      }
-    );
+              ),
+            ],
+          );
+        });
   }
-
 
   void showUploadDoneDialogue(String id) {
     showDialog(
@@ -503,7 +514,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
         if (dtEnd.isBefore(DateTime.now())) {
           return const SizedBox();
-        }else if(scheduleList.isEmpty){
+        } else if (scheduleList.isEmpty) {
           return const SizedBox();
         } else {
           Widget listChild = Column(children: [
@@ -534,7 +545,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                         const Spacer(),
                         Text(
                           "あと" +
-                              dtEnd.difference(DateTime.now()).inDays.toString() +
+                              dtEnd
+                                  .difference(DateTime.now())
+                                  .inDays
+                                  .toString() +
                               "日",
                           style: const TextStyle(color: Colors.redAccent),
                           overflow: TextOverflow.ellipsis,
@@ -697,8 +711,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             decoration: roundedBoxdecorationWithShadow(),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:
-             Column(crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 const Text("あなたのバックアップID:", style: TextStyle(fontSize: 15)),
                 IconButton(
@@ -712,14 +725,11 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 25)),
               Text(
-                "あと" +
-                    dtEnd.difference(DateTime.now()).inDays.toString() +
-                    "日",
+                "あと" + dtEnd.difference(DateTime.now()).inDays.toString() + "日",
                 style: const TextStyle(color: Colors.redAccent),
                 overflow: TextOverflow.ellipsis,
               )
-            ])
-          )
+            ]))
       ]);
     }
   }
@@ -786,5 +796,3 @@ void showSchedulesDialogue(context, String text, List<dynamic> data) {
     },
   );
 }
-
-

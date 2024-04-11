@@ -105,7 +105,29 @@ class ScheduleMetaDatabaseHelper {
         tagID: exportSchedule["tagID"] as String,
         dtEnd: exportSchedule["dtEnd"] as String,
         scheduleType: exportSchedule["scheduleType"] as String);
-    await _database.insert('schedule_metaInfo', scheduleMetaInfo.toMap());
+
+    String scheduleID = exportSchedule['scheduleID'] as String;
+
+    // 2. 同じ scheduleID を持つデータを検索します
+    List<Map<String, dynamic>> existingData = await _database.query(
+      'schedule_metaInfo',
+      where: 'scheduleID = ?',
+      whereArgs: [scheduleID],
+    );
+
+    // 3. 検索されたデータが存在するかどうかを確認します
+    if (existingData.isEmpty) {
+      // 検索されたデータが存在しない場合は、新しいデータとして挿入します
+      await _database.insert('schedule_metaInfo', scheduleMetaInfo.toMap());
+    } else {
+      // 検索されたデータが存在する場合は、そのデータを更新します
+      await _database.update(
+        'schedule_metaInfo',
+        exportSchedule,
+        where: 'scheduleID = ?',
+        whereArgs: [scheduleID],
+      );
+    }
   }
 
   Future<List<Map<String, dynamic>>> getScheduleMetaInfoListByScheduleType(

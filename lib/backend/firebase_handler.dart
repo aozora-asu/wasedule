@@ -18,16 +18,6 @@ Future<bool> isResisteredScheduleID(String scheduleID) async {
   return snapshot.exists;
 }
 
-Future<bool> isAlreadyPosted(String tagID) async {
-  String? scheduleID =
-      await ScheduleMetaDatabaseHelper().getScheduleIDByTagID(tagID);
-  if (scheduleID == null) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
 Future<bool> postScheduleToFB(
     String scheduleID, String tagID, int remainDay) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
