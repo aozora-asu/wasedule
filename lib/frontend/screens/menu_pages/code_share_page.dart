@@ -288,29 +288,23 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                       horizontal: SizeConfig.blockSizeHorizontal! * 2.5),
                   child: Column(children: [
                     Row(children: [
-
-                     SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *3,
-                      height: SizeConfig.blockSizeHorizontal! *10,
-                     ),
-
-                     InkWell(
-                          onTap: () {
-                            decreasePgNumber();
-                          },
-
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size:SizeConfig.blockSizeHorizontal! *3,
-                            ),
-                          ),
-
-                     SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *3,
-                      height: SizeConfig.blockSizeHorizontal! *10,
-                     ),
-
-
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 3,
+                        height: SizeConfig.blockSizeHorizontal! * 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          decreasePgNumber();
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          size: SizeConfig.blockSizeHorizontal! * 3,
+                        ),
+                      ),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 3,
+                        height: SizeConfig.blockSizeHorizontal! * 10,
+                      ),
                       Text(
                         targetMonth,
                         style: TextStyle(
@@ -318,28 +312,23 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-
-                     SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *3,
-                      height: SizeConfig.blockSizeHorizontal! *10,
-                     ),
-
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 3,
+                        height: SizeConfig.blockSizeHorizontal! * 10,
+                      ),
                       InkWell(
-                          onTap: () {
-                            setState(() {
-                              increasePgNumber();
-                            });
-                          },
-
-                          child: Icon(Icons.arrow_forward_ios,size: SizeConfig.blockSizeHorizontal! *3),
-                          ),
-                    
-                     SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *3,
-                      height: SizeConfig.blockSizeHorizontal! *10,
-                     ),
-
-
+                        onTap: () {
+                          setState(() {
+                            increasePgNumber();
+                          });
+                        },
+                        child: Icon(Icons.arrow_forward_ios,
+                            size: SizeConfig.blockSizeHorizontal! * 3),
+                      ),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 3,
+                        height: SizeConfig.blockSizeHorizontal! * 10,
+                      ),
                       Expanded(
                         child: TextField(
                           controller: textController,
@@ -351,8 +340,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                                 borderSide: BorderSide(color: colorTheme),
                               )),
                         ),
-
-                    
+                      )
                     ]),
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 100,
@@ -369,15 +357,9 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                           generateCalendarCells("thursday"),
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
-
-                        ])
-                    ),
-                  ])
-                )
-              )
-            )
-          ]);
-
+                        ])),
+                  ]))))
+    ]);
   }
 
   void increasePgNumber() {
@@ -551,10 +533,8 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                 child: Text(
               days.elementAt(index),
               style: TextStyle(
-
-                color: colorTheme,
-                fontSize: SizeConfig.blockSizeHorizontal! * 2.5),
-
+                  color: colorTheme,
+                  fontSize: SizeConfig.blockSizeHorizontal! * 2.5),
             )));
       },
       itemCount: 7,
