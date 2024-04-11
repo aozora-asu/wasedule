@@ -285,8 +285,6 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               } else {
                 inputScheduleIDDialogue(context, tagID, dtEnd, setState);
               }
-
-              
             }
           },
           style: const ButtonStyle(
@@ -302,7 +300,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     }
   }
 
-  void inputScheduleIDDialogue(BuildContext context, String tagID, int dtEnd, StateSetter setosute) {
+  void inputScheduleIDDialogue(
+      BuildContext context, String tagID, int dtEnd, StateSetter setosute) {
     bool isIDValid = true;
     Color textColor = Colors.green;
     String validatorText = "このIDは登録可能です";
@@ -368,7 +367,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     } else {
                       showBackupFailDialogue("アップロードに失敗しました");
                     }
-                    setosute((){});
+                    setosute(() {});
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -419,8 +418,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     ref.watch(scheduleFormProvider).clearContents();
                     //処理の成功時
                     //アップロード完了を知らせるダイアログ
-                    showUploadDoneDialogue(scheduleID);
-                    setState((){});
+                    showUploadDonePlainDialogue(scheduleID);
+                    setState(() {});
                   }
                 },
                 style: const ButtonStyle(
@@ -444,6 +443,23 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             ],
           );
         });
+  }
+
+  void showUploadDonePlainDialogue(String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('アップロードが更新されました',
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          actions: <Widget>[
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
   }
 
   void showUploadDoneDialogue(String id) {
