@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart";
 import "package:intl/intl.dart";
-import 'package:uuid/uuid.dart';
+import 'package:ulid/ulid.dart';
 
 import "DB/handler/schedule_metaInfo_db_handler.dart";
 import "DB/handler/arbeit_db_handler.dart";
@@ -10,6 +10,29 @@ import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import "./DB/handler/schedule_db_handler.dart";
 import "DB/handler/todo_db_handler.dart";
 import "DB/handler/user_info_db_handler.dart";
+
+String insertHyphens(String input) {
+  final chunkSize = 4;
+  final chunks = <String>[];
+
+  for (var i = 0; i < input.length; i += chunkSize) {
+    var end = (i + chunkSize <= input.length) ? i + chunkSize : input.length;
+    chunks.add(input.substring(i, end));
+  }
+
+  return chunks.join('-');
+}
+
+bool isValidInput(String input) {
+  int len = 0;
+
+  for (int i = 0; i < input.length; i++) {
+    RegExp regex = RegExp(r'[ -~]');
+    len += regex.hasMatch(input[i]) ? 1 : 2;
+  }
+
+  return len <= 32;
+}
 
 Future<bool> isResisteredScheduleID(String scheduleID) async {
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -103,7 +126,7 @@ Future<String?> backup() async {
 
   if (backupID == null) {
     while (true) {
-      backupID = const Uuid().v4();
+      backupID = Ulid().toString();
       final docRef = db.collection("backup").doc(backupID);
       final snapshot = await docRef.get();
       if (!snapshot.exists) {

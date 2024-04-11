@@ -15,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:uuid/uuid.dart';
+import 'package:ulid/ulid.dart';
 
 class DataUploadPage extends ConsumerStatefulWidget {
   @override
@@ -307,7 +307,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     Color textColor = Colors.green;
     String validatorText = "このIDは登録可能です";
     TextEditingController scheduleIDController = TextEditingController();
-    scheduleIDController.text = const Uuid().v4();
+    scheduleIDController.text = insertHyphens(Ulid().toString().toUpperCase());
     bool isSuccessed;
     showDialog(
       context: context,
@@ -330,6 +330,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                       isIDValid = false;
                       textColor = Colors.red;
                       validatorText = "1文字以上入力してください。";
+                    } else if (!isValidInput(scheduleIDController.text)) {
+                      isIDValid = false;
+                      textColor = Colors.red;
+                      validatorText = "文字数は半角32文字以内にしてください";
                     } else if (await isResisteredScheduleID(
                         scheduleIDController.text)) {
                       isIDValid = false;
