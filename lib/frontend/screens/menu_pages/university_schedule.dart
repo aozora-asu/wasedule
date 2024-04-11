@@ -430,7 +430,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           },
           child: departmentPanel(
             MAIN_COLOR,
-            "大學",
+            "",
             "大学全体")
         ),
 

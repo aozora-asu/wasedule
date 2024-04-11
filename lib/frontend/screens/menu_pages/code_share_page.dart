@@ -288,12 +288,29 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                       horizontal: SizeConfig.blockSizeHorizontal! * 2.5),
                   child: Column(children: [
                     Row(children: [
-                      IconButton(
-                          onPressed: () {
+
+                     SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *3,
+                      height: SizeConfig.blockSizeHorizontal! *10,
+                     ),
+
+                     InkWell(
+                          onTap: () {
                             decreasePgNumber();
                           },
-                          icon: const Icon(Icons.arrow_back_ios),
-                          iconSize: SizeConfig.blockSizeHorizontal! * 3),
+
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            size:SizeConfig.blockSizeHorizontal! *3,
+                            ),
+                          ),
+
+                     SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *3,
+                      height: SizeConfig.blockSizeHorizontal! *10,
+                     ),
+
+
                       Text(
                         targetMonth,
                         style: TextStyle(
@@ -301,14 +318,28 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      IconButton(
-                          onPressed: () {
+
+                     SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *3,
+                      height: SizeConfig.blockSizeHorizontal! *10,
+                     ),
+
+                      InkWell(
+                          onTap: () {
                             setState(() {
                               increasePgNumber();
                             });
                           },
-                          icon: const Icon(Icons.arrow_forward_ios),
-                          iconSize: SizeConfig.blockSizeHorizontal! * 3),
+
+                          child: Icon(Icons.arrow_forward_ios,size: SizeConfig.blockSizeHorizontal! *3),
+                          ),
+                    
+                     SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *3,
+                      height: SizeConfig.blockSizeHorizontal! *10,
+                     ),
+
+
                       Expanded(
                         child: TextField(
                           controller: textController,
@@ -320,11 +351,12 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                                 borderSide: BorderSide(color: colorTheme),
                               )),
                         ),
-                      ),
+
+                    
                     ]),
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 100,
-                      height: SizeConfig.blockSizeHorizontal! * 4,
+                      height: SizeConfig.blockSizeHorizontal! * 3.5,
                       child: generateWeekThumbnail(),
                     ),
                     SizedBox(
@@ -337,9 +369,15 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                           generateCalendarCells("thursday"),
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
-                        ])),
-                  ]))))
-    ]);
+
+                        ])
+                    ),
+                  ])
+                )
+              )
+            )
+          ]);
+
   }
 
   void increasePgNumber() {
@@ -509,13 +547,14 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
       itemBuilder: (context, index) {
         return SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 12.857,
-            height: SizeConfig.blockSizeHorizontal! * 2,
             child: Center(
                 child: Text(
               days.elementAt(index),
               style: TextStyle(
-                  color: colorTheme,
-                  fontSize: SizeConfig.blockSizeHorizontal! * 3),
+
+                color: colorTheme,
+                fontSize: SizeConfig.blockSizeHorizontal! * 2.5),
+
             )));
       },
       itemCount: 7,

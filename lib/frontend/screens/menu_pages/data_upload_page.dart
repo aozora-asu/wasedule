@@ -283,10 +283,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               if (scheduleID != null) {
                 confirmDataReplaceDialogue(scheduleID, tagID, dtEnd);
               } else {
-                inputScheduleIDDialogue(context, tagID, dtEnd);
+                inputScheduleIDDialogue(context, tagID, dtEnd, setState);
               }
 
-              setState(() {});
+              
             }
           },
           style: const ButtonStyle(
@@ -302,7 +302,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     }
   }
 
-  void inputScheduleIDDialogue(BuildContext context, String tagID, int dtEnd) {
+  void inputScheduleIDDialogue(BuildContext context, String tagID, int dtEnd, StateSetter setosute) {
     bool isIDValid = true;
     Color textColor = Colors.green;
     String validatorText = "このIDは登録可能です";
@@ -368,6 +368,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     } else {
                       showBackupFailDialogue("アップロードに失敗しました");
                     }
+                    setosute((){});
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -382,7 +383,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.downloading_outlined, color: Colors.white),
+                      Icon(Icons.upload_file, color: Colors.white),
                       SizedBox(width: 20),
                       Text("アップロード", style: TextStyle(color: Colors.white)),
                     ],
@@ -419,6 +420,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     //処理の成功時
                     //アップロード完了を知らせるダイアログ
                     showUploadDoneDialogue(scheduleID);
+                    setState((){});
                   }
                 },
                 style: const ButtonStyle(
