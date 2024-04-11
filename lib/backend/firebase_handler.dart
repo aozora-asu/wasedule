@@ -78,7 +78,7 @@ Future<bool> receiveSchedule(String scheduleID) async {
 }
 
 Future<String?> backup() async {
-  const int remainDay = 31;
+  const int remainDay = 7;
   Map<String, String?> backupInfo = await UserDatabaseHelper().getBackupInfo();
 
   String? backupID = backupInfo["backupID"];
