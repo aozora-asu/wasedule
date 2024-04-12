@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
@@ -12,10 +13,12 @@ class TaskDatabaseHelper {
   TaskDatabaseHelper() {
     _initDatabase();
   }
-
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'task.db');
-    _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
+    _database = await openDatabase(path,
+        version: 2,
+        onCreate: _createDatabase,
+        onUpgrade: _upgradeScheduleDatabase);
   }
 
   // データベースの作成
@@ -31,6 +34,44 @@ class TaskDatabaseHelper {
         isDone INTEGER
       )
     ''');
+  }
+
+  Future<void> _upgradeScheduleDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS tasks_new(
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid TEXT UNIQUE, -- UNIQUE,
+        title TEXT,
+        dtEnd INTEGER,
+        summary TEXT,
+        description TEXT,
+        isDone INTEGER
+    )
+  ''');
+    // 既存のデータを新しいテーブルに移行
+    var tasks = await db.query('tasks');
+
+    for (var task in tasks) {
+      DateTime correctDate =
+          DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
+      await db.insert('tasks_new', {
+        'uid': task["uid"] as String,
+        'title': task["title"] as String,
+        'dtEnd': correctDate
+            .subtract(const Duration(hours: 9))
+            .millisecondsSinceEpoch,
+        'summary': task["summary"] as String,
+        'description': task["description"] as String,
+        "isDone": task["isDone"] as int,
+      });
+    }
+
+    // 既存のテーブルを削除
+    await db.execute('DROP TABLE tasks');
+
+    // 新しいテーブルの名前を既存のテーブルの名前に変更
+    await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
   }
 
   Future<void> _orderByDateTime() async {

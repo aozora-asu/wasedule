@@ -320,6 +320,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   alignment: Alignment.centerLeft,
                   child: Text("共有する予定のスケジュールIDを設定しましょう。"),
                 ),
+                const Text(
+                    """IDを知っている者は予定をダウンロードできてしまいます。\n・6文字以上\n・推測されにくい文字列\nで設定することを推奨します。""",
+                    style: TextStyle(color: Colors.red)),
                 const SizedBox(height: 10),
                 CupertinoTextField(
                   controller: scheduleIDController,
