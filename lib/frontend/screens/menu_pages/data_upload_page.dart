@@ -450,7 +450,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('アップロードが更新されました',
+          title: const Text('アップロードデータが更新されました',
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           actions: <Widget>[

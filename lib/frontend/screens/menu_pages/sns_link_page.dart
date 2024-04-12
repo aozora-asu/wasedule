@@ -191,7 +191,7 @@ class UrlLaunchWithStringButton {
   final alertSnackBar = SnackBar(
     content: const Text('このURLは開けませんでした'),
     action: SnackBarAction(
-      label: '戻る',
+      label: '閉じる',
       onPressed: () {},
     ),
   );

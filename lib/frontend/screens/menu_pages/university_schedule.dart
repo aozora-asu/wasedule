@@ -159,7 +159,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("政治経済学部", "PSE");
+                showDownloadConfirmDialogue("政治経済学部  ", "PSE");
               },
               child: departmentPanel(
                 WASEDA_PSE_COLOR,
@@ -170,7 +170,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("法学部", "LAW");
+                showDownloadConfirmDialogue("法学部  ", "LAW");
               },
               child: departmentPanel(
                 WASEDA_LAW_COLOR,
@@ -181,7 +181,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("商学部", "SOC");
+                showDownloadConfirmDialogue("商学部  ", "SOC");
               },
               child: departmentPanel(
                 WASEDA_SOC_COLOR,
@@ -192,7 +192,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("国際教養学部", "");
+                showDownloadConfirmDialogue("国際教養学部  ", "");
               },
               child: departmentPanel(
                 WASEDA_SILS_COLOR,
@@ -203,7 +203,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("社会科学部", "SSS");
+                showDownloadConfirmDialogue("社会科学部  ", "SSS");
               },
               child: departmentPanel(
                 WASEDA_SSS_COLOR,
@@ -214,7 +214,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("教育学部", "EDU");
+                showDownloadConfirmDialogue("教育学部  ", "EDU");
               },
               child: departmentPanel(
                 WASEDA_EDU_COLOR,
@@ -225,7 +225,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("文学部", "HSS");
+                showDownloadConfirmDialogue("文学部  ", "HSS");
               },
               child: departmentPanel(
                 WASEDA_HSS_COLOR,
@@ -236,7 +236,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("文化構想学部", "CMS");
+                showDownloadConfirmDialogue("文化構想学部  ", "CMS");
               },
               child: departmentPanel(
                 WASEDA_CMS_COLOR,
@@ -247,7 +247,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("先進理工学部", "ASE");
+                showDownloadConfirmDialogue("先進理工学部  ", "ASE");
               },
               child: departmentPanel(
                 WASEDA_ASE_COLOR,
@@ -258,7 +258,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("創造理工学部", "CSE");
+                showDownloadConfirmDialogue("創造理工学部  ", "CSE");
               },
               child: departmentPanel(
                 WASEDA_CSE_COLOR,
@@ -269,7 +269,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("基幹理工学部", "FSE");
+                showDownloadConfirmDialogue("基幹理工学部  ", "FSE");
               },
               child: departmentPanel(
                 WASEDA_FSE_COLOR,
@@ -280,7 +280,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("人間科学部", "HUM");
+                showDownloadConfirmDialogue("人間科学部  ", "HUM");
               },
               child: departmentPanel(
                 WASEDA_HUM_COLOR,
@@ -291,7 +291,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("スポーツ科学部", "SPS");
+                showDownloadConfirmDialogue("スポーツ科学部  ", "SPS");
               },
               child: departmentPanel(
                 WASEDA_SPS_COLOR,
@@ -348,7 +348,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(depName + '  の年間行事予定をカレンダーに追加しますか？'),
+          title: Text(depName + 'の年間行事予定をカレンダーに追加しますか？'),
           actions: <Widget>[
             const Align(
                 alignment: Alignment.centerLeft,
@@ -357,10 +357,12 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             ElevatedButton(
                 onPressed: () async {
                   Navigator.pop(context);
-                  String year = DateFormat("yyyy").format(DateTime.now());
+                  String currentYear = returnFiscalYear(DateTime.now()).toString();
+                  String nextYear = (returnFiscalYear(DateTime.now()) +1).toString();
+                  print(alphabet + "_" + currentYear + "_" + nextYear);
 
                   bool isScheduleDownloadSuccess
-                    = await receiveSchedule(alphabet + "_" + year);
+                    = await receiveSchedule(alphabet + "_" + currentYear + "_" + nextYear);
 
                   if (isScheduleDownloadSuccess) {
                     showDownloadDoneDialogue("データがダウンロードされました！");
@@ -623,4 +625,13 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
     );
   }
 
+}
+
+int returnFiscalYear(DateTime dt){
+  int month = dt.month;
+  if(month <=3){
+    return dt.year -1;
+  }else{
+    return dt.year;
+  }
 }

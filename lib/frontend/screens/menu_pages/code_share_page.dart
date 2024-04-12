@@ -357,8 +357,12 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                           generateCalendarCells("thursday"),
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
-                        ])),
-                  ]))))
+                        ])
+                      ),
+                  ])
+                )
+              )
+            )
     ]);
   }
 
