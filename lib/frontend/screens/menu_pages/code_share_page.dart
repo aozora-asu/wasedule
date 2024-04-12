@@ -347,22 +347,24 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                       height: SizeConfig.blockSizeHorizontal! * 3.5,
                       child: generateWeekThumbnail(),
                     ),
-                    SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 100,
-                        child: Row(children: [
-                          generateCalendarCells("sunday"),
-                          generateCalendarCells("monday"),
-                          generateCalendarCells("tuesday"),
-                          generateCalendarCells("wednesday"),
-                          generateCalendarCells("thursday"),
-                          generateCalendarCells("friday"),
-                          generateCalendarCells("saturday")
-                        ])
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Row(
+                          children: [
+                            generateCalendarCells("sunday"),
+                            generateCalendarCells("monday"),
+                            generateCalendarCells("tuesday"),
+                            generateCalendarCells("wednesday"),
+                            generateCalendarCells("thursday"),
+                            generateCalendarCells("friday"),
+                            generateCalendarCells("saturday"),
+                          ],
+                        ),
                       ),
-                  ])
-                )
-              )
-            )
+                    ),
+                  ]))))
+
     ]);
   }
 
