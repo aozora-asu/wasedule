@@ -411,33 +411,28 @@ class _CalendarState extends ConsumerState<Calendar> {
         menuList(Icons.calendar_month, "カレンダー", [
           tagEmptyFlag(
               ref,
-              menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード",
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DataUploadPage()),
-                  );
-                }
-                )
-              ),
+              menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DataUploadPage()),
+                );
+              })),
 
-          menuListChild(Icons.install_mobile, "予定のダウンロード",
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DataDownloadPage()),
-              );
-            }
-          ),
-
-          menuListChild(Icons.school, "年間行事予定",
-            () {
+          menuListChild(Icons.install_mobile, "予定のダウンロード", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DataDownloadPage()),
+            );
+          }),
+          scheduleEmptyFlag(
+            ref,
+            menuListChild(Icons.school, "年間行事予定", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => UnivSchedulePage()),
               );
-            }
-          ),
+            }),
+          )
 
           // scheduleEmptyFlag(
           //   ref,
