@@ -219,7 +219,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 child: Text("ダウンロードを行うと、端末内にあるデータにバックアップしたデータが全て追加されます。",
                     style: TextStyle(color: Colors.red))),
             const Text(
-                """以下の点をご留意ください\n・この操作は取り消しできません\n・ダウンロードは一回のみ有効です\n・一度復元するとサーバー上から削除され二度と復元できません""",
+                """\n以下の点をご留意ください\n・この操作は取り消しできません\n・1つのIDに対してダウンロードは一回のみ有効です\n・一度復元するとサーバー上から削除され二度と復元できません""",
                 style: TextStyle(color: Colors.red)),
             const SizedBox(height: 10),
             CupertinoTextField(

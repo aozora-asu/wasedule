@@ -12,7 +12,7 @@ import "DB/handler/todo_db_handler.dart";
 import "DB/handler/user_info_db_handler.dart";
 
 String insertHyphens(String input) {
-  final chunkSize = 4;
+  const chunkSize = 4;
   final chunks = <String>[];
 
   for (var i = 0; i < input.length; i += chunkSize) {
@@ -208,4 +208,11 @@ Future<bool> recoveryBackup(String backupID) async {
   } catch (e) {
     return false; // エラーが発生した場合は空のリストを返す
   }
+}
+
+Future<bool> exsistBackupIDinFB(String backupID) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final docRef = db.collection("backup").doc(backupID);
+  DocumentSnapshot doc = await docRef.get();
+  return doc.exists;
 }

@@ -16,9 +16,7 @@ class TaskDatabaseHelper {
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path,
-        version: 2,
-        onCreate: _createDatabase,
-        onUpgrade: _upgradeScheduleDatabase);
+        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   // データベースの作成
@@ -36,7 +34,7 @@ class TaskDatabaseHelper {
     ''');
   }
 
-  Future<void> _upgradeScheduleDatabase(
+  Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS tasks_new(
@@ -53,18 +51,29 @@ class TaskDatabaseHelper {
     var tasks = await db.query('tasks');
 
     for (var task in tasks) {
-      DateTime correctDate =
-          DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
-      await db.insert('tasks_new', {
-        'uid': task["uid"] as String,
-        'title': task["title"] as String,
-        'dtEnd': correctDate
-            .subtract(const Duration(hours: 9))
-            .millisecondsSinceEpoch,
-        'summary': task["summary"] as String,
-        'description': task["description"] as String,
-        "isDone": task["isDone"] as int,
-      });
+      if (task["uid"] == null) {
+        await db.insert('tasks_new', {
+          'uid': null,
+          'title': task["title"] as String,
+          'dtEnd': task["dtEnd"] as int,
+          'summary': task["summary"] as String,
+          'description': task["description"] as String,
+          "isDone": task["isDone"] as int,
+        });
+      } else {
+        DateTime correctDate =
+            DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
+        await db.insert('tasks_new', {
+          'uid': task["uid"] as String,
+          'title': task["title"] as String,
+          'dtEnd': correctDate
+              .subtract(const Duration(hours: 9))
+              .millisecondsSinceEpoch,
+          'summary': task["summary"] as String,
+          'description': task["description"] as String,
+          "isDone": task["isDone"] as int,
+        });
+      }
     }
 
     // 既存のテーブルを削除
