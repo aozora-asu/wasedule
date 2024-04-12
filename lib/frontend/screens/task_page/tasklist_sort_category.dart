@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:intl/intl.dart';
 
 import 'package:expandable/expandable.dart';
@@ -519,8 +520,9 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
                           ),
                         ),
                         const SizedBox(height: 15),
+                        MoodleUrlLauncher(width: 100),
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 70,
+                          height: SizeConfig.blockSizeVertical! * 50,
                         )
                       ]))
                 ],

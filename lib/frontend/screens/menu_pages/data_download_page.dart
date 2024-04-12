@@ -117,7 +117,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("・ほかの人が配信した予定データを、スケジュールＩＤを入力して受信登録することができます！",
+          const Text("・ほかの人が配信した予定データを、スケジュールＩＤを入力して受信することができます！",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           CupertinoTextField(
@@ -171,7 +171,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         children: [
           Icon(Icons.install_mobile, color: Colors.white),
           SizedBox(width: 20),
-          Text("予定を受信登録する", style: TextStyle(color: Colors.white)),
+          Text("予定を受信する", style: TextStyle(color: Colors.white)),
         ],
       ),
     );

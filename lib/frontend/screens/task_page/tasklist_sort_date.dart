@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:expandable/expandable.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -618,8 +619,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           ),
                         ),
                         const SizedBox(height: 15),
+                        MoodleUrlLauncher(width: 100),
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 70,
+                          height: SizeConfig.blockSizeVertical! * 50,
                         )
                       ]))
                 ],

@@ -430,14 +430,14 @@ class _CalendarState extends ConsumerState<Calendar> {
             }
           ),
 
-          // menuListChild(Icons.school, "年間行事予定",
-          //   () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-          //     );
-          //   }
-          // ),
+          menuListChild(Icons.school, "年間行事予定",
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+              );
+            }
+          ),
 
           // scheduleEmptyFlag(
           //   ref,
