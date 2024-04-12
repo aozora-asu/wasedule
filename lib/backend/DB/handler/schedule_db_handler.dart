@@ -61,7 +61,7 @@ class ScheduleDatabaseHelper {
 
     for (var schedule in schedules) {
       String tagID = "";
-      if (schedule["tag"] as String == "") {
+      if (schedule["tag"] == "" || schedule["tag"] == null) {
         tagID = "";
       } else {
         int tagid = int.parse(schedule["tag"] as String);
@@ -69,13 +69,13 @@ class ScheduleDatabaseHelper {
       }
 
       await db.insert('schedule_new', {
-        "subject": schedule['subject'] as String,
-        "startDate": schedule['startDate'] as String,
-        "startTime": schedule['startTime'] as String,
-        "endDate": schedule['endDate'] as String,
-        "endTime": schedule['endTime'] as String,
-        "isPublic": schedule['isPublic'] as int,
-        "publicSubject": schedule['publicSubject'] as String,
+        "subject": schedule['subject'],
+        "startDate": schedule['startDate'],
+        "startTime": schedule['startTime'],
+        "endDate": schedule['endDate'],
+        "endTime": schedule['endTime'],
+        "isPublic": schedule['isPublic'],
+        "publicSubject": schedule['publicSubject'],
         "tagID": tagID,
         "hash": (DateTime.now().microsecondsSinceEpoch +
                 schedules.indexOf(schedule).hashCode)

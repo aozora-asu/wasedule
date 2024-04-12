@@ -54,24 +54,24 @@ class TaskDatabaseHelper {
       if (task["uid"] == null) {
         await db.insert('tasks_new', {
           'uid': null,
-          'title': task["title"] as String,
-          'dtEnd': task["dtEnd"] as int,
-          'summary': task["summary"] as String,
-          'description': task["description"] as String,
-          "isDone": task["isDone"] as int,
+          'title': task["title"],
+          'dtEnd': task["dtEnd"],
+          'summary': task["summary"],
+          'description': task["description"],
+          "isDone": task["isDone"],
         });
       } else {
         DateTime correctDate =
             DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
         await db.insert('tasks_new', {
-          'uid': task["uid"] as String,
-          'title': task["title"] as String,
+          'uid': task["uid"],
+          'title': task["title"],
           'dtEnd': correctDate
               .subtract(const Duration(hours: 9))
               .millisecondsSinceEpoch,
-          'summary': task["summary"] as String,
-          'description': task["description"] as String,
-          "isDone": task["isDone"] as int,
+          'summary': task["summary"],
+          'description': task["description"],
+          "isDone": task["isDone"],
         });
       }
     }

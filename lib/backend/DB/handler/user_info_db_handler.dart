@@ -29,9 +29,9 @@ class UserDatabaseHelper {
     // 既存のデータを新しいテーブルに移行
     var userInfo = await db.query(TABLE_NAME);
     await db.insert(TABLE_NAME, {
-      "url": userInfo.last["url"] as String,
-      "backupID": userInfo.last["backupID"] as String,
-      "dtEnd": userInfo.last["dtEnd"] as String
+      "url": userInfo.last["url"],
+      "backupID": userInfo.last["backupID"],
+      "dtEnd": userInfo.last["dtEnd"]
     });
 
     // 既存のテーブルを削除
