@@ -197,12 +197,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     while (dtEnd.isAfter(DateTime.now())) {
       Duration remainingTime = dtEnd.difference(DateTime.now());
 
-      int days = remainingTime.inDays;
+      int days = remainingTime.inDays + 1;
       int hours = (remainingTime.inHours % 24);
       int minutes = (remainingTime.inMinutes % 60);
       int seconds = (remainingTime.inSeconds % 60);
 
-      yield '  あと$days日 $hours時間 $minutes分 $seconds秒  ';
+      yield '  あと$days 日 $hours時間 $minutes分 $seconds秒  ';
 
       await Future.delayed(const Duration(seconds: 1));
     }
@@ -250,7 +250,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
             ),
             child: Text(
-              ("  あと${difference.inDays} 日  "),
+              ("  あと${difference.inDays + 1} 日  "),
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w700,
