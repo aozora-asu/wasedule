@@ -207,6 +207,7 @@ class TaskDatabaseHelper {
     // データベースヘルパークラスのインスタンスを作成
     // データベースの初期化
     Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
+
     TaskItem taskItem;
     await _initDatabase();
     for (int i = 0; i < taskData["events"].length; i++) {
@@ -221,7 +222,7 @@ class TaskDatabaseHelper {
       );
       // 2. データベースヘルパークラスを使用してデータベースに挿入
       try {
-        await insertTask(taskItem);
+        await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
