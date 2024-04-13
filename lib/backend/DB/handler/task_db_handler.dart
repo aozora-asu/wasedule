@@ -51,7 +51,7 @@ class TaskDatabaseHelper {
       );
       // 2. データベースヘルパークラスを使用してデータベースに挿入
       try {
-        await insertTask(taskItem);
+        await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
