@@ -35,38 +35,6 @@ class TaskDatabaseHelper {
     ''');
   }
 
-  Future<void> adjustDatetimeForUpgrade(String urlString) async {
-    // データベースの初期化
-    Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
-    TaskItem taskItem;
-    for (int i = 0; i < taskData["events"].length; i++) {
-      // 1. TaskItemオブジェクトを作成
-      taskItem = TaskItem(
-        uid: taskData["events"][i]["UID"],
-        summary: taskData["events"][i]["SUMMARY"],
-        description: taskData["events"][i]["DESCRIPTION"],
-        dtEnd: taskData["events"][i]["DTEND"],
-        title: taskData["events"][i]["CATEGORIES"],
-        isDone: STATUS_YET,
-      );
-      // 2. データベースヘルパークラスを使用してデータベースに挿入
-      try {
-        await _database.insert('tasks', taskItem.toMap());
-      } catch (e) {
-        // エラーが UNIQUE constraint failed の場合のみ無視する
-        if (e.toString().contains("UNIQUE constraint failed")) {
-          // 検索されたデータが存在する場合は、そのデータを更新します
-          await _database.update(
-            'tasks',
-            taskItem.toMap(),
-            where: 'uid = ?',
-            whereArgs: [taskData["events"][i]["UID"]],
-          );
-        }
-      }
-    }
-  }
-
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     await db.execute('''
@@ -82,18 +50,25 @@ class TaskDatabaseHelper {
   ''');
     // 既存のデータを新しいテーブルに移行
     var tasks = await db.query('tasks');
-
+    int correctDateInt;
     for (var task in tasks) {
       if (task["uid"] == null) {
-        await db.insert('tasks_new', {
-          'uid': null,
-          'title': task["title"],
-          'dtEnd': task["dtEnd"],
-          'summary': task["summary"],
-          'description': task["description"],
-          "isDone": task["isDone"],
-        });
+        correctDateInt = task["dtEnd"] as int;
+      } else {
+        DateTime correctDate =
+            DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
+        correctDateInt = correctDate
+            .subtract(const Duration(hours: 9))
+            .millisecondsSinceEpoch;
       }
+      await db.insert('tasks_new', {
+        'uid': task["uid"],
+        'title': task["title"],
+        'dtEnd': correctDateInt,
+        'summary': task["summary"],
+        'description': task["description"],
+        "isDone": task["isDone"],
+      });
     }
 
     // 既存のテーブルを削除
@@ -101,10 +76,6 @@ class TaskDatabaseHelper {
 
     // 新しいテーブルの名前を既存のテーブルの名前に変更
     await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
-    String? urlString = await UserDatabaseHelper().getUrl();
-    if (urlString != null) {
-      await adjustDatetimeForUpgrade(urlString);
-    }
   }
 
   Future<void> _orderByDateTime() async {
@@ -234,7 +205,6 @@ class TaskDatabaseHelper {
 
   Future<void> resisterTaskToDB(String urlString) async {
     // データベースヘルパークラスのインスタンスを作成
-
     // データベースの初期化
     Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
     TaskItem taskItem;
@@ -255,11 +225,12 @@ class TaskDatabaseHelper {
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
-          continue;
+          await _database.update(
+              'tasks', {'dtEnd': taskData["events"][i]["DTEND"]},
+              where: 'uid = ?', whereArgs: [taskData["events"][i]["UID"]]);
         }
       }
     }
-    await _orderByDateTime();
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
