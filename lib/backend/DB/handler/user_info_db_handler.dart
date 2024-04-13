@@ -12,7 +12,7 @@ class UserDatabaseHelper {
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), '$TABLE_NAME.db');
     _database = await openDatabase(path,
-        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 3, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   Future<void> _upgradeDatabase(
@@ -28,7 +28,7 @@ class UserDatabaseHelper {
   ''');
     // 既存のデータを新しいテーブルに移行
     var userInfo = await db.query(TABLE_NAME);
-    await db.insert(TABLE_NAME, {
+    await db.insert("${TABLE_NAME}_new", {
       "url": userInfo.last["url"],
       "backupID": userInfo.last["backupID"],
       "dtEnd": userInfo.last["dtEnd"]

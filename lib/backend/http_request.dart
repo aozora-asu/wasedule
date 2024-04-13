@@ -41,7 +41,7 @@ Future<String> _getTask(String urlString) async {
   Uri url = Uri.parse(urlString);
   var response = await http.post(url);
   //print(response.body.substring(1200, 2200));
-  return response.body.replaceAll("\\n", "");
+  return response.body.replaceAll("\\n", "").replaceAll("\\n", "");
 }
 
 Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {

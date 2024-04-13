@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
@@ -34,6 +35,38 @@ class TaskDatabaseHelper {
     ''');
   }
 
+  Future<void> adjustDatetimeForUpgrade(String urlString) async {
+    // データベースの初期化
+    Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
+    TaskItem taskItem;
+    for (int i = 0; i < taskData["events"].length; i++) {
+      // 1. TaskItemオブジェクトを作成
+      taskItem = TaskItem(
+        uid: taskData["events"][i]["UID"],
+        summary: taskData["events"][i]["SUMMARY"],
+        description: taskData["events"][i]["DESCRIPTION"],
+        dtEnd: taskData["events"][i]["DTEND"],
+        title: taskData["events"][i]["CATEGORIES"],
+        isDone: STATUS_YET,
+      );
+      // 2. データベースヘルパークラスを使用してデータベースに挿入
+      try {
+        await insertTask(taskItem);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          // 検索されたデータが存在する場合は、そのデータを更新します
+          await _database.update(
+            'tasks',
+            taskItem.toMap(),
+            where: 'uid = ?',
+            whereArgs: [taskData["events"][i]["UID"]],
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     await db.execute('''
@@ -60,19 +93,6 @@ class TaskDatabaseHelper {
           'description': task["description"],
           "isDone": task["isDone"],
         });
-      } else {
-        DateTime correctDate =
-            DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
-        await db.insert('tasks_new', {
-          'uid': task["uid"],
-          'title': task["title"],
-          'dtEnd': correctDate
-              .subtract(const Duration(hours: 9))
-              .millisecondsSinceEpoch,
-          'summary': task["summary"],
-          'description': task["description"],
-          "isDone": task["isDone"],
-        });
       }
     }
 
@@ -81,6 +101,10 @@ class TaskDatabaseHelper {
 
     // 新しいテーブルの名前を既存のテーブルの名前に変更
     await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
+    String? urlString = await UserDatabaseHelper().getUrl();
+    if (urlString != null) {
+      await adjustDatetimeForUpgrade(urlString);
+    }
   }
 
   Future<void> _orderByDateTime() async {
@@ -226,7 +250,14 @@ class TaskDatabaseHelper {
         isDone: STATUS_YET,
       );
       // 2. データベースヘルパークラスを使用してデータベースに挿入
-      await insertTask(taskItem);
+      try {
+        await insertTask(taskItem);
+      } catch (e) {
+        // エラーが UNIQUE constraint failed の場合のみ無視する
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          continue;
+        }
+      }
     }
     await _orderByDateTime();
   }
