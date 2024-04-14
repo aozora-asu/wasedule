@@ -201,7 +201,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             color: MAIN_COLOR,
           );
         } else if (snapshot.hasError) {
-          return Text('エラー: ${snapshot.error}');
+          return const SizedBox();
         } else {
           UserInfoLoader().insertDataToProvider(ref);
           return iDView(snapshot.data);

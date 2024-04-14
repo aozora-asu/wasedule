@@ -563,7 +563,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           Widget listChild = Column(children: [
             const SizedBox(height: 4),
             Row(children: [validTagChip(tag)]),
-            Text(id),
+            Row(children: [Text(id),]),
             Row(children: [
               Expanded(
                 child: Column(
