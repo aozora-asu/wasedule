@@ -496,7 +496,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             color: MAIN_COLOR,
           );
         } else if (snapshot.hasError) {
-          return Text('エラー: ${snapshot.error}');
+          return const SizedBox();
+          //Text('エラー: ${snapshot.error}');
         } else {
           BroadcastLoader().insertUploadDataToProvider(ref);
           return uploadDataView(snapshot.data);
