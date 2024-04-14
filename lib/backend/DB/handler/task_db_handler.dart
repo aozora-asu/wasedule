@@ -227,14 +227,20 @@ class TaskDatabaseHelper {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
           await _database.update(
-              'tasks', {'dtEnd': taskData["events"][i]["DTEND"]},
-              where: 'uid = ?', whereArgs: [taskData["events"][i]["UID"]]);
+              'tasks',
+              {
+                'dtEnd': taskData["events"][i]["DTEND"],
+                "description": taskData["events"][i]["DESCRIPTION"],
+              },
+              where: 'uid = ?',
+              whereArgs: [taskData["events"][i]["UID"]]);
         }
       }
     }
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
+    await _initDatabase();
     for (var task in taskList) {
       try {
         TaskItem taskItem = TaskItem(
@@ -244,7 +250,7 @@ class TaskDatabaseHelper {
             uid: task["uid"],
             description: task["description"],
             summary: task["summary"]);
-        await insertTask(taskItem);
+        await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {

@@ -22,7 +22,7 @@ class UserDatabaseHelper {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
         url TEXT,
         backupID TEXT,
-        dtEnd TEXT
+        dtEnd TEXT,
       tagID TEXT
     )
   ''');
