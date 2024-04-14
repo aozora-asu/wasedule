@@ -194,8 +194,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                           ConfigDataLoader().getConfigDataSource());
                       return calendarBody();
                     } else if (snapshot.hasError) {
-                      // エラーがある場合、エラーメッセージを表示します。
-                      return Text('エラーだよい: ${snapshot.error}');
+                      // エラーがある場合
+                      return const SizedBox();
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       if (ref.read(taskDataProvider).isRenewed) {
                         displayDB();
