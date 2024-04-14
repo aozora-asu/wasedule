@@ -1,8 +1,9 @@
 import 'package:http/http.dart' as http;
 import "./firebase_handler.dart";
+import 'dart:convert';
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
-  String s = iCalendarData.replaceAll("\\n\\n", "\\n");
+  String s = iCalendarData;
   final lines = s.split('\n'); // 行ごとに分割
 
   final iCalInfo = <String, dynamic>{
@@ -10,7 +11,7 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
   };
 
   Map<String, dynamic>? currentEvent; // 変数をNullableに変更
-
+  String? key;
   for (final line in lines) {
     final trimmedLine = line.trim();
     if (trimmedLine.startsWith('BEGIN:VEVENT')) {
@@ -23,11 +24,15 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
         currentEvent = null; // イベント終了後にcurrentEventを初期化
       }
     } else if (currentEvent != null) {
-      final parts = trimmedLine.split(':');
-      if (parts.length == 2) {
-        final key = parts[0];
-        final value = parts[1];
+      if (line.contains(':')) {
+        // 行に':'が含まれる場合はキーと値を抽出
+        List<String> parts = line.split(':');
+        key = parts[0];
+        String value = parts.sublist(1).join(':').trim();
         currentEvent[key] = value;
+      } else if (key != null) {
+        // 直前の行がキーに対する値の一部である場合は、値を連結
+        currentEvent[key] += line.trim();
       }
     }
   }
@@ -38,10 +43,14 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
 }
 
 Future<String> _getTask(String urlString) async {
-  Uri url = Uri.parse(urlString);
-  var response = await http.post(url);
-  //print(response.body.substring(1200, 2200));
-  return response.body.replaceAll("\\n", "").replaceAll("\\n", "");
+  // headersの作成
+  final headers = {'Content-type': 'application/json; charset=UTF-8'};
+  final url = Uri.parse(urlString);
+
+// POSTリクエストの作成
+  final response = await http.post(url, headers: headers);
+
+  return response.body;
 }
 
 Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
@@ -55,6 +64,8 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
         .millisecondsSinceEpoch; //これはエポックミリ秒 int型
     events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
         .replaceAll(RegExp(r'[A-Za-z()\d]'), '');
+    events["events"][i]["DESCRIPTION"] =
+        events["events"][i]["DESCRIPTION"].replaceAll("\\n", "\n").trimRight();
   }
 
   return events;
