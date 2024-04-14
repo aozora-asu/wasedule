@@ -1178,10 +1178,10 @@ String? returnTagId(String id, WidgetRef ref) {
   }
 }
 
-Widget tagChip(String tagID, WidgetRef ref) {
+Widget tagChip(String? tagID, WidgetRef ref) {
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
-  if (tagID == "") {
+  if (tagID == "" || tagID == null) {
     return const SizedBox();
   } else {
     for (var data in tagMap) {

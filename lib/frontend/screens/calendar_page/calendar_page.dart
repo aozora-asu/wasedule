@@ -454,12 +454,16 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         const SizedBox(height: 15),
         Row(children: [
-          menuPanel(Icons.link_rounded, "Moodle URL登録", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-            );
-          }),
+          menuPanel(
+            Icons.link_rounded, 
+            "Moodle URL登録", 
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+              );
+            }
+          ),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
           ),
@@ -479,6 +483,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               MaterialPageRoute(builder: (context) => DataDownloadPage()),
             );
           }),
+
           
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
@@ -1055,6 +1060,26 @@ class _CalendarState extends ConsumerState<Calendar> {
               ]))),
           const Divider(height: 1)
         ]));
+  }
+
+  Widget menuListIndex(String text) {
+    return Column(children: [
+      Container(
+          width: SizeConfig.blockSizeHorizontal! * 95,
+          height: SizeConfig.blockSizeVertical! * 4,
+          color: Colors.white,
+          child: Center(
+              child: Row(children: [
+            const SizedBox(width: 30),
+            Text(text,
+                style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  color: Colors.grey
+                )),
+            const Spacer(),
+          ]))),
+      const Divider(height: 1)
+    ]);
   }
 
   Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
