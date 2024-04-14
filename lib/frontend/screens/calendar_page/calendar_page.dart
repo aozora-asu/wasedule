@@ -454,12 +454,16 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         const SizedBox(height: 15),
         Row(children: [
-          menuPanel(Icons.link_rounded, "Moodle URL登録", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-            );
-          }),
+          menuPanel(
+            Icons.link_rounded, 
+            "Moodle URL登録", 
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+              );
+            }
+          ),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
           ),
@@ -479,6 +483,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               MaterialPageRoute(builder: (context) => DataDownloadPage()),
             );
           }),
+
           
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
@@ -1057,6 +1062,44 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]));
   }
 
+  Widget plainListChild(Widget child, void Function() ontap) {
+    return InkWell(
+        onTap: ontap,
+        child: 
+        Column(children: [
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              color: Colors.white,
+              child:Padding(
+                padding: EdgeInsets.all(5),
+                child: child)
+              ),
+          const Divider(height: 1)
+        ])
+      );
+  }
+
+  Widget menuListIndex(String text) {
+    return Column(children: [
+      Container(
+          width: SizeConfig.blockSizeHorizontal! * 95,
+          height: SizeConfig.blockSizeVertical! * 3,
+          color: Colors.white,
+          child: Center(
+              child: Row(children: [
+            const SizedBox(width: 15),
+            Text(text,
+                style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold
+                )),
+            const Spacer(),
+          ]))),
+      const Divider(height: 1)
+    ]);
+  }
+
   Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
@@ -1122,7 +1165,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 1:
           content = "今日は何時間勉強した？学習記録ページで管理しよう \n＞＞『学習管理』から";
         case 2:
-          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+          content = "アプリのデータをバックアップして、別端末に移行できます！  \n＞＞『データバックアップ』から";
         // "公式サイトにてみんなの授業課題データベースが公開中！楽単苦単をチェック\n＞＞『使い方ガイドとサポート』から";
         case 3:
           content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
@@ -1134,7 +1177,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 6:
           content = "カレンダーは複数日登録に対応！  \n＞＞『+』ボタンから";
         case 7:
-          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+          content = "予定配信機能で、グループの行事予定をシェア！！   \n＞＞『予定の配信/受信』から";
         case 8:
           content = "運営公式SNSで最新情報をチェック！  \n＞＞『サポート』から";
         case 9:
@@ -1380,7 +1423,71 @@ class _CalendarState extends ConsumerState<Calendar> {
     ]);
   }
 
-  Widget taskDataList(DateTime target, int fromNow) {
+  // Widget taskDataList(DateTime target, int fromNow) {
+  //   final taskData = ref.watch(taskDataProvider);
+  //   Map<DateTime, List<Map<String, dynamic>>> sortedData =
+  //       taskData.sortDataByDtEnd(taskData.taskDataList);
+  //   Widget title = const SizedBox();
+
+  //   if (sortedData.keys.contains(target)) {
+  //     if (fromNow == 0) {
+  //       title = Text(
+  //         '近日締切の課題',
+  //         style: TextStyle(
+  //             fontSize: SizeConfig.blockSizeHorizontal! * 7,
+  //             color: Colors.white,
+  //             fontWeight: FontWeight.bold),
+  //       );
+  //     }
+
+  //     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  //       title,
+  //       menuListIndex("$fromNow日後",),
+  //       ListView.builder(
+  //         itemBuilder: (BuildContext context, int index) {
+  //           Widget dateTimeData = Container();
+  //           dateTimeData = Text(
+  //             sortedData[target]!.elementAt(index)["title"],
+  //             style: TextStyle(
+  //                 color: Colors.grey,
+  //                 fontSize: SizeConfig.blockSizeHorizontal! *3,
+  //                 fontWeight: FontWeight.bold),
+  //           );
+
+  //           return plainListChild( Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         dateTimeData,
+  //                         Text(
+  //                           sortedData[target]!.elementAt(index)["summary"] ??
+  //                               "(詳細なし)",
+  //                           style: TextStyle(
+  //                               color: Colors.black,
+  //                               fontSize: SizeConfig.blockSizeHorizontal! *5,
+  //                               fontWeight: FontWeight.bold),
+  //                         )
+  //                       ]), () { });
+  //         },
+  //         itemCount: sortedData[target]!.length,
+  //         shrinkWrap: true,
+  //         physics: const NeverScrollableScrollPhysics(),
+  //       )
+  //     ]);
+  //   } else {
+  //     if (fromNow == 0 && !isTaskDatanull(target)) {
+  //       title = Text(
+  //         '近日締切の課題',
+  //         style: TextStyle(
+  //             fontSize: SizeConfig.blockSizeHorizontal! * 7,
+  //             color: Colors.white,
+  //             fontWeight: FontWeight.bold),
+  //       );
+  //     }
+  //     return title;
+  //   }
+  // }
+
+    Widget taskDataList(DateTime target, int fromNow) {
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime, List<Map<String, dynamic>>> sortedData =
         taskData.sortDataByDtEnd(taskData.taskDataList);
