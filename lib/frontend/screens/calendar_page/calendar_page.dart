@@ -1,8 +1,8 @@
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_download_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_upload_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
@@ -409,19 +409,13 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
       Column(children: [
         menuList(Icons.calendar_month, "カレンダー", [
-          menuListChild(Icons.send_to_mobile_rounded, "予定のアップロード", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataUploadPage()),
-            );
-          }),
 
-          menuListChild(Icons.install_mobile, "予定のダウンロード", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataDownloadPage()),
-            );
-          }),
+            menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DataUploadPage()),
+              );
+            }),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -478,21 +472,30 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
         menuList(Icons.info, "その他", [
-          menuListChild(Icons.info, "サポート", () {
+
+          menuListChild(Icons.backup, "データバックアップ", () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SnsLinkPage()),
+              MaterialPageRoute(builder: (context) => DataDownloadPage()),
             );
           }),
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-          ),
+          
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingsPage()),
             );
           }),
+
+          menuListChild(Icons.info, "サポート", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SnsLinkPage()),
+            );
+
+          })
+
+          
         ]),
         const SizedBox(height: 15),
         const SizedBox(height: 30),

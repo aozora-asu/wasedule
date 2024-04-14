@@ -1242,9 +1242,6 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
       color:widget.backGroundColor,
       borderRadius: const BorderRadius.all(Radius.circular(20))
     ),
-    // child:SingleChildScrollView(
-    //  scrollDirection: switchAxis(ref.read(dataProvider).isVertical),
-    //  physics: switchPhysics(ref.read(dataProvider).isVertical),
      child:TextField(
       controller: controller,
       onSubmitted: (value) async{

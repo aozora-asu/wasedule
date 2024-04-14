@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
@@ -39,14 +41,14 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             children: <Widget>[
               Row(children: [
                 const Icon(
-                  Icons.install_mobile,
+                  Icons.backup,
                   color: WIDGET_COLOR,
                 ),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 4,
                 ),
                 Text(
-                  '予定のダウンロード',
+                  'データバックアップ',
                   style: TextStyle(
                       fontSize: SizeConfig.blockSizeHorizontal! * 5,
                       fontWeight: FontWeight.w800,
@@ -80,7 +82,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       );
     } else {
       return Image.asset(
-        'lib/assets/schedule_share/schedule_broadcast_download.png',
+        'lib/assets/schedule_share/schedule_backup_upload.png',
         height: SizeConfig.blockSizeHorizontal! * 100,
         width: SizeConfig.blockSizeHorizontal! * 100,
       );
@@ -93,7 +95,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       totalSwitches: 2,
       activeBgColor: const [MAIN_COLOR],
       minWidth: SizeConfig.blockSizeHorizontal! * 45,
-      labels: const ['予定の受信', 'バックアップ復元'],
+      labels: const ['バックアップ', 'バックアップの復元'],
       onToggle: (index) {
         setState(() {
           currentIndex = index ?? 0;
@@ -104,80 +106,146 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
 
   Widget pageBody() {
     if (currentIndex == 0) {
-      return scheduleBroadcastPage();
+      return backupDownloadPage();
     } else {
-      return dataBackupPage();
+      return backupUploadPage();
     }
   }
 
-  TextEditingController idController = TextEditingController();
-  Widget scheduleBroadcastPage() {
+
+  Widget backupDownloadPage() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("・ほかの人が配信した予定データを、スケジュールＩＤを入力して受信することができます！",
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text(
+              "・今お使いの端末からサーバー上にすべてのデータをバックアップします。のちにこの端末や他の端末に復元していただけます。",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
-          CupertinoTextField(
-            controller: idController,
-            placeholder: 'IDを入力',
-          ),
-          Row(children: [
-            const Text("もしくは"),
-            TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ScannerWidget(
-                    idController: idController,
-                  ),
-                ));
-              },
-              icon: const Icon(Icons.qr_code_2, color: Colors.blue),
-              label: const Text("QRを読み込み",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.blue)),
-            )
-          ]),
-          const SizedBox(height: 20),
-          scheduleReceiveButton(idController),
-          const SizedBox(height: 5),
-        ],
-      ),
+          const Text("・バックアップに際して、発行されるIDが必要です。スクリーンショットなどで保管しておいてください。",
+              style: TextStyle(color: Colors.red, fontSize: 17)),
+          const SizedBox(height: 10),
+          const Text("・バックアップは復元後、もしくはアップロードから一定期間後にサーバー上から自動削除されます。",
+              style: TextStyle(color: Colors.red, fontSize: 17)),
+          const SizedBox(height: 15),
+          backUpUploadButton(),
+          showIDView(),
+        ]));
+  }
+
+  Widget backUpUploadButton() {
+    return ElevatedButton(
+        onPressed: () async {
+          String? id = await backup();
+
+          if (id == null) {
+            showBackupFailDialogue("バックアップが失敗しました。");
+          } else {
+            showBackUpDoneDialogue(id);
+          }
+
+          setState(() {});
+        },
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+        ),
+        child: const Row(children: [
+          Icon(Icons.backup, color: Colors.white),
+          SizedBox(width: 20),
+          Text("データをバックアップ", style: TextStyle(color: Colors.white))
+        ]));
+  }
+
+  void showBackUpDoneDialogue(String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('バックアップ完了'),
+          actions: <Widget>[
+            const Text("バックアップの復元に際して、こちらのIDが必要です。スクリーンショットなどで保管しておいてください。",
+                style: TextStyle(color: Colors.red)),
+            const SizedBox(height: 10),
+            const Align(alignment: Alignment.centerLeft, child: Text("ID:")),
+            Text(id,
+                style:
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            okButton(context, 500.0)
+          ],
+        );
+      },
     );
   }
 
-  Widget scheduleReceiveButton(TextEditingController idController) {
-    return ElevatedButton(
-      onPressed: () async {
-        String id = idController.text;
-        if (id.isNotEmpty) {
-          Navigator.pop(context);
-          bool isScheduleDownloadSuccess = await receiveSchedule(id);
-          if (isScheduleDownloadSuccess) {
-            showDownloadDoneDialogue("データがダウンロードされました！");
-          } else {
-            showDownloadFailDialogue("ダウンロードに失敗しました");
-          }
+  void showBackupFailDialogue(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('アップロード失敗'),
+          actions: <Widget>[
+            Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
+  }
+
+  Widget showIDView() {
+    return FutureBuilder(
+      future: UserInfoLoader().getUserIDSource(ref),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            color: MAIN_COLOR,
+          );
+        } else if (snapshot.hasError) {
+          return Text('エラー: ${snapshot.error}');
         } else {
-          showDownloadFailDialogue("IDを入力してください。");
+          UserInfoLoader().insertDataToProvider(ref);
+          return iDView(snapshot.data);
         }
       },
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.install_mobile, color: Colors.white),
-          SizedBox(width: 20),
-          Text("予定を受信する", style: TextStyle(color: Colors.white)),
-        ],
-      ),
     );
   }
 
-  Widget dataBackupPage() {
+  Widget iDView(String? id) {
+    DateTime dtEnd = ref.watch(calendarDataProvider).backUpDtEnd;
+    if (id == null || id.isEmpty || dtEnd.isBefore(DateTime.now())) {
+      return const SizedBox();
+    } else {
+      return Column(children: [
+        const SizedBox(height: 20),
+        Container(
+            decoration: roundedBoxdecorationWithShadow(),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const Text("あなたのバックアップID:", style: TextStyle(fontSize: 15)),
+                IconButton(
+                    onPressed: () async {
+                      final data = ClipboardData(text: id);
+                      await Clipboard.setData(data);
+                    },
+                    icon: const Icon(Icons.copy, color: Colors.grey))
+              ]),
+              Text(id,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 25)),
+              Text(
+                "あと" + dtEnd.difference(DateTime.now()).inDays.toString() + "日",
+                style: const TextStyle(color: Colors.redAccent),
+                overflow: TextOverflow.ellipsis,
+              )
+            ]))
+      ]);
+    }
+  }
+
+
+  Widget backupUploadPage() {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
