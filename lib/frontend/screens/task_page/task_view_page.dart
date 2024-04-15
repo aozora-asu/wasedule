@@ -35,9 +35,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
     isLoad = false;
+    _initializeData();
   }
 
-  
   Future<void> _initializeData() async {
     //ここの中にロードを1時間に1回までに制限する仕組みを書いて、
     //initState内で呼び出せばよさそうじゃない？
@@ -49,6 +49,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   //データベースを更新する関数。主にボタンを押された時のみ
   Future<void> loadData() async {
+    urlString = await UserDatabaseHelper().getUrl();
     if (urlString != null) {
       await databaseHelper.resisterTaskToDB(urlString!);
     }
@@ -137,10 +138,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             ),
             FloatingActionButton(
               heroTag: "task_2",
-              onPressed: () {
-               if(isLoad == false){
-                loadData();
-                isLoad = true;}
+              onPressed: () async {
+                if (isLoad == false) {
+                  await loadData();
+                  isLoad = true;
+                }
               },
               backgroundColor: MAIN_COLOR,
               child: const Icon(Icons.refresh_outlined, color: Colors.white),
@@ -158,7 +160,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         return FutureBuilder<List<Map<String, dynamic>>?>(
           future: displayDB(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting){
+            if (snapshot.connectionState == ConnectionState.waiting) {
               if (ref.read(taskDataProvider).isInit) {
                 return LoadingScreen();
               } else {
@@ -188,14 +190,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).isRenewed = false;
               }
 
-              Map<DateTime, List<Map<String, dynamic>>> sortedTasks 
-                    = taskData.sortDataByDtEnd(taskData.taskDataList);
-                if(sortedTasks.isEmpty){
-                  return NoTaskPage();
-                }else{
-                  return TaskListByDtEnd(
-                      sortedData: sortedTasks);
-                }
+              Map<DateTime, List<Map<String, dynamic>>> sortedTasks =
+                  taskData.sortDataByDtEnd(taskData.taskDataList);
+              if (sortedTasks.isEmpty) {
+                return NoTaskPage();
+              } else {
+                return TaskListByDtEnd(sortedData: sortedTasks);
+              }
             } else {
               //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
@@ -221,7 +222,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                         taskData.sortDataByCategory(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
+              return const Text("エラーコード: 503");
             } else if (snapshot.hasData) {
               if (ref.watch(taskDataProvider).isInit) {
                 ref.read(taskDataProvider).isInit = false;
@@ -322,7 +323,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：ゴリゴリ"));
+            child: const Text("ソート：カテゴリ"));
     }
   }
 }
