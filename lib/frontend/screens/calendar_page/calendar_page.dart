@@ -74,7 +74,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
-    NotifyContent().taskDueTodayNotification();
+
     NotifyContent().scheduleDailyEightAMNotification();
 
     // NotifyContent().sampleNotification("task");
@@ -409,13 +409,12 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
       Column(children: [
         menuList(Icons.calendar_month, "カレンダー", [
-
-            menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DataUploadPage()),
-              );
-            }),
+          menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DataUploadPage()),
+            );
+          }),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -454,16 +453,12 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         const SizedBox(height: 15),
         Row(children: [
-          menuPanel(
-            Icons.link_rounded, 
-            "Moodle URL登録", 
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-              );
-            }
-          ),
+          menuPanel(Icons.link_rounded, "Moodle URL登録", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+            );
+          }),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
           ),
@@ -476,31 +471,24 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
         menuList(Icons.info, "その他", [
-
           menuListChild(Icons.backup, "データバックアップ", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DataDownloadPage()),
             );
           }),
-
-          
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingsPage()),
             );
           }),
-
           menuListChild(Icons.info, "サポート", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SnsLinkPage()),
             );
-
           })
-
-          
         ]),
         const SizedBox(height: 15),
         const SizedBox(height: 30),
@@ -1065,18 +1053,13 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget plainListChild(Widget child, void Function() ontap) {
     return InkWell(
         onTap: ontap,
-        child: 
-        Column(children: [
+        child: Column(children: [
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               color: Colors.white,
-              child:Padding(
-                padding: const EdgeInsets.all(5),
-                child: child)
-              ),
+              child: Padding(padding: const EdgeInsets.all(5), child: child)),
           const Divider(height: 1)
-        ])
-      );
+        ]));
   }
 
   Widget menuListIndex(String text) {
@@ -1090,10 +1073,9 @@ class _CalendarState extends ConsumerState<Calendar> {
             const SizedBox(width: 15),
             Text(text,
                 style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold
-                )),
+                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
       const Divider(height: 1)
@@ -1373,9 +1355,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                             Row(children: [
                               dateTimeData,
                               const SizedBox(width: 15),
-                               tagChip(
-                                      targetDayData.elementAt(index)["tagID"],
-                                      ref)
+                              tagChip(
+                                  targetDayData.elementAt(index)["tagID"], ref)
                             ]),
                             SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 70,
@@ -1493,7 +1474,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   //   }
   // }
 
-    Widget taskDataList(DateTime target, int fromNow) {
+  Widget taskDataList(DateTime target, int fromNow) {
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime, List<Map<String, dynamic>>> sortedData =
         taskData.sortDataByDtEnd(taskData.taskDataList);
