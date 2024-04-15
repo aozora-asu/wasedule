@@ -310,8 +310,10 @@ class _CalendarState extends ConsumerState<Calendar> {
           ConfigDataLoader().searchConfigData("todaysSchedule", ref)),
       switchWidget(
           taskDataListList(
-              ConfigDataLoader().searchConfigInfo("taskList", ref)),
+              ConfigDataLoader().searchConfigInfo("taskList", ref)
+          ),
           ConfigDataLoader().searchConfigData("taskList", ref)),
+      
       switchWidget(
           Column(children: [
             MoodleUrlLauncher(width: 100),
@@ -1062,7 +1064,12 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]));
   }
 
-  Widget plainListChild(Widget child, void Function() ontap) {
+  Widget taskListChild(Widget child, void Function() ontap ,bool isIndent) {
+    double indent = 0;
+    if(!isIndent){
+      indent = 10;
+    }
+
     return InkWell(
         onTap: ontap,
         child: 
@@ -1070,16 +1077,23 @@ class _CalendarState extends ConsumerState<Calendar> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               color: Colors.white,
-              child:Padding(
-                padding: const EdgeInsets.all(5),
-                child: child)
+                child: child
               ),
-          const Divider(height: 1)
+          Divider(
+            height:1,
+            thickness:1,
+            indent:indent,
+            endIndent:0)
         ])
       );
   }
 
-  Widget menuListIndex(String text) {
+  Widget taskListHeader(String text,int fromNow) {
+    Color accentColor = Colors.blueGrey;
+    if(fromNow <=3){
+      accentColor = Colors.red;
+    }
+
     return Column(children: [
       Container(
           width: SizeConfig.blockSizeHorizontal! * 95,
@@ -1087,7 +1101,12 @@ class _CalendarState extends ConsumerState<Calendar> {
           color: Colors.white,
           child: Center(
               child: Row(children: [
-            const SizedBox(width: 15),
+            const SizedBox(width: 10),
+          Container(
+            width: SizeConfig.blockSizeVertical! * 1,
+            height: SizeConfig.blockSizeVertical! * 2,
+            color: accentColor),
+          const SizedBox(width: 5),
             Text(text,
                 style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 4,
@@ -1096,7 +1115,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 )),
             const Spacer(),
           ]))),
-      const Divider(height: 1)
+        const Divider(height: 1,indent:0,endIndent:0)
     ]);
   }
 
@@ -1405,160 +1424,167 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget taskDataListList(int fromNow) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
+    Widget noneTaskWidget = const SizedBox();
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      ListView.builder(
-        itemBuilder: (context, index) {
-          DateTime targetDay = today.add(Duration(days: index));
-          return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [taskDataList(targetDay, index)]);
-        },
-        itemCount: fromNow,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-      ),
-      SizedBox(height: SizeConfig.blockSizeVertical! * 1)
-    ]);
+    if(isTaskDatanull(today)){
+      noneTaskWidget  = 
+        taskListChild(
+          Column(children:[
+            const SizedBox(height:5),
+            Text("  $fromNow日以内の課題はありません。",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: SizeConfig.blockSizeHorizontal! *5,),
+            ),
+            const SizedBox(height:5),
+          ]),
+          (){},true
+        );
+      }
+
+    if(fromNow == 0){
+      return const SizedBox();
+    }else{
+      return Column(children:[
+        menuList(Icons.check, "近日締切の課題",
+          [
+            noneTaskWidget,
+
+            ListView.builder(
+              itemBuilder: (context, index) {
+                DateTime targetDay = today.add(Duration(days: index));
+                return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      taskDataList(targetDay, index)
+                    ]);
+              },
+              itemCount: fromNow,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+            ),
+          ]),
+          const SizedBox(height:20)
+        ]);
+    }
   }
 
-  // Widget taskDataList(DateTime target, int fromNow) {
-  //   final taskData = ref.watch(taskDataProvider);
-  //   Map<DateTime, List<Map<String, dynamic>>> sortedData =
-  //       taskData.sortDataByDtEnd(taskData.taskDataList);
-  //   Widget title = const SizedBox();
-  //   String indexText = "";
-
-  //   if(fromNow == 0){
-  //     indexText = "今日まで";
-  //   }else{
-  //     indexText = "$fromNow日後";
-  //   }
-
-  //   if (sortedData.keys.contains(target)) {
-  //     if (fromNow == 0) {
-  //       title = Text(
-  //         '近日締切の課題',
-  //         style: TextStyle(
-  //             fontSize: SizeConfig.blockSizeHorizontal! * 7,
-  //             color: Colors.white,
-  //             fontWeight: FontWeight.bold),
-  //       );
-  //     }
-
-  //     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-  //       title,
-  //       menuListIndex(indexText),
-  //       ListView.builder(
-  //         itemBuilder: (BuildContext context, int index) {
-  //           Widget dateTimeData = Container();
-  //           dateTimeData = Text(
-  //             sortedData[target]!.elementAt(index)["title"],
-  //             style: TextStyle(
-  //                 color: Colors.grey,
-  //                 fontSize: SizeConfig.blockSizeHorizontal! *3,
-  //                 fontWeight: FontWeight.bold),
-  //           );
-
-  //           return plainListChild( Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         dateTimeData,
-  //                         Text(
-  //                           sortedData[target]!.elementAt(index)["summary"] ??
-  //                               "(詳細なし)",
-  //                           style: TextStyle(
-  //                               color: Colors.black,
-  //                               fontSize: SizeConfig.blockSizeHorizontal! *5,
-  //                               fontWeight: FontWeight.bold),
-  //                         )
-  //                       ]), () { });
-  //         },
-  //         itemCount: sortedData[target]!.length,
-  //         shrinkWrap: true,
-  //         physics: const NeverScrollableScrollPhysics(),
-  //       )
-  //     ]);
-  //   } else {
-  //     if (fromNow == 0 && !isTaskDatanull(target)){
-  //       title = Text(
-  //         '近日締切の課題',
-  //         style: TextStyle(
-  //             fontSize: SizeConfig.blockSizeHorizontal! * 7,
-  //             color: Colors.white,
-  //             fontWeight: FontWeight.bold),
-  //       );
-  //     }
-  //     return title;
-  //   }
-  // }
-
-    Widget taskDataList(DateTime target, int fromNow) {
+  Widget taskDataList(DateTime target, int fromNow) {
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime, List<Map<String, dynamic>>> sortedData =
         taskData.sortDataByDtEnd(taskData.taskDataList);
     Widget title = const SizedBox();
+    String indexText = "";
+
+
+    if(fromNow == 0){
+      indexText = "今日まで";
+    }else{
+      indexText = "$fromNow日後";
+    }
 
     if (sortedData.keys.contains(target)) {
-      if (fromNow == 0) {
-        title = Text(
-          '近日締切の課題',
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 7,
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        );
-      }
+      // if (fromNow == 0) {
+      //   title = menuListIndex('近日締切の課題',);
+      // }
+
+    
 
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title,
-        Text("$fromNow日後",
-            style: const TextStyle(color: Colors.white, fontSize: 18)),
+        taskListHeader(indexText,fromNow),
         ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+
+            String timeEnd = DateFormat("HH:mm")
+              .format(DateTime.fromMillisecondsSinceEpoch(
+                sortedData[target]!.elementAt(index)["dtEnd"]
+              )
+            );
+
             Widget dateTimeData = Container();
             dateTimeData = Text(
               sortedData[target]!.elementAt(index)["title"],
-              style: const TextStyle(
+              style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 13,
+                  fontSize: SizeConfig.blockSizeHorizontal! *3,
                   fontWeight: FontWeight.bold),
             );
 
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: SizeConfig.blockSizeHorizontal! * 95,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white, // コンテナの背景色
-                      borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                          spreadRadius: 2, // 影の広がり
-                          blurRadius: 4, // 影のぼかし
-                          offset: const Offset(0, 2), // 影の方向（横、縦）
-                        ),
-                      ],
+            bool isLast = false;
+            if(sortedData[target]!.length == index + 1){
+              isLast = true;    
+            }
+            double dividerIndent = 0;
+            if(isLast){
+              dividerIndent = 8;
+            }
+
+            return taskListChild(
+              IntrinsicHeight(child:
+              Row(children:[
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:5),
+                  child: Text(timeEnd,style:const TextStyle(fontWeight: FontWeight.bold))
+                ),
+                
+              SizedBox(
+                width:6,
+                child:
+                Column(
+                 children:[
+                 const  Expanded(child:
+                    VerticalDivider(
+                      width: 2,
+                      thickness: 2,
+                      color: Colors.grey,
+                      ),
                     ),
-                    child: Column(
+                  Container(
+                    height:6,width:6,
+                    decoration: const BoxDecoration(
+                      color:Colors.grey,
+                      shape: BoxShape.circle
+                    ),
+                  ),
+                  Expanded(child:
+                    VerticalDivider(
+                      width: 2,
+                      thickness: 2,
+                      color: Colors.grey,
+                      endIndent: dividerIndent,
+                      
+                      ),
+                    )
+                  ]),
+                ),
+                
+
+                Expanded(child:
+                  Padding(
+                  padding: const EdgeInsets.all(5),
+                    child:
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           dateTimeData,
                           Text(
                             sortedData[target]!.elementAt(index)["summary"] ??
                                 "(詳細なし)",
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 25,
+                                fontSize: SizeConfig.blockSizeHorizontal! *5,
                                 fontWeight: FontWeight.bold),
                           )
                         ]),
-                  ),
-                  const SizedBox(height: 7)
-                ]);
+                      ),
+                    )
+                  ])
+                ),
+                () {bottomSheet(sortedData[target]!.elementAt(index));},
+                isLast
+                );
           },
           itemCount: sortedData[target]!.length,
           shrinkWrap: true,
@@ -1566,18 +1592,14 @@ class _CalendarState extends ConsumerState<Calendar> {
         )
       ]);
     } else {
-      if (fromNow == 0 && !isTaskDatanull(target)) {
-        title = Text(
-          '近日締切の課題',
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 7,
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        );
+      if (fromNow == 0 && !isTaskDatanull(target)){
+        title = const SizedBox(); //menuListIndex('近日締切の課題',);
       }
+
       return title;
     }
   }
+
 
   bool isTaskDatanull(DateTime target) {
     int numOfTasks = ConfigDataLoader().searchConfigInfo("taskList", ref);
@@ -1591,6 +1613,209 @@ class _CalendarState extends ConsumerState<Calendar> {
       }
     }
     return result;
+  }
+
+  void bottomSheet(targetData) {
+    TextEditingController summaryController =
+        TextEditingController(text: targetData["summary"] ?? "");
+    TextEditingController titleController =
+        TextEditingController(text: targetData["title"] ?? "");
+    TextEditingController descriptionController =
+        TextEditingController(text: targetData["description"] ?? "");
+    int id = targetData["id"];
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            height: SizeConfig.blockSizeVertical! * 60,
+            margin: const EdgeInsets.only(top: 0),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SingleChildScrollView(
+                child: Scrollbar(
+              child: Column(
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.6),
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset:const Offset(0, 2)
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      height: SizeConfig.blockSizeHorizontal! * 13,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 4,
+                          ),
+                          SizedBox(
+                              width: SizeConfig.blockSizeHorizontal! * 92,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            SizeConfig.blockSizeHorizontal! *
+                                                73.5),
+                                    child: Text(
+                                      targetData["summary"] ?? "(詳細なし)",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  5,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                  Text(
+                                    "  の詳細",
+                                    style: TextStyle(
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 5,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 4,
+                          ),
+                        ],
+                      )),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 2,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      child: Column(children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "タスク名",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextField(
+                            enabled:false,
+                            controller: summaryController,
+                            maxLines: 1,
+                            decoration: const InputDecoration.collapsed(
+                              hintText: "タスク名なし",
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeHorizontal! * 2,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "カテゴリ",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextField(
+                            enabled:false,
+                            controller: titleController,
+                            maxLines: 1,
+                            decoration: const InputDecoration.collapsed(
+                              hintText: "カテゴリなし",
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeHorizontal! * 2,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "タスクの詳細",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black),
+                          ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeHorizontal! * 0.5,
+                        ),
+                        TextField(
+                          enabled:false,
+                          maxLines: 7,
+                          controller: descriptionController,
+                          style: TextStyle(
+                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                          ),
+                          decoration: const InputDecoration(
+                            hintText: "詳細なし",
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.only(top: 0, left: 0, right: 4),
+                            hintStyle: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        MoodleUrlLauncher(width: 100),
+                        const SizedBox(height: 7.5),
+                    ])
+                  )
+                ],
+              ),
+            )
+          )
+        );
+      },
+    );
   }
 }
 
