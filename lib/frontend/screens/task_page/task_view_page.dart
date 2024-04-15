@@ -32,18 +32,18 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   @override
   void initState() {
     super.initState();
-    _initializeData();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
     isLoad = false;
   }
 
+  
   Future<void> _initializeData() async {
+    //ここの中にロードを1時間に1回までに制限する仕組みを書いて、
+    //initState内で呼び出せばよさそうじゃない？
     urlString = await UserDatabaseHelper().getUrl();
     if (await databaseHelper.hasData() || urlString != null) {
       await loadData();
-    } else {
-      NoTaskPage();
     }
   }
 
@@ -55,12 +55,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     await displayDB();
   }
 
-  Future<void> displayDB() async {
+  Future<List<Map<String, dynamic>>?> displayDB() async {
     final addData = await databaseHelper.taskListForTaskPage();
     if (mounted) {
-      setState(() {
-        events = Future.value(addData);
-      });
+      events = Future.value(addData);
+      return addData;
+    } else {
+      return null;
     }
   }
 
@@ -142,7 +143,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 isLoad = true;}
               },
               backgroundColor: MAIN_COLOR,
-              child: const Icon(Icons.get_app, color: Colors.white),
+              child: const Icon(Icons.refresh_outlined, color: Colors.white),
             ),
           ],
         ));
@@ -154,10 +155,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
     switch (ref.read(taskDataProvider).taskPageIndex) {
       case 0:
-        return FutureBuilder<List<Map<String, dynamic>>>(
-          future: events,
+        return FutureBuilder<List<Map<String, dynamic>>?>(
+          future: displayDB(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting){
               if (ref.read(taskDataProvider).isInit) {
                 return LoadingScreen();
               } else {
@@ -166,8 +167,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                         taskData.sortDataByDtEnd(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
+              return const SizedBox();
             } else if (snapshot.hasData) {
+
               if (ref.watch(taskDataProvider).isInit) {
                 ref.read(taskDataProvider).isInit = false;
               }
@@ -189,6 +191,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               return TaskListByDtEnd(
                   sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
             } else {
+              print(snapshot.data);
 
               if (ref.read(taskDataProvider).isRenewed) {
                 displayDB();

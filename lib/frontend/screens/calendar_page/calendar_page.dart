@@ -1071,7 +1071,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               width: SizeConfig.blockSizeHorizontal! * 95,
               color: Colors.white,
               child:Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: child)
               ),
           const Divider(height: 1)
@@ -1091,7 +1091,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             Text(text,
                 style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                  color: Colors.grey,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold
                 )),
             const Spacer(),
@@ -1373,10 +1373,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                             Row(children: [
                               dateTimeData,
                               const SizedBox(width: 15),
-                              SizedBox(
-                                  child: tagChip(
+                               tagChip(
                                       targetDayData.elementAt(index)["tagID"],
-                                      ref))
+                                      ref)
                             ]),
                             SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 70,
@@ -1428,6 +1427,13 @@ class _CalendarState extends ConsumerState<Calendar> {
   //   Map<DateTime, List<Map<String, dynamic>>> sortedData =
   //       taskData.sortDataByDtEnd(taskData.taskDataList);
   //   Widget title = const SizedBox();
+  //   String indexText = "";
+
+  //   if(fromNow == 0){
+  //     indexText = "今日まで";
+  //   }else{
+  //     indexText = "$fromNow日後";
+  //   }
 
   //   if (sortedData.keys.contains(target)) {
   //     if (fromNow == 0) {
@@ -1442,7 +1448,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   //     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
   //       title,
-  //       menuListIndex("$fromNow日後",),
+  //       menuListIndex(indexText),
   //       ListView.builder(
   //         itemBuilder: (BuildContext context, int index) {
   //           Widget dateTimeData = Container();
@@ -1474,7 +1480,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   //       )
   //     ]);
   //   } else {
-  //     if (fromNow == 0 && !isTaskDatanull(target)) {
+  //     if (fromNow == 0 && !isTaskDatanull(target)){
   //       title = Text(
   //         '近日締切の課題',
   //         style: TextStyle(
