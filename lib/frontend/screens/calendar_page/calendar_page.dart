@@ -74,7 +74,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
-    NotifyContent().taskDueTodayNotification();
+
     NotifyContent().scheduleDailyEightAMNotification();
 
     // NotifyContent().sampleNotification("task");
@@ -411,13 +411,12 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
       Column(children: [
         menuList(Icons.calendar_month, "カレンダー", [
-
-            menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DataUploadPage()),
-              );
-            }),
+          menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DataUploadPage()),
+            );
+          }),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -456,16 +455,12 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         const SizedBox(height: 15),
         Row(children: [
-          menuPanel(
-            Icons.link_rounded, 
-            "Moodle URL登録", 
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-              );
-            }
-          ),
+          menuPanel(Icons.link_rounded, "Moodle URL登録", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UrlRegisterPage()),
+            );
+          }),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 5,
           ),
@@ -478,31 +473,24 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
         menuList(Icons.info, "その他", [
-
           menuListChild(Icons.backup, "データバックアップ", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DataDownloadPage()),
             );
           }),
-
-          
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingsPage()),
             );
           }),
-
           menuListChild(Icons.info, "サポート", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SnsLinkPage()),
             );
-
           })
-
-          
         ]),
         const SizedBox(height: 15),
         const SizedBox(height: 30),
@@ -1072,8 +1060,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     return InkWell(
         onTap: ontap,
-        child: 
-        Column(children: [
+        child: Column(children: [
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               color: Colors.white,
@@ -1086,6 +1073,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             endIndent:0)
         ])
       );
+
   }
 
   Widget taskListHeader(String text,int fromNow) {
@@ -1109,10 +1097,9 @@ class _CalendarState extends ConsumerState<Calendar> {
           const SizedBox(width: 5),
             Text(text,
                 style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold
-                )),
+                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
         const Divider(height: 1,indent:0,endIndent:0)
@@ -1392,9 +1379,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                             Row(children: [
                               dateTimeData,
                               const SizedBox(width: 15),
-                               tagChip(
-                                      targetDayData.elementAt(index)["tagID"],
-                                      ref)
+                              tagChip(
+                                  targetDayData.elementAt(index)["tagID"], ref)
                             ]),
                             SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 70,
@@ -1468,6 +1454,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]);
     }
   }
+
 
   Widget taskDataList(DateTime target, int fromNow) {
     final taskData = ref.watch(taskDataProvider);
