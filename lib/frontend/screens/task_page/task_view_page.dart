@@ -169,6 +169,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             } else if (snapshot.hasError) {
               return const SizedBox();
             } else if (snapshot.hasData) {
+              //DBから何らかのデータが返ってきた場合
 
               if (ref.watch(taskDataProvider).isInit) {
                 ref.read(taskDataProvider).isInit = false;
@@ -187,12 +188,16 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).isRenewed = false;
               }
 
-              taskData.sortDataByDtEnd(taskData.taskDataList);
-              return TaskListByDtEnd(
-                  sortedData: taskData.sortDataByDtEnd(taskData.taskDataList));
+              Map<DateTime, List<Map<String, dynamic>>> sortedTasks 
+                    = taskData.sortDataByDtEnd(taskData.taskDataList);
+                if(sortedTasks.isEmpty){
+                  return NoTaskPage();
+                }else{
+                  return TaskListByDtEnd(
+                      sortedData: sortedTasks);
+                }
             } else {
-              print(snapshot.data);
-
+              //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
                 displayDB();
                 ref.read(taskDataProvider).isRenewed = false;
