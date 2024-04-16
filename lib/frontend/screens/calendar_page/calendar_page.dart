@@ -285,27 +285,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return Column(children: [
       switchWidget(tipsAndNewsPanel(randomNumber, ""),
           ConfigDataLoader().searchConfigData("tips", ref)),
-      Row(children: [
-        const Spacer(),
-        Padding(
-          padding: EdgeInsets.only(
-            left: SizeConfig.blockSizeHorizontal! * 3,
-            right: SizeConfig.blockSizeHorizontal! * 3,
-          ),
-          child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
-                );
-              },
-              child: const Text("画面カスタマイズ",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.bold))),
-        ),
-      ]),
+      const SizedBox(height:10),
       switchWidget(todaysScheduleListView(),
           ConfigDataLoader().searchConfigData("todaysSchedule", ref)),
       switchWidget(
@@ -410,7 +390,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeVertical! * 3,
       ),
       Column(children: [
-        menuList(Icons.calendar_month, "カレンダー", [
+        menuList(Icons.calendar_month, "カレンダー", false, [
           menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
             Navigator.push(
               context,
@@ -472,7 +452,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           })
         ]),
         const SizedBox(height: 15),
-        menuList(Icons.info, "その他", [
+        menuList(Icons.info, "その他", false, [
           menuListChild(Icons.backup, "データバックアップ", () {
             Navigator.push(
               context,
@@ -1052,10 +1032,19 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]));
   }
 
-  Widget taskListChild(Widget child, void Function() ontap ,bool isIndent) {
+  Widget taskListChild(Widget child, void Function() ontap ,bool isDivider, bool isIndent) {
     double indent = 0;
     if(!isIndent){
       indent = 10;
+    }
+
+    Widget divider = const SizedBox();
+    if(isDivider){
+      divider = Divider(
+        height:1,
+        thickness:1,
+        indent:indent,
+        endIndent:indent);
     }
 
     return InkWell(
@@ -1066,11 +1055,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               color: Colors.white,
                 child: child
               ),
-          Divider(
-            height:1,
-            thickness:1,
-            indent:indent,
-            endIndent:0)
+          divider
         ])
       );
 
@@ -1102,11 +1087,27 @@ class _CalendarState extends ConsumerState<Calendar> {
                     fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
-        const Divider(height: 1,indent:0,endIndent:0)
+        const Divider(height: 1,indent:10,endIndent:10)
     ]);
   }
 
-  Widget menuList(IconData headerIcon, String headerText, List<Widget> child) {
+  Widget menuList(IconData headerIcon, String headerText, bool showCustomButton, List<Widget> child) {
+    Widget customButton = const SizedBox();
+    if(showCustomButton){
+      customButton = 
+        InkWell(
+          onTap:(){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingsPage()),
+            );
+          },
+          child:Icon(Icons.settings,
+                size: SizeConfig.safeBlockVertical! * 2.5,
+                color: Colors.grey)
+        );
+    }
+
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
         decoration: BoxDecoration(
@@ -1123,19 +1124,23 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
         child: Column(children: [
           SizedBox(
-              height: SizeConfig.safeBlockVertical! * 2,
+              height: SizeConfig.safeBlockVertical! * 3,
               child: Row(children: [
                 const SizedBox(width: 10),
                 Icon(headerIcon,
-                    size: SizeConfig.safeBlockVertical! * 1.5,
+                    size: SizeConfig.safeBlockVertical! * 2,
                     color: Colors.grey),
                 Text(
-                  headerText,
+                  " " + headerText,
                   style: TextStyle(
-                      fontSize: SizeConfig.safeBlockVertical! * 1.5,
+                      fontSize: SizeConfig.safeBlockVertical! * 1.7,
                       color: Colors.grey),
-                )
-              ])),
+              ),
+              const Spacer(),
+              customButton,
+              const SizedBox(width: 15),
+            ])
+          ),
           const Divider(height: 1),
           ListView.builder(
             itemBuilder: (context, index) {
@@ -1292,7 +1297,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-  Widget todaysScheduleListView() {
+ Widget todaysScheduleListView() {
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
@@ -1306,106 +1311,279 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const SizedBox();
     } else {
       List targetDayData = data.sortedDataByDay[targetKey];
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          'きょうの予定',
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 7,
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        ),
-        ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            Widget dateTimeData = Container();
-            if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-                targetDayData.elementAt(index)["endTime"].trim() != "") {
-              dateTimeData = Text(
-                " " +
-                    targetDayData.elementAt(index)["startTime"] +
-                    "～" +
-                    targetDayData.elementAt(index)["endTime"],
-                style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold),
-              );
-            } else if (targetDayData.elementAt(index)["startTime"].trim() !=
-                "") {
-              dateTimeData = Text(
-                " " + targetDayData.elementAt(index)["startTime"],
-                style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold),
-              );
-            } else {
-              dateTimeData = const Text(
-                " 終日",
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold),
-              );
+      return Column(children:[
+        menuList(
+          Icons.calendar_month,
+          "きょうの予定",
+          true,
+          [
+          Container(
+            height:SizeConfig.blockSizeVertical! *3,
+            decoration: const BoxDecoration(
+            ),
+            child:Text(
+              DateFormat("   yyyy年MM月dd日 (E)").format(DateTime.now()),
+              style:const TextStyle(
+                color:Colors.grey,
+                fontWeight: FontWeight.bold
+              ),
+            )
+          ),
+
+          const Divider(height:1,indent:10,endIndent:10),
+
+          ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              Widget dateTimeData = Container();
+
+              if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+                  targetDayData.elementAt(index)["endTime"].trim() != "") {
+                dateTimeData = Text(
+                  " " +
+                      targetDayData.elementAt(index)["startTime"] +
+                      "\n " +
+                      targetDayData.elementAt(index)["endTime"],
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold),
+                );
+              } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+                  "") {
+                dateTimeData = Text(
+                  " " + targetDayData.elementAt(index)["startTime"],
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold),
+                );
+              } else {
+                dateTimeData = const 
+                Column(children:[
+                  Text(
+                    " 00:00",
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color:Colors.white
+                        ),
+                  ),
+                  Text(
+                    " 終日",
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    " 00:00",
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color:Colors.white
+                        ),
+                  )
+                ]);
+              }
+
+            String formerDateTimeData = "終日";
+            if(index != 0){
+              if (targetDayData.elementAt(index-1)["startTime"].trim() != "" &&
+                  targetDayData.elementAt(index-1)["endTime"].trim() != "") {
+
+                formerDateTimeData = targetDayData.elementAt(index-1)["startTime"];
+
+              } else if (targetDayData.elementAt(index-1)["startTime"].trim() != "") {
+
+                formerDateTimeData = targetDayData.elementAt(index-1)["startTime"];
+
+              }
             }
 
-            return Column(children: [
-              InkWell(
-                onTap: () {
+            String thisDateTimeData = "終日";
+            if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+                targetDayData.elementAt(index)["endTime"].trim() != "") {
+
+              thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+
+            } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
+
+              thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+
+            }
+
+            String nextDateTimeData = "終日";
+            if(index + 1 < targetDayData.length){
+              if (targetDayData.elementAt(index + 1)["startTime"].trim() != "" &&
+                  targetDayData.elementAt(index + 1)["endTime"].trim() != "") {
+
+                nextDateTimeData = targetDayData.elementAt(index + 1)["startTime"];
+
+              } else if (targetDayData.elementAt(index + 1)["startTime"].trim() != "") {
+
+                nextDateTimeData = targetDayData.elementAt(index + 1)["startTime"];
+
+              }
+            }
+
+            Color upperDividerColor = Colors.grey;
+            Color dotColor = Colors.grey;
+            Color underDividerColor = Colors.grey;
+            DateTime now = DateTime.now();
+
+
+            if(formerDateTimeData == "終日"){
+              upperDividerColor = Colors.redAccent;
+            }else{
+              DateTime formerDateTime = DateTime(
+                now.year,now.month,now.day,
+                int.parse(formerDateTimeData.substring(0,2)),
+                int.parse(formerDateTimeData.substring(3,5)),
+                );
+              if(formerDateTime.isBefore(now) && nextDateTimeData != "終日"){
+                DateTime nextDateTime = DateTime(
+                  now.year,now.month,now.day,
+                  int.parse(nextDateTimeData.substring(0,2)),
+                  int.parse(nextDateTimeData.substring(3,5)),
+                  );
+                  upperDividerColor = Colors.red;
+                if(nextDateTime.isBefore(now)){
+                  underDividerColor = Colors.red;
+                }
+                
+              }
+            }
+            
+
+            if(thisDateTimeData == "終日"){
+              upperDividerColor = Colors.red;
+              dotColor = Colors.red;
+              underDividerColor = Colors.red;
+            }else{
+              DateTime thisDateTime = DateTime(
+                now.year,now.month,now.day,
+                int.parse(thisDateTimeData.substring(0,2)),
+                int.parse(thisDateTimeData.substring(3,5)),
+                );
+              if(thisDateTime.isBefore(now)){
+                upperDividerColor = Colors.red;
+                dotColor = Colors.red;
+                underDividerColor = Colors.red;                
+              }
+              if(nextDateTimeData == "終日"){
+                underDividerColor = Colors.grey;
+              }
+            }
+
+            bool isLast = false;
+            if(targetDayData.length == index + 1){
+              isLast = true;    
+            }
+            
+            double dividerIndent = 0;
+            if(isLast){
+              dividerIndent = 8;
+            }
+
+            Widget tagThumbnailer = const SizedBox();
+            if(targetDayData.elementAt(index)["tagID"] != null &&
+            targetDayData.elementAt(index)["tagID"] != ""){
+              tagThumbnailer = Row(children:[
+                tagThumbnail(
+                  targetDayData.elementAt(index)["tagID"]),
+                Text(" " + returnTagTitle(
+                  targetDayData.elementAt(index)["tagID"] ?? "",
+                  ref),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: SizeConfig.blockSizeHorizontal! *3,
+                      fontWeight: FontWeight.bold),
+                  )
+              ]);
+            }
+
+              return taskListChild(
+               Column(
+                children: [
+              IntrinsicHeight(child:
+                Row(children:[
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal:5),
+                    child:dateTimeData,
+                  ),
+                  
+                SizedBox(
+                  width:6,
+                  child:
+                  Column(
+                  children:[
+                  Expanded(child:
+                      VerticalDivider(
+                        width: 2,
+                        thickness: 2,
+                        color: upperDividerColor,
+                        ),
+                      ),
+                    Container(
+                      height:6,width:6,
+                      decoration:BoxDecoration(
+                        color:dotColor,
+                        shape: BoxShape.circle
+                      ),
+                    ),
+                    Expanded(child:
+                      VerticalDivider(
+                        width: 2,
+                        thickness: 2,
+                        color: underDividerColor,
+                        endIndent: dividerIndent,
+                        
+                        ),
+                      )
+                    ]),
+                  ),
+                      Padding(
+                        padding:const EdgeInsets.all(5),
+                        child:Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+
+                              tagThumbnailer,
+                              
+                              Text(
+                                " " + data.sortedDataByDay[targetKey]
+                                    .elementAt(index)["subject"],
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: SizeConfig.blockSizeHorizontal! *5,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ]),
+                          )
+                      ])
+                    )
+               ]),
+              () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return DailyViewPage(target: target);
                       });
-                },
-                child: Container(
-                    width: SizeConfig.blockSizeHorizontal! * 95,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5), // 影の色と透明度
-                          spreadRadius: 2, // 影の広がり
-                          blurRadius: 3, // ぼかしの強さ
-                          offset: const Offset(0, 3), // 影の方向（横、縦）
-                        ),
-                      ],
-                    ),
-                    child: Row(children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(children: [
-                              dateTimeData,
-                              const SizedBox(width: 15),
-                              tagChip(
-                                  targetDayData.elementAt(index)["tagID"], ref)
-                            ]),
-                            SizedBox(
-                                width: SizeConfig.blockSizeHorizontal! * 70,
-                                child: Text(
-                                  data.sortedDataByDay[targetKey]
-                                      .elementAt(index)["subject"],
-                                  overflow: TextOverflow.clip,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                ))
-                          ]),
-                    ])),
-              ),
-              const SizedBox(height: 15)
-            ]);
-          },
-          itemCount: data.sortedDataByDay[targetKey].length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-        )
+              },
+              true,
+              isLast,
+              );
+            },
+            itemCount: data.sortedDataByDay[targetKey].length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+          )
+        ]),
+        const SizedBox(height:15)
       ]);
     }
   }
+
 
   Widget taskDataListList(int fromNow) {
     DateTime now = DateTime.now();
@@ -1424,7 +1602,9 @@ class _CalendarState extends ConsumerState<Calendar> {
             ),
             const SizedBox(height:5),
           ]),
-          (){},true
+          (){},
+          true,
+          true
         );
       }
 
@@ -1432,7 +1612,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const SizedBox();
     }else{
       return Column(children:[
-        menuList(Icons.check, "近日締切の課題",
+        menuList(Icons.check, "近日締切の課題",true,
           [
             noneTaskWidget,
 
@@ -1471,12 +1651,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
 
     if (sortedData.keys.contains(target)) {
-      // if (fromNow == 0) {
-      //   title = menuListIndex('近日締切の課題',);
-      // }
-
-    
-
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title,
         taskListHeader(indexText,fromNow),
@@ -1507,13 +1681,21 @@ class _CalendarState extends ConsumerState<Calendar> {
               dividerIndent = 8;
             }
 
+            Color upperDividerColor = Colors.grey;
+            if(fromNow == 0){
+              upperDividerColor = Colors.red;
+            }
+
             return taskListChild(
               IntrinsicHeight(child:
               Row(children:[
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal:5),
-                  child: Text(timeEnd,style:const TextStyle(fontWeight: FontWeight.bold))
+                  child: Text(timeEnd,
+                    style:const TextStyle(
+                      fontWeight: FontWeight.bold,)
+                    )
                 ),
                 
               SizedBox(
@@ -1521,11 +1703,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                 child:
                 Column(
                  children:[
-                 const  Expanded(child:
+                  Expanded(child:
                     VerticalDivider(
                       width: 2,
                       thickness: 2,
-                      color: Colors.grey,
+                      color:  upperDividerColor,
                       ),
                     ),
                   Container(
@@ -1570,6 +1752,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ])
                 ),
                 () {bottomSheet(sortedData[target]!.elementAt(index));},
+                isLast,
                 isLast
                 );
           },
@@ -1580,7 +1763,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       ]);
     } else {
       if (fromNow == 0 && !isTaskDatanull(target)){
-        title = const SizedBox(); //menuListIndex('近日締切の課題',);
+        title = const SizedBox();
       }
 
       return title;
