@@ -8,13 +8,13 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 
 class TagAndTemplatePage extends ConsumerStatefulWidget {
   @override

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 
 import 'tasklist_sort_date.dart';
 import 'dart:async';
-import 'data_manager.dart';
+import 'task_data_manager.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import '../common/loading.dart';
@@ -39,6 +40,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     _initializeData();
   }
 
+
   Future<void> _initializeData() async {
     //ここの中にロードを1時間に1回までに制限する仕組みを書いて、
     //initState内で呼び出せばよさそうじゃない？
@@ -68,13 +70,15 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scaffold(
-        backgroundColor: Colors.white, // BACKGROUND_COLOR,
+        backgroundColor: Colors.white,
         body: Column(children: [
           SizedBox(
             child: SingleChildScrollView(
@@ -87,15 +91,28 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       color: Colors.black.withOpacity(0.3),
                       spreadRadius: 1,
                       blurRadius: 2,
-                      offset: const Offset(0, 1), // 影のオフセット（x, y）
+                      offset: const Offset(0, 1), 
                     ),
                   ],
                 ),
                 height: SizeConfig.blockSizeVertical! * 4.5,
                 child: Row(children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: foldStateSwitch(),
+                  TextButton(
+                    child: Row(children:[
+                      const Text("未達成 ",
+                        style:TextStyle(fontWeight: FontWeight.bold)),
+                      listLengthView(
+                        ref.watch(taskDataProvider).expiredTaskDataList.length,
+                        SizeConfig.blockSizeVertical! * 1.205,
+                      )
+                      ]),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExpiredTaskPage()),
+                      );
+                    },
                   ),
                   const VerticalDivider(
                     width: 4,
@@ -105,7 +122,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     endIndent: 4,
                   ),
                   TextButton(
-                    child: const Text("削除済み"),
+                    child: const Text("削除済み",
+                      style:TextStyle(fontWeight: FontWeight.bold)),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -113,6 +131,17 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                             builder: (context) => DeletedTaskPage()),
                       );
                     },
+                  ),
+                  const VerticalDivider(
+                    width: 4,
+                    thickness: 1.5,
+                    color: Colors.grey,
+                    indent: 0,
+                    endIndent: 4,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: foldStateSwitch(),
                   ),
                   const VerticalDivider(
                     width: 4,
@@ -152,6 +181,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ],
         ));
   }
+
 
   Widget pages() {
     final taskData = ref.watch(taskDataProvider);
@@ -271,7 +301,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 taskData.foldState = 1;
               });
             },
-            child: const Text("全て畳む"));
+            child: const Text("畳む",
+              style:TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -279,23 +310,17 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 taskData.foldState = 2;
               });
             },
-            child: const Text("全て展開する"));
-      case 2:
-        return TextButton(
-            onPressed: () {
-              setState(() {
-                taskData.foldState = 0;
-              });
-            },
-            child: const Text("期限内のみ展開する"));
+            child: const Text("展開",
+              style:TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
             onPressed: () {
               setState(() {
-                taskData.foldState = 0;
+                taskData.foldState = 1;
               });
             },
-            child: const Text("期限内のみ展開する"));
+            child: const Text("畳む",
+              style:TextStyle(fontWeight: FontWeight.bold)));
     }
   }
 
@@ -309,7 +334,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 1;
               });
             },
-            child: const Text("ソート：期限"));
+            child: const Text("ソート：期限",
+              style:TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -317,7 +343,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ"));
+            child: const Text("ソート：カテゴリ",
+               style:TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
             onPressed: () {
@@ -325,7 +352,30 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ"));
+            child: const Text("ソート：カテゴリ",
+               style:TextStyle(fontWeight: FontWeight.bold)));
     }
   }
 }
+
+  Widget listLengthView(int target, double fontSize) {
+    if (target == 0) {
+      return const SizedBox();
+    } else {
+      return Container(
+          decoration: const BoxDecoration(
+            color: Colors.redAccent,
+            shape: BoxShape.circle,
+          ),
+          padding: EdgeInsets.all(fontSize / 3),
+          child: Text(
+            target.toString(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: fontSize),
+        )
+      );
+    }
+  }
+

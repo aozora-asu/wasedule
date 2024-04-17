@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
@@ -12,7 +12,7 @@ import '../common/burger_menu.dart';
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;

@@ -4,13 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/arbeit_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 class ArbeitStatsPage extends ConsumerStatefulWidget {

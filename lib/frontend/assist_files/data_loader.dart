@@ -2,7 +2,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_h
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 

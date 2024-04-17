@@ -23,6 +23,7 @@ class TaskDataNotifier extends StateNotifier<TaskData> {
 class TaskData {
   List<Map<String, dynamic>> taskDataList = [];
   List<Map<String, dynamic>> deletedTaskDataList = [];
+  List<Map<String, dynamic>> expiredTaskDataList = [];
   bool isInit = false;
   bool isRenewed = false;
   bool isButton = false;
@@ -73,19 +74,26 @@ class TaskData {
   Map<DateTime, List<Map<String, dynamic>>> sortDataByDtEnd(TDList) {
     Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
     deletedTaskDataList = [];
+    expiredTaskDataList = [];
+
     for (int i = 0; i < TDList.length; i++) {
-      DateTime targetDate = DateTime(
-        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).year,
-        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).month,
-        DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).day,
-      );
-      if (TDList.elementAt(i)["isDone"] == 0) {
-        if (sortedData.containsKey(targetDate)) {
+        DateTime targetDate = DateTime(
+          DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).year,
+          DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).month,
+          DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).day,
+        );
+      if(targetDate.isBefore(DateTime.now()) && TDList.elementAt(i)["isDone"] == 0){
+        //期限切れタスクをソート
+        expiredTaskDataList.add(TDList.elementAt(i));
+      }else if(TDList.elementAt(i)["isDone"] == 0) {
+        //期限内かつ未達成タスクをソート
+        if(sortedData.containsKey(targetDate)) {
           sortedData[targetDate]!.add(TDList.elementAt(i));
-        } else {
+        }else{
           sortedData[targetDate] = [TDList.elementAt(i)];
         }
       }else{
+        //達成タスクをソート
         deletedTaskDataList.add(TDList.elementAt(i));
       }
     }

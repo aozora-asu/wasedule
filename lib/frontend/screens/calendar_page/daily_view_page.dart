@@ -8,7 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
@@ -20,7 +20,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 
 Future<void> registeTaskToDB(Map<String, dynamic> task) async {
   TaskItem taskItem;
@@ -796,7 +796,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   newMap["tag"] = provider.tagController.text;
                   newMap["id"] = targetData["id"];
 
-                  //★ IDからtagIDを返す関数です！
                   newMap["tagID"] =
                       returnTagId(provider.tagController.text, ref);
 

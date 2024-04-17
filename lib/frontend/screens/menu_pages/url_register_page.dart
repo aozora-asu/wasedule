@@ -85,7 +85,7 @@ class _UrlRegisterPageState extends State<UrlRegisterPage> {
               ),),),
               const SizedBox(height: 4.0),
               Align(alignment:Alignment.centerLeft,
-              child:Text('①WasedaMoodle右端のアカウントアイコンからメニューを開き、「カレンダー」を選択',
+              child:Text('①WasedaMoodle右上端のアカウントアイコンからメニューを開き、「カレンダー」を選択',
                style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! *4,
               ),),),

@@ -6,7 +6,7 @@ import 'package:flutter_calandar_app/backend/DB/models/schedule_meta_data.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';

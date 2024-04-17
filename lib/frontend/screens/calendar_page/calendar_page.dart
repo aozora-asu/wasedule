@@ -21,9 +21,9 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_pa
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -398,15 +398,15 @@ class _CalendarState extends ConsumerState<Calendar> {
             );
           }),
 
-          // scheduleEmptyFlag(
-          //   ref,
-          //   menuListChild(Icons.school, "年間行事予定", () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-          //     );
-          //   }),
-          // )
+          scheduleEmptyFlag(
+            ref,
+            menuListChild(Icons.school, "年間行事予定", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+              );
+            }),
+          )
 
           // scheduleEmptyFlag(
           //   ref,
@@ -1682,8 +1682,39 @@ class _CalendarState extends ConsumerState<Calendar> {
             }
 
             Color upperDividerColor = Colors.grey;
-            if(fromNow == 0){
+            Color dotColor = Colors.grey;
+            Color underDividerColor = Colors.grey;
+
+            DateTime now = DateTime.now();
+            
+            DateTime thisDateTimeData = DateTime.fromMillisecondsSinceEpoch(
+              sortedData[target]!.elementAt(index)["dtEnd"]
+            );
+            DateTime formerDateTimeData = DateTime(thisDateTimeData.year,thisDateTimeData.month,thisDateTimeData.day-1);
+            DateTime nextDateTimeData = DateTime(thisDateTimeData.year,thisDateTimeData.month,thisDateTimeData.day+1,);
+
+            if(index != 0){
+              formerDateTimeData = DateTime.fromMillisecondsSinceEpoch(
+                sortedData[target]!.elementAt(index - 1)["dtEnd"]);
+            }
+
+            if(index + 1 < sortedData[target]!.length){
+              nextDateTimeData = DateTime.fromMillisecondsSinceEpoch(
+                sortedData[target]!.elementAt(index + 1)["dtEnd"]);
+            }
+
+            if(thisDateTimeData.isBefore(now)){
               upperDividerColor = Colors.red;
+              dotColor = Colors.red;
+              underDividerColor = Colors.red;
+            }else if(formerDateTimeData.isBefore(now) && fromNow == 0 && index == 0){
+              upperDividerColor = Colors.red;
+            }else if(formerDateTimeData.isBefore(now)){
+              upperDividerColor = Colors.grey;
+            }
+
+            if(isLast){
+              underDividerColor = Colors.grey;
             }
 
             return taskListChild(
@@ -1712,8 +1743,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                     ),
                   Container(
                     height:6,width:6,
-                    decoration: const BoxDecoration(
-                      color:Colors.grey,
+                    decoration: BoxDecoration(
+                      color:dotColor,
                       shape: BoxShape.circle
                     ),
                   ),
@@ -1721,9 +1752,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                     VerticalDivider(
                       width: 2,
                       thickness: 2,
-                      color: Colors.grey,
+                      color: underDividerColor,
                       endIndent: dividerIndent,
-                      
                       ),
                     )
                   ]),

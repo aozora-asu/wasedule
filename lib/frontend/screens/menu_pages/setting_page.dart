@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/schedule_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
