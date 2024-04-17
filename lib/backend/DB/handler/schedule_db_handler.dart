@@ -121,12 +121,19 @@ class ScheduleDatabaseHelper {
     await _initScheduleDatabase();
     ScheduleItem scheduleItem;
 
+    if (schedule["startDate"].contains("/")) {
+      schedule["startDate"] = schedule["startDate"].replaceAll("/", "-");
+    }
+    if (schedule["endDate"].contains("/")) {
+      schedule["endDate"] = schedule["endDate"].replaceAll("/", "-");
+    }
+
     // 1. TaskItemオブジェクトを作成
     scheduleItem = ScheduleItem(
         subject: schedule["subject"],
-        startDate: schedule["startDate"].replaceAll("/", "-"),
+        startDate: schedule["startDate"],
         startTime: schedule["startTime"],
-        endDate: schedule["endDate"].replaceAll("/", "-"),
+        endDate: schedule["endDate"],
         endTime: schedule["endTime"],
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],

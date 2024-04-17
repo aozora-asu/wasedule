@@ -55,17 +55,26 @@ Future<String> _getTask(String urlString) async {
 
 Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
   //events["events"].removeAt(0);
-  for (int i = 0; i < events["events"].length; i++) {
-    events["events"][i].remove("CLASS");
-    events["events"][i].remove("LAST-MODIFIED");
-    events["events"][i].remove("DTSTAMP");
-    events["events"][i].remove("DTSTART");
-    events["events"][i]["DTEND"] = DateTime.parse(events["events"][i]["DTEND"])
-        .millisecondsSinceEpoch; //これはエポックミリ秒 int型
-    events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
-        .replaceAll(RegExp(r'[A-Za-z()\d]'), '');
-    events["events"][i]["DESCRIPTION"] =
-        events["events"][i]["DESCRIPTION"].replaceAll("\\n", "\n").trimRight();
+  if (!events["events"].isEmpty) {
+    for (int i = 0; i < events["events"].length; i++) {
+      events["events"][i].remove("CLASS");
+      events["events"][i].remove("LAST-MODIFIED");
+      events["events"][i].remove("DTSTAMP");
+      events["events"][i].remove("DTSTART");
+      events["events"][i]["DTEND"] =
+          DateTime.parse(events["events"][i]["DTEND"])
+              .millisecondsSinceEpoch; //これはエポックミリ秒 int型
+      if (events["events"][i]["CATEGORIES"] != null) {
+        events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
+            .replaceAll(RegExp(r'[A-Za-z()\d]'), '');
+      }
+
+      if (events["events"][i]["DESCRIPTION"] != null) {
+        events["events"][i]["DESCRIPTION"] = events["events"][i]["DESCRIPTION"]
+            .replaceAll("\\n", "\n")
+            .trimRight();
+      }
+    }
   }
 
   return events;
@@ -76,7 +85,6 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   final taskString = await _getTask(urlString);
   Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
-  //resisterTaskToFB(iCalInfo);
 
   final tasks = _pretterTask(iCalInfo);
   return tasks;

@@ -242,7 +242,7 @@ class TaskDatabaseHelper {
         summary: taskData["events"][i]["SUMMARY"],
         description: taskData["events"][i]["DESCRIPTION"],
         dtEnd: taskData["events"][i]["DTEND"],
-        title: taskData["events"][i]["CATEGORIES"],
+        title: taskData["events"][i]["CATEGORIES"] ?? "",
         isDone: STATUS_YET,
       );
       // 2. データベースヘルパークラスを使用してデータベースに挿入

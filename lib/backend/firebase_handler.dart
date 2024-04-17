@@ -115,6 +115,7 @@ Future<bool> importAcademicCalendar(String scheduleID) async {
 
       await TagDatabaseHelper().resisterTagToDB(tagData);
       await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
+
       await ScheduleMetaDatabaseHelper().importSchedule({
         "scheduleID": scheduleID,
         "tagID": tagData["tagID"],

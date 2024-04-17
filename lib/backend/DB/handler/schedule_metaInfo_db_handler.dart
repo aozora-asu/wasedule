@@ -95,7 +95,12 @@ class ScheduleMetaDatabaseHelper {
         tagID: importSchedule["tagID"] as String,
         dtEnd: null,
         scheduleType: importSchedule["scheduleType"] as String);
-    await _database.insert('schedule_metaInfo', scheduleMetaInfo.toMap());
+    try {
+      await _database.insert('schedule_metaInfo', scheduleMetaInfo.toMap());
+    } catch (e) {
+      // エラーが UNIQUE constraint failed の場合のみ無視する
+      if (e.toString().contains("UNIQUE constraint failed")) {}
+    }
   }
 
   Future<void> exportSchedule(Map<String, String> exportSchedule) async {
