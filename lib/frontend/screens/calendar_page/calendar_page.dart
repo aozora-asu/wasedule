@@ -391,22 +391,22 @@ class _CalendarState extends ConsumerState<Calendar> {
       ),
       Column(children: [
         menuList(Icons.calendar_month, "カレンダー", false, [
-          menuListChild(Icons.groups_rounded, "予定の配信/受信", () {
+          menuListChild(Icons.groups_rounded, "予定の配信", () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DataUploadPage()),
             );
           }),
 
-          // scheduleEmptyFlag(
-          //   ref,
-          //   menuListChild(Icons.school, "年間行事予定", () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-          //     );
-          //   }),
-          // )
+          scheduleEmptyFlag(
+            ref,
+            menuListChild(Icons.school, "年間行事予定の受信", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+              );
+            }),
+          )
 
           // scheduleEmptyFlag(
           //   ref,

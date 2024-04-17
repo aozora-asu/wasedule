@@ -359,10 +359,9 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                   Navigator.pop(context);
                   String currentYear = returnFiscalYear(DateTime.now()).toString();
                   String nextYear = (returnFiscalYear(DateTime.now()) +1).toString();
-                  print(alphabet + "_" + currentYear + "_" + nextYear);
 
                   bool isScheduleDownloadSuccess
-                    = await receiveSchedule(alphabet + "_" + currentYear + "_" + nextYear);
+                    = await importAcademicCalendar(alphabet + "_" + currentYear + "_" + nextYear);
 
                   if (isScheduleDownloadSuccess) {
                     showDownloadDoneDialogue("データがダウンロードされました！");
