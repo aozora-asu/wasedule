@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
@@ -37,7 +38,7 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
             ),
           ),
           const Text(
-              "！ 削除済みタスクは、30日後に自動削除されます。",
+              "！ 削除済みタスクは、期限から30日後に自動削除されます。",
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15,color:Colors.grey),
             ),
           const Divider(
@@ -77,19 +78,26 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                                 InkWell(
                                   onTap: () async {
 
-                                    //ここで復活用関数を呼び出し
-                                    //await TaskDatabaseHelper().unDisplay(expiredData.elementAt(i)["id"]);
+                                    await TaskDatabaseHelper().beDisplay(deletedData.elementAt(i)["id"]);
                                     
-                                    final list = ref.read(taskDataProvider).taskDataList;
-                                    final newList = [...list];
-                                    ref.read(taskDataProvider.notifier).state =
-                                        TaskData(taskDataList: newList);
+                                    List<Map<String, dynamic>> list = ref.read(taskDataProvider).taskDataList;
+                                    int indexToRemove = returnIndexFromId(deletedData.elementAt(i)["id"]);
+                                    list.removeAt(indexToRemove);
                                     ref.read(taskDataProvider).isRenewed = true;
+                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
+                                    ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
                                     setState((){});
                                   },
-                                  child:const Icon(
-                                    Icons.undo,color:Colors.grey)),
-                                
+                                  child:const 
+                                    Row(children:[
+                                    Icon(
+                                      Icons.undo,color:Colors.grey),
+                                    SizedBox(width:2),
+                                    Text(
+                                      "復元",
+                                      style:TextStyle(color:Colors.grey)),
+                                    ])
+                                )
                               ])
                             ]),
                         const Divider(
@@ -107,4 +115,17 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
       )
     );
   }
+
+  int returnIndexFromId(int id){
+    final taskData = ref.watch(taskDataProvider);
+    int result = 0;
+    List<Map<String,dynamic>> taskDataList = taskData.taskDataList;
+    for(int i = 0; i < taskDataList.length; i++){
+      if(taskDataList.elementAt(i)["id"] == id){
+        result = i;
+      }
+    }
+    return result;
+  }
+
 }
