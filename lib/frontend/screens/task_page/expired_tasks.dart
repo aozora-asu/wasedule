@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,24 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
                               Text("${expiredData.elementAt(i)["title"]}"),
                               Text(
                                   "${expiredData.elementAt(i)["description"]}"),
-                              Text(adjustedDtEnd)
+                              Row(children:[
+                                Text(adjustedDtEnd),
+                                const SizedBox(width:10),
+                                InkWell(
+                                  onTap: () async {
+                                    await TaskDatabaseHelper().unDisplay(expiredData.elementAt(i)["id"]);
+                                    List<Map<String, dynamic>> list = ref.read(taskDataProvider).taskDataList;
+                                    int indexToRemove = returnIndexFromId(expiredData.elementAt(i)["id"]);
+                                    list.removeAt(indexToRemove);
+                                    ref.read(taskDataProvider).isRenewed = true;
+                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
+                                    ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
+                                    setState((){});
+                                  },
+                                  child:const Icon(
+                                    Icons.delete,color:Colors.grey)),
+                                
+                              ])
                             ]),
                         const Divider(
                           thickness: 2.5,
@@ -89,4 +107,17 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
       )
     );
   }
+  
+  int returnIndexFromId(int id){
+    final taskData = ref.watch(taskDataProvider);
+    int result = 0;
+    List<Map<String,dynamic>> taskDataList = taskData.taskDataList;
+    for(int i = 0; i < taskDataList.length; i++){
+      if(taskDataList.elementAt(i)["id"] == id){
+        result = i;
+      }
+    }
+    return result;
+  }
+
 }

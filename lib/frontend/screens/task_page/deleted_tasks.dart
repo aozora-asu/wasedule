@@ -36,8 +36,13 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
             ),
           ),
+          const Text(
+              "！ 削除済みタスクは、30日後に自動削除されます。",
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15,color:Colors.grey),
+            ),
           const Divider(
             thickness: 2.5,
+            height:2.5,
             indent: 7,
             endIndent: 7,
           ),
@@ -66,7 +71,26 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                               Text("${deletedData.elementAt(i)["title"]}"),
                               Text(
                                   "${deletedData.elementAt(i)["description"]}"),
-                              Text(adjustedDtEnd)
+                              Row(children:[
+                                Text(adjustedDtEnd),
+                                const SizedBox(width:10),
+                                InkWell(
+                                  onTap: () async {
+
+                                    //ここで復活用関数を呼び出し
+                                    //await TaskDatabaseHelper().unDisplay(expiredData.elementAt(i)["id"]);
+                                    
+                                    final list = ref.read(taskDataProvider).taskDataList;
+                                    final newList = [...list];
+                                    ref.read(taskDataProvider.notifier).state =
+                                        TaskData(taskDataList: newList);
+                                    ref.read(taskDataProvider).isRenewed = true;
+                                    setState((){});
+                                  },
+                                  child:const Icon(
+                                    Icons.undo,color:Colors.grey)),
+                                
+                              ])
                             ]),
                         const Divider(
                           thickness: 2.5,
