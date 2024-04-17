@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/user.dart';
@@ -13,6 +14,23 @@ class UserDatabaseHelper {
     String path = join(await getDatabasesPath(), '$TABLE_NAME.db');
     _database = await openDatabase(path,
         version: 3, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+    await _deleteExpairedBackupID(_database);
+  }
+
+  Future<void> _deleteExpairedBackupID(Database _database) async {
+    // 現在の日付を取得
+    DateTime currentDate = DateTime.now();
+
+    // 30日前以前のタスクを削除するクエリを実行
+    await _database.update(
+      'user',
+      {
+        'backupID': null,
+        'dtEnd': null,
+      },
+      where: 'dtEnd < ?',
+      whereArgs: [DateFormat("yyyy-MM-dd").format(currentDate)],
+    );
   }
 
   Future<void> _upgradeDatabase(
