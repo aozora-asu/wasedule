@@ -99,7 +99,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 child: Row(children: [
                   TextButton(
                     child: Row(children:[
-                      const Text("未達成 ",
+                      const Text("期限切れ ",
                         style:TextStyle(fontWeight: FontWeight.bold)),
                       listLengthView(
                         ref.watch(taskDataProvider).expiredTaskDataList.length,
