@@ -18,6 +18,22 @@ class TaskDatabaseHelper {
     String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path,
         version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+    await deleteExpairedTask(_database, 30);
+  }
+
+  Future<void> deleteExpairedTask(Database _database, int days) async {
+    // 現在の日付を取得
+    DateTime currentDate = DateTime.now();
+
+    // 30日前の日付を計算
+    DateTime thirtyDaysAgo = currentDate.subtract(Duration(days: days));
+
+    // 30日前以前のタスクを削除するクエリを実行
+    await _database.delete(
+      'tasks',
+      where: 'dtEnd <= ?',
+      whereArgs: [thirtyDaysAgo.millisecondsSinceEpoch], // ミリ秒単位のエポック時間を使用
+    );
   }
 
   // データベースの作成
@@ -177,7 +193,16 @@ class TaskDatabaseHelper {
     );
   }
 
-  Future<void> deleteExpairedTask() async {}
+  Future<void> beDisplay(int id) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _initDatabase();
+    await _database.update(
+      'tasks',
+      {'isDone': 0}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
     _initDatabase();
