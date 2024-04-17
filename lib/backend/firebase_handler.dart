@@ -100,6 +100,37 @@ Future<bool> receiveSchedule(String scheduleID) async {
   }
 }
 
+Future<bool> importAcademicCalendar(String scheduleID) async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  final docRef = db.collection("schedule_for_each_depertment").doc(scheduleID);
+
+  try {
+    DocumentSnapshot doc = await docRef.get();
+    final data = doc.data();
+    if (data is Map<String, dynamic>) {
+      final scheduleList = (data["schedule"] as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+      final tagData = data["tag"] as Map<String, dynamic>;
+
+      await TagDatabaseHelper().resisterTagToDB(tagData);
+      await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
+      await ScheduleMetaDatabaseHelper().importSchedule({
+        "scheduleID": scheduleID,
+        "tagID": tagData["tagID"],
+        "scheduleType": "academic_calendar",
+        "dtEnd": null
+      });
+
+      return true;
+    } else {
+      throw "データが予期せず不正な形式です";
+    }
+  } catch (e) {
+    return false; // エラーが発生した場合は空のリストを返す
+  }
+}
+
 Future<String?> backup() async {
   const int remainDay = 7;
   Map<String, String?> backupInfo = await UserDatabaseHelper().getBackupInfo();
@@ -161,49 +192,55 @@ Future<bool> recoveryBackup(String backupID) async {
 
   try {
     DocumentSnapshot doc = await docRef.get();
-    final data = doc.data();
-    if (data is Map<String, dynamic>) {
-      final scheduleList = (data["schedule"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
-      final tagList = (data["tag"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await TagDatabaseHelper().resisterTagListToDB(tagList);
-      final scheduleTemplateList = (data["schedule_template"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await ScheduleTemplateDatabaseHelper()
-          .resisterScheduleTemplateListToDB(scheduleTemplateList);
-      final scheduleMetaInfoList = (data["schedule_metaInfo"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await ScheduleMetaDatabaseHelper()
-          .resisterSchedulemetaInfoListToDB(scheduleMetaInfoList);
-      final toDoList = (data["toDo"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await DataBaseHelper().resisterToDoListToDB(toDoList);
-      final toDoTemplateList = (data["toDoTemplate"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await TemplateDataBaseHelper().resisterToDoTemplateDB(toDoTemplateList);
-
-      final arbeitList = (data["arbeit"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await ArbeitDatabaseHelper().resisterArbeitListToDB(arbeitList);
-      final taskList = (data["task"] as List<dynamic>)
-          .map((item) => item as Map<String, dynamic>)
-          .toList();
-      await TaskDatabaseHelper().resisterTaskListToDB(taskList);
-      final url = data["url"] as String;
-      await UserDatabaseHelper().resisterUserInfo(url);
-
-      return true;
+    if (!doc.exists) {
+      return false;
     } else {
-      throw "データが予期せず不正な形式です";
+      final data = doc.data();
+
+      if (data is Map<String, dynamic>) {
+        final scheduleList = (data["schedule"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await ScheduleDatabaseHelper().resisterScheduleListToDB(scheduleList);
+        final tagList = (data["tag"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await TagDatabaseHelper().resisterTagListToDB(tagList);
+        final scheduleTemplateList =
+            (data["schedule_template"] as List<dynamic>)
+                .map((item) => item as Map<String, dynamic>)
+                .toList();
+        await ScheduleTemplateDatabaseHelper()
+            .resisterScheduleTemplateListToDB(scheduleTemplateList);
+        final scheduleMetaInfoList =
+            (data["schedule_metaInfo"] as List<dynamic>)
+                .map((item) => item as Map<String, dynamic>)
+                .toList();
+        await ScheduleMetaDatabaseHelper()
+            .resisterSchedulemetaInfoListToDB(scheduleMetaInfoList);
+        final toDoList = (data["toDo"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await DataBaseHelper().resisterToDoListToDB(toDoList);
+        final toDoTemplateList = (data["toDoTemplate"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await TemplateDataBaseHelper().resisterToDoTemplateDB(toDoTemplateList);
+
+        final arbeitList = (data["arbeit"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await ArbeitDatabaseHelper().resisterArbeitListToDB(arbeitList);
+        final taskList = (data["task"] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        await TaskDatabaseHelper().resisterTaskListToDB(taskList);
+        final url = data["url"] as String;
+        await UserDatabaseHelper().resisterUserInfo(url);
+
+        return true;
+      }
+      throw "データの形式が異なります";
     }
   } catch (e) {
     return false; // エラーが発生した場合は空のリストを返す
