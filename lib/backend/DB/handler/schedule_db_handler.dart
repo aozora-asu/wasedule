@@ -16,7 +16,7 @@ class ScheduleDatabaseHelper {
   Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
     _database = await openDatabase(path,
-        version: 3,
+        version: 2,
         onCreate: _createScheduleDatabase,
         onUpgrade: _upgradeScheduleDatabase);
   }
@@ -84,21 +84,6 @@ class ScheduleDatabaseHelper {
         });
       }
     }
-    if (oldVersion == 2) {
-      for (var schedule in schedules) {
-        await db.insert('schedule_new', {
-          "subject": schedule["subject"],
-          "startDate": schedule["startDate"],
-          "startTime": schedule["startTime"] ?? "",
-          "endDate": schedule["endDate"],
-          "endTime": schedule["endTime"] ?? "",
-          "isPublic": schedule["isPublic"],
-          "publicSubject": schedule["publicSubject"],
-          "tagID": schedule["tagID"] ?? "",
-          "hash": schedule["hash"]
-        });
-      }
-    }
 
     // 既存のテーブルを削除
     await db.execute('DROP TABLE schedule');
@@ -151,7 +136,7 @@ class ScheduleDatabaseHelper {
         startTime: schedule["startTime"] ?? "",
         endDate: schedule["endDate"],
         endTime: schedule["endTime"] ?? "",
-        isPublic: schedule["isPublic"],
+        isPublic: schedule["isPublic"] ?? 1,
         publicSubject: schedule["publicSubject"],
         tagID: schedule["tagID"] ?? "",
         hash: schedule["hash"]);
@@ -162,7 +147,7 @@ class ScheduleDatabaseHelper {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
         await _database.update('schedule', scheduleItem.toMap(),
-            where: 'hash = ?', whereArgs: scheduleItem.toMap()["hash"]);
+            where: 'hash = ?', whereArgs: [scheduleItem.toMap()["hash"]]);
       }
     }
   }
