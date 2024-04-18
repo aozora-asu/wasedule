@@ -16,7 +16,7 @@ class ScheduleDatabaseHelper {
   Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
     _database = await openDatabase(path,
-        version: 2,
+        version: 4,
         onCreate: _createScheduleDatabase,
         onUpgrade: _upgradeScheduleDatabase);
   }
@@ -58,30 +58,46 @@ class ScheduleDatabaseHelper {
   ''');
     // 既存のデータを新しいテーブルに移行
     var schedules = await db.query('schedule');
+    if (oldVersion == 1) {
+      for (var schedule in schedules) {
+        String tagID = "";
+        if (schedule["tag"] == "" || schedule["tag"] == null) {
+          tagID = "";
+        } else {
+          int tagid = int.parse(schedule["tag"] as String);
+          tagID = await TagDatabaseHelper().getTagIDFromId(tagid) ?? "";
+        }
 
-    for (var schedule in schedules) {
-      String tagID = "";
-      if (schedule["tag"] == "" || schedule["tag"] == null) {
-        tagID = "";
-      } else {
-        int tagid = int.parse(schedule["tag"] as String);
-        tagID = await TagDatabaseHelper().getTagIDFromId(tagid) ?? "";
+        await db.insert('schedule_new', {
+          "subject": schedule['subject'],
+          "startDate": schedule['startDate'],
+          "startTime": schedule['startTime'],
+          "endDate": schedule['endDate'],
+          "endTime": schedule['endTime'],
+          "isPublic": schedule['isPublic'],
+          "publicSubject": schedule['publicSubject'],
+          "tagID": tagID,
+          "hash": (DateTime.now().microsecondsSinceEpoch +
+                  schedules.indexOf(schedule).hashCode)
+              .hashCode
+              .toString()
+        });
       }
-
-      await db.insert('schedule_new', {
-        "subject": schedule['subject'],
-        "startDate": schedule['startDate'],
-        "startTime": schedule['startTime'],
-        "endDate": schedule['endDate'],
-        "endTime": schedule['endTime'],
-        "isPublic": schedule['isPublic'],
-        "publicSubject": schedule['publicSubject'],
-        "tagID": tagID,
-        "hash": (DateTime.now().microsecondsSinceEpoch +
-                schedules.indexOf(schedule).hashCode)
-            .hashCode
-            .toString()
-      });
+    }
+    if (oldVersion == 2) {
+      for (var schedule in schedules) {
+        await db.insert('schedule_new', {
+          "subject": schedule["subject"],
+          "startDate": schedule["startDate"],
+          "startTime": schedule["startTime"] ?? "",
+          "endDate": schedule["endDate"],
+          "endTime": schedule["endTime"] ?? "",
+          "isPublic": schedule["isPublic"],
+          "publicSubject": schedule["publicSubject"],
+          "tagID": schedule["tagID"] ?? "",
+          "hash": schedule["hash"]
+        });
+      }
     }
 
     // 既存のテーブルを削除
@@ -124,7 +140,7 @@ class ScheduleDatabaseHelper {
     if (schedule["startDate"].contains("/")) {
       schedule["startDate"] = schedule["startDate"].replaceAll("/", "-");
     }
-    if (schedule["endDate"].contains("/")) {
+    if (schedule["endDate"] != null && schedule["endDate"].contains("/")) {
       schedule["endDate"] = schedule["endDate"].replaceAll("/", "-");
     }
 
@@ -132,27 +148,29 @@ class ScheduleDatabaseHelper {
     scheduleItem = ScheduleItem(
         subject: schedule["subject"],
         startDate: schedule["startDate"],
-        startTime: schedule["startTime"],
+        startTime: schedule["startTime"] ?? "",
         endDate: schedule["endDate"],
-        endTime: schedule["endTime"],
+        endTime: schedule["endTime"] ?? "",
         isPublic: schedule["isPublic"],
         publicSubject: schedule["publicSubject"],
         tagID: schedule["tagID"] ?? "",
         hash: schedule["hash"]);
-    await insertSchedule(scheduleItem);
+    // 2. データベースヘルパークラスを使用してデータベースに挿入
+    try {
+      await insertSchedule(scheduleItem);
+    } catch (e) {
+      // エラーが UNIQUE constraint failed の場合のみ無視する
+      if (e.toString().contains("UNIQUE constraint failed")) {
+        await _database.update('schedule', scheduleItem.toMap(),
+            where: 'hash = ?', whereArgs: scheduleItem.toMap()["hash"]);
+      }
+    }
   }
 
   Future<void> resisterScheduleListToDB(
       List<Map<String, dynamic>> scheduleList) async {
     for (var schedule in scheduleList) {
-      try {
-        await resisterScheduleToDB(schedule);
-      } catch (e) {
-        // エラーが UNIQUE constraint failed の場合のみ無視する
-        if (e.toString().contains("UNIQUE constraint failed")) {
-          continue;
-        }
-      }
+      await resisterScheduleToDB(schedule);
     }
   }
 
