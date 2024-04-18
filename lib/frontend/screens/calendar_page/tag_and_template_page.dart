@@ -364,7 +364,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                         "タグ「" + returnTagTitle(sortedData.elementAt(index)["tagID"],ref)
                         + "」が紐づいているすべての予定",
                         () async {
-                          deleteAllScheduleWithTag(sortedData.elementAt(index)["tagID"],ref);
+                          await deleteAllScheduleWithTag(sortedData.elementAt(index)["tagID"],ref,setState);
                         }
                       );
                       ref.read(scheduleFormProvider).clearContents();

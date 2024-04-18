@@ -102,7 +102,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           downloadUniversityScheduleButton(),
           const SizedBox(height: 5),
           chooseDepartmentButton(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 150),
           const Divider(thickness: 2,),
           const SizedBox(height: 10),
           const Text("【免責事項】",
@@ -124,10 +124,16 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           showDownloadConfirmDialogue("大学全体","all_depertment");
         },
         style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-        child:const Text(
+        child:const Row(children:[
+          Spacer(),
+          Icon(Icons.downloading_outlined,color:Colors.white),
+          SizedBox(width:30),
+          Text(
           "大学年間行事予定",
           style: TextStyle(color:Colors.white),  
-        )
+          ),
+          Spacer()
+        ])
       )
     );
   }
@@ -140,10 +146,16 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           showChooseDepartmentDialogue();
         },
         style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-        child:const Text(
+        child:const Row(children:[
+          Spacer(),
+          Icon(Icons.downloading_outlined,color:Colors.white),
+          SizedBox(width:30),
+          Text(
           "各学部年間行事予定",
           style: TextStyle(color:Colors.white),  
-        )
+          ),
+          Spacer()
+        ])
       )
     );
   }

@@ -378,9 +378,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                           .elementAt(index)["tagID"],ref)
                                     + "」が紐づいているすべての予定",
                                     () async {
-                                      deleteAllScheduleWithTag(data
+                                      await deleteAllScheduleWithTag(data
                                                 .sortedDataByDay[targetKey]
-                                                .elementAt(index)["tagID"], ref);
+                                                .elementAt(index)["tagID"], ref, setState);
                                       setState(() {});
                                     }
                                   );
@@ -1098,7 +1098,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   }
 }
 
-Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref)async{
+Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref, StateSetter setState)async{
   List allData = ref.read(calendarDataProvider).calendarData;
   for(int i = 0; i < allData.length; i++){
     if(allData.elementAt(i)["tagID"] == tagID){
@@ -1113,6 +1113,7 @@ Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref)async{
               false) {
       await Future.delayed(
           const Duration(microseconds: 1));
+      setState((){});
   }
 }
 
