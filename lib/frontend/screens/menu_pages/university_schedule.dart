@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -104,15 +105,21 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           downloadUniversityScheduleButton(),
           const SizedBox(height: 5),
           chooseDepartmentButton(),
-          const SizedBox(height: 150),
+          const SizedBox(height: 10),
           const Divider(thickness: 2,),
           const SizedBox(height: 10),
           const Text("【免責事項】",
               style: TextStyle(fontSize: 17)),
-          const Text("大学の予定は変更される場合があります。最新情報は以下のリンクから公式サイトにてお確かめください。",
+          const Text("大学の予定は予期せず変更される場合があります。最新情報は以下のリンクから公式サイトにてお確かめください。",
               style: TextStyle(fontSize: 17)),
           const SizedBox(height: 20),
-          urlList()
+          ExpandablePanel(
+            header:const Row(children:[
+              Icon(Icons.link,color:Colors.blue),
+              Text("リンク集")
+            ]),
+            collapsed: Container(),
+            expanded:  urlList())
         ],
       ),
     );
