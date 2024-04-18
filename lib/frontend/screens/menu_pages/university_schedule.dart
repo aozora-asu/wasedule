@@ -624,7 +624,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
             _urlLaunchWithStringButton.launchUriWithString(
               context,
-              "https://www.waseda.jp/tokorozawa/kg/human-school/schedule_h.html",
+              "https://www.waseda.jp/fhum/hum/campus-life/schedule/",
             );
           },
           child: departmentPanel(
@@ -638,7 +638,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
             _urlLaunchWithStringButton.launchUriWithString(
               context,
-              "https://www.waseda.jp/tokorozawa/kg/sports-school/schedule_s.html",
+              "https://www.waseda.jp/fsps/sps/students-2/registration/",
             );
           },
           child: departmentPanel(
