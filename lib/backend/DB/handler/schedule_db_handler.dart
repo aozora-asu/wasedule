@@ -16,7 +16,7 @@ class ScheduleDatabaseHelper {
   Future<void> _initScheduleDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
     _database = await openDatabase(path,
-        version: 4,
+        version: 3,
         onCreate: _createScheduleDatabase,
         onUpgrade: _upgradeScheduleDatabase);
   }
