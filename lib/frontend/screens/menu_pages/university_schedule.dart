@@ -206,7 +206,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
-                showDownloadConfirmDialogue("国際教養学部  ", "");
+                showDownloadConfirmDialogue("国際教養学部  ", "SILS");
               },
               child: departmentPanel(
                 WASEDA_SILS_COLOR,
