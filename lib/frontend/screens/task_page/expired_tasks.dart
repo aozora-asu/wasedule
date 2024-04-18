@@ -11,6 +11,11 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manage
 
 class ExpiredTaskPage extends ConsumerStatefulWidget {
   List<Map<String, dynamic>> expiredData = [];
+  StateSetter setosute;
+  ExpiredTaskPage ({
+     required this.setosute
+  });
+  
   @override
   _ExpiredTaskPageState createState() => _ExpiredTaskPageState();
 }
@@ -86,6 +91,7 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
                                     ref.read(taskDataProvider).sortDataByDtEnd(list);
                                     ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
                                     setState((){});
+                                    widget.setosute((){});
                                   },
                                   child:const Icon(
                                     Icons.delete,color:Colors.grey)),

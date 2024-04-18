@@ -10,6 +10,10 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manage
 
 class DeletedTaskPage extends ConsumerStatefulWidget {
   List<Map<String, dynamic>> deletedData = [];
+  StateSetter setosute;
+  DeletedTaskPage ({
+     required this.setosute
+  });
   @override
   _DeletedTaskPageState createState() => _DeletedTaskPageState();
 }
@@ -77,7 +81,6 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                                 const SizedBox(width:10),
                                 InkWell(
                                   onTap: () async {
-
                                     await TaskDatabaseHelper().beDisplay(deletedData.elementAt(i)["id"]);
                                     
                                     List<Map<String, dynamic>> list = ref.read(taskDataProvider).taskDataList;
@@ -87,6 +90,7 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                                     ref.read(taskDataProvider).sortDataByDtEnd(list);
                                     ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
                                     setState((){});
+                                    widget.setosute((){});
                                   },
                                   child:const 
                                     Row(children:[

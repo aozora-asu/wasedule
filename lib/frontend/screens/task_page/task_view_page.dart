@@ -110,7 +110,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ExpiredTaskPage()),
+                            builder: (context) => ExpiredTaskPage(setosute:setState)),
                       );
                     },
                   ),
@@ -128,7 +128,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DeletedTaskPage()),
+                            builder: (context) => DeletedTaskPage(setosute:setState)),
                       );
                     },
                   ),

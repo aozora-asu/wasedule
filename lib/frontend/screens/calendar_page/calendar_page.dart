@@ -1339,9 +1339,9 @@ class _CalendarState extends ConsumerState<Calendar> {
               if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
                   targetDayData.elementAt(index)["endTime"].trim() != "") {
                 dateTimeData = Text(
-                  " " +
+                  
                       targetDayData.elementAt(index)["startTime"] +
-                      "\n " +
+                      "\n" +
                       targetDayData.elementAt(index)["endTime"],
                   style: const TextStyle(
                       fontSize: 13,
@@ -1350,37 +1350,19 @@ class _CalendarState extends ConsumerState<Calendar> {
               } else if (targetDayData.elementAt(index)["startTime"].trim() !=
                   "") {
                 dateTimeData = Text(
-                  " " + targetDayData.elementAt(index)["startTime"],
+                  targetDayData.elementAt(index)["startTime"],
                   style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold),
                 );
               } else {
-                dateTimeData = const 
-                Column(children:[
+                dateTimeData = 
                   Text(
-                    " 00:00",
+                    "終日",
                     style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color:Colors.white
-                        ),
-                  ),
-                  Text(
-                    " 終日",
-                    style: TextStyle(
-                        fontSize: 13,
+                        fontSize: SizeConfig.blockSizeHorizontal! *3.5,
                         fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    " 00:00",
-                    style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color:Colors.white
-                        ),
-                  )
-                ]);
+                  );
               }
 
             String formerDateTimeData = "終日";
@@ -1505,10 +1487,14 @@ class _CalendarState extends ConsumerState<Calendar> {
               IntrinsicHeight(child:
                 Row(children:[
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:5),
-                    child:dateTimeData,
-                  ),
+                Container(
+                  width:SizeConfig.blockSizeHorizontal! *15,
+                  padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2,),
+                  child:
+                  Center(
+                    child :dateTimeData,
+                 ),
+                ),
                   
                 SizedBox(
                   width:6,
@@ -1721,10 +1707,12 @@ class _CalendarState extends ConsumerState<Calendar> {
               IntrinsicHeight(child:
               Row(children:[
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal:5),
+                Container(
+                  width:SizeConfig.blockSizeHorizontal! *15,
+                  padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2,),
                   child: Text(timeEnd,
-                    style:const TextStyle(
+                    style: TextStyle(
+                      fontSize:SizeConfig.blockSizeHorizontal! *4,
                       fontWeight: FontWeight.bold,)
                     )
                 ),
@@ -1738,7 +1726,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                     VerticalDivider(
                       width: 2,
                       thickness: 2,
-                      color:  upperDividerColor,
+                      color: upperDividerColor,
                       ),
                     ),
                   Container(
