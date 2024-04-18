@@ -54,7 +54,7 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
             itemBuilder: (BuildContext context, int i) {
               DateTime dateEnd = DateTime.fromMillisecondsSinceEpoch(
                   expiredData.elementAt(i)["dtEnd"]);
-              String adjustedDtEnd = ("期限：" + DateFormat("yyyy年MM月dd日 hh:mm").format(dateEnd));
+              String adjustedDtEnd = ("期限：" + DateFormat("yyyy年MM月dd日 HH:mm").format(dateEnd));
               return Container(
                   width: SizeConfig.blockSizeHorizontal! * 100,
                   padding: const EdgeInsets.only(

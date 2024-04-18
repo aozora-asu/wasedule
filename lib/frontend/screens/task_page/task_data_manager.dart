@@ -82,8 +82,11 @@ class TaskData {
           DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).month,
           DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]).day,
         );
-      if(targetDate.isBefore(DateTime.now()) && TDList.elementAt(i)["isDone"] == 0){
-        //期限切れタスクをソート
+        DateTime targetDateTime = DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]);
+
+      if(targetDateTime.isBefore(DateTime.now())
+          && TDList.elementAt(i)["isDone"] == 0){
+        //期限切れかつ未達成タスクをソート
         expiredTaskDataList.add(TDList.elementAt(i));
       }else if(TDList.elementAt(i)["isDone"] == 0) {
         //期限内かつ未達成タスクをソート
