@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../assist_files/colors.dart';
@@ -340,7 +342,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                 child:Text(
                   alphabet,
                   style: TextStyle(
-                    fontSize:SizeConfig.blockSizeHorizontal! *3,
+                    fontSize:SizeConfig.blockSizeHorizontal! *2.75,
                     color:Colors.white,
                     fontWeight: FontWeight.bold
                   ),
@@ -377,6 +379,13 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
                   if (isScheduleDownloadSuccess) {
                     showDownloadDoneDialogue("データがダウンロードされました！");
+                    ref.read(taskDataProvider).isRenewed = true;
+                    ref.read(calendarDataProvider.notifier).state = CalendarData();
+                    while (
+                        ref.read(taskDataProvider).isRenewed !=
+                            false) {
+                    await Future.delayed(
+                        const Duration(microseconds: 1));}
                   } else {
                     showDownloadFailDialogue("ダウンロードに失敗しました");
                   }

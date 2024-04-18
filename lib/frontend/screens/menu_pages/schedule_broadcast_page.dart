@@ -12,6 +12,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/code_share_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -690,10 +691,17 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       onPressed: () async {
         String id = idController.text;
         if (id.isNotEmpty) {
-          Navigator.pop(context);
+          
           bool isScheduleDownloadSuccess = await receiveSchedule(id);
           if (isScheduleDownloadSuccess) {
             showDownloadDoneDialogue("データがダウンロードされました！");
+              ref.read(taskDataProvider).isRenewed = true;
+              ref.read(calendarDataProvider.notifier).state = CalendarData();
+              while (
+                  ref.read(taskDataProvider).isRenewed !=
+                      false) {
+              await Future.delayed(
+                  const Duration(microseconds: 1));}
           } else {
             showDownloadFailDialogue("ダウンロードに失敗しました");
           }
