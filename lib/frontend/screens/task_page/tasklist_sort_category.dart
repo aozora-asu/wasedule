@@ -151,6 +151,8 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
             ref.read(taskDataProvider.notifier).state =
                 TaskData(taskDataList: newList);
             ref.read(taskDataProvider).isRenewed = true;
+            ref.read(taskDataProvider).sortDataByDtEnd(list);
+            setState((){});
           },
           child: Container(
             width: SizeConfig.blockSizeHorizontal! * 100,

@@ -88,8 +88,8 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
                                     int indexToRemove = returnIndexFromId(expiredData.elementAt(i)["id"]);
                                     list.removeAt(indexToRemove);
                                     ref.read(taskDataProvider).isRenewed = true;
-                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
                                     ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
+                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
                                     setState((){});
                                     widget.setosute((){});
                                   },

@@ -109,7 +109,9 @@ class TaskData {
     sortedDataByDTEnd = {};
     for (int i = 0; i < TDList.length; i++) {
       String targetCategory = TDList[i]["title"];
-      if (TDList.elementAt(i)["isDone"] == 0) {
+      DateTime targetDateTime = DateTime.fromMillisecondsSinceEpoch(TDList[i]["dtEnd"]);
+      if (targetDateTime.isAfter(DateTime.now())
+           && TDList.elementAt(i)["isDone"] == 0) {
         if (sortedData.containsKey(targetCategory)) {
           sortedData[targetCategory]!.add(TDList.elementAt(i));
         } else {

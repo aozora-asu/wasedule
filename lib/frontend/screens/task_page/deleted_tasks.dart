@@ -87,8 +87,9 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                                     int indexToRemove = returnIndexFromId(deletedData.elementAt(i)["id"]);
                                     list.removeAt(indexToRemove);
                                     ref.read(taskDataProvider).isRenewed = true;
-                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
+                                    
                                     ref.read(taskDataProvider.notifier).state = TaskData(taskDataList: list);
+                                    ref.read(taskDataProvider).sortDataByDtEnd(list);
                                     setState((){});
                                     widget.setosute((){});
                                   },
