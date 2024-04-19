@@ -398,15 +398,12 @@ class _CalendarState extends ConsumerState<Calendar> {
             );
           }),
 
-          scheduleEmptyFlag(
-            ref,
             menuListChild(Icons.school, "年間行事予定", () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => UnivSchedulePage()),
               );
             }),
-          )
 
           // scheduleEmptyFlag(
           //   ref,
