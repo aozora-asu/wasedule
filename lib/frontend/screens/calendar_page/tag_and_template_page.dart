@@ -1080,7 +1080,7 @@ Future<void> showTagDialogue(
                   });
                   Navigator.pop(context);
                 },
-                child: const Text(" - タグをクリア",
+                child: const Text(" - タグを外す",
                     style: TextStyle(color: Colors.white)),
               ),
             ]),

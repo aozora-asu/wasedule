@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 
 import '../common/app_bar.dart';
@@ -789,17 +790,27 @@ class DateTimePickerFormField extends ConsumerWidget {
       },
     );
     if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: const TimeOfDay(hour: 23, minute: 59),
-        initialEntryMode: TimePickerEntryMode.input,
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!,
-          );
-        },
-      );
+      DateTime now = DateTime.now();
+      TimeOfDay? pickedTime = TimeOfDay.fromDateTime(
+        await DatePicker.showTimePicker(
+        context,
+        showTitleActions: true,
+        showSecondsColumn: false,
+        currentTime: DateTime.now(),
+        locale: LocaleType.jp
+      ) ?? DateTime(now.year,now.month,now.day,23,59));
+
+      // await showTimePicker(
+      //   context: context,
+      //   initialTime: const TimeOfDay(hour: 23, minute: 59),
+      //   initialEntryMode: TimePickerEntryMode.input,
+      //   builder: (context, child) {
+      //     return MediaQuery(
+      //       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+      //       child: child!,
+      //     );
+      //   },
+      // );
 
       if (pickedTime != null) {
         _selectedDate = DateTime(

@@ -269,34 +269,26 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                             fontSize: SizeConfig
                                                     .blockSizeHorizontal! *
                                                 10)),
-                                    Row(children: [
-                                      Text("超えないには？？",
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  5)),
-                                    ]),
-                                    Text(
-                                        "目安  月収" +
-                                            formatNumberWithComma(((1030000 -
-                                                        yearlyWageSumWithAdditionalWorkTime(
-                                                            widget
-                                                                .targetMonth)) /
-                                                    (12 -
-                                                        numberOfValidMonth(
-                                                            widget
-                                                                .targetMonth)))
-                                                .round()) +
-                                            " 円未満",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                5)),
-                                    SizedBox(
-                                        height:
-                                            SizeConfig.blockSizeVertical! * 1)
+                                    //Row(children: [
+                                    //   Text("超えないには？？",
+                                    //       style: TextStyle(
+                                    //           color: Colors.grey,
+                                    //           fontSize: SizeConfig
+                                    //                   .blockSizeHorizontal! *
+                                    //               5)),
+                                    // ]),
+                                    // Text(
+                                    //     "目安  月収" +
+                                    //         formatNumberWithComma(returnRemainingIncome(1030000)) +
+                                    //         " 円未満",
+                                    //     style: TextStyle(
+                                    //         fontWeight: FontWeight.bold,
+                                    //         fontSize: SizeConfig
+                                    //                 .blockSizeHorizontal! *
+                                    //             5)),
+                                    // SizedBox(
+                                    //     height:
+                                    //         SizeConfig.blockSizeVertical! * 1)
                                   ]),
                                 ),
                               ),
@@ -335,38 +327,30 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                             fontSize: SizeConfig
                                                     .blockSizeHorizontal! *
                                                 10)),
-                                    Row(children: [
-                                      Text("超えないには？？",
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  5)),
-                                    ]),
-                                    Text(
-                                        "目安  月収" +
-                                            formatNumberWithComma(((1300000 -
-                                                        yearlyWageSumWithAdditionalWorkTime(
-                                                            widget
-                                                                .targetMonth)) /
-                                                    (12 -
-                                                        numberOfValidMonth(
-                                                            widget
-                                                                .targetMonth)))
-                                                .round()) +
-                                            " 円未満",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                5)),
-                                    SizedBox(
-                                        height:
-                                            SizeConfig.blockSizeVertical! * 1)
+                                    // Row(children: [
+                                    //   Text("超えないには？？",
+                                    //       style: TextStyle(
+                                    //           color: Colors.grey,
+                                    //           fontSize: SizeConfig
+                                    //                   .blockSizeHorizontal! *
+                                    //               5)),
+                                    // ]),
+                                    // Text(
+                                    //     "目安  月収" +
+                                    //         formatNumberWithComma(returnRemainingIncome(1300000)) +
+                                    //         " 円未満",
+                                    //     style: TextStyle(
+                                    //         fontWeight: FontWeight.bold,
+                                    //         fontSize: SizeConfig
+                                    //                 .blockSizeHorizontal! *
+                                    //             5)),
+                                    // SizedBox(
+                                    //     height:
+                                    //         SizeConfig.blockSizeVertical! * 1)
                                   ]),
                                 ),
                               )
-                            ])),
+                              ])),
                     const SizedBox(height: 30),
                     const Divider(
                       thickness: 3,
@@ -406,6 +390,16 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     child: Text('戻る', style: TextStyle(color: Colors.white)),
                   ))),
         ]));
+  }
+
+  int returnRemainingIncome(int maxIncome){
+    int remainingMonth = 12-numberOfValidMonth(widget.targetMonth);
+    if(remainingMonth == 0){
+       return ((maxIncome-yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))).round();
+    }else{
+       return ((maxIncome-yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))
+                                               /(12-numberOfValidMonth(widget.targetMonth))).round();
+    }
   }
 
   Widget correctIndicator() {
@@ -902,10 +896,10 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         for (int ind = 0;
             ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
             ind++) {
-          String tagId = sortedDataByMonth[targetKey]
+          String? tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tagID"];
+              .elementAt(ind)["tagID"] ?? "";
           Map targetScheduleData =
               sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
 
@@ -940,10 +934,10 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         for (int ind = 0;
             ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
             ind++) {
-          String tagId = sortedDataByMonth[targetKey]
+          String? tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tagID"];
+              .elementAt(ind)["tagID"] ?? "";
           Map targetScheduleData =
               sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
 
@@ -1015,10 +1009,10 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
         for (int ind = 0;
             ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
             ind++) {
-          String tagId = sortedDataByMonth[targetKey]
+          String? tagId = sortedDataByMonth[targetKey]
               .values
               .elementAt(i)
-              .elementAt(ind)["tagID"];
+              .elementAt(ind)["tagID"] ?? "";
 
           if (tagId == tagData["tagID"].toString()) {
             int f = tagData["fee"];

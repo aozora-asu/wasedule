@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_p
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import '../../../backend/DB/handler/schedule_db_handler.dart';
@@ -244,15 +246,19 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             ]),
             Row(children: [
               ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => TimeInputPage(
-                                target: widget.target,
-                                inputCategory: "startTime",
-                              )),
-                    );
-                  },
+                        onPressed: () async{
+                          await DatePicker.showTimePicker(context,
+                            showTitleActions: true,
+                            showSecondsColumn: false,
+                            onConfirm: (date) {
+                              scheduleForm.timeStartController.text
+                               = DateFormat("HH:mm").format(date);
+                                setState((){});
+                            },
+                            currentTime: DateTime.now(),
+                            locale: LocaleType.jp
+                          );
+                        },
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -263,15 +269,19 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             ]),
             Row(children: [
               ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => TimeInputPage(
-                                target: widget.target,
-                                inputCategory: "endTime",
-                              )),
-                    );
-                  },
+                        onPressed: () async{
+                          await DatePicker.showTimePicker(context,
+                            showTitleActions: true,
+                            showSecondsColumn: false,
+                            onConfirm: (date) {
+                              scheduleForm.timeEndController.text
+                               = DateFormat("HH:mm").format(date);
+                                setState((){});
+                            },
+                            currentTime: DateTime.now(),
+                            locale: LocaleType.jp
+                          );
+                        },
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all<Color?>(ACCENT_COLOR),

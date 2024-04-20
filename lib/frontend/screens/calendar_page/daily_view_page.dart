@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -13,7 +11,9 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart' ;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -664,16 +664,18 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   ]),
                   Row(children: [
                     ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => TimeInputPage(
-                                      target: widget.target,
-                                      inputCategory: "startTime",
-                                      setState: setoState,
-                                    )),
+                        onPressed: () async{
+                          await DatePicker.showTimePicker(context,
+                            showTitleActions: true,
+                            showSecondsColumn: false,
+                            onConfirm: (date) {
+                              provider.timeStartController.text
+                               = DateFormat("HH:mm").format(date);
+                                setoState((){});
+                            },
+                            currentTime: DateTime.now(),
+                            locale: LocaleType.jp
                           );
-                          setState(() {});
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -685,14 +687,17 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   ]),
                   Row(children: [
                     ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => TimeInputPage(
-                                      target: widget.target,
-                                      inputCategory: "endTime",
-                                      setState: setoState,
-                                    )),
+                        onPressed: () async{
+                          await DatePicker.showTimePicker(context,
+                            showTitleActions: true,
+                            showSecondsColumn: false,
+                            onConfirm: (date) {
+                              provider.timeEndController.text
+                               = DateFormat("HH:mm").format(date);
+                                setoState((){});
+                            },
+                            currentTime: DateTime.now(),
+                            locale: LocaleType.jp
                           );
                         },
                         style: ButtonStyle(
@@ -744,40 +749,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ),
 
             const SizedBox(height: 50),
-
-            // TextButton(
-            //   onPressed: () async{
-            //     if(isConflict(provider.timeStartController.text,provider.timeEndController.text)){
-            //       print("ボタン無効");
-            //     }else{
-            //       bool boolIsPublic = false;
-            //       if(targetData["isPublic"] == 1){boolIsPublic = true;}
-
-            //       Map<String,dynamic>newMap = {};
-            //       newMap["subject"] = titlecontroller.text;
-            //       newMap["startDate"] = dtStartcontroller;
-            //       newMap["startTime"] = provider.timeStartController.text;
-            //       newMap["endDate"] = dtStartcontroller;
-            //       newMap["endTime"] = provider.timeEndController.text;
-            //       newMap["isPublic"] = provider.isPublic;
-            //       newMap["publicSubject"] = targetData["publicSubject"];
-            //       newMap["tag"] = provider.tagController.text;
-            //       newMap["id"] = targetData["id"];
-            //       await ScheduleDatabaseHelper().updateSchedule(newMap);
-            //       ref.read(taskDataProvider).isRenewed = true;
-            //       ref.read(calendarDataProvider.notifier).state = CalendarData();
-            //       while (ref.read(taskDataProvider).isRenewed != false) {
-            //         await Future.delayed(const Duration(microseconds:1));
-            //       }
-            //       setState((){});
-            //       Navigator.pop(context);
-            //       if(ref.read(calendarDataProvider).calendarData.last["id"] == 1){
-            //         showTagAndTemplateGuide(context);
-            //       }
-            //     }
-            //   },
-            //   child: const Text('登録'),
-            // ),
 
             ElevatedButton(
               onPressed: () async {

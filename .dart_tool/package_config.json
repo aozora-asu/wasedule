@@ -201,7 +201,7 @@
     },
     {
       "name": "flutter_datetime_picker_plus",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_datetime_picker_plus-2.1.0",
+      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_datetime_picker_plus-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -782,7 +782,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-04-18T16:46:52.751086Z",
+  "generated": "2024-04-20T15:29:40.384361Z",
   "generator": "pub",
   "generatorVersion": "3.3.1"
 }
