@@ -41,6 +41,7 @@ class ScheduleForm {
   TextEditingController dtEndController = TextEditingController();
   TextEditingController timeEndController = TextEditingController();
   TextEditingController tagController = TextEditingController();
+  TextEditingController tagIDController = TextEditingController();
   bool isAllDay = false;
   bool isPublic = true;
   TextEditingController publicScheduleController = TextEditingController();
@@ -58,6 +59,7 @@ class ScheduleForm {
     String? dtEndController,
     String? timeEndController,
     String? tagController,
+    String? tagIDController,
     bool? isAllDay,
     bool? isPublic,
     String? publicScheduleController,
@@ -77,6 +79,7 @@ class ScheduleForm {
       ..timeEndController.text =
           timeEndController ?? this.timeEndController.text
       ..tagController.text = tagController ?? this.tagController.text
+      ..tagIDController.text = tagIDController ?? this.tagIDController.text
       ..isAllDay = isAllDay ?? this.isAllDay
       ..isPublic = isPublic ?? this.isPublic
       ..publicScheduleController.text =
@@ -111,6 +114,7 @@ class ScheduleForm {
     timeStartController.clear();
     timeEndController.clear();
     tagController.clear();
+    tagIDController.clear();
     dtStartList = [];
     dtEndList = [];
   }

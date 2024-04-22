@@ -1196,7 +1196,10 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
 
     return Padding(
-        padding: EdgeInsets.only(top: SizeConfig.blockSizeHorizontal! * 2),
+        padding: EdgeInsets.only(
+          top: SizeConfig.blockSizeHorizontal! * 2,
+          bottom: SizeConfig.blockSizeHorizontal! * 1,
+          ),
         child: InkWell(
             onTap: () {
               Navigator.push(

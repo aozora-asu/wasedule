@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
 
 import 'package:expandable/expandable.dart';
@@ -157,7 +158,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
           child: Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
             height: SizeConfig.blockSizeVertical! * 10,
-            color: Colors.pinkAccent,
+            color: Colors.redAccent,
             child: Row(children: [
               const Spacer(),
               checkedListLength(15.0),
@@ -224,7 +225,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     return Row(children: [
       InkWell(
           onTap: () {
-            bottomSheet(targetData);
+            bottomSheet(targetData,ref,context,setState);
           },
           child: Container(
               constraints: BoxConstraints(
@@ -296,243 +297,6 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     ]);
   }
 
-  void bottomSheet(targetData) {
-    TextEditingController summaryController =
-        TextEditingController(text: targetData["summary"] ?? "");
-    TextEditingController titleController =
-        TextEditingController(text: targetData["title"] ?? "");
-    TextEditingController descriptionController =
-        TextEditingController(text: targetData["description"] ?? "");
-    int id = targetData["id"];
-    showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-            height: SizeConfig.blockSizeVertical! * 60,
-            margin: const EdgeInsets.only(top: 0),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: SingleChildScrollView(
-                child: Scrollbar(
-              child: Column(
-                children: [
-                  Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                            spreadRadius: 2, // 影の広がり
-                            blurRadius: 4, // 影のぼかし
-                            offset: const Offset(0, 2), // 影の方向（横、縦）
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      height: SizeConfig.blockSizeHorizontal! * 13,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          Container(
-                              width: SizeConfig.blockSizeHorizontal! * 92,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                73.5),
-                                    child: Text(
-                                      targetData["summary"] ?? "(詳細なし)",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  5,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  Text(
-                                    "  の詳細",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                        ],
-                      )),
-                  SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 2,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      child: Column(children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスク名",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            controller: summaryController,
-                            maxLines: 1,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "タスク名を入力…",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                            onSubmitted: (value) {
-                              TaskDatabaseHelper().updateSummary(id, value);
-
-                              final list =
-                                  ref.read(taskDataProvider).taskDataList;
-                              final newList = [...list];
-                              ref.read(taskDataProvider.notifier).state =
-                                  TaskData();
-                              ref.read(taskDataProvider).isRenewed = true;
-                              //Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "カテゴリ",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            controller: titleController,
-                            maxLines: 1,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "カテゴリを入力...",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                            onSubmitted: (value) {
-                              TaskDatabaseHelper().updateTitle(id, value);
-
-                              final list =
-                                  ref.read(taskDataProvider).taskDataList;
-                              final newList = [...list];
-                              ref.read(taskDataProvider.notifier).state =
-                                  TaskData();
-                              ref.read(taskDataProvider).isRenewed = true;
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスクの詳細",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 0.5,
-                        ),
-                        TextField(
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (value) {
-                            TaskDatabaseHelper().updateDescription(id, value);
-
-                            final list =
-                                ref.read(taskDataProvider).taskDataList;
-                            final newList = [...list];
-                            ref.read(taskDataProvider.notifier).state =
-                                TaskData();
-                            ref.read(taskDataProvider).isRenewed = true;
-                            Navigator.pop(context);
-                          },
-                          maxLines: 7,
-                          controller: descriptionController,
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          onChanged: (text) {
-                            setState(() {
-                              isEditingText(descriptionController);
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            hintText: "(タスクの詳細やメモを入力…)",
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.only(top: 0, left: 0, right: 4),
-                            hintStyle: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        MoodleUrlLauncher(width: 100),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 50,
-                        )
-                      ]))
-                ],
-              ),
-            )));
-      },
-    );
-  }
 
   bool isEditingText(TextEditingController controller) {
     return controller.text.isNotEmpty;

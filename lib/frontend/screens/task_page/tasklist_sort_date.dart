@@ -157,7 +157,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           child: Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
             height: SizeConfig.blockSizeVertical! * 10,
-            color: Colors.pinkAccent,
+            color: Colors.redAccent,
             child: Row(children: [
               const Spacer(),
               checkedListLength(15.0),
@@ -333,7 +333,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               fontWeight: FontWeight.w700)),
       InkWell(
           onTap: () {
-            bottomSheet(targetData);
+            bottomSheet(targetData,ref,context,setState);
           },
           child: Container(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
@@ -395,7 +395,28 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ]);
   }
 
-  void bottomSheet(targetData) {
+
+
+  bool isEditingText(TextEditingController controller) {
+    return controller.text.isNotEmpty;
+  }
+
+  String truncateTimeEnd(targetData) {
+    String hour = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
+        .hour
+        .toString();
+    String minute = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
+        .minute
+        .toString();
+
+    String formattedhour = hour.padLeft(2, '0');
+    String formattedminute = minute.padLeft(2, '0');
+
+    return formattedhour + ":" + formattedminute;
+  }
+}
+
+  void bottomSheet(targetData,ref,context,setState) {
     TextEditingController summaryController =
         TextEditingController(text: targetData["summary"] ?? "");
     TextEditingController titleController =
@@ -603,11 +624,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           style: TextStyle(
                             fontSize: SizeConfig.blockSizeHorizontal! * 4,
                           ),
-                          onChanged: (text) {
-                            setState(() {
-                              isEditingText(descriptionController);
-                            });
-                          },
                           decoration: const InputDecoration(
                             hintText: "(タスクの詳細やメモを入力…)",
                             border: InputBorder.none,
@@ -620,8 +636,31 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 3),
                         MoodleUrlLauncher(width: 100),
+                        ElevatedButton(
+                          onPressed: () async{
+                            TaskDatabaseHelper().unDisplay(id);
+                            setState(() {});
+                            final list = ref.read(taskDataProvider).taskDataList;
+                            List<Map<String,dynamic>> newList = [...list];
+                            ref.read(taskDataProvider.notifier).state =
+                                TaskData(taskDataList: newList);
+                            ref.read(taskDataProvider).isRenewed = true;
+                            ref.read(taskDataProvider).sortDataByDtEnd(list);
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                          style:const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.redAccent)),
+                          child:
+                          const Row(children: [
+                            Spacer(),
+                            Icon(Icons.delete,color:Colors.white),
+                            SizedBox(width:10),
+                            Text("削除",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                            Spacer()
+                          ],)
+                        ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 50,
                         )
@@ -633,24 +672,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     );
   }
 
-  bool isEditingText(TextEditingController controller) {
-    return controller.text.isNotEmpty;
-  }
-
-  String truncateTimeEnd(targetData) {
-    String hour = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .hour
-        .toString();
-    String minute = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .minute
-        .toString();
-
-    String formattedhour = hour.padLeft(2, '0');
-    String formattedminute = minute.padLeft(2, '0');
-
-    return formattedhour + ":" + formattedminute;
-  }
-}
 
 String getDayOfWeek(int weekday) {
   switch (weekday) {
