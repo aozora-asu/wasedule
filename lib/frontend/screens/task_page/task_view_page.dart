@@ -78,13 +78,25 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
+    Widget dividerModel =
+      const VerticalDivider(
+        width: 4,
+        thickness: 1.5,
+        color: Colors.grey,
+        indent: 0,
+        endIndent: 4,
+      );
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(children: [
-          SizedBox(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
+          Row(
+            children:[
+              const Icon(Icons.arrow_left,color:Colors.grey),
+              Expanded(
+                child:SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -98,6 +110,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ),
                 height: SizeConfig.blockSizeVertical! * 4.5,
                 child: Row(children: [
+                  dividerModel,
                   TextButton(
                     child: Row(children:[
                       const Text("期限切れ ",
@@ -115,13 +128,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       );
                     },
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   TextButton(
                     child: const Text("削除済み",
                       style:TextStyle(fontWeight: FontWeight.bold)),
@@ -133,32 +140,14 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       );
                     },
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   Align(
                     alignment: Alignment.centerLeft,
                     child: foldStateSwitch(),
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   sortSwitch(),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   TextButton(
                     child: const Text("不具合報告",
                       style:TextStyle(fontWeight: FontWeight.bold,color:Colors.red)),
@@ -166,18 +155,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       showErrorReportDialogue();
                     },
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 60)
+                  dividerModel
                 ]),
               ),
             ),
           ),
+          const Icon(Icons.arrow_right,color:Colors.grey)
+        ]),
           const Divider(thickness: 0.3, height: 0.3, color: Colors.grey),
           Expanded(child: pages())
         ]),
@@ -381,7 +365,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
   void showErrorReportDialogue(){
     String _text = "";
-    bool _isChecked = false;
+    bool _isChecked = true;
     showDialog(
       context: context,
       builder: (BuildContext context) {

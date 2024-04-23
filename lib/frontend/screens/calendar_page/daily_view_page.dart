@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -329,38 +330,39 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      dateTimeData,
+                      GestureDetector(
+                        onTap: ()=> switchToEditMode(targetKey,index),
+                        child:dateTimeData),
                       const SizedBox(width: 15, height: 40),
-                      tagChip(
-                          targetDayData.elementAt(index)["tagID"] ?? "", ref),
+                      GestureDetector(
+                        onTap: ()=> switchToEditMode(targetKey,index),
+                        child: tagChip(
+                          targetDayData.elementAt(index)["tagID"] ?? "", ref)),
                       const Spacer(),
                     ]),
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              width: SizeConfig.blockSizeHorizontal! * 75,
-                              child: Text(
-                                data.sortedDataByDay[targetKey]
-                                    .elementAt(index)["subject"],
-                                overflow: TextOverflow.clip,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold),
-                              )),
+                          GestureDetector(
+                            onTap: ()=> switchToEditMode(targetKey,index),
+                            child:   Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                width: SizeConfig.blockSizeHorizontal! * 75,
+                                child: Text(
+                                  data.sortedDataByDay[targetKey]
+                                      .elementAt(index)["subject"],
+                                  overflow: TextOverflow.clip,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                              )
+                            ),
+                          ),
                           const Spacer(),
                           GestureDetector(
-                            onTap: (){
-                              setState(() {
-                                isEdited = false;
-                                editingSchedule = data.sortedDataByDay[targetKey]
-                                    .elementAt(index)["id"];
-                                initEditDialog(data.sortedDataByDay[targetKey].elementAt(index));
-                              });
-                            },
+                            onTap: ()=> switchToEditMode(targetKey,index),
                             child: const Icon(
                               Icons.edit,
                               color: Colors.grey,
@@ -373,14 +375,24 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         ]);
   }
 
-  TextEditingController titleController = TextEditingController();
-  String timeStartController = "";
-  String timeEndController = "";
-  TextEditingController tagController = TextEditingController();
-  dynamic tagIDController = "";
-  dynamic dtStartController = "";
-  bool isPublic = true;
-  bool isEdited = false;
+  void switchToEditMode(targetKey,index){
+    final data = ref.read(calendarDataProvider);
+    setState(() {
+      isEdited = false;
+      editingSchedule = data.sortedDataByDay[targetKey]
+          .elementAt(index)["id"];
+      initEditDialog(data.sortedDataByDay[targetKey].elementAt(index));
+    });
+  }
+
+    TextEditingController titleController = TextEditingController();
+    String timeStartController = "";
+    String timeEndController = "";
+    TextEditingController tagController = TextEditingController();
+    dynamic tagIDController = "";
+    dynamic dtStartController = "";
+    bool isPublic = true;
+    bool isEdited = false;
 
   void initEditDialog(Map targetData) {
     if(!isEdited){
@@ -493,7 +505,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         ),
                       ),
                       const SizedBox(width: 15, height: 40),
-                      tagEditButton(index,targetDayData),
+                      tagEmptyFlag(ref, tagEditButton(index,targetDayData)),
                       const Spacer(),
                     ]),
                     Row(
@@ -599,7 +611,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       children:[
                         containScreenshotButton(),
                         dateSetButton(),
-                        templateButton(index,targetKey),
+                        templateEmptyFlag(ref,templateButton(index,targetKey)),
                         backButton(),
                         multipleDeleteButton,
                         singleDeleteButton(index,targetKey),
@@ -1184,7 +1196,7 @@ return GestureDetector(
   Future<String?> _selectDateMultipul(
       BuildContext context, String controller, StateSetter setState) async {
     Completer<String?> completer = Completer<String?>();
-    await showDialog(
+      await showDialog(
         context: context,
         builder: (_) {
           return SimpleDialog(

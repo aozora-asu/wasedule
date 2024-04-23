@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
@@ -483,29 +484,34 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                 ]);
               },
             ),
-            TextButton(
-              onPressed: () async {
-                Map<String, dynamic> newMap = {};
-                newMap["subject"] = titlecontroller.text;
-                newMap["startTime"] = provider.timeStartController.text;
-                newMap["endTime"] = provider.timeEndController.text;
-                newMap["isPublic"] = targetData["isPublic"];
-                newMap["publicSubject"] = targetData["publicSubject"];
-                newMap["tag"] = provider.tagController.text;
-                newMap["id"] = targetData["id"];
-                newMap["tagID"] = returnTagId(provider.tagController.text, ref);
+            SizedBox(
+              width: 500,
+              child: ElevatedButton(
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                onPressed: () async {
+                  Map<String, dynamic> newMap = {};
+                  newMap["subject"] = titlecontroller.text;
+                  newMap["startTime"] = provider.timeStartController.text;
+                  newMap["endTime"] = provider.timeEndController.text;
+                  newMap["isPublic"] = targetData["isPublic"];
+                  newMap["publicSubject"] = targetData["publicSubject"];
+                  newMap["tag"] = provider.tagController.text;
+                  newMap["id"] = targetData["id"];
+                  newMap["tagID"] = returnTagId(provider.tagController.text, ref);
 
-                await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
-                ref.read(scheduleFormProvider).clearContents();
-                ref.read(taskDataProvider).isRenewed = true;
-                ref.read(calendarDataProvider.notifier).state = CalendarData();
-                while (ref.read(taskDataProvider).isRenewed != false) {
-                  await Future.delayed(const Duration(microseconds: 1));
-                }
-                setState(() {});
-                Navigator.pop(context);
-              },
-              child: const Text('変更'),
+                  await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
+                  ref.read(scheduleFormProvider).clearContents();
+                  ref.read(taskDataProvider).isRenewed = true;
+                  ref.read(calendarDataProvider.notifier).state = CalendarData();
+                  while (ref.read(taskDataProvider).isRenewed != false) {
+                    await Future.delayed(const Duration(microseconds: 1));
+                  }
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+                  child: const Text('変更', style: TextStyle(color: Colors.white)),
+                ),
             ),
           ],
         );
@@ -1109,7 +1115,7 @@ void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: const Text('削除の確認'),
           content: Text('$name を削除しますか？'),
           actions: <Widget>[
