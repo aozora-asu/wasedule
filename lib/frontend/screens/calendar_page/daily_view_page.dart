@@ -97,6 +97,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         onTap: () {
           if(editingSchedule == null){
             Navigator.pop(context);
+          }else{
+            setState(() {
+              editingSchedule = null;
+              isEdited = false;
+            });
           }
         },
         child:LayoutBuilder(builder:

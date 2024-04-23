@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
@@ -377,6 +378,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             children: <Widget>[
               CupertinoTextField(
                 maxLines: 5,
+                textInputAction: TextInputAction.done,
                 onChanged: (value) {
                   setState(() {
                     _text = value;
@@ -414,6 +416,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
 
                 Navigator.of(context).pop();
+                showReportDoneDialogue();
+                showReportFailDialogue("String errorMessage");
               },
             ),
           ],
@@ -423,6 +427,40 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
       },
     );
   }
+
+  void showReportDoneDialogue() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('不具合レポートが送信されました。'),
+          actions: <Widget>[
+            const Align(alignment: Alignment.centerLeft, child: Text("ご報告いただきありがとうございます。\nお寄せいただいた情報はアプリの改善のために役立てさせていただきます。")),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
+  }
+
+  void showReportFailDialogue(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('レポート失敗'),
+          actions: <Widget>[
+            Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
+            const Align(alignment: Alignment.centerLeft, child: Text("お手数ですが再度お試しください。")),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
+  }
+
 }
 
   Widget listLengthView(int target, double fontSize) {

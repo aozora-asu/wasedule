@@ -57,10 +57,8 @@ class TaskData {
     List<String> titles = ["その他"];
     for (int i = 0; i < TDList.length; i++) {
       String targetData = TDList.elementAt(i)["title"];
-      if (TDList.elementAt(i)["isDone"] == 0) {
         if (titles.contains(targetData) == false) {
           titles.add(TDList.elementAt(i)["title"]);
-        }
       }
     }
    return titles;
@@ -119,7 +117,6 @@ class TaskData {
         }
       }
     }
-
    return sortedData;
   }
 
