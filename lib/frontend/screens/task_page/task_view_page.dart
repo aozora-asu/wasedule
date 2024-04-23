@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
@@ -151,6 +152,27 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     endIndent: 4,
                   ),
                   sortSwitch(),
+                  const VerticalDivider(
+                    width: 4,
+                    thickness: 1.5,
+                    color: Colors.grey,
+                    indent: 0,
+                    endIndent: 4,
+                  ),
+                  TextButton(
+                    child: const Text("不具合報告",
+                      style:TextStyle(fontWeight: FontWeight.bold,color:Colors.red)),
+                    onPressed: () {
+                      showErrorReportDialogue();
+                    },
+                  ),
+                  const VerticalDivider(
+                    width: 4,
+                    thickness: 1.5,
+                    color: Colors.grey,
+                    indent: 0,
+                    endIndent: 4,
+                  ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 60)
                 ]),
               ),
@@ -334,7 +356,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 1;
               });
             },
-            child: const Text("ソート：期限",
+            child: const Text("期限順",
               style:TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
@@ -343,7 +365,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ",
+            child: const Text("カテゴリ別",
                style:TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
@@ -355,6 +377,67 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             child: const Text("ソート：カテゴリ",
                style:TextStyle(fontWeight: FontWeight.bold)));
     }
+  }
+
+  void showErrorReportDialogue(){
+    String _text = "";
+    bool _isChecked = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context,setState){
+          return CupertinoAlertDialog(
+          title:const Text('不具合を報告する'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CupertinoTextField(
+                maxLines: 5,
+                onChanged: (value) {
+                  setState(() {
+                    _text = value;
+                  });
+                },
+                placeholder:"不具合の概要\n(できるだけ詳細にお願いいたします。)",
+              ),
+              Row(children:[
+                CupertinoCheckbox(
+                  value: _isChecked,
+                  onChanged:(value){
+                  setState(() {
+                    _isChecked = value!;
+                  });
+                }),
+                const Expanded(child:
+                 Text("デバッグのための情報を提供する",
+                  overflow: TextOverflow.clip,),)
+              ]),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child:const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:const Text('送信'),
+              onPressed: () {
+              //ここにデバッグ情報を送信する処理を記述！！
+              //_isCheckedは同意があるかどうか
+              //_textはエラーの詳細
+
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+         );
+        }
+       );  
+      },
+    );
   }
 }
 
