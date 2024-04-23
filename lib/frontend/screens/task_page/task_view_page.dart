@@ -79,6 +79,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
+    final bottomSpace= MediaQuery.of(context).viewInsets.bottom;
+
     Widget dividerModel =
       const VerticalDivider(
         width: 4,
@@ -88,16 +90,19 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         endIndent: 4,
       );
 
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(children: [
-          Row(
-            children:[
-              const Icon(Icons.arrow_left,color:Colors.grey),
-              Expanded(
-                child:SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
+return Scaffold(
+  resizeToAvoidBottomInset: false,
+  backgroundColor: Colors.white,
+  body: Column(
+    children: [
+      Row(
+        children:[
+          const Icon(Icons.arrow_left,color:Colors.grey),
+          Expanded(
+            child: SingleChildScrollView(
+              reverse: true,
+              scrollDirection: Axis.horizontal,
+              child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -110,9 +115,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   ],
                 ),
                 height: SizeConfig.blockSizeVertical! * 4.5,
-                child: Row(children: [
-                  dividerModel,
-                  TextButton(
+                child: Row(
+                  children: [
+                    dividerModel,
+                    TextButton(
                     child: Row(children:[
                       const Text("期限切れ ",
                         style:TextStyle(fontWeight: FontWeight.bold)),
@@ -186,7 +192,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               child: const Icon(Icons.refresh_outlined, color: Colors.white),
             ),
           ],
-        ));
+        )
+      );
   }
 
 
@@ -359,7 +366,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ",
+            child: const Text("ゴリゴリ別",
                style:TextStyle(fontWeight: FontWeight.bold)));
     }
   }
