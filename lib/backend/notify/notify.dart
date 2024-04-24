@@ -234,4 +234,6 @@ class NotifyContent {
           )),
     );
   }
+
+  Future<void> bookTomorrowNotification() async {}
 }
