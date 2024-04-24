@@ -7,17 +7,22 @@ class Message {
   Message({required this.content, this.url});
   String? url;
   final String content;
-  Future<Map<String, dynamic>> toMap() async {
-    url = await UserDatabaseHelper().getUrl();
+  Future<Map<String, dynamic>> toMap(bool isAllow) async {
+    if (isAllow) {
+      url = await UserDatabaseHelper().getUrl();
+    } else {
+      url = null;
+    }
+
     return {"content": content, "url": url};
   }
 
-  Future<bool> sendEmail() async {
+  Future<bool> sendEmail(bool isAllow) async {
     try {
       await EmailJS.send(
         dotenv.get("SERVICE_ID"),
         dotenv.get('TEMPLATE_ID'),
-        await toMap(),
+        await toMap(isAllow),
         Options(
           publicKey: dotenv.get('PUBLIC_KEY'),
           privateKey: dotenv.get('PRIVATE_KEY'),

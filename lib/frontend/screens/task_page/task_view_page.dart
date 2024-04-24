@@ -362,112 +362,111 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   }
 }
 
-  void showErrorReportDialogue(context){
-    String _text = "";
-    bool _isChecked = true;
-    Message message;
-    bool isSuccess;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setState) {
-          return CupertinoAlertDialog(
-            title: const Text('不具合を報告する'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CupertinoTextField(
-                  maxLines: 5,
-                  textInputAction: TextInputAction.done,
-                  onChanged: (value) {
-                    setState(() {
-                      _text = value;
-                    });
-                  },
-                  placeholder: "不具合の概要\n(できるだけ詳細にお願いいたします。)",
-                ),
-                Row(children: [
-                  CupertinoCheckbox(
-                      value: _isChecked,
-                      onChanged: (value) {
-                        setState(() {
-                          _isChecked = value!;
-                        });
-                      }),
-                  const Expanded(
-                    child: Text(
-                      "デバッグのための情報を提供する",
-                      overflow: TextOverflow.clip,
-                    ),
-                  )
-                ]),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('閉じる'),
-                onPressed: () {
-                  Navigator.of(context).pop();
+void showErrorReportDialogue(context) {
+  String _text = "";
+  bool _isChecked = true;
+  Message message;
+  bool isSuccess;
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(builder: (context, setState) {
+        return CupertinoAlertDialog(
+          title: const Text('不具合を報告する'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CupertinoTextField(
+                maxLines: 5,
+                textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  setState(() {
+                    _text = value;
+                  });
                 },
+                placeholder: "不具合の概要\n(できるだけ詳細にお願いいたします。)",
               ),
-              TextButton(
-                child: const Text('送信'),
-                onPressed: () async {
-                  message = Message(content: _text);
-                  isSuccess = await message.sendEmail();
-
-                  Navigator.of(context).pop();
-                  if (isSuccess) {
-                    showReportDoneDialogue(context);
-                  } else {
-                    showReportFailDialogue("String errorMessage",context);
-                  }
-                },
-              ),
+              Row(children: [
+                CupertinoCheckbox(
+                    value: _isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChecked = value!;
+                      });
+                    }),
+                const Expanded(
+                  child: Text(
+                    "デバッグのための情報を提供する",
+                    overflow: TextOverflow.clip,
+                  ),
+                )
+              ]),
             ],
-          );
-        });
-      },
-    );
-  }
-
-  void showReportDoneDialogue(context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('不具合レポートが送信されました。'),
+          ),
           actions: <Widget>[
-            const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                    "ご報告いただきありがとうございます。\nお寄せいただいた情報はアプリの改善のために役立てさせていただきます。")),
-            const SizedBox(height: 10),
-            okButton(context, 500.0)
+            TextButton(
+              child: const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('送信'),
+              onPressed: () async {
+                message = Message(content: _text);
+                isSuccess = await message.sendEmail(_isChecked);
+
+                Navigator.of(context).pop();
+                if (isSuccess) {
+                  showReportDoneDialogue(context);
+                } else {
+                  showReportFailDialogue("String errorMessage", context);
+                }
+              },
+            ),
           ],
         );
-      },
-    );
-  }
+      });
+    },
+  );
+}
 
-  void showReportFailDialogue(String errorMessage,context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('レポート失敗'),
-          actions: <Widget>[
-            Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
-            const Align(
-                alignment: Alignment.centerLeft,
-                child: Text("お手数ですが再度お試しください。")),
-            const SizedBox(height: 10),
-            okButton(context, 500.0)
-          ],
-        );
-      },
-    );
-  }
+void showReportDoneDialogue(context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('不具合レポートが送信されました。'),
+        actions: <Widget>[
+          const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                  "ご報告いただきありがとうございます。\nお寄せいただいた情報はアプリの改善のために役立てさせていただきます。")),
+          const SizedBox(height: 10),
+          okButton(context, 500.0)
+        ],
+      );
+    },
+  );
+}
+
+void showReportFailDialogue(String errorMessage, context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('レポート失敗'),
+        actions: <Widget>[
+          Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
+          const Align(
+              alignment: Alignment.centerLeft, child: Text("お手数ですが再度お試しください。")),
+          const SizedBox(height: 10),
+          okButton(context, 500.0)
+        ],
+      );
+    },
+  );
+}
 
 Widget listLengthView(int target, double fontSize) {
   if (target == 0) {
