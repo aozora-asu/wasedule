@@ -1,15 +1,35 @@
 {
   "project_info": {
     "project_number": "342079600357",
+    "firebase_url": "https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "wasedule-f719a",
     "storage_bucket": "wasedule-f719a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:342079600357:android:42cdf983f5a0bed263460c",
+        "mobilesdk_app_id": "1:342079600357:android:1be5193116e48b5363460c",
         "android_client_info": {
-          "package_name": "com.example.flutter_calandar_app"
+          "package_name": "com.dexterous.flutter_local_notifications_example"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLqp6EL9DnpF8y8CYJ7CdkHW00iDrzh6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342079600357:android:71f57b2a212c03ce63460c",
+        "android_client_info": {
+          "package_name": "com.example.wasedule"
         }
       },
       "oauth_client": [],

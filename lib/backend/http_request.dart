@@ -1,6 +1,4 @@
 import 'package:http/http.dart' as http;
-import "./firebase_handler.dart";
-import 'dart:convert';
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
   String s = iCalendarData;

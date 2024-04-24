@@ -115,6 +115,8 @@ class NotifyContent {
         matchDateTimeComponents: DateTimeComponents.time);
   }
 
+  Future<void> bookTomorrowNotify() async {}
+
   Future<void> taskDueTodayNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         TASK_NOTIFICATION_ID,
@@ -213,5 +215,23 @@ class NotifyContent {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.wallClockTime);
+  }
+
+  Future<void> plainNotification() async {
+    await flutterLocalNotificationsPlugin.show(
+      400,
+      'firebase由来の通知：今日までの予定',
+      await TaskDatabaseHelper().taskDueTodayForNotify(today),
+      NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily task notification channel id',
+            '期限が今日の課題',
+            channelDescription:
+                await TaskDatabaseHelper().taskDueTodayForNotify(today),
+          ),
+          iOS: const DarwinNotificationDetails(
+            sound: 'slow_spring_board.aiff',
+          )),
+    );
   }
 }
