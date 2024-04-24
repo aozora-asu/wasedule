@@ -349,7 +349,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             child: const Text("ソート：期限",
                 style: TextStyle(fontWeight: FontWeight.bold)));
 
-      case 1:
+      default:
         return TextButton(
             onPressed: () {
               setState(() {
@@ -358,20 +358,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             },
             child: const Text("ソート：カテゴリ",
                 style: TextStyle(fontWeight: FontWeight.bold)));
-
-      default:
-        return TextButton(
-            onPressed: () {
-              setState(() {
-                ref.read(taskDataProvider).taskPageIndex = 0;
-              });
-            },
-            child: const Text("ゴリゴリ別",
-                style: TextStyle(fontWeight: FontWeight.bold)));
     }
   }
+}
 
-  void showErrorReportDialogue() {
+  void showErrorReportDialogue(context){
     String _text = "";
     bool _isChecked = true;
     Message message;
@@ -443,7 +434,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     );
   }
 
-  void showReportDoneDialogue() {
+  void showReportDoneDialogue(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -462,7 +453,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     );
   }
 
-  void showReportFailDialogue(String errorMessage) {
+  void showReportFailDialogue(String errorMessage,context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -480,7 +471,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
       },
     );
   }
-}
 
 Widget listLengthView(int target, double fontSize) {
   if (target == 0) {

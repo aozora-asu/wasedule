@@ -2038,7 +2038,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               fontSize: SizeConfig.blockSizeHorizontal!*4);
     TextStyle previewStyle = TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.blockSizeHorizontal!*10);
+              fontSize: SizeConfig.blockSizeHorizontal!*6);
     Duration workTimeSum = ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey,ref);
 
     return Column(

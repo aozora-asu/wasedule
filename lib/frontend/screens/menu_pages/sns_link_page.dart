@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -38,7 +39,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
           ],
         ),
       ),
-      body: Center(child:
+      body: SingleChildScrollView(child:
         Column(children:[
          const Spacer(),
          Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
@@ -53,11 +54,8 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:20),
          const Text("Waseda Moodleへのアクセスはこちらから！"),
          MoodleUrlLauncher(width:80),
-         const Spacer(),
-         const Padding(
-          padding: EdgeInsets.all(10),
-          child:Row(children:[Spacer(),Text(""),SizedBox(width:7)]),
-          ),
+         const SizedBox(height:20),
+         ErrorReportButton(),
          const SizedBox(height:3)
         ])
         )
@@ -88,6 +86,24 @@ class HomePageUrlLauncher extends StatelessWidget {
   }
 }
 
+
+class ErrorReportButton extends StatelessWidget {
+  ErrorReportButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return  ElevatedButton(
+          style:  ButtonStyle(
+            backgroundColor: const MaterialStatePropertyAll(Colors.red),
+            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
+            ),
+          child: const Text('不具合を報告する',style:TextStyle(color:Colors.white)),
+          onPressed: () {
+            showErrorReportDialogue(context);
+          }
+        );
+  }
+}
 class InstaUrlLauncher extends StatelessWidget {
   InstaUrlLauncher({Key? key}) : super(key: key);
 
