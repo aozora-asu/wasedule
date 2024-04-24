@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'dart:async';
 import 'package:expandable/expandable.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
+import 'package:intl/intl.dart';
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -423,7 +426,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         TextEditingController(text: targetData["title"] ?? "");
     TextEditingController descriptionController =
         TextEditingController(text: targetData["description"] ?? "");
+    DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
     int id = targetData["id"];
+    Widget dividerModel = const Divider(height:1);
+    Widget miniSquare = Container(
+      height: SizeConfig.blockSizeHorizontal! *2,
+      width: SizeConfig.blockSizeHorizontal! *2,
+      color:MAIN_COLOR
+    );
+
     showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -496,39 +507,41 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                   ),
                                 ],
                               )),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
+                          SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
                         ],
                       )),
+                      dividerModel,
                   SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 2,
+                    height: SizeConfig.blockSizeHorizontal! * 1,
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Column(children: [
+
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "タスク名",
+                            "■ タスク名",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
                                 color: Colors.grey),
                           ),
                         ),
+                        dividerModel,
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextField(
                             controller: summaryController,
-                            maxLines: 1,
+                            maxLines: null,
+                            textInputAction: TextInputAction.done,
                             decoration: const InputDecoration.collapsed(
                               hintText: "タスク名を入力…",
                               border: InputBorder.none,
                               hintStyle: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
                             style: TextStyle(
@@ -547,19 +560,23 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             },
                           ),
                         ),
+                      
                         SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
+                          height: SizeConfig.blockSizeVertical! * 2,
                         ),
+
+                        dividerModel,
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "カテゴリ",
+                            "■ カテゴリ",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
                                 color: Colors.grey),
                           ),
                         ),
+                        dividerModel,
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextField(
@@ -571,7 +588,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               hintStyle: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
                             style: TextStyle(
@@ -590,23 +607,65 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             },
                           ),
                         ),
+
                         SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
+                          height: SizeConfig.blockSizeVertical! * 2,
                         ),
+
+                        dividerModel,
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "タスクの詳細",
+                            "■ 締切日時",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
                                 color: Colors.grey),
                           ),
                         ),
+                        dividerModel,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap:()async{
+                              TextEditingController controller = TextEditingController();
+                              await DateTimePickerFormField(
+                                controller: controller,
+                                labelText: "",
+                                labelColor: MAIN_COLOR,
+                              ).selectDateAndTime(context,ref);
+                              DateTime changedDateTime = DateTime.parse(controller.text);
+                              int changedDateTimeSinceEpoch = changedDateTime.millisecondsSinceEpoch;
+                              //↑こいつを日時更新関数に渡す
+                              
+
+                              
+                            },
+                            child:Text(DateFormat("yyyy年MM月dd日  HH時mm分").format(dtEnd))
+                          )
+                        ),
+
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical! * 2,
+                        ),
+                        
+                        dividerModel,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "■ タスクの詳細",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey),
+                          ),
+                        ),
+                        dividerModel,
                         SizedBox(
                           height: SizeConfig.blockSizeHorizontal! * 0.5,
                         ),
                         TextField(
+                          maxLines:null,
                           textInputAction: TextInputAction.done,
                           onSubmitted: (value) {
                             TaskDatabaseHelper().updateDescription(id, value);
@@ -619,7 +678,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             ref.read(taskDataProvider).isRenewed = true;
                             Navigator.pop(context);
                           },
-                          maxLines: 7,
                           controller: descriptionController,
                           style: TextStyle(
                             fontSize: SizeConfig.blockSizeHorizontal! * 4,
@@ -627,8 +685,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           decoration: const InputDecoration(
                             hintText: "(タスクの詳細やメモを入力…)",
                             border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.only(top: 0, left: 0, right: 4),
                             hintStyle: TextStyle(
                               fontSize: 15,
                               color: Colors.grey,
@@ -636,7 +692,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 3),
+
+                        SizedBox(height:SizeConfig.blockSizeVertical! *2),
+                        dividerModel,
                         MoodleUrlLauncher(width: 100),
                         ElevatedButton(
                           onPressed: () async{
@@ -661,10 +719,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             Spacer()
                           ],)
                         ),
+                        dividerModel,
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 50,
                         )
-                      ]))
+                      ])
+                    )
                 ],
               ),
             )));
