@@ -41,6 +41,7 @@ class ScheduleForm {
   TextEditingController dtEndController = TextEditingController();
   TextEditingController timeEndController = TextEditingController();
   TextEditingController tagController = TextEditingController();
+  TextEditingController tagIDController = TextEditingController();
   bool isAllDay = false;
   bool isPublic = true;
   TextEditingController publicScheduleController = TextEditingController();
@@ -58,6 +59,7 @@ class ScheduleForm {
     String? dtEndController,
     String? timeEndController,
     String? tagController,
+    String? tagIDController,
     bool? isAllDay,
     bool? isPublic,
     String? publicScheduleController,
@@ -77,6 +79,7 @@ class ScheduleForm {
       ..timeEndController.text =
           timeEndController ?? this.timeEndController.text
       ..tagController.text = tagController ?? this.tagController.text
+      ..tagIDController.text = tagIDController ?? this.tagIDController.text
       ..isAllDay = isAllDay ?? this.isAllDay
       ..isPublic = isPublic ?? this.isPublic
       ..publicScheduleController.text =
@@ -111,6 +114,7 @@ class ScheduleForm {
     timeStartController.clear();
     timeEndController.clear();
     tagController.clear();
+    tagIDController.clear();
     dtStartList = [];
     dtEndList = [];
   }
@@ -242,7 +246,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   ),
                   child: const Text(" + 日付       ",
                       style: TextStyle(color: Colors.white))),
-              dateInputPreview(scheduleForm.dtStartList)
+              dateInputPreview(scheduleForm.dtStartList),
             ]),
             Row(children: [
               ElevatedButton(
@@ -265,7 +269,14 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   ),
                   child: const Text("+ 開始時刻",
                       style: TextStyle(color: Colors.white))),
-              timeInputPreview(scheduleForm.timeStartController.text)
+              timeInputPreview(scheduleForm.timeStartController.text),
+              IconButton(
+                onPressed:(){
+                  setState(() {
+                    scheduleForm.timeStartController.text = "";
+                  });
+                },
+              icon:const Icon(Icons.delete,color:Colors.grey))
             ]),
             Row(children: [
               ElevatedButton(
@@ -288,7 +299,14 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   ),
                   child: const Text("+ 終了時刻",
                       style: TextStyle(color: Colors.white))),
-              timeInputPreview(scheduleForm.timeEndController.text)
+              timeInputPreview(scheduleForm.timeEndController.text),
+              IconButton(
+                onPressed:(){
+                  setState(() {
+                    scheduleForm.timeEndController.text = "";
+                  });
+                },
+              icon:const Icon(Icons.delete,color:Colors.grey))
             ]),
             tagEmptyFlag(
               ref,

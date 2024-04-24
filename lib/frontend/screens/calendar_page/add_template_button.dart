@@ -11,7 +11,9 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_p
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 
 
@@ -102,16 +104,19 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
 
          Row(children:[
           ElevatedButton(
-           onPressed: (){
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => 
-                TimeInputPage(
-                 target:DateTime.now(),
-                 inputCategory:"startTime",
-                )
-              ),
-            );
+           onPressed: ()async {
+              DateTime now = DateTime.now();
+              await DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false,
+                onConfirm: (date) {
+                  scheduleForm.timeStartController.text
+                    = DateFormat("HH:mm").format(date);
+                    setState((){});
+                },
+                currentTime: DateTime(now.year,now.month,now.day,12,00),
+                locale: LocaleType.jp
+              );
            },
            style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -124,16 +129,19 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
 
           Row(children:[
           ElevatedButton(
-           onPressed: (){
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => 
-                TimeInputPage(
-                 target:DateTime.now(),
-                 inputCategory:"endTime",
-                )
-              ),
-            );
+           onPressed: ()async {
+              DateTime now = DateTime.now();
+              await DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false,
+                onConfirm: (date) {
+                  scheduleForm.timeEndController.text
+                    = DateFormat("HH:mm").format(date);
+                    setState((){});
+                },
+                currentTime: DateTime(now.year,now.month,now.day,12,00),
+                locale: LocaleType.jp
+              );
            },
            style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
@@ -162,32 +170,6 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               height: SizeConfig.blockSizeVertical! * 0.5,
               width: SizeConfig.blockSizeHorizontal! * 80),      
 
-          // Container(
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     children: [
-          //       const Text(
-          //         'フレンドに共有',
-          //         style: TextStyle(fontSize: 20),
-          //       ),
-          //       const Spacer(),
-          //       CupertinoSwitch(
-          //           activeColor: ACCENT_COLOR,
-          //           value: scheduleForm.isPublic,
-          //           onChanged: (value) {
-          //             ref.read(scheduleFormProvider.notifier).toggleSwitch();
-          //             ref
-          //                 .read(scheduleFormProvider.notifier)
-          //                 .updateDateTimeFields();
-          //           }),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(
-          //   width: SizeConfig.blockSizeHorizontal! * 80,
-          //   height: SizeConfig.blockSizeHorizontal! * 3,
-          // ),
-          // publicScheduleField(ref),
           
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 80,

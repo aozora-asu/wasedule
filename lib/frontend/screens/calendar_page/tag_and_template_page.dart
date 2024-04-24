@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
@@ -13,8 +14,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:intl/intl.dart';
 
 class TagAndTemplatePage extends ConsumerStatefulWidget {
   @override
@@ -418,15 +421,19 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   ),
                   Row(children: [
                     ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => TimeInputPage(
-                                      target: DateTime.now(),
-                                      inputCategory: "startTime",
-                                      setState: setState,
-                                    )),
-                          );
+                        onPressed: ()async {
+                            DateTime now = DateTime.now();
+                            await DatePicker.showTimePicker(context,
+                              showTitleActions: true,
+                              showSecondsColumn: false,
+                              onConfirm: (date) {
+                                provider.timeStartController.text
+                                  = DateFormat("HH:mm").format(date);
+                                  setState((){});
+                              },
+                              currentTime: DateTime(now.year,now.month,now.day,12,00),
+                              locale: LocaleType.jp
+                            );
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -438,15 +445,19 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   ]),
                   Row(children: [
                     ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => TimeInputPage(
-                                      target: DateTime.now(),
-                                      inputCategory: "endTime",
-                                      setState: setState,
-                                    )),
-                          );
+                        onPressed: ()async {
+                            DateTime now = DateTime.now();
+                            await DatePicker.showTimePicker(context,
+                              showTitleActions: true,
+                              showSecondsColumn: false,
+                              onConfirm: (date) {
+                                provider.timeEndController.text
+                                  = DateFormat("HH:mm").format(date);
+                                  setState((){});
+                              },
+                              currentTime: DateTime(now.year,now.month,now.day,12,00),
+                              locale: LocaleType.jp
+                            );
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -473,31 +484,34 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                 ]);
               },
             ),
-            TextButton(
-              onPressed: () async {
-                Map<String, dynamic> newMap = {};
-                newMap["subject"] = titlecontroller.text;
-                newMap["startTime"] = provider.timeStartController.text;
-                newMap["endTime"] = provider.timeEndController.text;
-                newMap["isPublic"] = targetData["isPublic"];
-                newMap["publicSubject"] = targetData["publicSubject"];
-                newMap["tag"] = provider.tagController.text;
-                newMap["id"] = targetData["id"];
+            SizedBox(
+              width: 500,
+              child: ElevatedButton(
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                onPressed: () async {
+                  Map<String, dynamic> newMap = {};
+                  newMap["subject"] = titlecontroller.text;
+                  newMap["startTime"] = provider.timeStartController.text;
+                  newMap["endTime"] = provider.timeEndController.text;
+                  newMap["isPublic"] = targetData["isPublic"];
+                  newMap["publicSubject"] = targetData["publicSubject"];
+                  newMap["tag"] = provider.tagController.text;
+                  newMap["id"] = targetData["id"];
+                  newMap["tagID"] = returnTagId(provider.tagController.text, ref);
 
-                //★ IDからtagIDを返す関数です！
-                //newMap["tagID"] = returnTagIdFromID(scheduleForm.tagController.text, ref)
-
-                await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
-                ref.read(scheduleFormProvider).clearContents();
-                ref.read(taskDataProvider).isRenewed = true;
-                ref.read(calendarDataProvider.notifier).state = CalendarData();
-                while (ref.read(taskDataProvider).isRenewed != false) {
-                  await Future.delayed(const Duration(microseconds: 1));
-                }
-                setState(() {});
-                Navigator.pop(context);
-              },
-              child: const Text('変更'),
+                  await ScheduleTemplateDatabaseHelper().updateSchedule(newMap);
+                  ref.read(scheduleFormProvider).clearContents();
+                  ref.read(taskDataProvider).isRenewed = true;
+                  ref.read(calendarDataProvider.notifier).state = CalendarData();
+                  while (ref.read(taskDataProvider).isRenewed != false) {
+                    await Future.delayed(const Duration(microseconds: 1));
+                  }
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+                  child: const Text('変更', style: TextStyle(color: Colors.white)),
+                ),
             ),
           ],
         );
@@ -954,11 +968,12 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
   }
 }
 
-Future<void> showTagDialogue(
+Future<String> showTagDialogue(
     WidgetRef ref, BuildContext context, StateSetter setState) async {
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
-  showDialog(
+  String result = "";
+  await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -1032,14 +1047,19 @@ Future<void> showTagDialogue(
                         }
 
                         return InkWell(
-                            onTap: () async {
+                            onTap: (){
                               final inputform = ref.watch(scheduleFormProvider);
                               setState(() {
                                 inputform.tagController.text = data.tagData
                                     .elementAt(index)["id"]
                                     .toString();
+                                result = data.tagData
+                                    .elementAt(index)["id"]
+                                    .toString();
                               });
                               Navigator.pop(context);
+
+                              
                             },
                             child: Container(
                                 decoration: BoxDecoration(
@@ -1078,6 +1098,7 @@ Future<void> showTagDialogue(
                   setState(() {
                     ref.read(scheduleFormProvider).tagController.text = "";
                   });
+                  result = "";
                   Navigator.pop(context);
                 },
                 child: const Text(" - タグを外す",
@@ -1087,13 +1108,14 @@ Future<void> showTagDialogue(
           ],
         );
       });
+      return result;
 }
 
 void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: const Text('削除の確認'),
           content: Text('$name を削除しますか？'),
           actions: <Widget>[
@@ -1277,10 +1299,6 @@ String truncateString(String input) {
   }
 }
 
-///////////////ここから下が旧処理です//////////////////////////////////////////////////////////////////////////////////////
-
-//★　DB竣工時に以下の関数は一斉削除し、上の関数名から「~」を除去します。
-
 String returnTagData(String id, WidgetRef ref) {
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
@@ -1296,122 +1314,3 @@ String returnTagData(String id, WidgetRef ref) {
     return "無効なタグです";
   }
 }
-
-
-// int returnTagIsBeit(String id, WidgetRef ref){
-//     final data = ref.read(calendarDataProvider);
-//     List tagMap = data.tagData;
-//     if(id == ""){
-//     return 0;
-//   }else{
-//     for (var data in tagMap) {
-//       if (data["id"] == int.parse(id)) {
-//         return data["isBeit"];
-//       }
-//     }
-  
-//   return 0;
-//  }
-// }
-
-// Color? returnTagColor(String id, WidgetRef ref){
-//     final data = ref.read(calendarDataProvider);
-//     List tagMap = data.tagData;
-//     if(id == ""){
-//     return null;
-//   }else{
-//     for (var data in tagMap) {
-//       if (data["id"] == int.parse(id)) {
-//         return data["color"];
-//       }
-//     }
-//   return null;
-//  }
-// }
-
-
-// Widget tagChip(String id, WidgetRef ref){
-//   final data = ref.read(calendarDataProvider);
-//   List tagMap = data.tagData;
-//   if(id == ""){
-//     return const SizedBox();
-//   }else{
-//     for (var data in tagMap) {
-//       if (data["id"] == int.parse(id)) {
-        
-//         return Container(
-//           height: 25,
-//           decoration: BoxDecoration(
-//             color: data["color"],
-//             borderRadius: BorderRadius.circular(10),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.grey[700]!,
-//                   spreadRadius: 1,
-//                   blurRadius: 0,
-//                   offset: const Offset(0, 0)
-//                 ),
-//               ],
-//           ),
-//           padding: const EdgeInsets.only(right:15,left:5),
-//           child:Row(children:[
-//           Container(
-//                       width: 10,
-//                       height: 10,
-//                       decoration:  BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         color: Colors.grey[700],
-//                       ),
-//                     ),
-//             Text(
-//               "  " + truncateString(data["title"]),
-//               style: const TextStyle(
-//                 color: Colors.white,
-//                 fontSize: 15,
-//                 overflow: TextOverflow.ellipsis
-//               ),
-//             ),
-//           ]),
-
-//         );
-
-//       }
-//     }
-//   return  Container(
-//           height: 25,
-//           decoration: BoxDecoration(
-//             color: Colors.grey,
-//             borderRadius: BorderRadius.circular(10),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.grey[700]!,
-//                   spreadRadius: 1,
-//                   blurRadius: 0,
-//                   offset: const Offset(0, 0)
-//                 ),
-//               ],
-//           ),
-//           padding: const EdgeInsets.only(right:15,left:5),
-//           child:Row(children:[
-//           Container(
-//                       width: 10,
-//                       height: 10,
-//                       decoration:  BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         color: Colors.grey[700],
-//                       ),
-//                     ),
-//            const Text(
-//               " ! 無効なタグ",
-//               style:  TextStyle(
-//                 color: Colors.white,
-//                 fontSize: 15,
-//                 overflow: TextOverflow.ellipsis
-//               ),
-//             ),
-//           ]),
-
-//         );
-//  }
-// }
-

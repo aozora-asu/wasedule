@@ -293,9 +293,11 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
 
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 8.5,
+                //height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
                   controller: inputForm.summaryController,
+                  maxLines: null,
+                  textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: '①タスク名',
@@ -311,10 +313,11 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
 
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 8.5,
+                //height: SizeConfig.blockSizeHorizontal! * 8.5,
                 child: TextField(
                   textInputAction: TextInputAction.done,
                   controller: inputForm.descriptionController,
+                  maxLines: null,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '②詳細'),
                   onChanged: (value) {setState(() {});},
@@ -361,57 +364,6 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                 ),
               ),
               
-
-                 Row(crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                  const Spacer(),
-                  TextButton(
-                      onPressed: () {
-                        inputForm.titleController.clear();
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('新しいカテゴリ名を追加'),
-                                content: TextField(
-                                  controller: inputForm.titleController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'カテゴリ名',
-                                      border: OutlineInputBorder()),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(); // ダイアログを閉じる
-                                    },
-                                    child: const Text('戻る'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      String enteredText =
-                                          inputForm.titleController.text;
-                                      ref
-                                          .read(inputFormProvider.notifier)
-                                          .updateDateTimeFields();
-                                      Navigator.of(context).pop(); // ダイアログを閉じる
-                                    },
-                                    child: const Text('登録'),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      style: const ButtonStyle(
-                          padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      child: Text(
-                        "カテゴリの追加",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3),
-                      )),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                ]),
 
                 ElevatedButton(
                   onPressed: () async{
@@ -743,6 +695,58 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                       taskData.extractTitles(taskData.taskDataList).length,
                 ),
               ),
+
+                 Row(crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                  const Spacer(),
+                  TextButton(
+                      onPressed: () {
+                        inputForm.titleController.clear();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('新しいカテゴリ名を追加'),
+                                content: TextField(
+                                  controller: inputForm.titleController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'カテゴリ名',
+                                      border: OutlineInputBorder()),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // ダイアログを閉じる
+                                    },
+                                    child: const Text('戻る'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      String enteredText =
+                                          inputForm.titleController.text;
+                                      ref
+                                          .read(inputFormProvider.notifier)
+                                          .updateDateTimeFields();
+                                      Navigator.of(context).pop(); // ダイアログを閉じる
+                                    },
+                                    child: const Text('登録'),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      style: const ButtonStyle(
+                          padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      child: Text(
+                        "カテゴリの追加",
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 3),
+                      )),
+                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+                ]),
+
           ])
         ),
       );

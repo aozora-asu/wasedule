@@ -390,7 +390,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeVertical! * 3,
       ),
       Column(children: [
-        menuList(Icons.calendar_month, "カレンダー", false, [
+        menuList(Icons.calendar_month, "カレンダーメニュー", false, [
           menuListChild(Icons.groups_rounded, "予定の配信", () {
             Navigator.push(
               context,
@@ -418,18 +418,41 @@ class _CalendarState extends ConsumerState<Calendar> {
           // )
         ]),
         const SizedBox(height: 15),
+
+        // tagEmptyFlag(
+        //   ref,
+        //   expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => ArbeitStatsPage(
+        //                 targetMonth: targetMonth,
+        //               )),
+        //     );
+        //   }),
+        // ),
+
         tagEmptyFlag(
           ref,
-          expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ArbeitStatsPage(
-                        targetMonth: targetMonth,
-                      )),
-            );
-          }),
+        GestureDetector(
+          onTap:(){
+            Navigator.push(context,
+              MaterialPageRoute(builder:(_) => 
+                 ArbeitStatsPage(targetMonth: targetMonth)));
+          },
+          child:menuList(Icons.currency_yen, "アルバイト", true,
+            [
+              menuListChild(Icons.currency_yen, "アルバイト", () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder:(_) => 
+                    ArbeitStatsPage(targetMonth: targetMonth)));
+              }),
+              arbeitStatsPreview(targetMonth)
+            ])
+          )
         ),
+
+
         const SizedBox(height: 15),
         Row(children: [
           menuPanel(Icons.link_rounded, "Moodle URL登録", () {
@@ -1196,7 +1219,10 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
 
     return Padding(
-        padding: EdgeInsets.only(top: SizeConfig.blockSizeHorizontal! * 2),
+        padding: EdgeInsets.only(
+          top: SizeConfig.blockSizeHorizontal! * 2,
+          bottom: SizeConfig.blockSizeHorizontal! * 1,
+          ),
         child: InkWell(
             onTap: () {
               Navigator.push(
@@ -2002,6 +2028,72 @@ class _CalendarState extends ConsumerState<Calendar> {
       },
     );
   }
+
+  Widget arbeitStatsPreview(targetMonth){
+    String year = targetMonth.substring(0, 4);
+    String month = targetMonth.substring(5, 7);
+    String targetKey = year + "-" + month;
+    TextStyle titletyle = TextStyle(
+              color:Colors.grey,
+              fontSize: SizeConfig.blockSizeHorizontal!*4);
+    TextStyle previewStyle = TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: SizeConfig.blockSizeHorizontal!*10);
+    Duration workTimeSum = ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey,ref);
+
+    return Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children:[
+        Padding(
+         padding:const  EdgeInsets.only(left:10,right:10),
+         child:Column(children:[
+          Text(
+            year+"年 推計年収",
+            style:titletyle),
+
+          const Divider(height:1),
+
+          Text(
+            ArbeitCalculator().formatNumberWithComma(
+              ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
+                targetMonth,ref)) +
+                " 円",
+            style: previewStyle),
+          ])
+        ),
+
+        const Divider(height:1),
+
+        Padding(
+         padding:const  EdgeInsets.only(left:10,right:10),
+         child:Column(children:[
+          Text(
+            month +"月 推計月収",
+            style:titletyle),
+          const Divider(height:1),
+        Text(
+          ArbeitCalculator().formatNumberWithComma(
+            ArbeitCalculator().monthlyWageSum(targetMonth,ref) +
+                  ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
+              " 円",
+          style: previewStyle),
+
+          Text(
+            month +"月  労働時間合計",
+            style:titletyle),
+          const Divider(height:1),
+          Text(
+            workTimeSum.inHours.toString() + "時間" +
+            (workTimeSum.inMinutes % 60).toString()+ " 分",
+            style: previewStyle),
+        ])
+      )
+    ]);
+  }
+
+
+
+
 }
 
 Widget calendarIcon(Color color, double size) {

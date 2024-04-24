@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -10,12 +13,12 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart' ;
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:timezone/timezone.dart';
 
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
@@ -85,14 +88,38 @@ class DailyViewPage extends ConsumerStatefulWidget {
 }
 
 class DailyViewPageState extends ConsumerState<DailyViewPage> {
+ 
   @override
   Widget build(BuildContext context) {
+    final bottomSpace= MediaQuery.of(context).viewInsets.bottom;
     ref.watch(taskDataProvider);
     return GestureDetector(
-      child: Center(child: pageBody()),
-      onTap: () {
-        Navigator.pop(context);
-      },
+        onTap: () {
+          if(editingSchedule == null){
+            Navigator.pop(context);
+          }else{
+            setState(() {
+              editingSchedule = null;
+              isEdited = false;
+            });
+          }
+        },
+        child:LayoutBuilder(builder:
+         (BuildContext context, BoxConstraints viewportConstraints) { 
+          return SingleChildScrollView(
+          reverse: true,
+          child:  Padding(
+          padding: EdgeInsets.only(bottom: bottomSpace),
+            child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: viewportConstraints.maxHeight,
+                      maxHeight: viewportConstraints.maxHeight),
+                  child:Center(child: pageBody()),
+        )
+      )
+     );
+     }
+    )
     );
   }
 
@@ -195,6 +222,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     ));
   }
 
+  int? editingSchedule;
+
   Widget listView() {
     final taskData = ref.read(taskDataProvider);
     final data = ref.read(calendarDataProvider);
@@ -204,6 +233,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         widget.target.month.toString().padLeft(2, "0") +
         "-" +
         widget.target.day.toString().padLeft(2, "0");
+
 
     if (data.sortedDataByDay[targetKey] == null) {
       return GestureDetector(
@@ -227,67 +257,100 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ),
           ]));
     } else {
-      List targetDayData = data.sortedDataByDay[targetKey];
-      return ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          Widget dateTimeData = Container();
-          if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-              targetDayData.elementAt(index)["endTime"].trim() != "") {
-            dateTimeData = Text(
-              targetDayData.elementAt(index)["startTime"] +
-                  "～" +
-                  targetDayData.elementAt(index)["endTime"],
-              style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            );
-          } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-            dateTimeData = Text(
-              targetDayData.elementAt(index)["startTime"],
-              style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            );
-          } else {
-            dateTimeData = const Text(
-              "終日",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            );
-          }
+          return scheduleListBody(targetKey);
+    }
+  }
 
-          return Column(children: [
-            const Divider(
-              height: 2,
-              thickness: 2,
-            ),
-            Container(
-                width: SizeConfig.blockSizeHorizontal! * 95,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        dateTimeData,
-                        const SizedBox(width: 15, height: 40),
-                        tagChip(
-                            targetDayData.elementAt(index)["tagID"] ?? "", ref),
-                        const Spacer(),
-                      ]),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
+  Widget scheduleListBody(targetKey){
+    final data = ref.read(calendarDataProvider);
+    List targetDayData = data.sortedDataByDay[targetKey];
+
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        
+      TextStyle dateTimeStyle =const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold);
+      if(targetDayData.elementAt(index)["id"] == editingSchedule){
+        dateTimeStyle = const TextStyle(
+          color: Colors.black,
+          fontSize: 15,
+          fontWeight: FontWeight.normal);
+      }
+
+      Widget dateTimeData = Container();
+        if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+            targetDayData.elementAt(index)["endTime"].trim() != "") {
+          dateTimeData = Text(
+            targetDayData.elementAt(index)["startTime"] +
+                "～" +
+                targetDayData.elementAt(index)["endTime"],
+            style:  dateTimeStyle
+            );
+        } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
+          dateTimeData = Text(
+            targetDayData.elementAt(index)["startTime"],
+            style:  dateTimeStyle
+          );
+        } else {
+          dateTimeData = Text(
+            "終日",
+            style:  dateTimeStyle
+          );
+        }
+
+        if(targetDayData.elementAt(index)["id"] == editingSchedule){
+
+          return editModeListChild(targetKey,index);
+        }else{
+          return viewModeListChild(targetKey,index,dateTimeData);
+        }
+      },
+      itemCount: data.sortedDataByDay[targetKey].length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+    );
+  }
+
+  Widget viewModeListChild(targetKey,index,dateTimeData){
+    final data = ref.read(calendarDataProvider);
+    List targetDayData = data.sortedDataByDay[targetKey];
+
+        return Column(children: [
+          const Divider(
+            height: 2,
+            thickness: 2,
+          ),
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: ()=> switchToEditMode(targetKey,index),
+                        child:dateTimeData),
+                      const SizedBox(width: 15, height: 40),
+                      GestureDetector(
+                        onTap: ()=> switchToEditMode(targetKey,index),
+                        child: tagChip(
+                          targetDayData.elementAt(index)["tagID"] ?? "", ref)),
+                      const Spacer(),
+                    ]),
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: ()=> switchToEditMode(targetKey,index),
+                            child:   Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
                                 width: SizeConfig.blockSizeHorizontal! * 75,
@@ -299,105 +362,578 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                       color: Colors.black,
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold),
-                                )),
-                            const Spacer(),
-                            PopupMenuButton(
-                              icon: const Icon(Icons.edit, color: Colors.grey),
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  const PopupMenuItem(
-                                    value: 'edit',
-                                    child: Row(children: [
-                                      Icon(
-                                        Icons.edit,
-                                      ),
-                                      SizedBox(width: 15),
-                                      Text('編集')
-                                    ]),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'delete',
-                                    child: Row(children: [
-                                      Icon(
-                                        Icons.delete,
-                                      ),
-                                      SizedBox(width: 15),
-                                      Text('削除')
-                                    ]),
-                                  ),
-                                  PopupMenuItem(
-                                    enabled: isPanelEnable(data
-                                            .sortedDataByDay[targetKey]
-                                            .elementAt(index)["tagID"]),
-                                    value: 'deleteAll',
-                                    child:const Row(children: [
-                                      Icon(
-                                        Icons.tag,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text('一括削除')
-                                    ]),
-                                  ),
-                                ];
-                              },
-                              onSelected: (value) async {
-                                if (value == "edit") {
-                                  inittodaiarogu(data.sortedDataByDay[targetKey]
-                                      .elementAt(index));
-                                  _showTextDialog(
-                                      context,
-                                      data.sortedDataByDay[targetKey]
-                                          .elementAt(index),
-                                      "予定の編集…");
-                                } else if (value == "delete") {
-                                  showDeleteDialogue(
-                                      context,
-                                      data.sortedDataByDay[targetKey]
-                                          .elementAt(index)["subject"],
-                                      () async {
-                                    await ScheduleDatabaseHelper()
-                                        .deleteSchedule(data
-                                            .sortedDataByDay[targetKey]
-                                            .elementAt(index)["id"]);
-                                    ref.read(taskDataProvider).isRenewed = true;
-                                    ref
-                                        .read(calendarDataProvider.notifier)
-                                        .state = CalendarData();
-                                    while (
-                                        ref.read(taskDataProvider).isRenewed !=
-                                            false) {
-                                      await Future.delayed(
-                                          const Duration(microseconds: 1));
-                                    }
-                                    setState(() {});
-                                  });
-                                } else if(value == "deleteAll"){
-                                  showDeleteDialogue(
-                                    context,
-                                    "タグ「" + returnTagTitle(data.sortedDataByDay[targetKey]
-                                          .elementAt(index)["tagID"],ref)
-                                    + "」が紐づいているすべての予定",
-                                    () async {
-                                      await deleteAllScheduleWithTag(data
-                                                .sortedDataByDay[targetKey]
-                                                .elementAt(index)["tagID"], ref, setState);
-                                      setState(() {});
-                                    }
-                                  );
-                      }
-                    },
-                  ),
-                ])
+                              )
+                            ),
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: ()=> switchToEditMode(targetKey,index),
+                            child: const Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                              size: 30,
+                              ),
+                          )
               ])
-            ),
-          ]);
+            ])
+          ),
+        ]);
+  }
+
+  void switchToEditMode(targetKey,index){
+    final data = ref.read(calendarDataProvider);
+    setState(() {
+      isEdited = false;
+      editingSchedule = data.sortedDataByDay[targetKey]
+          .elementAt(index)["id"];
+      initEditDialog(data.sortedDataByDay[targetKey].elementAt(index));
+    });
+  }
+
+    TextEditingController titleController = TextEditingController();
+    String timeStartController = "";
+    String timeEndController = "";
+    TextEditingController tagController = TextEditingController();
+    dynamic tagIDController = "";
+    dynamic dtStartController = "";
+    bool isPublic = true;
+    bool isEdited = false;
+
+  void initEditDialog(Map targetData) {
+    if(!isEdited){
+      dtStartController = targetData["startDate"];
+      titleController.text = targetData["subject"];
+      tagController.text = targetData["tag"] ?? "";
+      tagIDController = targetData["tagID"] ?? "";
+      timeStartController = targetData["startTime"] ?? "";
+      timeEndController = targetData["endTime"] ?? "";
+    }
+    isPublic = izuPabu(targetData["isPublic"]);
+  }
+
+  Widget editModeListChild(targetKey,index){
+    
+    final data = ref.read(calendarDataProvider);
+    List targetDayData = data.sortedDataByDay[targetKey];
+    ScrollController scrollController = ScrollController();
+    String dateStartAndEnd = "終日";
+    
+    Widget multipleDeleteButton = const SizedBox();
+    if(!isEdited){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      });
+    }
+
+    if(targetDayData.elementAt(index)["tagID"] != ""
+       && targetDayData.elementAt(index)["tagID"] != null){
+      multipleDeleteButton =  GestureDetector(
+        onTap:(){
+          showDeleteDialogue(
+            context,
+            "タグ「" + returnTagTitle(data.sortedDataByDay[targetKey]
+                  .elementAt(index)["tagID"],ref)
+            + "」が紐づいているすべての予定",
+            () async {
+              await deleteAllScheduleWithTag(
+                targetDayData.elementAt(index)["tagID"],
+              ref, setState);
+              isEdited = false;
+              editingSchedule = null;
+              setState(() {});
+            }
+          );
         },
-        itemCount: data.sortedDataByDay[targetKey].length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        child:const Row(children:[
+          Icon(Icons.tag,),
+          SizedBox(width: 5),
+          Text('一括削除'),
+          VerticalDivider(color:Colors.blueGrey,width:20),
+        ])
       );
     }
+    
+    Icon buttonIcon = const Icon(
+                          Icons.cancel,
+                          color: Colors.grey,
+                          size:40,);
+    if(isEdited){
+      buttonIcon = const Icon(
+                          Icons.done,
+                          color: Colors.blue,
+                          size:40,);
+    }
+
+    if(timeStartController != "" && timeEndController != ""){
+      dateStartAndEnd = timeStartController + "～" + timeEndController;
+    }else if(timeStartController != "" ){
+      dateStartAndEnd = timeStartController;
+    }
+
+
+    return 
+      GestureDetector(
+        onTap: (){},
+        child: Column(children: [
+          const Divider(
+            height: 2,
+            thickness: 2,
+          ),
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+          child:Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap:() {
+                          timeBottomSheet();
+                        },
+                        child:Container(
+                          padding:const EdgeInsets.symmetric(horizontal: 2.5),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius:BorderRadius.circular(7.5),
+                          ),
+                          child:Row(children:[
+                            Text(dateStartAndEnd),
+                            const SizedBox(width:0),
+                            const Icon(Icons.arrow_drop_down, color:Colors.grey)
+                          ]) 
+                        ),
+                      ),
+                      const SizedBox(width: 15, height: 40),
+                      tagEmptyFlag(ref, tagEditButton(index,targetDayData)),
+                      const Spacer(),
+                    ]),
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              width: SizeConfig.blockSizeHorizontal! * 75,
+                              child: Material(
+                                child:TextField(
+                                  controller: titleController,
+                                  maxLines:null,
+                                  textInputAction: TextInputAction.done,
+                                  decoration:const InputDecoration(
+                                    hintText: "予定名を入力…"),
+                                  // overflow: TextOverflow.clip,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isEdited = true;
+                                    });
+                                    
+                                  },
+                                  ),
+                                )
+                              ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () async{
+                              if(isEdited){
+                                if (isConflict(timeStartController,
+                                    timeEndController)) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          content: Text(errorCause,
+                                            style:const TextStyle(color:Colors.red)),
+                                        );
+                                      },
+                                    );
+                                } else {
+                                  setState(() {
+                                    editingSchedule = null;
+                                    isEdited = false;
+                                  });
+                                  Map<String, dynamic> newMap = {};
+                                  newMap["subject"] = titleController.text;
+                                  newMap["startDate"] = dtStartController;
+                                  newMap["startTime"] = timeStartController;
+                                  newMap["endDate"] = dtStartController;
+                                  newMap["endTime"] = timeEndController;
+                                  newMap["isPublic"] = isPublic;
+                                  newMap["publicSubject"] = titleController.text;
+                                  newMap["tag"] = tagController.text;
+                                  newMap["id"] = targetDayData.elementAt(index)["id"];
+                                  newMap["tagID"] = tagIDController;
+
+                                  await ScheduleDatabaseHelper().updateSchedule(newMap);
+                                  ref.read(taskDataProvider).isRenewed = true;
+                                  ref.read(calendarDataProvider.notifier).state =
+                                      CalendarData();
+                                  while (ref.read(taskDataProvider).isRenewed != false) {
+                                    await Future.delayed(const Duration(microseconds: 1));
+                                  }
+                                  setState(() {});
+                                  if (ref.read(calendarDataProvider).calendarData.last["id"] ==
+                                      1) {
+                                    showTagAndTemplateGuide(context);
+                                  }
+                                }
+                              }else{
+                                setState(() {
+                                  editingSchedule = null;
+                                  isEdited = false;
+                                });
+                              }
+                            },
+                            child: buttonIcon
+                          )
+              ]),
+              const SizedBox(height:5),
+              Container(
+                width: SizeConfig.blockSizeHorizontal! * 95,
+                padding:const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 235, 235, 235),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child:SizedBox(
+                 height: SizeConfig.blockSizeVertical! *4,
+                 child:Row(children:[
+                  const Icon(Icons.arrow_left,color:Colors.grey),
+                  Expanded(child:
+                    ListView(
+                      controller:scrollController,
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      children:[
+                        containScreenshotButton(),
+                        dateSetButton(),
+                        templateEmptyFlag(ref,templateButton(index,targetKey)),
+                        backButton(),
+                        multipleDeleteButton,
+                        singleDeleteButton(index,targetKey),
+                     ])
+                    ),
+                    const Icon(Icons.arrow_right,color:Colors.grey),
+                  ]),
+                ),
+              ),
+            ])
+          ),
+          const SizedBox(height:5)
+        ])
+      );
   }
+
+  Future<void> timeBottomSheet() async{
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      enableDrag: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) {
+        return StatefulBuilder(builder: (context,settiState){
+          return Container(
+                    height: SizeConfig.blockSizeVertical! *25,
+                    decoration:const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    margin:const EdgeInsets.only(top: 10),
+                    child: Padding(
+                      padding:const EdgeInsets.all(10),
+                      child: Column(children: [
+                        Row(children:[
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("完了",
+                              style: TextStyle(
+                                color:Colors.blue,
+                                fontSize: SizeConfig.blockSizeHorizontal! *4.5
+                                ),)
+                          ),
+                          const SizedBox(width:10)
+                        ]),
+                        Row(children: [
+                          ElevatedButton(
+                              onPressed: () async{
+                                DateTime now = DateTime.now();
+                                await DatePicker.showTimePicker(context,
+                                  showTitleActions: true,
+                                  showSecondsColumn: false,
+                                  onConfirm: (date) {
+                                    timeStartController
+                                      = DateFormat("HH:mm").format(date);
+                                      
+                                      setState((){});
+                                  },
+                                  currentTime: DateTime(now.year,now.month,now.day,12,00),
+                                  locale: LocaleType.jp
+                                );
+                                isEdited = true;
+                                settiState((){});
+                              },
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color?>(Colors.blueAccent),
+                              ),
+                              child: const Text("+ 開始時刻",
+                                  style: TextStyle(color: Colors.white))),
+                          timeInputPreview(timeStartController),
+                          IconButton(
+                            onPressed:(){
+                              setState(() {
+                                timeStartController = "";
+                              });
+                              isEdited = true;
+                              settiState((){});
+                            },
+                            icon:const Icon(Icons.delete))
+                        ]),
+                        Row(children: [
+                          ElevatedButton(
+                              onPressed: () async{
+                                DateTime now = DateTime.now();
+                                await DatePicker.showTimePicker(context,
+                                  showTitleActions: true,
+                                  showSecondsColumn: false,
+                                  onConfirm: (date) {
+                                    timeEndController
+                                      = DateFormat("HH:mm").format(date);
+                                      
+                                      setState((){});
+                                  },
+                                  currentTime: DateTime(now.year,now.month,now.day,12,00),
+                                  locale: LocaleType.jp
+                                );
+                                isEdited = true;
+                                settiState((){});
+                              },
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color?>(Colors.blueAccent),
+                              ),
+                              child: const Text("+ 終了時刻",
+                                  style: TextStyle(color: Colors.white))),
+                          timeInputPreview(timeEndController),
+                          IconButton(
+                            onPressed:(){
+                              setState(() {
+                                timeEndController = "";
+                              });
+                              isEdited = true;
+                              settiState((){});
+                            },
+                            icon:const Icon(Icons.delete))
+                        ]),
+                      ],),
+                    )
+                  );
+        }); 
+    });
+  }
+
+  Widget tagEditButton(index,targetDayData){
+    Widget tagObject = Container(
+    height: 25,
+    decoration: BoxDecoration(
+      color: Colors.grey[400],
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.grey[400]!,
+            spreadRadius: 1,
+            blurRadius: 0,
+            offset: const Offset(0, 0)),
+      ],
+    ),
+    padding: const EdgeInsets.only(right: 15, left: 5),
+    child: Row(children: [
+      Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[300],
+        ),
+      ),
+      const Text(
+        "  + タグを追加…",
+        style: TextStyle(
+          color:Colors.white,
+          fontWeight:FontWeight.bold,
+          fontSize: 15,
+          overflow: TextOverflow.ellipsis),
+      ),
+    ]),
+  );
+    
+    // print("tagID:" + tagIDController);
+    // print("tag:" + tagController.text);
+    if(tagIDController != "" && tagIDController != null){
+      tagObject = tagChip(
+        tagIDController  ?? "", ref);
+    }
+
+return GestureDetector(
+  onTap: () async {
+    isEdited = true;
+    await showTagDialogue(ref, context, setState);
+    tagIDController = returnTagId(ref.read(scheduleFormProvider).tagController.text, ref);
+    setState(() {
+
+    });
+  },
+  child: tagObject
+);
+
+  }
+
+  Widget containScreenshotButton(){
+    final scheduleForm = ref.read(scheduleFormProvider);
+    String label = "含まない";
+    if(isPublic){
+      label = "含む";
+    }
+
+    return GestureDetector(
+      onLongPress: (){
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const AlertDialog(
+              content: Text("カレンダーのスクリーンショット共有時に、予定を非表示にすることができます。"),
+            );
+          },
+        );
+      },
+      onTap:(){
+        isEdited = true;
+        setState(() {
+          if (isPublic) {
+           isPublic = false;
+          } else {
+            isPublic = true;
+          }
+        });
+      },
+      child:Row(children:[
+        const Icon(Icons.ios_share),
+        const SizedBox(width: 5),
+        Text(label),
+        const VerticalDivider(color:Colors.blueGrey,width:20),
+      ])
+    );
+  }
+
+  Widget dateSetButton(){
+    return GestureDetector(
+      onTap: () async {
+        dtStartController = await _selectDateMultipul(
+                context, dtStartController, setState) ??
+            dtStartController;
+        isEdited = true;
+        setState(() {});
+      },
+      child:Row(children:[
+        const Icon(Icons.calendar_month),
+        const SizedBox(width: 5),
+        Text(dtStartController),
+        const VerticalDivider(color:Colors.blueGrey,width:20),
+      ])
+    );
+  }
+
+  Widget templateButton(index,targetKey){
+    final inputForm = ref.read(inputFormProvider);
+    return GestureDetector(
+      onTap:() async{
+        isEdited = true;
+        await showTemplateDialogue(setState, titleController);
+        setState((){});
+      },
+      child:const Row(children:[
+        Icon(Icons.add),
+        SizedBox(width: 5),
+        Text('テンプレート'),
+        VerticalDivider(color:Colors.blueGrey,width:20),
+      ])
+    );
+  }
+
+  Widget singleDeleteButton(index,targetKey){
+    final data = ref.read(calendarDataProvider);
+    return GestureDetector(
+      onTap:(){
+        showDeleteDialogue(
+            context,
+            data.sortedDataByDay[targetKey]
+                .elementAt(index)["subject"],
+            () async {
+          await ScheduleDatabaseHelper()
+              .deleteSchedule(data
+                  .sortedDataByDay[targetKey]
+                  .elementAt(index)["id"]);
+          ref.read(taskDataProvider).isRenewed = true;
+          ref
+              .read(calendarDataProvider.notifier)
+              .state = CalendarData();
+          while (
+              ref.read(taskDataProvider).isRenewed !=
+                  false) {
+            await Future.delayed(
+                const Duration(microseconds: 1));
+          }
+          isEdited = false;
+          editingSchedule = null;
+          setState(() {});
+        });
+      },
+      child:const Row(children:[
+        Icon(Icons.delete),
+        SizedBox(width: 5),
+        Text('削除'),
+        SizedBox(width: 10),
+      ])
+    );
+  }
+
+  Widget backButton(){
+   if(isEdited){
+      return
+      GestureDetector(
+        onTap: () {
+          setState(() {
+            editingSchedule = null;
+          });
+        },
+        child:const Row(children:[
+          Icon(Icons.cancel),
+          SizedBox(width: 5),
+          Text("戻る"),
+          VerticalDivider(color:Colors.blueGrey,width:20),
+        ])
+      );
+    }else{
+      return const SizedBox();
+    }
+  }
+
 
   Future<void> addEmptyData() async {
     String startDate = DateFormat('yyyy-MM-dd').format(widget.target);
@@ -410,7 +946,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       "isPublic": 1,
       "publicSubject": "",
       "tag": "",
-      //★ "tagID" : ""
+      "tagID" : ""
     };
     await ScheduleDatabaseHelper().resisterScheduleToDB(schedule);
 
@@ -424,9 +960,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     setState(() {});
     final data = ref.read(calendarDataProvider);
     List dateData = data.sortedDataByDay[startDate];
-
-    inittodaiarogu(data.calendarData.last);
-    _showTextDialog(context, data.calendarData.last, "予定の追加…");
+    setState(() {
+    isEdited = false;
+    editingSchedule = data.calendarData.last["id"];
+    initEditDialog(data.calendarData.last);
+  });
   }
 
   String weekDay(weekday) {
@@ -588,14 +1126,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     }
   }
 
-  void inittodaiarogu(Map targetData) {
-    final provider = ref.watch(scheduleFormProvider);
-    ref.read(scheduleFormProvider).clearContents();
-    provider.timeStartController.text = targetData["startTime"];
-    provider.timeEndController.text = targetData["endTime"];
-    provider.tagController.text = targetData["tag"] ?? "";
-    provider.isPublic = izuPabu(targetData["isPublic"]);
-  }
 
   bool izuPabu(int izuPab) {
     if (izuPab == 0) {
@@ -604,230 +1134,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       return true;
     }
   }
-
+  
   String errorCause = "";
-
-  Future<void> _showTextDialog(
-      BuildContext context, Map targetData, String title) async {
-    final provider = ref.watch(scheduleFormProvider);
-    TextEditingController titlecontroller = TextEditingController();
-    titlecontroller.text = targetData["subject"];
-    dynamic dtStartcontroller = targetData["startDate"];
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        ref.watch(scheduleFormProvider.notifier);
-        return AlertDialog(
-          title: Text(title),
-          actions: <Widget>[
-            StatefulBuilder(
-              builder: (BuildContext context, StateSetter setoState) {
-                ref.watch(scheduleFormProvider.notifier);
-
-                String tagcontroller = targetData["tag"] ?? "";
-
-                return Column(children: [
-                  TextField(
-                    controller: titlecontroller,
-                    decoration: const InputDecoration(
-                        labelText: '予定', border: OutlineInputBorder()),
-                  ),
-                  templateEmptyFlag(
-                      ref,
-                      Column(children: [
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 80,
-                          height: SizeConfig.blockSizeVertical! * 0.5,
-                        ),
-                        addTemplateButton(setoState, titlecontroller),
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 80,
-                          height: SizeConfig.blockSizeVertical! * 0.5,
-                        ),
-                      ])),
-                  Row(children: [
-                    ElevatedButton(
-                        onPressed: () async {
-                          dtStartcontroller = await _selectDateMultipul(
-                                  context, dtStartcontroller, setState) ??
-                              dtStartcontroller;
-                          setoState(() {});
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text(" + 日付       ",
-                            style: TextStyle(color: Colors.white))),
-                    timeInputPreview(dtStartcontroller)
-                  ]),
-                  Row(children: [
-                    ElevatedButton(
-                        onPressed: () async{
-                          await DatePicker.showTimePicker(context,
-                            showTitleActions: true,
-                            showSecondsColumn: false,
-                            onConfirm: (date) {
-                              provider.timeStartController.text
-                               = DateFormat("HH:mm").format(date);
-                                setoState((){});
-                            },
-                            currentTime: DateTime.now(),
-                            locale: LocaleType.jp
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("+ 開始時刻",
-                            style: TextStyle(color: Colors.white))),
-                    timeInputPreview(provider.timeStartController.text)
-                  ]),
-                  Row(children: [
-                    ElevatedButton(
-                        onPressed: () async{
-                          await DatePicker.showTimePicker(context,
-                            showTitleActions: true,
-                            showSecondsColumn: false,
-                            onConfirm: (date) {
-                              provider.timeEndController.text
-                               = DateFormat("HH:mm").format(date);
-                                setoState((){});
-                            },
-                            currentTime: DateTime.now(),
-                            locale: LocaleType.jp
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("+ 終了時刻",
-                            style: TextStyle(color: Colors.white))),
-                    timeInputPreview(provider.timeEndController.text)
-                  ]),
-                  tagEmptyFlag(
-                    ref,
-                    Row(children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            showTagDialogue(ref, context, setoState);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                          ),
-                          child: const Text("+    タグ     ",
-                              style: TextStyle(color: Colors.white))),
-                      timeInputPreview(
-                          returnTagData(provider.tagController.text, ref))
-                    ]),
-                  ),
-                  Row(children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          setoState(() {
-                            if (provider.isPublic) {
-                              provider.isPublic = false;
-                            } else {
-                              provider.isPublic = true;
-                            }
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("共有時表示",
-                            style: TextStyle(color: Colors.white))),
-                    isPublicPreview(provider.isPublic),
-                  ]),
-                ]);
-              },
-            ),
-
-            const SizedBox(height: 50),
-
-            ElevatedButton(
-              onPressed: () async {
-                if (isConflict(provider.timeStartController.text,
-                    provider.timeEndController.text)) {
-                  print("ボタン無効");
-                } else {
-                  Map<String, dynamic> newMap = {};
-                  newMap["subject"] = titlecontroller.text;
-                  newMap["startDate"] = dtStartcontroller;
-                  newMap["startTime"] = provider.timeStartController.text;
-                  newMap["endDate"] = dtStartcontroller;
-                  newMap["endTime"] = provider.timeEndController.text;
-                  newMap["isPublic"] = provider.isPublic;
-                  newMap["publicSubject"] = targetData["publicSubject"];
-                  newMap["tag"] = provider.tagController.text;
-                  newMap["id"] = targetData["id"];
-
-                  newMap["tagID"] =
-                      returnTagId(provider.tagController.text, ref);
-
-                  await ScheduleDatabaseHelper().updateSchedule(newMap);
-                  ref.read(taskDataProvider).isRenewed = true;
-                  ref.read(calendarDataProvider.notifier).state =
-                      CalendarData();
-                  while (ref.read(taskDataProvider).isRenewed != false) {
-                    await Future.delayed(const Duration(microseconds: 1));
-                  }
-                  setState(() {});
-                  Navigator.pop(context);
-                  if (ref.read(calendarDataProvider).calendarData.last["id"] ==
-                      1) {
-                    showTagAndTemplateGuide(context);
-                  }
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
-                  if (isConflict(provider.timeStartController.text,
-                      provider.timeEndController.text)) {
-                    print("ボタン無効");
-                    return Colors.grey; // ボタンが無効の場合の色
-                  } else {
-                    return MAIN_COLOR; // ボタンが通常の場合の色
-                  }
-                }),
-                fixedSize: MaterialStateProperty.all<Size>(Size(
-                  SizeConfig.blockSizeHorizontal! * 100,
-                  SizeConfig.blockSizeHorizontal! * 7.5,
-                )),
-              ),
-              child: const Text('登録', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget addTemplateButton(
-      StateSetter setosute, TextEditingController titleController) {
-    return ElevatedButton(
-      onPressed: () {
-        showTemplateDialogue(setosute, titleController);
-      },
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-      ),
-      child: const Row(children: [
-        Spacer(),
-        Icon(Icons.add, color: Colors.white),
-        SizedBox(width: 10),
-        Text('テンプレート', style: TextStyle(color: Colors.white)),
-        Spacer(),
-      ]),
-    );
-  }
-
   bool isConflict(String start, String end) {
     errorCause = "";
     if (returnTagIsBeit(
@@ -850,7 +1158,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           minutes: int.parse(end.substring(3, 5)));
 
       if (startTime >= endTime) {
-        errorCause = "*開始時を終了時間より前にしてください。";
+        errorCause = "*開始時間を終了時間より前にしてください。";
         return true;
       } else {
         return false;
@@ -893,7 +1201,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Future<String?> _selectDateMultipul(
       BuildContext context, String controller, StateSetter setState) async {
     Completer<String?> completer = Completer<String?>();
-    await showDialog(
+      await showDialog(
         context: context,
         builder: (_) {
           return SimpleDialog(
@@ -921,6 +1229,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       String result = DateFormat('yyyy-MM-dd').format(value);
                       completer.complete(result);
                       Navigator.pop(context);
+                      setState((){});
                     },
                     onCancel: () {
                       completer.complete(null);
@@ -942,7 +1251,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final data = ref.read(calendarDataProvider);
     List tempLateMap = data.templateData;
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -977,6 +1286,17 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               data.templateData.elementAt(index)["endTime"];
                           inputform.tagController.text =
                               data.templateData.elementAt(index)["tag"];
+
+                          titleController.text =
+                              data.templateData.elementAt(index)["subject"];
+                          timeStartController =
+                              data.templateData.elementAt(index)["startTime"];
+                          timeEndController =
+                              data.templateData.elementAt(index)["endTime"];
+                          tagController.text =
+                              data.templateData.elementAt(index)["tag"];
+                          tagIDController=
+                              data.templateData.elementAt(index)["tagID"];
                           setosute(() {});
 
                           Navigator.pop(context);

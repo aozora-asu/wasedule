@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
@@ -74,11 +76,28 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(children: [
-          SizedBox(
+    final bottomSpace= MediaQuery.of(context).viewInsets.bottom;
+
+    Widget dividerModel =
+      const VerticalDivider(
+        width: 4,
+        thickness: 1.5,
+        color: Colors.grey,
+        indent: 0,
+        endIndent: 4,
+      );
+
+return Scaffold(
+  resizeToAvoidBottomInset: false,
+  backgroundColor: Colors.white,
+  body: Column(
+    children: [
+      Row(
+        children:[
+          const Icon(Icons.arrow_left,color:Colors.grey),
+          Expanded(
             child: SingleChildScrollView(
+              reverse: true,
               scrollDirection: Axis.horizontal,
               child: Container(
                 decoration: BoxDecoration(
@@ -93,9 +112,12 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   ],
                 ),
                 height: SizeConfig.blockSizeVertical! * 4.5,
-                child: Row(children: [
-                  TextButton(
-                    child: Row(children: [
+
+                child: Row(
+                  children: [
+                    dividerModel,
+                    TextButton(
+                    child: Row(children:[
                       const Text("期限切れ ",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       listLengthView(
@@ -112,13 +134,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       );
                     },
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   TextButton(
                     child: const Text("削除済み",
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -131,30 +147,28 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       );
                     },
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   Align(
                     alignment: Alignment.centerLeft,
                     child: foldStateSwitch(),
                   ),
-                  const VerticalDivider(
-                    width: 4,
-                    thickness: 1.5,
-                    color: Colors.grey,
-                    indent: 0,
-                    endIndent: 4,
-                  ),
+                  dividerModel,
                   sortSwitch(),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 60)
+                  dividerModel,
+                  TextButton(
+                    child: const Text("不具合報告",
+                      style:TextStyle(fontWeight: FontWeight.bold,color:Colors.red)),
+                    onPressed: () {
+                      showErrorReportDialogue();
+                    },
+                  ),
+                  dividerModel
                 ]),
               ),
             ),
           ),
+          const Icon(Icons.arrow_right,color:Colors.grey)
+        ]),
           const Divider(thickness: 0.3, height: 0.3, color: Colors.grey),
           Expanded(child: pages())
         ]),
@@ -178,7 +192,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               child: const Icon(Icons.refresh_outlined, color: Colors.white),
             ),
           ],
-        ));
+        )
+      );
   }
 
   Widget pages() {
@@ -332,8 +347,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 1;
               });
             },
+
             child: const Text("ソート：期限",
                 style: TextStyle(fontWeight: FontWeight.bold)));
+
       case 1:
         return TextButton(
             onPressed: () {
@@ -341,8 +358,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
+
             child: const Text("ソート：カテゴリ",
                 style: TextStyle(fontWeight: FontWeight.bold)));
+
       default:
         return TextButton(
             onPressed: () {
@@ -350,10 +369,110 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+
+            child: const Text("ゴリゴリ別",
+               style:TextStyle(fontWeight: FontWeight.bold)));
+
     }
   }
+
+  void showErrorReportDialogue(){
+    String _text = "";
+    bool _isChecked = true;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context,setState){
+          return CupertinoAlertDialog(
+          title:const Text('不具合を報告する'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CupertinoTextField(
+                maxLines: 5,
+                textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  setState(() {
+                    _text = value;
+                  });
+                },
+                placeholder:"不具合の概要\n(できるだけ詳細にお願いいたします。)",
+              ),
+              Row(children:[
+                CupertinoCheckbox(
+                  value: _isChecked,
+                  onChanged:(value){
+                  setState(() {
+                    _isChecked = value!;
+                  });
+                }),
+                const Expanded(child:
+                 Text("デバッグのための情報を提供する",
+                  overflow: TextOverflow.clip,),)
+              ]),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child:const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:const Text('送信'),
+              onPressed: () {
+              //ここにデバッグ情報を送信する処理を記述！！
+              //_isCheckedは同意があるかどうか
+              //_textはエラーの詳細
+
+
+                Navigator.of(context).pop();
+                showReportDoneDialogue();
+                showReportFailDialogue("String errorMessage");
+              },
+            ),
+          ],
+         );
+        }
+       );  
+      },
+    );
+  }
+
+  void showReportDoneDialogue() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('不具合レポートが送信されました。'),
+          actions: <Widget>[
+            const Align(alignment: Alignment.centerLeft, child: Text("ご報告いただきありがとうございます。\nお寄せいただいた情報はアプリの改善のために役立てさせていただきます。")),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
+  }
+
+  void showReportFailDialogue(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('レポート失敗'),
+          actions: <Widget>[
+            Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
+            const Align(alignment: Alignment.centerLeft, child: Text("お手数ですが再度お試しください。")),
+            const SizedBox(height: 10),
+            okButton(context, 500.0)
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 Widget listLengthView(int target, double fontSize) {

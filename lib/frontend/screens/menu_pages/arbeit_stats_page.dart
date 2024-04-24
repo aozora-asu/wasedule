@@ -13,15 +13,413 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
+class ArbeitCalculator{
+  int returnCorrectedWage(tagData, targetKey ,ref) {
+    bool found = false;
+    int result = 0;
+
+    for (var data in ref.read(calendarDataProvider).arbeitData) {
+      String month = data["month"];
+      int tagId = data["tagId"];
+      int wage = data["wage"];
+
+      if (month == targetKey && tagId == tagData["id"]) {
+        found = true;
+        result += wage;
+      }
+    }
+
+    if (!found) {
+      result += (culculateWage(
+              monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey ,ref),
+              tagData["wage"]) +
+          monthlyFeeSum(tagData, targetKey ,ref));
+    }
+    return result;
+  }
+
+  Duration monthlyWorkTimeSumOfAllTags(targetKey,ref){
+    final tagData = ref.watch(calendarDataProvider).tagData;
+    Duration result = Duration.zero;
+    for(int i = 0; i < tagData.length; i++){
+      if(tagData.elementAt(i)["isBeit"] == 1){
+        result += monthlyWorkTimeSum(tagData.elementAt(i),targetKey,ref);
+      }
+    }
+    return result;
+  }
+
+  Duration monthlyWorkTimeSum(tagData, targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    Duration result = Duration.zero;
+    if (sortedDataByMonth[targetKey] != null) {
+      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
+        for (int ind = 0;
+            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
+            ind++) {
+          String? tagId = sortedDataByMonth[targetKey]
+              .values
+              .elementAt(i)
+              .elementAt(ind)["tagID"] ?? "";
+          Map targetScheduleData =
+              sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
+
+          if (tagId == tagData["tagID"].toString()) {
+            Duration start =
+                parseTimeToDuration(targetScheduleData["startTime"]);
+            Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
+            Duration newDuration = end;
+            newDuration -= start;
+
+            if (const Duration(hours: 6) < newDuration &&
+                newDuration <= const Duration(hours: 8)) {
+              newDuration -= const Duration(minutes: 45);
+            } else if (newDuration > const Duration(hours: 8)) {
+              newDuration -= const Duration(hours: 1);
+            }
+
+            result += newDuration;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  Duration monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+
+    Duration result = Duration.zero;
+    if (sortedDataByMonth[targetKey] != null) {
+      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
+        for (int ind = 0;
+            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
+            ind++) {
+          String? tagId = sortedDataByMonth[targetKey]
+              .values
+              .elementAt(i)
+              .elementAt(ind)["tagID"] ?? "";
+          Map targetScheduleData =
+              sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
+
+          if (tagId == tagData["tagID"].toString()) {
+            Duration start =
+                parseTimeToDuration(targetScheduleData["startTime"]);
+            Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
+            Duration newDuration = end;
+            newDuration -= start;
+
+            //休憩時間の減算(6時間以上で45分、8時間以上で60分)
+            if (const Duration(hours: 6) < newDuration &&
+                newDuration <= const Duration(hours: 8)) {
+              newDuration -= const Duration(minutes: 45);
+            } else if (newDuration > const Duration(hours: 8)) {
+              newDuration -= const Duration(hours: 1);
+            }
+
+            //時間外労働分の加算(8時間を超えた分は1.25倍)
+            if (newDuration > const Duration(hours: 8)) {
+              Duration additional = newDuration - const Duration(hours: 8);
+              newDuration -= additional;
+              newDuration += additional * 1.25;
+            }
+
+            //深夜労働分の加算(夜10時以降、朝5時以前は1.25倍)
+            if (start <= const Duration(hours: 22) &&
+                const Duration(hours: 22) <= end) {
+              Duration additional = end - const Duration(hours: 22);
+              newDuration -= additional;
+              newDuration += additional * 1.25;
+            } else if (const Duration(hours: 22) <= start &&
+                const Duration(hours: 22) <= end) {
+              Duration additional = newDuration;
+              newDuration = additional * 1.25;
+            }
+
+            if (start <= const Duration(hours: 5) &&
+                const Duration(hours: 5) <= end) {
+              Duration additional = const Duration(hours: 5) - start;
+              newDuration -= additional;
+              newDuration += additional * 1.25;
+            } else if (start <= const Duration(hours: 5) &&
+                end <= const Duration(hours: 5)) {
+              Duration additional = newDuration;
+              newDuration = additional * 1.25;
+            }
+
+            result += newDuration;
+          }
+        }
+      }
+    } else {}
+    return result;
+  }
+
+  Duration parseTimeToDuration(String timeString) {
+    List<String> parts = timeString.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    return Duration(hours: hours, minutes: minutes);
+  }
+
+  int monthlyFeeSum(tagData, targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    if (sortedDataByMonth[targetKey] != null) {
+      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
+        for (int ind = 0;
+            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
+            ind++) {
+          String? tagId = sortedDataByMonth[targetKey]
+              .values
+              .elementAt(i)
+              .elementAt(ind)["tagID"] ?? "";
+
+          if (tagId == tagData["tagID"].toString()) {
+            int f = tagData["fee"];
+            result += f * 2;
+          }
+        }
+      }
+    } else {}
+
+    return result;
+  }
+
+  int culculateWage(Duration duration, int multiplier) {
+    int wage = ((duration.inMinutes * multiplier) / 60).round();
+    return wage;
+  }
+
+  Duration yearlyWorkTimeSum(tagData, targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    Duration result = Duration.zero;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+
+    for (int i = 0; i < targetKeys.length; i++) {
+      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
+        result += monthlyWorkTimeSum(tagData, targetKeys.elementAt(i) ,ref);
+      }
+    }
+
+    return result;
+  }
+
+  int yearlyWageSumWithAdditionalWorkTime(targetKey ,ref) {
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+    for (int i = 0; i < tagData.length; i++) {
+      if (tagData.elementAt(i)["isBeit"] == 1) {
+        for (int ind = 0; ind < targetKeys.length; ind++) {
+          if (sortedDataByMonth[targetKeys.elementAt(ind)] != null) {
+            result += returnCorrectedWage(
+                tagData.elementAt(i), targetKeys.elementAt(ind) ,ref);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  int yearlyFeeSum(tagData, targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+
+    for (int i = 0; i < targetKeys.length; i++) {
+      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
+        result += monthlyFeeSum(tagData, targetKeys.elementAt(i) ,ref);
+      }
+    }
+
+    return result;
+  }
+
+  int yearlyFeeSumOfAllTags(targetKey ,ref) {
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+
+    int result = 0;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+    for (int i = 0; i < tagData.length; i++) {
+      if (tagData.elementAt(i)["isBeit"] == 1) {
+        for (int ind = 0; ind < targetKeys.length; ind++) {
+          if (sortedDataByMonth[targetKeys.elementAt(ind)] != null) {
+            result +=
+                monthlyFeeSum(tagData.elementAt(i), targetKeys.elementAt(i) ,ref);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  int monthlyFeeSumOfAllTags(targetKey ,ref) {
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+
+    int result = 0;
+
+    for (int i = 0; i < tagData.length; i++) {
+      if (tagData.elementAt(i)["isBeit"] == 1) {
+        if (sortedDataByMonth[targetKey] != null) {
+          result += monthlyFeeSum(tagData.elementAt(i), targetKey ,ref);
+        }
+      }
+    }
+    return result;
+  }
+
+  int numberOfValidMonthNullsafe(targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+
+    for (int i = 0; i < targetKeys.length; i++) {
+      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
+        result += 1;
+      }
+    }
+
+    if (result == 0) {
+      result = 1;
+    }
+
+    return result;
+  }
+
+  int numberOfValidMonth(targetKey ,ref) {
+    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
+    int result = 0;
+    String year = targetKey.substring(0, 4);
+    List<String> targetKeys = [
+      year + "-01",
+      year + "-02",
+      year + "-03",
+      year + "-04",
+      year + "-05",
+      year + "-06",
+      year + "-07",
+      year + "-08",
+      year + "-09",
+      year + "-10",
+      year + "-11",
+      year + "-12",
+    ];
+
+    for (int i = 0; i < targetKeys.length; i++) {
+      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
+        result += 1;
+      }
+    }
+
+    return result;
+  }
+
+  int monthlyWageSum(targetKey ,ref) {
+    List tagData = ref.watch(calendarDataProvider).tagData;
+    int result = 0;
+    String modifiedKey =
+        targetKey.substring(0, 4) + "-" + targetKey.substring(5, 7);
+    for (int i = 0; i < tagData.length; i++) {
+      if (tagData.elementAt(i)["isBeit"] == 1) {
+        result += culculateWage(
+            monthlyWorkTimeSumWithAdditionalWorkTime(
+                tagData.elementAt(i), modifiedKey ,ref),
+            tagData.elementAt(i)["wage"]);
+      }
+    }
+    return result;
+  }
+
+  String formatNumberWithComma(int number) {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(number);
+  }
+}
+
+
 class ArbeitStatsPage extends ConsumerStatefulWidget {
   String targetMonth;
 
   ArbeitStatsPage({required this.targetMonth});
   @override
-  _ArbeitStatsPageState createState() => _ArbeitStatsPageState();
+  ArbeitStatsPageState createState() => ArbeitStatsPageState();
 }
 
-class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
+class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
   Color charColor = const Color.fromARGB(255, 200, 200, 200);
   Color charColorLight = const Color.fromARGB(255, 150, 150, 150);
   late int includeFee;
@@ -44,15 +442,17 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
     if (includeFee == 1) {
       estimatedMonthlyIncome = Text(
-          formatNumberWithComma(monthlyWageSum(widget.targetMonth) +
-                  monthlyFeeSumOfAllTags(targetKey)) +
+          ArbeitCalculator().formatNumberWithComma(
+            ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref) +
+                  ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
               " 円",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeHorizontal! * 15));
     } else if (includeFee == 0) {
       estimatedMonthlyIncome = Text(
-          formatNumberWithComma(monthlyWageSum(widget.targetMonth)) + " 円",
+          ArbeitCalculator().formatNumberWithComma(
+            ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref)) + " 円",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeHorizontal! * 15));
@@ -157,9 +557,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                     7)),
                                         correctIndicator(),
                                         Text(
-                                            formatNumberWithComma(
-                                                    yearlyWageSumWithAdditionalWorkTime(
-                                                        widget.targetMonth)) +
+                                            ArbeitCalculator().formatNumberWithComma(
+                                              ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
+                                                widget.targetMonth,ref)) +
                                                 " 円",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -217,13 +617,13 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                             5)),
                                                 const SizedBox(width: 15),
                                                 Text(
-                                                    formatNumberWithComma(
-                                                            (yearlyWageSumWithAdditionalWorkTime(
+                                                    ArbeitCalculator().formatNumberWithComma(
+                                                      (ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
                                                                         widget
-                                                                            .targetMonth) /
-                                                                    numberOfValidMonthNullsafe(
+                                                                            .targetMonth,ref) /
+                                                        ArbeitCalculator().numberOfValidMonthNullsafe(
                                                                         widget
-                                                                            .targetMonth))
+                                                                            .targetMonth,ref))
                                                                 .round()) +
                                                         " 円",
                                                     style: TextStyle(
@@ -260,9 +660,9 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               "あなたの扶養者(親など)にかかる所得税が増加するラインです。"))
                                     ]),
                                     Text(
-                                        formatNumberWithComma(1030000 -
-                                                yearlyWageSumWithAdditionalWorkTime(
-                                                    widget.targetMonth)) +
+                                        ArbeitCalculator().formatNumberWithComma(1030000 -
+                                          ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
+                                            widget.targetMonth,ref)) +
                                             " 円",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -316,11 +716,11 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               "あなたに社会保険料が科されるようになるラインです。"))
                                     ]),
                                     Text(
-                                        formatNumberWithComma(1300000 -
-                                                yearlyWageSumWithAdditionalWorkTime(
-                                                    widget.targetMonth) -
-                                                yearlyFeeSumOfAllTags(
-                                                    widget.targetMonth)) +
+                                        ArbeitCalculator().formatNumberWithComma(1300000 -
+                                          ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
+                                                    widget.targetMonth,ref) -
+                                            ArbeitCalculator().yearlyFeeSumOfAllTags(
+                                                    widget.targetMonth,ref)) +
                                             " 円",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -393,12 +793,12 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
   }
 
   int returnRemainingIncome(int maxIncome){
-    int remainingMonth = 12-numberOfValidMonth(widget.targetMonth);
+    int remainingMonth = 12-ArbeitCalculator().numberOfValidMonth(widget.targetMonth,ref);
     if(remainingMonth == 0){
-       return ((maxIncome-yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))).round();
+       return ((maxIncome-ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(widget.targetMonth,ref))).round();
     }else{
-       return ((maxIncome-yearlyWageSumWithAdditionalWorkTime(widget.targetMonth))
-                                               /(12-numberOfValidMonth(widget.targetMonth))).round();
+       return ((maxIncome-ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(widget.targetMonth,ref))
+                                               /(12-ArbeitCalculator().numberOfValidMonth(widget.targetMonth,ref))).round();
     }
   }
 
@@ -505,7 +905,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               "時給：" +
-                  formatNumberWithComma(sortedData.elementAt(index)["wage"]) +
+                  ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"]) +
                   "円",
               style: const TextStyle(
                   color: Colors.white,
@@ -514,7 +914,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             ),
             Text(
               "片道交通費：" +
-                  formatNumberWithComma(sortedData.elementAt(index)["fee"]) +
+                  ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"]) +
                   "円",
               style: const TextStyle(
                   color: Colors.white,
@@ -591,25 +991,27 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               const SizedBox(height: 2),
               Row(children: [
                 const Text("労働時間　  ", style: TextStyle(color: Colors.grey)),
-                Text(monthlyWorkTimeSum(tagData, targetKey).inHours.toString() +
+                Text(ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inHours.toString() +
                     " 時間" +
-                    (monthlyWorkTimeSum(tagData, targetKey).inMinutes % 60)
+                    (ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60)
                         .toString() +
                     " 分"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("給料見込み  ", style: TextStyle(color: Colors.grey)),
-                Text(formatNumberWithComma(culculateWage(
-                        monthlyWorkTimeSumWithAdditionalWorkTime(
-                            tagData, targetKey),
+                Text(ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().culculateWage(
+                    ArbeitCalculator().monthlyWorkTimeSumWithAdditionalWorkTime(
+                            tagData, targetKey,ref),
                         tagData["wage"])) +
                     " 円"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("交通費総額  ", style: TextStyle(color: Colors.grey)),
-                Text(formatNumberWithComma(monthlyFeeSum(tagData, targetKey)) +
+                Text(ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().monthlyFeeSum(tagData, targetKey,ref)) +
                     " 円"),
               ]),
               const SizedBox(height: 7),
@@ -618,24 +1020,26 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               const SizedBox(height: 2),
               Row(children: [
                 const Text("労働時間　  ", style: TextStyle(color: Colors.grey)),
-                Text(yearlyWorkTimeSum(tagData, targetKey).inHours.toString() +
+                Text(ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inHours.toString() +
                     " 時間" +
-                    (yearlyWorkTimeSum(tagData, targetKey).inMinutes % 60)
+                    (ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60)
                         .toString() +
                     " 分"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("給料見込み  ", style: TextStyle(color: Colors.grey)),
-                Text(formatNumberWithComma(culculateWage(
-                        yearlyWorkTimeSum(tagData, targetKey),
+                Text(ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().culculateWage(
+                    ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref),
                         tagData["wage"])) +
                     " 円"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("交通費総額  ", style: TextStyle(color: Colors.grey)),
-                Text(formatNumberWithComma(yearlyFeeSum(tagData, targetKey)) +
+                Text(ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().yearlyFeeSum(tagData, targetKey,ref)) +
                     " 円"),
               ]),
               const SizedBox(height: 15),
@@ -758,18 +1162,19 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             ];
 
             controller.text =
-                (returnCorrectedWage(tagData, targetKeys.elementAt(index)))
+                (ArbeitCalculator().returnCorrectedWage(tagData, targetKeys.elementAt(index),ref))
                     .toString();
 
             return Row(children: [
               Text(targetKeys.elementAt(index)),
               const Spacer(),
               SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-              Text(formatNumberWithComma(culculateWage(
-                          monthlyWorkTimeSumWithAdditionalWorkTime(
-                              tagData, targetKeys.elementAt(index)),
+              Text(ArbeitCalculator().formatNumberWithComma(
+                ArbeitCalculator().culculateWage(
+                  ArbeitCalculator().monthlyWorkTimeSumWithAdditionalWorkTime(
+                              tagData, targetKeys.elementAt(index),ref),
                           tagData["wage"]) +
-                      monthlyFeeSum(tagData, targetKeys.elementAt(index))) +
+                    ArbeitCalculator().monthlyFeeSum(tagData, targetKeys.elementAt(index),ref)) +
                   " 円"),
               SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
               SizedBox(
@@ -864,389 +1269,7 @@ class _ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     }
   }
 
-  int returnCorrectedWage(tagData, targetKey) {
-    bool found = false;
-    int result = 0;
 
-    for (var data in ref.read(calendarDataProvider).arbeitData) {
-      String month = data["month"];
-      int tagId = data["tagId"];
-      int wage = data["wage"];
-
-      if (month == targetKey && tagId == tagData["id"]) {
-        found = true;
-        result += wage;
-      }
-    }
-
-    if (!found) {
-      result += (culculateWage(
-              monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey),
-              tagData["wage"]) +
-          monthlyFeeSum(tagData, targetKey));
-    }
-    return result;
-  }
-
-  Duration monthlyWorkTimeSum(tagData, targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    Duration result = Duration.zero;
-    if (sortedDataByMonth[targetKey] != null) {
-      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
-        for (int ind = 0;
-            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
-            ind++) {
-          String? tagId = sortedDataByMonth[targetKey]
-              .values
-              .elementAt(i)
-              .elementAt(ind)["tagID"] ?? "";
-          Map targetScheduleData =
-              sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
-
-          if (tagId == tagData["tagID"].toString()) {
-            Duration start =
-                parseTimeToDuration(targetScheduleData["startTime"]);
-            Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
-            Duration newDuration = end;
-            newDuration -= start;
-
-            if (const Duration(hours: 6) < newDuration &&
-                newDuration <= const Duration(hours: 8)) {
-              newDuration -= const Duration(minutes: 45);
-            } else if (newDuration > const Duration(hours: 8)) {
-              newDuration -= const Duration(hours: 1);
-            }
-
-            result += newDuration;
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  Duration monthlyWorkTimeSumWithAdditionalWorkTime(tagData, targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-
-    Duration result = Duration.zero;
-    if (sortedDataByMonth[targetKey] != null) {
-      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
-        for (int ind = 0;
-            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
-            ind++) {
-          String? tagId = sortedDataByMonth[targetKey]
-              .values
-              .elementAt(i)
-              .elementAt(ind)["tagID"] ?? "";
-          Map targetScheduleData =
-              sortedDataByMonth[targetKey].values.elementAt(i).elementAt(ind);
-
-          if (tagId == tagData["tagID"].toString()) {
-            Duration start =
-                parseTimeToDuration(targetScheduleData["startTime"]);
-            Duration end = parseTimeToDuration(targetScheduleData["endTime"]);
-            Duration newDuration = end;
-            newDuration -= start;
-
-            //休憩時間の減算(6時間以上で45分、8時間以上で60分)
-            if (const Duration(hours: 6) < newDuration &&
-                newDuration <= const Duration(hours: 8)) {
-              newDuration -= const Duration(minutes: 45);
-            } else if (newDuration > const Duration(hours: 8)) {
-              newDuration -= const Duration(hours: 1);
-            }
-
-            //時間外労働分の加算(8時間を超えた分は1.25倍)
-            if (newDuration > const Duration(hours: 8)) {
-              Duration additional = newDuration - const Duration(hours: 8);
-              newDuration -= additional;
-              newDuration += additional * 1.25;
-            }
-
-            //深夜労働分の加算(夜10時以降、朝5時以前は1.25倍)
-            if (start <= const Duration(hours: 22) &&
-                const Duration(hours: 22) <= end) {
-              Duration additional = end - const Duration(hours: 22);
-              newDuration -= additional;
-              newDuration += additional * 1.25;
-            } else if (const Duration(hours: 22) <= start &&
-                const Duration(hours: 22) <= end) {
-              Duration additional = newDuration;
-              newDuration = additional * 1.25;
-            }
-
-            if (start <= const Duration(hours: 5) &&
-                const Duration(hours: 5) <= end) {
-              Duration additional = const Duration(hours: 5) - start;
-              newDuration -= additional;
-              newDuration += additional * 1.25;
-            } else if (start <= const Duration(hours: 5) &&
-                end <= const Duration(hours: 5)) {
-              Duration additional = newDuration;
-              newDuration = additional * 1.25;
-            }
-
-            result += newDuration;
-          }
-        }
-      }
-    } else {}
-    return result;
-  }
-
-  Duration parseTimeToDuration(String timeString) {
-    List<String> parts = timeString.split(':');
-    int hours = int.parse(parts[0]);
-    int minutes = int.parse(parts[1]);
-    return Duration(hours: hours, minutes: minutes);
-  }
-
-  int monthlyFeeSum(tagData, targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    int result = 0;
-    if (sortedDataByMonth[targetKey] != null) {
-      for (int i = 0; i < sortedDataByMonth[targetKey].length; i++) {
-        for (int ind = 0;
-            ind < sortedDataByMonth[targetKey].values.elementAt(i).length;
-            ind++) {
-          String? tagId = sortedDataByMonth[targetKey]
-              .values
-              .elementAt(i)
-              .elementAt(ind)["tagID"] ?? "";
-
-          if (tagId == tagData["tagID"].toString()) {
-            int f = tagData["fee"];
-            result += f * 2;
-          }
-        }
-      }
-    } else {}
-
-    return result;
-  }
-
-  int culculateWage(Duration duration, int multiplier) {
-    int wage = ((duration.inMinutes * multiplier) / 60).round();
-    return wage;
-  }
-
-  Duration yearlyWorkTimeSum(tagData, targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    Duration result = Duration.zero;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-
-    for (int i = 0; i < targetKeys.length; i++) {
-      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
-        result += monthlyWorkTimeSum(tagData, targetKeys.elementAt(i));
-      }
-    }
-
-    return result;
-  }
-
-  int yearlyWageSumWithAdditionalWorkTime(targetKey) {
-    List tagData = ref.watch(calendarDataProvider).tagData;
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    int result = 0;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-    for (int i = 0; i < tagData.length; i++) {
-      if (tagData.elementAt(i)["isBeit"] == 1) {
-        for (int ind = 0; ind < targetKeys.length; ind++) {
-          if (sortedDataByMonth[targetKeys.elementAt(ind)] != null) {
-            result += returnCorrectedWage(
-                tagData.elementAt(i), targetKeys.elementAt(ind));
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  int yearlyFeeSum(tagData, targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    int result = 0;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-
-    for (int i = 0; i < targetKeys.length; i++) {
-      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
-        result += monthlyFeeSum(tagData, targetKeys.elementAt(i));
-      }
-    }
-
-    return result;
-  }
-
-  int yearlyFeeSumOfAllTags(targetKey) {
-    List tagData = ref.watch(calendarDataProvider).tagData;
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-
-    int result = 0;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-    for (int i = 0; i < tagData.length; i++) {
-      if (tagData.elementAt(i)["isBeit"] == 1) {
-        for (int ind = 0; ind < targetKeys.length; ind++) {
-          if (sortedDataByMonth[targetKeys.elementAt(ind)] != null) {
-            result +=
-                monthlyFeeSum(tagData.elementAt(i), targetKeys.elementAt(i));
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  int monthlyFeeSumOfAllTags(targetKey) {
-    List tagData = ref.watch(calendarDataProvider).tagData;
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-
-    int result = 0;
-
-    for (int i = 0; i < tagData.length; i++) {
-      if (tagData.elementAt(i)["isBeit"] == 1) {
-        if (sortedDataByMonth[targetKey] != null) {
-          result += monthlyFeeSum(tagData.elementAt(i), targetKey);
-        }
-      }
-    }
-    return result;
-  }
-
-  int numberOfValidMonthNullsafe(targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    int result = 0;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-
-    for (int i = 0; i < targetKeys.length; i++) {
-      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
-        result += 1;
-      }
-    }
-
-    if (result == 0) {
-      result = 1;
-    }
-
-    return result;
-  }
-
-  int numberOfValidMonth(targetKey) {
-    Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
-    int result = 0;
-    String year = targetKey.substring(0, 4);
-    List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
-    ];
-
-    for (int i = 0; i < targetKeys.length; i++) {
-      if (sortedDataByMonth[targetKeys.elementAt(i)] != null) {
-        result += 1;
-      }
-    }
-
-    return result;
-  }
-
-  int monthlyWageSum(targetKey) {
-    List tagData = ref.watch(calendarDataProvider).tagData;
-    int result = 0;
-    String modifiedKey =
-        targetKey.substring(0, 4) + "-" + targetKey.substring(5, 7);
-    for (int i = 0; i < tagData.length; i++) {
-      if (tagData.elementAt(i)["isBeit"] == 1) {
-        result += culculateWage(
-            monthlyWorkTimeSumWithAdditionalWorkTime(
-                tagData.elementAt(i), modifiedKey),
-            tagData.elementAt(i)["wage"]);
-      }
-    }
-    return result;
-  }
-
-  String formatNumberWithComma(int number) {
-    final formatter = NumberFormat('#,###');
-    return formatter.format(number);
-  }
 
   void showTextDialog(BuildContext context, String text) {
     showDialog(
