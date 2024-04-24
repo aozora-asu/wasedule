@@ -94,14 +94,24 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final bottomSpace= MediaQuery.of(context).viewInsets.bottom;
     ref.watch(taskDataProvider);
     return GestureDetector(
-        onTap: () {
+        onTap: () async{
           if(editingSchedule == null){
             Navigator.pop(context);
           }else{
-            setState(() {
-              editingSchedule = null;
-              isEdited = false;
-            });
+            if(isEdited){
+              bool isLeave = await showConfirmExitDialogue(context);
+              if(isLeave){
+                setState(() {
+                  editingSchedule = null;
+                  isEdited = false;
+                });
+              }
+            }else{
+              setState(() {
+                editingSchedule = null;
+                isEdited = false;
+              });
+            }
           }
         },
         child:LayoutBuilder(builder:
@@ -1407,6 +1417,36 @@ Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref, StateSetter s
       setState((){});
   }
 }
+
+  Future<bool> showConfirmExitDialogue(BuildContext context)async{
+    bool result = false;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: const Text('変更を保存せずに戻りますか？'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // ダイアログを閉じる
+              },
+              child: const Text('いいえ'),
+            ),
+            TextButton(
+              onPressed: () {
+                result = true;
+                Navigator.of(context).pop(); // ダイアログを閉じる
+              },
+              child: const Text(
+                'はい',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      });
+    return result;  
+  }
 
 bool isPanelEnable(String? tagID){
   if(tagID == null || tagID == ""){

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -419,38 +420,38 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
 
-        // tagEmptyFlag(
-        //   ref,
-        //   expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => ArbeitStatsPage(
-        //                 targetMonth: targetMonth,
-        //               )),
-        //     );
-        //   }),
-        // ),
-
         tagEmptyFlag(
           ref,
-        GestureDetector(
-          onTap:(){
-            Navigator.push(context,
-              MaterialPageRoute(builder:(_) => 
-                 ArbeitStatsPage(targetMonth: targetMonth)));
-          },
-          child:menuList(Icons.currency_yen, "アルバイト", true,
-            [
-              menuListChild(Icons.currency_yen, "アルバイト", () {
-                Navigator.push(context,
-                  MaterialPageRoute(builder:(_) => 
-                    ArbeitStatsPage(targetMonth: targetMonth)));
-              }),
-              arbeitStatsPreview(targetMonth)
-            ])
-          )
+          expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ArbeitStatsPage(
+                        targetMonth: targetMonth,
+                      )),
+            );
+          }),
         ),
+
+        // tagEmptyFlag(
+        //   ref,
+        // GestureDetector(
+        //   onTap:(){
+        //     Navigator.push(context,
+        //       MaterialPageRoute(builder:(_) => 
+        //          ArbeitStatsPage(targetMonth: targetMonth)));
+        //   },
+        //   child:menuList(Icons.currency_yen, "アルバイト", true,
+        //     [
+        //       menuListChild(Icons.currency_yen, "アルバイト", () {
+        //         Navigator.push(context,
+        //           MaterialPageRoute(builder:(_) => 
+        //             ArbeitStatsPage(targetMonth: targetMonth)));
+        //       }),
+        //       arbeitStatsPreview(targetMonth)
+        //     ])
+        //   )
+        // ),
 
 
         const SizedBox(height: 15),

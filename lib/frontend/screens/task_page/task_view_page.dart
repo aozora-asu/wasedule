@@ -159,7 +159,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red)),
                       onPressed: () {
-                        showErrorReportDialogue();
+                        showErrorReportDialogue(context);
                       },
                     ),
                     dividerModel
@@ -346,7 +346,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 1;
               });
             },
-            child: const Text("ソート：期限",
+            child: const Text("期限順",
                 style: TextStyle(fontWeight: FontWeight.bold)));
 
       default:
@@ -356,7 +356,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
             },
-            child: const Text("ソート：カテゴリ",
+            child: const Text("カテゴリ別",
                 style: TextStyle(fontWeight: FontWeight.bold)));
     }
   }
@@ -413,17 +413,14 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               TextButton(
                 child: const Text('送信'),
                 onPressed: () async {
-                  //ここにデバッグ情報を送信する処理を記述！！
-                  //_isCheckedは同意があるかどうか
-                  //_textはエラーの詳細
                   message = Message(content: _text);
                   isSuccess = await message.sendEmail();
 
                   Navigator.of(context).pop();
                   if (isSuccess) {
-                    showReportDoneDialogue();
+                    showReportDoneDialogue(context);
                   } else {
-                    showReportFailDialogue("String errorMessage");
+                    showReportFailDialogue("String errorMessage",context);
                   }
                 },
               ),

@@ -638,8 +638,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               int changedDateTimeSinceEpoch = changedDateTime.millisecondsSinceEpoch;
                               //↑こいつを日時更新関数に渡す
                               
-
                               
+                              final list =
+                                  ref.read(taskDataProvider).taskDataList;
+                              final newList = [...list];
+                              ref.read(taskDataProvider.notifier).state =
+                                  TaskData();
+                              ref.read(taskDataProvider).isRenewed = true;
                             },
                             child:Text(DateFormat("yyyy年MM月dd日  HH時mm分").format(dtEnd))
                           )

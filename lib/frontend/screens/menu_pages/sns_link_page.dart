@@ -39,14 +39,18 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
           ],
         ),
       ),
-      body: SingleChildScrollView(child:
-        Column(children:[
-         const Spacer(),
+      body:
+      Container(
+       width: SizeConfig.blockSizeHorizontal! *100,
+       child:SingleChildScrollView(
+        child:Column(children:[
+         const SizedBox(height:50),
          Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
-         const Spacer(),
+         const SizedBox(height:50),
          const Text("使い方ガイドやお問い合わせはこちら"),
          HomePageUrlLauncher(),
          PrivacyPolicyLauncher(),
+         ErrorReportButton(),
          const SizedBox(height:20),
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
@@ -54,11 +58,10 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:20),
          const Text("Waseda Moodleへのアクセスはこちらから！"),
          MoodleUrlLauncher(width:80),
-         const SizedBox(height:20),
-         ErrorReportButton(),
          const SizedBox(height:3)
         ])
-        )
+      ))
+      
     );
   }
 }
