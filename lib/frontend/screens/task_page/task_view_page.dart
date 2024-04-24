@@ -159,7 +159,7 @@ return Scaffold(
                     child: const Text("不具合報告",
                       style:TextStyle(fontWeight: FontWeight.bold,color:Colors.red)),
                     onPressed: () {
-                      showErrorReportDialogue();
+                      showErrorReportDialogue(context);
                     },
                   ),
                   dividerModel
@@ -351,7 +351,7 @@ return Scaffold(
             child: const Text("ソート：期限",
                 style: TextStyle(fontWeight: FontWeight.bold)));
 
-      case 1:
+      default:
         return TextButton(
             onPressed: () {
               setState(() {
@@ -362,21 +362,11 @@ return Scaffold(
             child: const Text("ソート：カテゴリ",
                 style: TextStyle(fontWeight: FontWeight.bold)));
 
-      default:
-        return TextButton(
-            onPressed: () {
-              setState(() {
-                ref.read(taskDataProvider).taskPageIndex = 0;
-              });
-            },
-
-            child: const Text("ゴリゴリ別",
-               style:TextStyle(fontWeight: FontWeight.bold)));
-
     }
   }
+}
 
-  void showErrorReportDialogue(){
+  void showErrorReportDialogue(context){
     String _text = "";
     bool _isChecked = true;
     showDialog(
@@ -428,8 +418,8 @@ return Scaffold(
 
 
                 Navigator.of(context).pop();
-                showReportDoneDialogue();
-                showReportFailDialogue("String errorMessage");
+                showReportDoneDialogue(context);
+                showReportFailDialogue("String errorMessage",context);
               },
             ),
           ],
@@ -440,7 +430,7 @@ return Scaffold(
     );
   }
 
-  void showReportDoneDialogue() {
+  void showReportDoneDialogue(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -456,7 +446,7 @@ return Scaffold(
     );
   }
 
-  void showReportFailDialogue(String errorMessage) {
+  void showReportFailDialogue(String errorMessage,context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -473,7 +463,7 @@ return Scaffold(
     );
   }
 
-}
+
 
 Widget listLengthView(int target, double fontSize) {
   if (target == 0) {
