@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.flutterCalendar.RunnerTests</string>
+	<string>com.example.wasedule</string>
 	<key>PROJECT_ID</key>
 	<string>wasedule-f719a</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:342079600357:ios:0a6b9a79ac8bd85263460c</string>
+	<string>1:342079600357:ios:a462571263b2860563460c</string>
+	<key>DATABASE_URL</key>
+	<string>https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

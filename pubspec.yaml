@@ -50,6 +50,7 @@ dependencies:
   qr_flutter: ^4.1.0
   mobile_scanner: ^4.0.1
   flutter_datetime_picker_plus: ^2.2.0
+  flutter_dotenv: ^5.1.0
 
   flutter_localizations:
     sdk: flutter
@@ -67,6 +68,8 @@ dependencies:
   firebase_core: ^2.27.0
   fl_chart: ^0.66.1
   ulid: ^2.0.0
+  firebase_messaging: ^14.8.2
+  emailjs: ^1.3.0
 
 dev_dependencies:
   flutter_test:
@@ -118,6 +121,7 @@ flutter:
     - lib/assets/schedule_share/schedule_backup_download.png
     - lib/assets/schedule_share/schedule_broadcast_upload.png
     - lib/assets/schedule_share/schedule_broadcast_download.png
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
