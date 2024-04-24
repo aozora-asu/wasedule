@@ -636,15 +636,16 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               ).selectDateAndTime(context,ref);
                               DateTime changedDateTime = DateTime.parse(controller.text);
                               int changedDateTimeSinceEpoch = changedDateTime.millisecondsSinceEpoch;
-                              //↑こいつを日時更新関数に渡す
-                              
-                              
+
+                              await TaskDatabaseHelper().updateDtEnd(id,changedDateTimeSinceEpoch);
+
                               final list =
                                   ref.read(taskDataProvider).taskDataList;
                               final newList = [...list];
                               ref.read(taskDataProvider.notifier).state =
                                   TaskData();
                               ref.read(taskDataProvider).isRenewed = true;
+                              Navigator.pop(context);
                             },
                             child:Text(DateFormat("yyyy年MM月dd日  HH時mm分").format(dtEnd))
                           )
