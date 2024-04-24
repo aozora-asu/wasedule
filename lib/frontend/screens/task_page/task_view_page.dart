@@ -40,7 +40,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     _initializeData();
   }
 
-
   Future<void> _initializeData() async {
     //ここの中にロードを1時間に1回までに制限する仕組みを書いて、
     //initState内で呼び出せばよさそうじゃない？
@@ -56,7 +55,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     if (urlString != null) {
       await databaseHelper.resisterTaskToDB(urlString!);
     }
-    NotifyContent().taskDueTodayNotification();
+    await NotifyContent().taskDueTodayNotification();
     await displayDB();
   }
 
@@ -69,8 +68,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
       return null;
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -91,26 +88,27 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       color: Colors.black.withOpacity(0.3),
                       spreadRadius: 1,
                       blurRadius: 2,
-                      offset: const Offset(0, 1), 
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
                 height: SizeConfig.blockSizeVertical! * 4.5,
                 child: Row(children: [
                   TextButton(
-                    child: Row(children:[
+                    child: Row(children: [
                       const Text("期限切れ ",
-                        style:TextStyle(fontWeight: FontWeight.bold)),
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       listLengthView(
                         ref.watch(taskDataProvider).expiredTaskDataList.length,
                         SizeConfig.blockSizeVertical! * 1.205,
                       )
-                      ]),
+                    ]),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ExpiredTaskPage(setosute:setState)),
+                            builder: (context) =>
+                                ExpiredTaskPage(setosute: setState)),
                       );
                     },
                   ),
@@ -123,12 +121,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   ),
                   TextButton(
                     child: const Text("削除済み",
-                      style:TextStyle(fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DeletedTaskPage(setosute:setState)),
+                            builder: (context) =>
+                                DeletedTaskPage(setosute: setState)),
                       );
                     },
                   ),
@@ -181,7 +180,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ],
         ));
   }
-
 
   Widget pages() {
     final taskData = ref.watch(taskDataProvider);
@@ -302,7 +300,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-              style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -311,7 +309,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("展開",
-              style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
             onPressed: () {
@@ -320,7 +318,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-              style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
     }
   }
 
@@ -335,7 +333,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("ソート：期限",
-              style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -344,7 +342,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("ソート：カテゴリ",
-               style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
             onPressed: () {
@@ -353,29 +351,27 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("ソート：カテゴリ",
-               style:TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
     }
   }
 }
 
-  Widget listLengthView(int target, double fontSize) {
-    if (target == 0) {
-      return const SizedBox();
-    } else {
-      return Container(
-          decoration: const BoxDecoration(
-            color: Colors.redAccent,
-            shape: BoxShape.circle,
-          ),
-          padding: EdgeInsets.all(fontSize / 3),
-          child: Text(
-            target.toString(),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: fontSize),
-        )
-      );
-    }
+Widget listLengthView(int target, double fontSize) {
+  if (target == 0) {
+    return const SizedBox();
+  } else {
+    return Container(
+        decoration: const BoxDecoration(
+          color: Colors.redAccent,
+          shape: BoxShape.circle,
+        ),
+        padding: EdgeInsets.all(fontSize / 3),
+        child: Text(
+          target.toString(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: fontSize),
+        ));
   }
-
+}

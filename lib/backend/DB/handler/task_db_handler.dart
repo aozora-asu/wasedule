@@ -160,6 +160,17 @@ class TaskDatabaseHelper {
     );
   }
 
+  Future<void> updateDtEnd(int id, int newDtEnd) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _initDatabase();
+    await _database.update(
+      'tasks',
+      {'dtEnd': newDtEnd}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> updateSummary(int id, String newSummary) async {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
@@ -250,16 +261,7 @@ class TaskDatabaseHelper {
         await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
-        if (e.toString().contains("UNIQUE constraint failed")) {
-          await _database.update(
-              'tasks',
-              {
-                'dtEnd': taskData["events"][i]["DTEND"],
-                "description": taskData["events"][i]["DESCRIPTION"],
-              },
-              where: 'uid = ?',
-              whereArgs: [taskData["events"][i]["UID"]]);
-        }
+        if (e.toString().contains("UNIQUE constraint failed")) {}
       }
     }
   }
