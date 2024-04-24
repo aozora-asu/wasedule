@@ -770,7 +770,7 @@ class DateTimePickerFormField extends ConsumerWidget {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  Future<void> _selectDateAndTime(BuildContext context, WidgetRef ref) async {
+  Future<void> selectDateAndTime(BuildContext context, WidgetRef ref) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -841,7 +841,7 @@ class DateTimePickerFormField extends ConsumerWidget {
           height: SizeConfig.blockSizeHorizontal! * 8.5,
           child: InkWell(
             onTap: () {
-              _selectDateAndTime(context, ref);
+              selectDateAndTime(context, ref);
             },
             child: IgnorePointer(
               child: TextFormField(
