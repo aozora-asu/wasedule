@@ -14,6 +14,7 @@ class ConfigDataLoader {
     await createConfigData("moodleLink", 0, ref);
     await createConfigData("holidayPaint", 1, ref);
     await createConfigData("holidayName", 0, ref);
+    await createConfigData("arbeitPreview", 1, ref);
   }
 
   Future<void> createConfigData(

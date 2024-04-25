@@ -176,7 +176,7 @@ class CalendarData {
     }
   }
 
-  void sortDataByMonth() {
+  Future<void> sortDataByMonth() async{
     var rawData = sortedDataByDay;
     var result = {};
     for (int i = 0; i < rawData.length; i++) {

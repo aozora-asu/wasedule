@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadc
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
 
@@ -420,38 +421,38 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
 
-        tagEmptyFlag(
-          ref,
-          expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ArbeitStatsPage(
-                        targetMonth: targetMonth,
-                      )),
-            );
-          }),
-        ),
-
         // tagEmptyFlag(
         //   ref,
-        // GestureDetector(
-        //   onTap:(){
-        //     Navigator.push(context,
-        //       MaterialPageRoute(builder:(_) => 
-        //          ArbeitStatsPage(targetMonth: targetMonth)));
-        //   },
-        //   child:menuList(Icons.currency_yen, "アルバイト", true,
-        //     [
-        //       menuListChild(Icons.currency_yen, "アルバイト", () {
-        //         Navigator.push(context,
-        //           MaterialPageRoute(builder:(_) => 
-        //             ArbeitStatsPage(targetMonth: targetMonth)));
-        //       }),
-        //       arbeitStatsPreview(targetMonth)
-        //     ])
-        //   )
+        //   expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => ArbeitStatsPage(
+        //                 targetMonth: targetMonth,
+        //               )),
+        //     );
+        //   }),
         // ),
+
+        tagEmptyFlag(
+          ref,
+        GestureDetector(
+          onTap:(){
+            Navigator.push(context,
+              MaterialPageRoute(builder:(_) => 
+                 ArbeitStatsPage(targetMonth: targetMonth)));
+          },
+          child:menuList(Icons.currency_yen, "アルバイト", true,
+            [
+              menuListChild(Icons.currency_yen, "アルバイト", () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder:(_) => 
+                    ArbeitStatsPage(targetMonth: targetMonth)));
+              }),
+              loadArbeitStatsPreview(targetMonth)
+            ])
+          )
+        ),
 
 
         const SizedBox(height: 15),
@@ -2030,6 +2031,29 @@ class _CalendarState extends ConsumerState<Calendar> {
     );
   }
 
+  Widget loadArbeitStatsPreview(targetMonth){
+    return FutureBuilder(
+      future:  ref.read(calendarDataProvider).sortDataByMonth(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting){
+           return const SizedBox(
+            height:200,
+            child:Center(
+              child:CircularProgressIndicator(color:MAIN_COLOR)
+            )
+            
+           );
+        }else{
+          return 
+      switchWidget(arbeitStatsPreview(targetMonth),
+          ConfigDataLoader().searchConfigData("arbeitPreview", ref));
+            
+        }
+        
+      },
+    );
+  }
+
   Widget arbeitStatsPreview(targetMonth){
     String year = targetMonth.substring(0, 4);
     String month = targetMonth.substring(5, 7);
@@ -2064,31 +2088,47 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
 
         const Divider(height:1),
-
+      IntrinsicHeight(
+        child:
+        Row(children:[
+      
+      Expanded(child:
         Padding(
-         padding:const  EdgeInsets.only(left:10,right:10),
-         child:Column(children:[
-          Text(
-            month +"月 推計月収",
-            style:titletyle),
-          const Divider(height:1),
-        Text(
-          ArbeitCalculator().formatNumberWithComma(
-            ArbeitCalculator().monthlyWageSum(targetMonth,ref) +
-                  ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
-              " 円",
-          style: previewStyle),
+          padding:const  EdgeInsets.only(left:10,right:10),
+          child:Column(children:[
+            Text(
+              month +"月 推計月収",
+              style:titletyle),
+            const Divider(height:1),
+            Text(
+              ArbeitCalculator().formatNumberWithComma(
+                ArbeitCalculator().monthlyWageSum(targetMonth,ref) +
+                      ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
+                  " 円",
+              style: previewStyle),
+            ])
+          ),
+        ), 
 
-          Text(
-            month +"月  労働時間合計",
-            style:titletyle),
-          const Divider(height:1),
-          Text(
-            workTimeSum.inHours.toString() + "時間" +
-            (workTimeSum.inMinutes % 60).toString()+ " 分",
-            style: previewStyle),
-        ])
-      )
+        const VerticalDivider(width:1),
+
+        Expanded(child:
+          Padding(
+            padding:const  EdgeInsets.only(left:10,right:10),
+            child:Column(children:[         Text(
+                month +"月  労働時間合計",
+                style:titletyle),
+              const Divider(height:1),
+              Text(
+                workTimeSum.inHours.toString() + "時間" +
+                (workTimeSum.inMinutes % 60).toString()+ " 分",
+                style: previewStyle),
+            ])
+          ),
+        ),
+       ]),
+      ),
+    const Divider(height:1),
     ]);
   }
 

@@ -667,9 +667,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                           ),
                         ),
                         dividerModel,
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 0.5,
-                        ),
                         TextField(
                           maxLines:null,
                           textInputAction: TextInputAction.done,

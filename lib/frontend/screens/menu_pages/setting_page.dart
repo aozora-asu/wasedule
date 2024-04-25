@@ -217,6 +217,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const SizedBox(height: 5),
                     configSwitch("Waseda Moodle リンク", "moodleLink"),
                     const SizedBox(height: 5),
+                    configSwitch("アルバイト推計収入", "arbeitPreview"),
+                    const SizedBox(height: 5),
                   ])),
                 
                 const SizedBox(height:10),
