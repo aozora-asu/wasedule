@@ -28,13 +28,11 @@ class Message {
           privateKey: dotenv.get('PRIVATE_KEY'),
         ),
       );
-      print('SUCCESS!');
+
       return true;
     } catch (error) {
-      if (error is EmailJSResponseStatus) {
-        print('ERROR... ${error.status}: ${error.text}');
-      }
-      print(error.toString());
+      if (error is EmailJSResponseStatus) {}
+
       return false;
     }
   }

@@ -38,8 +38,6 @@ import 'dart:math';
 import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
-import '../../../backend/DB/models/notify_content.dart';
-import '../../../backend/notify/notify.dart';
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -77,10 +75,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
 
-    NotifyContent().scheduleDailyEightAMNotification();
-
-    // NotifyContent().sampleNotification("task");
-    // NotifyContent().sampleNotification("schedule");
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
@@ -287,15 +281,13 @@ class _CalendarState extends ConsumerState<Calendar> {
     return Column(children: [
       switchWidget(tipsAndNewsPanel(randomNumber, ""),
           ConfigDataLoader().searchConfigData("tips", ref)),
-      const SizedBox(height:10),
+      const SizedBox(height: 10),
       switchWidget(todaysScheduleListView(),
           ConfigDataLoader().searchConfigData("todaysSchedule", ref)),
       switchWidget(
           taskDataListList(
-              ConfigDataLoader().searchConfigInfo("taskList", ref)
-          ),
+              ConfigDataLoader().searchConfigInfo("taskList", ref)),
           ConfigDataLoader().searchConfigData("taskList", ref)),
-      
       switchWidget(
           Column(children: [
             MoodleUrlLauncher(width: 100),
@@ -400,12 +392,12 @@ class _CalendarState extends ConsumerState<Calendar> {
             );
           }),
 
-            menuListChild(Icons.school, "年間行事予定", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-              );
-            }),
+          menuListChild(Icons.school, "年間行事予定", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+            );
+          }),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -435,25 +427,25 @@ class _CalendarState extends ConsumerState<Calendar> {
         // ),
 
         tagEmptyFlag(
-          ref,
-        GestureDetector(
-          onTap:(){
-            Navigator.push(context,
-              MaterialPageRoute(builder:(_) => 
-                 ArbeitStatsPage(targetMonth: targetMonth)));
-          },
-          child:menuList(Icons.currency_yen, "アルバイト", true,
-            [
-              menuListChild(Icons.currency_yen, "アルバイト", () {
-                Navigator.push(context,
-                  MaterialPageRoute(builder:(_) => 
-                    ArbeitStatsPage(targetMonth: targetMonth)));
-              }),
-              loadArbeitStatsPreview(targetMonth)
-            ])
-          )
-        ),
-
+            ref,
+            GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              ArbeitStatsPage(targetMonth: targetMonth)));
+                },
+                child: menuList(Icons.currency_yen, "アルバイト", true, [
+                  menuListChild(Icons.currency_yen, "アルバイト", () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                ArbeitStatsPage(targetMonth: targetMonth)));
+                  }),
+                  loadArbeitStatsPreview(targetMonth)
+                ]))),
 
         const SizedBox(height: 15),
         Row(children: [
@@ -1054,19 +1046,17 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]));
   }
 
-  Widget taskListChild(Widget child, void Function() ontap ,bool isDivider, bool isIndent) {
+  Widget taskListChild(
+      Widget child, void Function() ontap, bool isDivider, bool isIndent) {
     double indent = 0;
-    if(!isIndent){
+    if (!isIndent) {
       indent = 10;
     }
 
     Widget divider = const SizedBox();
-    if(isDivider){
-      divider = Divider(
-        height:1,
-        thickness:1,
-        indent:indent,
-        endIndent:indent);
+    if (isDivider) {
+      divider =
+          Divider(height: 1, thickness: 1, indent: indent, endIndent: indent);
     }
 
     return InkWell(
@@ -1075,17 +1065,14 @@ class _CalendarState extends ConsumerState<Calendar> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               color: Colors.white,
-                child: child
-              ),
+              child: child),
           divider
-        ])
-      );
-
+        ]));
   }
 
-  Widget taskListHeader(String text,int fromNow) {
+  Widget taskListHeader(String text, int fromNow) {
     Color accentColor = Colors.blueGrey;
-    if(fromNow <=3){
+    if (fromNow <= 3) {
       accentColor = Colors.red;
     }
 
@@ -1097,11 +1084,11 @@ class _CalendarState extends ConsumerState<Calendar> {
           child: Center(
               child: Row(children: [
             const SizedBox(width: 10),
-          Container(
-            width: SizeConfig.blockSizeVertical! * 1,
-            height: SizeConfig.blockSizeVertical! * 2,
-            color: accentColor),
-          const SizedBox(width: 5),
+            Container(
+                width: SizeConfig.blockSizeVertical! * 1,
+                height: SizeConfig.blockSizeVertical! * 2,
+                color: accentColor),
+            const SizedBox(width: 5),
             Text(text,
                 style: TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal! * 4,
@@ -1109,25 +1096,23 @@ class _CalendarState extends ConsumerState<Calendar> {
                     fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
-        const Divider(height: 1,indent:10,endIndent:10)
+      const Divider(height: 1, indent: 10, endIndent: 10)
     ]);
   }
 
-  Widget menuList(IconData headerIcon, String headerText, bool showCustomButton, List<Widget> child) {
+  Widget menuList(IconData headerIcon, String headerText, bool showCustomButton,
+      List<Widget> child) {
     Widget customButton = const SizedBox();
-    if(showCustomButton){
-      customButton = 
-        InkWell(
-          onTap:(){
+    if (showCustomButton) {
+      customButton = InkWell(
+          onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingsPage()),
             );
           },
-          child:Icon(Icons.settings,
-                size: SizeConfig.safeBlockVertical! * 2.5,
-                color: Colors.grey)
-        );
+          child: Icon(Icons.settings,
+              size: SizeConfig.safeBlockVertical! * 2.5, color: Colors.grey));
     }
 
     return Container(
@@ -1157,12 +1142,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                   style: TextStyle(
                       fontSize: SizeConfig.safeBlockVertical! * 1.7,
                       color: Colors.grey),
-              ),
-              const Spacer(),
-              customButton,
-              const SizedBox(width: 15),
-            ])
-          ),
+                ),
+                const Spacer(),
+                customButton,
+                const SizedBox(width: 15),
+              ])),
           const Divider(height: 1),
           ListView.builder(
             itemBuilder: (context, index) {
@@ -1224,7 +1208,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         padding: EdgeInsets.only(
           top: SizeConfig.blockSizeHorizontal! * 2,
           bottom: SizeConfig.blockSizeHorizontal! * 1,
-          ),
+        ),
         child: InkWell(
             onTap: () {
               Navigator.push(
@@ -1322,7 +1306,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
- Widget todaysScheduleListView() {
+  Widget todaysScheduleListView() {
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
@@ -1336,27 +1320,17 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const SizedBox();
     } else {
       List targetDayData = data.sortedDataByDay[targetKey];
-      return Column(children:[
-        menuList(
-          Icons.calendar_month,
-          "きょうの予定",
-          true,
-          [
+      return Column(children: [
+        menuList(Icons.calendar_month, "きょうの予定", true, [
           Container(
-            height:SizeConfig.blockSizeVertical! *3,
-            decoration: const BoxDecoration(
-            ),
-            child:Text(
-              DateFormat("   yyyy年MM月dd日 (E)").format(DateTime.now()),
-              style:const TextStyle(
-                color:Colors.grey,
-                fontWeight: FontWeight.bold
-              ),
-            )
-          ),
-
-          const Divider(height:1,indent:10,endIndent:10),
-
+              height: SizeConfig.blockSizeVertical! * 3,
+              decoration: const BoxDecoration(),
+              child: Text(
+                DateFormat("   yyyy年MM月dd日 (E)").format(DateTime.now()),
+                style: const TextStyle(
+                    color: Colors.grey, fontWeight: FontWeight.bold),
+              )),
+          const Divider(height: 1, indent: 10, endIndent: 10),
           ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               Widget dateTimeData = Container();
@@ -1364,225 +1338,219 @@ class _CalendarState extends ConsumerState<Calendar> {
               if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
                   targetDayData.elementAt(index)["endTime"].trim() != "") {
                 dateTimeData = Text(
-                  
-                      targetDayData.elementAt(index)["startTime"] +
+                  targetDayData.elementAt(index)["startTime"] +
                       "\n" +
                       targetDayData.elementAt(index)["endTime"],
                   style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 );
               } else if (targetDayData.elementAt(index)["startTime"].trim() !=
                   "") {
                 dateTimeData = Text(
                   targetDayData.elementAt(index)["startTime"],
                   style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 );
               } else {
-                dateTimeData = 
-                  Text(
-                    "終日",
-                    style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! *3.5,
-                        fontWeight: FontWeight.bold),
-                  );
-              }
-
-            String formerDateTimeData = "終日";
-            if(index != 0){
-              if (targetDayData.elementAt(index-1)["startTime"].trim() != "" &&
-                  targetDayData.elementAt(index-1)["endTime"].trim() != "") {
-
-                formerDateTimeData = targetDayData.elementAt(index-1)["startTime"];
-
-              } else if (targetDayData.elementAt(index-1)["startTime"].trim() != "") {
-
-                formerDateTimeData = targetDayData.elementAt(index-1)["startTime"];
-
-              }
-            }
-
-            String thisDateTimeData = "終日";
-            if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-                targetDayData.elementAt(index)["endTime"].trim() != "") {
-
-              thisDateTimeData = targetDayData.elementAt(index)["startTime"];
-
-            } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-
-              thisDateTimeData = targetDayData.elementAt(index)["startTime"];
-
-            }
-
-            String nextDateTimeData = "終日";
-            if(index + 1 < targetDayData.length){
-              if (targetDayData.elementAt(index + 1)["startTime"].trim() != "" &&
-                  targetDayData.elementAt(index + 1)["endTime"].trim() != "") {
-
-                nextDateTimeData = targetDayData.elementAt(index + 1)["startTime"];
-
-              } else if (targetDayData.elementAt(index + 1)["startTime"].trim() != "") {
-
-                nextDateTimeData = targetDayData.elementAt(index + 1)["startTime"];
-
-              }
-            }
-
-            Color upperDividerColor = Colors.grey;
-            Color dotColor = Colors.grey;
-            Color underDividerColor = Colors.grey;
-            DateTime now = DateTime.now();
-
-
-            if(formerDateTimeData == "終日"){
-              upperDividerColor = Colors.redAccent;
-            }else{
-              DateTime formerDateTime = DateTime(
-                now.year,now.month,now.day,
-                int.parse(formerDateTimeData.substring(0,2)),
-                int.parse(formerDateTimeData.substring(3,5)),
+                dateTimeData = Text(
+                  "終日",
+                  style: TextStyle(
+                      fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                      fontWeight: FontWeight.bold),
                 );
-              if(formerDateTime.isBefore(now) && nextDateTimeData != "終日"){
-                DateTime nextDateTime = DateTime(
-                  now.year,now.month,now.day,
-                  int.parse(nextDateTimeData.substring(0,2)),
-                  int.parse(nextDateTimeData.substring(3,5)),
+              }
+
+              String formerDateTimeData = "終日";
+              if (index != 0) {
+                if (targetDayData.elementAt(index - 1)["startTime"].trim() !=
+                        "" &&
+                    targetDayData.elementAt(index - 1)["endTime"].trim() !=
+                        "") {
+                  formerDateTimeData =
+                      targetDayData.elementAt(index - 1)["startTime"];
+                } else if (targetDayData
+                        .elementAt(index - 1)["startTime"]
+                        .trim() !=
+                    "") {
+                  formerDateTimeData =
+                      targetDayData.elementAt(index - 1)["startTime"];
+                }
+              }
+
+              String thisDateTimeData = "終日";
+              if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+                  targetDayData.elementAt(index)["endTime"].trim() != "") {
+                thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+              } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+                  "") {
+                thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+              }
+
+              String nextDateTimeData = "終日";
+              if (index + 1 < targetDayData.length) {
+                if (targetDayData.elementAt(index + 1)["startTime"].trim() !=
+                        "" &&
+                    targetDayData.elementAt(index + 1)["endTime"].trim() !=
+                        "") {
+                  nextDateTimeData =
+                      targetDayData.elementAt(index + 1)["startTime"];
+                } else if (targetDayData
+                        .elementAt(index + 1)["startTime"]
+                        .trim() !=
+                    "") {
+                  nextDateTimeData =
+                      targetDayData.elementAt(index + 1)["startTime"];
+                }
+              }
+
+              Color upperDividerColor = Colors.grey;
+              Color dotColor = Colors.grey;
+              Color underDividerColor = Colors.grey;
+              DateTime now = DateTime.now();
+
+              if (formerDateTimeData == "終日") {
+                upperDividerColor = Colors.redAccent;
+              } else {
+                DateTime formerDateTime = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  int.parse(formerDateTimeData.substring(0, 2)),
+                  int.parse(formerDateTimeData.substring(3, 5)),
+                );
+                if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
+                  DateTime nextDateTime = DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    int.parse(nextDateTimeData.substring(0, 2)),
+                    int.parse(nextDateTimeData.substring(3, 5)),
                   );
                   upperDividerColor = Colors.red;
-                if(nextDateTime.isBefore(now)){
-                  underDividerColor = Colors.red;
+                  if (nextDateTime.isBefore(now)) {
+                    underDividerColor = Colors.red;
+                  }
                 }
-                
               }
-            }
-            
 
-            if(thisDateTimeData == "終日"){
-              upperDividerColor = Colors.red;
-              dotColor = Colors.red;
-              underDividerColor = Colors.red;
-            }else{
-              DateTime thisDateTime = DateTime(
-                now.year,now.month,now.day,
-                int.parse(thisDateTimeData.substring(0,2)),
-                int.parse(thisDateTimeData.substring(3,5)),
-                );
-              if(thisDateTime.isBefore(now)){
+              if (thisDateTimeData == "終日") {
                 upperDividerColor = Colors.red;
                 dotColor = Colors.red;
-                underDividerColor = Colors.red;                
+                underDividerColor = Colors.red;
+              } else {
+                DateTime thisDateTime = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  int.parse(thisDateTimeData.substring(0, 2)),
+                  int.parse(thisDateTimeData.substring(3, 5)),
+                );
+                if (thisDateTime.isBefore(now)) {
+                  upperDividerColor = Colors.red;
+                  dotColor = Colors.red;
+                  underDividerColor = Colors.red;
+                }
+                if (nextDateTimeData == "終日") {
+                  underDividerColor = Colors.grey;
+                }
               }
-              if(nextDateTimeData == "終日"){
-                underDividerColor = Colors.grey;
+
+              bool isLast = false;
+              if (targetDayData.length == index + 1) {
+                isLast = true;
               }
-            }
 
-            bool isLast = false;
-            if(targetDayData.length == index + 1){
-              isLast = true;    
-            }
-            
-            double dividerIndent = 0;
-            if(isLast){
-              dividerIndent = 8;
-            }
+              double dividerIndent = 0;
+              if (isLast) {
+                dividerIndent = 8;
+              }
 
-            Widget tagThumbnailer = const SizedBox();
-            if(targetDayData.elementAt(index)["tagID"] != null &&
-            targetDayData.elementAt(index)["tagID"] != ""){
-              tagThumbnailer = Row(children:[
-                tagThumbnail(
-                  targetDayData.elementAt(index)["tagID"]),
-                Text(" " + returnTagTitle(
-                  targetDayData.elementAt(index)["tagID"] ?? "",
-                  ref),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: SizeConfig.blockSizeHorizontal! *3,
-                      fontWeight: FontWeight.bold),
+              Widget tagThumbnailer = const SizedBox();
+              if (targetDayData.elementAt(index)["tagID"] != null &&
+                  targetDayData.elementAt(index)["tagID"] != "") {
+                tagThumbnailer = Row(children: [
+                  tagThumbnail(targetDayData.elementAt(index)["tagID"]),
+                  Text(
+                    " " +
+                        returnTagTitle(
+                            targetDayData.elementAt(index)["tagID"] ?? "", ref),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                        fontWeight: FontWeight.bold),
                   )
-              ]);
-            }
+                ]);
+              }
 
               return taskListChild(
-               Column(
-                children: [
-              IntrinsicHeight(child:
-                Row(children:[
-
-                Container(
-                  width:SizeConfig.blockSizeHorizontal! *15,
-                  padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2,),
-                  child:
-                  Center(
-                    child :dateTimeData,
-                 ),
-                ),
-                  
-                SizedBox(
-                  width:6,
-                  child:
-                  Column(
-                  children:[
-                  Expanded(child:
-                      VerticalDivider(
-                        width: 2,
-                        thickness: 2,
-                        color: upperDividerColor,
-                        ),
-                      ),
+                Column(children: [
+                  IntrinsicHeight(
+                      child: Row(children: [
                     Container(
-                      height:6,width:6,
-                      decoration:BoxDecoration(
-                        color:dotColor,
-                        shape: BoxShape.circle
+                      width: SizeConfig.blockSizeHorizontal! * 15,
+                      padding: EdgeInsets.only(
+                        left: SizeConfig.blockSizeHorizontal! * 2,
+                      ),
+                      child: Center(
+                        child: dateTimeData,
                       ),
                     ),
-                    Expanded(child:
-                      VerticalDivider(
-                        width: 2,
-                        thickness: 2,
-                        color: underDividerColor,
-                        endIndent: dividerIndent,
-                        
+                    SizedBox(
+                      width: 6,
+                      child: Column(children: [
+                        Expanded(
+                          child: VerticalDivider(
+                            width: 2,
+                            thickness: 2,
+                            color: upperDividerColor,
+                          ),
                         ),
-                      )
-                    ]),
-                  ),
-                      Padding(
-                        padding:const EdgeInsets.all(5),
-                        child:Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-
-                              tagThumbnailer,
-                              
-                              Text(
-                                " " + data.sortedDataByDay[targetKey]
-                                    .elementAt(index)["subject"],
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: SizeConfig.blockSizeHorizontal! *5,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ]),
-                          )
-                      ])
+                        Container(
+                          height: 6,
+                          width: 6,
+                          decoration: BoxDecoration(
+                              color: dotColor, shape: BoxShape.circle),
+                        ),
+                        Expanded(
+                          child: VerticalDivider(
+                            width: 2,
+                            thickness: 2,
+                            color: underDividerColor,
+                            endIndent: dividerIndent,
+                          ),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            tagThumbnailer,
+                            Text(
+                              " " +
+                                  data.sortedDataByDay[targetKey]
+                                      .elementAt(index)["subject"],
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]),
                     )
-               ]),
-              () {
+                  ]))
+                ]),
+                () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return DailyViewPage(target: target);
                       });
-              },
-              true,
-              isLast,
+                },
+                true,
+                isLast,
               );
             },
             itemCount: data.sortedDataByDay[targetKey].length,
@@ -1590,62 +1558,56 @@ class _CalendarState extends ConsumerState<Calendar> {
             physics: const NeverScrollableScrollPhysics(),
           )
         ]),
-        const SizedBox(height:15)
+        const SizedBox(height: 15)
       ]);
     }
   }
-
 
   Widget taskDataListList(int fromNow) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
     Widget noneTaskWidget = const SizedBox();
 
-    if(isTaskDatanull(today)){
-      noneTaskWidget  = 
-        taskListChild(
-          Column(children:[
-            const SizedBox(height:5),
-            Text("  $fromNow日以内の課題はありません。",
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: SizeConfig.blockSizeHorizontal! *5,),
+    if (isTaskDatanull(today)) {
+      noneTaskWidget = taskListChild(
+          Column(children: [
+            const SizedBox(height: 5),
+            Text(
+              "  $fromNow日以内の課題はありません。",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+              ),
             ),
-            const SizedBox(height:5),
+            const SizedBox(height: 5),
           ]),
-          (){},
+          () {},
           true,
-          true
-        );
-      }
+          true);
+    }
 
-    if(fromNow == 0){
+    if (fromNow == 0) {
       return const SizedBox();
-    }else{
-      return Column(children:[
-        menuList(Icons.check, "近日締切の課題",true,
-          [
-            noneTaskWidget,
-
-            ListView.builder(
-              itemBuilder: (context, index) {
-                DateTime targetDay = today.add(Duration(days: index));
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      taskDataList(targetDay, index)
-                    ]);
-              },
-              itemCount: fromNow,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-            ),
-          ]),
-          const SizedBox(height:20)
-        ]);
+    } else {
+      return Column(children: [
+        menuList(Icons.check, "近日締切の課題", true, [
+          noneTaskWidget,
+          ListView.builder(
+            itemBuilder: (context, index) {
+              DateTime targetDay = today.add(Duration(days: index));
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [taskDataList(targetDay, index)]);
+            },
+            itemCount: fromNow,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+          ),
+        ]),
+        const SizedBox(height: 20)
+      ]);
     }
   }
-
 
   Widget taskDataList(DateTime target, int fromNow) {
     final taskData = ref.watch(taskDataProvider);
@@ -1654,41 +1616,37 @@ class _CalendarState extends ConsumerState<Calendar> {
     Widget title = const SizedBox();
     String indexText = "";
 
-
-    if(fromNow == 0){
+    if (fromNow == 0) {
       indexText = "今日まで";
-    }else{
+    } else {
       indexText = "$fromNow日後";
     }
 
     if (sortedData.keys.contains(target)) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title,
-        taskListHeader(indexText,fromNow),
+        taskListHeader(indexText, fromNow),
         ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-
-            String timeEnd = DateFormat("HH:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(
-                sortedData[target]!.elementAt(index)["dtEnd"]
-              )
-            );
+            String timeEnd = DateFormat("HH:mm").format(
+                DateTime.fromMillisecondsSinceEpoch(
+                    sortedData[target]!.elementAt(index)["dtEnd"]));
 
             Widget dateTimeData = Container();
             dateTimeData = Text(
               sortedData[target]!.elementAt(index)["title"],
               style: TextStyle(
                   color: Colors.grey,
-                  fontSize: SizeConfig.blockSizeHorizontal! *3,
+                  fontSize: SizeConfig.blockSizeHorizontal! * 3,
                   fontWeight: FontWeight.bold),
             );
 
             bool isLast = false;
-            if(sortedData[target]!.length == index + 1){
-              isLast = true;    
+            if (sortedData[target]!.length == index + 1) {
+              isLast = true;
             }
             double dividerIndent = 0;
-            if(isLast){
+            if (isLast) {
               dividerIndent = 8;
             }
 
@@ -1697,107 +1655,103 @@ class _CalendarState extends ConsumerState<Calendar> {
             Color underDividerColor = Colors.grey;
 
             DateTime now = DateTime.now();
-            
+
             DateTime thisDateTimeData = DateTime.fromMillisecondsSinceEpoch(
-              sortedData[target]!.elementAt(index)["dtEnd"]
+                sortedData[target]!.elementAt(index)["dtEnd"]);
+            DateTime formerDateTimeData = DateTime(thisDateTimeData.year,
+                thisDateTimeData.month, thisDateTimeData.day - 1);
+            DateTime nextDateTimeData = DateTime(
+              thisDateTimeData.year,
+              thisDateTimeData.month,
+              thisDateTimeData.day + 1,
             );
-            DateTime formerDateTimeData = DateTime(thisDateTimeData.year,thisDateTimeData.month,thisDateTimeData.day-1);
-            DateTime nextDateTimeData = DateTime(thisDateTimeData.year,thisDateTimeData.month,thisDateTimeData.day+1,);
 
-            if(index != 0){
+            if (index != 0) {
               formerDateTimeData = DateTime.fromMillisecondsSinceEpoch(
-                sortedData[target]!.elementAt(index - 1)["dtEnd"]);
+                  sortedData[target]!.elementAt(index - 1)["dtEnd"]);
             }
 
-            if(index + 1 < sortedData[target]!.length){
+            if (index + 1 < sortedData[target]!.length) {
               nextDateTimeData = DateTime.fromMillisecondsSinceEpoch(
-                sortedData[target]!.elementAt(index + 1)["dtEnd"]);
+                  sortedData[target]!.elementAt(index + 1)["dtEnd"]);
             }
 
-            if(thisDateTimeData.isBefore(now)){
+            if (thisDateTimeData.isBefore(now)) {
               upperDividerColor = Colors.red;
               dotColor = Colors.red;
               underDividerColor = Colors.red;
-            }else if(formerDateTimeData.isBefore(now) && fromNow == 0 && index == 0){
+            } else if (formerDateTimeData.isBefore(now) &&
+                fromNow == 0 &&
+                index == 0) {
               upperDividerColor = Colors.red;
-            }else if(formerDateTimeData.isBefore(now)){
+            } else if (formerDateTimeData.isBefore(now)) {
               upperDividerColor = Colors.grey;
             }
 
-            if(isLast){
+            if (isLast) {
               underDividerColor = Colors.grey;
             }
 
             return taskListChild(
-              IntrinsicHeight(child:
-              Row(children:[
-
-                Container(
-                  width:SizeConfig.blockSizeHorizontal! *15,
-                  padding: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal! *2,),
-                  child: Text(timeEnd,
-                    style: TextStyle(
-                      fontSize:SizeConfig.blockSizeHorizontal! *4,
-                      fontWeight: FontWeight.bold,)
-                    )
-                ),
-                
-              SizedBox(
-                width:6,
-                child:
-                Column(
-                 children:[
-                  Expanded(child:
-                    VerticalDivider(
-                      width: 2,
-                      thickness: 2,
-                      color: upperDividerColor,
-                      ),
-                    ),
+                IntrinsicHeight(
+                    child: Row(children: [
                   Container(
-                    height:6,width:6,
-                    decoration: BoxDecoration(
-                      color:dotColor,
-                      shape: BoxShape.circle
-                    ),
+                      width: SizeConfig.blockSizeHorizontal! * 15,
+                      padding: EdgeInsets.only(
+                        left: SizeConfig.blockSizeHorizontal! * 2,
+                      ),
+                      child: Text(timeEnd,
+                          style: TextStyle(
+                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                            fontWeight: FontWeight.bold,
+                          ))),
+                  SizedBox(
+                    width: 6,
+                    child: Column(children: [
+                      Expanded(
+                        child: VerticalDivider(
+                          width: 2,
+                          thickness: 2,
+                          color: upperDividerColor,
+                        ),
+                      ),
+                      Container(
+                        height: 6,
+                        width: 6,
+                        decoration: BoxDecoration(
+                            color: dotColor, shape: BoxShape.circle),
+                      ),
+                      Expanded(
+                        child: VerticalDivider(
+                          width: 2,
+                          thickness: 2,
+                          color: underDividerColor,
+                          endIndent: dividerIndent,
+                        ),
+                      )
+                    ]),
                   ),
-                  Expanded(child:
-                    VerticalDivider(
-                      width: 2,
-                      thickness: 2,
-                      color: underDividerColor,
-                      endIndent: dividerIndent,
-                      ),
-                    )
-                  ]),
-                ),
-                
-
-                Expanded(child:
-                  Padding(
-                  padding: const EdgeInsets.all(5),
-                    child:
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          dateTimeData,
-                          Text(
-                            sortedData[target]!.elementAt(index)["summary"] ??
-                                "(詳細なし)",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: SizeConfig.blockSizeHorizontal! *5,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]),
-                      ),
-                    )
-                  ])
-                ),
-                () {bottomSheet(sortedData[target]!.elementAt(index));},
-                isLast,
-                isLast
-                );
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            dateTimeData,
+                            Text(
+                              sortedData[target]!.elementAt(index)["summary"] ??
+                                  "(詳細なし)",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]),
+                    ),
+                  )
+                ])), () {
+              bottomSheet(sortedData[target]!.elementAt(index));
+            }, isLast, isLast);
           },
           itemCount: sortedData[target]!.length,
           shrinkWrap: true,
@@ -1805,14 +1759,13 @@ class _CalendarState extends ConsumerState<Calendar> {
         )
       ]);
     } else {
-      if (fromNow == 0 && !isTaskDatanull(target)){
+      if (fromNow == 0 && !isTaskDatanull(target)) {
         title = const SizedBox();
       }
 
       return title;
     }
   }
-
 
   bool isTaskDatanull(DateTime target) {
     int numOfTasks = ConfigDataLoader().searchConfigInfo("taskList", ref);
@@ -1858,17 +1811,16 @@ class _CalendarState extends ConsumerState<Calendar> {
                   Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:const BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.6),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset:const Offset(0, 2)
-                          ),
+                              color: Colors.grey.withOpacity(0.6),
+                              spreadRadius: 2,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2)),
                         ],
                       ),
                       alignment: Alignment.center,
@@ -1932,7 +1884,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextField(
-                            enabled:false,
+                            enabled: false,
                             controller: summaryController,
                             maxLines: 1,
                             decoration: const InputDecoration.collapsed(
@@ -1965,7 +1917,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextField(
-                            enabled:false,
+                            enabled: false,
                             controller: titleController,
                             maxLines: 1,
                             decoration: const InputDecoration.collapsed(
@@ -1999,7 +1951,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           height: SizeConfig.blockSizeHorizontal! * 0.5,
                         ),
                         TextField(
-                          enabled:false,
+                          enabled: false,
                           maxLines: 7,
                           controller: descriptionController,
                           style: TextStyle(
@@ -2020,121 +1972,95 @@ class _CalendarState extends ConsumerState<Calendar> {
                         const SizedBox(height: 15),
                         MoodleUrlLauncher(width: 100),
                         const SizedBox(height: 7.5),
-                    ])
-                  )
+                      ]))
                 ],
               ),
-            )
-          )
-        );
+            )));
       },
     );
   }
 
-  Widget loadArbeitStatsPreview(targetMonth){
+  Widget loadArbeitStatsPreview(targetMonth) {
     return FutureBuilder(
-      future:  ref.read(calendarDataProvider).sortDataByMonth(),
+      future: ref.read(calendarDataProvider).sortDataByMonth(),
       builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting){
-           return const SizedBox(
-            height:200,
-            child:Center(
-              child:CircularProgressIndicator(color:MAIN_COLOR)
-            )
-            
-           );
-        }else{
-          return 
-      switchWidget(arbeitStatsPreview(targetMonth),
-          ConfigDataLoader().searchConfigData("arbeitPreview", ref));
-            
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+              height: 200,
+              child:
+                  Center(child: CircularProgressIndicator(color: MAIN_COLOR)));
+        } else {
+          return switchWidget(arbeitStatsPreview(targetMonth),
+              ConfigDataLoader().searchConfigData("arbeitPreview", ref));
         }
-        
       },
     );
   }
 
-  Widget arbeitStatsPreview(targetMonth){
+  Widget arbeitStatsPreview(targetMonth) {
     String year = targetMonth.substring(0, 4);
     String month = targetMonth.substring(5, 7);
     String targetKey = year + "-" + month;
     TextStyle titletyle = TextStyle(
-              color:Colors.grey,
-              fontSize: SizeConfig.blockSizeHorizontal!*4);
+        color: Colors.grey, fontSize: SizeConfig.blockSizeHorizontal! * 4);
     TextStyle previewStyle = TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.blockSizeHorizontal!*6);
-    Duration workTimeSum = ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey,ref);
+        fontWeight: FontWeight.bold,
+        fontSize: SizeConfig.blockSizeHorizontal! * 6);
+    Duration workTimeSum =
+        ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey, ref);
 
-    return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children:[
-        Padding(
-         padding:const  EdgeInsets.only(left:10,right:10),
-         child:Column(children:[
-          Text(
-            year+"年 推計年収",
-            style:titletyle),
-
-          const Divider(height:1),
-
-          Text(
-            ArbeitCalculator().formatNumberWithComma(
-              ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
-                targetMonth,ref)) +
-                " 円",
-            style: previewStyle),
-          ])
-        ),
-
-        const Divider(height:1),
-      IntrinsicHeight(
-        child:
-        Row(children:[
-      
-      Expanded(child:
-        Padding(
-          padding:const  EdgeInsets.only(left:10,right:10),
-          child:Column(children:[
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Column(children: [
+            Text(year + "年 推計年収", style: titletyle),
+            const Divider(height: 1),
             Text(
-              month +"月 推計月収",
-              style:titletyle),
-            const Divider(height:1),
-            Text(
-              ArbeitCalculator().formatNumberWithComma(
-                ArbeitCalculator().monthlyWageSum(targetMonth,ref) +
-                      ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
-                  " 円",
-              style: previewStyle),
-            ])
-          ),
-        ), 
-
-        const VerticalDivider(width:1),
-
-        Expanded(child:
-          Padding(
-            padding:const  EdgeInsets.only(left:10,right:10),
-            child:Column(children:[         Text(
-                month +"月  労働時間合計",
-                style:titletyle),
-              const Divider(height:1),
-              Text(
-                workTimeSum.inHours.toString() + "時間" +
-                (workTimeSum.inMinutes % 60).toString()+ " 分",
+                ArbeitCalculator().formatNumberWithComma(ArbeitCalculator()
+                        .yearlyWageSumWithAdditionalWorkTime(
+                            targetMonth, ref)) +
+                    " 円",
                 style: previewStyle),
-            ])
+          ])),
+      const Divider(height: 1),
+      IntrinsicHeight(
+        child: Row(children: [
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Column(children: [
+                  Text(month + "月 推計月収", style: titletyle),
+                  const Divider(height: 1),
+                  Text(
+                      ArbeitCalculator().formatNumberWithComma(
+                              ArbeitCalculator()
+                                      .monthlyWageSum(targetMonth, ref) +
+                                  ArbeitCalculator()
+                                      .monthlyFeeSumOfAllTags(targetKey, ref)) +
+                          " 円",
+                      style: previewStyle),
+                ])),
           ),
-        ),
-       ]),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Column(children: [
+                  Text(month + "月  労働時間合計", style: titletyle),
+                  const Divider(height: 1),
+                  Text(
+                      workTimeSum.inHours.toString() +
+                          "時間" +
+                          (workTimeSum.inMinutes % 60).toString() +
+                          " 分",
+                      style: previewStyle),
+                ])),
+          ),
+        ]),
       ),
-    const Divider(height:1),
+      const Divider(height: 1),
     ]);
   }
-
-
-
-
 }
 
 Widget calendarIcon(Color color, double size) {

@@ -3,10 +3,10 @@ import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dar
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
-import "../../status_code.dart";
+
 import "../../http_request.dart";
 
-import 'package:intl/intl.dart';
+import '../../notify/notify_content.dart';
 
 class TaskDatabaseHelper {
   late Database _database;
@@ -34,6 +34,7 @@ class TaskDatabaseHelper {
       where: 'dtEnd <= ?',
       whereArgs: [thirtyDaysAgo.millisecondsSinceEpoch], // ミリ秒単位のエポック時間を使用
     );
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   // データベースの作成
@@ -158,6 +159,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   Future<void> updateDtEnd(int id, int newDtEnd) async {
@@ -169,6 +171,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   Future<void> updateSummary(int id, String newSummary) async {
@@ -180,6 +183,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   Future<void> updateDescription(int id, String newDescription) async {
@@ -202,6 +206,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   Future<void> beDisplay(int id) async {
@@ -254,7 +259,7 @@ class TaskDatabaseHelper {
         description: taskData["events"][i]["DESCRIPTION"],
         dtEnd: taskData["events"][i]["DTEND"],
         title: taskData["events"][i]["CATEGORIES"] ?? "",
-        isDone: STATUS_YET,
+        isDone: 0,
       );
       // 2. データベースヘルパークラスを使用してデータベースに挿入
       try {
@@ -264,6 +269,7 @@ class TaskDatabaseHelper {
         if (e.toString().contains("UNIQUE constraint failed")) {}
       }
     }
+    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
@@ -287,48 +293,14 @@ class TaskDatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> withinNdaysTask(
-      DateTime today, int n) async {
+  Future<List<Map<String, dynamic>>> getDuringTaskList(
+      int startDate, int endDate) async {
     await _initDatabase();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
-      where: 'dtEnd >= ? AND dtEnd < ? AND isDone=?',
-      whereArgs: [
-        today.millisecondsSinceEpoch,
-        today.add(Duration(days: n)).millisecondsSinceEpoch,
-        0
-      ],
+      where: 'dtEnd > ? AND dtEnd <= ? AND isDone=?',
+      whereArgs: [startDate, endDate, 0],
     );
-
     return withinNdaysTask;
-  }
-
-  Future<String> taskDueTodayForNotify(DateTime today) async {
-    await _initDatabase();
-    List<Map<String, dynamic>> taskDueTodayList =
-        await withinNdaysTask(today, 1);
-    late String taskDueToday = "";
-    if (taskDueTodayList.isEmpty) {
-      taskDueToday = "本日が期限の課題はありません";
-    } else {
-      for (var task in taskDueTodayList) {
-        String due = "";
-        if (task["isDone"] == 0) {
-          try {
-            due = DateFormat("HH:mm")
-                .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-          } catch (e) {
-            due = "";
-          }
-          String title = task["title"] ?? "";
-          String summary = task["summary"] ?? "";
-          taskDueToday += "$dueまで $title   $summary\n";
-        }
-      }
-    }
-
-    taskDueToday = taskDueToday.trimRight(); // Trim trailing whitespaces
-
-    return taskDueToday;
   }
 }

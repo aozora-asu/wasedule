@@ -5,6 +5,7 @@ import '../models/schedule.dart';
 import './tag_db_handler.dart';
 import 'package:intl/intl.dart';
 import "./schedule_metaInfo_db_handler.dart";
+import '../../notify/notify_content.dart';
 
 class ScheduleDatabaseHelper {
   late Database _database;
@@ -98,13 +99,14 @@ class ScheduleDatabaseHelper {
   }
 
   // タスクの削除
-  Future<int> deleteSchedule(int id) async {
+  Future<void> deleteSchedule(int id) async {
     await _initScheduleDatabase();
-    return await _database.delete(
+    await _database.delete(
       'schedule',
       where: 'id = ?',
       whereArgs: [id],
     );
+    NotifyContent().bookDailyNAMScheduleNotification(8);
   }
 
   Future<void> updateSchedule(Map<String, dynamic> newSchedule) async {
@@ -116,6 +118,7 @@ class ScheduleDatabaseHelper {
       where: 'id = ?',
       whereArgs: [newSchedule["id"]],
     );
+    NotifyContent().bookDailyNAMScheduleNotification(8);
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
@@ -150,6 +153,7 @@ class ScheduleDatabaseHelper {
             where: 'hash = ?', whereArgs: [scheduleItem.toMap()["hash"]]);
       }
     }
+    NotifyContent().bookDailyNAMScheduleNotification(8);
   }
 
   Future<void> resisterScheduleListToDB(
@@ -166,39 +170,13 @@ class ScheduleDatabaseHelper {
     return data;
   }
 
-  Future<List<Map<String, dynamic>>> _getTodaysSchedule(DateTime today) async {
+  Future<List<Map<String, dynamic>>> getTodaysSchedule(DateTime today) async {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> todaysSchedule = await _database.query(
       'schedule',
       where: 'startDate = ?',
       whereArgs: [DateFormat("yyyy-MM-dd").format(today)],
     );
-
-    return todaysSchedule;
-  }
-
-  Future<String> todaysScheduleForNotify(today) async {
-    await _initScheduleDatabase();
-    List<Map<String, dynamic>> todaysScheduleList =
-        await _getTodaysSchedule(today);
-
-    String todaysSchedule = "";
-
-    if (todaysScheduleList.isEmpty) {
-      todaysSchedule = "本日の予定はありません";
-    } else {
-      for (var schedule in todaysScheduleList) {
-        String startTime = schedule["startTime"] ?? "";
-        String endTime = schedule["endTime"] ?? "";
-        String subject = schedule["subject"] ?? "";
-        if (endTime == "" && startTime == "") {
-          todaysSchedule += "終日の予定   $subject\n";
-        } else {
-          todaysSchedule += "$startTime~$endTime  $subject\n";
-        }
-      }
-      todaysSchedule = todaysSchedule.trimRight();
-    }
 
     return todaysSchedule;
   }
