@@ -27,6 +27,6 @@ void main() async {
   ]);
 
   await initializeDateFormatting(); // 初期化
-  FCMnotificationSetting();
+
   runApp(ProviderScope(child: MyApp()));
 }

@@ -5,6 +5,10 @@ import flutter_local_notifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
+
+    // メソッドチャネルの定義
+  private let methodChannelName = "com.example.show"
+  public var result: FlutterResult?
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?

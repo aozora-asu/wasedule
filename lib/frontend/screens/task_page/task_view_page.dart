@@ -19,7 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 
 import "../../../backend/DB/handler/user_info_db_handler.dart";
-import '../../../backend/notify/notify.dart';
+
 import "../../../backend/email.dart";
 
 class TaskViewPage extends ConsumerStatefulWidget {
@@ -58,7 +58,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     if (urlString != null) {
       await databaseHelper.resisterTaskToDB(urlString!);
     }
-    await NotifyContent().taskDueTodayNotification();
+
     await displayDB();
   }
 
