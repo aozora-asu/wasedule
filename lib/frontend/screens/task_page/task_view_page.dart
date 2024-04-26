@@ -95,7 +95,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             const Icon(Icons.arrow_left, color: Colors.grey),
             Expanded(
               child: SingleChildScrollView(
-                reverse: true,
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   decoration: BoxDecoration(
@@ -155,7 +154,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     sortSwitch(),
                     dividerModel,
                     TextButton(
-                      child: const Text("不具合報告",
+                      child: const Text("お問い合わせ",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red)),
                       onPressed: () {
@@ -372,7 +371,7 @@ void showErrorReportDialogue(context) {
     builder: (BuildContext context) {
       return StatefulBuilder(builder: (context, setState) {
         return CupertinoAlertDialog(
-          title: const Text('不具合を報告する'),
+          title: const Text('お問い合わせ'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -384,7 +383,7 @@ void showErrorReportDialogue(context) {
                     _text = value;
                   });
                 },
-                placeholder: "不具合の概要\n(できるだけ詳細にお願いいたします。)",
+                placeholder: "概要\n(不具合報告の場合、できるだけ詳細にお願いいたします。)",
               ),
               Row(children: [
                 CupertinoCheckbox(
@@ -396,7 +395,7 @@ void showErrorReportDialogue(context) {
                     }),
                 const Expanded(
                   child: Text(
-                    "デバッグのための情報を提供する",
+                    "アプリ改善に必要な情報を提供する",
                     overflow: TextOverflow.clip,
                   ),
                 )

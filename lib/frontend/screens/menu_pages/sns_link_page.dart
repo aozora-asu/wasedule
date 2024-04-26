@@ -100,7 +100,7 @@ class ErrorReportButton extends StatelessWidget {
             backgroundColor: const MaterialStatePropertyAll(Colors.red),
             fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
             ),
-          child: const Text('不具合を報告する',style:TextStyle(color:Colors.white)),
+          child: const Text('お問い合わせ',style:TextStyle(color:Colors.white)),
           onPressed: () {
             showErrorReportDialogue(context);
           }
