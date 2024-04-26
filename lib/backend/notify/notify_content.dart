@@ -41,13 +41,14 @@ class NotifyContent {
     return scheduledDate;
   }
 
-  Future<void> bookDailyNAMTaskNotification(int n) async {
+  Future<void> bookDailyNAMNotification(int n) async {
     tz.TZDateTime scheduleDate = _nextInstanceOfNAM(n);
     List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
         .getDuringTaskList(scheduleDate.millisecondsSinceEpoch,
             scheduleDate.add(const Duration(days: 1)).millisecondsSinceEpoch);
 
     late String body = "";
+    body += "課題\n";
     if (notifyTaskList.isEmpty) {
       body = "本日が期限の課題はありません";
     } else {
@@ -78,29 +79,11 @@ class NotifyContent {
         }
       }
     }
-
-    body = body.trimRight();
-    notificationDetails = _setNotificationDetail(
-        10, "今日${DateFormat("MM/dd").format(scheduleDate)}までの課題", body);
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      10,
-      "今日${DateFormat("MM/dd").format(scheduleDate)}までの課題",
-      body,
-      scheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
-
-  Future<void> bookDailyNAMScheduleNotification(int n) async {
-    tz.TZDateTime scheduleDate = _nextInstanceOfNAM(n);
     List<Map<String, dynamic>> notifyScheduleList =
         await ScheduleDatabaseHelper().getTodaysSchedule(scheduleDate);
-    String body = "";
-
+    body += "予定\n";
     if (notifyScheduleList.isEmpty) {
-      body = "本日の予定はありません";
+      body += "本日の予定はありません";
     } else {
       for (var schedule in notifyScheduleList) {
         String startTime = schedule["startTime"] ?? "";
@@ -115,10 +98,10 @@ class NotifyContent {
       body = body.trimRight();
     }
     notificationDetails = _setNotificationDetail(
-        10, "今日${DateFormat("MM/dd").format(scheduleDate)}の予定", body);
+        10, "今日${DateFormat("MM/dd DD").format(scheduleDate)}のお知らせ", body);
     await flutterLocalNotificationsPlugin.zonedSchedule(
       10,
-      "今日${DateFormat("MM/dd").format(scheduleDate)}の予定",
+      "今日${DateFormat("MM/dd DD").format(scheduleDate)}のお知らせ",
       body,
       scheduleDate,
       notificationDetails,

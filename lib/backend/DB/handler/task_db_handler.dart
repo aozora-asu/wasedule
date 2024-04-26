@@ -34,7 +34,6 @@ class TaskDatabaseHelper {
       where: 'dtEnd <= ?',
       whereArgs: [thirtyDaysAgo.millisecondsSinceEpoch], // ミリ秒単位のエポック時間を使用
     );
-    NotifyContent().bookDailyNAMTaskNotification(8);
   }
 
   // データベースの作成
@@ -159,7 +158,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMTaskNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateDtEnd(int id, int newDtEnd) async {
@@ -171,7 +170,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMTaskNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateSummary(int id, String newSummary) async {
@@ -183,7 +182,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMTaskNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateDescription(int id, String newDescription) async {
@@ -206,7 +205,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMTaskNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> beDisplay(int id) async {
@@ -269,7 +268,7 @@ class TaskDatabaseHelper {
         if (e.toString().contains("UNIQUE constraint failed")) {}
       }
     }
-    NotifyContent().bookDailyNAMTaskNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {

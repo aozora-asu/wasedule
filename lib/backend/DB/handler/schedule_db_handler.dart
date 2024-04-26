@@ -106,7 +106,7 @@ class ScheduleDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMScheduleNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateSchedule(Map<String, dynamic> newSchedule) async {
@@ -118,7 +118,7 @@ class ScheduleDatabaseHelper {
       where: 'id = ?',
       whereArgs: [newSchedule["id"]],
     );
-    NotifyContent().bookDailyNAMScheduleNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
@@ -153,7 +153,7 @@ class ScheduleDatabaseHelper {
             where: 'hash = ?', whereArgs: [scheduleItem.toMap()["hash"]]);
       }
     }
-    NotifyContent().bookDailyNAMScheduleNotification(8);
+    NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> resisterScheduleListToDB(
