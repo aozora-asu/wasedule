@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 
 import '../screens/calendar_page/calendar_page.dart';
 import '../screens/to_do_page/to_do_page.dart';
@@ -44,7 +45,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget pageView(){
     return PageView(
         controller: pageController ,
-        children: [const Calendar(),
+        children: [//TimeTablePage(),
+                   const Calendar(),
                    TaskViewPage(),
                    TaskPage(),],
         onPageChanged: (value){
