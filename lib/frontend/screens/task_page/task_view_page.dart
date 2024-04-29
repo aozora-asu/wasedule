@@ -37,7 +37,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   late bool isLoad;
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
@@ -80,6 +80,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
+    ConfigDataLoader().initConfig(ref);
+      ref.read(calendarDataProvider).getConfigData(
+                ConfigDataLoader().getConfigDataSource());
 
     Widget dividerModel = const VerticalDivider(
       width: 4,
@@ -208,10 +211,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             } else if (snapshot.hasError) {
               return const SizedBox();
             } else if (snapshot.hasData) {
-              ConfigDataLoader().initConfig(ref);
-              ref.read(calendarDataProvider).getConfigData(
-                          ConfigDataLoader().getConfigDataSource());
-
               //DBから何らかのデータが返ってきた場合
               if (ref.watch(taskDataProvider).isInit) {
                 ref.read(taskDataProvider).isInit = false;
@@ -238,9 +237,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
             } else {
-              ConfigDataLoader().initConfig(ref);
-              ref.read(calendarDataProvider).getConfigData(
-                          ConfigDataLoader().getConfigDataSource());
               //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
                 displayDB();
