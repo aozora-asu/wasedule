@@ -777,19 +777,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             ),
           )
         ]),
-        floatingActionButton: Row(children: [
-          const Spacer(),
-          FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              backgroundColor: ACCENT_COLOR,
-              label: SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 80,
-                  child: const Center(
-                    child: Text('戻る', style: TextStyle(color: Colors.white)),
-                  ))),
-        ]));
+      );
   }
 
   int returnRemainingIncome(int maxIncome){

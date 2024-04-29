@@ -14,11 +14,11 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
       selectedItemColor: WIDGET_COLOR,
       unselectedItemColor:WIDGET_COLOR,
       items: const <BottomNavigationBarItem>[
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.grid_on),
-        //   label: '授業',
-        //   backgroundColor: MAIN_COLOR
-        // ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_on),
+          label: '授業',
+          backgroundColor: MAIN_COLOR
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today),
           label: 'カレンダー',
@@ -27,6 +27,11 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
         BottomNavigationBarItem(
           icon: Icon(Icons.check),
           label: '課題',
+          backgroundColor: MAIN_COLOR
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school),
+          label: 'Moodle',
           backgroundColor: MAIN_COLOR
         ),
         BottomNavigationBarItem(

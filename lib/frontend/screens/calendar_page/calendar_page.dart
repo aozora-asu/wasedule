@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadc
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
 
@@ -220,7 +218,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                       return calendarBody();
                     } else {
                       if (ref.read(taskDataProvider).isRenewed) {
-                        //ConfigData().initConfig(ref);
                         displayDB();
                         _getTemplateDataSource();
                         ref.read(calendarDataProvider).getConfigData(
@@ -413,18 +410,6 @@ class _CalendarState extends ConsumerState<Calendar> {
         ]),
         const SizedBox(height: 15),
 
-        // tagEmptyFlag(
-        //   ref,
-        //   expandedMenuPanel(Icons.currency_yen, "アルバイト", () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => ArbeitStatsPage(
-        //                 targetMonth: targetMonth,
-        //               )),
-        //     );
-        //   }),
-        // ),
 
         tagEmptyFlag(
             ref,
@@ -687,7 +672,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return ListView.builder(
       itemBuilder: (context, index) {
         return SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
+            width: SizeConfig.blockSizeHorizontal! * 13.571,
             height: SizeConfig.blockSizeVertical! * 2,
             child: Center(
                 child: Text(
@@ -765,14 +750,14 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
+        width: SizeConfig.blockSizeHorizontal! * 13.571,
         child: ListView.builder(
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return InkWell(
               child: Container(
-                  width: SizeConfig.blockSizeHorizontal! * 13.571, //14.285,
+                  width: SizeConfig.blockSizeHorizontal! * 13.571,
                   height: SizeConfig.blockSizeVertical! * 12,
                   decoration: BoxDecoration(
                     color: cellColour(target),
