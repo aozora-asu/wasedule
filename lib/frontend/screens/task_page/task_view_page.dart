@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
@@ -97,16 +99,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration:const BoxDecoration(
                     color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 1,
-                        blurRadius: 2,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
                   ),
                   height: SizeConfig.blockSizeVertical! * 4.5,
                   child: Row(children: [
@@ -214,8 +208,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             } else if (snapshot.hasError) {
               return const SizedBox();
             } else if (snapshot.hasData) {
-              //DBから何らかのデータが返ってきた場合
+              ConfigDataLoader().initConfig(ref);
+              ref.read(calendarDataProvider).getConfigData(
+                          ConfigDataLoader().getConfigDataSource());
 
+              //DBから何らかのデータが返ってきた場合
               if (ref.watch(taskDataProvider).isInit) {
                 ref.read(taskDataProvider).isInit = false;
               }
@@ -241,6 +238,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
             } else {
+              ConfigDataLoader().initConfig(ref);
+              ref.read(calendarDataProvider).getConfigData(
+                          ConfigDataLoader().getConfigDataSource());
               //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
                 displayDB();

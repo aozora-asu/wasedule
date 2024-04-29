@@ -10,6 +10,7 @@ import 'package:cloud_firestore_web/cloud_firestore_web.dart';
 import 'package:device_info_plus/src/device_info_plus_web.dart';
 import 'package:firebase_core_web/firebase_core_web.dart';
 import 'package:firebase_messaging_web/firebase_messaging_web.dart';
+import 'package:flutter_inappwebview_web/web/main.dart';
 import 'package:flutter_keyboard_visibility_web/flutter_keyboard_visibility_web.dart';
 import 'package:flutter_timezone/flutter_timezone_web.dart';
 import 'package:mobile_scanner/mobile_scanner_web_plugin.dart';
@@ -24,6 +25,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   DeviceInfoPlusWebPlugin.registerWith(registrar);
   FirebaseCoreWeb.registerWith(registrar);
   FirebaseMessagingWeb.registerWith(registrar);
+  InAppWebViewFlutterPlugin.registerWith(registrar);
   FlutterKeyboardVisibilityPlugin.registerWith(registrar);
   FlutterTimezonePlugin.registerWith(registrar);
   MobileScannerWebPlugin.registerWith(registrar);

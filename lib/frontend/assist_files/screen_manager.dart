@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 
 import '../screens/calendar_page/calendar_page.dart';
@@ -29,8 +30,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initIndex ?? 0;
-    pageController = PageController(initialPage:widget.initIndex ?? 0);
+    _currentIndex = widget.initIndex ?? 1;
+    pageController = PageController(initialPage:widget.initIndex ?? 1);
   }
 
 
@@ -45,9 +46,10 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget pageView(){
     return PageView(
         controller: pageController ,
-        children: [//TimeTablePage(),
+        children: [TimeTablePage(),
                    const Calendar(),
                    TaskViewPage(),
+                   MoodleViewPage(),
                    TaskPage(),],
         onPageChanged: (value){
           setState((){

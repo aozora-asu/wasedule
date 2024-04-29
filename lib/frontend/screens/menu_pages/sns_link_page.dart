@@ -142,7 +142,7 @@ class XUrlLauncher extends StatelessWidget {
             backgroundColor: const MaterialStatePropertyAll(Colors.lightBlue),
             fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
             ),
-          child: const Text('X(旧Twitter)',style:TextStyle(color:Colors.white)),
+          child: const Text('Twitter(現X)',style:TextStyle(color:Colors.white)),
           onPressed: () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
