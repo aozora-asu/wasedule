@@ -10,20 +10,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler:const  TextScaler.linear(1)),
-          child: child!,
-        );
-      },
-      // localizationsDelegates: [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,],
-      // supportedLocales: [const Locale('en'),],
-      // locale: const Locale('en'),
-      home: FadingImage()
-    );
+          return MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1)),
+            child: child!,
+          );
+        },
+        // localizationsDelegates: [
+        //   GlobalMaterialLocalizations.delegate,
+        //   GlobalWidgetsLocalizations.delegate,],
+        // supportedLocales: [const Locale('en'),],
+        // locale: const Locale('en'),
+        home: FadingImage());
   }
 }
 
@@ -45,7 +45,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 10),
     );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -75,7 +75,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
 
     // インターバルごとにloadingTextを更新
 
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    Timer.periodic(const Duration(milliseconds: 5), (timer) {
       if (!mounted) {
         // Check if the widget is still part of the tree
         timer

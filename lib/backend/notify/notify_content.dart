@@ -50,7 +50,7 @@ class NotifyContent {
     late String body = "";
     body += "課題\n";
     if (notifyTaskList.isEmpty) {
-      body = "本日が期限の課題はありません";
+      body = "本日が期限の課題はありません\n";
     } else {
       for (var task in notifyTaskList) {
         String due = "";
@@ -67,7 +67,7 @@ class NotifyContent {
               due = DateFormat("翌HH:mm")
                   .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
             } else {
-              due = DateFormat(" HH:mm")
+              due = DateFormat("  HH:mm")
                   .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
             }
           } catch (e) {
@@ -98,15 +98,27 @@ class NotifyContent {
       body = body.trimRight();
     }
     notificationDetails = _setNotificationDetail(
-        10, "今日${DateFormat("MM/dd DD").format(scheduleDate)}のお知らせ", body);
+        20,
+        "今日${DateFormat("MM/dd").format(DateTime.now())}(${'月火水木金土日'[DateTime.now().weekday - 1]})のお知らせ",
+        body);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      10,
-      "今日${DateFormat("MM/dd DD").format(scheduleDate)}のお知らせ",
+      20,
+      "今日${DateFormat("MM/dd").format(DateTime.now())}(${'月火水木金土日'[DateTime.now().weekday - 1]})のお知らせ",
       body,
       scheduleDate,
       notificationDetails,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
+  }
+
+  getScheduled() async {
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print('予約済みの通知');
+    for (var pendingNotificationRequest in pendingNotificationRequests) {
+      print(
+          '予約済みの通知: [id: ${pendingNotificationRequest.id}, title: ${pendingNotificationRequest.title}, body: ${pendingNotificationRequest.body}, payload: ${pendingNotificationRequest.payload}]');
+    }
   }
 }

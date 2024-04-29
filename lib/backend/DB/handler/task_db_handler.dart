@@ -158,7 +158,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMNotification(8);
+    await NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateDtEnd(int id, int newDtEnd) async {
@@ -170,7 +170,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMNotification(8);
+    await NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateSummary(int id, String newSummary) async {
@@ -182,7 +182,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMNotification(8);
+    await NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> updateDescription(int id, String newDescription) async {
@@ -205,7 +205,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().bookDailyNAMNotification(8);
+    await NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> beDisplay(int id) async {
@@ -268,7 +268,7 @@ class TaskDatabaseHelper {
         if (e.toString().contains("UNIQUE constraint failed")) {}
       }
     }
-    NotifyContent().bookDailyNAMNotification(8);
+    await NotifyContent().bookDailyNAMNotification(8);
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
@@ -299,6 +299,7 @@ class TaskDatabaseHelper {
       'tasks',
       where: 'dtEnd > ? AND dtEnd <= ? AND isDone=?',
       whereArgs: [startDate, endDate, 0],
+      orderBy: 'dtEnd ASC', // dtEndが小さい順に並び替える
     );
     return withinNdaysTask;
   }
