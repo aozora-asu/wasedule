@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -102,7 +104,30 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       result = "年  秋学期  冬セメスター";
     }
     return thisYear.toString() + result;
+  }
 
+  String currentQuaterID(){
+    String result = "full_year";
+    if(semesterNum == 1){
+      result = "spring_quater";
+    }else if(semesterNum == 2){
+      result = "summer_quater";
+    }else if(semesterNum == 3){
+      result = "fall_quater";
+    }else if(semesterNum == 4){
+      result = "winter_quater";
+    }
+    return result;
+  }
+
+  String currentSemesterID(){
+    String result = "full_year";
+    if(semesterNum == 1 || semesterNum == 2){
+      result = "spring_semester";
+    }else if(semesterNum == 3 || semesterNum == 4){
+      result = "fall_semester";
+    }
+    return result;
   }
 
   Widget timeTable(){
@@ -178,9 +203,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       height: SizeConfig.blockSizeVertical! * 2.5,
       child:ListView.builder(
         itemBuilder: (context, index) {
-          return SizedBox(
+          Color bgColor = Colors.white;
+          if(index + 1 == DateTime.now().weekday 
+            && index != 6){
+            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+          }
+
+          return Container(
               width: SizeConfig.blockSizeHorizontal! *cellWidth,
               height: SizeConfig.blockSizeVertical! * 2,
+              color:bgColor,
               child: Center(
                   child: Text(
                 days.elementAt(index),
@@ -198,27 +230,135 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget timetableSells(int weekDay){
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! *cellWidth, 
-        child:ListView.builder(
+        child:ListView.separated(
         shrinkWrap: true,
-        itemCount: 6,
+        itemCount: 7,
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         itemBuilder: (
         (context, index) {
+          Color bgColor = Colors.white;
+          Widget cellContents = const SizedBox();
+
+          if(random.nextInt(100).isEven){
+            bgColor = const Color.fromARGB(255, 227, 238, 255);
+            cellContents = timeTableSellsChild(weekDay,index+1);
+          }
+          
+          DateTime now = DateTime.now();
+          if(returnBeginningDateTime(index+1).isBefore(now)
+              && returnEndDateTime(index+1).isAfter(now)
+              && now.weekday == weekDay
+              && weekDay <= 6){
+            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+          }
+          
+
           return Container(
             width: SizeConfig.blockSizeHorizontal! *cellWidth,
-            height: SizeConfig.blockSizeVertical! * 12,
+            height: SizeConfig.blockSizeVertical! * 17,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: bgColor,
               border: Border.all(
                 color: Colors.grey,
                 width: 0.5,
               ),
             ),
+            child: Padding(
+              padding:const EdgeInsets.symmetric(horizontal:3),
+              child:cellContents) 
           );
-        })
+        }),
+        separatorBuilder: (context, index) {
+          Widget resultinging = const SizedBox();
+          DateTime now = DateTime.now(); 
+          Color bgColor = Colors.white;
+          if(returnBeginningDateTime(2).isAfter(now)
+              && returnEndDateTime(3).isBefore(now)){
+            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+          }
+          String childText = "";
+          if(weekDay == 3){
+            childText = "昼";
+          }
+          if(weekDay == 4){
+            childText = "休";
+          }
+          if(weekDay == 5){
+            childText = "み";
+          }
+
+          if(index == 1){
+            resultinging = 
+              Container(
+                height:SizeConfig.blockSizeVertical! *2.5,
+                color:bgColor,
+                child:Column(
+                  children:[
+                    const Divider(color:Colors.grey,height:0.5,thickness: 0.5),
+                    const Spacer(),
+                    Text(childText, style: TextStyle(color:Colors.grey,fontSize: SizeConfig.blockSizeHorizontal! *3)),
+                    const Spacer(),
+                    const Divider(color:Colors.grey,height:0.5,thickness: 0.5)
+                ])
+              );
+          }
+          return resultinging;
+        },
       )
     );
+  }
+ 
+
+  Widget timeTableSellsChild(int weekDay, int period){
+    double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
+    Color grey = Colors.grey;
+
+    return SizedBox(
+      child:Column(
+       mainAxisAlignment:MainAxisAlignment.spaceBetween,
+       children:[
+        Text(returnBeginningTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+        Text("社会科学特講（社会デザインの基礎理論）A",
+          style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
+          maxLines: 4,
+          ),
+      Container(
+        decoration: BoxDecoration(
+          color:Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(2)),
+          border: Border.all(color: Colors.black,width: 0.5)
+        ),
+        child:Column(children:[
+          Text("100-S102",
+            style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,color:grey),
+            overflow: TextOverflow.visible,
+            maxLines: 2,
+            ),
+            taskListLength(random.nextInt(10),SizeConfig.blockSizeHorizontal! *2.5)
+        ]),
+      ),       
+      Text(returnEndTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+      ])
+    );
+  }
+
+
+  Widget taskListLength(int length, double fontSize) {
+    Color fontColor = Colors.grey;
+    FontWeight fontWeight = FontWeight.normal;
+    if(length >= 1){
+      fontColor = Colors.redAccent;
+      fontWeight = FontWeight.bold;
+    }
+    return Row(children:[
+        Icon(Icons.task,color:fontColor,size:fontSize,),
+        Text(" ${length.toString()} 件",
+          style: TextStyle(
+            color:fontColor,
+            fontSize: fontSize,
+            fontWeight: fontWeight))
+    ]);
   }
 
   AssetImage tableBackGroundImage() {
@@ -245,6 +385,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
   }
 
+  DateTime returnBeginningDateTime(int period){
+    DateTime now = DateTime.now();
+    switch(period) {
+      case 1: return DateTime(now.year,now.month,now.day,8,50);
+      case 2: return DateTime(now.year,now.month,now.day,10,40);
+      case 3: return DateTime(now.year,now.month,now.day,13,10);
+      case 4: return DateTime(now.year,now.month,now.day,15,05);
+      case 5: return DateTime(now.year,now.month,now.day,17,00);
+      case 6: return DateTime(now.year,now.month,now.day,18,55);
+      default : return DateTime(now.year,now.month,now.day,20,45);
+    }
+  }
+
   String returnEndTime(int period){
     switch(period) {
       case 1: return "10:30";
@@ -257,7 +410,18 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
   }
 
-
+  DateTime returnEndDateTime(int period){
+    DateTime now = DateTime.now();
+    switch(period) {
+      case 1: return DateTime(now.year,now.month,now.day,10,30);
+      case 2: return DateTime(now.year,now.month,now.day,12,20);
+      case 3: return DateTime(now.year,now.month,now.day,14,50);
+      case 4: return DateTime(now.year,now.month,now.day,16,45);
+      case 5: return DateTime(now.year,now.month,now.day,18,40);
+      case 6: return DateTime(now.year,now.month,now.day,20,35);
+      default : return DateTime(now.year,now.month,now.day,21,35);
+    }
+  }
 
 
 

@@ -184,6 +184,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget calendarBody() {
+    Widget borderModel =
+      const Column(children:[
+        SizedBox(height: 2.5),
+        Divider(height:1),
+        SizedBox(height: 2.5),
+      ]);
+
     return KeyboardActions(
         config: _buildConfig(controller),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -196,7 +203,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const SizedBox(height: 10),
           Container(
               decoration: roundedBoxdecorationWithShadow(),
-              padding: const EdgeInsets.all(7.5),
+              padding: const EdgeInsets.symmetric(horizontal:5,vertical:10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -206,26 +213,27 @@ class _MainContentsState extends ConsumerState<MainContents> {
                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 5),
+                    const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+                    const SizedBox(height:2),
                     configSwitch("Tipsとお知らせ", "tips"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("きょうの予定", "todaysSchedule"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("近日締切のタスク", "taskList"),
                     const SizedBox(height: 5),
                     configTextField("表示日数：", "taskList", controller),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("Waseda Moodle リンク", "moodleLink"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("アルバイト推計収入", "arbeitPreview"),
-                    const SizedBox(height: 5),
+                    borderModel,
                   ])),
                 
                 const SizedBox(height:10),
 
           Container(
               decoration: roundedBoxdecorationWithShadow(),
-              padding: const EdgeInsets.all(7.5),
+              padding: const EdgeInsets.symmetric(horizontal:5,vertical:10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -235,11 +243,12 @@ class _MainContentsState extends ConsumerState<MainContents> {
                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 5),
+                    const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+                    const SizedBox(height:2),
                     configSwitch("土日祝日の着色", "holidayPaint"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("祝日名の表示", "holidayName"),
-                    const SizedBox(height: 5),
+                    borderModel,
                   ]))
 
         ]));
@@ -277,18 +286,20 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
   Widget configSwitch(String configText, String widgetName) {
     return Row(children: [
-      CupertinoSwitch(
-          value: searchConfigData(widgetName),
-          activeColor: ACCENT_COLOR,
-          onChanged: (value) {
-            updateConfigData(widgetName, value);
-          }),
+      const SizedBox(width:5),
       Text(
         configText,
         style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! * 4,
         ),
       ),
+      const Spacer(),
+      CupertinoSwitch(
+          value: searchConfigData(widgetName),
+          activeColor: ACCENT_COLOR,
+          onChanged: (value) {
+            updateConfigData(widgetName, value);
+          }),
     ]);
   }
 
