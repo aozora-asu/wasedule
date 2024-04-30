@@ -6,8 +6,13 @@ class NotifyConfig {
   int? weekday;
   String time;
   int? days;
+  int isValidNotify;
   NotifyConfig(
-      {required this.notifyType, required this.time, this.days, this.weekday});
+      {required this.notifyType,
+      required this.time,
+      required this.isValidNotify,
+      required this.days,
+      required this.weekday});
 
   toMap() {
     return {
@@ -20,7 +25,7 @@ class NotifyConfig {
 }
 
 class NotifyFormat {
-  String notifyFormat;
+  String? notifyFormat;
   int isContainWeekday;
   NotifyFormat({required this.isContainWeekday, required this.notifyFormat});
 
@@ -60,7 +65,8 @@ class NotifyDatabaseHandler {
         notifyType TEXT,
         weekday INT,
         time TEXT,
-        days INTEGER
+        days INTEGER,
+        isValidNotify INTEGER
       )
     ''');
   }
@@ -76,6 +82,7 @@ class NotifyDatabaseHandler {
     NotifyConfig notifyConfig = NotifyConfig(
         notifyType: notifyConfigMap["notifyType"],
         time: notifyConfigMap["time"],
+        isValidNotify: 1,
         days: notifyConfigMap["days"],
         weekday: notifyConfigMap["weekday"]);
     await _database.insert(configTable, notifyConfig.toMap());
