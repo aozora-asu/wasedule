@@ -816,9 +816,11 @@ return GestureDetector(
 
   Widget containScreenshotButton(){
     final scheduleForm = ref.read(scheduleFormProvider);
-    String label = "含まない";
+    String label = "共有";
+    TextDecoration decoration = TextDecoration.lineThrough;
     if(isPublic){
-      label = "含む";
+      label = "共有";
+      decoration = TextDecoration.none;
     }
 
     return GestureDetector(
@@ -843,9 +845,9 @@ return GestureDetector(
         });
       },
       child:Row(children:[
-        const Icon(Icons.ios_share),
+        const Icon(Icons.camera_alt),
         const SizedBox(width: 5),
-        Text(label),
+        Text(label,style:TextStyle(decoration:decoration)),
         const VerticalDivider(color:Colors.blueGrey,width:20),
       ])
     );

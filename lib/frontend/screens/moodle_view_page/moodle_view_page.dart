@@ -8,9 +8,11 @@ class MoodleViewPage extends ConsumerStatefulWidget {
   _MoodleViewPageState createState() => _MoodleViewPageState();
 }
 
+final GlobalKey webMoodleViewKey = GlobalKey();
+InAppWebViewController? webMoodleViewController;
+
 class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
-  final GlobalKey webViewKey = GlobalKey();
-  InAppWebViewController? webViewController;
+
   
   @override
   Widget build (BuildContext context){
@@ -18,15 +20,26 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
     return Scaffold(
       body: Column(children:[
        Expanded(
-        child:InAppWebView(
-            key: webViewKey,
-            initialUrlRequest: URLRequest(
-              url: WebUri("https://wsdmoodle.waseda.jp/")),
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
+        child:
+          ListView(
+           shrinkWrap: true,
+           scrollDirection: Axis.horizontal,
+           physics: const NeverScrollableScrollPhysics(),
+           children:[
+            SizedBox(
+              width:SizeConfig.blockSizeHorizontal! *100,
+              child:InAppWebView(
+                key: webMoodleViewKey,
+                initialUrlRequest: URLRequest(
+                  url: WebUri("https://wsdmoodle.waseda.jp/")),
+                onWebViewCreated: (controller) {
+                  webMoodleViewController = controller;
+                },
+              )
+          )
             
-          )),
+          ])
+          ),
       const Divider(height:0.5,thickness: 0.5, color: Colors.grey),
       Container(
         color: Colors.white,
@@ -42,7 +55,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
     return Row(children:[
             IconButton(
                 onPressed: () {
-                  webViewController?.goBack();
+                  webMoodleViewController?.goBack();
                 },
                 icon:Icon(Icons.arrow_back_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
             const Spacer(),
@@ -50,13 +63,13 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                 onPressed: () {
                   final url = URLRequest(
                       url: WebUri("https://wsdmoodle.waseda.jp/"));
-                  webViewController?.loadUrl(urlRequest: url);
+                  webMoodleViewController?.loadUrl(urlRequest: url);
                 },
                 icon:Icon(Icons.home,size:SizeConfig.blockSizeVertical! *3,),),
             const Spacer(),
             IconButton(
                 onPressed: () {
-                  webViewController?.goForward();
+                  webMoodleViewController?.goForward();
                 },
                 icon:Icon(Icons.arrow_forward_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
     ]);
