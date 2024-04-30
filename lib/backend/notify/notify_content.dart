@@ -50,7 +50,7 @@ class NotifyContent {
     late String body = "";
     body += "課題\n";
     if (notifyTaskList.isEmpty) {
-      body = "本日が期限の課題はありません\n";
+      body += "本日が期限の課題はありません\n";
     } else {
       for (var task in notifyTaskList) {
         String due = "";
