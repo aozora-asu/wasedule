@@ -394,7 +394,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
 
   Widget notificationBody() {
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         '通知設定…',
@@ -416,7 +415,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
           ),
           const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
           const SizedBox(height:2),
-          notificationFrequencySetting()
+          notificationFrequencySetting(),
+          const SizedBox(height:10),
+          const Text("設定済み通知",style:TextStyle(color:Colors.grey),),
+          const Divider(height:1),
+          notificationSettingList()
         ])
       ),
       const SizedBox(height: 10),
@@ -433,7 +436,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             ),
             const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
             const SizedBox(height:2),
-
+            notificarionFormatSetting()
           ])
       ),
     ]);
@@ -562,7 +565,7 @@ Widget notificationFrequencySetting(){
             child:Container(
               padding:const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color:Colors.orange,
+                color:ACCENT_COLOR,
                 border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
                 borderRadius:BorderRadius.circular(5),
               ),
@@ -638,7 +641,7 @@ Widget notificationFrequencySetting(){
             child:Container(
               padding:const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color:Colors.orange,
+                color:ACCENT_COLOR,
                 border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
                 borderRadius:BorderRadius.circular(5),
               ),
@@ -658,6 +661,114 @@ Widget notificationFrequencySetting(){
       const SizedBox(height:7),
     
     borderModel
+    ]);
+  }
+
+
+  Widget notificationSettingList(){
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder:((context, index) {
+          
+      }),
+      separatorBuilder: ((context, index) {
+        return const Divider(height:1);
+      }),
+      itemCount: 0);
+  }
+
+
+  String? notificationFormat;
+  bool isContainWeekDay = true;
+  Widget notificarionFormatSetting(){
+
+    String weekDayText = "";
+    if(isContainWeekDay 
+      && notificationFormat != null){
+      weekDayText = DateFormat("(E)","ja_JP").format(DateTime.now());
+    }
+
+    String thumbnailText = "";
+    if(notificationFormat != null){
+      thumbnailText = DateFormat(notificationFormat).format(DateTime.now());
+    }else{
+      thumbnailText = "今日    明日";
+    }
+
+    return Column(
+     children: [
+
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("日付の形式  "),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 45,
+            child: DropdownButtonFormField(
+              decoration:const InputDecoration.collapsed(
+                hintText: "日付の形式",
+                border: OutlineInputBorder()
+              ),
+              items: const [
+                DropdownMenuItem(value: "MM月dd日", child: Text(" MM月dd日")),
+                DropdownMenuItem(value: "MM/dd", child: Text(" MM/dd")),
+                DropdownMenuItem(value: "dd/MM", child: Text(" dd/MM")),
+                DropdownMenuItem(value: null, child: Text(" 相対")),
+              ],
+              onChanged: (value){
+                setState(() {
+                  notificationFormat = value;
+                });
+              },
+            ),
+          ),
+        ]),
+      ),
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("曜日を含む："),
+          CupertinoCheckbox(
+            activeColor: ACCENT_COLOR,
+            value: isContainWeekDay,
+            onChanged:(value){
+              setState(() {
+                isContainWeekDay = value!;
+              });
+            }),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              setState(() {});
+
+              //ここでDB登録！！
+              print(notificationFormat);
+              print(isContainWeekDay);
+
+            },
+            child:Container(
+              padding:const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color:Colors.orange,
+                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
+                borderRadius:BorderRadius.circular(5),
+              ),
+              child:const Row(children:[
+                Text("   変更   ",
+                  style:TextStyle(
+                    fontWeight:FontWeight.bold,
+                    color:Colors.white
+                  )
+                ),
+              ])
+            ),
+          ),
+          const SizedBox(width:5)
+        ]),
+      ),
+      const Divider(height:1),
+      const SizedBox(height:5),
+      Text(thumbnailText + weekDayText,
+        style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
     ]);
   }
 
