@@ -1,4 +1,3 @@
-import 'package:flutter_calandar_app/backend/DB/models/arbeit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -33,8 +32,8 @@ class NotifyFormat {
 class NotifyDatabaseHandler {
   late Database _database;
   static const String databaseName = "notify";
-  static const String format_table = "notify_format";
-  static const String config_table = "notify_config";
+  static const String formatTable = "notify_format";
+  static const String configTable = "notify_config";
   // データベースの初期化
   NotifyDatabaseHandler() {
     _initNotifyDatabase();
@@ -49,14 +48,14 @@ class NotifyDatabaseHandler {
   // データベースの作成
   Future<void> _createNotifyDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS $format_table(
+      CREATE TABLE IF NOT EXISTS $formatTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         notifyFormat TEXT,
         isContainWeekday INTEGER
       )
     ''');
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS $config_table(
+      CREATE TABLE IF NOT EXISTS $configTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         notifyType TEXT,
         weekday INT,
@@ -70,23 +69,22 @@ class NotifyDatabaseHandler {
     NotifyFormat notifyFormat = NotifyFormat(
         isContainWeekday: notifyFormatMap["isContainWeekday"],
         notifyFormat: notifyFormatMap["notifyFormat"]);
-    await _database.insert(format_table, notifyFormat.toMap());
+    await _database.insert(formatTable, notifyFormat.toMap());
   }
 
-  Future<void> insertNotifyConfig(Map<String, dynamic> notifyConfigMap) async {
+  Future<void> _insertNotifyConfig(Map<String, dynamic> notifyConfigMap) async {
     NotifyConfig notifyConfig = NotifyConfig(
         notifyType: notifyConfigMap["notifyType"],
         time: notifyConfigMap["time"],
         days: notifyConfigMap["days"],
         weekday: notifyConfigMap["weekday"]);
-    await _initNotifyDatabase();
-    await _database.insert(config_table, notifyConfig.toMap());
+    await _database.insert(configTable, notifyConfig.toMap());
   }
 
   Future<void> deleteNotifyFormat(int id) async {
     await _initNotifyDatabase();
     await _database.delete(
-      format_table,
+      formatTable,
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -95,38 +93,45 @@ class NotifyDatabaseHandler {
   Future<void> deleteNotifyConfig(int id) async {
     await _initNotifyDatabase();
     await _database.delete(
-      config_table,
+      configTable,
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
-  Future<void> updateNotifyConfig(Map<String, dynamic> newNotifyConfig) async {
+  Future<void> updateNotifyConfig(
+      Map<String, dynamic> newNotifyConfigMap) async {
     await _initNotifyDatabase();
     await _database.update(
-      config_table,
-      newNotifyConfig, // 更新後の値
+      configTable,
+      newNotifyConfigMap, // 更新後の値
       where: 'id = ?',
-      whereArgs: [newNotifyConfig["id"]],
+      whereArgs: [newNotifyConfigMap["id"]],
     );
   }
 
-  Future<void> _updateNotifyFormat(Map<String, dynamic> newNotifyFormat) async {
+  Future<void> _updateNotifyFormat(
+      Map<String, dynamic> newNotifyFormatMap) async {
     await _database.update(
-      config_table,
-      newNotifyFormat, // 更新後の値
+      configTable,
+      newNotifyFormatMap, // 更新後の値
       where: 'id = ?',
       whereArgs: [1],
     );
   }
 
-  Future<void> setNotifyFormat(Map<String, dynamic> notifyFormat) async {
+  Future<void> setNotifyFormat(Map<String, dynamic> notifyFormatMap) async {
     await _initNotifyDatabase();
     if (await hasNotifyFormat()) {
-      await _updateNotifyFormat(notifyFormat);
+      await _updateNotifyFormat(notifyFormatMap);
     } else {
-      await _insertNotifyFormat(notifyFormat);
+      await _insertNotifyFormat(notifyFormatMap);
     }
+  }
+
+  Future<void> setNotifyConfig(Map<String, dynamic> notifyConfigMap) async {
+    await _initNotifyDatabase();
+    await _insertNotifyConfig(notifyConfigMap);
   }
 
   Future<bool> hasNotifyFormat() async {
@@ -134,8 +139,30 @@ class NotifyDatabaseHandler {
     // データのカウントを取得
     await _initNotifyDatabase();
     count = Sqflite.firstIntValue(
-        await _database.rawQuery('SELECT COUNT(*) FROM $format_table'));
+        await _database.rawQuery('SELECT COUNT(*) FROM $formatTable'));
 
     return count! > 0;
+  }
+
+  Future<Map<String, dynamic>?> getNotifyFormat() async {
+    await _initNotifyDatabase();
+    List<Map<String, dynamic>> notifyFormatList =
+        await _database.rawQuery('SELECT * FROM $formatTable');
+    if (notifyFormatList.isEmpty) {
+      return null;
+    } else {
+      return notifyFormatList[0];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>?> getNotifyConfig() async {
+    await _initNotifyDatabase();
+    List<Map<String, dynamic>> notifyConfigList =
+        await _database.rawQuery('SELECT * FROM $configTable');
+    if (notifyConfigList.isEmpty) {
+      return null;
+    } else {
+      return notifyConfigList;
+    }
   }
 }
