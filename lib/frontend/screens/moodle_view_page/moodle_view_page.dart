@@ -17,19 +17,20 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
     SizeConfig().init(context);
     return Scaffold(
       body: Column(children:[
-        Expanded(
-          child: InAppWebView(
+       Expanded(
+        child:InAppWebView(
             key: webViewKey,
             initialUrlRequest: URLRequest(
               url: WebUri("https://wsdmoodle.waseda.jp/")),
             onWebViewCreated: (controller) {
               webViewController = controller;
-        },
-      )),
+            },
+            
+          )),
       const Divider(height:0.5,thickness: 0.5, color: Colors.grey),
       Container(
         color: Colors.white,
-        height:SizeConfig.blockSizeVertical! *4.5,
+        height:SizeConfig.blockSizeVertical! *5.5,
         child:menuBar()
       ),
       ])

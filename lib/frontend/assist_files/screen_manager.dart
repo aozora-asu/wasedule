@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
@@ -30,8 +33,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initIndex ?? 1;
-    pageController = PageController(initialPage:widget.initIndex ?? 1);
+    _currentIndex = widget.initIndex ?? 0;
+    pageController = PageController(initialPage:widget.initIndex ?? 0);
   }
 
 
@@ -42,19 +45,26 @@ class _AppPageState extends ConsumerState<AppPage> {
     });
     pageController .jumpToPage(index);
   }
+  ScrollPhysics physics = const ScrollPhysics();
 
   Widget pageView(){
     return PageView(
-        controller: pageController ,
-        children: [TimeTablePage(),
+        physics: physics,
+        controller: pageController,
+        children: [//TimeTablePage(),
                    const Calendar(),
                    TaskViewPage(),
-                   MoodleViewPage(),
+                   //MoodleViewPage(),
                    TaskPage(),],
         onPageChanged: (value){
-          setState((){
-            _currentIndex = value;
-          });  
+            // if(value == 3){
+            //   physics = const NeverScrollableScrollPhysics();
+            // }else{
+            //   physics = const ScrollPhysics();
+            // }
+            setState((){
+              _currentIndex = value;
+            });
         },
     );
   }

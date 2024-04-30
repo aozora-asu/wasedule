@@ -1513,7 +1513,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             tagThumbnailer,
-                            Text(
+                            SizedBox(
+                             width: SizeConfig.blockSizeHorizontal! *75,
+                             child:Text(
                               " " +
                                   data.sortedDataByDay[targetKey]
                                       .elementAt(index)["subject"],
@@ -1522,7 +1524,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                                   color: Colors.black,
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                   fontWeight: FontWeight.bold),
-                            )
+                            ))
+                            
                           ]),
                     )
                   ]))
