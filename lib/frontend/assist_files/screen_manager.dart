@@ -33,8 +33,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initIndex ?? 0;
-    pageController = PageController(initialPage:widget.initIndex ?? 0);
+    _currentIndex = widget.initIndex ?? 1;
+    pageController = PageController(initialPage:widget.initIndex ?? 1);
   }
 
 
@@ -43,7 +43,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     setState(() {
       _currentIndex = index;
     });
-    pageController .jumpToPage(index);
+    pageController.jumpToPage(index);
   }
   ScrollPhysics physics = const ScrollPhysics();
 
@@ -51,17 +51,17 @@ class _AppPageState extends ConsumerState<AppPage> {
     return PageView(
         physics: physics,
         controller: pageController,
-        children: [//TimeTablePage(),
+        children: [TimeTablePage(),
                    const Calendar(),
                    TaskViewPage(),
-                   //MoodleViewPage(),
+                   MoodleViewPage(),
                    TaskPage(),],
         onPageChanged: (value){
-            // if(value == 3){
-            //   physics = const NeverScrollableScrollPhysics();
-            // }else{
-            //   physics = const ScrollPhysics();
-            // }
+            if(value == 3){
+              physics = const NeverScrollableScrollPhysics();
+            }else{
+              physics = const ScrollPhysics();
+            }
             setState((){
               _currentIndex = value;
             });
