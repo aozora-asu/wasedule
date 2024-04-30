@@ -176,15 +176,16 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
        default:
         return Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: notificationBody(),
-        ));
-
+          child: SingleChildScrollView(
+            child:Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: notificationBody(),
+        )));
 
     }
   }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Widget calendarBody() {
     Widget borderModel =
       const Column(children:[
@@ -394,6 +395,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
 
   Widget notificationBody() {
+    
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         '通知設定…',
@@ -416,10 +418,17 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
           const SizedBox(height:2),
           notificationFrequencySetting(),
-          const SizedBox(height:10),
-          const Text("設定済み通知",style:TextStyle(color:Colors.grey),),
-          const Divider(height:1),
-          notificationSettingList()
+          const SizedBox(height:1),
+          const Text(" ■ 設定済み通知",style:TextStyle(color:Colors.grey),),
+          //const Divider(height:1),
+          showNotificationList([{
+            "id":1,
+            "notyfyType":"weekly",
+            "weekDay":3,
+            "time":"08:00",
+            "days":3,
+            "isValidNotify":1
+          }])
         ])
       ),
       const SizedBox(height: 10),
@@ -436,10 +445,12 @@ class _MainContentsState extends ConsumerState<MainContents> {
             ),
             const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
             const SizedBox(height:2),
-            notificarionFormatSetting()
+            notificarionFormatSetting(),
           ])
       ),
-    ]);
+      const SizedBox(height:20)
+    ])
+    ;
   }
 
   String? notifyType;
@@ -448,16 +459,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
   String timeForPreview = "08時間00分";
   int days = 1;
 
-Widget notificationFrequencySetting(){
+  Widget notificationFrequencySetting(){
 
-  
-  Widget borderModel =
-    const Column(children:[
-      SizedBox(height: 2.5),
-      Divider(height:1),
-      SizedBox(height: 2.5),
-  ]);
-
+    Widget borderModel =
+      const Column(children:[
+        SizedBox(height: 2.5),
+        Divider(height:1),
+        SizedBox(height: 2.5),
+    ]);
 
   return Column(
     children: [
@@ -629,8 +638,7 @@ Widget notificationFrequencySetting(){
             onTap: () {
               notifyType = "beforeHour";
               setState(() {
-                // ここでsetStateを使用して状態を更新
-                // または、データベースへの登録などの操作を実行する前に、状態を更新します。
+
               });
               //ここでDB登録！！
               print(notifyType);
@@ -664,20 +672,108 @@ Widget notificationFrequencySetting(){
     ]);
   }
 
+  Widget showNotificationList(List<Map>? map){
+    if(map == null){
+      return noneSettingWidget();
+    }else{
+      return notificationSettingList(map);
+    }
+  }
 
-  Widget notificationSettingList(){
+  Widget notificationSettingList(List<Map> map){
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder:((context, index) {
+        Map target = map.elementAt(index);
+        int id = target["id"];
+        int? weekDay = target["weekDay"];
+        String time = target["time"];
+        int? days = target["days"];
+        int isValidNotify = target["isValidNotify"];
+        Color buttonColor = Colors.grey;
+        String buttonText = "通知OFF";
+        
+        if(isValidNotify == 1){
+          buttonColor = ACCENT_COLOR;
+          buttonText = "通知ON";
+        }
+
+        return Card(
+          child:Padding(
+           padding:const EdgeInsets.all(5),
+           child:Row(
+            children:[
+            InkWell(
+              onTap:(){
+                //ここに削除の処理
+                id;
+
+                setState(() {
+                  
+                });
+              },
+              child:const Icon(Icons.delete)),
+            const Spacer(),
+            Column(children:[
+              Row(children:[
+                const Text(" "),
+                Text(getDayOfWeek(weekDay)),
+                const Text(" "),
+                Text(time)
+              ]),
+              Row(children:[
+                const Text(" "),
+                Text(days.toString()+" 日分",
+                  style:const TextStyle(color:Colors.grey)),
+              ]),
+            ]),
+            const Spacer(),
+            GestureDetector(
+            onTap: () {
+              //通知のON　OFFの切り替え処理をします
+              id;
+              setState(() {
+                
+              });
+            },
+            child:Container(
+              padding:const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color:buttonColor,
+                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
+                borderRadius:BorderRadius.circular(5),
+              ),
+              child:Row(children:[
+                Text(buttonText,
+                  style:const TextStyle(
+                    fontWeight:FontWeight.bold,
+                    color:Colors.white
+                  )
+                ),
+              ])
+            ),
+          ),
+          ]))
           
+        );
       }),
       separatorBuilder: ((context, index) {
-        return const Divider(height:1);
+        return const SizedBox(height:2);
       }),
-      itemCount: 0);
+      itemCount: map.length);
   }
 
+  Widget noneSettingWidget(){
+    return SizedBox(
+      height: SizeConfig.blockSizeVertical! *10,
+      child:const Center(
+        child:Text(
+          "登録されている通知はありません。",
+          style:TextStyle(color:Colors.grey))
+      ),
+    );
+  }
 
   String? notificationFormat;
   bool isContainWeekDay = true;
@@ -770,6 +866,27 @@ Widget notificationFrequencySetting(){
       Text(thumbnailText + weekDayText,
         style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
     ]);
+  }
+
+  String getDayOfWeek(int? dayIndex) {
+    switch (dayIndex) {
+      case DateTime.monday:
+        return "毎週月曜日";
+      case DateTime.tuesday:
+        return "毎週火曜日";
+      case DateTime.wednesday:
+        return "毎週水曜日";
+      case DateTime.thursday:
+        return "毎週木曜日";
+      case DateTime.friday:
+        return "毎週金曜日";
+      case DateTime.saturday:
+        return "毎週土曜日";
+      case DateTime.sunday:
+        return "毎週日曜日";
+      default:
+        return "毎日";
+    }
   }
 
 
