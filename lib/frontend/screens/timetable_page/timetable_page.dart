@@ -240,10 +240,25 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         (context, index) {
           Color bgColor = Colors.white;
           Widget cellContents = const SizedBox();
+          int length = random.nextInt(11);
 
           if(random.nextInt(100).isEven){
-            bgColor = const Color.fromARGB(255, 227, 238, 255);
-            cellContents = timeTableSellsChild(weekDay,index+1);
+            switch(length){
+               case 0:bgColor = Color.fromRGBO(255, 255, 255, 0.6);
+               case 1:bgColor = Color.fromRGBO(254, 255, 232, 0.6);
+               case 2:bgColor = Color.fromRGBO(253, 255, 187, 0.6);
+               case 3:bgColor = Color.fromRGBO(255, 243, 150, 0.6);
+               case 4:bgColor = Color.fromRGBO(255, 231, 125, 0.6);
+               case 5:bgColor = Color.fromRGBO(255, 203, 138, 0.6);
+               case 6:bgColor = Color.fromRGBO(255, 184, 117, 0.6);
+               case 7:bgColor = Color.fromRGBO(255, 125, 142, 0.6);
+               case 8:bgColor = Color.fromRGBO(255, 128, 128, 0.6);
+               case 9:bgColor = Color.fromRGBO(255, 139, 170, 0.6);
+               default :bgColor = Color.fromRGBO(255, 102, 161, 0.6);
+            }
+              
+            cellContents = timeTableSellsChild(
+              weekDay,index+1,length);
           }
           
           DateTime now = DateTime.now();
@@ -251,7 +266,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               && returnEndDateTime(index+1).isAfter(now)
               && now.weekday == weekDay
               && weekDay <= 6){
-            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+            bgColor = Color.fromRGBO(255, 166, 166, 1);
           }
           
 
@@ -311,16 +326,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
  
 
-  Widget timeTableSellsChild(int weekDay, int period){
+  Widget timeTableSellsChild(int weekDay, int period, int taskLength){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
     String className = "社会科学特講（社会デザインの基礎理論）A";
     String classRoom = "100-S102";
-    int taskLength = random.nextInt(11);
+    
 
     return Stack(
      children:[
-      lengthBadge(taskLength,fontSize,true),
+      Align(
+        alignment:const Alignment(-1,-0.9),
+        child:lengthBadge(taskLength,fontSize,true)
+      ),
       SizedBox(
         child:Column(
         mainAxisAlignment:MainAxisAlignment.spaceBetween,
