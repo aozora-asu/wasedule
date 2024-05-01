@@ -64,3 +64,23 @@ Color brighten(Color color, [double amount = .1]) {
 
   return Color.fromARGB(color.alpha, r, g, b);
 }
+
+  Widget lengthBadge(int length,fontSize,bool hideZero) {
+    if(length == 0 && hideZero){
+      return const SizedBox();
+    }else{
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.redAccent,
+          shape: BoxShape.circle,
+        ),
+        padding: EdgeInsets.all(fontSize / 3),
+        child: Text(
+          length.toString(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: fontSize),
+        ));
+    }
+  }

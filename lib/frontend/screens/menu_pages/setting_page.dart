@@ -423,7 +423,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const Text(" ■ 設定済み通知",style:TextStyle(color:Colors.grey),),
           //const Divider(height:1),
           showNotificationList([
-          //ここにDBから登録済み通知のデータを受け渡し
+          //＠ここにDBから登録済み通知のデータを受け渡し
           {"id":1,
            "notyfyType":"weekly",
            "weekDay":3,
@@ -572,7 +572,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 notifyType = "weekly";
               }
               setState(() {});
-              //ここでDB登録！！
+              //＠ここで毎日or毎週通知をDB登録！！
               print(notifyType);
               print(weekDay);
               print(time);
@@ -648,7 +648,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               setState(() {
 
               });
-              //ここでDB登録！！
+              //＠ここで締め切り前通知をDB登録！！
               print(notifyType);
               print(weekDay);
               print(time);
@@ -731,7 +731,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             children:[
             InkWell(
               onTap:(){
-                //ここに削除の処理
+                //＠ここに通知設定削除の処理
                 id;
 
                 setState(() {
@@ -744,7 +744,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             const Spacer(),
             buttonModel(
             () {
-              //通知のON　OFFの切り替え処理をします
+              //＠通知のON OFFの切り替え処理をここでしますよ.
               id;
               setState(() {
                 
@@ -835,7 +835,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             () {
               setState(() {});
 
-              //ここでDB登録！！
+              //＠ここで通知フォーマットをDB登録！！
               print(notificationFormat);
               print(isContainWeekDay);
 
@@ -855,7 +855,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         const Spacer(),
         buttonModel(
           () {
-            //ここでサンプル通知！！
+            //＠ここでサンプル通知！！
 
           },
           ACCENT_COLOR,
