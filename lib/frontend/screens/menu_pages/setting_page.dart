@@ -709,7 +709,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     InkWell(
                         onTap: () {
                           //＠ここに通知設定削除の処理
-                          id;
+
+                          NotifyDatabaseHandler().deleteNotifyConfig(id);
 
                           setState(() {});
                         },
@@ -719,7 +720,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const Spacer(),
                     buttonModel(() {
                       //＠通知のON OFFの切り替え処理をここでしますよ.
-
                       id;
                       setState(() {});
                     }, buttonColor, buttonText),
