@@ -359,7 +359,7 @@ class NotifyContent {
     Map<String, dynamic>? notifyFormatMap =
         await NotifyDatabaseHandler().getNotifyFormat();
     List<Map<String, dynamic>>? notifyConfigList =
-        await NotifyDatabaseHandler().getNotifyConfig();
+        await NotifyDatabaseHandler().getNotifyConfigList();
     if (notifyConfigList != null && notifyFormatMap != null) {
       NotifyFormat notifyFormat = NotifyFormat(
           isContainWeekday: notifyFormatMap["isContainWeekday"],
