@@ -1,4 +1,3 @@
-
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 
@@ -12,8 +11,10 @@ class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   late NotificationDetails notificationDetails;
-  static const int DAILYNOTIFYID = 0;
-  static const int WEEKLYNOTIFYID = 1;
+  static const int SAMPLENOTIFYID = 0;
+  static const int DAILYNOTIFYID = 1;
+  static const int WEEKLYNOTIFYID = 2;
+
   int BEFOREHOURNOTIFYID = 100;
   NotificationDetails _setNotificationDetail(
       int id, String title, String body) {
@@ -302,7 +303,7 @@ class NotifyContent {
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
         body = "$dueまで $title   $summary";
-        notifyTitle = "期限が近い課題です";
+
         notificationDetails =
             _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
         await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -364,21 +365,69 @@ class NotifyContent {
           isContainWeekday: notifyFormatMap["isContainWeekday"],
           notifyFormat: notifyFormatMap["notifyFormat"]);
       for (Map<String, dynamic> notifyConfigMap in notifyConfigList) {
-        NotifyConfig notifyConfig = NotifyConfig(
-            notifyType: notifyConfigMap["notifyType"],
-            time: notifyConfigMap["time"],
-            isValidNotify: notifyConfigMap["isValidNotify"],
-            days: notifyConfigMap["days"],
-            weekday: notifyConfigMap["weekday"]);
-        switch (notifyConfig.notifyType) {
-          case "daily":
-            await _bookDailyNotify(notifyConfig, notifyFormat);
-          case "weekly":
-            await _bookWeeklyNotify(notifyConfig, notifyFormat);
-          case "beforeHour":
-            await _bookBeforeHourNotify(notifyConfig, notifyFormat);
+        if (notifyConfigMap["isValidNotify"] == 1) {
+          NotifyConfig notifyConfig = NotifyConfig(
+              notifyType: notifyConfigMap["notifyType"],
+              time: notifyConfigMap["time"],
+              isValidNotify: notifyConfigMap["isValidNotify"],
+              days: notifyConfigMap["days"],
+              weekday: notifyConfigMap["weekday"]);
+          switch (notifyConfig.notifyType) {
+            case "daily":
+              await _bookDailyNotify(notifyConfig, notifyFormat);
+            case "weekly":
+              await _bookWeeklyNotify(notifyConfig, notifyFormat);
+            case "beforeHour":
+              await _bookBeforeHourNotify(notifyConfig, notifyFormat);
+          }
         }
       }
+    }
+  }
+
+  Future<void> sampleNotify() async {
+    Map<String, dynamic>? notifyFormatMap =
+        await NotifyDatabaseHandler().getNotifyFormat();
+    String notifyTitle;
+    tz.initializeTimeZones();
+    tz.Location _local = tz.getLocation('Asia/Tokyo');
+    tz.TZDateTime now = tz.TZDateTime.now(_local);
+    if (notifyFormatMap != null) {
+      NotifyFormat notifyFormat = NotifyFormat(
+          isContainWeekday: notifyFormatMap["isContainWeekday"],
+          notifyFormat: notifyFormatMap["notifyFormat"]);
+      if (notifyFormat.isContainWeekday == 0) {
+        if (notifyFormat.notifyFormat == null) {
+          notifyTitle = "今日のお知らせ";
+        } else {
+          notifyTitle =
+              "${DateFormat(notifyFormat.notifyFormat).format(now)}のお知らせ";
+        }
+      } else {
+        if (notifyFormat.notifyFormat == null) {
+          notifyTitle = "今日(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+        } else {
+          notifyTitle =
+              "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+        }
+      }
+      notificationDetails =
+          _setNotificationDetail(DAILYNOTIFYID, notifyTitle, "このように通知されます");
+      await flutterLocalNotificationsPlugin.show(
+        SAMPLENOTIFYID,
+        notifyTitle,
+        "このように通知されます",
+        notificationDetails,
+      );
+    } else {
+      notificationDetails =
+          _setNotificationDetail(DAILYNOTIFYID, "通知のフォーマットを設定してください", "");
+      await flutterLocalNotificationsPlugin.show(
+        SAMPLENOTIFYID,
+        "通知のフォーマットを設定してください",
+        "",
+        notificationDetails,
+      );
     }
   }
 
