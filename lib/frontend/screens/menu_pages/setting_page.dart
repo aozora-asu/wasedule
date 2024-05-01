@@ -675,7 +675,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         itemBuilder: ((context, index) {
           Map target = map.elementAt(index);
           int id = target["id"];
-          String notifyType = target["notyfyType"];
+          String notifyType = target["notifyType"];
           int? weekday = target["weekday"];
           String time = target["time"];
           int? days = target["days"];
@@ -723,7 +723,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     InkWell(
                         onTap: () async{
                           //＠ここに通知設定削除の処理
-
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
                           await NotifyContent().setNotify();
 
