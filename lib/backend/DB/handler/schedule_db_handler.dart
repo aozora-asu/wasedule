@@ -170,12 +170,12 @@ class ScheduleDatabaseHelper {
     return data;
   }
 
-  Future<List<Map<String, dynamic>>> getTodaysSchedule(DateTime today) async {
+  Future<List<Map<String, dynamic>>> getSchedule(DateTime datetime) async {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> todaysSchedule = await _database.query(
       'schedule',
       where: 'startDate = ?',
-      whereArgs: [DateFormat("yyyy-MM-dd").format(today)],
+      whereArgs: [DateFormat("yyyy-MM-dd").format(datetime)],
     );
 
     return todaysSchedule;
