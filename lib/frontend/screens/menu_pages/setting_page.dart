@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
@@ -634,8 +635,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
         child:Row(children: [
           const Text("に通知"),
           const Spacer(),
-          GestureDetector(
-            onTap: () {
+          buttonModel(
+            () {
               notifyType = "beforeHour";
               setState(() {
 
@@ -646,22 +647,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
               print(time);
 
             },
-            child:Container(
-              padding:const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color:ACCENT_COLOR,
-                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
-                borderRadius:BorderRadius.circular(5),
-              ),
-              child:const Row(children:[
-                Text("   追加   ",
-                  style:TextStyle(
-                    fontWeight:FontWeight.bold,
-                    color:Colors.white
-                  )
-                ),
-              ])
-            ),
+            ACCENT_COLOR,
+            "   追加   "
           ),
           const SizedBox(width:5)
         ]),
@@ -695,7 +682,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         String buttonText = "通知OFF";
         
         if(isValidNotify == 1){
-          buttonColor = ACCENT_COLOR;
+          buttonColor = Colors.blue;
           buttonText = "通知ON";
         }
 
@@ -729,31 +716,17 @@ class _MainContentsState extends ConsumerState<MainContents> {
               ]),
             ]),
             const Spacer(),
-            GestureDetector(
-            onTap: () {
+            buttonModel(
+            () {
               //通知のON　OFFの切り替え処理をします
               id;
               setState(() {
                 
               });
             },
-            child:Container(
-              padding:const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color:buttonColor,
-                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
-                borderRadius:BorderRadius.circular(5),
-              ),
-              child:Row(children:[
-                Text(buttonText,
-                  style:const TextStyle(
-                    fontWeight:FontWeight.bold,
-                    color:Colors.white
-                  )
-                ),
-              ])
+            buttonColor,
+            buttonText
             ),
-          ),
           ]))
           
         );
@@ -832,8 +805,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
               });
             }),
           const Spacer(),
-          GestureDetector(
-            onTap: () {
+          buttonModel(
+            () {
               setState(() {});
 
               //ここでDB登録！！
@@ -841,30 +814,29 @@ class _MainContentsState extends ConsumerState<MainContents> {
               print(isContainWeekDay);
 
             },
-            child:Container(
-              padding:const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color:Colors.orange,
-                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
-                borderRadius:BorderRadius.circular(5),
-              ),
-              child:const Row(children:[
-                Text("   変更   ",
-                  style:TextStyle(
-                    fontWeight:FontWeight.bold,
-                    color:Colors.white
-                  )
-                ),
-              ])
-            ),
+            ACCENT_COLOR,
+            "   変更   "
           ),
           const SizedBox(width:5)
         ]),
       ),
       const Divider(height:1),
       const SizedBox(height:5),
-      Text(thumbnailText + weekDayText,
+      Row(children:[
+        const SizedBox(width:10),
+        Text(thumbnailText + weekDayText,
         style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
+        const Spacer(),
+        buttonModel(
+          () {
+            //ここでサンプル通知！！
+
+          },
+          ACCENT_COLOR,
+          "サンプル通知"
+        ),
+      ])
+     
     ]);
   }
 
