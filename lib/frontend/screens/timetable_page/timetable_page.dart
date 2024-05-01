@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
@@ -256,7 +257,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
           return Container(
             width: SizeConfig.blockSizeHorizontal! *cellWidth,
-            height: SizeConfig.blockSizeVertical! * 17,
+            height: SizeConfig.blockSizeVertical! * 16,
             decoration: BoxDecoration(
               color: bgColor,
               border: Border.all(
@@ -313,52 +314,41 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget timeTableSellsChild(int weekDay, int period){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
+    String className = "社会科学特講（社会デザインの基礎理論）A";
+    String classRoom = "100-S102";
+    int taskLength = random.nextInt(11);
 
-    return SizedBox(
-      child:Column(
-       mainAxisAlignment:MainAxisAlignment.spaceBetween,
-       children:[
-        Text(returnBeginningTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
-        Text("社会科学特講（社会デザインの基礎理論）A",
-          style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
-          maxLines: 4,
-          ),
-      Container(
-        decoration: BoxDecoration(
-          color:Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(2)),
-          border: Border.all(color: Colors.black,width: 0.5)
-        ),
-        child:Column(children:[
-          Text("100-S102",
-            style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,color:grey),
-            overflow: TextOverflow.visible,
-            maxLines: 2,
+    return Stack(
+     children:[
+      lengthBadge(taskLength,fontSize,true),
+      SizedBox(
+        child:Column(
+        mainAxisAlignment:MainAxisAlignment.spaceBetween,
+        children:[
+          Text(returnBeginningTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+          Text(className,
+            style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
+            maxLines: 4,
             ),
-            taskListLength(random.nextInt(10),SizeConfig.blockSizeHorizontal! *2.5)
-        ]),
-      ),       
-      Text(returnEndTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
-      ])
-    );
-  }
-
-
-  Widget taskListLength(int length, double fontSize) {
-    Color fontColor = Colors.grey;
-    FontWeight fontWeight = FontWeight.normal;
-    if(length >= 1){
-      fontColor = Colors.redAccent;
-      fontWeight = FontWeight.bold;
-    }
-    return Row(children:[
-        Icon(Icons.task,color:fontColor,size:fontSize,),
-        Text(" ${length.toString()} 件",
-          style: TextStyle(
-            color:fontColor,
-            fontSize: fontSize,
-            fontWeight: fontWeight))
-    ]);
+          Container(
+            decoration: BoxDecoration(
+              color:Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+              border: Border.all(color:grey,width: 0.5)
+          ),
+          child:Column(children:[
+            Text(classRoom,
+              style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
+              overflow: TextOverflow.visible,
+              maxLines: 2,
+            ),
+          ]),
+        ),       
+        Text(returnEndTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+        ])
+      )
+    ])
+    ;
   }
 
   AssetImage tableBackGroundImage() {

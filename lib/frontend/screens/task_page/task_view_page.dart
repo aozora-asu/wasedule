@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -733,8 +734,9 @@ Widget listLengthView(int target, double fontSize) {
                         ),
                         SizedBox(height:SizeConfig.blockSizeVertical! *2),
                         indexModel("■ タスクの削除"),
-                        ElevatedButton(
-                          onPressed: () async{
+                        SizedBox(height:SizeConfig.blockSizeVertical! *1),
+                        buttonModelWithChild(
+                          ()async{
                             TaskDatabaseHelper().unDisplay(id);
                             setState(() {});
                             final list = ref.read(taskDataProvider).taskDataList;
@@ -746,8 +748,7 @@ Widget listLengthView(int target, double fontSize) {
                             setState(() {});
                             Navigator.pop(context);
                           },
-                          style:const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.redAccent)),
-                          child:
+                          Colors.red,
                           const Row(children: [
                             Spacer(),
                             Icon(Icons.delete,color:Colors.white),
