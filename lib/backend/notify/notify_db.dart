@@ -110,7 +110,7 @@ class NotifyDatabaseHandler {
 
   Future<void> _updateNotifyFormat(NotifyFormat newNotifyFormat) async {
     await _database.update(
-      configTable,
+      formatTable,
       newNotifyFormat.toMap(), // 更新後の値
       where: 'id = ?',
       whereArgs: [1],
