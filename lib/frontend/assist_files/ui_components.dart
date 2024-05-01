@@ -30,7 +30,7 @@ Widget buttonModelWithChild(Function() onTap,Color color,Widget child){
       padding:const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color:color,
-        border: Border.all(color:brighten(color,0.6),width:1),
+        border: Border.all(color:brighten(color,0.5),width:2),
         borderRadius:BorderRadius.circular(5),
       ),
       child: child

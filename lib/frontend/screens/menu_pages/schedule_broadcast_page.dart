@@ -411,8 +411,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             title: const Text('この予定はすでに配信されています'),
             content: const Text('配信中の予定を上書きしますか？'),
             actions: [
-              ElevatedButton(
-                onPressed: () async {
+              buttonModel(
+                () async {
                   isSuccessed =
                       await postScheduleToFB(scheduleID, tagID, dtEnd);
                   Navigator.of(context).pop();
@@ -427,23 +427,16 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     setState(() {});
                   }
                 },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                child: const Text(
-                  ' はい ',
-                  style: TextStyle(color: Colors.white),
-                ),
+                MAIN_COLOR,
+                  '  はい  ',
               ),
-              ElevatedButton(
-                onPressed: () {
+              const SizedBox(height:5),
+              buttonModel(
+                () {
                   Navigator.of(context).pop();
                 },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-                child: const Text(
-                  'いいえ',
-                  style: TextStyle(color: Colors.white),
-                ),
+                ACCENT_COLOR,       
+                '  いいえ  ',
               ),
             ],
           );

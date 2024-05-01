@@ -422,14 +422,21 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const SizedBox(height:1),
           const Text(" ■ 設定済み通知",style:TextStyle(color:Colors.grey),),
           //const Divider(height:1),
-          showNotificationList([{
-            "id":1,
-            "notyfyType":"weekly",
-            "weekDay":3,
-            "time":"08:00",
-            "days":3,
-            "isValidNotify":1
-          }])
+          showNotificationList([
+          //ここにDBから登録済み通知のデータを受け渡し
+          {"id":1,
+           "notyfyType":"weekly",
+           "weekDay":3,
+           "time":"08:00",
+           "days":3,
+           "isValidNotify":1},
+          {"id":2,
+           "notyfyType":"beforeHour",
+           "weekDay":null,
+           "time":"10:00",
+           "days":null,
+           "isValidNotify":0},
+          ])
         ])
       ),
       const SizedBox(height: 10),
@@ -674,6 +681,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
       itemBuilder:((context, index) {
         Map target = map.elementAt(index);
         int id = target["id"];
+        String notifyType = target["notyfyType"];
         int? weekDay = target["weekDay"];
         String time = target["time"];
         int? days = target["days"];
@@ -684,6 +692,36 @@ class _MainContentsState extends ConsumerState<MainContents> {
         if(isValidNotify == 1){
           buttonColor = Colors.blue;
           buttonText = "通知ON";
+        }
+
+        Widget notificationDescription =const SizedBox();
+        if(notifyType == "beforeHour"){
+          String hour = time.substring(0,2);
+          String minute = time.substring(3,5);
+
+          notificationDescription = 
+          Column(children:[
+            const Text(" 締切・予定の "),
+            Row(children:[      
+            Text(hour + "時間"+ minute + "分 前",
+                style:TextStyle(color:Colors.grey))
+            ]),
+          ]);
+        }else{
+          notificationDescription = 
+          Column(children:[
+              Row(children:[
+                const Text(" "),
+                Text(getDayOfWeek(weekDay)),
+                const Text(" "),
+                Text(time)
+              ]),
+              Row(children:[
+                const Text(" "),
+                Text(days.toString()+" 日分",
+                  style:const TextStyle(color:Colors.grey)),
+              ]),
+            ]);
         }
 
         return Card(
@@ -702,19 +740,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               },
               child:const Icon(Icons.delete)),
             const Spacer(),
-            Column(children:[
-              Row(children:[
-                const Text(" "),
-                Text(getDayOfWeek(weekDay)),
-                const Text(" "),
-                Text(time)
-              ]),
-              Row(children:[
-                const Text(" "),
-                Text(days.toString()+" 日分",
-                  style:const TextStyle(color:Colors.grey)),
-              ]),
-            ]),
+            notificationDescription,
             const Spacer(),
             buttonModel(
             () {

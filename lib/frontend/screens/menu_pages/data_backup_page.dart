@@ -134,8 +134,8 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget backUpUploadButton() {
-    return ElevatedButton(
-        onPressed: () async {
+    return buttonModelWithChild(
+        () async {
           String? id = await backup();
 
           if (id == null) {
@@ -146,10 +146,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
 
           setState(() {});
         },
-        style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-        ),
-        child: const Row(children: [
+        MAIN_COLOR,
+        const Row(children: [
+          SizedBox(width: 20),
           Icon(Icons.backup, color: Colors.white),
           SizedBox(width: 20),
           Text("データをバックアップ", style: TextStyle(color: Colors.white))
@@ -261,14 +260,13 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget backUpDownloadButton() {
-    return ElevatedButton(
-        onPressed: () {
+    return buttonModelWithChild(
+        () {
           showDownloadConfirmDialogue();
         },
-        style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-        ),
-        child: const Row(children: [
+        ACCENT_COLOR,
+        const Row(children: [
+          SizedBox(width: 20),
           Icon(Icons.downloading_outlined, color: Colors.white),
           SizedBox(width: 20),
           Text("バックアップを復元", style: TextStyle(color: Colors.white))
@@ -299,8 +297,8 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
               },
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-                onPressed: () async {
+            buttonModelWithChild(
+                () async {
                   String id = idController.text;
                   if (id.isNotEmpty) {
                     //ここにバックアップの実行処理を書き込む（ダウンロード）
@@ -315,10 +313,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                     showDownloadFailDialogue("IDを入力してください。");
                   }
                 },
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color?>(MAIN_COLOR)),
-                child: const Row(children: [
+                MAIN_COLOR,
+                const Row(children: [
+                  SizedBox(width: 20),
                   Icon(Icons.downloading_outlined, color: Colors.white),
                   SizedBox(width: 20),
                   Text("ダウンロード実行", style: TextStyle(color: Colors.white))

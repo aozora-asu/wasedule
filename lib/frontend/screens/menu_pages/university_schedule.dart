@@ -129,12 +129,12 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
   Widget downloadUniversityScheduleButton(){
     return SizedBox(
       width:90000,
-      child:ElevatedButton(
-        onPressed: ()async{
+      child:buttonModelWithChild(
+        ()async{
           showDownloadConfirmDialogue("大学全体","all_depertment");
         },
-        style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-        child:const Row(children:[
+        MAIN_COLOR,
+        const Row(children:[
           Spacer(),
           Icon(Icons.downloading_outlined,color:Colors.white),
           SizedBox(width:30),
@@ -151,12 +151,12 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
   Widget chooseDepartmentButton(){
     return SizedBox(
       width:90000,
-      child:ElevatedButton(
-        onPressed: (){
+      child:buttonModelWithChild(
+        (){
           showChooseDepartmentDialogue();
         },
-        style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-        child:const Row(children:[
+        ACCENT_COLOR,
+        const Row(children:[
           Spacer(),
           Icon(Icons.downloading_outlined,color:Colors.white),
           SizedBox(width:30),
@@ -376,8 +376,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                 alignment: Alignment.centerLeft,
                 child: Text("ダウンロードを行うと、カレンダーにデータが追加されます。")),
             const SizedBox(height: 10),
-            ElevatedButton(
-                onPressed: () async {
+            buttonModelWithChild(
+                () async {
                   Navigator.pop(context);
                   String currentYear = returnFiscalYear(DateTime.now()).toString();
                   String nextYear = (returnFiscalYear(DateTime.now()) +1).toString();
@@ -398,10 +398,9 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                     showDownloadFailDialogue("ダウンロードに失敗しました");
                   }
                 },
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color?>(MAIN_COLOR)),
-                child: const Row(children: [
+                MAIN_COLOR,
+                const Row(children: [
+                  SizedBox(width: 20),
                   Icon(Icons.downloading_outlined, color: Colors.white),
                   SizedBox(width: 20),
                   Text("ダウンロード実行", style: TextStyle(color: Colors.white))
