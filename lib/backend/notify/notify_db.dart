@@ -19,7 +19,8 @@ class NotifyConfig {
       "notifyType": notifyType,
       "weekday": weekday,
       "time": time,
-      "days": days
+      "days": days,
+      "isValidNotify": isValidNotify
     };
   }
 }
