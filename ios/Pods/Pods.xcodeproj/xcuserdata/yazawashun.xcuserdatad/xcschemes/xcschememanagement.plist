@@ -164,6 +164,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>OrderedSet.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Runner.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -205,6 +210,11 @@
 			<false/>
 		</dict>
 		<key>firebase_messaging.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>flutter_inappwebview_ios.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
