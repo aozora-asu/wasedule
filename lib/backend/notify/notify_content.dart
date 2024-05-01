@@ -307,7 +307,7 @@ class NotifyContent {
         notificationDetails =
             _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          task["dtEnd"],
+          BEFOREHOURNOTIFYID++,
           notifyTitle,
           body,
           tz.TZDateTime.fromMillisecondsSinceEpoch(_local, task["dtEnd"])
@@ -344,7 +344,7 @@ class NotifyContent {
       notificationDetails =
           _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        int.parse(schedule["hash"]),
+        BEFOREHOURNOTIFYID++,
         notifyTitle,
         body,
         scheduleDatetime,
