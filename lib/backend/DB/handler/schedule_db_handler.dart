@@ -181,6 +181,21 @@ class ScheduleDatabaseHelper {
     return todaysSchedule;
   }
 
+  Future<List<Map<String, dynamic>>> getDuringScheduleList(
+      DateTime startDatetime, DateTime endDatetime) async {
+    // データベースからstartDateからendDateTimeまでの期間に該当するスケジュールを取得し、日付が早い順に並べる
+    List<Map<String, dynamic>> schedules = await _database.rawQuery('''
+    SELECT * FROM schedule
+    WHERE startDate BETWEEN ? AND ?
+    ORDER BY startDate ASC
+  ''', [
+      DateFormat("yyyy-MM-dd").format(startDatetime),
+      DateFormat("yyyy-MM-dd").format(endDatetime)
+    ]);
+
+    return schedules;
+  }
+
   Future<List<Map<String, dynamic>>> pickScheduleByTag(String tagID) async {
     await _initScheduleDatabase();
     List<Map<String, dynamic>> postSchedule = await _database.query(

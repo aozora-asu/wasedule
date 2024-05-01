@@ -13,6 +13,9 @@ class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   late NotificationDetails notificationDetails;
+  static const int DAILYNOTIFYID = 0;
+  static const int WEEKLYNOTIFYID = 1;
+  int BEFOREHOURNOTIFYID = 100;
   NotificationDetails _setNotificationDetail(
       int id, String title, String body) {
     notificationDetails = NotificationDetails(
@@ -99,10 +102,10 @@ class NotifyContent {
       return DateFormat("$daysAfter日後 HH:mm")
           .format(DateTime.fromMillisecondsSinceEpoch(taskEnd));
     }
-    return "直近の課題はありません"; // 条件に一致しない場合は空文字を返す
+    return "直近の課題はありません";
   }
 
-  Future<void> _bookDailyNotification(
+  Future<void> _bookDailyNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
     tz.TZDateTime dailyScheduleDate =
         _nextInstanceOfDailyTime(notifyConfig.time);
@@ -164,9 +167,10 @@ class NotifyContent {
             "${DateFormat(notifyFormat.notifyFormat).format(dailyScheduleDate)}(${'月火水木金土日'[dailyScheduleDate.weekday - 1]})のお知らせ";
       }
     }
-    notificationDetails = _setNotificationDetail(0, notifyTitle, body);
+    notificationDetails =
+        _setNotificationDetail(WEEKLYNOTIFYID, notifyTitle, body);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      WEEKLYNOTIFYID,
       notifyTitle,
       body,
       dailyScheduleDate,
@@ -176,7 +180,7 @@ class NotifyContent {
     );
   }
 
-  Future<void> _bookWeeklyNotification(
+  Future<void> _bookWeeklyNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
     tz.TZDateTime dailyScheduleDate =
         _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
@@ -252,9 +256,10 @@ class NotifyContent {
             "${DateFormat(notifyFormat.notifyFormat).format(dailyScheduleDate)}(${'月火水木金土日'[dailyScheduleDate.weekday - 1]})のお知らせ";
       }
     }
-    notificationDetails = _setNotificationDetail(0, notifyTitle, body);
+    notificationDetails =
+        _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      DAILYNOTIFYID,
       notifyTitle,
       body,
       dailyScheduleDate,
@@ -262,6 +267,96 @@ class NotifyContent {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
+  }
+
+  Future<void> _bookBeforeHourNotify(
+      NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
+    String notifyTitle;
+    String body;
+
+    tz.initializeTimeZones();
+    tz.Location _local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(_local);
+    // 時刻文字列をパースして、DateTimeオブジェクトに変換
+    DateTime parsedTime = DateFormat.Hm().parse(notifyConfig.time);
+    if (parsedTime.hour == 0) {
+      notifyTitle = "${parsedTime.minute}分前のお知らせです";
+    } else {
+      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前のお知らせです";
+    }
+//それぞれ2日先まで取得して、期限のn時間前予約を行う
+    List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
+        .getDuringTaskList(now.millisecondsSinceEpoch,
+            now.add(const Duration(days: 2)).millisecondsSinceEpoch);
+    List<Map<String, dynamic>> notifyScheduleList =
+        await ScheduleDatabaseHelper()
+            .getDuringScheduleList(now, now.add(const Duration(days: 2)));
+
+    String title;
+    String summary;
+    String due;
+
+    for (var task in notifyTaskList) {
+      if (task["isDone"] == 0) {
+        due = _getDueDate(now, 1, task["dtEnd"]);
+        title = task["title"] ?? "";
+        summary = task["summary"] ?? "";
+        body = "$dueまで $title   $summary";
+        notifyTitle = "期限が近い課題です";
+        notificationDetails =
+            _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          BEFOREHOURNOTIFYID++,
+          notifyTitle,
+          body,
+          tz.TZDateTime.fromMillisecondsSinceEpoch(_local, task["dtEnd"])
+              .subtract(
+                  Duration(hours: parsedTime.hour, minutes: parsedTime.minute)),
+          notificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+        );
+      }
+    }
+    for (var schedule in notifyScheduleList) {
+      String startDatetime;
+      if (schedule["startTime"] == "") {
+        startDatetime = "00:00";
+      } else {
+        startDatetime = schedule["startTime"];
+      }
+      tz.TZDateTime scheduleDatetime =
+          tz.TZDateTime.parse(_local, "${schedule["startDate"]} $startDatetime")
+              .subtract(
+                  Duration(hours: parsedTime.hour, minutes: parsedTime.minute));
+      String prefix;
+      String endTime = schedule["endTime"];
+      String startTime = schedule["startTime"];
+      String subject = schedule["subject"];
+
+      if (1 == 0) {
+        prefix = "翌";
+      } else {
+        prefix = "今日";
+      }
+      if (endTime == "" && schedule["startTime"] == "") {
+        body = "終日  $subject\n";
+      } else {
+        body = "$startTime~$endTime  $subject\n";
+      }
+
+      notificationDetails =
+          _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        BEFOREHOURNOTIFYID++,
+        notifyTitle,
+        body,
+        scheduleDatetime,
+        notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 
   Future<void> setNotify() async {
@@ -282,15 +377,17 @@ class NotifyContent {
             weekday: notifyConfigMap["weekday"]);
         switch (notifyConfig.notifyType) {
           case "daily":
-            await _bookDailyNotification(notifyConfig, notifyFormat);
+            await _bookDailyNotify(notifyConfig, notifyFormat);
           case "weekly":
+            await _bookWeeklyNotify(notifyConfig, notifyFormat);
           case "beforeHour":
+            await _bookBeforeHourNotify(notifyConfig, notifyFormat);
         }
       }
     }
   }
 
-  getScheduled() async {
+  getScheduledNotify() async {
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     print('予約済みの通知');

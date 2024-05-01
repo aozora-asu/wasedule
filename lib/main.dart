@@ -29,13 +29,8 @@ void main() async {
   ]);
 
   await initializeDateFormatting(); // 初期化
-  await NotifyContent().flutterLocalNotificationsPlugin.cancel(0);
 
-  await NotifyContent().getScheduled();
-  // 時刻文字列をパースして、DateTimeオブジェクトに変換
-  String timeString = "8:00";
-  DateTime parsedTime = DateFormat.Hm().parse(timeString);
-  print(parsedTime.hour);
-  print(parsedTime.minute);
+  await NotifyContent().getScheduledNotify();
+
   runApp(ProviderScope(child: MyApp()));
 }
