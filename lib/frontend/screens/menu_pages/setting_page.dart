@@ -427,7 +427,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               " ■ 設定済み通知",
               style: TextStyle(color: Colors.grey),
             ),
-            const Divider(height:1),
+            const Divider(height: 1),
             buildNotificationSettingList()
           ])),
       const SizedBox(height: 10),
@@ -452,19 +452,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
-  Widget buildNotificationSettingList(){
-    return FutureBuilder(future: NotifyDatabaseHandler().getNotifyConfigList(),
-    builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return loadingSettingWidget();
-        }
-        else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        else {
-          return showNotificationList(snapshot.data);
-        }
-    });
+  Widget buildNotificationSettingList() {
+    return FutureBuilder(
+        future: NotifyDatabaseHandler().getNotifyConfigList(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return loadingSettingWidget();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return showNotificationList(snapshot.data);
+          }
+        });
   }
 
   late String notifyType;
@@ -697,7 +696,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               const Text(" 締切・予定の "),
               Row(children: [
                 Text(hour + "時間" + minute + "分 前",
-                    style:const TextStyle(color: Colors.grey))
+                    style: const TextStyle(color: Colors.grey))
               ]),
             ]);
           } else {
@@ -721,7 +720,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   padding: const EdgeInsets.all(5),
                   child: Row(children: [
                     InkWell(
-                        onTap: () async{
+                        onTap: () async {
                           //＠ここに通知設定削除の処理
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
                           await NotifyContent().setNotify();
@@ -732,7 +731,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const Spacer(),
                     notificationDescription,
                     const Spacer(),
-                    buttonModel(() async{
+                    buttonModel(() async {
                       //＠通知のON OFFの切り替え処理をここでしますよ.
                       id;
                       await NotifyContent().setNotify();
@@ -755,12 +754,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
     );
   }
 
-    Widget loadingSettingWidget() {
+  Widget loadingSettingWidget() {
     return SizedBox(
       height: SizeConfig.blockSizeVertical! * 10,
-      child: const Center(
-          child:
-              CircularProgressIndicator(color:ACCENT_COLOR)),
+      child:
+          const Center(child: CircularProgressIndicator(color: ACCENT_COLOR)),
     );
   }
 
@@ -833,8 +831,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
         Text(thumbnailText + weekdayText,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const Spacer(),
-        buttonModel(() async{
-          //＠ここでサンプル通知！！
+        buttonModel(() async {
+          await NotifyContent().sampleNotify();
         }, ACCENT_COLOR, "サンプル通知"),
       ])
     ]);
