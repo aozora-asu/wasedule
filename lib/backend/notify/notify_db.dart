@@ -71,20 +71,11 @@ class NotifyDatabaseHandler {
     ''');
   }
 
-  Future<void> _insertNotifyFormat(Map<String, dynamic> notifyFormatMap) async {
-    NotifyFormat notifyFormat = NotifyFormat(
-        isContainWeekday: notifyFormatMap["isContainWeekday"],
-        notifyFormat: notifyFormatMap["notifyFormat"]);
+  Future<void> _insertNotifyFormat(NotifyFormat notifyFormat) async {
     await _database.insert(formatTable, notifyFormat.toMap());
   }
 
-  Future<void> _insertNotifyConfig(Map<String, dynamic> notifyConfigMap) async {
-    NotifyConfig notifyConfig = NotifyConfig(
-        notifyType: notifyConfigMap["notifyType"],
-        time: notifyConfigMap["time"],
-        isValidNotify: 1,
-        days: notifyConfigMap["days"],
-        weekday: notifyConfigMap["weekday"]);
+  Future<void> _insertNotifyConfig(NotifyConfig notifyConfig) async {
     await _database.insert(configTable, notifyConfig.toMap());
   }
 
@@ -106,39 +97,37 @@ class NotifyDatabaseHandler {
     );
   }
 
-  Future<void> updateNotifyConfig(
-      Map<String, dynamic> newNotifyConfigMap) async {
+  Future<void> updateNotifyConfig(NotifyConfig newNotifyConfig) async {
     await _initNotifyDatabase();
     await _database.update(
       configTable,
-      newNotifyConfigMap, // 更新後の値
+      newNotifyConfig.toMap(), // 更新後の値
       where: 'id = ?',
-      whereArgs: [newNotifyConfigMap["id"]],
+      whereArgs: [newNotifyConfig.toMap()["id"]],
     );
   }
 
-  Future<void> _updateNotifyFormat(
-      Map<String, dynamic> newNotifyFormatMap) async {
+  Future<void> _updateNotifyFormat(NotifyFormat newNotifyFormat) async {
     await _database.update(
       configTable,
-      newNotifyFormatMap, // 更新後の値
+      newNotifyFormat.toMap(), // 更新後の値
       where: 'id = ?',
       whereArgs: [1],
     );
   }
 
-  Future<void> setNotifyFormat(Map<String, dynamic> notifyFormatMap) async {
+  Future<void> setNotifyFormat(NotifyFormat notifyFormat) async {
     await _initNotifyDatabase();
     if (await hasNotifyFormat()) {
-      await _updateNotifyFormat(notifyFormatMap);
+      await _updateNotifyFormat(notifyFormat);
     } else {
-      await _insertNotifyFormat(notifyFormatMap);
+      await _insertNotifyFormat(notifyFormat);
     }
   }
 
-  Future<void> setNotifyConfig(Map<String, dynamic> notifyConfigMap) async {
+  Future<void> setNotifyConfig(NotifyConfig notifyConfig) async {
     await _initNotifyDatabase();
-    await _insertNotifyConfig(notifyConfigMap);
+    await _insertNotifyConfig(notifyConfig);
   }
 
   Future<bool> hasNotifyFormat() async {
@@ -162,7 +151,7 @@ class NotifyDatabaseHandler {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getNotifyConfig() async {
+  Future<List<Map<String, dynamic>>?> getNotifyConfigList() async {
     await _initNotifyDatabase();
     List<Map<String, dynamic>> notifyConfigList =
         await _database.rawQuery('SELECT * FROM $configTable');
