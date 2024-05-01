@@ -2,6 +2,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -282,27 +283,6 @@ class _IntroLastPageState extends State<IntroLastPage> {
 
 }
 
-
-
-Widget okButton(context,width){
-    return ElevatedButton(
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-    style: const ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-      visualDensity: VisualDensity.standard
-    ),
-    child: SizedBox(
-      width: width,
-      child: const Center(
-        child:Text(
-        'OK',
-        style:TextStyle(color: Colors.white)
-      )) 
-    ),
-  );
-}
 
 
 
