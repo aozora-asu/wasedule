@@ -427,11 +427,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
               " ■ 設定済み通知",
               style: TextStyle(color: Colors.grey),
             ),
-            //const Divider(height:1),
-            showNotificationList(
-                //ここがawaitだからFuturebuilder使う必要あるわ
-                // await NotifyDatabaseHandler().getNotifyConfigList()
-                [])
+            const Divider(height:1),
+            buildNotificationSettingList()
           ])),
       const SizedBox(height: 10),
       Container(
@@ -453,6 +450,21 @@ class _MainContentsState extends ConsumerState<MainContents> {
           ])),
       const SizedBox(height: 20)
     ]);
+  }
+
+  Widget buildNotificationSettingList(){
+    return FutureBuilder(future: NotifyDatabaseHandler().getNotifyConfigList(),
+    builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return loadingSettingWidget();
+        }
+        else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        else {
+          return showNotificationList(snapshot.data);
+        }
+    });
   }
 
   late String notifyType;
@@ -566,6 +578,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   isValidNotify: 1,
                   days: days,
                   weekday: weekday));
+              await NotifyContent().setNotify();
             },
             child: Container(
                 padding: const EdgeInsets.all(5),
@@ -637,6 +650,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 isValidNotify: 1,
                 days: days,
                 weekday: weekday));
+            await NotifyContent().setNotify();
           }, ACCENT_COLOR, "   追加   "),
           const SizedBox(width: 5)
         ]),
@@ -683,7 +697,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               const Text(" 締切・予定の "),
               Row(children: [
                 Text(hour + "時間" + minute + "分 前",
-                    style: TextStyle(color: Colors.grey))
+                    style:const TextStyle(color: Colors.grey))
               ]),
             ]);
           } else {
@@ -707,10 +721,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   padding: const EdgeInsets.all(5),
                   child: Row(children: [
                     InkWell(
-                        onTap: () {
+                        onTap: () async{
                           //＠ここに通知設定削除の処理
 
-                          NotifyDatabaseHandler().deleteNotifyConfig(id);
+                          await NotifyDatabaseHandler().deleteNotifyConfig(id);
+                          await NotifyContent().setNotify();
 
                           setState(() {});
                         },
@@ -718,9 +733,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const Spacer(),
                     notificationDescription,
                     const Spacer(),
-                    buttonModel(() {
+                    buttonModel(() async{
                       //＠通知のON OFFの切り替え処理をここでしますよ.
                       id;
+                      await NotifyContent().setNotify();
                       setState(() {});
                     }, buttonColor, buttonText),
                   ])));
@@ -737,6 +753,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
       child: const Center(
           child:
               Text("登録されている通知はありません。", style: TextStyle(color: Colors.grey))),
+    );
+  }
+
+    Widget loadingSettingWidget() {
+    return SizedBox(
+      height: SizeConfig.blockSizeVertical! * 10,
+      child: const Center(
+          child:
+              CircularProgressIndicator(color:ACCENT_COLOR)),
     );
   }
 
@@ -793,11 +818,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const Spacer(),
           buttonModel(() async {
             setState(() {});
-
             //＠ここで通知フォーマットをDB登録！！
             await NotifyDatabaseHandler().setNotifyFormat(NotifyFormat(
                 isContainWeekday: isContainWeekday ? 1 : 0,
                 notifyFormat: notifyFormat));
+            await NotifyContent().setNotify();
           }, ACCENT_COLOR, "   変更   "),
           const SizedBox(width: 5)
         ]),
@@ -809,7 +834,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         Text(thumbnailText + weekdayText,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const Spacer(),
-        buttonModel(() {
+        buttonModel(() async{
           //＠ここでサンプル通知！！
         }, ACCENT_COLOR, "サンプル通知"),
       ])
