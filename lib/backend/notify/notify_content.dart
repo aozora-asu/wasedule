@@ -123,12 +123,14 @@ class NotifyContent {
 
     body += "課題\n";
 
+
     for (var task in notifyTaskList) {
       if (task["isDone"] == 0) {
         for (int i = 0; i < notifyConfig.days!; i++) {
           due = _getDueDate(dailyScheduleDate, i, task["dtEnd"]);
           title = task["title"] ?? "";
           summary = task["summary"] ?? "";
+
           body += "$dueまで $title   $summary\n";
         }
       }
