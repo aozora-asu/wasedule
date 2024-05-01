@@ -123,7 +123,6 @@ class NotifyContent {
 
     body += "課題\n";
 
-
     for (var task in notifyTaskList) {
       if (task["isDone"] == 0) {
         for (int i = 0; i < notifyConfig.days!; i++) {
@@ -308,7 +307,7 @@ class NotifyContent {
         notificationDetails =
             _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          BEFOREHOURNOTIFYID++,
+          task["dtEnd"],
           notifyTitle,
           body,
           tz.TZDateTime.fromMillisecondsSinceEpoch(_local, task["dtEnd"])
@@ -331,16 +330,11 @@ class NotifyContent {
           tz.TZDateTime.parse(_local, "${schedule["startDate"]} $startDatetime")
               .subtract(
                   Duration(hours: parsedTime.hour, minutes: parsedTime.minute));
-      String prefix;
+
       String endTime = schedule["endTime"];
       String startTime = schedule["startTime"];
       String subject = schedule["subject"];
 
-      if (1 == 0) {
-        prefix = "翌";
-      } else {
-        prefix = "今日";
-      }
       if (endTime == "" && schedule["startTime"] == "") {
         body = "終日  $subject\n";
       } else {
@@ -350,7 +344,7 @@ class NotifyContent {
       notificationDetails =
           _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        BEFOREHOURNOTIFYID++,
+        int.parse(schedule["hash"]),
         notifyTitle,
         body,
         scheduleDatetime,
