@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>セレクトボックスを横に並べる</title>
+    <style>
+      .select-container {
+        display: flex;
+      }
+
+      .select-container select {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="select-container">
+      <select name="select1" id="select1">
+        <option value="option1">毎日</option>
+        <option value="option2">毎週</option>
+      </select>
+      <select name="select2" id="select2">
+        <option value="option1">--</option>
+        <option value="option1">毎日ならなし</option>
+        <option value="option2">月曜日</option>
+        <option value="option3">火曜日</option>
+        <option value="option4">水曜日</option>
+        <option value="option5">木曜日</option>
+        <option value="option6">金曜日</option>
+        <option value="option7">土曜日</option>
+        <option value="option8">日曜日</option>
+      </select>
+
+      <select name="select3" id="select3"></select>
+      <p>時</p>
+      <select name="select4" id="select4"></select>
+      <p>分に</p>
+      <select name="select5" id="select5"></select>
+      <p>日分を通知　　　　　</p>
+      <button>追加</button>
+    </div>
+    <div class="select-container">
+      <p>期限、予定開始の</p>
+      <select name="select3" id="select33"></select>
+      <p>時間</p>
+      <select name="select4" id="select44"></select>
+      <p>分前に通知　　　　</p>
+
+      <button>追加</button>
+    </div>
+    <p>----------------------------------------------------------------</p>
+    <p>通知リスト</p>
+    <br />
+    <br />
+    <p>----------------------------------------------------------------</p>
+    <p>通知フォーマット</p>
+    <div class="select-container">
+      <p>日付の形式　　</p>
+      <select name="select1" id="select1">
+        <option value="option1">完全な日付</option>
+        <option value="option1">年/月/日</option>
+        <option value="option1">月/日/年</option>
+        <option value="option1">日/月/年</option>
+        <option value="option2">相対</option>
+      </select>
+      <input type="radio" id="option1" name="option" value="option1" checked />
+      <label for="option1">曜日を含む</label>
+      <p>（例をここに　）2024/04/30(火)</p>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+  <script>
+    // セレクトボックスにオプションを追加する関数
+    function addOptions(selectElement, start, end, step) {
+      for (let i = start; i <= end; i += step) {
+        selectElement.innerHTML += `<option value="${i}">${i}</option>`;
+      }
+    }
+    // ラジオボタンを切り替えるときのイベントリスナーを追加
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach((radioButton) => {
+      radioButton.addEventListener("click", () => {
+        if (radioButton.checked) {
+          radioButton.checked = false;
+        } else {
+          radioButton.checked = true;
+        }
+      });
+    });
+    const select3 = document.getElementById("select3");
+    addOptions(select3, 0, 23, 1); // 数字を1から7まで1つずつ追加
+    const select4 = document.getElementById("select4");
+    addOptions(select4, 0, 59, 1); // 数字を1から7まで1つずつ追加
+    const select33 = document.getElementById("select33");
+    addOptions(select33, 0, 23, 1); // 数字を1から7まで1つずつ追加
+    const select44 = document.getElementById("select44");
+    addOptions(select44, 0, 59, 1); // 数字を1から7まで1つずつ追加
+
+    const select5 = document.getElementById("select5");
+    addOptions(select5, 1, 7, 1); // 数字を1から7まで1つずつ追加
+  </script>
+</html>
