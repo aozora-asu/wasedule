@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_metaInfo_db_han
 import 'package:flutter_calandar_app/backend/DB/models/schedule_meta_data.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
@@ -134,6 +135,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               style: TextStyle(color: Colors.red, fontSize: 17)),
           const SizedBox(height: 10),
           chooseTagButton(),
+          const SizedBox(height: 5),
           broadcastUploadButton(),
           const SizedBox(height: 5),
           dtEndField(60),
@@ -144,16 +146,15 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget chooseTagButton() {
-    return ElevatedButton(
-      onPressed: () async {
+    return buttonModelWithChild(
+      () async {
         await showTagDialogue(ref, context, setState);
         setState(() {});
       },
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-      ),
-      child: const Row(
+      ACCENT_COLOR,
+      const Row(
         children: [
+          SizedBox(width: 20),
           Icon(Icons.more_vert_rounded, color: Colors.white),
           SizedBox(width: 20),
           Text("タグを選択", style: TextStyle(color: Colors.white)),
@@ -268,8 +269,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
   Widget broadcastUploadButton() {
     if (shareScheduleList.isNotEmpty) {
-      return ElevatedButton(
-          onPressed: () async {
+      return buttonModelWithChild(
+          () async {
             int dtEnd = int.parse(dtEndController.text);
 
             if (dtEnd > 60 || 0 >= dtEnd) {
@@ -289,10 +290,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
               }
             }
           },
-          style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
-          ),
-          child: const Row(children: [
+          MAIN_COLOR,
+          const Row(children: [
+            SizedBox(width: 20),
             Icon(Icons.backup, color: Colors.white),
             SizedBox(width: 20),
             Text("予定をアップロード", style: TextStyle(color: Colors.white))
@@ -411,8 +411,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             title: const Text('この予定はすでに配信されています'),
             content: const Text('配信中の予定を上書きしますか？'),
             actions: [
-              ElevatedButton(
-                onPressed: () async {
+              buttonModel(
+                () async {
                   isSuccessed =
                       await postScheduleToFB(scheduleID, tagID, dtEnd);
                   Navigator.of(context).pop();
@@ -427,23 +427,16 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     setState(() {});
                   }
                 },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                child: const Text(
-                  ' はい ',
-                  style: TextStyle(color: Colors.white),
-                ),
+                MAIN_COLOR,
+                  '  はい  ',
               ),
-              ElevatedButton(
-                onPressed: () {
+              const SizedBox(height:5),
+              buttonModel(
+                () {
                   Navigator.of(context).pop();
                 },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-                child: const Text(
-                  'いいえ',
-                  style: TextStyle(color: Colors.white),
-                ),
+                ACCENT_COLOR,       
+                '  いいえ  ',
               ),
             ],
           );
@@ -606,8 +599,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     await Clipboard.setData(data);
                   },
                   icon: const Icon(Icons.copy, color: Colors.grey)),
-              ElevatedButton(
-                  onPressed: () async {
+              buttonModelWithChild(
+                  () async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -618,9 +611,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                               )),
                     );
                   },
-                  style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                  child: const Row(children: [
+                  MAIN_COLOR,
+                  const Row(children: [
                     Icon(
                       Icons.qr_code_2_outlined,
                       color: Colors.white,
@@ -687,8 +679,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget scheduleReceiveButton(TextEditingController idController) {
-    return ElevatedButton(
-      onPressed: () async {
+    return buttonModelWithChild(
+      () async {
         String id = idController.text;
         if (id.isNotEmpty) {
           
@@ -709,11 +701,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           showDownloadFailDialogue("IDを入力してください。");
         }
       },
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-      ),
-      child: const Row(
+      ACCENT_COLOR,
+      const Row(
         children: [
+          SizedBox(width: 20),
           Icon(Icons.install_mobile, color: Colors.white),
           SizedBox(width: 20),
           Text("予定を受信する", style: TextStyle(color: Colors.white)),

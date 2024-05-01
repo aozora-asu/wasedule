@@ -295,7 +295,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           controller: _screenShotController,
           child: SizedBox(
               child: Container(
-                  height: SizeConfig.blockSizeVertical! * 85,
+                  //height: SizeConfig.blockSizeVertical! * 85,
                   decoration: switchDecoration(),
                   child: Column(children: [
                     Row(children: [
@@ -365,11 +365,28 @@ class _CalendarState extends ConsumerState<Calendar> {
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
                         ])),
+                    const Divider(height:0.5,thickness:0.5),
                     Row(children: [
                       const Spacer(),
                       showOnlyScreenShot(screenShotDateTime()),
                       const SizedBox(width: 7)
-                    ])
+                    ]),
+                    doNotContainScreenShot(
+                      menuListChild(Icons.groups_rounded, "予定の配信", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DataUploadPage()),
+                        );
+                      })),
+                    
+                    doNotContainScreenShot(
+                      menuListChild(Icons.school, "年間行事予定", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UnivSchedulePage()),
+                        );
+                      })),
+                      const SizedBox(height:20)
                   ])))),
       menu()
     ]);
@@ -381,20 +398,6 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeVertical! * 3,
       ),
       Column(children: [
-        menuList(Icons.calendar_month, "カレンダーメニュー", false, [
-          menuListChild(Icons.groups_rounded, "予定の配信", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataUploadPage()),
-            );
-          }),
-
-          menuListChild(Icons.school, "年間行事予定", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-            );
-          }),
 
           // scheduleEmptyFlag(
           //   ref,
@@ -407,9 +410,6 @@ class _CalendarState extends ConsumerState<Calendar> {
           //     );
           //   }),
           // )
-        ]),
-        const SizedBox(height: 15),
-
 
         tagEmptyFlag(
             ref,
@@ -1513,7 +1513,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             tagThumbnailer,
-                            Text(
+                            SizedBox(
+                             width: SizeConfig.blockSizeHorizontal! *75,
+                             child:Text(
                               " " +
                                   data.sortedDataByDay[targetKey]
                                       .elementAt(index)["subject"],
@@ -1522,7 +1524,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                                   color: Colors.black,
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                   fontWeight: FontWeight.bold),
-                            )
+                            ))
+                            
                           ]),
                     )
                   ]))

@@ -29,9 +29,8 @@ void main() async {
   ]);
 
   await initializeDateFormatting(); // 初期化
-  await NotifyContent().flutterLocalNotificationsPlugin.cancel(0);
 
-  await NotifyContent().getScheduled();
+  await NotifyContent().getScheduledNotify();
 
   runApp(ProviderScope(child: MyApp()));
 }

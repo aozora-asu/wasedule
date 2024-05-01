@@ -10,10 +10,15 @@ class MoodleViewPage extends ConsumerStatefulWidget {
   _MoodleViewPageState createState() => _MoodleViewPageState();
 }
 
+final GlobalKey webMoodleViewKey = GlobalKey();
+InAppWebViewController? webMoodleViewController;
+
 class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
+
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
   double progress = 0;
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -83,6 +88,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
           size: SizeConfig.blockSizeVertical! * 2.5,
         ),
       ),
+
     ]);
   }
 }

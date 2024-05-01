@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -174,16 +177,24 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
        default:
         return Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: notificationBody(),
-        ));
-
+          child: SingleChildScrollView(
+            child:Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: notificationBody(),
+        )));
 
     }
   }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Widget calendarBody() {
+    Widget borderModel =
+      const Column(children:[
+        SizedBox(height: 2.5),
+        Divider(height:1),
+        SizedBox(height: 2.5),
+      ]);
+
     return KeyboardActions(
         config: _buildConfig(controller),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -196,99 +207,71 @@ class _MainContentsState extends ConsumerState<MainContents> {
           const SizedBox(height: 10),
           Container(
               decoration: roundedBoxdecorationWithShadow(),
-              padding: const EdgeInsets.all(7.5),
+              padding: const EdgeInsets.symmetric(horizontal:5,vertical:10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '画面表示のカスタマイズ',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          fontWeight: FontWeight.bold),
+                          fontSize: SizeConfig.blockSizeHorizontal!*5),
                     ),
-                    const SizedBox(height: 5),
+                    const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+                    const SizedBox(height:2),
                     configSwitch("Tipsとお知らせ", "tips"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("きょうの予定", "todaysSchedule"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("近日締切のタスク", "taskList"),
                     const SizedBox(height: 5),
                     configTextField("表示日数：", "taskList", controller),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("Waseda Moodle リンク", "moodleLink"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("アルバイト推計収入", "arbeitPreview"),
-                    const SizedBox(height: 5),
+                    borderModel,
                   ])),
                 
                 const SizedBox(height:10),
 
           Container(
               decoration: roundedBoxdecorationWithShadow(),
-              padding: const EdgeInsets.all(7.5),
+              padding: const EdgeInsets.symmetric(horizontal:5,vertical:10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'カレンダーの設定',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          fontWeight: FontWeight.bold),
+                          fontSize: SizeConfig.blockSizeHorizontal! *5),
                     ),
-                    const SizedBox(height: 5),
+                    const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+                    const SizedBox(height:2),
                     configSwitch("土日祝日の着色", "holidayPaint"),
-                    const SizedBox(height: 5),
+                    borderModel,
                     configSwitch("祝日名の表示", "holidayName"),
-                    const SizedBox(height: 5),
+                    borderModel,
                   ]))
 
         ]));
   }
 
-  Widget notificationBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        '通知設定…',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
-            fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 10),
-      Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.all(7.5),
-            //child:
-            //Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // Text(
-            //   '通知のON/OFF',
-            //   style: TextStyle(
-            //       fontSize: SizeConfig.blockSizeHorizontal! * 4,
-            //       fontWeight: FontWeight.bold),
-            // ),
-            // const SizedBox(height: 5),
-            // configSwitch("課題の通知(毎朝8時)", "tips"),
-            // const SizedBox(height: 5),
-            // configSwitch("予定の通知(毎朝8時)", "tips"),
-            //])
-      )
-    ]);
-  }
-
-
   Widget configSwitch(String configText, String widgetName) {
     return Row(children: [
-      CupertinoSwitch(
-          value: searchConfigData(widgetName),
-          activeColor: ACCENT_COLOR,
-          onChanged: (value) {
-            updateConfigData(widgetName, value);
-          }),
+      const SizedBox(width:5),
       Text(
         configText,
         style: TextStyle(
           fontSize: SizeConfig.blockSizeHorizontal! * 4,
         ),
       ),
+      const Spacer(),
+      CupertinoSwitch(
+          value: searchConfigData(widgetName),
+          activeColor: ACCENT_COLOR,
+          onChanged: (value) {
+            updateConfigData(widgetName, value);
+          }),
     ]);
   }
 
@@ -408,5 +391,501 @@ class _MainContentsState extends ConsumerState<MainContents> {
       }
     }
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  Widget notificationBody() {
+    
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        '通知設定…',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height:5),
+      Container(
+        decoration: roundedBoxdecorationWithShadow(),
+        padding: const EdgeInsets.all(7.5),
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+          Text(
+            '通知頻度の設定',
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 5),
+          ),
+          const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+          const SizedBox(height:2),
+          notificationFrequencySetting(),
+          const SizedBox(height:1),
+          const Text(" ■ 設定済み通知",style:TextStyle(color:Colors.grey),),
+          //const Divider(height:1),
+          showNotificationList([
+          //＠ここにDBから登録済み通知のデータを受け渡し
+          {"id":1,
+           "notyfyType":"weekly",
+           "weekDay":3,
+           "time":"08:00",
+           "days":3,
+           "isValidNotify":1},
+          {"id":2,
+           "notyfyType":"beforeHour",
+           "weekDay":null,
+           "time":"10:00",
+           "days":null,
+           "isValidNotify":0},
+          ])
+        ])
+      ),
+      const SizedBox(height: 10),
+      Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.all(7.5),
+          child:Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children:[
+            Text(
+              '通知フォーマットの設定',
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5),
+            ),
+            const Divider(height:2,thickness:2,color:ACCENT_COLOR,),
+            const SizedBox(height:2),
+            notificarionFormatSetting(),
+          ])
+      ),
+      const SizedBox(height:20)
+    ])
+    ;
+  }
+
+  String? notifyType;
+  int? weekDay;
+  String time = "08:00";
+  String timeForPreview = "08時間00分";
+  int days = 1;
+
+  Widget notificationFrequencySetting(){
+
+    Widget borderModel =
+      const Column(children:[
+        SizedBox(height: 2.5),
+        Divider(height:1),
+        SizedBox(height: 2.5),
+    ]);
+
+  return Column(
+    children: [
+
+      IntrinsicHeight(
+        child:Row(children: [
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 32,
+            child: DropdownButtonFormField(
+              decoration:const InputDecoration.collapsed(
+                hintText: "通知する日",
+                border: OutlineInputBorder()
+              ),
+              items: const [
+                DropdownMenuItem(value: null, child: Text(" 毎日")),
+                DropdownMenuItem(value: 1, child: Text(" 毎週月曜日")),
+                DropdownMenuItem(value: 2, child: Text(" 毎週火曜日")),
+                DropdownMenuItem(value: 3, child: Text(" 毎週水曜日")),
+                DropdownMenuItem(value: 4, child: Text(" 毎週木曜日")),
+                DropdownMenuItem(value: 5, child: Text(" 毎週金曜日")),
+                DropdownMenuItem(value: 6, child: Text(" 毎週土曜日")),
+                DropdownMenuItem(value: 7, child: Text(" 毎週日曜日")),
+              ],
+              onChanged: (value){
+                setState(() {
+                  weekDay = value;
+                });
+              },
+            ),
+          ),
+          SizedBox(width:SizeConfig.blockSizeHorizontal! *2),
+          GestureDetector(
+            onTap: () async{
+              DateTime now = DateTime.now();
+              await DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false,
+                onConfirm: (date) {
+                  setState((){
+                    time=DateFormat("HH:mm").format(date);
+                  });
+                },
+                currentTime: DateTime(now.year,now.month,now.day,12,00),
+                locale: LocaleType.jp
+              );
+            },
+            child:Container(
+              padding:const EdgeInsets.symmetric(horizontal: 2.5),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color.fromARGB(255, 100, 100, 100),width:1),
+                borderRadius:BorderRadius.circular(5),
+              ),
+              child:Row(children:[
+                Text(time,style:const TextStyle(fontWeight:FontWeight.bold)),
+                const Icon(Icons.arrow_drop_down, color:Color.fromARGB(255, 100, 100, 100))
+              ])
+            ),
+          ),
+          const Text(" に"),
+        ]),
+      ),
+      IntrinsicHeight(
+        child:Row(children: [
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 15,
+            child: DropdownButtonFormField(
+              decoration:const InputDecoration.collapsed(
+                hintText: "日数",
+                border: OutlineInputBorder()
+              ),
+              items: const [
+                DropdownMenuItem(value: 1, child: Text(" １")),
+                DropdownMenuItem(value: 2, child: Text(" ２")),
+                DropdownMenuItem(value: 3, child: Text(" ３")),
+                DropdownMenuItem(value: 4, child: Text(" ４")),
+                DropdownMenuItem(value: 5, child: Text(" ５")),
+                DropdownMenuItem(value: 6, child: Text(" ６")),
+                DropdownMenuItem(value: 7, child: Text(" ７")),
+                DropdownMenuItem(value: 8, child: Text(" ８")),
+              ],
+              onChanged: (value){
+                setState(() {
+                  days = value!;
+                });
+              },
+            ),
+          ),
+          const Text(" 日分を通知"),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              if(weekDay == null){
+                notifyType = "dayly";
+              }else{
+                notifyType = "weekly";
+              }
+              setState(() {});
+              //＠ここで毎日or毎週通知をDB登録！！
+              print(notifyType);
+              print(weekDay);
+              print(time);
+              print(days);
+
+            },
+            child:Container(
+              padding:const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color:ACCENT_COLOR,
+                border: Border.all(color:const Color.fromARGB(255, 255, 216, 130),width:1),
+                borderRadius:BorderRadius.circular(5),
+              ),
+              child:const Row(children:[
+                Text("   追加   ",
+                  style:TextStyle(
+                    fontWeight:FontWeight.bold,
+                    color:Colors.white
+                  )
+                ),
+              ])
+            ),
+          ),
+          const SizedBox(width:5)
+        ]),
+      ),
+
+      borderModel,
+      
+      const SizedBox(height:7),
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("期限/予定の  "),
+          GestureDetector(
+            onTap: () async{
+              DateTime now = DateTime.now();
+              await DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false,
+                onConfirm: (date) {
+                  setState((){
+                    timeForPreview=DateFormat("HH時間mm分").format(date);
+                    time=DateFormat("HH:mm").format(date);
+                  });
+                },
+                currentTime: DateTime(now.year,now.month,now.day,12,00),
+                locale: LocaleType.jp
+              );
+            },
+            child:Container(
+              padding:const EdgeInsets.symmetric(horizontal: 2.5),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color.fromARGB(255, 100, 100, 100),width:1),
+                borderRadius:BorderRadius.circular(5),
+              ),
+              child:Row(children:[
+                Text(timeForPreview,style:const TextStyle(fontWeight:FontWeight.bold)),
+                const Icon(Icons.arrow_drop_down, color:Color.fromARGB(255, 100, 100, 100))
+              ])
+            ),
+          ),
+          const Text(" 前"),
+        ]),
+      ),
+      const SizedBox(height:14),
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("に通知"),
+          const Spacer(),
+          buttonModel(
+            () {
+              notifyType = "beforeHour";
+              setState(() {
+
+              });
+              //＠ここで締め切り前通知をDB登録！！
+              print(notifyType);
+              print(weekDay);
+              print(time);
+
+            },
+            ACCENT_COLOR,
+            "   追加   "
+          ),
+          const SizedBox(width:5)
+        ]),
+      ),
+      const SizedBox(height:7),
+    
+    borderModel
+    ]);
+  }
+
+  Widget showNotificationList(List<Map>? map){
+    if(map == null){
+      return noneSettingWidget();
+    }else{
+      return notificationSettingList(map);
+    }
+  }
+
+  Widget notificationSettingList(List<Map> map){
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder:((context, index) {
+        Map target = map.elementAt(index);
+        int id = target["id"];
+        String notifyType = target["notyfyType"];
+        int? weekDay = target["weekDay"];
+        String time = target["time"];
+        int? days = target["days"];
+        int isValidNotify = target["isValidNotify"];
+        Color buttonColor = Colors.grey;
+        String buttonText = "通知OFF";
+        
+        if(isValidNotify == 1){
+          buttonColor = Colors.blue;
+          buttonText = "通知ON";
+        }
+
+        Widget notificationDescription =const SizedBox();
+        if(notifyType == "beforeHour"){
+          String hour = time.substring(0,2);
+          String minute = time.substring(3,5);
+
+          notificationDescription = 
+          Column(children:[
+            const Text(" 締切・予定の "),
+            Row(children:[      
+            Text(hour + "時間"+ minute + "分 前",
+                style:TextStyle(color:Colors.grey))
+            ]),
+          ]);
+        }else{
+          notificationDescription = 
+          Column(children:[
+              Row(children:[
+                const Text(" "),
+                Text(getDayOfWeek(weekDay)),
+                const Text(" "),
+                Text(time)
+              ]),
+              Row(children:[
+                const Text(" "),
+                Text(days.toString()+" 日分",
+                  style:const TextStyle(color:Colors.grey)),
+              ]),
+            ]);
+        }
+
+        return Card(
+          child:Padding(
+           padding:const EdgeInsets.all(5),
+           child:Row(
+            children:[
+            InkWell(
+              onTap:(){
+                //＠ここに通知設定削除の処理
+                id;
+
+                setState(() {
+                  
+                });
+              },
+              child:const Icon(Icons.delete)),
+            const Spacer(),
+            notificationDescription,
+            const Spacer(),
+            buttonModel(
+            () {
+              //＠通知のON OFFの切り替え処理をここでしますよ.
+              id;
+              setState(() {
+                
+              });
+            },
+            buttonColor,
+            buttonText
+            ),
+          ]))
+          
+        );
+      }),
+      separatorBuilder: ((context, index) {
+        return const SizedBox(height:2);
+      }),
+      itemCount: map.length);
+  }
+
+  Widget noneSettingWidget(){
+    return SizedBox(
+      height: SizeConfig.blockSizeVertical! *10,
+      child:const Center(
+        child:Text(
+          "登録されている通知はありません。",
+          style:TextStyle(color:Colors.grey))
+      ),
+    );
+  }
+
+  String? notificationFormat;
+  bool isContainWeekDay = true;
+  Widget notificarionFormatSetting(){
+
+    String weekDayText = "";
+    if(isContainWeekDay 
+      && notificationFormat != null){
+      weekDayText = DateFormat("(E)","ja_JP").format(DateTime.now());
+    }
+
+    String thumbnailText = "";
+    if(notificationFormat != null){
+      thumbnailText = DateFormat(notificationFormat).format(DateTime.now());
+    }else{
+      thumbnailText = "今日    明日";
+    }
+
+    return Column(
+     children: [
+
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("日付の形式  "),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 45,
+            child: DropdownButtonFormField(
+              decoration:const InputDecoration.collapsed(
+                hintText: "日付の形式",
+                border: OutlineInputBorder()
+              ),
+              items: const [
+                DropdownMenuItem(value: "MM月dd日", child: Text(" MM月dd日")),
+                DropdownMenuItem(value: "MM/dd", child: Text(" MM/dd")),
+                DropdownMenuItem(value: "dd/MM", child: Text(" dd/MM")),
+                DropdownMenuItem(value: null, child: Text(" 相対")),
+              ],
+              onChanged: (value){
+                setState(() {
+                  notificationFormat = value;
+                });
+              },
+            ),
+          ),
+        ]),
+      ),
+      IntrinsicHeight(
+        child:Row(children: [
+          const Text("曜日を含む："),
+          CupertinoCheckbox(
+            activeColor: ACCENT_COLOR,
+            value: isContainWeekDay,
+            onChanged:(value){
+              setState(() {
+                isContainWeekDay = value!;
+              });
+            }),
+          const Spacer(),
+          buttonModel(
+            () {
+              setState(() {});
+
+              //＠ここで通知フォーマットをDB登録！！
+              print(notificationFormat);
+              print(isContainWeekDay);
+
+            },
+            ACCENT_COLOR,
+            "   変更   "
+          ),
+          const SizedBox(width:5)
+        ]),
+      ),
+      const Divider(height:1),
+      const SizedBox(height:5),
+      Row(children:[
+        const SizedBox(width:10),
+        Text(thumbnailText + weekDayText,
+        style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
+        const Spacer(),
+        buttonModel(
+          () {
+            //＠ここでサンプル通知！！
+
+          },
+          ACCENT_COLOR,
+          "サンプル通知"
+        ),
+      ])
+     
+    ]);
+  }
+
+  String getDayOfWeek(int? dayIndex) {
+    switch (dayIndex) {
+      case DateTime.monday:
+        return "毎週月曜日";
+      case DateTime.tuesday:
+        return "毎週火曜日";
+      case DateTime.wednesday:
+        return "毎週水曜日";
+      case DateTime.thursday:
+        return "毎週木曜日";
+      case DateTime.friday:
+        return "毎週金曜日";
+      case DateTime.saturday:
+        return "毎週土曜日";
+      case DateTime.sunday:
+        return "毎週日曜日";
+      default:
+        return "毎日";
+    }
+  }
+
 
 }
