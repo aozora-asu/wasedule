@@ -46,6 +46,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     pageController.jumpToPage(index);
   }
   ScrollPhysics physics = const ScrollPhysics();
+  bool isExtendBody = true;
 
   Widget pageView(){
     return PageView(
@@ -58,8 +59,13 @@ class _AppPageState extends ConsumerState<AppPage> {
                    TaskPage(),],
         onPageChanged: (value){
             if(value == 3){
+              isExtendBody = false;
               physics = const NeverScrollableScrollPhysics();
+            }else if(value == 0 || value == 1){
+              isExtendBody = true;
+              physics = const ScrollPhysics();
             }else{
+              isExtendBody = false;
               physics = const ScrollPhysics();
             }
             setState((){
@@ -76,9 +82,11 @@ class _AppPageState extends ConsumerState<AppPage> {
   body = pageView();
 
     return Scaffold(
-      appBar: CustomAppBar(backButton: false,),
-      drawer: burgerMenu(),
+      extendBodyBehindAppBar: isExtendBody,
+      extendBody: true,
+      appBar: CustomAppBar(backButton: false),
       bottomNavigationBar: customBottomBar(
+         context,
          _currentIndex,
          _onItemTapped,
          setState

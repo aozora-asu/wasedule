@@ -21,23 +21,31 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     Key? key
   }) : super(key: key);
 
+  Color contentColor = Colors.white;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MAIN_COLOR,
-        elevation: 3,
+    Widget appBarContent = const SizedBox();
+    if(!backButton){
+      appBarContent = dateThumbNail();
+    }
+
+
+    return AppBar(
+        backgroundColor:MAIN_COLOR,
+        elevation: 2,
         title: 
         Row(children: <Widget>[
           LogoAndTitle(
             size: 7,
-            color:Colors.white,
+            color:contentColor,
             isLogoWhite: true,
           ),
           const Spacer(),
+          appBarContent,
+          const Spacer(),
           InkWell(
-            child: const Icon(Icons.notifications_outlined,color:Colors.white),
+            child: Icon(Icons.notifications_outlined, color:contentColor),
             onTap: (){
               Navigator.push(
                 context,
@@ -45,26 +53,62 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               );
             },
           ),
-          popupMenuButton()
+          popupMenuButton(contentColor)
         ]),
-         leading: switchLeading(context)
-      ),
+         leading: switchLeading(context),
+          shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(32),
+          ),
+        ),
     );
   }
 
   Widget? switchLeading(context){
    if(backButton){
-    return const BackButton(color:Colors.white);
+    return BackButton(color:contentColor);
    }else{
     return null;
    }
   }
+
+  Widget dateThumbNail(){
+    DateTime now = DateTime.now();
+    String todayText = DateFormat("MM/dd").format(now);
+    String todayWeekday = DateFormat("EEE.").format(now);
+    return Container(
+      width:SizeConfig.blockSizeHorizontal! *20,
+      height:SizeConfig.blockSizeVertical! *6,
+      decoration: BoxDecoration(
+        color: BACKGROUND_COLOR,
+        borderRadius:const BorderRadius.all(Radius.circular(7.5)),
+        border: Border.all(color:Color.fromARGB(255, 184, 113, 113),width: 3.5),
+      ),
+      child: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       children:[
+        Text(todayWeekday,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: SizeConfig.blockSizeHorizontal! *3
+            )
+        ),
+        Text(todayText,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: SizeConfig.blockSizeHorizontal! *5
+            )
+        )
+      ])
+    );
+  }
+
 }
 
-Widget popupMenuButton(){
+Widget popupMenuButton(color){
   return PopupMenuButton(
 
-    icon:const Icon(Icons.more_vert,color:Colors.white),
+    icon:Icon(Icons.more_vert,color:color),
     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
       PopupMenuItem(
         child: ListTile(

@@ -70,13 +70,14 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     targetSemester = thisYear.toString() + "-" + semesterNum.toString();
   }
 
+  
 
   void increasePgNumber() {
-    if(semesterNum == 4){
+    if(semesterNum == 3){
       thisYear += 1;  
       semesterNum = 1;
     }else{
-      semesterNum += 1;
+      semesterNum = 3;
     }
     setState(() {
       targetSemester = thisYear.toString() + "-" + semesterNum.toString();
@@ -86,23 +87,68 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   void decreasePgNumber() {
     if(semesterNum == 1){
       thisYear -= 1;  
-      semesterNum = 4;
+      semesterNum = 3;
     }else{
-      semesterNum -= 1;
+      semesterNum = 1;
     }
     setState(() {
       targetSemester = thisYear.toString() + "-" + semesterNum.toString();
     });
   }
 
-  String semesterText(){
-    String result = "年  春学期  春セメスター";
-    if(semesterNum == 2){
-      result = "年  春学期  夏セメスター";
-    }else if(semesterNum == 3){
-      result = "年  秋学期  秋セメスター";
+  Widget changeQuaterbutton(){
+    String quaterName = "";
+    switch(semesterNum){
+      case 1:quaterName = " 春クォーター ";
+      case 2:quaterName = " 夏クォーター ";
+      case 3:quaterName = " 秋クォーター ";
+      case 4:quaterName = " 冬クォーター ";
+    }
+
+    Color quaterColor = Colors.white;
+    switch(semesterNum){
+      case 1:quaterColor = const Color.fromARGB(255, 255, 159, 191);
+      case 2:quaterColor = Colors.blueAccent;
+      case 3:quaterColor = const Color.fromARGB(255, 231, 85, 0);
+      case 4:quaterColor = Colors.cyan;
+    }
+
+    return buttonModel(
+      (){
+        switchSemester();
+      },
+      quaterColor,
+      quaterName);
+  }
+
+  void switchSemester(){
+    if(semesterNum == 1){
+      setState(() {
+        semesterNum = 2;
+      });
+    }else if(semesterNum == 2){
+      setState(() {
+        semesterNum = 1;
+      });
+    } else if(semesterNum == 3){
+      setState(() {
+        semesterNum = 4;
+      });
     }else if(semesterNum == 4){
-      result = "年  秋学期  冬セメスター";
+      setState(() {
+        semesterNum = 3;
+      });
+    }
+  }
+
+  String semesterText(){
+    String result = "年  春学期";
+    if(semesterNum == 2){
+      result = "年  春学期";
+    }else if(semesterNum == 3){
+      result = "年  秋学期";
+    }else if(semesterNum == 4){
+      result = "年  秋学期";
     }
     return thisYear.toString() + result;
   }
@@ -153,7 +199,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               },
               icon: const Icon(Icons.arrow_back_ios),
               iconSize: 20),
-          const Spacer(),
           Text(
             semesterText(),
             style: const TextStyle(
@@ -161,7 +206,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const Spacer(),
           IconButton(
               onPressed: () {
                 setState(() {
@@ -170,11 +214,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               },
               icon: const Icon(Icons.arrow_forward_ios),
               iconSize: 20),
+          const Spacer(),
+          changeQuaterbutton(),
+          const Spacer(),
           ]),
           Row(children:[
-            // SizedBox(
-            //   width: SizeConfig.blockSizeHorizontal! *5,
-            //   child:Text("")),
             Column(children:[
               generateWeekThumbnail(),
               SizedBox(
