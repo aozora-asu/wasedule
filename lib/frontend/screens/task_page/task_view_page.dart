@@ -174,7 +174,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           const Divider(thickness: 0.3, height: 0.3, color: Colors.grey),
           Expanded(child: pages())
         ]),
-        floatingActionButton: Row(
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
+          child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             AddDataCardButton(setosute: setState),
@@ -194,7 +196,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               child: const Icon(Icons.refresh_outlined, color: Colors.white),
             ),
           ],
-        ));
+        )));
   }
 
   Widget pages() {

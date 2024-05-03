@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 import '../common/loading.dart';
 
 InAppWebView? webView; // InAppWebViewを保持する変数
+
 
 class MoodleViewPage extends ConsumerStatefulWidget {
   @override
@@ -153,6 +155,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
           height: SizeConfig.blockSizeVertical! * 4.5,
           child: menuBar()),
     ]));
+
+    
   }
 
   Widget menuBar() {

@@ -253,12 +253,18 @@ class _CalendarState extends ConsumerState<Calendar> {
             ],
           ),
         ),
-        floatingActionButton: Row(children: [
-          const Spacer(),
-          AddEventButton(),
-          const SizedBox(width: 10),
-          calendarShareButton(context),
-        ]));
+        floatingActionButton:
+        Container(
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
+          child:Row(
+           children: [
+            const Spacer(),
+            AddEventButton(),
+            const SizedBox(width: 10),
+            calendarShareButton(context),
+          ])
+        )
+      );
   }
 
   AssetImage calendarBackGroundImage() {
