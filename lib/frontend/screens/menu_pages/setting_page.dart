@@ -679,12 +679,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
           String time = target["time"];
           int? days = target["days"];
           int isValidNotify = target["isValidNotify"];
-          Color buttonColor = Colors.grey;
-          String buttonText = "通知OFF";
+          Color buttonColor;
+          String buttonText;
 
           if (isValidNotify == 1) {
             buttonColor = Colors.blue;
             buttonText = "通知ON";
+          } else {
+            buttonColor = Colors.grey;
+            buttonText = "通知OFF";
           }
 
           Widget notificationDescription = const SizedBox();
@@ -722,8 +725,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     InkWell(
                         onTap: () async {
                           //＠ここに通知設定削除の処理
+
+                          await NotifyDatabaseHandler().disableNotify(id);
+                          await NotifyContent().cancelNotify();
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
-                          await NotifyContent().setNotify();
 
                           setState(() {});
                         },
@@ -733,7 +738,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     const Spacer(),
                     buttonModel(() async {
                       //＠通知のON OFFの切り替え処理をここでしますよ.
-                      id;
+                      //isValidNotify 0<->1の切り替えです
+                      isValidNotify = 1 - isValidNotify;
+                      if (isValidNotify == 1) {
+                        await NotifyDatabaseHandler().activateNotify(id);
+                      } else {
+                        await NotifyDatabaseHandler().disableNotify(id);
+                      }
+                      await NotifyContent().cancelNotify();
+
                       await NotifyContent().setNotify();
                       setState(() {});
                     }, buttonColor, buttonText),

@@ -183,6 +183,7 @@ class ScheduleDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getDuringScheduleList(
       DateTime startDatetime, DateTime endDatetime) async {
+    await _initScheduleDatabase();
     // データベースからstartDateからendDateTimeまでの期間に該当するスケジュールを取得し、日付が早い順に並べる
     List<Map<String, dynamic>> schedules = await _database.rawQuery('''
     SELECT * FROM schedule
@@ -194,6 +195,14 @@ class ScheduleDatabaseHelper {
     ]);
 
     return schedules;
+  }
+
+  Future<int> getMaxId() async {
+    await _initScheduleDatabase();
+    final result =
+        await _database.rawQuery('SELECT MAX(id) as maxId FROM schedule');
+    int? maxId = result.first['maxId'] as int?;
+    return maxId ?? 0;
   }
 
   Future<List<Map<String, dynamic>>> pickScheduleByTag(String tagID) async {

@@ -220,12 +220,20 @@ class TaskDatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
-    _initDatabase();
+    await _initDatabase();
     await _orderByDateTime();
     final List<Map<String, dynamic>> data =
         await _database.rawQuery('SELECT * FROM tasks');
 
     return data;
+  }
+
+  Future<int> getMaxId() async {
+    await _initDatabase();
+    final result =
+        await _database.rawQuery('SELECT MAX(id) as maxId FROM tasks');
+    int? maxId = result.first['maxId'] as int?;
+    return maxId ?? 0;
   }
 
   Future<bool> hasData() async {

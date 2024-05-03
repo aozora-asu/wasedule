@@ -124,8 +124,8 @@ flutter:
     - lib/assets/schedule_share/schedule_broadcast_download.png
     - .env
 
-    - lib/frontend/screens/moodle_view_page/login.js
-    - lib/frontend/screens/moodle_view_page/auto.js
+    - lib/frontend/screens/moodle_view_page/auto_login_checkbox.js
+    - lib/frontend/screens/moodle_view_page/get_cookie.js
     - lib/frontend/screens/moodle_view_page/get_course_info.js
 
   # The following line ensures that the Material Icons font is
