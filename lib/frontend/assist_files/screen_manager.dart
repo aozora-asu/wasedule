@@ -49,6 +49,7 @@ class _AppPageState extends ConsumerState<AppPage> {
 
   ScrollPhysics physics = const ScrollPhysics();
   bool isExtendBody = true;
+  bool isExtendBottom = true;
   bool showAppBar = true;
   Timer? _timer;
 
@@ -64,13 +65,16 @@ class _AppPageState extends ConsumerState<AppPage> {
                    ],
         onPageChanged: (value){
             if(value == 4){
+              isExtendBottom = false;
               isExtendBody = false;
               physics = const NeverScrollableScrollPhysics();
             }else if(value == 1 || value == 2){
               isExtendBody = true;
+              isExtendBottom = true;
               physics = const ScrollPhysics();
             }else{
               isExtendBody = false;
+              isExtendBottom = true;
               physics = const ScrollPhysics();
             }
             setState((){
@@ -88,7 +92,7 @@ class _AppPageState extends ConsumerState<AppPage> {
 
     return Scaffold(
       extendBodyBehindAppBar: isExtendBody,
-      extendBody: true,
+      extendBody: isExtendBottom,
       appBar: CustomAppBar(backButton: false),
       bottomNavigationBar:customBottomBar(
           context,

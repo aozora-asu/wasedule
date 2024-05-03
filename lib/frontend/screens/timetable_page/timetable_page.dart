@@ -248,8 +248,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
           SizedBox(
               height: SizeConfig.blockSizeVertical! *cellHeight,
-              child:Expanded(
-                child:generateOndemandRow())),
+              child:generateOndemandRow()),
           const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
           SizedBox(height: SizeConfig.blockSizeVertical! *3,)
       ])
