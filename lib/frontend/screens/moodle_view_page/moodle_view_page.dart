@@ -50,22 +50,21 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
             },
           )),
         ]),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal! *3,
-              vertical: SizeConfig.blockSizeVertical! *1
-            ),
-            decoration: BoxDecoration(
-              color:Colors.white,
-              border: Border.all(color:Colors.grey,width: 0.5),
-              borderRadius:const BorderRadius.all(Radius.circular(15)),
-              boxShadow:const [BoxShadow(blurRadius:0.5,)]
-            ),
-            height: SizeConfig.blockSizeVertical! * 4.5,
-            child: menuBar()),
-    ]) 
-    
-    );
+        Container(
+          margin: EdgeInsets.symmetric(
+            horizontal: SizeConfig.blockSizeHorizontal! *3,
+            vertical: SizeConfig.blockSizeVertical! *1
+          ),
+          decoration: BoxDecoration(
+            color:Colors.white,
+            border: Border.all(color:Colors.grey,width: 0.5),
+            borderRadius:const BorderRadius.all(Radius.circular(15)),
+            boxShadow:const [BoxShadow(blurRadius:0.5,)]
+          ),
+          height: SizeConfig.blockSizeVertical! * 4.5,
+          child: menuBar()),
+        ]) 
+      );
   }
 
   Widget menuBar() {

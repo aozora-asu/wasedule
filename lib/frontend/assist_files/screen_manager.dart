@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +35,9 @@ class _AppPageState extends ConsumerState<AppPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initIndex ?? 1;
-    pageController = PageController(initialPage:widget.initIndex ?? 1);
+    _currentIndex = widget.initIndex ?? 2;
+    pageController = PageController(initialPage:widget.initIndex ?? 2);
   }
-
 
   void _onItemTapped(int index) {
     ref.read(taskDataProvider).isInit = true;
@@ -45,23 +46,27 @@ class _AppPageState extends ConsumerState<AppPage> {
     });
     pageController.jumpToPage(index);
   }
+
   ScrollPhysics physics = const ScrollPhysics();
   bool isExtendBody = true;
+  bool showAppBar = true;
+  Timer? _timer;
 
   Widget pageView(){
     return PageView(
         physics: physics,
         controller: pageController,
-        children: [TimeTablePage(),
+        children: [TaskPage(),
+                   TimeTablePage(),
                    const Calendar(),
                    TaskViewPage(),
                    MoodleViewPage(),
-                   TaskPage(),],
+                   ],
         onPageChanged: (value){
-            if(value == 3){
+            if(value == 4){
               isExtendBody = false;
               physics = const NeverScrollableScrollPhysics();
-            }else if(value == 0 || value == 1){
+            }else if(value == 1 || value == 2){
               isExtendBody = true;
               physics = const ScrollPhysics();
             }else{
@@ -85,13 +90,31 @@ class _AppPageState extends ConsumerState<AppPage> {
       extendBodyBehindAppBar: isExtendBody,
       extendBody: true,
       appBar: CustomAppBar(backButton: false),
-      bottomNavigationBar: customBottomBar(
-         context,
-         _currentIndex,
-         _onItemTapped,
-         setState
-      ),
+      bottomNavigationBar:customBottomBar(
+          context,
+          _currentIndex,
+          _onItemTapped,
+          setState
+        ),
       body: body,
     );
   }
+
+  void startTimer() {
+    _timer?.cancel();
+    _timer = Timer(const Duration(seconds: 4), () {
+      setState(() {
+       if(_currentIndex != 3){
+        showAppBar = false;
+       }
+      });
+    });
+  }
+  
+  @override
+  void dispose() {
+    _timer?.cancel(); // リソースの解放
+    super.dispose();
+  }
+
 }

@@ -9,20 +9,21 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
       ValueChanged<int> onItemTapped,
       StateSetter setosute
     ) {
-    Color unSelectedColor = MAIN_COLOR;
-    Color selectedColor = Colors.blueAccent;
+    Color unSelectedColor = Colors.grey;
+    Color selectedColor = Colors.white;
     SizeConfig().init(context);
 
     return Container(
       padding: const EdgeInsets.all(0),
       margin: EdgeInsets.symmetric(
-        horizontal: SizeConfig.blockSizeHorizontal! *3,
-        vertical: SizeConfig.blockSizeVertical! *1.5
+        horizontal: SizeConfig.blockSizeHorizontal! *0,
+        vertical: SizeConfig.blockSizeVertical! *0
         ),
-      decoration:const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(25)),
-        boxShadow:[BoxShadow(blurRadius:2,)]
+      decoration: BoxDecoration(
+        border:const Border(top:BorderSide(color:PALE_MAIN_COLOR,width: 4.5)),
+        color: MAIN_COLOR.withOpacity(0.95),
+        borderRadius:const BorderRadius.all(Radius.circular(0)),
+        //boxShadow:[BoxShadow(blurRadius:2,)]
         ),
       child:BottomNavigationBar(
         currentIndex: currentIndex,
@@ -32,6 +33,11 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         selectedItemColor: selectedColor,
         unselectedItemColor: unSelectedColor,
         items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit),
+            label: '学習記録',
+            backgroundColor:Colors.transparent
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
             label: '授業',
@@ -52,19 +58,14 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
             label: 'Moodle',
             backgroundColor:Colors.transparent
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: '学習管理',
-            backgroundColor:Colors.transparent
-          ),
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.group),
           //   label: 'フレンド',
           //   backgroundColor: MAIN_COLOR
           // ),
         ],
-        selectedFontSize: 17.0, 
-        unselectedFontSize: 12.0,
+        selectedFontSize: 9, 
+        unselectedFontSize:0,
       )
     );
   }

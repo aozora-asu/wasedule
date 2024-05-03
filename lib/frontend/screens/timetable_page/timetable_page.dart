@@ -219,10 +219,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           const Spacer(),
           ]),
           Row(children:[
+            Expanded(child:generatePrirodColumn()),
             Column(children:[
               generateWeekThumbnail(),
               SizedBox(
-                width: SizeConfig.blockSizeHorizontal! *cellWidth * 7,
+                width: SizeConfig.blockSizeHorizontal! *cellWidth * 6,
                 child:Row(children:[
                   timetableSells(1),
                   timetableSells(2),
@@ -230,20 +231,36 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   timetableSells(4),
                   timetableSells(5),
                   timetableSells(6),
-                  timetableSells(7),
               ])
              )
             ])
           ]),
-        SizedBox(height: SizeConfig.blockSizeVertical! *2,)
+          SizedBox(height: SizeConfig.blockSizeVertical! *1),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "   ■ オンデマンド・その他",
+              style: TextStyle(
+                fontSize: 17.5,
+                fontWeight: FontWeight.w700,
+              ),
+            )),
+          const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
+          SizedBox(
+              height: SizeConfig.blockSizeVertical! *cellHeight,
+              child:Expanded(
+                child:generateOndemandRow())),
+          const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
+          SizedBox(height: SizeConfig.blockSizeVertical! *3,)
       ])
     );
   }
 
-  double cellWidth = 13.571;
+  double cellWidth = 14.5;
+  double cellHeight = 14;
 
   Widget generateWeekThumbnail() {
-    List<String> days = ["月", "火", "水", "木", "金", "土", "ｵﾝﾃﾞﾏ"];
+    List<String> days = ["月", "火", "水", "木", "金", "土"];
     return SizedBox(
       height: SizeConfig.blockSizeVertical! * 2.5,
       child:ListView.builder(
@@ -264,7 +281,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 style: const TextStyle(color: Colors.grey),
               )));
         },
-        itemCount: 7,
+        itemCount: 6,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
@@ -272,51 +289,23 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     );
   }
 
-  Widget timetableSells(int weekDay){
-    return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! *cellWidth, 
-        child:ListView.separated(
-        shrinkWrap: true,
-        itemCount: 7,
-        physics: const NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (
-        (context, index) {
-          Color bgColor = Colors.white;
-          Widget cellContents = const SizedBox();
-          int length = random.nextInt(11);
-
-          if(random.nextInt(100).isEven){
-            switch(length){
-               case 0:bgColor = Color.fromRGBO(255, 255, 255, 0.6);
-               case 1:bgColor = Color.fromRGBO(254, 255, 232, 0.6);
-               case 2:bgColor = Color.fromRGBO(253, 255, 187, 0.6);
-               case 3:bgColor = Color.fromRGBO(255, 243, 150, 0.6);
-               case 4:bgColor = Color.fromRGBO(255, 231, 125, 0.6);
-               case 5:bgColor = Color.fromRGBO(255, 203, 138, 0.6);
-               case 6:bgColor = Color.fromRGBO(255, 184, 117, 0.6);
-               case 7:bgColor = Color.fromRGBO(255, 125, 142, 0.6);
-               case 8:bgColor = Color.fromRGBO(255, 128, 128, 0.6);
-               case 9:bgColor = Color.fromRGBO(255, 139, 170, 0.6);
-               default :bgColor = Color.fromRGBO(255, 102, 161, 0.6);
-            }
-              
-            cellContents = timeTableSellsChild(
-              weekDay,index+1,length);
-          }
-          
+  Widget generatePrirodColumn(){
+    double fontSize = SizeConfig.blockSizeHorizontal! *2.25;
+    Color grey = Colors.grey;
+    
+    return Column(children:[
+      SizedBox(height: SizeConfig.blockSizeVertical! * 2.5,),
+      ListView.separated(
+        itemBuilder:(context, index) {
+          Color bgColor = Colors.white;                  
           DateTime now = DateTime.now();
           if(returnBeginningDateTime(index+1).isBefore(now)
-              && returnEndDateTime(index+1).isAfter(now)
-              && now.weekday == weekDay
-              && weekDay <= 6){
+              && returnEndDateTime(index+1).isAfter(now)){
             bgColor = Color.fromRGBO(255, 166, 166, 1);
           }
-          
 
           return Container(
-            width: SizeConfig.blockSizeHorizontal! *cellWidth,
-            height: SizeConfig.blockSizeVertical! * 16,
+            height: SizeConfig.blockSizeVertical! * cellHeight,
             decoration: BoxDecoration(
               color: bgColor,
               border: Border.all(
@@ -326,42 +315,146 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             ),
             child: Padding(
               padding:const EdgeInsets.symmetric(horizontal:3),
-              child:cellContents) 
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children:[
+                Text(returnBeginningTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
+                Text((index+1).toString(),style:TextStyle(color:Colors.grey,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
+                Text(returnEndTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
+              ])
+            ) 
           );
-        }),
-        separatorBuilder: (context, index) {
+        },
+        separatorBuilder:(context, index) {
           Widget resultinging = const SizedBox();
           DateTime now = DateTime.now(); 
           Color bgColor = Colors.white;
-          if(returnBeginningDateTime(2).isAfter(now)
-              && returnEndDateTime(3).isBefore(now)){
+          if(returnEndDateTime(2).isBefore(now)
+              && returnBeginningDateTime(3).isAfter(now)){
             bgColor = const Color.fromRGBO(255, 204, 204, 1);
           }
-          String childText = "";
-          if(weekDay == 3){
-            childText = "昼";
-          }
-          if(weekDay == 4){
-            childText = "休";
-          }
-          if(weekDay == 5){
-            childText = "み";
-          }
-
           if(index == 1){
             resultinging = 
               Container(
                 height:SizeConfig.blockSizeVertical! *2.5,
                 color:bgColor,
-                child:Column(
+                child:const Column(
                   children:[
-                    const Divider(color:Colors.grey,height:0.5,thickness: 0.5),
-                    const Spacer(),
-                    Text(childText, style: TextStyle(color:Colors.grey,fontSize: SizeConfig.blockSizeHorizontal! *3)),
-                    const Spacer(),
-                    const Divider(color:Colors.grey,height:0.5,thickness: 0.5)
+                    Divider(color:Colors.grey,height:0.5,thickness: 0.5),
+                    Spacer(),
+                    Divider(color:Colors.grey,height:0.5,thickness: 0.5)
                 ])
               );
+          }
+          return resultinging;
+        },
+        itemCount: 7,
+        shrinkWrap: true,
+        physics:const NeverScrollableScrollPhysics(),
+        )
+    ]);
+  }
+
+  Color cellBackGroundColor(int length){
+    Color bgColor = Colors.white;
+    switch(length){
+    case 0:bgColor = Color.fromRGBO(255, 255, 255, 0.6);
+    case 1:bgColor = Color.fromRGBO(254, 255, 232, 0.6);
+    case 2:bgColor = Color.fromRGBO(253, 255, 187, 0.6);
+    case 3:bgColor = Color.fromRGBO(255, 243, 150, 0.6);
+    case 4:bgColor = Color.fromRGBO(255, 231, 125, 0.6);
+    case 5:bgColor = Color.fromRGBO(255, 203, 138, 0.6);
+    case 6:bgColor = Color.fromRGBO(255, 184, 117, 0.6);
+    case 7:bgColor = Color.fromRGBO(255, 125, 142, 0.6);
+    case 8:bgColor = Color.fromRGBO(255, 128, 128, 0.6);
+    case 9:bgColor = Color.fromRGBO(255, 139, 170, 0.6);
+    default :bgColor = Color.fromRGBO(255, 102, 161, 0.6);
+    }
+    return bgColor;
+  }
+
+  Widget timetableSells(int weekDay){
+    return SizedBox(
+      width: SizeConfig.blockSizeHorizontal! *cellWidth, 
+      child:ListView.separated(
+      shrinkWrap: true,
+      itemCount: 7,
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (
+      (context, index) {
+        Color bgColor = Colors.white;
+        Widget cellContents = const SizedBox();
+        int length = random.nextInt(11);
+
+        if(random.nextInt(100).isEven){
+          bgColor = cellBackGroundColor(length);
+          cellContents = timeTableSellsChild(
+            weekDay,index+1,length);
+        }
+        
+        Color lineColor = Colors.grey;
+        double lineWidth = 0.5;
+        DateTime now = DateTime.now();
+        if(returnBeginningDateTime(index+1).isBefore(now)
+            && returnEndDateTime(index+1).isAfter(now)
+            && now.weekday == weekDay
+            && weekDay <= 6){
+          lineWidth = 2;
+          lineColor = Colors.blueAccent;
+          bgColor = Color.fromRGBO(255, 166, 166, 1);
+        }
+        
+
+        return Container(
+          width: SizeConfig.blockSizeHorizontal! *cellWidth,
+          height: SizeConfig.blockSizeVertical! * cellHeight,
+          decoration: BoxDecoration(
+            color: bgColor,
+            border: Border.all(
+              color: lineColor,
+              width: lineWidth,
+            ),
+          ),
+          child: Padding(
+            padding:const EdgeInsets.symmetric(horizontal:3),
+            child:cellContents) 
+        );
+      }),
+
+      separatorBuilder: (context, index) {
+        Widget resultinging = const SizedBox();
+        DateTime now = DateTime.now(); 
+        Color bgColor = Colors.white;
+        if(returnEndDateTime(2).isBefore(now)
+            && returnBeginningDateTime(3).isAfter(now)){
+          bgColor = const Color.fromRGBO(255, 204, 204, 1);
+        }
+        String childText = "";
+        if(weekDay == 2){
+          childText = "昼";
+        }
+        if(weekDay == 3){
+          childText = "休";
+        }
+        if(weekDay == 4){
+          childText = "み";
+        }
+
+        if(index == 1){
+          resultinging = 
+            Container(
+              height:SizeConfig.blockSizeVertical! *2.5,
+              color:bgColor,
+              child:Column(
+                children:[
+                  const Divider(color:Colors.grey,height:0.5,thickness: 0.5),
+                  const Spacer(),
+                  Text(childText, style: TextStyle(color:Colors.grey,fontSize: SizeConfig.blockSizeHorizontal! *3)),
+                  const Spacer(),
+                  const Divider(color:Colors.grey,height:0.5,thickness: 0.5)
+              ])
+            );
           }
           return resultinging;
         },
@@ -369,44 +462,101 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     );
   }
  
+  Widget generateOndemandRow(){
+    int length = random.nextInt(11);
+    Color bgColor = cellBackGroundColor(length);
+
+    return ListView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: length,
+      itemBuilder: (context,index){
+       return Container(
+          height: SizeConfig.blockSizeVertical! * cellHeight,
+          width: SizeConfig.blockSizeHorizontal! *cellWidth,
+          decoration: BoxDecoration(
+            color: bgColor,
+            border: Border.all(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+          ),
+          child:ondemandSellsChild(index,length)
+       );
+      });
+  }
+
 
   Widget timeTableSellsChild(int weekDay, int period, int taskLength){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "社会科学特講（社会デザインの基礎理論）A";
+    String className = "社会科学特講A";
     String classRoom = "100-S102";
     
 
     return Stack(
      children:[
       Align(
-        alignment:const Alignment(-1,-0.9),
+        alignment:const Alignment(-1,-1),
         child:lengthBadge(taskLength,fontSize,true)
       ),
       SizedBox(
         child:Column(
-        mainAxisAlignment:MainAxisAlignment.spaceBetween,
+        mainAxisAlignment:MainAxisAlignment.start,
         children:[
-          Text(returnBeginningTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+          SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
+          const Spacer(),
+
           Text(className,
             style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
             maxLines: 4,
             ),
+          const Spacer(),
           Container(
             decoration: BoxDecoration(
               color:Colors.white,
               borderRadius: const BorderRadius.all(Radius.circular(2)),
               border: Border.all(color:grey,width: 0.5)
           ),
-          child:Column(children:[
+          child:
             Text(classRoom,
               style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
               overflow: TextOverflow.visible,
               maxLines: 2,
             ),
-          ]),
-        ),       
-        Text(returnEndTime(period),style:TextStyle(color:grey,fontSize:fontSize),),
+          ),
+          const Spacer()
+
+        ])
+      )
+    ])
+    ;
+  }
+
+  Widget ondemandSellsChild(int index, int taskLength){
+    double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
+    Color grey = Colors.grey;
+    String className = "篠田神の単位ハント";
+    
+
+    return Stack(
+     children:[
+      Align(
+        alignment:const Alignment(-1,-1),
+        child:lengthBadge(taskLength,fontSize,true)
+      ),
+      SizedBox(
+        child:Column(
+        mainAxisAlignment:MainAxisAlignment.start,
+        children:[
+          SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
+          const Spacer(),
+
+          Text(className,
+            style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
+            maxLines: 4,
+            ),
+          const Spacer(),
         ])
       )
     ])
