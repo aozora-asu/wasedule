@@ -1,57 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
-Widget buttonModel(Function() onTap,Color color,String text){
-  return  GestureDetector(
+Widget buttonModel(Function() onTap, Color color, String text) {
+  return GestureDetector(
     onTap: onTap,
-    child:Container(
-      padding:const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color:color,
-        border: Border.all(color:brighten(color,0.6),width:1),
-        borderRadius:BorderRadius.circular(5),
-      ),
-      child: Row(children:[
-        Text(text,
-          style:const TextStyle(
-            fontWeight:FontWeight.bold,
-            color:Colors.white
-          )
+    child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(color: brighten(color, 0.6), width: 1),
+          borderRadius: BorderRadius.circular(5),
         ),
-      ])
-    ),
+        child: Row(children: [
+          Text(text,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.white)),
+        ])),
   );
 }
 
-Widget buttonModelWithChild(Function() onTap,Color color,Widget child){
-  return  GestureDetector(
+Widget buttonModelWithChild(Function() onTap, Color color, Widget child) {
+  return GestureDetector(
     onTap: onTap,
-    child:Container(
-      padding:const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color:color,
-        border: Border.all(color:brighten(color,0.5),width:2),
-        borderRadius:BorderRadius.circular(5),
-      ),
-      child: child
-    ),
+    child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(color: brighten(color, 0.5), width: 2),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: child),
   );
 }
 
-Widget okButton(context,width){
-    return buttonModelWithChild(
+Widget okButton(context, width) {
+  return buttonModelWithChild(
     () {
       Navigator.of(context).pop();
     },
     MAIN_COLOR,
     SizedBox(
-      width: width,
-      child: const Center(
-        child:Text(
-        'OK',
-        style:TextStyle(color: Colors.white)
-      )) 
-    ),
+        width: width,
+        child: const Center(
+            child: Text('OK', style: TextStyle(color: Colors.white)))),
   );
 }
 
@@ -65,11 +56,11 @@ Color brighten(Color color, [double amount = .1]) {
   return Color.fromARGB(color.alpha, r, g, b);
 }
 
-  Widget lengthBadge(int length,fontSize,bool hideZero) {
-    if(length == 0 && hideZero){
-      return const SizedBox();
-    }else{
-      return Container(
+Widget lengthBadge(int length, fontSize, bool hideZero) {
+  if (length == 0 && hideZero) {
+    return const SizedBox();
+  } else {
+    return Container(
         decoration: const BoxDecoration(
           color: Colors.redAccent,
           shape: BoxShape.circle,
@@ -82,5 +73,5 @@ Color brighten(Color color, [double amount = .1]) {
               color: Colors.white,
               fontSize: fontSize),
         ));
-    }
   }
+}
