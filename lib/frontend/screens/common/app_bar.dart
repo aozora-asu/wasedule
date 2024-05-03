@@ -32,7 +32,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 
     return AppBar(
-        backgroundColor:MAIN_COLOR,
+        backgroundColor:MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         title: 
         Row(children: <Widget>[
@@ -82,7 +82,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       decoration: BoxDecoration(
         color: BACKGROUND_COLOR,
         borderRadius:const BorderRadius.all(Radius.circular(7.5)),
-        border: Border.all(color:Color.fromARGB(255, 184, 113, 113),width: 3.5),
+        border: Border.all(color:PALE_MAIN_COLOR,width: 3.5),
       ),
       child: Column(
        mainAxisAlignment: MainAxisAlignment.center,

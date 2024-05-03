@@ -7,7 +7,7 @@ const ACCENT_COLOR = Colors.orangeAccent;//Color.fromARGB(255,144,115,85);
 const WIDGET_COLOR = Color.fromARGB(255, 255, 255, 255);
 const WIDGET_OUTLINE_COLOR = Color.fromARGB(255, 227, 227, 227);
 const BACKGROUND_COLOR = Color.fromARGB(255, 245, 245, 245);
-
+const PALE_MAIN_COLOR = Color.fromARGB(255, 184, 113, 113);
 
 const WASEDA_PSE_COLOR = Color.fromARGB(255, 255, 120, 9);
 const WASEDA_LAW_COLOR = Color.fromARGB(255, 0, 142, 97);

@@ -156,7 +156,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
           child: menuBar()),
     ]));
 
-    
+
   }
 
   Widget menuBar() {
