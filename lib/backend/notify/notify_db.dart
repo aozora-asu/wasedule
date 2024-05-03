@@ -108,6 +108,26 @@ class NotifyDatabaseHandler {
     );
   }
 
+  Future<void> activateNotify(int id) async {
+    await _initNotifyDatabase();
+    await _database.update(
+      configTable,
+      {'isValidNotify': 1}, // 更新後の値, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> disableNotify(int id) async {
+    await _initNotifyDatabase();
+    await _database.update(
+      configTable,
+      {'isValidNotify': 0}, // 更新後の値, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> _updateNotifyFormat(NotifyFormat newNotifyFormat) async {
     await _database.update(
       formatTable,
