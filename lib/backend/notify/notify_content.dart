@@ -15,7 +15,8 @@ class NotifyContent {
   static const int DAILYNOTIFYID = 1;
   static const int WEEKLYNOTIFYID = 2;
 
-  int BEFOREHOURNOTIFYID = 100;
+  int TASKBEFOREHOURNOTIFYID_DIGIT = 0;
+  int SCHEDULEBEFORHOURNOTIFYID_DIGIT = 1;
   NotificationDetails _setNotificationDetail(
       int id, String title, String body) {
     notificationDetails = NotificationDetails(
@@ -317,7 +318,7 @@ class NotifyContent {
           notificationDetails =
               _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
           await flutterLocalNotificationsPlugin.zonedSchedule(
-            BEFOREHOURNOTIFYID++,
+            task["id"] * 10 + TASKBEFOREHOURNOTIFYID_DIGIT,
             notifyTitle,
             body,
             tz.TZDateTime.fromMillisecondsSinceEpoch(_local, task["dtEnd"])
@@ -355,7 +356,7 @@ class NotifyContent {
       notificationDetails =
           _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        BEFOREHOURNOTIFYID++,
+        SCHEDULEBEFORHOURNOTIFYID_DIGIT + schedule["id"] * 10 as int,
         notifyTitle,
         body,
         scheduleDatetime,
@@ -376,13 +377,13 @@ class NotifyContent {
           isContainWeekday: notifyFormatMap["isContainWeekday"],
           notifyFormat: notifyFormatMap["notifyFormat"]);
       for (Map<String, dynamic> notifyConfigMap in notifyConfigList) {
+        NotifyConfig notifyConfig = NotifyConfig(
+            notifyType: notifyConfigMap["notifyType"],
+            time: notifyConfigMap["time"],
+            isValidNotify: notifyConfigMap["isValidNotify"],
+            days: notifyConfigMap["days"],
+            weekday: notifyConfigMap["weekday"]);
         if (notifyConfigMap["isValidNotify"] == 1) {
-          NotifyConfig notifyConfig = NotifyConfig(
-              notifyType: notifyConfigMap["notifyType"],
-              time: notifyConfigMap["time"],
-              isValidNotify: notifyConfigMap["isValidNotify"],
-              days: notifyConfigMap["days"],
-              weekday: notifyConfigMap["weekday"]);
           switch (notifyConfig.notifyType) {
             case "daily":
               await _bookDailyNotify(notifyConfig, notifyFormat);
@@ -452,11 +453,43 @@ class NotifyContent {
     }
   }
 
-  Future<void> cancelAllNotify() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> cancelNotify() async {
+    List<Map<String, dynamic>>? notifyConfigList =
+        await NotifyDatabaseHandler().getNotifyConfigList();
+    int task_num = await TaskDatabaseHelper().getMaxId();
+    int schedule_num = await ScheduleDatabaseHelper().getMaxId();
+    if (notifyConfigList != null && (task_num != 0 || schedule_num != 0)) {
+      for (Map<String, dynamic> notifyConfigMap in notifyConfigList) {
+        NotifyConfig notifyConfig = NotifyConfig(
+            notifyType: notifyConfigMap["notifyType"],
+            time: notifyConfigMap["time"],
+            isValidNotify: notifyConfigMap["isValidNotify"],
+            days: notifyConfigMap["days"],
+            weekday: notifyConfigMap["weekday"]);
+        if (notifyConfigMap["isValidNotify"] == 0) {
+          switch (notifyConfig.notifyType) {
+            case "daily":
+              await flutterLocalNotificationsPlugin.cancel(DAILYNOTIFYID);
+            case "weekly":
+              await flutterLocalNotificationsPlugin.cancel(WEEKLYNOTIFYID);
+            case "beforeHour":
+              for (int i = 0; i <= task_num; i++) {
+                await flutterLocalNotificationsPlugin
+                    .cancel(i * 10 + TASKBEFOREHOURNOTIFYID_DIGIT);
+              }
+              for (int i = 0; i <= schedule_num; i++) {
+                await flutterLocalNotificationsPlugin
+                    .cancel(i * 10 + SCHEDULEBEFORHOURNOTIFYID_DIGIT);
+              }
+
+            //await _bookBeforeHourNotify(notifyConfig, notifyFormat);
+          }
+        }
+      }
+    }
   }
 
-  Future<void> cancelNotify(int notifyID) async {
-    await flutterLocalNotificationsPlugin.cancel(notifyID);
+  Future<void> cancelAllNotify() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
