@@ -7,6 +7,7 @@ import '../models/task.dart';
 import "../../http_request.dart";
 
 import '../../notify/notify_content.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 class TaskDatabaseHelper {
   late Database _database;
@@ -159,6 +160,7 @@ class TaskDatabaseHelper {
       whereArgs: [id],
     );
     await NotifyContent().setNotify();
+    FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
   Future<void> updateDtEnd(int id, int newDtEnd) async {
@@ -183,6 +185,7 @@ class TaskDatabaseHelper {
       whereArgs: [id],
     );
     await NotifyContent().setNotify();
+    FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
   Future<void> updateDescription(int id, String newDescription) async {
@@ -206,6 +209,7 @@ class TaskDatabaseHelper {
       whereArgs: [id],
     );
     await NotifyContent().setNotify();
+    FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
   Future<void> beDisplay(int id) async {
@@ -277,6 +281,7 @@ class TaskDatabaseHelper {
       }
     }
     await NotifyContent().setNotify();
+    FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
@@ -310,5 +315,23 @@ class TaskDatabaseHelper {
       orderBy: 'dtEnd ASC', // dtEndが小さい順に並び替える
     );
     return withinNdaysTask;
+  }
+
+  Future<int> getCountOfUndoneTasks() async {
+    await _initDatabase();
+    // 今日の日付を取得
+    DateTime now = DateTime.now();
+    DateTime endOfDay = DateTime(now.year, now.month, now.day + 1, 0);
+
+    // 条件を満たすタスクの数を取得するクエリを実行
+    List<Map<String, dynamic>> result = await _database.rawQuery('''
+    SELECT COUNT(*) FROM tasks
+    WHERE isDone = 0 AND dtEnd <= ?
+  ''', [endOfDay.millisecondsSinceEpoch]);
+
+    // クエリの結果からタスクの数を取得
+    int? count = Sqflite.firstIntValue(result);
+
+    return count ?? 0;
   }
 }
