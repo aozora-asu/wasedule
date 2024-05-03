@@ -102,8 +102,8 @@ class NotifyDatabaseHandler {
     await _database.update(
       configTable,
       newNotifyConfig.toMap(), // 更新後の値
-      where: 'id = ?',
-      whereArgs: [newNotifyConfig.toMap()["id"]],
+      where: 'notifyType = ?',
+      whereArgs: [newNotifyConfig.toMap()["notifyType"]],
     );
   }
 
