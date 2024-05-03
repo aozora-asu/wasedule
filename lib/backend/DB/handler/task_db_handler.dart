@@ -111,6 +111,8 @@ class TaskDatabaseHelper {
       await _database.insert('tasks', task.toMap());
     } catch (e) {}
     await _orderByDateTime();
+    await NotifyContent().setNotify();
+    FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
   Future<void> deleteAllData(Database db) async {
@@ -326,8 +328,8 @@ class TaskDatabaseHelper {
     // 条件を満たすタスクの数を取得するクエリを実行
     List<Map<String, dynamic>> result = await _database.rawQuery('''
     SELECT COUNT(*) FROM tasks
-    WHERE isDone = 0 AND dtEnd <= ?
-  ''', [endOfDay.millisecondsSinceEpoch]);
+    WHERE isDone = 0 AND dtEnd <= ? AND ? <= dtEnd
+  ''', [endOfDay.millisecondsSinceEpoch, now.millisecondsSinceEpoch]);
 
     // クエリの結果からタスクの数を取得
     int? count = Sqflite.firstIntValue(result);
