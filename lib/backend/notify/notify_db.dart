@@ -63,7 +63,7 @@ class NotifyDatabaseHandler {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS $configTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        notifyType TEXT,
+        notifyType TEXT UNIQUE,
         weekday INT,
         time TEXT,
         days INTEGER,
@@ -98,8 +98,7 @@ class NotifyDatabaseHandler {
     );
   }
 
-  Future<void> updateNotifyConfig(NotifyConfig newNotifyConfig) async {
-    await _initNotifyDatabase();
+  Future<void> _updateNotifyConfig(NotifyConfig newNotifyConfig) async {
     await _database.update(
       configTable,
       newNotifyConfig.toMap(), // 更新後の値
@@ -148,7 +147,14 @@ class NotifyDatabaseHandler {
 
   Future<void> setNotifyConfig(NotifyConfig notifyConfig) async {
     await _initNotifyDatabase();
-    await _insertNotifyConfig(notifyConfig);
+    try {
+      await _insertNotifyConfig(notifyConfig);
+    } catch (e) {
+      // エラーが UNIQUE constraint failed の場合のみ無視する
+      if (e.toString().contains("UNIQUE constraint failed")) {
+        await _updateNotifyConfig(notifyConfig);
+      }
+    }
   }
 
   Future<bool> hasNotifyFormat() async {
