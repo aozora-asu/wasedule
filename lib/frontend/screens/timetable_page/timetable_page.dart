@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,6 +24,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.read(timeTableProvider).getData(tempData);
+    ref.read(timeTableProvider).sortDataByWeekDay(tempData);
     SizeConfig().init(context);
     return Scaffold(
         body: Container(
@@ -156,13 +159,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   String currentQuaterID(){
     String result = "full_year";
     if(semesterNum == 1){
-      result = "spring_quater";
+      result = "spring_quarter";
     }else if(semesterNum == 2){
-      result = "summer_quater";
+      result = "summer_quarter";
     }else if(semesterNum == 3){
-      result = "fall_quater";
+      result = "fall_quarter";
     }else if(semesterNum == 4){
-      result = "winter_quater";
+      result = "winter_quarter";
     }
     return result;
   }
@@ -265,9 +268,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       child:ListView.builder(
         itemBuilder: (context, index) {
           Color bgColor = Colors.white;
+          Color fontColor = Colors.grey;
           if(index + 1 == DateTime.now().weekday 
             && index != 6){
-            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+            bgColor = const Color.fromRGBO(255, 166, 166, 1);
+            fontColor = Colors.blueAccent;
           }
 
           return Container(
@@ -277,7 +282,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               child: Center(
                   child: Text(
                 days.elementAt(index),
-                style: const TextStyle(color: Colors.grey),
+                style:TextStyle(color: fontColor),
               )));
         },
         itemCount: 6,
@@ -296,11 +301,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       SizedBox(height: SizeConfig.blockSizeVertical! * 2.5,),
       ListView.separated(
         itemBuilder:(context, index) {
-          Color bgColor = Colors.white;                  
+          Color bgColor = Colors.white;
+          Color fontColor = Colors.grey;            
           DateTime now = DateTime.now();
           if(returnBeginningDateTime(index+1).isBefore(now)
               && returnEndDateTime(index+1).isAfter(now)){
-            bgColor = Color.fromRGBO(255, 166, 166, 1);
+            bgColor = const Color.fromRGBO(255, 166, 166, 1);
+            fontColor = Colors.blueAccent;
           }
 
           return Container(
@@ -317,9 +324,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children:[
-                Text(returnBeginningTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
-                Text((index+1).toString(),style:TextStyle(color:Colors.grey,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
-                Text(returnEndTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
+                Text(returnBeginningTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
+                Text((index+1).toString(),style:TextStyle(color:fontColor,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
+                Text(returnEndTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
               ])
             ) 
           );
@@ -373,6 +380,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget timetableSells(int weekDay){
+    final tableData = ref.read(timeTableProvider);
     return SizedBox(
       width: SizeConfig.blockSizeHorizontal! *cellWidth, 
       child:ListView.separated(
@@ -386,22 +394,34 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         Widget cellContents = const SizedBox();
         int length = random.nextInt(11);
 
-        if(random.nextInt(100).isEven){
-          bgColor = cellBackGroundColor(length);
-          cellContents = timeTableSellsChild(
-            weekDay,index+1,length);
+        if(tableData.sortedDataByWeekDay.containsKey(weekDay)
+          && returnExistingPeriod(tableData.sortedDataByWeekDay[weekDay]).contains(index+1)){
+
+          if(tableData.sortedDataByWeekDay[weekDay]
+            .elementAt(returnIndexFromPeriod(
+              tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+            == currentQuaterID() || 
+            tableData.sortedDataByWeekDay[weekDay]
+            .elementAt(returnIndexFromPeriod(
+              tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+            == currentSemesterID()
+          ){
+            bgColor = cellBackGroundColor(length);
+            cellContents = timeTableSellsChild(
+              weekDay,index+1,length);
+          }
         }
         
-        Color lineColor = Colors.grey;
+        Color lineColor = const Color.fromARGB(255, 152, 144, 144);
         double lineWidth = 0.5;
         DateTime now = DateTime.now();
         if(returnBeginningDateTime(index+1).isBefore(now)
             && returnEndDateTime(index+1).isAfter(now)
             && now.weekday == weekDay
             && weekDay <= 6){
-          lineWidth = 2;
+          lineWidth = 3;
           lineColor = Colors.blueAccent;
-          bgColor = Color.fromRGBO(255, 166, 166, 1);
+          bgColor = const Color.fromRGBO(255, 166, 166, 1);
         }
         
 
@@ -462,36 +482,81 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
  
   Widget generateOndemandRow(){
-    int length = random.nextInt(11);
-    Color bgColor = cellBackGroundColor(length);
+    final tableData = ref.read(timeTableProvider);
+    int listLength = 0;
+    if(tableData.sortedDataByWeekDay.containsKey(7)){
+      listLength =tableData.sortedDataByWeekDay[7].length;
+    }
 
     return ListView.builder(
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      itemCount: length,
+      itemCount: listLength,
       itemBuilder: (context,index){
-       return Container(
-          height: SizeConfig.blockSizeVertical! * cellHeight,
-          width: SizeConfig.blockSizeHorizontal! *cellWidth,
-          decoration: BoxDecoration(
-            color: bgColor,
-            border: Border.all(
-              color: Colors.grey,
-              width: 0.5,
+        int length = random.nextInt(11);
+        Color bgColor = cellBackGroundColor(length);
+        return Container(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            width: SizeConfig.blockSizeHorizontal! *cellWidth,
+            decoration: BoxDecoration(
+              color: bgColor,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
             ),
-          ),
-          child:ondemandSellsChild(index,length)
-       );
+            child:ondemandSellsChild(index,length)
+        );
       });
   }
 
+  List<int> returnExistingPeriod(List<Map>target){
+    List<int> result = [];
+    for(int i = 0; i < target.length; i++){
+      result.add(target.elementAt(i)["period"]);
+    }
+    return result;
+  }
+
+  int returnIndexFromPeriod(List<Map>target,int period){
+    int result = 0;
+    for(int i = 0; i < target.length; i++){
+      if(target.elementAt(i)["period"] == period){
+        result = i;
+      }
+    }
+    return result;
+  }
 
   Widget timeTableSellsChild(int weekDay, int period, int taskLength){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "社会科学特講A";
-    String classRoom = "100-S102";
+    final timeTableData = ref.read(timeTableProvider);
+    String className = 
+      timeTableData.sortedDataByWeekDay[weekDay]
+        .elementAt(returnIndexFromPeriod(
+          timeTableData.sortedDataByWeekDay[weekDay],period))["category"];
+    String? classRoom = timeTableData.sortedDataByWeekDay[weekDay]
+        .elementAt(returnIndexFromPeriod(
+          timeTableData.sortedDataByWeekDay[weekDay],period))["classRoom"];
     
+    Widget classRoomView = const SizedBox();
+    if(classRoom != null
+      && classRoom != ""
+      && classRoom != "-"){
+      classRoomView =Container(
+        decoration: BoxDecoration(
+          color:Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(2)),
+          border: Border.all(color:grey,width: 0.5)
+      ),
+      child:
+        Text(classRoom,
+          style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
+          overflow: TextOverflow.visible,
+          maxLines: 2,
+        ));}
+
 
     return Stack(
      children:[
@@ -500,6 +565,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         child:lengthBadge(taskLength,fontSize,true)
       ),
       SizedBox(
+        width: SizeConfig.blockSizeHorizontal! *cellWidth,
         child:Column(
         mainAxisAlignment:MainAxisAlignment.start,
         children:[
@@ -511,19 +577,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             maxLines: 4,
             ),
           const Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color:Colors.white,
-              borderRadius: const BorderRadius.all(Radius.circular(2)),
-              border: Border.all(color:grey,width: 0.5)
-          ),
-          child:
-            Text(classRoom,
-              style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
-              overflow: TextOverflow.visible,
-              maxLines: 2,
-            ),
-          ),
+          classRoomView,
           const Spacer()
 
         ])
@@ -533,9 +587,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget ondemandSellsChild(int index, int taskLength){
+    final tableData = ref.read(timeTableProvider);
+    Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "学術的文章の作成";
+    String className = target["category"];
     
 
     return Stack(
@@ -627,7 +683,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
 
   //これはUI表示調整用の仮データです。
-  //データ構造これから大幅に変えちゃってもいいです。
   List<Map<String,dynamic>> tempData = [
     {"id":0,
      "classID":"",
@@ -642,10 +697,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":1,
      "classID":"",
-     "className":"未来社会を作るセキュリティ最前線",
+     "category":"未来社会を作るセキュリティ最前線",
      "weekDay":1,
      "period": 4,
-     "semester" : "spring_semester",
+     "semester" : "summer_quarter",
      "classRoom":"3-301",
      "memo" : "",
      "color" : 22354646,
@@ -653,19 +708,21 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":3,
      "classID":"",
-     "className":"経営学",
+     "category":"経営学",
      "weekDay":2,
      "period": 3,
+     "semester" : "spring_semester",
      "classRoom":"14-402",
-     "memorandom" : "",
+     "memo" : null,
      "color" : 22354646,
      "groupID" : "d34erws2"
     },
     {"id":4,
      "classID":"",
-     "className":"人間の安全保障論",
+     "category":"人間の安全保障論",
      "weekDay":2,
      "period": 5,
+     "semester" : "spring_semester",
      "classRoom":"14-502",
      "memorandom" : "",
      "color" : 22354646,
@@ -673,9 +730,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":5,
      "classID":"",
-     "className":"社会科学特講（社会デザインの基礎理論）A",
+     "category":"社会科学特講（社会デザインの基礎理論）A",
      "weekDay":3,
      "period":2,
+     "semester" : "spring_semester",
      "classRoom":"7-419",
      "memorandom" :"",
      "color" : 22354646,
@@ -683,7 +741,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":6,
      "classID":"",
-     "className":"知識社会学",
+     "semester" : "spring_semester",
+     "category":"知識社会学",
      "weekDay":3,
      "period": 3,
      "classRoom":"14-B101",
@@ -693,7 +752,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":7,
      "classID":"",
-     "className":"ゼミナールⅡ（国際経済法研究／春学期）",
+     "semester" : "spring_semester",
+     "category":"ゼミナールⅡ（国際経済法研究／春学期）",
      "weekDay":3,
      "period": 5,
      "classRoom":"14-516",
@@ -703,7 +763,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":8,
      "classID":"",
-     "className":"日本語を教える１",
+     "category":"日本語を教える１",
+     "semester" : "spring_semester",
      "weekDay":4,
      "period": 2,
      "classRoom":"22-201",
@@ -713,8 +774,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":9,
      "classID":"",
-     "className":"商業史1",
-     "weekDay": 4,
+     "category":"商業史1",
+     "semester" : "spring_semester",
+     "weekDay": 5,
      "period": 2,
      "classRoom":"",
      "memorandom" : "15-102",
@@ -723,8 +785,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":10,
      "classID":"",
-     "className":"現代政治分析(イタリア)",
-     "weekDay":4,
+     "category":"現代政治分析(イタリア)",
+     "semester" : "spring_semester",
+     "weekDay":5,
      "period": 3,
      "classRoom":"14-514",
      "memorandom" : "",
@@ -733,8 +796,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     },
     {"id":11,
      "classID":"",
-     "className":"ディスアビリティ・スタディーズ",
-     "weekDay": 7,
+     "category":"ディスアビリティ・スタディーズ",
+     "semester" : "spring_semester",
+     "weekDay": null,
      "period": null,
      "classRoom": null,
      "memorandom" : "",

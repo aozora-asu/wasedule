@@ -179,14 +179,31 @@ class _AppBarThumbNailState extends ConsumerState<AppBarThumbNail> {
  
   @override
   Widget build(BuildContext context){
+  SizeConfig().init(context);
   Widget contents = const SizedBox();
   switch(type){
     case 0: contents = datePreview();
+    break; 
     case 1: contents = taskPreview();
+    break; 
+    case 2: contents = fuck();
+    break; 
   }
 
   return PopupMenuButton(
     itemBuilder:(BuildContext context) => <PopupMenuEntry>[
+    PopupMenuItem(
+      child: ListTile(
+        leading:const Icon(Icons.do_disturb,color:MAIN_COLOR),
+        title :const Text('表示なし'),
+        onTap:(){
+          Navigator.pop(context);
+          setState(() {
+            type = 100;
+          });
+        }
+      )
+    ),
     PopupMenuItem(
       child: ListTile(
         leading:const Icon(Icons.date_range,color:MAIN_COLOR),
@@ -213,6 +230,18 @@ class _AppBarThumbNailState extends ConsumerState<AppBarThumbNail> {
     ),
     PopupMenuItem(
       child: ListTile(
+        leading:const Icon(Icons.check,color:MAIN_COLOR),
+        title :const Text('次の課題期限'),
+        onTap:(){
+          Navigator.pop(context);
+          setState(() {
+            type = 2;
+          });
+        }
+      )
+    ),
+    PopupMenuItem(
+      child: ListTile(
         leading:const Icon(Icons.directions_walk,color:MAIN_COLOR),
         title :const Text('次の教室'),
         onTap:(){
@@ -222,18 +251,33 @@ class _AppBarThumbNailState extends ConsumerState<AppBarThumbNail> {
       )
     ),
   ],
-    child:Container(
-      width:SizeConfig.blockSizeHorizontal! *20,
-      height:SizeConfig.blockSizeVertical! *5.5,
-      decoration: BoxDecoration(
-        color: BACKGROUND_COLOR,
-        borderRadius:const BorderRadius.all(Radius.circular(7.5)),
-        border: Border.all(color:PALE_MAIN_COLOR,width: 3),
-      ),
-      child: contents
-    )
+    child: frame(contents)
   );
 }
+
+  Widget frame(contents){
+
+    if (type < 100) {
+      return Container(
+        padding: EdgeInsets.symmetric(
+          vertical: SizeConfig.blockSizeVertical! * 0.25,
+          horizontal: SizeConfig.blockSizeHorizontal! * 3,
+        ),
+        decoration: BoxDecoration(
+          color: BACKGROUND_COLOR,
+          borderRadius: const BorderRadius.all(Radius.circular(7.5)),
+          border: Border.all(color: PALE_MAIN_COLOR, width: 3),
+        ),
+        child: contents,
+      );
+    } else {
+      return SizedBox(
+        height: SizeConfig.blockSizeVertical! * 4,
+        width: SizeConfig.blockSizeHorizontal! * 20,
+      );
+    }
+
+  }
 
 Widget datePreview(){
   DateTime now = DateTime.now();
@@ -273,6 +317,48 @@ Widget taskPreview(){
           )
       ),
       Text(taskLength.toString() + "件",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: SizeConfig.blockSizeVertical! *2
+          )
+      )
+    ]);
+  }
+
+  Widget fuck(){
+    if(type == 2 && ref.read(taskDataProvider).sortedDataByDTEnd.isEmpty){
+      return SizedBox(
+        height: SizeConfig.blockSizeVertical! * 4,
+        width: SizeConfig.blockSizeHorizontal! * 20,
+        child:Center(
+          child:Text("課題なし",
+            overflow: TextOverflow.clip,
+            style:TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeVertical! *1.5))
+        )
+      );
+    }else{
+      return earliestTaskPreview();
+    }
+  }
+
+  Widget earliestTaskPreview(){
+  final taskData = ref.read(taskDataProvider);
+  DateTime? earliestDtEnd
+   = DateTime.fromMillisecondsSinceEpoch(taskData.sortedDataByDTEnd.values.elementAt(0).elementAt(0)["dtEnd"]);
+  Duration remainingTime = earliestDtEnd.difference(DateTime.now());
+  String hour = remainingTime.inHours.toString();
+  String minute = (remainingTime.inMinutes %60).toString();
+
+  return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children:[
+      Text("次の期限まで",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: SizeConfig.blockSizeVertical! *1.25
+          )
+      ),
+      Text(hour +"h "+minute +"m",
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: SizeConfig.blockSizeVertical! *2
