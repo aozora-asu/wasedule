@@ -535,7 +535,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget ondemandSellsChild(int index, int taskLength){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "篠田神の単位ハント";
+    String className = "学術的文章の作成";
     
 
     return Stack(
