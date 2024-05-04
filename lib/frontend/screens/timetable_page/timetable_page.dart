@@ -357,17 +357,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Color cellBackGroundColor(int length){
     Color bgColor = Colors.white;
     switch(length){
-    case 0:bgColor = Color.fromRGBO(255, 255, 255, 0.6);
-    case 1:bgColor = Color.fromRGBO(254, 255, 232, 0.6);
-    case 2:bgColor = Color.fromRGBO(253, 255, 187, 0.6);
-    case 3:bgColor = Color.fromRGBO(255, 243, 150, 0.6);
-    case 4:bgColor = Color.fromRGBO(255, 231, 125, 0.6);
-    case 5:bgColor = Color.fromRGBO(255, 203, 138, 0.6);
-    case 6:bgColor = Color.fromRGBO(255, 184, 117, 0.6);
-    case 7:bgColor = Color.fromRGBO(255, 125, 142, 0.6);
-    case 8:bgColor = Color.fromRGBO(255, 128, 128, 0.6);
-    case 9:bgColor = Color.fromRGBO(255, 139, 170, 0.6);
-    default :bgColor = Color.fromRGBO(255, 102, 161, 0.6);
+    case 0:bgColor = Color.fromRGBO(255, 250, 240, 0.6);
+    case 1:bgColor = Color.fromRGBO(254, 240, 220, 0.6);
+    case 2:bgColor = Color.fromRGBO(253, 230, 200, 0.6);
+    case 3:bgColor = Color.fromRGBO(255, 220, 180, 0.6);
+    case 4:bgColor = Color.fromRGBO(255, 210, 160, 0.6);
+    case 5:bgColor = Color.fromRGBO(255, 200, 140, 0.6);
+    case 6:bgColor = Color.fromRGBO(255, 190, 120, 0.6);
+    case 7:bgColor = Color.fromRGBO(255, 180, 100, 0.6);
+    case 8:bgColor = Color.fromRGBO(255, 170, 80, 0.6);
+    case 9:bgColor = Color.fromRGBO(255, 160, 60, 0.6);
+    default :bgColor = Color.fromRGBO(255,150, 40, 0.6);
     }
     return bgColor;
   }

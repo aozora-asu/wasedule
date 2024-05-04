@@ -171,7 +171,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             ),
             const Icon(Icons.arrow_right, color: Colors.grey)
           ]),
-          const Divider(thickness: 0.3, height: 0.3, color: Colors.grey),
+          const Divider(thickness: 1, height: 1, color: Colors.grey),
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(

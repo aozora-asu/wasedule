@@ -37,13 +37,14 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scrollbar(
-        child: Column(children: [
-      executeDeleteButton(),
-      Expanded(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int keyIndex) {
-            String categoryName = sortedData.keys.elementAt(keyIndex);
+        child: 
+      Stack(children:[
+      Column(children: [
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int keyIndex) {
+              String categoryName = sortedData.keys.elementAt(keyIndex);
 
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * 100,
@@ -99,7 +100,10 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
           itemCount: sortedData.keys.length,
         ),
       )
-    ]));
+    ]),
+    executeDeleteButton()
+   ])
+  );
   }
 
   bool isLimitOver(
@@ -237,15 +241,8 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2), // 影の色と透明度
-                          spreadRadius: 1.5, // 影の広がり
-                          blurRadius: 1, // ぼかしの強さ
-                          offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
-                        ),
-                      ]),
-                  //width: SizeConfig.blockSizeHorizontal! *95,
+                      border: Border.all(color:Colors.grey,width: 1)
+                      ),
                   child: Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
