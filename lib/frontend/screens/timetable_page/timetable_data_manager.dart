@@ -19,6 +19,7 @@ class TimeTableData {
   bool isInit = false;
   bool isRenewed = false;
   var sortedDataByWeekDay = {};
+  int maxPeriod = 4;
 
   TimeTableData({
     List<Map<String, dynamic>> timeTableDataList = const [],
@@ -45,10 +46,14 @@ class TimeTableData {
 
   Map<int, List<Map<String, dynamic>>> sortDataByWeekDay(TDList) {
     Map<int, List<Map<String, dynamic>>> sortedData = {};
-
+    maxPeriod = 4;
     for (int i = 0; i < TDList.length; i++) {
         
         int? targetWeekDay = TDList[i]["weekDay"];
+        int period = TDList[i]["period"] ?? 0;
+        if(maxPeriod < period){
+          maxPeriod = period;
+        }
 
         if(sortedData.containsKey(targetWeekDay)) {
           sortedData[targetWeekDay]!.add(TDList.elementAt(i));
