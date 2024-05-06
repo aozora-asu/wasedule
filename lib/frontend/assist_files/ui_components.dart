@@ -11,7 +11,9 @@ Widget buttonModel(Function() onTap, Color color, String text) {
           border: Border.all(color: brighten(color, 0.6), width: 1),
           borderRadius: BorderRadius.circular(5),
         ),
-        child: Row(children: [
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           Text(text,
               style: const TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.white)),

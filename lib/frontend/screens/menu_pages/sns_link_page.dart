@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -42,6 +43,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
       body:
       Container(
        width: SizeConfig.blockSizeHorizontal! *100,
+       padding: EdgeInsets.symmetric(horizontal:SizeConfig.blockSizeHorizontal! *5,),
        child:SingleChildScrollView(
         child:Column(children:[
          const SizedBox(height:50),
@@ -49,16 +51,19 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:50),
          const Text("使い方ガイドやお問い合わせはこちら"),
          HomePageUrlLauncher(),
+         const SizedBox(height:5),
          PrivacyPolicyLauncher(),
+         const SizedBox(height:5),
          ErrorReportButton(),
          const SizedBox(height:20),
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
+         const SizedBox(height:5),
          XUrlLauncher(),
          const SizedBox(height:20),
          const Text("Waseda Moodleへのアクセスはこちらから！"),
          MoodleUrlLauncher(width:80),
-         const SizedBox(height:3)
+         const SizedBox(height:30)
         ])
       ))
       
@@ -73,18 +78,15 @@ class HomePageUrlLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(MAIN_COLOR),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
-            ),
-          child: const Text('わせジュール 公式サイト',style:TextStyle(color:Colors.white)),
-          onPressed: () {
+    return buttonModel(
+          () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://wasedule.com/",
             );
-          }
+          },
+          MAIN_COLOR,
+          "   わせジュール 公式サイト   "
         );
   }
 }
@@ -95,16 +97,13 @@ class ErrorReportButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(Colors.red),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
-            ),
-          child: const Text('お問い合わせ',style:TextStyle(color:Colors.white)),
-          onPressed: () {
-            showErrorReportDialogue(context);
-          }
-        );
+    return buttonModel(
+      () {
+        showErrorReportDialogue(context);
+      },
+      Colors.redAccent,
+      "   お問い合わせ   "
+    );
   }
 }
 class InstaUrlLauncher extends StatelessWidget {
@@ -114,18 +113,15 @@ class InstaUrlLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(Colors.pinkAccent),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
-            ),
-          child: const Text('Instagram',style:TextStyle(color:Colors.white)),
-          onPressed: () {
+    return buttonModel(
+          () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.instagram.com/wasedule/",
             );
-          }
+          },
+          Colors.pinkAccent,
+          "   Instagram   "
         );
   }
 }
@@ -137,18 +133,15 @@ class XUrlLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(Colors.lightBlue),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
-            ),
-          child: const Text('Twitter(現X)',style:TextStyle(color:Colors.white)),
-          onPressed: () {
+    return  buttonModel(
+          () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://twitter.com/wasedule",
             );
-          }
+          },
+          Colors.lightBlue,
+          "   Twitter (現 X)   "
         );
   }
 }
@@ -164,18 +157,15 @@ class MoodleUrlLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(Colors.orange),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal!*width,25))
-            ),
-          child: const Text('Waseda Moodle リンク',style:TextStyle(color:Colors.white)),
-          onPressed: () {
+    return buttonModel(
+          () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://wsdmoodle.waseda.jp/",
             );
-          }
+          },
+          Colors.orange,
+          "   Waseda Moodle リンク   "
         );
   }
 }
@@ -189,18 +179,15 @@ class PrivacyPolicyLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-          style:  ButtonStyle(
-            backgroundColor: const MaterialStatePropertyAll(ACCENT_COLOR),
-            fixedSize: MaterialStatePropertyAll(Size(SizeConfig.blockSizeHorizontal! *80,25))
-            ),
-          child: const Text('プライバシーポリシー',style:TextStyle(color:Colors.white)),
-          onPressed: () {
+    return buttonModel(
+          () {
             _urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://wasedule.com/privacy",
             );
-          }
+          },
+          ACCENT_COLOR,
+          "   プライバシーポリシー   "
         );
   }
 }

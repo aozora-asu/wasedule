@@ -271,7 +271,7 @@ class _IntroLastPageState extends State<IntroLastPage> {
         pref.setBool('hasCompletedIntro', true);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) =>  AppPage(initIndex: 2),
+            builder: (_) =>  AppPage(initIndex: 3),
           ),
         );
       },

@@ -271,8 +271,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Color fontColor = Colors.grey;
           if(index + 1 == DateTime.now().weekday 
             && index != 6){
-            bgColor = const Color.fromRGBO(255, 166, 166, 1);
-            fontColor = Colors.blueAccent;
+            bgColor = Colors.blueAccent;
+            fontColor = Colors.white;
           }
 
           return Container(
@@ -306,8 +306,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           DateTime now = DateTime.now();
           if(returnBeginningDateTime(index+1).isBefore(now)
               && returnEndDateTime(index+1).isAfter(now)){
-            bgColor = const Color.fromRGBO(255, 166, 166, 1);
-            fontColor = Colors.blueAccent;
+            bgColor = Colors.blueAccent;
+            fontColor = Colors.white;
           }
 
           return Container(
@@ -364,17 +364,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Color cellBackGroundColor(int length){
     Color bgColor = Colors.white;
     switch(length){
-    case 0:bgColor = Color.fromRGBO(255, 250, 240, 0.6);
-    case 1:bgColor = Color.fromRGBO(254, 240, 220, 0.6);
-    case 2:bgColor = Color.fromRGBO(253, 230, 200, 0.6);
-    case 3:bgColor = Color.fromRGBO(255, 220, 180, 0.6);
-    case 4:bgColor = Color.fromRGBO(255, 210, 160, 0.6);
-    case 5:bgColor = Color.fromRGBO(255, 200, 140, 0.6);
-    case 6:bgColor = Color.fromRGBO(255, 190, 120, 0.6);
-    case 7:bgColor = Color.fromRGBO(255, 180, 100, 0.6);
-    case 8:bgColor = Color.fromRGBO(255, 170, 80, 0.6);
-    case 9:bgColor = Color.fromRGBO(255, 160, 60, 0.6);
-    default :bgColor = Color.fromRGBO(255,150, 40, 0.6);
+    case 0:bgColor = Color.fromRGBO(100, 150, 255, 0.6);
+    case 1:bgColor = Color.fromRGBO(255, 190, 180, 0.6);
+    case 2:bgColor = Color.fromRGBO(255, 180, 160, 0.6);
+    case 3:bgColor = Color.fromRGBO(255, 170, 140, 0.6);
+    case 4:bgColor = Color.fromRGBO(255, 160, 120, 0.6);
+    case 5:bgColor = Color.fromRGBO(255, 150, 100, 0.6);
+    case 6:bgColor = Color.fromRGBO(255, 140, 80, 0.6);
+    case 7:bgColor = Color.fromRGBO(255, 130, 60, 0.6);
+    case 8:bgColor = Color.fromRGBO(255, 120, 40, 0.6);
+    case 9:bgColor = Color.fromRGBO(255, 110, 20, 0.6);
+    default :bgColor = Color.fromRGBO(255,100, 0, 0.6);
     }
     return bgColor;
   }
@@ -419,9 +419,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             && returnEndDateTime(index+1).isAfter(now)
             && now.weekday == weekDay
             && weekDay <= 6){
-          lineWidth = 3;
+          lineWidth = 4;
           lineColor = Colors.blueAccent;
-          bgColor = const Color.fromRGBO(255, 166, 166, 1);
         }
         
 
@@ -582,8 +581,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
         ])
       )
-    ])
-    ;
+    ]);
   }
 
   Widget ondemandSellsChild(int index, int taskLength){

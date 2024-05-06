@@ -86,9 +86,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
-    ConfigDataLoader().initConfig(ref);
-      ref.read(calendarDataProvider).getConfigData(
-                ConfigDataLoader().getConfigDataSource());
+
 
     Widget dividerModel = const VerticalDivider(
       width: 4,
@@ -221,6 +219,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             } else if (snapshot.hasData) {
               //DBから何らかのデータが返ってきた場合
               if (ref.watch(taskDataProvider).isInit) {
+
                 ref.read(taskDataProvider).isInit = false;
               }
 
@@ -245,8 +244,12 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
             } else {
+
               //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
+                ConfigDataLoader().initConfig(ref);
+                  ref.read(calendarDataProvider).getConfigData(
+                            ConfigDataLoader().getConfigDataSource());
                 displayDB();
                 ref.read(taskDataProvider).isRenewed = false;
               }
@@ -519,19 +522,14 @@ Widget listLengthView(int target, double fontSize) {
     Widget dividerModel = const Divider(height:1);
     int _height = (SizeConfig.blockSizeVertical! *100).round();
 
-
-    Widget miniSquare = Container(
-      height: SizeConfig.blockSizeHorizontal! *2,
-      width: SizeConfig.blockSizeHorizontal! *2,
-      color:MAIN_COLOR
-    );
-
     showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return Stack(
+        return
+        Stack(children:[
+        Stack(
          alignment: Alignment.bottomCenter,
          children:[ 
           Container(
@@ -549,65 +547,8 @@ Widget listLengthView(int target, double fontSize) {
                 child: Scrollbar(
               child: Column(
                 children: [
-                  Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                            spreadRadius: 2, // 影の広がり
-                            blurRadius: 4, // 影のぼかし
-                            offset: const Offset(0, 2), // 影の方向（横、縦）
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      height: SizeConfig.blockSizeHorizontal! * 13,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 92,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                73.5),
-                                    child: Text(
-                                      targetData["summary"] ?? "(詳細なし)",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  5,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  Text(
-                                    "  の詳細",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
-                        ],
-                      )),
-                      dividerModel,
                   SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 1,
+                    height: SizeConfig.blockSizeHorizontal! * 15,
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 15, right: 15),
@@ -799,8 +740,65 @@ Widget listLengthView(int target, double fontSize) {
             )
           )
         ),
-        menuBar(),
-        ]);
+          menuBar(),
+        ]),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5), // 影の色と透明度
+                spreadRadius: 2, // 影の広がり
+                blurRadius: 4, // 影のぼかし
+                offset: const Offset(0, 2), // 影の方向（横、縦）
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          height: SizeConfig.blockSizeHorizontal! * 13,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 4,
+              ),
+              SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 92,
+                  child: Row(
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(
+                            maxWidth:
+                                SizeConfig.blockSizeHorizontal! *
+                                    73.5),
+                        child: Text(
+                          targetData["summary"] ?? "(詳細なし)",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize:
+                                  SizeConfig.blockSizeHorizontal! *
+                                      5,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Text(
+                        "  の詳細",
+                        style: TextStyle(
+                            fontSize:
+                                SizeConfig.blockSizeHorizontal! * 5,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  )),
+              SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
+            ],
+          )),
+        ]) ;
       },
     );
   }

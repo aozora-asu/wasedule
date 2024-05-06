@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 
 class NoTaskPage extends StatefulWidget {
@@ -25,21 +26,24 @@ class _NoTaskPageState extends State<NoTaskPage> {
           const SizedBox(height:15),
           urlPageButton(),
           const Spacer(),
+          const Spacer(),
+          const Spacer(),
         ])
       )
     );
   }
 
   Widget urlPageButton(){
-    return ElevatedButton(
-      style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-      onPressed:(){
+    return buttonModelWithChild(
+      (){
           Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => UrlRegisterPage()),
         );
       },
-      child:const Row(children:[
+      MAIN_COLOR,
+      const Row(children:[
+        SizedBox(width:20),
         Icon(Icons.add_link_rounded,color: Colors.white),
         SizedBox(width:20),
         Text("Moodle URL登録",style:TextStyle(color:Colors.white,fontWeight:FontWeight.bold))
