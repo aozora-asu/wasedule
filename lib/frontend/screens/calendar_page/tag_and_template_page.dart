@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -419,9 +419,10 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                     decoration: const InputDecoration(
                         labelText: 'テンプレート予定名', border: OutlineInputBorder()),
                   ),
+                  const SizedBox(height:5),
                   Row(children: [
-                    ElevatedButton(
-                        onPressed: ()async {
+                    buttonModel(
+                        ()async {
                             DateTime now = DateTime.now();
                             await DatePicker.showTimePicker(context,
                               showTitleActions: true,
@@ -435,17 +436,14 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                               locale: LocaleType.jp
                             );
                         },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("+ 開始時刻",
-                            style: TextStyle(color: Colors.white))),
+                        ACCENT_COLOR,
+                        "  + 開始時刻 "),
                     timeInputPreview(provider.timeStartController.text)
                   ]),
+                  const SizedBox(height:5),
                   Row(children: [
-                    ElevatedButton(
-                        onPressed: ()async {
+                    buttonModel(
+                        ()async {
                             DateTime now = DateTime.now();
                             await DatePicker.showTimePicker(context,
                               showTitleActions: true,
@@ -459,37 +457,29 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                               locale: LocaleType.jp
                             );
                         },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("+ 終了時刻",
-                            style: TextStyle(color: Colors.white))),
+                        ACCENT_COLOR,
+                        "  + 終了時刻 "),
                     timeInputPreview(provider.timeEndController.text)
                   ]),
+                  const SizedBox(height:5),
                   Row(children: [
-                    ElevatedButton(
-                        onPressed: () {
+                    buttonModel(
+                        () {
                           showTagDialogue(ref, context, setState);
                         },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                        ),
-                        child: const Text("+    タグ     ",
-                            style: TextStyle(color: Colors.white))),
+                        ACCENT_COLOR,
+                        "  +    タグ      "),
                     timeInputPreview(
                         returnTagData(provider.tagController.text, ref))
                   ])
                 ]);
               },
             ),
+             const SizedBox(height:10),
             SizedBox(
               width: 500,
-              child: ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                onPressed: () async {
+              child: buttonModel(
+                () async {
                   Map<String, dynamic> newMap = {};
                   newMap["subject"] = titlecontroller.text;
                   newMap["startTime"] = provider.timeStartController.text;
@@ -510,7 +500,8 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   setState(() {});
                   Navigator.pop(context);
                 },
-                  child: const Text('変更', style: TextStyle(color: Colors.white)),
+                MAIN_COLOR,
+                '      変更      ',
                 ),
             ),
           ],
@@ -783,6 +774,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor = isBeit ? ACCENT_COLOR : Colors.grey;
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -801,30 +793,21 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
             ),
             const SizedBox(height: 5),
             Row(children: [
-              ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
-                onPressed: () {
+              buttonModel(
+                () {
                   colorPickerDialogue();
                 },
-                child: const Text('  色を選択 ',
-                    style: TextStyle(color: Colors.white)),
-              ),
+                ACCENT_COLOR,
+                '  色を選択  '),
               const SizedBox(width: 10),
               Expanded(child: Container(height: 30, color: tagColor))
             ]),
+            const SizedBox(height: 10),
             Row(children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  // ボタンの背景色を条件に応じて変更する
-                  backgroundColor: isBeit ? ACCENT_COLOR : Colors.grey,
-                  // その他のスタイル設定
-                  textStyle: const TextStyle(color: Colors.white),
-                  // 他のスタイルプロパティを設定する
-                ),
-                onPressed: () {},
-                child:
-                    const Text('アルバイト', style: TextStyle(color: Colors.white)),
+              buttonModel(
+                () {},
+                bgColor,
+                'アルバイト',
               ),
               const SizedBox(width: 10),
               Expanded(child: wageField())
@@ -832,10 +815,8 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
             const SizedBox(height: 10),
             SizedBox(
               width: 500,
-              child: ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                onPressed: () async {
+              child: buttonModel(
+                () async {
                   if (feeController.text == "") {
                     feeController.text = "0";
                   }
@@ -848,10 +829,8 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
                     "color": colorToInt(tagColor),
                     "isBeit": boolToInt(isBeit),
                     "wage": int.parse(wageController.text),
-                    "fee": int.parse(feeController.text)
-
-                    //★ Tagの編集ダイアログ。編集前の値をそのまま渡します。
-                    //"tagId" : widget.tagData["tagId"],
+                    "fee": int.parse(feeController.text),
+                    "tagId" : widget.tagData["tagId"],
                   });
                   ref.read(scheduleFormProvider).clearContents();
                   ref.read(taskDataProvider).isRenewed = true;
@@ -863,7 +842,8 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
                   widget.setosute(() {});
                   Navigator.pop(context);
                 },
-                child: const Text('変更', style: TextStyle(color: Colors.white)),
+                MAIN_COLOR,
+                '      変更      ',
               ),
             )
           ],
@@ -1089,20 +1069,17 @@ Future<String> showTagDialogue(
                     shrinkWrap: true,
                     itemCount: tagMap.length,
                   )),
-              ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Colors.blueAccent),
-                    minimumSize: MaterialStatePropertyAll(Size(1000, 35))),
-                onPressed: () {
+              const SizedBox(height:15),
+              buttonModel(
+                () {
                   setState(() {
                     ref.read(scheduleFormProvider).tagController.text = "";
                   });
                   result = "";
                   Navigator.pop(context);
                 },
-                child: const Text(" - タグを外す",
-                    style: TextStyle(color: Colors.white)),
+                Colors.blueAccent,
+                " - タグを外す",
               ),
             ]),
           ],

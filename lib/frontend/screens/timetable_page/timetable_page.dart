@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,7 +52,26 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             ],
           ),
         ),
-      )
+      ),
+      floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
+          child: Row(children:[
+            const Spacer(),
+            FloatingActionButton(
+              onPressed:(){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CourseAddPage();
+                 });
+              },
+              backgroundColor: ACCENT_COLOR,
+              child:const Icon(Icons.add,color:Colors.white)
+            ),
+            const SizedBox(width: 10),
+            //timetableShareButton(context),
+          ])
+        ),
     );
   }
 
@@ -73,7 +99,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   
 
   void increasePgNumber() {
-    if(semesterNum == 3){
+    if(semesterNum == 3 || semesterNum == 4){
       thisYear += 1;  
       semesterNum = 1;
     }else{
@@ -85,7 +111,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   void decreasePgNumber() {
-    if(semesterNum == 1){
+    if(semesterNum == 1 || semesterNum == 2){
       thisYear -= 1;  
       semesterNum = 3;
     }else{
@@ -96,17 +122,24 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     });
   }
 
-  Widget changeQuaterbutton(){
+  Widget changeQuaterbutton(int type){
+    int buttonSemester = 0;
+    if(type == 1){
+      buttonSemester = button1Semester();
+    }else{
+      buttonSemester = button2Semester();
+    }
+
     String quaterName = "";
-    switch(semesterNum){
-      case 1:quaterName = " 春クォーター ";
-      case 2:quaterName = " 夏クォーター ";
-      case 3:quaterName = " 秋クォーター ";
-      case 4:quaterName = " 冬クォーター ";
+    switch(buttonSemester){
+      case 1:quaterName = "   春   ";
+      case 2:quaterName = "   夏   ";
+      case 3:quaterName = "   秋   ";
+      case 4:quaterName = "   冬   ";
     }
 
     Color quaterColor = Colors.white;
-    switch(semesterNum){
+    switch(buttonSemester){
       case 1:quaterColor = const Color.fromARGB(255, 255, 159, 191);
       case 2:quaterColor = Colors.blueAccent;
       case 3:quaterColor = const Color.fromARGB(255, 231, 85, 0);
@@ -117,7 +150,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       (){
         switchSemester();
       },
-      quaterColor,
+      buttonColor(buttonSemester,quaterColor),
       quaterName);
   }
 
@@ -141,6 +174,38 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
   }
 
+  int button1Semester(){
+    if(semesterNum == 1){
+        return 1;
+    }else if(semesterNum == 2){
+        return 1;
+    } else if(semesterNum == 3){
+        return 3;
+    }else{
+       return 3;
+    }
+  }
+
+  int button2Semester(){
+    if(semesterNum == 1){
+        return 2;
+    }else if(semesterNum == 2){
+        return 2;
+    } else if(semesterNum == 3){
+        return 4;
+    }else{
+       return 4;
+    }
+  }
+
+  Color buttonColor(int buttonSemester,Color color){
+    if(semesterNum == buttonSemester){
+      return color;
+    }else{
+      return Colors.grey[350]!;
+    }
+  }
+
   String semesterText(){
     String result = "年  春学期";
     if(semesterNum == 2){
@@ -156,13 +221,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   String currentQuaterID(){
     String result = "full_year";
     if(semesterNum == 1){
-      result = "spring_quater";
+      result = "spring_quarter";
     }else if(semesterNum == 2){
-      result = "summer_quater";
+      result = "summer_quarter";
     }else if(semesterNum == 3){
-      result = "fall_quater";
+      result = "fall_quarter";
     }else if(semesterNum == 4){
-      result = "winter_quater";
+      result = "winter_quarter";
     }
     return result;
   }
@@ -215,9 +280,80 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               icon: const Icon(Icons.arrow_forward_ios),
               iconSize: 20),
           const Spacer(),
-          changeQuaterbutton(),
+          changeQuaterbutton(1),
+          changeQuaterbutton(2),
           const Spacer(),
           ]),
+          FutureBuilder(
+            //＠こいつは仮です、ここを時間割DB呼び出しに置き換え
+            future: ScheduleDatabaseHelper().getSchedule(DateTime(2024,5,6,)),
+            builder:((context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return timeTableBody();
+              }else if (snapshot.hasError) {
+                return const SizedBox();
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                ref.read(timeTableProvider).getData(tempData);
+                ref.read(timeTableProvider).sortDataByWeekDay(tempData);
+                return timeTableBody();
+              }else{
+                return noDataScreen();
+              }
+            }
+          )
+        )
+      ])
+    );
+  }
+
+  Widget noDataScreen(){
+    return SizedBox(
+      height: SizeConfig.blockSizeVertical! *80,
+      width: SizeConfig.blockSizeHorizontal! *85,
+      child: Center(child:
+        Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children:[
+         Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
+         const SizedBox(height:20),
+         Text("時間割データはまだありません。",
+          style:TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *5,
+            fontWeight: FontWeight.bold
+          )),
+        const SizedBox(height:15),
+        const Row(
+         mainAxisAlignment: MainAxisAlignment.center,
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children:[
+          Icon(Icons.school,color:MAIN_COLOR),
+          Text(" Moodle",
+           style:TextStyle(
+             color:MAIN_COLOR,
+             fontWeight: FontWeight.bold
+           )),
+           Expanded(child:Text(" ページから、時間割データを自動作成しましょう！",
+             overflow: TextOverflow.clip,))
+        ]),
+        const Icon(
+          Icons.keyboard_double_arrow_right,
+          color:MAIN_COLOR,
+          size: 150,),
+      ]))
+    );
+  }
+
+  Widget loadingScreen(){
+    return SizedBox(
+      height: SizeConfig.blockSizeVertical! *80,
+      width: SizeConfig.blockSizeHorizontal! *95,
+      child:const Center(
+        child:CircularProgressIndicator()
+      )
+    );
+  }
+
+  Widget timeTableBody(){
+    return Column(children:[
           Row(children:[
             Expanded(child:generatePrirodColumn()),
             Column(children:[
@@ -251,8 +387,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               child:generateOndemandRow()),
           const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
           SizedBox(height: SizeConfig.blockSizeVertical! *3,)
-      ])
-    );
+    ]);
   }
 
   double cellWidth = 14.5;
@@ -265,9 +400,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       child:ListView.builder(
         itemBuilder: (context, index) {
           Color bgColor = Colors.white;
+          Color fontColor = Colors.grey;
           if(index + 1 == DateTime.now().weekday 
             && index != 6){
-            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+            bgColor = Colors.blueAccent;
+            fontColor = Colors.white;
           }
 
           return Container(
@@ -277,7 +414,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               child: Center(
                   child: Text(
                 days.elementAt(index),
-                style: const TextStyle(color: Colors.grey),
+                style:TextStyle(color: fontColor),
               )));
         },
         itemCount: 6,
@@ -296,11 +433,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       SizedBox(height: SizeConfig.blockSizeVertical! * 2.5,),
       ListView.separated(
         itemBuilder:(context, index) {
-          Color bgColor = Colors.white;                  
+          Color bgColor = Colors.white;
+          Color fontColor = Colors.grey;            
           DateTime now = DateTime.now();
           if(returnBeginningDateTime(index+1).isBefore(now)
               && returnEndDateTime(index+1).isAfter(now)){
-            bgColor = Color.fromRGBO(255, 166, 166, 1);
+            bgColor = Colors.blueAccent;
+            fontColor = Colors.white;
           }
 
           return Container(
@@ -317,9 +456,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children:[
-                Text(returnBeginningTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
-                Text((index+1).toString(),style:TextStyle(color:Colors.grey,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
-                Text(returnEndTime(index+1),style:TextStyle(color:grey,fontSize:fontSize),),
+                Text(returnBeginningTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
+                Text((index+1).toString(),style:TextStyle(color:fontColor,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
+                Text(returnEndTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
               ])
             ) 
           );
@@ -347,7 +486,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           }
           return resultinging;
         },
-        itemCount: 7,
+        itemCount: ref.read(timeTableProvider).maxPeriod,
         shrinkWrap: true,
         physics:const NeverScrollableScrollPhysics(),
         )
@@ -357,51 +496,80 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Color cellBackGroundColor(int length){
     Color bgColor = Colors.white;
     switch(length){
-    case 0:bgColor = Color.fromRGBO(255, 255, 255, 0.6);
-    case 1:bgColor = Color.fromRGBO(254, 255, 232, 0.6);
-    case 2:bgColor = Color.fromRGBO(253, 255, 187, 0.6);
-    case 3:bgColor = Color.fromRGBO(255, 243, 150, 0.6);
-    case 4:bgColor = Color.fromRGBO(255, 231, 125, 0.6);
-    case 5:bgColor = Color.fromRGBO(255, 203, 138, 0.6);
-    case 6:bgColor = Color.fromRGBO(255, 184, 117, 0.6);
-    case 7:bgColor = Color.fromRGBO(255, 125, 142, 0.6);
-    case 8:bgColor = Color.fromRGBO(255, 128, 128, 0.6);
-    case 9:bgColor = Color.fromRGBO(255, 139, 170, 0.6);
-    default :bgColor = Color.fromRGBO(255, 102, 161, 0.6);
+    case 0:bgColor = Color.fromRGBO(100, 150, 255, 0.6);
+    case 1:bgColor = Color.fromRGBO(255, 190, 180, 0.6);
+    case 2:bgColor = Color.fromRGBO(255, 180, 160, 0.6);
+    case 3:bgColor = Color.fromRGBO(255, 170, 140, 0.6);
+    case 4:bgColor = Color.fromRGBO(255, 160, 120, 0.6);
+    case 5:bgColor = Color.fromRGBO(255, 150, 100, 0.6);
+    case 6:bgColor = Color.fromRGBO(255, 140, 80, 0.6);
+    case 7:bgColor = Color.fromRGBO(255, 130, 60, 0.6);
+    case 8:bgColor = Color.fromRGBO(255, 120, 40, 0.6);
+    case 9:bgColor = Color.fromRGBO(255, 110, 20, 0.6);
+    default :bgColor = Color.fromRGBO(255,100, 0, 0.6);
     }
     return bgColor;
   }
 
   Widget timetableSells(int weekDay){
+    final tableData = ref.read(timeTableProvider);
     return SizedBox(
       width: SizeConfig.blockSizeHorizontal! *cellWidth, 
       child:ListView.separated(
       shrinkWrap: true,
-      itemCount: 7,
+      itemCount: ref.read(timeTableProvider).maxPeriod,
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemBuilder: (
       (context, index) {
         Color bgColor = Colors.white;
-        Widget cellContents = const SizedBox();
+        Widget cellContents = GestureDetector(
+          onTap:(){
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CourseAddPage(
+                  year:thisYear,
+                  semester:currentSemesterID(),
+                  weekDay:weekDay,
+                  period:index+1
+                );
+            });
+          }
+        );
         int length = random.nextInt(11);
 
-        if(random.nextInt(100).isEven){
-          bgColor = cellBackGroundColor(length);
-          cellContents = timeTableSellsChild(
-            weekDay,index+1,length);
+        if(tableData.sortedDataByWeekDay.containsKey(weekDay)
+          && returnExistingPeriod(tableData.sortedDataByWeekDay[weekDay]).contains(index+1)
+          &&tableData.sortedDataByWeekDay[weekDay]
+            .elementAt(returnIndexFromPeriod(
+              tableData.sortedDataByWeekDay[weekDay],index + 1))["year"] 
+            == thisYear){
+
+            if(tableData.sortedDataByWeekDay[weekDay]
+              .elementAt(returnIndexFromPeriod(
+                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+              == currentQuaterID() || 
+              tableData.sortedDataByWeekDay[weekDay]
+              .elementAt(returnIndexFromPeriod(
+                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+              == currentSemesterID()
+            ){
+              bgColor = cellBackGroundColor(length);
+              cellContents = timeTableSellsChild(
+                weekDay,index+1,length);
+            }
         }
         
-        Color lineColor = Colors.grey;
+        Color lineColor = const Color.fromARGB(255, 152, 144, 144);
         double lineWidth = 0.5;
         DateTime now = DateTime.now();
         if(returnBeginningDateTime(index+1).isBefore(now)
             && returnEndDateTime(index+1).isAfter(now)
             && now.weekday == weekDay
             && weekDay <= 6){
-          lineWidth = 2;
+          lineWidth = 4;
           lineColor = Colors.blueAccent;
-          bgColor = Color.fromRGBO(255, 166, 166, 1);
         }
         
 
@@ -462,36 +630,96 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
  
   Widget generateOndemandRow(){
-    int length = random.nextInt(11);
-    Color bgColor = cellBackGroundColor(length);
+    final tableData = ref.read(timeTableProvider);
+    int listLength = 0;
+    if(tableData.sortedDataByWeekDay.containsKey(7)){
+      listLength =tableData.sortedDataByWeekDay[7].length;
+    }
 
     return ListView.builder(
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      itemCount: length,
+      itemCount: listLength,
       itemBuilder: (context,index){
-       return Container(
-          height: SizeConfig.blockSizeVertical! * cellHeight,
-          width: SizeConfig.blockSizeHorizontal! *cellWidth,
-          decoration: BoxDecoration(
-            color: bgColor,
-            border: Border.all(
-              color: Colors.grey,
-              width: 0.5,
+        int length = random.nextInt(11);
+        Color bgColor = cellBackGroundColor(length);
+        Widget child = const SizedBox();
+        if(tableData.sortedDataByWeekDay[7]
+            .elementAt(index)["semester"] 
+            == currentQuaterID()
+          || tableData.sortedDataByWeekDay[7]
+            .elementAt(index)["semester"] 
+            == currentSemesterID()
+          &&tableData.sortedDataByWeekDay[7]
+            .elementAt(index)["year"] 
+            == thisYear){
+          child =Container(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            width: SizeConfig.blockSizeHorizontal! *cellWidth,
+            decoration: BoxDecoration(
+              color: bgColor,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
             ),
-          ),
-          child:ondemandSellsChild(index,length)
-       );
+            child:ondemandSellsChild(index,length)
+        ); 
+        }
+        return child;
       });
   }
 
+  List<int> returnExistingPeriod(List<Map>target){
+    List<int> result = [];
+    for(int i = 0; i < target.length; i++){
+      result.add(target.elementAt(i)["period"]);
+    }
+    return result;
+  }
+
+  int returnIndexFromPeriod(List<Map>target,int period){
+    int result = 0;
+    for(int i = 0; i < target.length; i++){
+      if(target.elementAt(i)["period"] == period){
+        result = i;
+      }
+    }
+    return result;
+  }
 
   Widget timeTableSellsChild(int weekDay, int period, int taskLength){
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "社会科学特講A";
-    String classRoom = "100-S102";
+    final timeTableData = ref.read(timeTableProvider);
+    Map targetData = timeTableData.sortedDataByWeekDay[weekDay]
+        .elementAt(returnIndexFromPeriod(
+          timeTableData.sortedDataByWeekDay[weekDay],period));
+    String className = 
+      timeTableData.sortedDataByWeekDay[weekDay]
+        .elementAt(returnIndexFromPeriod(
+          timeTableData.sortedDataByWeekDay[weekDay],period))["courseName"];
+    String? classRoom = timeTableData.sortedDataByWeekDay[weekDay]
+        .elementAt(returnIndexFromPeriod(
+          timeTableData.sortedDataByWeekDay[weekDay],period))["classRoom"];
     
+    Widget classRoomView = const SizedBox();
+    if(classRoom != null
+      && classRoom != ""
+      && classRoom != "-"){
+      classRoomView =Container(
+        decoration: BoxDecoration(
+          color:Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(2)),
+          border: Border.all(color:grey,width: 0.5)
+      ),
+      child:
+        Text(classRoom,
+          style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
+          overflow: TextOverflow.visible,
+          maxLines: 2,
+        ));}
+
 
     return Stack(
      children:[
@@ -500,66 +728,74 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         child:lengthBadge(taskLength,fontSize,true)
       ),
       SizedBox(
-        child:Column(
-        mainAxisAlignment:MainAxisAlignment.start,
-        children:[
-          SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
-          const Spacer(),
+        width: SizeConfig.blockSizeHorizontal! *cellWidth,
+        child: InkWell(
+          onTap:(){
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CoursePreview(target: targetData);
+            });
+          },
+          child:Column(
+          mainAxisAlignment:MainAxisAlignment.start,
+          children:[
+            SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
+            const Spacer(),
 
-          Text(className,
-            style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
-            maxLines: 4,
-            ),
-          const Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color:Colors.white,
-              borderRadius: const BorderRadius.all(Radius.circular(2)),
-              border: Border.all(color:grey,width: 0.5)
-          ),
-          child:
-            Text(classRoom,
-              style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
-              overflow: TextOverflow.visible,
-              maxLines: 2,
-            ),
-          ),
-          const Spacer()
+            Text(className,
+              style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
+              maxLines: 4,
+              ),
+            const Spacer(),
+            classRoomView,
+            const Spacer()
 
-        ])
+          ])
+        )
+        
       )
-    ])
-    ;
+    ]);
   }
 
   Widget ondemandSellsChild(int index, int taskLength){
+    final tableData = ref.read(timeTableProvider);
+    Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
-    String className = "篠田神の単位ハント";
+    String className = target["courseName"];
     
 
-    return Stack(
-     children:[
-      Align(
-        alignment:const Alignment(-1,-1),
-        child:lengthBadge(taskLength,fontSize,true)
-      ),
-      SizedBox(
-        child:Column(
-        mainAxisAlignment:MainAxisAlignment.start,
-        children:[
-          SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
-          const Spacer(),
+    return GestureDetector(
+      onTap:() {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return OndemandPreview(target:target);
+        });
+      },
+      child:Stack(
+      children:[
+        Align(
+          alignment:const Alignment(-1,-1),
+          child:lengthBadge(taskLength,fontSize,true)
+        ),
+        SizedBox(
+          child:Column(
+          mainAxisAlignment:MainAxisAlignment.start,
+          children:[
+            SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
+            const Spacer(),
 
-          Text(className,
-            style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
-            maxLines: 4,
-            ),
-          const Spacer(),
-        ])
-      )
-    ])
-    ;
+            Text(className,
+              style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
+              maxLines: 4,
+              ),
+            const Spacer(),
+          ])
+        )
+      ])
+    );
   }
 
   AssetImage tableBackGroundImage() {
@@ -627,119 +863,162 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
 
   //これはUI表示調整用の仮データです。
-  //データ構造これから大幅に変えちゃってもいいです。
   List<Map<String,dynamic>> tempData = [
     {"id":0,
      "classID":"",
-     "category":"経営学",
+     "courseName":"経営学",
      "weekDay":1,
      "period": 2,
      "semester" : "spring_semester",
      "classRoom":"14-402",
      "memo" : null,
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":1,
      "classID":"",
-     "className":"未来社会を作るセキュリティ最前線",
+     "courseName":"未来社会を作るセキュリティ最前線",
      "weekDay":1,
      "period": 4,
-     "semester" : "spring_semester",
+     "semester" : "summer_quarter",
      "classRoom":"3-301",
      "memo" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":3,
      "classID":"",
-     "className":"経営学",
+     "courseName":"経営学",
      "weekDay":2,
      "period": 3,
+     "semester" : "spring_semester",
      "classRoom":"14-402",
-     "memorandom" : "",
+     "memo" : null,
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":4,
      "classID":"",
-     "className":"人間の安全保障論",
+     "courseName":"人間の安全保障論",
      "weekDay":2,
      "period": 5,
+     "semester" : "spring_semester",
      "classRoom":"14-502",
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":5,
      "classID":"",
-     "className":"社会科学特講（社会デザインの基礎理論）A",
+     "courseName":"社会科学特講（社会デザインの基礎理論）A",
      "weekDay":3,
      "period":2,
+     "semester" : "spring_semester",
      "classRoom":"7-419",
      "memorandom" :"",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
+    },
+    {"id":15,
+     "classID":"",
+     "courseName":"全く同じ授業だよ",
+     "weekDay":3,
+     "period":2,
+     "semester" : "spring_semester",
+     "classRoom":"7-419",
+     "memorandom" :"",
+     "color" : 22354646,
+     "groupID" : "d34erws2",
+     "year" : 2024
+    },
+    {"id":16,
+     "classID":"",
+     "courseName":"全く同じ授業だよ",
+     "weekDay":3,
+     "period":2,
+     "semester" : "spring_semester",
+     "classRoom":"7-419",
+     "memorandom" :"",
+     "color" : 22354646,
+     "groupID" : "d34erws2",
+     "year" : 2025
     },
     {"id":6,
      "classID":"",
-     "className":"知識社会学",
+     "semester" : "spring_semester",
+     "courseName":"知識社会学",
      "weekDay":3,
      "period": 3,
      "classRoom":"14-B101",
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":7,
      "classID":"",
-     "className":"ゼミナールⅡ（国際経済法研究／春学期）",
+     "semester" : "spring_semester",
+     "courseName":"ゼミナールⅡ（国際経済法研究／春学期）",
      "weekDay":3,
      "period": 5,
      "classRoom":"14-516",
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":8,
      "classID":"",
-     "className":"日本語を教える１",
+     "courseName":"日本語を教える１",
+     "semester" : "spring_semester",
      "weekDay":4,
      "period": 2,
      "classRoom":"22-201",
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":9,
      "classID":"",
-     "className":"商業史1",
-     "weekDay": 4,
+     "courseName":"商業史1",
+     "semester" : "spring_semester",
+     "weekDay": 5,
      "period": 2,
      "classRoom":"",
      "memorandom" : "15-102",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":10,
      "classID":"",
-     "className":"現代政治分析(イタリア)",
-     "weekDay":4,
+     "courseName":"現代政治分析(イタリア)",
+     "semester" : "spring_semester",
+     "weekDay":5,
      "period": 3,
      "classRoom":"14-514",
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
     {"id":11,
      "classID":"",
-     "className":"ディスアビリティ・スタディーズ",
-     "weekDay": 7,
+     "courseName":"ディスアビリティ・スタディーズ",
+     "semester" : "spring_semester",
+     "weekDay": null,
      "period": null,
      "classRoom": null,
      "memorandom" : "",
      "color" : 22354646,
-     "groupID" : "d34erws2"
+     "groupID" : "d34erws2",
+     "year" : 2024
     },
   ];
 

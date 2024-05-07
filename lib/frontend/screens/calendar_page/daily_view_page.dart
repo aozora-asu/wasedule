@@ -119,7 +119,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           return SingleChildScrollView(
           reverse: true,
           child:  Padding(
-          padding: EdgeInsets.only(bottom: bottomSpace),
+          padding: EdgeInsets.only(bottom: bottomSpace/2),
             child: ConstrainedBox(
                   constraints: BoxConstraints(
                       minHeight: viewportConstraints.maxHeight,

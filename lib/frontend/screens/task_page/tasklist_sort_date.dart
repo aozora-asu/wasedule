@@ -35,8 +35,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scrollbar(
-        child: Column(children: [
-      executeDeleteButton(),
+      child:Stack(children:[
+      Column(children: [
+
       Expanded(
         child: ListView.builder(
 
@@ -93,7 +94,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           itemCount: sortedData.keys.length,
         ),
       )
-    ]));
+    ]),
+    executeDeleteButton()
+    ])
+    );
   }
 
   bool isLimitOver(
@@ -345,14 +349,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2), // 影の色と透明度
-                          spreadRadius: 1.5, // 影の広がり
-                          blurRadius: 1, // ぼかしの強さ
-                          offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
-                        ),
-                      ]),
+                      border: Border.all(color:Colors.grey,width: 1)
+                      ),
                   child: Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
