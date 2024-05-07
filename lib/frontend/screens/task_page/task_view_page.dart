@@ -87,9 +87,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskDataProvider);
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
-
-
-
     Widget dividerModel = const VerticalDivider(
       width: 4,
       thickness: 1.5,
@@ -222,7 +219,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             } else if (snapshot.hasData) {
               //DBから何らかのデータが返ってきた場合
               if (ref.watch(taskDataProvider).isInit) {
-
                 ref.read(taskDataProvider).isInit = false;
               }
 
@@ -247,12 +243,12 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
             } else {
-
               //DBからのデータがnullの場合
               if (ref.read(taskDataProvider).isRenewed) {
                 ConfigDataLoader().initConfig(ref);
-                  ref.read(calendarDataProvider).getConfigData(
-                            ConfigDataLoader().getConfigDataSource());
+                ref
+                    .read(calendarDataProvider)
+                    .getConfigData(ConfigDataLoader().getConfigDataSource());
                 displayDB();
                 ref.read(taskDataProvider).isRenewed = false;
               }
@@ -508,329 +504,358 @@ Widget indexModel(String text) {
             fontWeight: FontWeight.normal,
             color: Colors.grey),
       ),
+    ),
+    const Divider(height: 1),
+  ]);
+}
 
-      const Divider(height:1),
-    ]);
-  }
+void bottomSheet(targetData, ref, context, setState) {
+  TextEditingController summaryController =
+      TextEditingController(text: targetData["summary"] ?? "");
+  TextEditingController titleController =
+      TextEditingController(text: targetData["title"] ?? "");
+  TextEditingController descriptionController =
+      TextEditingController(text: targetData["description"] ?? "");
+  DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
+  int id = targetData["id"];
+  Widget dividerModel = const Divider(height: 1);
+  int _height = (SizeConfig.blockSizeVertical! * 100).round();
 
-  void bottomSheet(targetData,ref,context,setState) {
-    TextEditingController summaryController =
-        TextEditingController(text: targetData["summary"] ?? "");
-    TextEditingController titleController =
-        TextEditingController(text: targetData["title"] ?? "");
-    TextEditingController descriptionController =
-        TextEditingController(text: targetData["description"] ?? "");
-    DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
-    int id = targetData["id"];
-    Widget dividerModel = const Divider(height:1);
-    int _height = (SizeConfig.blockSizeVertical! *100).round();
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return
-        Stack(children:[
-        Stack(
-         alignment: Alignment.bottomCenter,
-         children:[ 
+  showModalBottomSheet(
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (BuildContext context) {
+      return Stack(children: [
+        Stack(alignment: Alignment.bottomCenter, children: [
           Container(
-            height: SizeConfig.blockSizeVertical! * 85,
-            margin: const EdgeInsets.only(top: 0),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+              height: SizeConfig.blockSizeVertical! * 85,
+              margin: const EdgeInsets.only(top: 0),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
               ),
-            ),
-            child: SingleChildScrollView(
-                primary: false,
-                child: Scrollbar(
-
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 15,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      child: Column(children: [
-                        indexModel("■タスク名"),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            controller: summaryController,
-                            maxLines: null,
-                            textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "タスク名を入力…",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                            indexModel("■ 締切日時"),
-                            Align(
+              child: SingleChildScrollView(
+                  primary: false,
+                  child: Scrollbar(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: SizeConfig.blockSizeHorizontal! * 15,
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(left: 15, right: 15),
+                            child: Column(children: [
+                              indexModel("■タスク名"),
+                              Align(
                                 alignment: Alignment.centerLeft,
-                                child: GestureDetector(
-                                    onTap: () async {
-                                      TextEditingController controller =
-                                          TextEditingController();
-                                      await DateTimePickerFormField(
-                                        controller: controller,
-                                        labelText: "",
-                                        labelColor: MAIN_COLOR,
-                                      ).selectDateAndTime(context, ref);
-                                      DateTime changedDateTime =
-                                          DateTime.parse(controller.text);
-                                      int changedDateTimeSinceEpoch =
-                                          changedDateTime
-                                              .millisecondsSinceEpoch;
+                                child: TextField(
+                                  controller: summaryController,
+                                  maxLines: null,
+                                  textInputAction: TextInputAction.done,
+                                  decoration: const InputDecoration.collapsed(
+                                    hintText: "タスク名を入力…",
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 4,
+                                      fontWeight: FontWeight.w400),
+                                  onSubmitted: (value) {
+                                    TaskDatabaseHelper()
+                                        .updateSummary(id, value);
 
-                                      await TaskDatabaseHelper().updateDtEnd(
-                                          id, changedDateTimeSinceEpoch);
-
-                                      final list = ref
-                                          .read(taskDataProvider)
-                                          .taskDataList;
-                                      final newList = [...list];
-                                      ref
-                                          .read(taskDataProvider.notifier)
-                                          .state = TaskData();
-                                      ref.read(taskDataProvider).isRenewed =
-                                          true;
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                        DateFormat("yyyy年MM月dd日  HH時mm分")
-                                            .format(dtEnd)))),
-                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                            indexModel("■ タスクの詳細"),
-                            TextField(
-                              maxLines: null,
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (value) {
-                                TaskDatabaseHelper()
-                                    .updateDescription(id, value);
-
-                                final list =
-                                    ref.read(taskDataProvider).taskDataList;
-                                final newList = [...list];
-                                ref.read(taskDataProvider.notifier).state =
-                                    TaskData();
-                                ref.read(taskDataProvider).isRenewed = true;
-                                Navigator.pop(context);
-                              },
-                              controller: descriptionController,
-                              style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                              ),
-                              decoration: const InputDecoration(
-                                hintText: "(タスクの詳細やメモを入力…)",
-                                border: InputBorder.none,
-                                hintStyle: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.normal,
+                                    final list =
+                                        ref.read(taskDataProvider).taskDataList;
+                                    final newList = [...list];
+                                    ref.read(taskDataProvider.notifier).state =
+                                        TaskData();
+                                    ref.read(taskDataProvider).isRenewed = true;
+                                    //Navigator.pop(context);
+                                  },
                                 ),
                               ),
-                            ),
-                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                            indexModel("■ タスクの削除"),
-                            SizedBox(height: SizeConfig.blockSizeVertical! * 1),
-                            buttonModelWithChild(() async {
-                              TaskDatabaseHelper().unDisplay(id);
-                              setState(() {});
-                              final list =
-                                  ref.read(taskDataProvider).taskDataList;
-                              List<Map<String, dynamic>> newList = [...list];
-                              ref.read(taskDataProvider.notifier).state =
-                                  TaskData(taskDataList: newList);
-                              ref.read(taskDataProvider).isRenewed = true;
-                              ref.read(taskDataProvider).sortDataByDtEnd(list);
-                              setState(() {});
-                              Navigator.pop(context);
-                            },
-                                Colors.red,
-                                const Row(
-                                  children: [
-                                    Spacer(),
-                                    Icon(Icons.delete, color: Colors.white),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "削除",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
+                              SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 2),
+                              indexModel("■ カテゴリ"),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextField(
+                                  controller: titleController,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration.collapsed(
+                                    hintText: "カテゴリを入力...",
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
                                     ),
-                                    Spacer()
-                                  ],
-                                )),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
-                            ),
+                                  ),
+                                  style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 4,
+                                      fontWeight: FontWeight.w400),
+                                  onSubmitted: (value) {
+                                    TaskDatabaseHelper().updateTitle(id, value);
 
-                          ),
-                        ),
-                        SizedBox(height:SizeConfig.blockSizeVertical! *2),
-                        indexModel("■ タスクの削除"),
-                        SizedBox(height:SizeConfig.blockSizeVertical! *1),
-                        buttonModelWithChild(
-                          ()async{
-                            TaskDatabaseHelper().unDisplay(id);
-                            setState(() {});
-                            final list = ref.read(taskDataProvider).taskDataList;
-                            List<Map<String,dynamic>> newList = [...list];
-                            ref.read(taskDataProvider.notifier).state =
-                                TaskData(taskDataList: newList);
-                            ref.read(taskDataProvider).isRenewed = true;
-                            ref.read(taskDataProvider).sortDataByDtEnd(list);
-                            setState(() {});
-                            Navigator.pop(context);
-                          },
-                          Colors.red,
-                          const Row(children: [
-                            Spacer(),
-                            Icon(Icons.delete,color:Colors.white),
-                            SizedBox(width:10),
-                            Text("削除",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                            Spacer()
-                          ],)
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 2,
-                        ),
-                        indexModel("■ Moodle ページビュー"),
-                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 1,
-                        ),
-                        Container(
-                            width:SizeConfig.blockSizeHorizontal! *100,
-                            height :SizeConfig.blockSizeVertical! *_height,
-                            decoration:BoxDecoration(border: Border.all()),
-                            child:InAppWebView(
-                              key: webMoodleViewKey,
-                              initialUrlRequest: URLRequest(
+                                    final list =
+                                        ref.read(taskDataProvider).taskDataList;
+                                    final newList = [...list];
+                                    ref.read(taskDataProvider.notifier).state =
+                                        TaskData();
+                                    ref.read(taskDataProvider).isRenewed = true;
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 2),
+                              indexModel("■ 締切日時"),
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: GestureDetector(
+                                      onTap: () async {
+                                        TextEditingController controller =
+                                            TextEditingController();
+                                        await DateTimePickerFormField(
+                                          controller: controller,
+                                          labelText: "",
+                                          labelColor: MAIN_COLOR,
+                                        ).selectDateAndTime(context, ref);
+                                        DateTime changedDateTime =
+                                            DateTime.parse(controller.text);
+                                        int changedDateTimeSinceEpoch =
+                                            changedDateTime
+                                                .millisecondsSinceEpoch;
 
-                              //ここに課題ページのURLを受け渡し！
-                                url: WebUri("https://wsdmoodle.waseda.jp/")),
-                              
-                              onWebViewCreated: (controller) {
-                                webMoodleViewController = controller;
+                                        await TaskDatabaseHelper().updateDtEnd(
+                                            id, changedDateTimeSinceEpoch);
+
+                                        final list = ref
+                                            .read(taskDataProvider)
+                                            .taskDataList;
+                                        final newList = [...list];
+                                        ref
+                                            .read(taskDataProvider.notifier)
+                                            .state = TaskData();
+                                        ref.read(taskDataProvider).isRenewed =
+                                            true;
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                          DateFormat("yyyy年MM月dd日  HH時mm分")
+                                              .format(dtEnd)))),
+                              SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 2),
+                              indexModel("■ タスクの詳細"),
+                              TextField(
+                                maxLines: null,
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (value) {
+                                  TaskDatabaseHelper()
+                                      .updateDescription(id, value);
+
+                                  final list =
+                                      ref.read(taskDataProvider).taskDataList;
+                                  final newList = [...list];
+                                  ref.read(taskDataProvider.notifier).state =
+                                      TaskData();
+                                  ref.read(taskDataProvider).isRenewed = true;
+                                  Navigator.pop(context);
+                                },
+                                controller: descriptionController,
+                                style: TextStyle(
+                                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                ),
+                                decoration: const InputDecoration(
+                                  hintText: "(タスクの詳細やメモを入力…)",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 2),
+                              indexModel("■ タスクの削除"),
+                              SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 1),
+                              buttonModelWithChild(() async {
+                                TaskDatabaseHelper().unDisplay(id);
+                                setState(() {});
+                                final list =
+                                    ref.read(taskDataProvider).taskDataList;
+                                List<Map<String, dynamic>> newList = [...list];
+                                ref.read(taskDataProvider.notifier).state =
+                                    TaskData(taskDataList: newList);
+                                ref.read(taskDataProvider).isRenewed = true;
+                                ref
+                                    .read(taskDataProvider)
+                                    .sortDataByDtEnd(list);
+                                setState(() {});
+                                Navigator.pop(context);
                               },
-                              onLoadStop: (a,b) async{
-                                _height = await webMoodleViewController?.getContentHeight() ?? 100;
-                                setState((){});
-                              },
-                              onContentSizeChanged:(a,b,c) async{
-                                _height = await webMoodleViewController?.getContentHeight() ?? 100;
-                                setState((){});
-                              },
-                            )
-                          ),
-                        
-                        
-                      ])
-                    )
-                ],
-              ),
-            )
-          )
-        ),
+                                  Colors.red,
+                                  const Row(
+                                    children: [
+                                      Spacer(),
+                                      Icon(Icons.delete, color: Colors.white),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "削除",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Spacer()
+                                    ],
+                                  )),
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 2,
+                              ),
+                              indexModel("■ Moodle ページビュー"),
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 1,
+                              ),
+                              Container(
+                                  width: SizeConfig.blockSizeHorizontal! * 100,
+                                  height:
+                                      SizeConfig.blockSizeVertical! * _height,
+                                  decoration:
+                                      BoxDecoration(border: Border.all()),
+                                  child: InAppWebView(
+                                    key: webMoodleViewKey,
+                                    initialUrlRequest: URLRequest(
+
+                                        //ここに課題ページのURLを受け渡し！
+                                        url: WebUri(
+                                            "https://wsdmoodle.waseda.jp/")),
+                                    onWebViewCreated: (controller) {
+                                      webMoodleViewController = controller;
+                                    },
+                                    onLoadStop: (a, b) async {
+                                      _height = await webMoodleViewController
+                                              ?.getContentHeight() ??
+                                          100;
+                                      setState(() {});
+                                    },
+                                    onContentSizeChanged: (a, b, c) async {
+                                      _height = await webMoodleViewController
+                                              ?.getContentHeight() ??
+                                          100;
+                                      setState(() {});
+                                    },
+                                  )),
+                            ]))
+                      ],
+                    ),
+                  ))),
           menuBar(),
         ]),
         Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // 影の色と透明度
+                  spreadRadius: 2, // 影の広がり
+                  blurRadius: 4, // 影のぼかし
+                  offset: const Offset(0, 2), // 影の方向（横、縦）
+                ),
+              ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                spreadRadius: 2, // 影の広がり
-                blurRadius: 4, // 影のぼかし
-                offset: const Offset(0, 2), // 影の方向（横、縦）
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          height: SizeConfig.blockSizeHorizontal! * 13,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 4,
-              ),
-              SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 92,
-                  child: Row(
-                    children: [
-                      Container(
-                        constraints: BoxConstraints(
-                            maxWidth:
-                                SizeConfig.blockSizeHorizontal! *
-                                    73.5),
-                        child: Text(
-                          targetData["summary"] ?? "(詳細なし)",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+            alignment: Alignment.center,
+            height: SizeConfig.blockSizeHorizontal! * 13,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 4,
+                ),
+                SizedBox(
+                    width: SizeConfig.blockSizeHorizontal! * 92,
+                    child: Row(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth: SizeConfig.blockSizeHorizontal! * 73.5),
+                          child: Text(
+                            targetData["summary"] ?? "(詳細なし)",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Text(
+                          "  の詳細",
                           style: TextStyle(
-                              fontSize:
-                                  SizeConfig.blockSizeHorizontal! *
-                                      5,
+                              fontSize: SizeConfig.blockSizeHorizontal! * 5,
                               fontWeight: FontWeight.w700),
                         ),
-                      ),
-                      Text(
-                        "  の詳細",
-                        style: TextStyle(
-                            fontSize:
-                                SizeConfig.blockSizeHorizontal! * 5,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  )),
-              SizedBox(width: SizeConfig.blockSizeHorizontal! * 4,),
-            ],
-          )),
-        ]) ;
-      },
-    );
-  }
-
+                      ],
+                    )),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 4,
+                ),
+              ],
+            )),
+      ]);
+    },
+  );
+}
 
 Widget menuBar() {
   return Container(
-    decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey))),
-    //   child:Row(children:[
-    //     IconButton(
-    //         onPressed: () {
-    //           webMoodleViewController?.goBack();
-    //         },
-    //         icon:Icon(Icons.arrow_back_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
-    //     const Spacer(),
-    //     IconButton(
-    //         onPressed: () {
-    //           final url = URLRequest(
-    //               url: WebUri("https://wsdmoodle.waseda.jp/"));
-    //           webMoodleViewController?.loadUrl(urlRequest: url);
-    //         },
-    //         icon:Icon(Icons.home,size:SizeConfig.blockSizeVertical! *3,),),
-    //     const Spacer(),
-    //     IconButton(
-    //         onPressed: () {
-    //           webMoodleViewController?.goForward();
-    //         },
-    //         icon:Icon(Icons.arrow_forward_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
-    // ])
-  );
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey))),
+      child: Row(children: [
+        IconButton(
+          onPressed: () {
+            webMoodleViewController?.goBack();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: SizeConfig.blockSizeVertical! * 2.5,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            final url = URLRequest(url: WebUri("https://wsdmoodle.waseda.jp/"));
+            webMoodleViewController?.loadUrl(urlRequest: url);
+          },
+          icon: Icon(
+            Icons.home,
+            size: SizeConfig.blockSizeVertical! * 3,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            webMoodleViewController?.goForward();
+          },
+          icon: Icon(
+            Icons.arrow_forward_ios,
+            size: SizeConfig.blockSizeVertical! * 2.5,
+          ),
+        ),
+      ]));
 }
