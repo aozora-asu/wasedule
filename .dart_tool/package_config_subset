@@ -62,6 +62,10 @@ crypto
 2.19
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/crypto-3.0.3/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/crypto-3.0.3/lib/
+csslib
+2.19
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/csslib-1.0.0/
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/csslib-1.0.0/lib/
 cupertino_icons
 2.19
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6/
@@ -234,6 +238,10 @@ flutter_timezone
 2.12
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_timezone-1.0.8/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/flutter_timezone-1.0.8/lib/
+html
+2.19
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/html-0.15.4/
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/html-0.15.4/lib/
 http
 3.3
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/http-1.2.1/
@@ -512,8 +520,8 @@ file:///Users/yazawashun/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.1/
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.1/lib/
 uuid
 3.0
-file:///Users/yazawashun/.pub-cache/hosted/pub.dev/uuid-4.3.3/
-file:///Users/yazawashun/.pub-cache/hosted/pub.dev/uuid-4.3.3/lib/
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/uuid-4.4.0/
+file:///Users/yazawashun/.pub-cache/hosted/pub.dev/uuid-4.4.0/lib/
 vector_math
 2.14
 file:///Users/yazawashun/.pub-cache/hosted/pub.dev/vector_math-2.1.4/
