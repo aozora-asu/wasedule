@@ -790,17 +790,20 @@ class _CalendarState extends ConsumerState<Calendar> {
       universityClassView =
       Container(
         decoration:const BoxDecoration(
-          color:ACCENT_COLOR,
           borderRadius: BorderRadius.all(Radius.circular(2))),
         margin:const EdgeInsets.symmetric(horizontal:1),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children:[
             Text(universityClassData,
-                style: const TextStyle(color: Colors.white, fontSize: 7)),
-            const Text(" 授業",
-                style: TextStyle(color: Colors.white, fontSize: 8)),
-
+                style: const TextStyle(color: Colors.grey, fontSize: 7)),
+            const Row(children:[
+              Icon(Icons.school,color:MAIN_COLOR,size:8),
+              Text(" 授業",
+                  style: TextStyle(color: Colors.black, fontSize: 8)),
+            ]),
+            const Divider(height: 0.7,indent: 2,
+                          endIndent: 2,thickness: 0.7),
         ]));
     }
             return InkWell(
