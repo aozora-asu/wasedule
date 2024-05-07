@@ -43,7 +43,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   late bool isLoad;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     ref.read(taskDataProvider).chosenTaskIdList = [];
     isButton = false;
@@ -88,6 +88,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
 
+
+
     Widget dividerModel = const VerticalDivider(
       width: 4,
       thickness: 1.5,
@@ -106,7 +108,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  decoration:const BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                   ),
                   height: SizeConfig.blockSizeVertical! * 4.5,
@@ -173,28 +175,29 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
-          child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            AddDataCardButton(setosute: setState),
-            SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 2,
-              height: SizeConfig.blockSizeVertical! * 5,
-            ),
-            FloatingActionButton(
-              heroTag: "task_2",
-              onPressed: () async {
-                if (isLoad == false) {
-                  await loadData();
-                  isLoad = true;
-                }
-              },
-              backgroundColor: MAIN_COLOR,
-              child: const Icon(Icons.refresh_outlined, color: Colors.white),
-            ),
-          ],
-        )));
+            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 9),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AddDataCardButton(setosute: setState),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 2,
+                  height: SizeConfig.blockSizeVertical! * 5,
+                ),
+                FloatingActionButton(
+                  heroTag: "task_2",
+                  onPressed: () async {
+                    if (isLoad == false) {
+                      await loadData();
+                      isLoad = true;
+                    }
+                  },
+                  backgroundColor: MAIN_COLOR,
+                  child:
+                      const Icon(Icons.refresh_outlined, color: Colors.white),
+                ),
+              ],
+            )));
   }
 
   Widget pages() {
@@ -494,18 +497,18 @@ Widget listLengthView(int target, double fontSize) {
   }
 }
 
-  Widget indexModel(String text){
-    return Column(children: [
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
-              fontWeight: FontWeight.normal,
-              color: Colors.grey),
-        ),
+Widget indexModel(String text) {
+  return Column(children: [
+    Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            fontWeight: FontWeight.normal,
+            color: Colors.grey),
       ),
+
       const Divider(height:1),
     ]);
   }
@@ -543,8 +546,9 @@ Widget listLengthView(int target, double fontSize) {
               ),
             ),
             child: SingleChildScrollView(
-              primary: false,
+                primary: false,
                 child: Scrollbar(
+
               child: Column(
                 children: [
                   SizedBox(
@@ -569,110 +573,108 @@ Widget listLengthView(int target, double fontSize) {
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                            onSubmitted: (value) {
-                              TaskDatabaseHelper().updateSummary(id, value);
+                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+                            indexModel("■ 締切日時"),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: GestureDetector(
+                                    onTap: () async {
+                                      TextEditingController controller =
+                                          TextEditingController();
+                                      await DateTimePickerFormField(
+                                        controller: controller,
+                                        labelText: "",
+                                        labelColor: MAIN_COLOR,
+                                      ).selectDateAndTime(context, ref);
+                                      DateTime changedDateTime =
+                                          DateTime.parse(controller.text);
+                                      int changedDateTimeSinceEpoch =
+                                          changedDateTime
+                                              .millisecondsSinceEpoch;
 
-                              final list =
-                                  ref.read(taskDataProvider).taskDataList;
-                              final newList = [...list];
-                              ref.read(taskDataProvider.notifier).state =
-                                  TaskData();
-                              ref.read(taskDataProvider).isRenewed = true;
-                              //Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                        indexModel("■ カテゴリ"),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            controller: titleController,
-                            maxLines: 1,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "カテゴリを入力...",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal,
+                                      await TaskDatabaseHelper().updateDtEnd(
+                                          id, changedDateTimeSinceEpoch);
+
+                                      final list = ref
+                                          .read(taskDataProvider)
+                                          .taskDataList;
+                                      final newList = [...list];
+                                      ref
+                                          .read(taskDataProvider.notifier)
+                                          .state = TaskData();
+                                      ref.read(taskDataProvider).isRenewed =
+                                          true;
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                        DateFormat("yyyy年MM月dd日  HH時mm分")
+                                            .format(dtEnd)))),
+                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+                            indexModel("■ タスクの詳細"),
+                            TextField(
+                              maxLines: null,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (value) {
+                                TaskDatabaseHelper()
+                                    .updateDescription(id, value);
+
+                                final list =
+                                    ref.read(taskDataProvider).taskDataList;
+                                final newList = [...list];
+                                ref.read(taskDataProvider.notifier).state =
+                                    TaskData();
+                                ref.read(taskDataProvider).isRenewed = true;
+                                Navigator.pop(context);
+                              },
+                              controller: descriptionController,
+                              style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: "(タスクの詳細やメモを入力…)",
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
                             ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                            onSubmitted: (value) {
-                              TaskDatabaseHelper().updateTitle(id, value);
-
+                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+                            indexModel("■ タスクの削除"),
+                            SizedBox(height: SizeConfig.blockSizeVertical! * 1),
+                            buttonModelWithChild(() async {
+                              TaskDatabaseHelper().unDisplay(id);
+                              setState(() {});
                               final list =
                                   ref.read(taskDataProvider).taskDataList;
-                              final newList = [...list];
+                              List<Map<String, dynamic>> newList = [...list];
                               ref.read(taskDataProvider.notifier).state =
-                                  TaskData();
+                                  TaskData(taskDataList: newList);
                               ref.read(taskDataProvider).isRenewed = true;
+                              ref.read(taskDataProvider).sortDataByDtEnd(list);
+                              setState(() {});
                               Navigator.pop(context);
                             },
-                          ),
-                        ),
-                        SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                        indexModel("■ 締切日時"),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap:()async{
-                              TextEditingController controller = TextEditingController();
-                              await DateTimePickerFormField(
-                                controller: controller,
-                                labelText: "",
-                                labelColor: MAIN_COLOR,
-                              ).selectDateAndTime(context,ref);
-                              DateTime changedDateTime = DateTime.parse(controller.text);
-                              int changedDateTimeSinceEpoch = changedDateTime.millisecondsSinceEpoch;
-
-                              await TaskDatabaseHelper().updateDtEnd(id,changedDateTimeSinceEpoch);
-
-                              final list =
-                                  ref.read(taskDataProvider).taskDataList;
-                              final newList = [...list];
-                              ref.read(taskDataProvider.notifier).state =
-                                  TaskData();
-                              ref.read(taskDataProvider).isRenewed = true;
-                              Navigator.pop(context);
-                            },
-                            child:Text(DateFormat("yyyy年MM月dd日  HH時mm分").format(dtEnd))
-                          )
-                        ),
-                        SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                        indexModel("■ タスクの詳細"),
-                        TextField(
-                          maxLines:null,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (value) {
-                            TaskDatabaseHelper().updateDescription(id, value);
-
-                            final list =
-                                ref.read(taskDataProvider).taskDataList;
-                            final newList = [...list];
-                            ref.read(taskDataProvider.notifier).state =
-                                TaskData();
-                            ref.read(taskDataProvider).isRenewed = true;
-                            Navigator.pop(context);
-                          },
-                          controller: descriptionController,
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          decoration: const InputDecoration(
-                            hintText: "(タスクの詳細やメモを入力…)",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.normal,
+                                Colors.red,
+                                const Row(
+                                  children: [
+                                    Spacer(),
+                                    Icon(Icons.delete, color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "削除",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Spacer()
+                                  ],
+                                )),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 2,
                             ),
+
                           ),
                         ),
                         SizedBox(height:SizeConfig.blockSizeVertical! *2),
@@ -803,33 +805,32 @@ Widget listLengthView(int target, double fontSize) {
     );
   }
 
-    Widget menuBar(){
-    return 
-        Container(
-          decoration:const  BoxDecoration(
-            color: Colors.white,
-            border: Border(top:BorderSide(color:Colors.grey))
-          ),
-          child:Row(children:[
-            IconButton(
-                onPressed: () {
-                  webMoodleViewController?.goBack();
-                },
-                icon:Icon(Icons.arrow_back_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
-            const Spacer(),
-            IconButton(
-                onPressed: () {
-                  final url = URLRequest(
-                      url: WebUri("https://wsdmoodle.waseda.jp/"));
-                  webMoodleViewController?.loadUrl(urlRequest: url);
-                },
-                icon:Icon(Icons.home,size:SizeConfig.blockSizeVertical! *3,),),
-            const Spacer(),
-            IconButton(
-                onPressed: () {
-                  webMoodleViewController?.goForward();
-                },
-                icon:Icon(Icons.arrow_forward_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
-        ])
-      );
-  }
+
+Widget menuBar() {
+  return Container(
+    decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey))),
+    //   child:Row(children:[
+    //     IconButton(
+    //         onPressed: () {
+    //           webMoodleViewController?.goBack();
+    //         },
+    //         icon:Icon(Icons.arrow_back_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
+    //     const Spacer(),
+    //     IconButton(
+    //         onPressed: () {
+    //           final url = URLRequest(
+    //               url: WebUri("https://wsdmoodle.waseda.jp/"));
+    //           webMoodleViewController?.loadUrl(urlRequest: url);
+    //         },
+    //         icon:Icon(Icons.home,size:SizeConfig.blockSizeVertical! *3,),),
+    //     const Spacer(),
+    //     IconButton(
+    //         onPressed: () {
+    //           webMoodleViewController?.goForward();
+    //         },
+    //         icon:Icon(Icons.arrow_forward_ios,size:SizeConfig.blockSizeVertical! *2.5,),),
+    // ])
+  );
+}

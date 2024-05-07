@@ -98,6 +98,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "csslib",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/csslib-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.6",
       "packageUri": "lib/",
@@ -378,6 +384,12 @@
       "rootUri": "file:///C:/src/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "html",
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/html-0.15.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "http",
@@ -801,7 +813,9 @@
     },
     {
       "name": "uuid",
-      "rootUri": "file:///C:/Users/likel/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.3.3",
+
+      "rootUri": "file:///Users/yazawashun/.pub-cache/hosted/pub.dev/uuid-4.4.0",
+
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -860,7 +874,9 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-05-04T03:06:40.579318Z",
+
+  "generated": "2024-05-06T14:22:53.432869Z",
+
   "generator": "pub",
   "generatorVersion": "3.3.1"
 }

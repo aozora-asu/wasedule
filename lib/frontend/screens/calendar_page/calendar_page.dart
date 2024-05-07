@@ -253,18 +253,14 @@ class _CalendarState extends ConsumerState<Calendar> {
             ],
           ),
         ),
-        floatingActionButton:
-        Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
-          child:Row(
-           children: [
-            const Spacer(),
-            AddEventButton(),
-            const SizedBox(width: 10),
-            calendarShareButton(context),
-          ])
-        )
-      );
+        floatingActionButton: Container(
+            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 9),
+            child: Row(children: [
+              const Spacer(),
+              AddEventButton(),
+              const SizedBox(width: 10),
+              calendarShareButton(context),
+            ])));
   }
 
   AssetImage calendarBackGroundImage() {
@@ -371,28 +367,29 @@ class _CalendarState extends ConsumerState<Calendar> {
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
                         ])),
-                    const Divider(height:0.5,thickness:0.5),
+                    const Divider(height: 0.5, thickness: 0.5),
                     Row(children: [
                       const Spacer(),
                       showOnlyScreenShot(screenShotDateTime()),
                       const SizedBox(width: 7)
                     ]),
                     doNotContainScreenShot(
-                      menuListChild(Icons.groups_rounded, "予定の配信", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DataUploadPage()),
-                        );
-                      })),
-                    
+                        menuListChild(Icons.groups_rounded, "予定の配信", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DataUploadPage()),
+                      );
+                    })),
                     doNotContainScreenShot(
-                      menuListChild(Icons.school, "年間行事予定", () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UnivSchedulePage()),
-                        );
-                      })),
-                      const SizedBox(height:20)
+                        menuListChild(Icons.school, "年間行事予定", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UnivSchedulePage()),
+                      );
+                    })),
+                    const SizedBox(height: 20)
                   ])))),
       menu()
     ]);
@@ -404,18 +401,17 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeVertical! * 3,
       ),
       Column(children: [
-
-          // scheduleEmptyFlag(
-          //   ref,
-          //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
-          //       () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => SnsContentsPage()),
-          //     );
-          //   }),
-          // )
+        // scheduleEmptyFlag(
+        //   ref,
+        //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
+        //       () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => SnsContentsPage()),
+        //     );
+        //   }),
+        // )
 
         tagEmptyFlag(
             ref,
@@ -1520,18 +1516,18 @@ class _CalendarState extends ConsumerState<Calendar> {
                           children: [
                             tagThumbnailer,
                             SizedBox(
-                             width: SizeConfig.blockSizeHorizontal! *75,
-                             child:Text(
-                              " " +
-                                  data.sortedDataByDay[targetKey]
-                                      .elementAt(index)["subject"],
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                                  fontWeight: FontWeight.bold),
-                            ))
-                            
+                                width: SizeConfig.blockSizeHorizontal! * 75,
+                                child: Text(
+                                  " " +
+                                      data.sortedDataByDay[targetKey]
+                                          .elementAt(index)["subject"],
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal! * 5,
+                                      fontWeight: FontWeight.bold),
+                                ))
                           ]),
                     )
                   ]))
