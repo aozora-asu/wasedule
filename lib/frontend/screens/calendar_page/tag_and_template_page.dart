@@ -830,7 +830,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
                     "isBeit": boolToInt(isBeit),
                     "wage": int.parse(wageController.text),
                     "fee": int.parse(feeController.text),
-                    "tagId" : widget.tagData["tagId"],
+                    "tagID" : widget.tagData["tagID"],
                   });
                   ref.read(scheduleFormProvider).clearContents();
                   ref.read(taskDataProvider).isRenewed = true;
@@ -852,7 +852,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
     );
   }
 
-  bool intToBool(int) {
+  bool intToBool(int int) {
     if (int == 1) {
       return true;
     } else {
@@ -860,7 +860,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
     }
   }
 
-  int boolToInt(bool) {
+  int boolToInt(bool bool) {
     if (bool) {
       return 1;
     } else {
@@ -1100,7 +1100,7 @@ void showDeleteDialogue(BuildContext context, String name, VoidCallback onTap) {
               onPressed: () {
                 Navigator.of(context).pop(); // ダイアログを閉じる
               },
-              child: const Text('キャンセル'),
+              child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () {

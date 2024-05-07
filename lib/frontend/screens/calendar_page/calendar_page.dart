@@ -5,6 +5,8 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_pag
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
@@ -64,15 +66,19 @@ class _CalendarState extends ConsumerState<Calendar> {
       DateTime.now().month.toString().padLeft(2, '0') +
       "/" +
       DateTime.now().day.toString().padLeft(2, '0');
+  late int thisYear;
+  late int semesterNum;
+  late String targetSemester;
+
 
   @override
   void initState() {
     super.initState();
-    displayDB();
+    initTargetSem();
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
     LocalNotificationSetting().initializePlatformSpecifics();
-
+    displayDB();
     targetMonth = thisMonth;
     generateCalendarData();
     _initializeData();
@@ -153,6 +159,40 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+  void initTargetSem(){
+    DateTime now = DateTime.now();  
+      thisYear = now.year;
+    if(now.month <= 3){
+      thisYear -= 1;
+    }
+    semesterNum = 5;
+    if(now.month == 1){
+      semesterNum = 4;
+    }else if(now.month == 4||now.month == 5){
+      semesterNum = 1;
+    }else if(now.month == 6||now.month == 7){
+      semesterNum = 2;
+    }else if(now.month == 10||now.month == 11){
+      semesterNum = 3;
+    }else if(now.month == 12){
+      semesterNum = 4;
+    }else{
+      semesterNum == 5;
+    }
+    targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+  }
+
+  Future<List<Map<String, dynamic>>> loadDataBases() async{
+    await ConfigDataLoader().initConfig(ref);
+    await ref.read(calendarDataProvider).getTagData(TagDataLoader().getTagDataSource());
+    await ref.read(calendarDataProvider).getConfigData(ConfigDataLoader().getConfigDataSource());
+    await ref.read(calendarDataProvider).getTemplateData(_getTemplateDataSource());
+    await ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
+    await ref.read(timeTableProvider).getData(tempData());
+    List<Map<String,dynamic>> result = await CalendarDataLoader().getDataSource();
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -176,75 +216,34 @@ class _CalendarState extends ConsumerState<Calendar> {
                   right: SizeConfig.blockSizeHorizontal! * 2.5,
                 ),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: CalendarDataLoader().getDataSource(),
+                  future: loadDataBases(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      // データが取得される間、ローディングインディケータを表示できます。
-                      ConfigDataLoader().initConfig(ref);
-                      ref
-                          .read(calendarDataProvider)
-                          .getTagData(TagDataLoader().getTagDataSource());
-                      ref.read(calendarDataProvider).getConfigData(
-                          ConfigDataLoader().getConfigDataSource());
+                      // データが取得されるまでの間
                       return calendarBody();
                     } else if (snapshot.hasError) {
                       // エラーがある場合
                       return const SizedBox();
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      //カレンダーが空の場合
                       if (ref.read(taskDataProvider).isRenewed) {
                         displayDB();
-                        _getTemplateDataSource();
-                        ref
-                            .read(calendarDataProvider)
-                            .getArbeitData(_getArbeitDataSource());
-                        ref.read(calendarDataProvider).sortDataByDay();
-                        ref
-                            .read(calendarDataProvider)
-                            .getTemplateData(_getTemplateDataSource());
                         ref.read(taskDataProvider).isRenewed = false;
                       }
-
-                      ref
-                          .read(calendarDataProvider)
-                          .getArbeitData(_getArbeitDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTagData(TagDataLoader().getTagDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).sortDataByDay();
-
+                      ref.read(timeTableProvider).sortDataByWeekDay(ref.read(timeTableProvider).timeTableDataList);
                       return calendarBody();
                     } else {
+                      //カレンダーがデータを持っている場合
                       if (ref.read(taskDataProvider).isRenewed) {
                         displayDB();
-                        _getTemplateDataSource();
-                        ref.read(calendarDataProvider).getConfigData(
-                            ConfigDataLoader().getConfigDataSource());
-                        ref
-                            .read(calendarDataProvider)
-                            .getArbeitData(_getArbeitDataSource());
-                        ref
-                            .read(calendarDataProvider)
-                            .getTemplateData(_getTemplateDataSource());
-                        ref.read(calendarDataProvider).getData(snapshot.data!);
-                        ref.read(calendarDataProvider).sortDataByDay();
                         ref.read(taskDataProvider).isRenewed = false;
                       }
-                      ref
-                          .read(calendarDataProvider)
-                          .getArbeitData(_getArbeitDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTagData(TagDataLoader().getTagDataSource());
-                      ref
-                          .read(calendarDataProvider)
-                          .getTemplateData(_getTemplateDataSource());
                       ref.read(calendarDataProvider).getData(snapshot.data!);
-                      ref.read(calendarDataProvider).sortDataByDay();
                       ref.read(taskDataProvider).getData(taskData);
-
+                      ref.read(calendarDataProvider).sortDataByDay();
+                      ref.read(timeTableProvider).sortDataByWeekDay(ref.read(timeTableProvider).timeTableDataList);
+                      ref.read(timeTableProvider).initUniversityScheduleByDay(thisYear,semesterNum);
                       return calendarBody();
                     }
                   },
@@ -297,7 +296,6 @@ class _CalendarState extends ConsumerState<Calendar> {
           controller: _screenShotController,
           child: SizedBox(
               child: Container(
-                  //height: SizeConfig.blockSizeVertical! * 85,
                   decoration: switchDecoration(),
                   child: Column(children: [
                     Row(children: [
@@ -516,17 +514,20 @@ class _CalendarState extends ConsumerState<Calendar> {
       int year = int.parse(targetMonth.substring(0, 4));
       year += 1;
       setState(() {
+        renewSemesterNum(year,12);
         increasedMonth = year.toString() + "/" + "01";
       });
     } else {
+      int year = int.parse(targetMonth.substring(0, 4));
       int month = int.parse(targetMonth.substring(5, 7));
       month += 1;
       setState(() {
+        renewSemesterNum(year, month);
         increasedMonth =
             targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
       });
     }
-
+    print(thisYear);print(semesterNum);
     targetMonth = increasedMonth;
     generateCalendarData();
   }
@@ -538,19 +539,44 @@ class _CalendarState extends ConsumerState<Calendar> {
       int year = int.parse(targetMonth.substring(0, 4));
       year -= 1;
       setState(() {
+        renewSemesterNum(year,12);
         decreasedMonth = year.toString() + "/" + "12";
       });
     } else {
+      int year = int.parse(targetMonth.substring(0, 4));
       int month = int.parse(targetMonth.substring(5, 7));
       month -= 1;
       setState(() {
+        renewSemesterNum(year, month);
         decreasedMonth =
             targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
       });
     }
-
+    print(thisYear);print(semesterNum);
     targetMonth = decreasedMonth;
     generateCalendarData();
+  }
+
+  void renewSemesterNum(int year,int month){
+      thisYear = year;
+    if(month <= 3){
+      thisYear -= 1;
+    }
+    semesterNum = 5;
+    if(month == 1){
+      semesterNum = 4;
+    }else if(month == 4||month == 5){
+      semesterNum = 1;
+    }else if(month == 6||month == 7){
+      semesterNum = 2;
+    }else if(month == 10||month == 11){
+      semesterNum = 3;
+    }else if(month == 12){
+      semesterNum = 4;
+    }else{
+      semesterNum == 5;
+    }
+    targetSemester = thisYear.toString() + "-" + semesterNum.toString();
   }
 
   Map<String, List<DateTime>> generateCalendarData() {
@@ -738,7 +764,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         return Column(children: [
           Text(
             NHolidayJp.getName(target.year, target.month, target.day),
-            style: const TextStyle(color: Colors.red, fontSize: 10),
+            style: const TextStyle(color: Colors.red, fontSize: 9),
           ),
           const SizedBox(height: 5)
         ]);
@@ -757,10 +783,30 @@ class _CalendarState extends ConsumerState<Calendar> {
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
+    String universityClassData = ref.read(timeTableProvider)
+                  .universityScheduleByWeekDay[target.weekday] ?? "";
+    Widget universityClassView = const SizedBox();
+    if(universityClassData != ""){
+      universityClassView =
+      Container(
+        decoration:const BoxDecoration(
+          color:ACCENT_COLOR,
+          borderRadius: BorderRadius.all(Radius.circular(2))),
+        margin:const EdgeInsets.symmetric(horizontal:1),
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+            Text(universityClassData,
+                style: const TextStyle(color: Colors.white, fontSize: 7)),
+            const Text(" 授業",
+                style: TextStyle(color: Colors.white, fontSize: 8)),
+
+        ]));
+    }
             return InkWell(
               child: Container(
                   width: SizeConfig.blockSizeHorizontal! * 13.571,
-                  height: SizeConfig.blockSizeVertical! * 12,
+                  height: SizeConfig.blockSizeVertical! * 14,
                   decoration: BoxDecoration(
                     color: cellColour(target),
                     border: Border.all(
@@ -770,6 +816,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
                           Align(
@@ -785,6 +832,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           endIndent: 2,
                           thickness: 0.7,
                         ),
+                        universityClassView,
                         Expanded(child: calendarCellsChild(target)),
                         holidayName(target),
                       ])),
@@ -2051,6 +2099,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       const Divider(height: 1),
     ]);
   }
+
 }
 
 Widget calendarIcon(Color color, double size) {

@@ -40,7 +40,7 @@ class CalendarData {
     dataForShare = data;
   }
 
-  void getTemplateData(Future<List<Map<String, dynamic>>> data) async {
+  Future<void> getTemplateData(Future<List<Map<String, dynamic>>> data) async {
     List<Map<String, dynamic>> fetchedTemplateData = await data;
     templateData = fetchedTemplateData;
   }
@@ -60,7 +60,7 @@ class CalendarData {
     downloadData = fetchedData;
   }
 
-  void getTagData(Future<List<Map<String, dynamic>>> data) async {
+  Future<void> getTagData(Future<List<Map<String, dynamic>>> data) async {
     var fetchedTagData = await data;
     var fixedData = [];
 
@@ -78,7 +78,7 @@ class CalendarData {
     tagData = fixedData;
   }
 
-  void getArbeitData(Future<List<Map<String, dynamic>>> data) async {
+  Future<void> getArbeitData(Future<List<Map<String, dynamic>>> data) async {
     var fetchedArbeitData = await data;
     arbeitData = fetchedArbeitData;
   }
