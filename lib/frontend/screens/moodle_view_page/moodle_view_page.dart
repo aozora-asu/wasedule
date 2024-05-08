@@ -65,10 +65,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
             sharedCookiesEnabled: true,
             useShouldOverrideUrlLoading: true),
         onConsoleMessage: (controller, consoleMessage) {
-          print(consoleMessage.message);
           try {
             messageData = jsonDecode(consoleMessage.message);
-
             switch (messageData.keys.first) {
               case "isAllowAutoLogin":
                 print(messageData["isAllowAutoLogin"]);
@@ -93,20 +91,20 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                   'lib/frontend/screens/moodle_view_page/get_course_info.js');
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
-            case moodleLoginUrl:
-              javascriptCode = await rootBundle.loadString(
-                  'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
-              await webViewController.evaluateJavascript(
-                  source: javascriptCode);
+            // case moodleLoginUrl:
+            //   javascriptCode = await rootBundle.loadString(
+            //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
+            //   await webViewController.evaluateJavascript(
+            //       source: javascriptCode);
             case mywasedaErrorUrl:
               webViewController.loadUrl(
                 urlRequest: URLRequest(url: WebUri(mywasedaUrl)),
               );
-            case microsoftLoginUrl:
-              javascriptCode = await rootBundle.loadString(
-                  'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
-              await webViewController.evaluateJavascript(
-                  source: javascriptCode);
+            // case microsoftLoginUrl:
+            //   javascriptCode = await rootBundle.loadString(
+            //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
+            //   await webViewController.evaluateJavascript(
+            //       source: javascriptCode);
           }
         },
       )),
@@ -132,10 +130,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
       const Spacer(),
       IconButton(
         onPressed: () {
-          final url = URLRequest(
-              url: WebUri(
-                  "https://coursereg.waseda.jp/portal/simpleportal.php?HID_P14=JA"));
-          webViewController.loadUrl(urlRequest: url);
+          webViewController.loadUrl(
+              urlRequest: URLRequest(url: WebUri(moodleUrl)));
         },
         icon: Icon(
           Icons.home,

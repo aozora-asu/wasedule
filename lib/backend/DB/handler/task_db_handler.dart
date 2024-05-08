@@ -312,7 +312,7 @@ class TaskDatabaseHelper {
     await _initDatabase();
     List<Map<String, dynamic>> withinNdaysTask = await _database.query(
       'tasks',
-      where: 'dtEnd > ? AND dtEnd <= ? AND isDone=?',
+      where: 'dtEnd >= ? AND dtEnd <= ? AND isDone=?',
       whereArgs: [startDate, endDate, 0],
       orderBy: 'dtEnd ASC', // dtEndが小さい順に並び替える
     );
