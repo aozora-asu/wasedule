@@ -27,7 +27,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     Map target = widget.target; 
     memoController.text = target["memo"] ?? "";
     classRoomController.text = target["classRoom"] ?? "";
-    classNameController.text = target["className"] ?? "";
+    classNameController.text = target["courseName"] ?? "";
   }
 
   @override
@@ -80,9 +80,15 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
            crossAxisAlignment: CrossAxisAlignment.start,
            children:[
 
-            Text(target["courseName"],
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *8,
-              fontWeight: FontWeight.bold),overflow: TextOverflow.clip),
+            Row(children:[
+              textFieldModel(
+                "授業名を入力…",classNameController,FontWeight.bold,30.0,
+                (vakue){
+                  int id = target["id"];
+                  //＠ここに授業名変更関数を登録！！！
+
+                })
+              ]),
 
             dividerModel, 
 
@@ -108,7 +114,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               const Icon(Icons.group,color:MAIN_COLOR),
               SizedBox(width: SizeConfig.blockSizeHorizontal! *3),
               textFieldModel(
-                "教室を入力…",classRoomController,FontWeight.bold,
+                "教室を入力…",classRoomController,FontWeight.bold,20.0,
                 (value){
                   int id = target["id"];
                   //＠ここに教室のアップデート関数！！！
@@ -123,7 +129,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               const Icon(Icons.sticky_note_2,color:MAIN_COLOR),
               SizedBox(width: SizeConfig.blockSizeHorizontal! *3),
               textFieldModel("授業メモを入力…",memoController,
-                FontWeight.normal,
+                FontWeight.normal,20.0,
                 (value){
                   int id = target["id"];
                   //＠ここにメモのアップデート関数！！！
@@ -154,8 +160,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     String hintText,
     TextEditingController controller,
     FontWeight weight,
+    double fontSize,
     Function(String) onSubmitted
-    
     ){
       return Expanded(
       child: Material(
@@ -167,6 +173,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             border: InputBorder.none,
             hintText: hintText),
           style: TextStyle(
+              fontSize:fontSize,
               color: Colors.black,fontWeight: weight),
           onSubmitted: onSubmitted
           ),
@@ -196,7 +203,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
   
   String targetSemester(String semesterID){
-    String result = "年間科目";
+    String result = "通年科目";
     if(semesterID == "spring_quarter"){
       result = "春学期 -春クォーター";
     }else if(semesterID == "summer_quarter"){

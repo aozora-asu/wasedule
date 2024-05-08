@@ -731,9 +731,14 @@ void bottomSheet(targetData, ref, context, setState) {
                               Container(
                                   width: SizeConfig.blockSizeHorizontal! * 100,
                                   height:
-                                      SizeConfig.blockSizeVertical! * _height,
+                                      SizeConfig.blockSizeVertical! * 75,
                                   decoration:
                                       BoxDecoration(border: Border.all()),
+                                  child: SingleChildScrollView(
+                                    child: Container(
+                                  width: SizeConfig.blockSizeHorizontal! * 100,
+                                  height:
+                                      SizeConfig.blockSizeVertical! * _height,
                                   child: InAppWebView(
                                     key: webMoodleViewKey,
                                     initialUrlRequest: URLRequest(
@@ -756,8 +761,16 @@ void bottomSheet(targetData, ref, context, setState) {
                                           100;
                                       setState(() {});
                                     },
-                                  )),
-                            ]))
+                                  )
+                                ),
+                              )
+                            ),    
+                        SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 10,
+                              ),
+                            ])
+                          ),
+                      
                       ],
                     ),
                   ))),

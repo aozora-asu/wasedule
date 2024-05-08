@@ -286,15 +286,15 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           ]),
           FutureBuilder(
             //＠こいつは仮です、ここを時間割DB呼び出しに置き換え
-            future: ScheduleDatabaseHelper().getSchedule(DateTime(2024,5,6,)),
+            future: tempData(),
             builder:((context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting){
                 return timeTableBody();
               }else if (snapshot.hasError) {
                 return const SizedBox();
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                ref.read(timeTableProvider).getData(tempData);
-                ref.read(timeTableProvider).sortDataByWeekDay(tempData);
+                ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
+                ref.read(timeTableProvider).initUniversityScheduleByDay(thisYear,semesterNum);
                 return timeTableBody();
               }else{
                 return noDataScreen();
@@ -539,20 +539,20 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         );
         int length = random.nextInt(11);
 
-        if(tableData.sortedDataByWeekDay.containsKey(weekDay)
-          && returnExistingPeriod(tableData.sortedDataByWeekDay[weekDay]).contains(index+1)
-          &&tableData.sortedDataByWeekDay[weekDay]
+        if(tableData.currentSemesterClasses.containsKey(weekDay)
+          && returnExistingPeriod(tableData.currentSemesterClasses[weekDay]).contains(index+1)
+          &&tableData.currentSemesterClasses[weekDay]
             .elementAt(returnIndexFromPeriod(
-              tableData.sortedDataByWeekDay[weekDay],index + 1))["year"] 
+              tableData.currentSemesterClasses[weekDay],index + 1))["year"] 
             == thisYear){
 
-            if(tableData.sortedDataByWeekDay[weekDay]
+            if(tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
-                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentQuaterID() || 
-              tableData.sortedDataByWeekDay[weekDay]
+              tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
-                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentSemesterID()
             ){
               bgColor = cellBackGroundColor(length);
@@ -692,16 +692,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
     final timeTableData = ref.read(timeTableProvider);
-    Map targetData = timeTableData.sortedDataByWeekDay[weekDay]
+    Map targetData = timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period));
+          timeTableData.currentSemesterClasses[weekDay],period));
     String className = 
-      timeTableData.sortedDataByWeekDay[weekDay]
+      timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period))["courseName"];
-    String? classRoom = timeTableData.sortedDataByWeekDay[weekDay]
+          timeTableData.currentSemesterClasses[weekDay],period))["courseName"];
+    String? classRoom = timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period))["classRoom"];
+          timeTableData.currentSemesterClasses[weekDay],period))["classRoom"];
     
     Widget classRoomView = const SizedBox();
     if(classRoom != null
@@ -859,167 +859,180 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       default : return DateTime(now.year,now.month,now.day,21,35);
     }
   }
-
+}
 
 
   //これはUI表示調整用の仮データです。
-  List<Map<String,dynamic>> tempData = [
-    {"id":0,
-     "classID":"",
-     "courseName":"経営学",
-     "weekDay":1,
-     "period": 2,
-     "semester" : "spring_semester",
-     "classRoom":"14-402",
-     "memo" : null,
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":1,
-     "classID":"",
-     "courseName":"未来社会を作るセキュリティ最前線",
-     "weekDay":1,
-     "period": 4,
-     "semester" : "summer_quarter",
-     "classRoom":"3-301",
-     "memo" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":3,
-     "classID":"",
-     "courseName":"経営学",
-     "weekDay":2,
-     "period": 3,
-     "semester" : "spring_semester",
-     "classRoom":"14-402",
-     "memo" : null,
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":4,
-     "classID":"",
-     "courseName":"人間の安全保障論",
-     "weekDay":2,
-     "period": 5,
-     "semester" : "spring_semester",
-     "classRoom":"14-502",
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":5,
-     "classID":"",
-     "courseName":"社会科学特講（社会デザインの基礎理論）A",
-     "weekDay":3,
-     "period":2,
-     "semester" : "spring_semester",
-     "classRoom":"7-419",
-     "memorandom" :"",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":15,
-     "classID":"",
-     "courseName":"全く同じ授業だよ",
-     "weekDay":3,
-     "period":2,
-     "semester" : "spring_semester",
-     "classRoom":"7-419",
-     "memorandom" :"",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":16,
-     "classID":"",
-     "courseName":"全く同じ授業だよ",
-     "weekDay":3,
-     "period":2,
-     "semester" : "spring_semester",
-     "classRoom":"7-419",
-     "memorandom" :"",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2025
-    },
-    {"id":6,
-     "classID":"",
-     "semester" : "spring_semester",
-     "courseName":"知識社会学",
-     "weekDay":3,
-     "period": 3,
-     "classRoom":"14-B101",
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":7,
-     "classID":"",
-     "semester" : "spring_semester",
-     "courseName":"ゼミナールⅡ（国際経済法研究／春学期）",
-     "weekDay":3,
-     "period": 5,
-     "classRoom":"14-516",
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":8,
-     "classID":"",
-     "courseName":"日本語を教える１",
-     "semester" : "spring_semester",
-     "weekDay":4,
-     "period": 2,
-     "classRoom":"22-201",
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":9,
-     "classID":"",
-     "courseName":"商業史1",
-     "semester" : "spring_semester",
-     "weekDay": 5,
-     "period": 2,
-     "classRoom":"",
-     "memorandom" : "15-102",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":10,
-     "classID":"",
-     "courseName":"現代政治分析(イタリア)",
-     "semester" : "spring_semester",
-     "weekDay":5,
-     "period": 3,
-     "classRoom":"14-514",
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-    {"id":11,
-     "classID":"",
-     "courseName":"ディスアビリティ・スタディーズ",
-     "semester" : "spring_semester",
-     "weekDay": null,
-     "period": null,
-     "classRoom": null,
-     "memorandom" : "",
-     "color" : 22354646,
-     "groupID" : "d34erws2",
-     "year" : 2024
-    },
-  ];
-
-}
+  Future<List<Map<String,dynamic>>> tempData() async{
+    List<Map<String,dynamic>> tempData = [
+      {"id":1,
+      "classID":"",
+      "courseName":"未来社会を作るセキュリティ最前線",
+      "weekDay":1,
+      "period": 4,
+      "semester" : "summer_quarter",
+      "classRoom":"3-301",
+      "memo" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":5,
+      "classID":"",
+      "courseName":"社会科学特講（社会デザインの基礎理論）A",
+      "weekDay":3,
+      "period":2,
+      "semester" : "spring_semester",
+      "classRoom":"7-209",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":6,
+      "classID":"",
+      "semester" : "spring_semester",
+      "courseName":"知識社会学",
+      "weekDay":3,
+      "period": 3,
+      "classRoom":"14-B101",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":4,
+      "classID":"",
+      "courseName":"人間の安全保障論",
+      "weekDay":2,
+      "period": 5,
+      "semester" : "spring_semester",
+      "classRoom":"14-502",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":0,
+      "classID":"",
+      "courseName":"経営学",
+      "weekDay":1,
+      "period": 2,
+      "semester" : "spring_semester",
+      "classRoom":"14-402",
+      "memo" : null,
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":15,
+      "classID":"",
+      "courseName":"全く同じ授業だよ",
+      "weekDay":3,
+      "period":2,
+      "semester" : "spring_semester",
+      "classRoom":"7-419",
+      "memorandom" :"",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":7,
+      "classID":"",
+      "semester" : "spring_semester",
+      "courseName":"ゼミナールⅡ（国際経済法研究／春学期）",
+      "weekDay":3,
+      "period": 5,
+      "classRoom":"14-516",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":11,
+      "classID":"",
+      "courseName":"ディスアビリティ・スタディーズ",
+      "semester" : "spring_semester",
+      "weekDay": null,
+      "period": null,
+      "classRoom": null,
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":8,
+      "classID":"",
+      "courseName":"日本語を教える１",
+      "semester" : "spring_semester",
+      "weekDay":4,
+      "period": 2,
+      "classRoom":"22-201",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":3,
+      "classID":"",
+      "courseName":"経営学",
+      "weekDay":2,
+      "period": 3,
+      "semester" : "spring_semester",
+      "classRoom":"14-402",
+      "memo" : null,
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":9,
+      "classID":"",
+      "courseName":"商業史1",
+      "semester" : "spring_semester",
+      "weekDay": 5,
+      "period": 2,
+      "classRoom":"",
+      "memorandom" : "15-102",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+      {"id":16,
+      "classID":"",
+      "courseName":"全く同じ授業だよ",
+      "weekDay":3,
+      "period":2,
+      "semester" : "spring_semester",
+      "classRoom":"7-419",
+      "memorandom" :"",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2025
+      },
+      {"id":16,
+      "classID":"",
+      "courseName":"全く同じ授業だえ～。",
+      "weekDay":3,
+      "period":3,
+      "semester" : "spring_semester",
+      "classRoom":"7-419",
+      "memorandom" :"",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2025
+      },
+      {"id":10,
+      "classID":"",
+      "courseName":"現代政治分析(イタリア)",
+      "semester" : "spring_semester",
+      "weekDay":5,
+      "period": 3,
+      "classRoom":"14-514",
+      "memorandom" : "",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2024
+      },
+    ];
+    return tempData;
+  }

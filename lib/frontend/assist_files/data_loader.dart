@@ -4,7 +4,6 @@ import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class ConfigDataLoader {
   Future<void> initConfig(WidgetRef ref) async {
@@ -15,6 +14,8 @@ class ConfigDataLoader {
     await createConfigData("holidayPaint", 1, ref);
     await createConfigData("holidayName", 0, ref);
     await createConfigData("arbeitPreview", 1, ref);
+    await createConfigData("timetableInCalendarcell", 1, ref);
+    await createConfigData("timetableInDailyView", 1, ref);
   }
 
   Future<void> createConfigData(

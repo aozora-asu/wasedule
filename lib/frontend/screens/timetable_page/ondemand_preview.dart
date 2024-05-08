@@ -25,7 +25,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     super.initState();
     Map target = widget.target; 
     memoController.text = target["memo"] ?? "";
-    classNameController.text = target["className"] ?? "";
+    classNameController.text = target["courseName"] ?? "";
   }
 
   @override
@@ -57,7 +57,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                         const SizedBox(height:20),
                         courseInfo(),
                         const SizedBox(height:20),
-          ])))))));}));
+      ])))))));}));
   }
 
   Widget courseInfo(){
@@ -78,9 +78,15 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
            crossAxisAlignment: CrossAxisAlignment.start,
            children:[
 
-            Text(target["courseName"],
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *8,
-              fontWeight: FontWeight.bold),overflow: TextOverflow.clip),
+            Row(children:[
+              textFieldModel("授業名を入力…",classNameController,FontWeight.bold,30.0,
+              (value){
+                int id = target["id"];
+                //＠ここに授業名のアップデート関数！！！
+                         
+              })
+            ]),
+
             dividerModel, 
 
             Row(children:[
@@ -104,7 +110,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
               const Icon(Icons.sticky_note_2,color:MAIN_COLOR),
               SizedBox(width: SizeConfig.blockSizeHorizontal! *3),
               textFieldModel("授業メモを入力…",memoController,
-                FontWeight.normal,
+                FontWeight.normal,20.0,
                 (value){
                   int id = target["id"];
                   //＠ここにメモのアップデート関数！！！
@@ -135,8 +141,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     String hintText,
     TextEditingController controller,
     FontWeight weight,
+    double fontSize,
     Function(String) onSubmitted
-    
     ){
       return Expanded(
       child: Material(
@@ -148,7 +154,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
             border: InputBorder.none,
             hintText: hintText),
           style: TextStyle(
-              color: Colors.black,fontWeight: weight),
+              color: Colors.black,fontWeight: weight,
+              fontSize:fontSize),
           onSubmitted: onSubmitted
           ),
         )

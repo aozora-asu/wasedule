@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart' ;
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 import 'package:intl/intl.dart';
@@ -235,7 +237,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   int? editingSchedule;
 
   Widget listView() {
-    final taskData = ref.read(taskDataProvider);
+    final tableData = ref.read(timeTableProvider);
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
     String targetKey = widget.target.year.toString() +
@@ -245,7 +247,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         widget.target.day.toString().padLeft(2, "0");
 
 
-    if (data.sortedDataByDay[targetKey] == null) {
+    if (data.sortedDataByDay[targetKey] == null &&
+        tableData.currentSemesterClasses[widget.target.weekday] == null) {
       return GestureDetector(
           onTap: () async {
             await addEmptyData();
@@ -273,11 +276,22 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget scheduleListBody(targetKey){
     final data = ref.read(calendarDataProvider);
-    List targetDayData = data.sortedDataByDay[targetKey];
+    List targetDayData = data.sortedDataByDay[targetKey] ?? [];
+    DateTime targetDay = DateTime.parse(targetKey);
+    DateTime now = DateTime.now();
+    List<Map<DateTime,Widget>> mixedDataByTime = [];
+    
+    //まずは予定データの生成
+    for(int index = 0; index < targetDayData.length; index++){
+      DateTime key = 
+        DateTime(now.year,now.month,now.day-1,0,0,0);
+      if(targetDayData.elementAt(index)["startTime"].trim() != ""){
+        DateFormat format = DateFormat.Hm();
+        DateTime time = format.parse(targetDayData.elementAt(index)["startTime"]);
+        key = DateTime(now.year,now.month,now.day,time.hour,time.minute,0);
+      }
 
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        
+      Widget value = const SizedBox();
       TextStyle dateTimeStyle =const TextStyle(
                   color: Colors.grey,
                   fontSize: 20,
@@ -311,13 +325,41 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         }
 
         if(targetDayData.elementAt(index)["id"] == editingSchedule){
-
-          return editModeListChild(targetKey,index);
+          value = editModeListChild(targetKey,index);
         }else{
-          return viewModeListChild(targetKey,index,dateTimeData);
+          value = viewModeListChild(targetKey,index,dateTimeData);
         }
+      mixedDataByTime.add({key:value});
+    }
+
+    //予定データが生成されたところに時間割データを混ぜる
+    final timeTable = ref.read(timeTableProvider);
+    Map<dynamic,dynamic> timeTableData = timeTable.currentSemesterClasses;
+    int weekDay = targetDay.weekday;
+    List<Map<String,dynamic>> targetDayList = timeTableData[weekDay] ?? [];
+    
+    for(int i = 0; i < targetDayList.length; i++){
+      Map targetClass = targetDayList.elementAt(i);
+      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
+      Widget value = 
+        switchWidget(
+          timeTableListChild(targetClass),
+           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
+      mixedDataByTime.add({key:value});
+    }
+
+    //グチャグチャなデータをソートする
+    List<Map<DateTime, dynamic>> sortMapsByFirstKey(List<Map<DateTime, dynamic>> list) {
+      list.sort((a, b) => a.keys.first.compareTo(b.keys.first));
+      return list;
+    }
+    List<Map<DateTime, dynamic>> sortedList = sortMapsByFirstKey(mixedDataByTime);
+
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        return sortedList.elementAt(index).values.first;
       },
-      itemCount: data.sortedDataByDay[targetKey].length,
+      itemCount: sortedList.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
@@ -641,6 +683,79 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           const SizedBox(height:5)
         ])
       );
+  }
+
+  Widget timeTableListChild(Map classData){
+    final data = ref.read(timeTableProvider);
+    String startTime = data.returnBeginningTime(classData["period"]);
+    String endTime = data.returnEndTime(classData["period"]);
+        return Column(children: [
+          const Divider(
+            height: 2,
+            thickness: 2,
+          ),
+          Container(
+              width: SizeConfig.blockSizeHorizontal! * 95,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(startTime +"~"+ endTime,
+                        style:const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Icon(Icons.school,color:MAIN_COLOR,size:20),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(data.intToWeekday(classData["weekDay"]) + "の授業",
+                        style:const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.normal)),
+                      const Spacer(),
+                    ]),
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                width: SizeConfig.blockSizeHorizontal! * 70,
+                                child: Text(
+                                  classData["courseName"],
+                                  overflow: TextOverflow.clip,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                              )
+                            ),
+                          const Spacer(),
+                          Text(
+                            classData["classRoom"],
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const Spacer(),
+              ])
+            ])
+          ),
+        ]);
   }
 
   Future<void> timeBottomSheet() async{
@@ -1399,6 +1514,14 @@ return GestureDetector(
               .elementAt(index)["endTime"];
     }
   }
+
+  Widget switchWidget(Widget widget, int isVisible) {
+    if (isVisible == 1) {
+      return Column(children: [widget]);
+    } else {
+      return const SizedBox();
+    }
+  }
 }
 
 Future<void> deleteAllScheduleWithTag(String tagID, WidgetRef ref, StateSetter setState)async{
@@ -1456,4 +1579,5 @@ bool isPanelEnable(String? tagID){
   }else{
     return true;
   }
+  
 }
