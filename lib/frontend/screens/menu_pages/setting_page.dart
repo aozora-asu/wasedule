@@ -254,7 +254,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     configSwitch("日付画面の大学授業表示", "timetableInDailyView"),
                     const Padding(
                      padding:EdgeInsets.all(7.5),
-                     child:Text("※これらは、登録されている時間割をもとに該当学期の各曜日に授業データを機械的に表示するものです。ご利用にあたっては大学暦や授業の状況を併せてご確認ください。",
+                     child:Text("※これらは、登録されている時間割をもとに該当月の各曜日に授業データを機械的に表示するものです。ご利用にあたっては大学暦や授業の状況を併せてご確認ください。",
                       style: TextStyle(color:Colors.red))),
                     borderModel,
                   ]))

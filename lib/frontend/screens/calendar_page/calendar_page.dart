@@ -1348,12 +1348,54 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget todaysScheduleListView() {
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
-    ref.watch(calendarDataProvider);
     String targetKey = target.year.toString() +
         "-" +
         target.month.toString().padLeft(2, "0") +
         "-" +
         target.day.toString().padLeft(2, "0");
+    List targetDayData = data.sortedDataByDay[targetKey] ?? [];
+    DateTime targetDay = DateTime.parse(targetKey);
+    DateTime now = DateTime.now();
+    List<Map<DateTime,Widget>> mixedDataByTime = [];
+
+    //まずは予定データの生成
+    for(int index = 0; index < targetDayData.length; index++){
+      DateTime key = 
+        DateTime(now.year,now.month,now.day-1,0,0,0);
+      if(targetDayData.elementAt(index)["startTime"].trim() != ""){
+        DateFormat format = DateFormat.Hm();
+        DateTime time = format.parse(targetDayData.elementAt(index)["startTime"]);
+        key = DateTime(now.year,now.month,now.day,time.hour,time.minute,0);
+      }
+
+      Widget value = const SizedBox();
+      value = todaysScheduleChild(targetDayData,targetKey,target,index);
+      mixedDataByTime.add({key:value});
+    }
+
+    //予定データが生成されたところに時間割データを混ぜる
+    final timeTable = ref.read(timeTableProvider);
+    Map<dynamic,dynamic> timeTableData = timeTable.currentSemesterClasses;
+    int weekDay = targetDay.weekday;
+    List<Map<String,dynamic>> targetDayList = timeTableData[weekDay] ?? [];
+    
+    for(int i = 0; i < targetDayList.length; i++){
+      Map targetClass = targetDayList.elementAt(i);
+      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
+      Widget value = 
+        switchWidget(
+          Text(targetClass.toString()),
+           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
+      mixedDataByTime.add({key:value});
+    }
+
+    //グチャグチャなデータをソートする
+    List<Map<DateTime, dynamic>> sortMapsByFirstKey(List<Map<DateTime, dynamic>> list) {
+      list.sort((a, b) => a.keys.first.compareTo(b.keys.first));
+      return list;
+    }
+    List<Map<DateTime, dynamic>> sortedList = sortMapsByFirstKey(mixedDataByTime);
+
 
     if (data.sortedDataByDay[targetKey] == null) {
       return const SizedBox();
@@ -1372,230 +1414,9 @@ class _CalendarState extends ConsumerState<Calendar> {
           const Divider(height: 1, indent: 10, endIndent: 10),
           ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              Widget dateTimeData = Container();
-
-              if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-                  targetDayData.elementAt(index)["endTime"].trim() != "") {
-                dateTimeData = Text(
-                  targetDayData.elementAt(index)["startTime"] +
-                      "\n" +
-                      targetDayData.elementAt(index)["endTime"],
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.bold),
-                );
-              } else if (targetDayData.elementAt(index)["startTime"].trim() !=
-                  "") {
-                dateTimeData = Text(
-                  targetDayData.elementAt(index)["startTime"],
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.bold),
-                );
-              } else {
-                dateTimeData = Text(
-                  "終日",
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                      fontWeight: FontWeight.bold),
-                );
-              }
-
-              String formerDateTimeData = "終日";
-              if (index != 0) {
-                if (targetDayData.elementAt(index - 1)["startTime"].trim() !=
-                        "" &&
-                    targetDayData.elementAt(index - 1)["endTime"].trim() !=
-                        "") {
-                  formerDateTimeData =
-                      targetDayData.elementAt(index - 1)["startTime"];
-                } else if (targetDayData
-                        .elementAt(index - 1)["startTime"]
-                        .trim() !=
-                    "") {
-                  formerDateTimeData =
-                      targetDayData.elementAt(index - 1)["startTime"];
-                }
-              }
-
-              String thisDateTimeData = "終日";
-              if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-                  targetDayData.elementAt(index)["endTime"].trim() != "") {
-                thisDateTimeData = targetDayData.elementAt(index)["startTime"];
-              } else if (targetDayData.elementAt(index)["startTime"].trim() !=
-                  "") {
-                thisDateTimeData = targetDayData.elementAt(index)["startTime"];
-              }
-
-              String nextDateTimeData = "終日";
-              if (index + 1 < targetDayData.length) {
-                if (targetDayData.elementAt(index + 1)["startTime"].trim() !=
-                        "" &&
-                    targetDayData.elementAt(index + 1)["endTime"].trim() !=
-                        "") {
-                  nextDateTimeData =
-                      targetDayData.elementAt(index + 1)["startTime"];
-                } else if (targetDayData
-                        .elementAt(index + 1)["startTime"]
-                        .trim() !=
-                    "") {
-                  nextDateTimeData =
-                      targetDayData.elementAt(index + 1)["startTime"];
-                }
-              }
-
-              Color upperDividerColor = Colors.grey;
-              Color dotColor = Colors.grey;
-              Color underDividerColor = Colors.grey;
-              DateTime now = DateTime.now();
-
-              if (formerDateTimeData == "終日") {
-                upperDividerColor = Colors.redAccent;
-              } else {
-                DateTime formerDateTime = DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                  int.parse(formerDateTimeData.substring(0, 2)),
-                  int.parse(formerDateTimeData.substring(3, 5)),
-                );
-                if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-                  DateTime nextDateTime = DateTime(
-                    now.year,
-                    now.month,
-                    now.day,
-                    int.parse(nextDateTimeData.substring(0, 2)),
-                    int.parse(nextDateTimeData.substring(3, 5)),
-                  );
-                  upperDividerColor = Colors.red;
-                  if (nextDateTime.isBefore(now)) {
-                    underDividerColor = Colors.red;
-                  }
-                }
-              }
-
-              if (thisDateTimeData == "終日") {
-                upperDividerColor = Colors.red;
-                dotColor = Colors.red;
-                underDividerColor = Colors.red;
-              } else {
-                DateTime thisDateTime = DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                  int.parse(thisDateTimeData.substring(0, 2)),
-                  int.parse(thisDateTimeData.substring(3, 5)),
-                );
-                if (thisDateTime.isBefore(now)) {
-                  upperDividerColor = Colors.red;
-                  dotColor = Colors.red;
-                  underDividerColor = Colors.red;
-                }
-                if (nextDateTimeData == "終日") {
-                  underDividerColor = Colors.grey;
-                }
-              }
-
-              bool isLast = false;
-              if (targetDayData.length == index + 1) {
-                isLast = true;
-              }
-
-              double dividerIndent = 0;
-              if (isLast) {
-                dividerIndent = 8;
-              }
-
-              Widget tagThumbnailer = const SizedBox();
-              if (targetDayData.elementAt(index)["tagID"] != null &&
-                  targetDayData.elementAt(index)["tagID"] != "") {
-                tagThumbnailer = Row(children: [
-                  tagThumbnail(targetDayData.elementAt(index)["tagID"]),
-                  Text(
-                    " " +
-                        returnTagTitle(
-                            targetDayData.elementAt(index)["tagID"] ?? "", ref),
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                        fontWeight: FontWeight.bold),
-                  )
-                ]);
-              }
-
-              return taskListChild(
-                Column(children: [
-                  IntrinsicHeight(
-                      child: Row(children: [
-                    Container(
-                      width: SizeConfig.blockSizeHorizontal! * 15,
-                      padding: EdgeInsets.only(
-                        left: SizeConfig.blockSizeHorizontal! * 2,
-                      ),
-                      child: Center(
-                        child: dateTimeData,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 6,
-                      child: Column(children: [
-                        Expanded(
-                          child: VerticalDivider(
-                            width: 2,
-                            thickness: 2,
-                            color: upperDividerColor,
-                          ),
-                        ),
-                        Container(
-                          height: 6,
-                          width: 6,
-                          decoration: BoxDecoration(
-                              color: dotColor, shape: BoxShape.circle),
-                        ),
-                        Expanded(
-                          child: VerticalDivider(
-                            width: 2,
-                            thickness: 2,
-                            color: underDividerColor,
-                            endIndent: dividerIndent,
-                          ),
-                        )
-                      ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            tagThumbnailer,
-                            SizedBox(
-                                width: SizeConfig.blockSizeHorizontal! * 75,
-                                child: Text(
-                                  " " +
-                                      data.sortedDataByDay[targetKey]
-                                          .elementAt(index)["subject"],
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 5,
-                                      fontWeight: FontWeight.bold),
-                                ))
-                          ]),
-                    )
-                  ]))
-                ]),
-                () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DailyViewPage(target: target);
-                      });
-                },
-                true,
-                isLast,
-              );
+              return sortedList.elementAt(index).values.first;
             },
-            itemCount: data.sortedDataByDay[targetKey].length,
+            itemCount: sortedList.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           )
@@ -1604,6 +1425,234 @@ class _CalendarState extends ConsumerState<Calendar> {
       ]);
     }
   }
+
+  Widget todaysScheduleChild(targetDayData,targetKey,target,index){
+    Widget dateTimeData = Container();
+    final data = ref.read(calendarDataProvider);
+
+    if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+        targetDayData.elementAt(index)["endTime"].trim() != "") {
+      dateTimeData = Text(
+        targetDayData.elementAt(index)["startTime"] +
+            "\n" +
+            targetDayData.elementAt(index)["endTime"],
+        style: const TextStyle(
+            fontSize: 13, fontWeight: FontWeight.bold),
+      );
+    } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+        "") {
+      dateTimeData = Text(
+        targetDayData.elementAt(index)["startTime"],
+        style: const TextStyle(
+            fontSize: 13, fontWeight: FontWeight.bold),
+      );
+    } else {
+      dateTimeData = Text(
+        "終日",
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+            fontWeight: FontWeight.bold),
+      );
+    }
+
+    String formerDateTimeData = "終日";
+    if (index != 0) {
+      if (targetDayData.elementAt(index - 1)["startTime"].trim() !=
+              "" &&
+          targetDayData.elementAt(index - 1)["endTime"].trim() !=
+              "") {
+        formerDateTimeData =
+            targetDayData.elementAt(index - 1)["startTime"];
+      } else if (targetDayData
+              .elementAt(index - 1)["startTime"]
+              .trim() !=
+          "") {
+        formerDateTimeData =
+            targetDayData.elementAt(index - 1)["startTime"];
+      }
+    }
+
+    String thisDateTimeData = "終日";
+    if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+        targetDayData.elementAt(index)["endTime"].trim() != "") {
+      thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+    } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+        "") {
+      thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+    }
+
+    String nextDateTimeData = "終日";
+    if (index + 1 < targetDayData.length) {
+      if (targetDayData.elementAt(index + 1)["startTime"].trim() !=
+              "" &&
+          targetDayData.elementAt(index + 1)["endTime"].trim() !=
+              "") {
+        nextDateTimeData =
+            targetDayData.elementAt(index + 1)["startTime"];
+      } else if (targetDayData
+              .elementAt(index + 1)["startTime"]
+              .trim() !=
+          "") {
+        nextDateTimeData =
+            targetDayData.elementAt(index + 1)["startTime"];
+      }
+    }
+
+    Color upperDividerColor = Colors.grey;
+    Color dotColor = Colors.grey;
+    Color underDividerColor = Colors.grey;
+    DateTime now = DateTime.now();
+
+    if (formerDateTimeData == "終日") {
+      upperDividerColor = Colors.redAccent;
+    } else {
+      DateTime formerDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(formerDateTimeData.substring(0, 2)),
+        int.parse(formerDateTimeData.substring(3, 5)),
+      );
+      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
+        DateTime nextDateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          int.parse(nextDateTimeData.substring(0, 2)),
+          int.parse(nextDateTimeData.substring(3, 5)),
+        );
+        upperDividerColor = Colors.red;
+        if (nextDateTime.isBefore(now)) {
+          underDividerColor = Colors.red;
+        }
+      }
+    }
+
+    if (thisDateTimeData == "終日") {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+      underDividerColor = Colors.red;
+    } else {
+      DateTime thisDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(thisDateTimeData.substring(0, 2)),
+        int.parse(thisDateTimeData.substring(3, 5)),
+      );
+      if (thisDateTime.isBefore(now)) {
+        upperDividerColor = Colors.red;
+        dotColor = Colors.red;
+        underDividerColor = Colors.red;
+      }
+      if (nextDateTimeData == "終日") {
+        underDividerColor = Colors.grey;
+      }
+    }
+
+    bool isLast = false;
+    if (targetDayData.length == index + 1) {
+      isLast = true;
+    }
+
+    double dividerIndent = 0;
+    if (isLast) {
+      dividerIndent = 8;
+    }
+
+    Widget tagThumbnailer = const SizedBox();
+    if (targetDayData.elementAt(index)["tagID"] != null &&
+        targetDayData.elementAt(index)["tagID"] != "") {
+      tagThumbnailer = Row(children: [
+        tagThumbnail(targetDayData.elementAt(index)["tagID"]),
+        Text(
+          " " +
+              returnTagTitle(
+                  targetDayData.elementAt(index)["tagID"] ?? "", ref),
+          style: TextStyle(
+              color: Colors.grey,
+              fontSize: SizeConfig.blockSizeHorizontal! * 3,
+              fontWeight: FontWeight.bold),
+        )
+      ]);
+    }
+
+    return taskListChild(
+      Column(children: [
+        IntrinsicHeight(
+            child: Row(children: [
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 15,
+            padding: EdgeInsets.only(
+              left: SizeConfig.blockSizeHorizontal! * 2,
+            ),
+            child: Center(
+              child: dateTimeData,
+            ),
+          ),
+          SizedBox(
+            width: 6,
+            child: Column(children: [
+              Expanded(
+                child: VerticalDivider(
+                  width: 2,
+                  thickness: 2,
+                  color: upperDividerColor,
+                ),
+              ),
+              Container(
+                height: 6,
+                width: 6,
+                decoration: BoxDecoration(
+                    color: dotColor, shape: BoxShape.circle),
+              ),
+              Expanded(
+                child: VerticalDivider(
+                  width: 2,
+                  thickness: 2,
+                  color: underDividerColor,
+                  endIndent: dividerIndent,
+                ),
+              )
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  tagThumbnailer,
+                  SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! * 75,
+                      child: Text(
+                        " " +
+                            data.sortedDataByDay[targetKey]
+                                .elementAt(index)["subject"],
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize:
+                                SizeConfig.blockSizeHorizontal! * 5,
+                            fontWeight: FontWeight.bold),
+                      ))
+                ]),
+          )
+        ]))
+      ]),
+      () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return DailyViewPage(target: target);
+            });
+      },
+      true,
+      isLast,
+    );
+  }
+
+
 
   Widget taskDataListList(int fromNow) {
     DateTime now = DateTime.now();
