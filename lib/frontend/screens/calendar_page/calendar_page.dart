@@ -527,7 +527,6 @@ class _CalendarState extends ConsumerState<Calendar> {
             targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
       });
     }
-    print(thisYear);print(semesterNum);
     targetMonth = increasedMonth;
     generateCalendarData();
   }
@@ -788,7 +787,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     Widget universityClassView = const SizedBox();
     if(universityClassData != ""){
       universityClassView =
-      Container(
+      switchWidget(
+       Container(
         decoration:const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(2))),
         margin:const EdgeInsets.symmetric(horizontal:1),
@@ -804,7 +804,8 @@ class _CalendarState extends ConsumerState<Calendar> {
             ]),
             const Divider(height: 0.7,indent: 2,
                           endIndent: 2,thickness: 0.7),
-        ]));
+        ])),
+        ConfigDataLoader().searchConfigData("timetableInCalendarcell", ref));
     }
             return InkWell(
               child: Container(

@@ -294,6 +294,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 return const SizedBox();
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
+                ref.read(timeTableProvider).initUniversityScheduleByDay(thisYear,semesterNum);
                 return timeTableBody();
               }else{
                 return noDataScreen();
@@ -538,20 +539,20 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         );
         int length = random.nextInt(11);
 
-        if(tableData.sortedDataByWeekDay.containsKey(weekDay)
-          && returnExistingPeriod(tableData.sortedDataByWeekDay[weekDay]).contains(index+1)
-          &&tableData.sortedDataByWeekDay[weekDay]
+        if(tableData.currentSemesterClasses.containsKey(weekDay)
+          && returnExistingPeriod(tableData.currentSemesterClasses[weekDay]).contains(index+1)
+          &&tableData.currentSemesterClasses[weekDay]
             .elementAt(returnIndexFromPeriod(
-              tableData.sortedDataByWeekDay[weekDay],index + 1))["year"] 
+              tableData.currentSemesterClasses[weekDay],index + 1))["year"] 
             == thisYear){
 
-            if(tableData.sortedDataByWeekDay[weekDay]
+            if(tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
-                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentQuaterID() || 
-              tableData.sortedDataByWeekDay[weekDay]
+              tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
-                tableData.sortedDataByWeekDay[weekDay],index + 1))["semester"] 
+                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentSemesterID()
             ){
               bgColor = cellBackGroundColor(length);
@@ -691,16 +692,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
     Color grey = Colors.grey;
     final timeTableData = ref.read(timeTableProvider);
-    Map targetData = timeTableData.sortedDataByWeekDay[weekDay]
+    Map targetData = timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period));
+          timeTableData.currentSemesterClasses[weekDay],period));
     String className = 
-      timeTableData.sortedDataByWeekDay[weekDay]
+      timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period))["courseName"];
-    String? classRoom = timeTableData.sortedDataByWeekDay[weekDay]
+          timeTableData.currentSemesterClasses[weekDay],period))["courseName"];
+    String? classRoom = timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.sortedDataByWeekDay[weekDay],period))["classRoom"];
+          timeTableData.currentSemesterClasses[weekDay],period))["classRoom"];
     
     Widget classRoomView = const SizedBox();
     if(classRoom != null
@@ -882,8 +883,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       "weekDay":3,
       "period":2,
       "semester" : "spring_semester",
-      "classRoom":"7-419",
-      "memorandom" :"",
+      "classRoom":"7-209",
+      "memorandom" : "",
       "color" : 22354646,
       "groupID" : "d34erws2",
       "year" : 2024
@@ -1001,6 +1002,18 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       "courseName":"全く同じ授業だよ",
       "weekDay":3,
       "period":2,
+      "semester" : "spring_semester",
+      "classRoom":"7-419",
+      "memorandom" :"",
+      "color" : 22354646,
+      "groupID" : "d34erws2",
+      "year" : 2025
+      },
+      {"id":16,
+      "classID":"",
+      "courseName":"全く同じ授業だえ～。",
+      "weekDay":3,
+      "period":3,
       "semester" : "spring_semester",
       "classRoom":"7-419",
       "memorandom" :"",

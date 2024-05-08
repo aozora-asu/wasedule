@@ -19,6 +19,7 @@ class TimeTableData {
   bool isInit = false;
   bool isRenewed = false;
   var sortedDataByWeekDay = {};
+  var currentSemesterClasses = {};
   var universityScheduleByWeekDay = {};
   int maxPeriod = 4;
 
@@ -88,7 +89,14 @@ class TimeTableData {
          target["period"] != null){
       if(target["semester"] == currentQuaterID(semesterNum) ||
          target["semester"] == currentSemesterID(semesterNum)){
-         thisSemesterData.add(target);
+          //年度・学期が条件に沿うデータのみを抽出
+          thisSemesterData.add(target);
+          int targetWeekDay = target["weekDay"];
+          if(currentSemesterClasses.containsKey(targetWeekDay)) {
+            currentSemesterClasses[targetWeekDay]!.add(target);
+          }else{
+            currentSemesterClasses[targetWeekDay] = [target];
+          }
         }
       }
     }
@@ -101,6 +109,7 @@ class TimeTableData {
 
   void initUniversityScheduleByDay(int thisYear,int semesterNum){
     universityScheduleByWeekDay = {};
+    currentSemesterClasses = {};
     universityScheduleByWeekDay[1] = returnStringClassTime(thisYear,semesterNum,1);
     universityScheduleByWeekDay[2] = returnStringClassTime(thisYear,semesterNum,2);
     universityScheduleByWeekDay[3] = returnStringClassTime(thisYear,semesterNum,3);
@@ -186,12 +195,27 @@ class TimeTableData {
       default : return DateTime(now.year,now.month,now.day,21,35);
     }
   }
-  // TaskData copyWith({
-  //   List<Map<String, dynamic>>? taskDataList,
-  // }) {
-  //   return TaskData()
-  //     ..taskDataList = taskDataList ?? this.taskDataList;
-  // }
+
+  String intToWeekday(int weekday) {
+    switch (weekday) {
+      case 1:
+        return '月曜日';
+      case 2:
+        return '火曜日';
+      case 3:
+        return '水曜日';
+      case 4:
+        return '木曜日';
+      case 5:
+        return '金曜日';
+      case 6:
+        return '土曜日';
+      case 7:
+        return '日曜日';
+      default:
+        return '不明な曜日';
+    }
+  }
 
   void clearContents() {
     timeTableDataList.clear();
