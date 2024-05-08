@@ -571,7 +571,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           GestureDetector(
             onTap: () async {
               if (weekday == null) {
-                notifyType = "dayly";
+                notifyType = "daily";
               } else {
                 notifyType = "weekly";
               }
@@ -806,9 +806,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
               decoration: const InputDecoration.collapsed(
                   hintText: "日付の形式", border: OutlineInputBorder()),
               items: const [
-                DropdownMenuItem(value: "MM月dd日", child: Text(" MM月dd日")),
-                DropdownMenuItem(value: "MM/dd", child: Text(" MM/dd")),
-                DropdownMenuItem(value: "dd/MM", child: Text(" dd/MM")),
+                DropdownMenuItem(value: "M月d日", child: Text(" M月d日")),
+                DropdownMenuItem(value: "M/d", child: Text(" M/d")),
+                DropdownMenuItem(value: "d/M", child: Text(" d/M")),
                 DropdownMenuItem(value: null, child: Text(" 相対")),
               ],
               onChanged: (value) {
