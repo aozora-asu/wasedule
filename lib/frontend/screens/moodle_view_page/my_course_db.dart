@@ -117,12 +117,12 @@ class MyCourseDatabaseHandler {
         attendCount INTEGER,
         year INTEGER,
         pageID TEXT,
-        syllabusID TEXT
+        syllabusID TEXT UNIQUE
       )
     ''');
   }
 
-  Future<void> _insertNotifyFormat(MyCourse myCourse) async {
+  Future<void> _insertMyCourse(MyCourse myCourse) async {
     await _database.insert(myCourseTable, myCourse.toMap());
   }
 
@@ -144,17 +144,16 @@ class MyCourseDatabaseHandler {
     );
   }
 
-  Future<void> resisterMyCourse(
-    MyCourse myCourse,
-  ) async {
+  Future<void> resisterMyCourse(MyCourse myCourse) async {
     await _initMyCourseDatabase();
     try {
-      await _insertNotifyFormat(myCourse);
+      await _insertMyCourse(myCourse);
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
         await _updateMyCourse(myCourse);
       }
+      print(e);
     }
   }
 

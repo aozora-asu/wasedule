@@ -73,7 +73,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
               case "isAllowAutoLogin":
                 print(messageData["isAllowAutoLogin"]);
               case "myCourseData":
-                for (var myCourseData in messageData["myCourseData"]) {
+                for (var myCourseData in messageData["myCourseData"] as List) {
                   MyCourse? myCourse = await getMyCourse(MoodleCourse(
                       color: myCourseData["color"],
                       courseName: myCourseData["courseName"],
@@ -84,7 +84,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                 }
             }
           } catch (e) {
-            print(consoleMessage.message);
+            throw "jsから渡された値がJSON形式ではありません";
           }
         },
         initialUrlRequest: URLRequest(url: WebUri(initUrl)),
