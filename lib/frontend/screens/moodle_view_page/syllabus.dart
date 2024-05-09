@@ -145,15 +145,18 @@ SyllabusQueryResult _get(String htmlString) {
   var extractedString = match?.group(1);
 
   Map<String, int?> periodAndDate = _parseSchedule(tdElements[6].text);
+
   // 抽出した文字列を表示
+
   SyllabusQueryResult syllabusResult = SyllabusQueryResult(
       courseName: tdElements[2].text,
       classRoom: zenkaku2hankaku(tdElements[7].text),
       period: periodAndDate["period"],
       weekday: periodAndDate["weekday"],
-      semester: tdElements[5].text,
+      semester: convertSemester(tdElements[5].text),
       year: zenkaku2hankaku(tdElements[0].text),
       syllabusID: extractedString);
+
   return syllabusResult;
 }
 
@@ -181,6 +184,27 @@ Future<MyCourse?> getMyCourse(MoodleCourse moodleCourse) async {
   }
 
   return myCourse;
+}
+
+String? convertSemester(String? text) {
+  switch (text) {
+    case "春クォーター":
+      return "spring_quarter";
+    case "夏クォーター":
+      return "summer_quarter";
+    case "春学期":
+      return "spring_semester";
+    case "秋クォーター":
+      return "fall_quarter";
+    case "冬クォーター":
+      return "winter_quarter";
+    case "秋学期":
+      return "fall_semester";
+    case "通年":
+      return "full_year";
+    default:
+      return null;
+  }
 }
 
 int? _weekdayToNumber(String? weekday) {

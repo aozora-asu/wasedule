@@ -8,7 +8,7 @@ class SyllabusQueryResult {
   String classRoom;
   int? period;
   int? weekday;
-  String semester;
+  String? semester;
   String year;
   String? syllabusID;
   SyllabusQueryResult(
@@ -48,7 +48,7 @@ class MyCourse {
   String courseName;
   int? weekday;
   int? period;
-  String semester;
+  String? semester;
   String classRoom;
   String? memo;
   String color;
