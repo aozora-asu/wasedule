@@ -9,7 +9,7 @@ class SyllabusQueryResult {
   int? period;
   int? weekday;
   String? semester;
-  String year;
+  int year;
   String? syllabusID;
   SyllabusQueryResult(
       {required this.courseName,
@@ -52,7 +52,7 @@ class MyCourse {
   String classRoom;
   String? memo;
   String color;
-  String year;
+  int year;
   String pageID;
   int? attendCount;
   String? syllabusID;

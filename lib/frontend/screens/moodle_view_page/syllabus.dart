@@ -154,7 +154,7 @@ SyllabusQueryResult _get(String htmlString) {
       period: periodAndDate["period"],
       weekday: periodAndDate["weekday"],
       semester: convertSemester(tdElements[5].text),
-      year: zenkaku2hankaku(tdElements[0].text),
+      year: int.parse(tdElements[0].text),
       syllabusID: extractedString);
 
   return syllabusResult;
