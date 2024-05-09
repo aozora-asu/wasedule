@@ -45,7 +45,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
             isLogoWhite: true,
           ),
           const Spacer(),
-          appBarContent,
           const Spacer(),
           InkWell(
             child: Icon(Icons.notifications_outlined, color:contentColor),
@@ -256,7 +255,6 @@ class _AppBarThumbNailState extends ConsumerState<AppBarThumbNail> {
 }
 
   Widget frame(contents){
-
     if (type < 100) {
       return Container(
         padding: EdgeInsets.symmetric(

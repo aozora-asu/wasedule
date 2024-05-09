@@ -219,6 +219,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     configSwitch("Tipsとお知らせ", "tips"),
                     borderModel,
                     configSwitch("きょうの予定", "todaysSchedule"),
+                    configSwitch("きょうの予定枠内に\n時間割データを表示", "timetableInTodaysSchedule"),
                     borderModel,
                     configSwitch("近日締切のタスク", "taskList"),
                     const SizedBox(height: 5),

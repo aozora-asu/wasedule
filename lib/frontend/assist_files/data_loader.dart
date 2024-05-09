@@ -16,6 +16,7 @@ class ConfigDataLoader {
     await createConfigData("arbeitPreview", 1, ref);
     await createConfigData("timetableInCalendarcell", 1, ref);
     await createConfigData("timetableInDailyView", 1, ref);
+    await createConfigData("timetableInTodaysSchedule", 1, ref);
   }
 
   Future<void> createConfigData(
