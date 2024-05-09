@@ -84,7 +84,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                 }
             }
           } catch (e) {
-            throw "jsから渡された値がJSON形式ではありません";
+            print(consoleMessage.message);
           }
         },
         initialUrlRequest: URLRequest(url: WebUri(initUrl)),
