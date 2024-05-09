@@ -1,3 +1,5 @@
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
 import 'package:html/dom.dart' as html;
 
 import 'package:flutter/material.dart';
@@ -38,8 +40,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
   //     "https://coursereg.waseda.jp/portal/simpleportal.php?HID_P14=JA";
   static const String mywasedaErrorUrl =
       "https://iaidp.ia.waseda.jp/idp/profile/Authn/SAML2/POST/SSO";
-  static const String microsoftLoginUrl =
-      "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/saml2?SAMLRequest=hVJdb5wwEPwryO9gMAcH1nHRNaeqJ6XNKZA%2B9KVauCXnytjUa5L235fcR5W%2BpK%2F27MzOzK5ufg06eEZHypqKJVHMAjSdPSjzVLHH5mNYsJv1imDQYpSbyR%2FNA%2F6ckHwwDxqS55%2BKTc5IC6RIGhiQpO9kvfl8J0UUy9FZbzurWbAhQudnqVtraBrQ1eieVYePD3cVO3o%2FkuRcgTqMkYLoBQgPEP0Y%2BfzAZ5ZeaeSnJfgrueD7%2B7rhdX3Pgu28kjLgTzauTNo%2BKRMNqnOWbO%2Bt0cpg1NmBt2mRZ8lShGVRLMNFm0JYlH0flhmkWVuKftGl%2FOSNBbttxb6LZQJ9mS%2FaJEvEIRVpBiAgzxGhLESLM4xowp0hD8ZXTMRiEcZZGIsmiWWWyCyPyrz4xoL9JY0PypxTfi%2B69gwi%2Balp9uGrXRZ8vbY1A9ilG3lSd29LeZ8Yrk2w9X9yp6NqW6vRH1f8rdbfq%2Fgyk%2B%2B2e6tV9zvYaG1fbh2Cx4p5NyHj68vcv%2Fez%2FgM%3D&RelayState=e2s1";
+  // static const String microsoftLoginUrl =
+  //     "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/saml2?SAMLRequest=hVJdb5wwEPwryO9gMAcH1nHRNaeqJ6XNKZA%2B9KVauCXnytjUa5L235fcR5W%2BpK%2F27MzOzK5ufg06eEZHypqKJVHMAjSdPSjzVLHH5mNYsJv1imDQYpSbyR%2FNA%2F6ckHwwDxqS55%2BKTc5IC6RIGhiQpO9kvfl8J0UUy9FZbzurWbAhQudnqVtraBrQ1eieVYePD3cVO3o%2FkuRcgTqMkYLoBQgPEP0Y%2BfzAZ5ZeaeSnJfgrueD7%2B7rhdX3Pgu28kjLgTzauTNo%2BKRMNqnOWbO%2Bt0cpg1NmBt2mRZ8lShGVRLMNFm0JYlH0flhmkWVuKftGl%2FOSNBbttxb6LZQJ9mS%2FaJEvEIRVpBiAgzxGhLESLM4xowp0hD8ZXTMRiEcZZGIsmiWWWyCyPyrz4xoL9JY0PypxTfi%2B69gwi%2Balp9uGrXRZ8vbY1A9ilG3lSd29LeZ8Yrk2w9X9yp6NqW6vRH1f8rdbfq%2Fgyk%2B%2B2e6tV9zvYaG1fbh2Cx4p5NyHj68vcv%2Fez%2FgM%3D&RelayState=e2s1";
   String initUrl = moodleUrl;
 
   @override
@@ -64,17 +66,25 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
             thirdPartyCookiesEnabled: true,
             sharedCookiesEnabled: true,
             useShouldOverrideUrlLoading: true),
-        onConsoleMessage: (controller, consoleMessage) {
+        onConsoleMessage: (controller, consoleMessage) async {
           try {
             messageData = jsonDecode(consoleMessage.message);
             switch (messageData.keys.first) {
               case "isAllowAutoLogin":
                 print(messageData["isAllowAutoLogin"]);
               case "myCourseData":
-                print(messageData["myCourseData"]);
+                for (var myCourseData in messageData["myCourseData"]) {
+                  MyCourse? myCourse = await getMyCourse(MoodleCourse(
+                      color: myCourseData["color"],
+                      courseName: myCourseData["courseName"],
+                      pageID: myCourseData["pageID"]));
+                  if (myCourse != null) {
+                    await MyCourseDatabaseHandler().resisterMyCourse(myCourse);
+                  }
+                }
             }
           } catch (e) {
-            print(e);
+            print(consoleMessage.message);
           }
         },
         initialUrlRequest: URLRequest(url: WebUri(initUrl)),
@@ -88,7 +98,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
           switch (currentUrl.toString()) {
             case moodleUrl:
               javascriptCode = await rootBundle.loadString(
-                  'lib/frontend/screens/moodle_view_page/get_course_info.js');
+                  'lib/frontend/screens/moodle_view_page/get_course_button.js');
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
             // case moodleLoginUrl:
