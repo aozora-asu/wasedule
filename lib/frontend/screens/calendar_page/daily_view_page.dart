@@ -570,7 +570,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         children: [
                           Container(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                                  const EdgeInsets.symmetric(horizontal: 2.5),
                               width: SizeConfig.blockSizeHorizontal! * 75,
                               child: Material(
                                 child:TextField(
@@ -582,13 +582,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                   // overflow: TextOverflow.clip,
                                   style: const TextStyle(
                                       color: Colors.black,
-                                      fontSize: 30,
+                                      fontSize: 25,
                                       fontWeight: FontWeight.bold),
                                   onChanged: (value) {
                                     setState(() {
                                       isEdited = true;
                                     });
-                                    
                                   },
                                   ),
                                 )
@@ -738,7 +737,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                   overflow: TextOverflow.clip,
                                   style: const TextStyle(
                                       color: Colors.black,
-                                      fontSize: 20,
+                                      fontSize: 30,
                                       fontWeight: FontWeight.bold),
                               )
                             ),

@@ -493,22 +493,32 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  Color cellBackGroundColor(int length){
+  Color cellBackGroundColor(int length,Color color){
     Color bgColor = Colors.white;
     switch(length){
-    case 0:bgColor = Color.fromRGBO(100, 150, 255, 0.6);
-    case 1:bgColor = Color.fromRGBO(255, 190, 180, 0.6);
-    case 2:bgColor = Color.fromRGBO(255, 180, 160, 0.6);
-    case 3:bgColor = Color.fromRGBO(255, 170, 140, 0.6);
-    case 4:bgColor = Color.fromRGBO(255, 160, 120, 0.6);
-    case 5:bgColor = Color.fromRGBO(255, 150, 100, 0.6);
-    case 6:bgColor = Color.fromRGBO(255, 140, 80, 0.6);
-    case 7:bgColor = Color.fromRGBO(255, 130, 60, 0.6);
-    case 8:bgColor = Color.fromRGBO(255, 120, 40, 0.6);
-    case 9:bgColor = Color.fromRGBO(255, 110, 20, 0.6);
-    default :bgColor = Color.fromRGBO(255,100, 0, 0.6);
+    case 0:bgColor = increaseRed(color,amount:0);
+    case 1:bgColor = increaseRed(color,amount:30);
+    case 2:bgColor = increaseRed(color,amount:60);
+    case 3:bgColor = increaseRed(color,amount:90);
+    case 4:bgColor = increaseRed(color,amount:120);
+    case 5:bgColor = increaseRed(color,amount:150);
+    case 6:bgColor = increaseRed(color,amount:180);
+    case 7:bgColor = increaseRed(color,amount:210);
+    case 8:bgColor = increaseRed(color,amount:240);
+    case 9:bgColor = increaseRed(color,amount:255);
+    default :bgColor = increaseRed(color,amount:255);
     }
     return bgColor;
+  }
+
+  Color increaseRed(Color color, {int amount = 10}) {
+    int red = color.red;
+    int green = color.green;
+    int blue = color.blue;
+
+    red = (red + amount).clamp(0, 255); // clampで0～255の範囲に収める
+
+    return Color.fromRGBO(red, green, blue, 1);
   }
 
   Widget timetableSells(int weekDay){
@@ -545,7 +555,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             .elementAt(returnIndexFromPeriod(
               tableData.currentSemesterClasses[weekDay],index + 1))["year"] 
             == thisYear){
-
+            Color colorning = const Color.fromARGB(255, 158, 194, 255);
             if(tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
                 tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
@@ -555,7 +565,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentSemesterID()
             ){
-              bgColor = cellBackGroundColor(length);
+              bgColor = cellBackGroundColor(length,colorning);
               cellContents = timeTableSellsChild(
                 weekDay,index+1,length);
             }
@@ -641,8 +651,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       scrollDirection: Axis.horizontal,
       itemCount: listLength,
       itemBuilder: (context,index){
+        Color colorning = const Color.fromARGB(255, 158, 194, 255);
         int length = random.nextInt(11);
-        Color bgColor = cellBackGroundColor(length);
+        Color bgColor = cellBackGroundColor(length,colorning);
         Widget child = const SizedBox();
         if(tableData.sortedDataByWeekDay[7]
             .elementAt(index)["semester"] 
@@ -762,7 +773,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     final tableData = ref.read(timeTableProvider);
     Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
     double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
-    Color grey = Colors.grey;
     String className = target["courseName"];
     
 
