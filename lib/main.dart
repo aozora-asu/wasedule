@@ -8,9 +8,6 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import "./backend/firabase_fcm_notification.dart";
-import 'package:intl/intl.dart';
-import "./backend/notify/notify_content.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Bindingの初期化
@@ -29,8 +26,6 @@ void main() async {
   ]);
 
   await initializeDateFormatting(); // 初期化
-
-  await NotifyContent().getScheduledNotify();
 
   runApp(ProviderScope(child: MyApp()));
 }
