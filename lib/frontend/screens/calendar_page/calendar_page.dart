@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_pa
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/study_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
@@ -1345,7 +1346,10 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+   List<Map<DateTime,dynamic>>sortedMapList = [];
   Widget todaysScheduleListView() {
+    List<Map<DateTime, dynamic>> sortedWidgetList = [];
+    List<Map<DateTime,dynamic>> mapList = [];
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
     String targetKey = target.year.toString() +
@@ -1367,10 +1371,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         DateTime time = format.parse(targetDayData.elementAt(index)["startTime"]);
         key = DateTime(now.year,now.month,now.day,time.hour,time.minute,0);
       }
-
-      Widget value = const SizedBox();
-      value = todaysScheduleChild(targetDayData,targetKey,target,index);
-      mixedDataByTime.add({key:value});
+      mapList.add({key:targetDayData.elementAt(index)});
     }
 
     //予定データが生成されたところに時間割データを混ぜる
@@ -1380,27 +1381,42 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<String,dynamic>> targetDayList = timeTableData[weekDay] ?? [];
     
     for(int i = 0; i < targetDayList.length; i++){
-      Map targetClass = targetDayList.elementAt(i);
+      Map<String,dynamic> targetClass = targetDayList.elementAt(i);
+      String startTime = timeTable.returnBeginningTime(targetClass["period"]);
+      String endTime = timeTable.returnEndTime(targetClass["period"]);
+      targetClass["startTime"] = startTime;
+      targetClass["endTime"] = endTime;
       DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
-      Widget value = 
-        switchWidget(
-          Text(targetClass.toString()),
-           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
-      mixedDataByTime.add({key:value});
+      mapList.add({key:targetClass});
     }
 
-    //グチャグチャなデータをソートする
+    //グチャグチャなMapデータをソートする
+    sortedWidgetList = [];
     List<Map<DateTime, dynamic>> sortMapsByFirstKey(List<Map<DateTime, dynamic>> list) {
       list.sort((a, b) => a.keys.first.compareTo(b.keys.first));
       return list;
     }
-    List<Map<DateTime, dynamic>> sortedList = sortMapsByFirstKey(mixedDataByTime);
+    sortedMapList = sortMapsByFirstKey(mapList);
 
+    //整えたMapデータをもとにウィジェットのリストを錬成
+    for(int index = 0; index < sortedMapList.length; index++){
+      DateTime key = sortedMapList.elementAt(index).keys.first;
+      Widget value = const SizedBox();
+      if(sortedMapList.elementAt(index).values.first.containsKey("period")){
+        value = 
+          switchWidget(
+             todaysClassChild(index),
+             ConfigDataLoader().searchConfigData("timetableInTodaysSchedule", ref));
+        sortedWidgetList.add({key:value});
+      }else{
+        value = todaysScheduleChild(index,target);
+        sortedWidgetList.add({key:value});
+      }
+    }
 
     if (data.sortedDataByDay[targetKey] == null) {
       return const SizedBox();
     } else {
-      List targetDayData = data.sortedDataByDay[targetKey];
       return Column(children: [
         menuList(Icons.calendar_month, "きょうの予定", true, [
           Container(
@@ -1414,9 +1430,9 @@ class _CalendarState extends ConsumerState<Calendar> {
           const Divider(height: 1, indent: 10, endIndent: 10),
           ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return sortedList.elementAt(index).values.first;
+              return sortedWidgetList.elementAt(index).values.first;
             },
-            itemCount: sortedList.length,
+            itemCount: sortedWidgetList.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           )
@@ -1426,23 +1442,23 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
-  Widget todaysScheduleChild(targetDayData,targetKey,target,index){
+  Widget todaysScheduleChild(index,target){
     Widget dateTimeData = Container();
-    final data = ref.read(calendarDataProvider);
 
-    if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-        targetDayData.elementAt(index)["endTime"].trim() != "") {
+    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
+        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
+        sortedMapList.elementAt(index).values.first["endTime"] != null) {
       dateTimeData = Text(
-        targetDayData.elementAt(index)["startTime"] +
+        sortedMapList.elementAt(index).values.first["startTime"] +
             "\n" +
-            targetDayData.elementAt(index)["endTime"],
+            sortedMapList.elementAt(index).values.first["endTime"],
         style: const TextStyle(
             fontSize: 13, fontWeight: FontWeight.bold),
       );
-    } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+    } else if (sortedMapList.elementAt(index).values.first["startTime"].trim() !=
         "") {
       dateTimeData = Text(
-        targetDayData.elementAt(index)["startTime"],
+        sortedMapList.elementAt(index).values.first["startTime"],
         style: const TextStyle(
             fontSize: 13, fontWeight: FontWeight.bold),
       );
@@ -1457,44 +1473,38 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     String formerDateTimeData = "終日";
     if (index != 0) {
-      if (targetDayData.elementAt(index - 1)["startTime"].trim() !=
-              "" &&
-          targetDayData.elementAt(index - 1)["endTime"].trim() !=
-              "") {
+      if(sortedMapList.elementAt(index-1).values.first["startTime"].trim()!="" &&
+         sortedMapList.elementAt(index-1).values.first["endTime"] != "" &&
+         sortedMapList.elementAt(index-1).values.first["endTime"] != null) {
         formerDateTimeData =
-            targetDayData.elementAt(index - 1)["startTime"];
-      } else if (targetDayData
-              .elementAt(index - 1)["startTime"]
-              .trim() !=
-          "") {
+            sortedMapList.elementAt(index-1).values.first["startTime"];
+      } else if (sortedMapList.elementAt(index-1).values.first["startTime"]
+              .trim()!= "") {
         formerDateTimeData =
-            targetDayData.elementAt(index - 1)["startTime"];
+            sortedMapList.elementAt(index-1).values.first["startTime"];
       }
     }
 
     String thisDateTimeData = "終日";
-    if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-        targetDayData.elementAt(index)["endTime"].trim() != "") {
-      thisDateTimeData = targetDayData.elementAt(index)["startTime"];
-    } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
+        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
+        sortedMapList.elementAt(index).values.first["endTime"] != null) {
+      thisDateTimeData = sortedMapList.elementAt(index).values.first["startTime"];
+    } else if (sortedMapList.elementAt(index).values.first["startTime"].trim()!=
         "") {
-      thisDateTimeData = targetDayData.elementAt(index)["startTime"];
+      thisDateTimeData = sortedMapList.elementAt(index).values.first["startTime"];
     }
 
     String nextDateTimeData = "終日";
-    if (index + 1 < targetDayData.length) {
-      if (targetDayData.elementAt(index + 1)["startTime"].trim() !=
-              "" &&
-          targetDayData.elementAt(index + 1)["endTime"].trim() !=
-              "") {
+    if (index + 1 < sortedMapList.length) {
+      if (sortedMapList.elementAt(index+1).values.first["startTime"].trim()!="" &&
+          sortedMapList.elementAt(index+1).values.first["endTime"] != "" &&
+          sortedMapList.elementAt(index+1).values.first["endTime"] != null) {
         nextDateTimeData =
-            targetDayData.elementAt(index + 1)["startTime"];
-      } else if (targetDayData
-              .elementAt(index + 1)["startTime"]
-              .trim() !=
-          "") {
+            sortedMapList.elementAt(index+1).values.first["startTime"];
+      } else if (sortedMapList.elementAt(index+1).values.first["startTime"].trim()!="") {
         nextDateTimeData =
-            targetDayData.elementAt(index + 1)["startTime"];
+            sortedMapList.elementAt(index+1).values.first["startTime"];
       }
     }
 
@@ -1551,7 +1561,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
 
     bool isLast = false;
-    if (targetDayData.length == index + 1) {
+    if (sortedMapList.length == index + 1) {
       isLast = true;
     }
 
@@ -1561,14 +1571,14 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
 
     Widget tagThumbnailer = const SizedBox();
-    if (targetDayData.elementAt(index)["tagID"] != null &&
-        targetDayData.elementAt(index)["tagID"] != "") {
+    if (sortedMapList.elementAt(index).values.first["tagID"] != null &&
+        sortedMapList.elementAt(index).values.first["tagID"] != "") {
       tagThumbnailer = Row(children: [
-        tagThumbnail(targetDayData.elementAt(index)["tagID"]),
+        tagThumbnail(sortedMapList.elementAt(index).values.first["tagID"]),
         Text(
           " " +
               returnTagTitle(
-                  targetDayData.elementAt(index)["tagID"] ?? "", ref),
+                  sortedMapList.elementAt(index).values.first["tagID"] ?? "", ref),
           style: TextStyle(
               color: Colors.grey,
               fontSize: SizeConfig.blockSizeHorizontal! * 3,
@@ -1627,8 +1637,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       width: SizeConfig.blockSizeHorizontal! * 75,
                       child: Text(
                         " " +
-                            data.sortedDataByDay[targetKey]
-                                .elementAt(index)["subject"],
+                          sortedMapList.elementAt(index).values.first["subject"],
                         overflow: TextOverflow.clip,
                         style: TextStyle(
                             color: Colors.black,
@@ -1652,7 +1661,180 @@ class _CalendarState extends ConsumerState<Calendar> {
     );
   }
 
+  Widget todaysClassChild(index){
+    Widget dateTimeData = Text(
+      sortedMapList.elementAt(index).values.first["startTime"] +
+          "\n" +
+          sortedMapList.elementAt(index).values.first["endTime"],
+      style: const TextStyle(
+          fontSize: 13, fontWeight: FontWeight.bold),
+    );
 
+    String formerDateTimeData = "終日";
+    if (index != 0) {
+      if(sortedMapList.elementAt(index-1).values.first["startTime"].trim()!="" &&
+         sortedMapList.elementAt(index-1).values.first["endTime"] != "" &&
+         sortedMapList.elementAt(index-1).values.first["endTime"] != null) {
+        formerDateTimeData =
+            sortedMapList.elementAt(index-1).values.first["startTime"];
+      } else if (sortedMapList.elementAt(index-1).values.first["startTime"]
+              .trim()!= "") {
+        formerDateTimeData =
+            sortedMapList.elementAt(index-1).values.first["startTime"];
+      }
+    }
+
+    String thisDateTimeData = sortedMapList.elementAt(index).values.first["startTime"];
+
+    String nextDateTimeData = "終日";
+    if (index + 1 < sortedMapList.length) {
+      if (sortedMapList.elementAt(index+1).values.first["startTime"].trim()!="" &&
+          sortedMapList.elementAt(index+1).values.first["endTime"] != "" &&
+          sortedMapList.elementAt(index+1).values.first["endTime"] != null) {
+        nextDateTimeData =
+            sortedMapList.elementAt(index+1).values.first["startTime"];
+      } else if (sortedMapList.elementAt(index+1).values.first["startTime"].trim()!="") {
+        nextDateTimeData =
+            sortedMapList.elementAt(index+1).values.first["startTime"];
+      }
+    }
+
+    Color upperDividerColor = Colors.grey;
+    Color dotColor = Colors.grey;
+    Color underDividerColor = Colors.grey;
+    DateTime now = DateTime.now();
+
+    if (formerDateTimeData == "終日") {
+      upperDividerColor = Colors.redAccent;
+    } else {
+      DateTime formerDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(formerDateTimeData.substring(0, 2)),
+        int.parse(formerDateTimeData.substring(3, 5)),
+      );
+      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
+        DateTime nextDateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          int.parse(nextDateTimeData.substring(0, 2)),
+          int.parse(nextDateTimeData.substring(3, 5)),
+        );
+        upperDividerColor = Colors.red;
+        if (nextDateTime.isBefore(now)) {
+          underDividerColor = Colors.red;
+        }
+      }
+    }
+
+    if (thisDateTimeData == "終日") {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+      underDividerColor = Colors.red;
+    } else {
+      DateTime thisDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(thisDateTimeData.substring(0, 2)),
+        int.parse(thisDateTimeData.substring(3, 5)),
+      );
+      if (thisDateTime.isBefore(now)) {
+        upperDividerColor = Colors.red;
+        dotColor = Colors.red;
+        underDividerColor = Colors.red;
+      }
+      if (nextDateTimeData == "終日") {
+        underDividerColor = Colors.grey;
+      }
+    }
+
+    bool isLast = false;
+    if (sortedMapList.length == index + 1) {
+      isLast = true;
+    }
+
+    double dividerIndent = 0;
+    if (isLast) {
+      dividerIndent = 8;
+    }
+
+    return taskListChild(
+      Column(children: [
+        IntrinsicHeight(
+            child: Row(children: [
+          Container(
+            width: SizeConfig.blockSizeHorizontal! * 15,
+            padding: EdgeInsets.only(
+              left: SizeConfig.blockSizeHorizontal! * 2,
+            ),
+            child: Center(
+              child: dateTimeData,
+            ),
+          ),
+          SizedBox(
+            width: 6,
+            child: Column(children: [
+              Expanded(
+                child: VerticalDivider(
+                  width: 2,
+                  thickness: 2,
+                  color: upperDividerColor,
+                ),
+              ),
+              Container(
+                height: 6,
+                width: 6,
+                decoration: BoxDecoration(
+                    color: dotColor, shape: BoxShape.circle),
+              ),
+              Expanded(
+                child: VerticalDivider(
+                  width: 2,
+                  thickness: 2,
+                  color: underDividerColor,
+                  endIndent: dividerIndent,
+                ),
+              )
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(children:[
+                    Icon(Icons.school,color:MAIN_COLOR,size:SizeConfig.blockSizeHorizontal! * 3,),
+                    Text(ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekDay"]) +
+                      "の授業、",
+                      style:TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! * 3,fontWeight:FontWeight.bold)),
+                    Text(sortedMapList.elementAt(index).values.first["classRoom"],
+                    style:TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! * 3)),
+                  ]),
+                  SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! * 75,
+                      child: Text(
+                        " " +
+                          sortedMapList.elementAt(index).values.first["courseName"],
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize:
+                                SizeConfig.blockSizeHorizontal! * 5,
+                            fontWeight: FontWeight.bold),
+                      ))
+                ]),
+          )
+        ]))
+      ]),
+      () {},
+      true,
+      isLast,
+    );
+  }
 
   Widget taskDataListList(int fromNow) {
     DateTime now = DateTime.now();
