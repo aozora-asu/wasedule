@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
@@ -286,7 +287,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           ]),
           FutureBuilder(
             //＠こいつは仮です、ここを時間割DB呼び出しに置き換え
-            future: tempData(),
+            future: MyCourseDatabaseHandler().getMyCourse(),
             builder:((context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting){
                 return timeTableBody();
