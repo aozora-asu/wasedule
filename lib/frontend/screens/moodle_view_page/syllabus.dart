@@ -116,7 +116,8 @@ class RequestQuery {
   }
 }
 
-Future<void> fetchSyllabusResults(RequestQuery requestBody) async {
+Future<SyllabusQueryResult?> fetchSyllabusResults(
+    RequestQuery requestBody) async {
   // リクエストを送信
   final response = await http.post(
     Uri.parse('https://www.wsl.waseda.jp/syllabus/JAA101.php'),
@@ -127,13 +128,14 @@ Future<void> fetchSyllabusResults(RequestQuery requestBody) async {
   // レスポンスを処理
   if (response.statusCode == 200) {
     // print(response.body);
-    get(response.body);
+    return _get(response.body);
   } else {
     print('Request failed with status: ${response.statusCode}');
+    return null;
   }
 }
 
-void get(String htmlString) {
+SyllabusQueryResult _get(String htmlString) {
   final document = html_parser.parse(htmlString);
   final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
   final tdElements = trElements[1].querySelectorAll("td");
@@ -142,12 +144,95 @@ void get(String htmlString) {
       .firstMatch(anchor!.attributes['onclick']!);
   var extractedString = match?.group(1);
 
+  Map<String, int?> periodAndDate = _parseSchedule(tdElements[6].text);
   // 抽出した文字列を表示
   SyllabusQueryResult syllabusResult = SyllabusQueryResult(
       courseName: tdElements[2].text,
-      classRoom: tdElements[7].text,
-      periodAndDate: tdElements[6].text,
+      classRoom: zenkaku2hankaku(tdElements[7].text),
+      period: periodAndDate["period"],
+      weekday: periodAndDate["weekday"],
       semester: tdElements[5].text,
-      year: tdElements[0].text,
+      year: zenkaku2hankaku(tdElements[0].text),
       syllabusID: extractedString);
+  return syllabusResult;
+}
+
+Future<MyCourse?> getMyCourse(MoodleCourse moodleCourse) async {
+  MyCourse myCourse;
+  SyllabusQueryResult? syllabusQueryResult;
+  RequestQuery requestQuery = RequestQuery(kamoku: moodleCourse.courseName);
+
+  syllabusQueryResult = await fetchSyllabusResults(requestQuery);
+  if (syllabusQueryResult != null) {
+    myCourse = MyCourse(
+        attendCount: null,
+        classRoom: syllabusQueryResult.classRoom,
+        color: moodleCourse.color,
+        courseName: moodleCourse.courseName,
+        memo: null,
+        pageID: moodleCourse.pageID,
+        period: syllabusQueryResult.period,
+        semester: syllabusQueryResult.semester,
+        syllabusID: syllabusQueryResult.syllabusID,
+        weekday: syllabusQueryResult.weekday,
+        year: syllabusQueryResult.year);
+  } else {
+    return null;
+  }
+
+  return myCourse;
+}
+
+int? _weekdayToNumber(String? weekday) {
+  switch (weekday) {
+    case '月':
+      return 1;
+    case '火':
+      return 2;
+    case '水':
+      return 3;
+    case '木':
+      return 4;
+    case '金':
+      return 5;
+    case '土':
+      return 6;
+    case '日':
+      return 7;
+    case null:
+      return null;
+    default:
+      return null; // 不明な曜日の場合
+  }
+}
+
+Map<String, int?> _parseSchedule(String scheduleString) {
+  // 正規表現パターン
+  final pattern = RegExp(r'([月火水木金土日]+)(\d+)限');
+
+  // 正規表現を用いて文字列を解析
+  final match = pattern.firstMatch(scheduleString);
+
+  // グループから曜日と時限を抽出
+  String? weekdayString = match?.group(1); // 曜日
+  int? weekday = _weekdayToNumber(weekdayString);
+  int? period = match?.group(2) as int; // 時限
+
+  return {"period": period, "weekday": weekday};
+}
+
+String zenkaku2hankaku(String fullWidthString) {
+  const fullWidthChars =
+      '０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ！＃＄％＆’（）＊＋，－．／：；＜＝＞？＠［￥］＾＿‘｛｜｝～';
+  const halfWidthChars =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#\$%&\'()*+,-./:;<=>?@[¥]^_`{|}~';
+  final map = Map.fromIterables(fullWidthChars.runes, halfWidthChars.runes);
+
+  final result = fullWidthString.runes.map((charCode) {
+    return map[charCode] != null
+        ? String.fromCharCode(map[charCode]!)
+        : String.fromCharCode(charCode);
+  }).join('');
+
+  return result;
 }

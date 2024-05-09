@@ -1,18 +1,21 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import './syllabus.dart';
 
 class SyllabusQueryResult {
   String courseName;
   String classRoom;
-  String periodAndDate;
+  int? period;
+  int? weekday;
   String semester;
   String year;
   String? syllabusID;
   SyllabusQueryResult(
       {required this.courseName,
       required this.classRoom,
-      required this.periodAndDate,
+      required this.period,
+      required this.weekday,
       required this.semester,
       required this.year,
       required this.syllabusID});
@@ -22,7 +25,9 @@ class SyllabusQueryResult {
       "classRoom": classRoom,
       "semester": semester,
       "year": year,
-      "syllabusID": syllabusID
+      "syllabusID": syllabusID,
+      "period": period,
+      "weekday": weekday
     };
   }
 }
@@ -30,7 +35,7 @@ class SyllabusQueryResult {
 class MoodleCourse {
   String courseName;
   String pageID;
-  int color;
+  String color;
   MoodleCourse(
       {required this.color, required this.courseName, required this.pageID});
 
@@ -41,13 +46,13 @@ class MoodleCourse {
 
 class MyCourse {
   String courseName;
-  int weekday;
-  int period;
+  int? weekday;
+  int? period;
   String semester;
   String classRoom;
-  String memo;
+  String? memo;
   String color;
-  int year;
+  String year;
   String pageID;
   int? attendCount;
   String? syllabusID;
@@ -139,7 +144,9 @@ class MyCourseDatabaseHandler {
     );
   }
 
-  Future<void> setMyCourse(MyCourse myCourse) async {
+  Future<void> resisterMyCourse(
+    MyCourse myCourse,
+  ) async {
     await _initMyCourseDatabase();
     try {
       await _insertNotifyFormat(myCourse);

@@ -35,7 +35,7 @@ class NotifyContent {
   }
 
   //@params 通知をしたい毎週何曜日に何時に通知するのかを決める
-  //timeString: 03:59 HH:mm型の文字列
+  //timeString: 03:59 H:m型の文字列
   //weekday 月~日まで1~7
   //return
   tz.TZDateTime _nextInstanceOfWeeklyTime(String timeString, int weekday) {
@@ -112,18 +112,18 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   HH:mm")
+          due = DateFormat("今日   H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    HH:mm")
+          due = DateFormat("翌    H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(dailyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 HH:mm")
+          due = DateFormat("$n日後 H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -207,18 +207,18 @@ class NotifyContent {
         if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   HH:mm")
+          due = DateFormat("今日   H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    HH:mm")
+          due = DateFormat("翌    H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(weeklyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 HH:mm")
+          due = DateFormat("$n日後 H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -331,15 +331,15 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   HH:mm")
+          due = DateFormat("今日   H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    HH:mm")
+          due = DateFormat("翌    H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
-          due = DateFormat("$n日後 HH:mm")
+          due = DateFormat("$n日後 H:m")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -427,7 +427,7 @@ class NotifyContent {
         }
       }
     }
-    await getScheduledNotify();
+    //await getScheduledNotify();
   }
 
   Future<void> sampleNotify() async {
