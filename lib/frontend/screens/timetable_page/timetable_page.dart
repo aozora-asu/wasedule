@@ -426,7 +426,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget generatePrirodColumn(){
-    double fontSize = SizeConfig.blockSizeHorizontal! *2.25;
+    double fontSize = SizeConfig.blockSizeHorizontal! *2;
     Color grey = Colors.grey;
     
     return Column(children:[
