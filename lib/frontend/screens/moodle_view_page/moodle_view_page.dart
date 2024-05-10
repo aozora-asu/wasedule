@@ -85,6 +85,9 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                       await MyCourseDatabaseHandler()
                           .resisterMyCourse(myCourse);
                     }
+                    // for (var myCourse in myCourseList) {
+                    //   print(myCourse.toMap());
+                    // }
                   }
                 }
             }
