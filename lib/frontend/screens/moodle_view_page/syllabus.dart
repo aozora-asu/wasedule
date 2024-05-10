@@ -193,7 +193,7 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
     return null;
   }
 
-  return null;
+  return myCourseList;
 }
 
 String? convertSemester(String? text) {
