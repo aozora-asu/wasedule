@@ -74,12 +74,15 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                 print(messageData["isAllowAutoLogin"]);
               case "myCourseData":
                 for (var myCourseData in messageData["myCourseData"] as List) {
-                  MyCourse? myCourse = await getMyCourse(MoodleCourse(
+                  List<MyCourse>? myCourseList = await getMyCourse(MoodleCourse(
                       color: myCourseData["color"],
                       courseName: myCourseData["courseName"],
                       pageID: myCourseData["pageID"]));
-                  if (myCourse != null) {
-                    await MyCourseDatabaseHandler().resisterMyCourse(myCourse);
+                  if (myCourseList != null) {
+                    for (var myCourse in myCourseList) {
+                      await MyCourseDatabaseHandler()
+                          .resisterMyCourse(myCourse);
+                    }
                   }
                 }
             }

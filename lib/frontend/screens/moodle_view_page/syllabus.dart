@@ -116,7 +116,7 @@ class RequestQuery {
   }
 }
 
-Future<SyllabusQueryResult?> fetchSyllabusResults(
+Future<List<SyllabusQueryResult>?> fetchSyllabusResults(
     RequestQuery requestBody) async {
   // リクエストを送信
   final response = await http.post(
@@ -134,9 +134,10 @@ Future<SyllabusQueryResult?> fetchSyllabusResults(
   }
 }
 
-SyllabusQueryResult? _get(String htmlString) {
+List<SyllabusQueryResult>? _get(String htmlString) {
   final document = html_parser.parse(htmlString);
   final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
+  List<SyllabusQueryResult> syllabusQueryResultList = [];
   if (trElements.isNotEmpty) {
     final tdElements = trElements[1].querySelectorAll("td");
     final anchor = tdElements[2].querySelector("a");
@@ -144,49 +145,55 @@ SyllabusQueryResult? _get(String htmlString) {
         .firstMatch(anchor!.attributes['onclick']!);
     var extractedString = match?.group(1);
 
-    Map<String, int?> periodAndDate = _parseSchedule(tdElements[6].text);
+    List<Map<String, int?>> periodAndDateList =
+        extractDayAndPeriod(tdElements[6].text);
 
-    // 抽出した文字列を表示
+    for (var periodAndDate in periodAndDateList) {
+      SyllabusQueryResult syllabusResult = SyllabusQueryResult(
+          courseName: tdElements[2].text,
+          classRoom: zenkaku2hankaku(tdElements[7].text),
+          period: periodAndDate["period"],
+          weekday: periodAndDate["weekday"],
+          semester: convertSemester(tdElements[5].text),
+          year: int.parse(tdElements[0].text),
+          syllabusID: extractedString);
+      syllabusQueryResultList.add(syllabusResult);
+    }
 
-    SyllabusQueryResult syllabusResult = SyllabusQueryResult(
-        courseName: tdElements[2].text,
-        classRoom: zenkaku2hankaku(tdElements[7].text),
-        period: periodAndDate["period"],
-        weekday: periodAndDate["weekday"],
-        semester: convertSemester(tdElements[5].text),
-        year: int.parse(tdElements[0].text),
-        syllabusID: extractedString);
-    return syllabusResult;
+    return syllabusQueryResultList;
   } else {
     return null;
   }
 }
 
-Future<MyCourse?> getMyCourse(MoodleCourse moodleCourse) async {
-  MyCourse myCourse;
-  SyllabusQueryResult? syllabusQueryResult;
+Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
+  List<MyCourse>? myCourseList = [];
+  List<SyllabusQueryResult>? syllabusQueryResultList;
   RequestQuery requestQuery = RequestQuery(kamoku: moodleCourse.courseName);
 
-  syllabusQueryResult = await fetchSyllabusResults(requestQuery);
+  syllabusQueryResultList = await fetchSyllabusResults(requestQuery);
 
-  if (syllabusQueryResult != null) {
-    myCourse = MyCourse(
-        attendCount: null,
-        classRoom: syllabusQueryResult.classRoom,
-        color: moodleCourse.color,
-        courseName: moodleCourse.courseName,
-        memo: null,
-        pageID: moodleCourse.pageID,
-        period: syllabusQueryResult.period,
-        semester: syllabusQueryResult.semester,
-        syllabusID: syllabusQueryResult.syllabusID,
-        weekday: syllabusQueryResult.weekday,
-        year: syllabusQueryResult.year);
+  if (syllabusQueryResultList != null) {
+    for (var syllabusQueryResult in syllabusQueryResultList) {
+      MyCourse myCourse = MyCourse(
+          attendCount: null,
+          classRoom: syllabusQueryResult.classRoom,
+          color: moodleCourse.color,
+          courseName: moodleCourse.courseName,
+          memo: null,
+          pageID: moodleCourse.pageID,
+          period: syllabusQueryResult.period,
+          semester: syllabusQueryResult.semester,
+          syllabusID: syllabusQueryResult.syllabusID,
+          weekday: syllabusQueryResult.weekday,
+          year: syllabusQueryResult.year);
+      myCourseList.add(myCourse);
+    }
   } else {
     return null;
   }
 
-  return myCourse;
+  return null;
 }
 
 String? convertSemester(String? text) {
@@ -233,23 +240,6 @@ int? _weekdayToNumber(String? weekday) {
   }
 }
 
-Map<String, int?> _parseSchedule(String scheduleString) {
-  // 正規表現パターン
-  final pattern = RegExp(r'([月火水木金土日]+)(\d+)限');
-
-  // 正規表現を用いて文字列を解析
-  final match = pattern.firstMatch(scheduleString);
-
-  // グループから曜日と時限を抽出
-  String? weekdayString = match?.group(1); // 曜日
-  int? weekday = _weekdayToNumber(weekdayString);
-
-  int? period =
-      match?.group(2) != null ? int.tryParse(match!.group(2)!) : null; // 時限
-
-  return {"period": period, "weekday": weekday};
-}
-
 String zenkaku2hankaku(String fullWidthString) {
   const fullWidthChars =
       '０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ！＃＄％＆’（）＊＋，－．／：；＜＝＞？＠［￥］＾＿‘｛｜｝～';
@@ -262,6 +252,54 @@ String zenkaku2hankaku(String fullWidthString) {
         ? String.fromCharCode(map[charCode]!)
         : String.fromCharCode(charCode);
   }).join('');
+
+  return result;
+}
+
+List<Map<String, int?>> extractDayAndPeriod(String input) {
+  RegExp _pattern1 = RegExp(r'([月火水木金土日])\s*(\d+)時限');
+  RegExp _pattern2 = RegExp(r'([月火水木金土日])\s*(\d+)-(\d+)');
+  RegExp _pattern3 =
+      RegExp(r'\d+:\s*([月火水木金土日])\s*(\d+)-\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
+  List<Map<String, int?>> result = [];
+  ; // 時限
+  if (_pattern1.hasMatch(input)) {
+    Match match = _pattern1.firstMatch(input)!;
+    result.add({
+      'weekday': _weekdayToNumber(match.group(1)!),
+      'period': match.group(2) != null ? int.tryParse(match.group(2)!) : null
+    });
+  } else if (_pattern2.hasMatch(input)) {
+    Match match = _pattern2.firstMatch(input)!;
+    result.add({
+      'weekday': _weekdayToNumber(match.group(1)!),
+      'period': match.group(2) != null ? int.tryParse(match.group(2)!) : null
+    });
+    result.add({
+      'weekday': _weekdayToNumber(match.group(1)!),
+      'period': match.group(3) != null ? int.tryParse(match.group(3)!) : null
+    });
+  } else if (_pattern3.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
+    for (var match in matches) {
+      Map<String, int?> entry = {};
+      entry['weekday'] = _weekdayToNumber(match.group(1)!);
+      entry['period'] =
+          match.group(2) != null ? int.tryParse(match.group(2)!) : null;
+      result.add(entry);
+      if (match.group(3) != null) {
+        Map<String, int?> entry = {};
+        entry['weekday'] = _weekdayToNumber(match.group(4)!);
+        entry['period'] =
+            match.group(4) != null ? int.tryParse(match.group(4)!) : null;
+        result.add(entry);
+      }
+    }
+  } else {
+    return [
+      {"weekday": null, "period": null}
+    ];
+  }
 
   return result;
 }
