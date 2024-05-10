@@ -146,7 +146,7 @@ List<SyllabusQueryResult>? _get(String htmlString) {
     var extractedString = match?.group(1);
 
     List<Map<String, int?>> periodAndDateList =
-        extractDayAndPeriod(tdElements[6].text);
+        extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
 
     for (var periodAndDate in periodAndDateList) {
       SyllabusQueryResult syllabusResult = SyllabusQueryResult(
