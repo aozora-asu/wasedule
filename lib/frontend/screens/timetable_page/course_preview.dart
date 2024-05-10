@@ -96,7 +96,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               SizedBox(width: SizeConfig.blockSizeHorizontal! *1),
               const Icon(Icons.access_time,color:MAIN_COLOR),
               SizedBox(width: SizeConfig.blockSizeHorizontal! *3),
-              Text(getJapaneseWeekday(target["weekDay"])
+              Text(getJapaneseWeekday(target["weekday"])
               + " " + target["period"].toString() + "限",
               style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *5,
               fontWeight: FontWeight.bold)),
