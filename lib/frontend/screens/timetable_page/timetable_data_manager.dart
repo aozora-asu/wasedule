@@ -51,7 +51,7 @@ class TimeTableData {
     maxPeriod = 4;
     for (int i = 0; i < TDList.length; i++) {
         
-        int? targetWeekDay = TDList[i]["weekDay"];
+        int? targetWeekDay = TDList[i]["weekday"];
         int period = TDList[i]["period"] ?? 0;
         if(maxPeriod < period){
           maxPeriod = period;
@@ -70,7 +70,6 @@ class TimeTableData {
       data.sort((a, b) => (a["period"] as int).compareTo(b["period"] as int));
       sortedData[targetKey] = data;
     }
-
     sortedDataByWeekDay = sortedData;
    return sortedData;
   }
@@ -85,13 +84,13 @@ class TimeTableData {
     for(int i = 0; i < weekDayData.length; i++){
       Map<String,dynamic> target = weekDayData.elementAt(i);
       if(target["year"] == thisYear &&
-         target["weekDay"] != null &&
+         target["weekday"] != null &&
          target["period"] != null){
       if(target["semester"] == currentQuaterID(semesterNum) ||
          target["semester"] == currentSemesterID(semesterNum)){
           //年度・学期が条件に沿うデータのみを抽出
           thisSemesterData.add(target);
-          int targetWeekDay = target["weekDay"];
+          int targetWeekDay = target["weekday"];
           if(currentSemesterClasses.containsKey(targetWeekDay)) {
             currentSemesterClasses[targetWeekDay]!.add(target);
           }else{
