@@ -547,7 +547,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             });
           }
         );
-        int length = random.nextInt(11);
+        int length = random.nextInt(1);
 
         if(tableData.currentSemesterClasses.containsKey(weekDay)
           && returnExistingPeriod(tableData.currentSemesterClasses[weekDay]).contains(index+1)
@@ -555,7 +555,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             .elementAt(returnIndexFromPeriod(
               tableData.currentSemesterClasses[weekDay],index + 1))["year"] 
             == thisYear){
-            Color colorning = const Color.fromARGB(255, 158, 194, 255);
+            Color colorning = hexToColor(tableData.currentSemesterClasses[weekDay]
+              .elementAt(returnIndexFromPeriod(
+                tableData.currentSemesterClasses[weekDay],index + 1))["color"] );
             if(tableData.currentSemesterClasses[weekDay]
               .elementAt(returnIndexFromPeriod(
                 tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
@@ -869,6 +871,24 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       default : return DateTime(now.year,now.month,now.day,21,35);
     }
   }
+
+Color hexToColor(String hexColor) {
+  // 16進数のカラーコードが#で始まる場合、#を削除する
+  if (hexColor.startsWith('#')) {
+    hexColor = hexColor.substring(1);
+  }
+  
+  // 16進数のカラーコードをRGBに分解する
+  int hexValue = int.parse(hexColor, radix: 16);
+  int alpha = (hexValue >> 24) & 0xFF;
+  int red = (hexValue >> 16) & 0xFF;
+  int green = (hexValue >> 8) & 0xFF;
+  int blue = hexValue & 0xFF;
+  
+  // Colorオブジェクトを作成して返す
+  return Color.fromARGB(alpha, red, green, blue);
+}
+
 }
 
 
