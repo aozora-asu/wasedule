@@ -169,7 +169,8 @@ List<SyllabusQueryResult>? _get(String htmlString) {
 Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   List<MyCourse>? myCourseList = [];
   List<SyllabusQueryResult>? syllabusQueryResultList;
-  RequestQuery requestQuery = RequestQuery(kamoku: moodleCourse.courseName);
+  RequestQuery requestQuery = RequestQuery(
+      kamoku: moodleCourse.courseName, keyword: moodleCourse.department);
 
   syllabusQueryResultList = await fetchSyllabusResults(requestQuery);
 
