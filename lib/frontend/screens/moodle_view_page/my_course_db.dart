@@ -36,11 +36,20 @@ class MoodleCourse {
   String courseName;
   String pageID;
   String color;
+  String department;
   MoodleCourse(
-      {required this.color, required this.courseName, required this.pageID});
+      {required this.color,
+      required this.courseName,
+      required this.pageID,
+      required this.department});
 
   Map<String, dynamic> toMap() {
-    return {"courseName": courseName, "pageID": pageID, "color": color};
+    return {
+      "courseName": courseName,
+      "pageID": pageID,
+      "color": color,
+      "department": department
+    };
   }
 }
 

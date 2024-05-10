@@ -77,7 +77,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                   List<MyCourse>? myCourseList = await getMyCourse(MoodleCourse(
                       color: myCourseData["color"],
                       courseName: myCourseData["courseName"],
-                      pageID: myCourseData["pageID"]));
+                      pageID: myCourseData["pageID"],
+                      department: myCourseData["department"]));
 
                   if (myCourseList != null) {
                     for (var myCourse in myCourseList) {
