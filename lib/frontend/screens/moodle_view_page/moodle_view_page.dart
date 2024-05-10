@@ -78,6 +78,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                       color: myCourseData["color"],
                       courseName: myCourseData["courseName"],
                       pageID: myCourseData["pageID"]));
+
                   if (myCourseList != null) {
                     for (var myCourse in myCourseList) {
                       await MyCourseDatabaseHandler()

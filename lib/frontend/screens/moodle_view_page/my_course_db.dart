@@ -117,7 +117,7 @@ class MyCourseDatabaseHandler {
         attendCount INTEGER,
         year INTEGER,
         pageID TEXT,
-        syllabusID TEXT UNIQUE
+        syllabusID TEXT 
       )
     ''');
   }
