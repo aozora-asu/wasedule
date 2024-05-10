@@ -653,7 +653,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       scrollDirection: Axis.horizontal,
       itemCount: listLength,
       itemBuilder: (context,index){
-        Color colorning = const Color.fromARGB(255, 158, 194, 255);
+        Color colorning = hexToColor(tableData.sortedDataByWeekDay[7]
+            .elementAt(index)["color"]);
         int length = random.nextInt(11);
         Color bgColor = cellBackGroundColor(length,colorning);
         Widget child = const SizedBox();
