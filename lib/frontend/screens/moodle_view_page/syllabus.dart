@@ -147,6 +147,7 @@ List<SyllabusQueryResult>? _get(String htmlString) {
 
     List<Map<String, int?>> periodAndDateList =
         extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
+    print(tdElements[6].text);
 
     for (var periodAndDate in periodAndDateList) {
       SyllabusQueryResult syllabusResult = SyllabusQueryResult(
@@ -264,7 +265,7 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
   RegExp _pattern3 = RegExp(
       r'\d+:\s*([月火水木金土日])\s*(\d+)時限\n\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
   List<Map<String, int?>> result = [];
-  ; // 時限
+  // 時限
   if (_pattern3.hasMatch(input)) {
     Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
     for (var match in matches) {
@@ -281,6 +282,7 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
         result.add(entry);
       }
     }
+    print(result);
   } else if (_pattern1.hasMatch(input)) {
     Match match = _pattern1.firstMatch(input)!;
     result.add({

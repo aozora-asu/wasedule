@@ -92,6 +92,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     }
                   }
                 }
+                printWrapped(
+                    "${await MyCourseDatabaseHandler().getMyCourse()}");
             }
           } catch (e) {
             printWrapped(consoleMessage.message);
