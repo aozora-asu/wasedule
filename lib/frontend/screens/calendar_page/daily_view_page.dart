@@ -718,7 +718,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text(data.intToWeekday(classData["weekDay"]) + "の授業",
+                      Text(data.intToWeekday(classData["weekday"]) + "の授業",
                         style:const TextStyle(
                           color: Colors.grey,
                           fontSize: 12.5,
