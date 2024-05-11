@@ -172,7 +172,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(
-            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 9),
+            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
