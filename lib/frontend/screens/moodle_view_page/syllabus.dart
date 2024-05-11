@@ -146,13 +146,13 @@ List<SyllabusQueryResult>? _get(String htmlString) {
     var extractedString = match?.group(1);
 
     List<Map<String, int?>> periodAndDateList =
-        extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
+        extractDayAndPeriod(zenkaku2hankaku(tdElements[6].innerHtml));
     print(tdElements[6].text);
 
     for (var periodAndDate in periodAndDateList) {
       SyllabusQueryResult syllabusResult = SyllabusQueryResult(
           courseName: tdElements[2].text,
-          classRoom: zenkaku2hankaku(tdElements[7].text),
+          classRoom: zenkaku2hankaku(tdElements[7].innerHtml),
           period: periodAndDate["period"],
           weekday: periodAndDate["weekday"],
           semester: convertSemester(tdElements[5].text),
@@ -263,7 +263,7 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
   RegExp _pattern1 = RegExp(r'([月火水木金土日])\s*(\d+)時限');
   RegExp _pattern2 = RegExp(r'([月火水木金土日])\s*(\d+)-(\d+)');
   RegExp _pattern3 = RegExp(
-      r'\d+:\s*([月火水木金土日])\s*(\d+)時限\n\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
+      r'\d+:\s*([月火水木金土日])\s*(\d+)時限\n*\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
   List<Map<String, int?>> result = [];
   // 時限
   if (_pattern3.hasMatch(input)) {
