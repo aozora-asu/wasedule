@@ -25,9 +25,6 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  String text = "01:水3時限\n02:金5時限";
-
-  print(extractDayAndPeriod(text));
 
   await initializeDateFormatting(); // 初期化
 
