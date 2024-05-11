@@ -1,11 +1,13 @@
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import "notify_db.dart";
+import "../../converter.dart";
 
 class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -524,5 +526,18 @@ class NotifyContent {
 
   Future<void> cancelAllNotify() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> attendNotify() async {
+    List<Map<String, dynamic>>? myCourseList =
+        await MyCourseDatabaseHandler().getMyCourse();
+    if (myCourseList != null) {
+      for (var myCourse in myCourseList) {
+        if (myCourse["period"] != null && myCourse["weekday"]) {
+          tz.TZDateTime weeklyScheduleDate = _nextInstanceOfWeeklyTime(
+              period2startTime(myCourse["period"])!, myCourse["weekday"]);
+        }
+      }
+    }
   }
 }
