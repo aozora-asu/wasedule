@@ -1808,7 +1808,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 children: [
                   Row(children:[
                     Icon(Icons.school,color:MAIN_COLOR,size:SizeConfig.blockSizeHorizontal! * 3,),
-                    Text(ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekDay"]) +
+                    Text(ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekday"]) +
                       "の授業、",
                       style:TextStyle(color:Colors.grey,fontSize:SizeConfig.blockSizeHorizontal! * 3,fontWeight:FontWeight.bold)),
                     Text(sortedMapList.elementAt(index).values.first["classRoom"],
