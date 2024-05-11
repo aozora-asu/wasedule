@@ -282,7 +282,6 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
         result.add(entry);
       }
     }
-    print(result);
   } else if (_pattern1.hasMatch(input)) {
     Match match = _pattern1.firstMatch(input)!;
     result.add({
