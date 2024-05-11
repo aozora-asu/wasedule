@@ -55,7 +55,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         ),
       ),
       floatingActionButton: Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *9),
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *12),
           child: Row(children:[
             const Spacer(),
             FloatingActionButton(
