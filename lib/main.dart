@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import "frontend/screens/moodle_view_page/syllabus.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Bindingの初期化
@@ -24,6 +25,9 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  String text = "01:水3時限\n02:金5時限";
+
+  print(extractDayAndPeriod(text));
 
   await initializeDateFormatting(); // 初期化
 

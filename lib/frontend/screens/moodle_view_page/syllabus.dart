@@ -261,11 +261,27 @@ String zenkaku2hankaku(String fullWidthString) {
 List<Map<String, int?>> extractDayAndPeriod(String input) {
   RegExp _pattern1 = RegExp(r'([月火水木金土日])\s*(\d+)時限');
   RegExp _pattern2 = RegExp(r'([月火水木金土日])\s*(\d+)-(\d+)');
-  RegExp _pattern3 =
-      RegExp(r'\d+:\s*([月火水木金土日])\s*(\d+)-\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
+  RegExp _pattern3 = RegExp(
+      r'\d+:\s*([月火水木金土日])\s*(\d+)時限\n\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
   List<Map<String, int?>> result = [];
   ; // 時限
-  if (_pattern1.hasMatch(input)) {
+  if (_pattern3.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
+    for (var match in matches) {
+      Map<String, int?> entry = {};
+      entry['weekday'] = _weekdayToNumber(match.group(1)!);
+      entry['period'] =
+          match.group(2) != null ? int.tryParse(match.group(2)!) : null;
+      result.add(entry);
+      if (match.group(3) != null) {
+        Map<String, int?> entry = {};
+        entry['weekday'] = _weekdayToNumber(match.group(4)!);
+        entry['period'] =
+            match.group(5) != null ? int.tryParse(match.group(5)!) : null;
+        result.add(entry);
+      }
+    }
+  } else if (_pattern1.hasMatch(input)) {
     Match match = _pattern1.firstMatch(input)!;
     result.add({
       'weekday': _weekdayToNumber(match.group(1)!),
@@ -281,22 +297,6 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
       'weekday': _weekdayToNumber(match.group(1)!),
       'period': match.group(3) != null ? int.tryParse(match.group(3)!) : null
     });
-  } else if (_pattern3.hasMatch(input)) {
-    Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
-    for (var match in matches) {
-      Map<String, int?> entry = {};
-      entry['weekday'] = _weekdayToNumber(match.group(1)!);
-      entry['period'] =
-          match.group(2) != null ? int.tryParse(match.group(2)!) : null;
-      result.add(entry);
-      if (match.group(3) != null) {
-        Map<String, int?> entry = {};
-        entry['weekday'] = _weekdayToNumber(match.group(4)!);
-        entry['period'] =
-            match.group(4) != null ? int.tryParse(match.group(4)!) : null;
-        result.add(entry);
-      }
-    }
   } else {
     return [
       {"weekday": null, "period": null}
