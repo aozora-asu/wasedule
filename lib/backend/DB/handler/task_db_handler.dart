@@ -156,38 +156,6 @@ class TaskDatabaseHelper {
     await db.rawDelete('DELETE FROM tasks');
   }
 
-  Future<List<Map<String, dynamic>>> taskListForTaskPage() async {
-    await _initDatabase();
-
-    final List<Map<String, dynamic>> dataList = await _database.query('tasks',
-        orderBy: 'dtEnd ASC',
-        columns: [
-          "id",
-          'title',
-          'dtEnd',
-          'summary',
-          'description',
-          "isDone"
-        ]); // 複数のカラムのデータを取得
-
-    return dataList;
-  }
-
-  Future<List<Map<String, dynamic>>> taskListForCalendarPage() async {
-    await _initDatabase();
-    final List<Map<String, dynamic>> dataList = await _database.query('tasks',
-        orderBy: 'dtEnd ASC',
-        columns: [
-          "id",
-          'title',
-          'dtEnd',
-          'summary',
-          'isDone'
-        ]); // 複数のカラムのデータを取得
-
-    return dataList;
-  }
-
   Future<void> updateTitle(int id, String newTitle) async {
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
@@ -382,5 +350,15 @@ class TaskDatabaseHelper {
     int? count = Sqflite.firstIntValue(result);
 
     return count ?? 0;
+  }
+
+  Future<List<Map<String, dynamic>>> getTaskListByTitle(String title) async {
+    await _initDatabase();
+    List<Map<String, dynamic>> tasks = await _database.query(
+      'tasks',
+      where: 'title = ? AND isDone = ?',
+      whereArgs: [title, 0],
+    );
+    return tasks;
   }
 }

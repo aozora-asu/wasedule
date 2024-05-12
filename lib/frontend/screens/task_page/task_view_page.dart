@@ -71,7 +71,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   }
 
   Future<List<Map<String, dynamic>>?> displayDB() async {
-    final addData = await databaseHelper.taskListForTaskPage();
+    final addData = await databaseHelper.getTaskFromDB();
     if (mounted) {
       events = Future.value(addData);
       return addData;
