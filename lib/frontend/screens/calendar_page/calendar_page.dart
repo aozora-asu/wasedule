@@ -1404,10 +1404,13 @@ class _CalendarState extends ConsumerState<Calendar> {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
       String startTime = timeTable.returnBeginningTime(targetClass["period"]);
       String endTime = timeTable.returnEndTime(targetClass["period"]);
-      targetClass["startTime"] = startTime;
-      targetClass["endTime"] = endTime;
+      final newTargetClass = {
+        ...targetClass,
+        "startTime": startTime,
+        "endTime":endTime
+      };
       DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
-      mapList.add({key: targetClass});
+      mapList.add({key: newTargetClass});
     }
 
     //グチャグチャなMapデータをソートする

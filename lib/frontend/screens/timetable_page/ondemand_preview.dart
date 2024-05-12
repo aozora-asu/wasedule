@@ -92,6 +92,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                                 fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                 fontWeight: FontWeight.bold)),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+                        ]),
+                        Row(children:[
+                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                         Text(
                             target["year"].toString() +
                                 " " +
