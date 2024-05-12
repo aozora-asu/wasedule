@@ -93,7 +93,7 @@ String? weekday2string(int? weekday, String format) {
       case "(E)":
         return "(${"月火水木金"[weekday]})";
       default:
-        return null;
+        return "月火水木金"[weekday];
     }
   } else {
     return null;
