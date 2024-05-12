@@ -518,8 +518,62 @@ void bottomSheet(targetData, ref, context, setState) {
       TextEditingController(text: targetData["description"] ?? "");
   DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
   int id = targetData["id"];
+  String? pageID = targetData["pageID"];
   Widget dividerModel = const Divider(height: 1);
   int _height = (SizeConfig.blockSizeVertical! * 100).round();
+
+  Widget webView(String? pageID){
+    if(pageID != null){
+      return Column(children:[
+        indexModel("■ Moodle ページビュー"),
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 1,
+        ),
+        Container(
+            width: SizeConfig.blockSizeHorizontal! * 100,
+            height: SizeConfig.blockSizeVertical! * 75,
+            decoration:
+                BoxDecoration(border: Border.all()),
+            child: SingleChildScrollView(
+              child: Container(
+                  width: SizeConfig.blockSizeHorizontal! *
+                      100,
+                  height: SizeConfig.blockSizeVertical! *
+                      _height,
+                  child: InAppWebView(
+                    key: webMoodleViewKey,
+                    initialUrlRequest: URLRequest(
+
+                        //ここに課題ページのURLを受け渡し！
+
+                        url: WebUri(
+                            "https://wsdmoodle.waseda.jp/course/view.php?id=" + pageID)),
+                    onWebViewCreated: (controller) {
+                      webMoodleViewController =
+                          controller;
+                    },
+                    onLoadStop: (a, b) async {
+                      _height =
+                          await webMoodleViewController
+                                  ?.getContentHeight() ??
+                              100;
+                      setState(() {});
+                    },
+                    onContentSizeChanged:
+                        (a, b, c) async {
+                      _height =
+                          await webMoodleViewController
+                                  ?.getContentHeight() ??
+                              100;
+                      setState(() {});
+                    },
+                  )),
+            )),
+      ]);
+    }else{
+      return const SizedBox();
+    }
+  }
 
   showModalBottomSheet(
     isScrollControlled: true,
@@ -724,50 +778,7 @@ void bottomSheet(targetData, ref, context, setState) {
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 2,
                               ),
-                              indexModel("■ Moodle ページビュー"),
-                              SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 1,
-                              ),
-                              Container(
-                                  width: SizeConfig.blockSizeHorizontal! * 100,
-                                  height: SizeConfig.blockSizeVertical! * 75,
-                                  decoration:
-                                      BoxDecoration(border: Border.all()),
-                                  child: SingleChildScrollView(
-                                    child: Container(
-                                        width: SizeConfig.blockSizeHorizontal! *
-                                            100,
-                                        height: SizeConfig.blockSizeVertical! *
-                                            _height,
-                                        child: InAppWebView(
-                                          key: webMoodleViewKey,
-                                          initialUrlRequest: URLRequest(
-
-                                              //ここに課題ページのURLを受け渡し！
-
-                                              url: WebUri(
-                                                  "https://wsdmoodle.waseda.jp/")),
-                                          onWebViewCreated: (controller) {
-                                            webMoodleViewController =
-                                                controller;
-                                          },
-                                          onLoadStop: (a, b) async {
-                                            _height =
-                                                await webMoodleViewController
-                                                        ?.getContentHeight() ??
-                                                    100;
-                                            setState(() {});
-                                          },
-                                          onContentSizeChanged:
-                                              (a, b, c) async {
-                                            _height =
-                                                await webMoodleViewController
-                                                        ?.getContentHeight() ??
-                                                    100;
-                                            setState(() {});
-                                          },
-                                        )),
-                                  )),
+                              webView(pageID),
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 10,
                               ),
