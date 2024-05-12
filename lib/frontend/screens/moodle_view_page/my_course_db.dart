@@ -156,6 +156,7 @@ class MyCourseDatabaseHandler {
   }
 
   Future<void> updateCourseName(int id, String newCourseName) async {
+    await _initMyCourseDatabase();
     // データベースの更新
     await _database.update(
       myCourseTable,
@@ -166,6 +167,7 @@ class MyCourseDatabaseHandler {
   }
 
   Future<void> updateMemo(int id, String newMemo) async {
+    await _initMyCourseDatabase();
     await _database.update(
       myCourseTable,
       {'memo': newMemo}, // 新しいmemoの値を設定
@@ -175,6 +177,7 @@ class MyCourseDatabaseHandler {
   }
 
   Future<void> updateClassRoom(int id, String newClassRoom) async {
+    await _initMyCourseDatabase();
     await _database.update(
       myCourseTable,
       {'classRoom': newClassRoom}, // 新しいclassRoomの値を設定
@@ -184,6 +187,7 @@ class MyCourseDatabaseHandler {
   }
 
   Future<void> _updateMyCourseFromMoodle(MyCourse newMyCourse) async {
+    await _initMyCourseDatabase();
     // データベースを更新します
     await _database.update(
       myCourseTable,

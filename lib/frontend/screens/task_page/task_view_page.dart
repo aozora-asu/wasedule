@@ -730,47 +730,48 @@ void bottomSheet(targetData, ref, context, setState) {
                               ),
                               Container(
                                   width: SizeConfig.blockSizeHorizontal! * 100,
-                                  height:
-                                      SizeConfig.blockSizeVertical! * 75,
+                                  height: SizeConfig.blockSizeVertical! * 75,
                                   decoration:
                                       BoxDecoration(border: Border.all()),
                                   child: SingleChildScrollView(
                                     child: Container(
-                                  width: SizeConfig.blockSizeHorizontal! * 100,
-                                  height:
-                                      SizeConfig.blockSizeVertical! * _height,
-                                  child: InAppWebView(
-                                    key: webMoodleViewKey,
-                                    initialUrlRequest: URLRequest(
+                                        width: SizeConfig.blockSizeHorizontal! *
+                                            100,
+                                        height: SizeConfig.blockSizeVertical! *
+                                            _height,
+                                        child: InAppWebView(
+                                          key: webMoodleViewKey,
+                                          initialUrlRequest: URLRequest(
 
-                                        //ここに課題ページのURLを受け渡し！
-                                        url: WebUri(
-                                            "https://wsdmoodle.waseda.jp/")),
-                                    onWebViewCreated: (controller) {
-                                      webMoodleViewController = controller;
-                                    },
-                                    onLoadStop: (a, b) async {
-                                      _height = await webMoodleViewController
-                                              ?.getContentHeight() ??
-                                          100;
-                                      setState(() {});
-                                    },
-                                    onContentSizeChanged: (a, b, c) async {
-                                      _height = await webMoodleViewController
-                                              ?.getContentHeight() ??
-                                          100;
-                                      setState(() {});
-                                    },
-                                  )
-                                ),
-                              )
-                            ),    
-                        SizedBox(
+                                              //ここに課題ページのURLを受け渡し！
+
+                                              url: WebUri(
+                                                  "https://wsdmoodle.waseda.jp/")),
+                                          onWebViewCreated: (controller) {
+                                            webMoodleViewController =
+                                                controller;
+                                          },
+                                          onLoadStop: (a, b) async {
+                                            _height =
+                                                await webMoodleViewController
+                                                        ?.getContentHeight() ??
+                                                    100;
+                                            setState(() {});
+                                          },
+                                          onContentSizeChanged:
+                                              (a, b, c) async {
+                                            _height =
+                                                await webMoodleViewController
+                                                        ?.getContentHeight() ??
+                                                    100;
+                                            setState(() {});
+                                          },
+                                        )),
+                                  )),
+                              SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 10,
                               ),
-                            ])
-                          ),
-                      
+                            ])),
                       ],
                     ),
                   ))),
