@@ -352,12 +352,13 @@ class TaskDatabaseHelper {
     return count ?? 0;
   }
 
-  Future<List<Map<String, dynamic>>> getTaskListByTitle(String title) async {
+  Future<List<Map<String, dynamic>>> getTaskListByTitle(
+      String courseName) async {
     await _initDatabase();
     List<Map<String, dynamic>> tasks = await _database.query(
       'tasks',
       where: 'title = ? AND isDone = ?',
-      whereArgs: [title, 0],
+      whereArgs: [courseName.replaceAll(RegExp(r'[A-Za-z()\d]'), ''), 0],
     );
     return tasks;
   }
