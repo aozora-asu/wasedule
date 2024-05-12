@@ -88,7 +88,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                   if (myCourseList != null) {
                     for (var myCourse in myCourseList) {
                       await MyCourseDatabaseHandler()
-                          .resisterMyCourse(myCourse);
+                          .resisterMyCourseFromMoodle(myCourse);
                     }
                   }
                 }
