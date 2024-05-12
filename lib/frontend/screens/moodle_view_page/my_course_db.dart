@@ -62,16 +62,16 @@ class MyCourse {
   String? memo;
   String color;
   int year;
-  String pageID;
+  String? pageID;
   int? attendCount;
   String? syllabusID;
 
   MyCourse(
-      {required this.attendCount,
+      {this.attendCount,
       required this.classRoom,
       required this.color,
       required this.courseName,
-      required this.memo,
+      this.memo,
       required this.pageID,
       required this.period,
       required this.semester,
@@ -126,7 +126,8 @@ class MyCourseDatabaseHandler {
         attendCount INTEGER,
         year INTEGER,
         pageID TEXT,
-        syllabusID TEXT 
+        syllabusID TEXT ,
+         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester)
       )
     ''');
   }
@@ -144,25 +145,68 @@ class MyCourseDatabaseHandler {
     );
   }
 
-  Future<void> _updateMyCourse(MyCourse newMyCourse) async {
+  Future<void> updateMyCourse(MyCourse newMyCourse, int id) async {
+    await _initMyCourseDatabase();
     await _database.update(
       myCourseTable,
       newMyCourse.toMap(), // 更新後の値
       where: 'id = ?',
-      whereArgs: [newMyCourse.toMap()["id"]],
+      whereArgs: [id],
     );
   }
 
-  Future<void> resisterMyCourse(MyCourse myCourse) async {
+  Future<void> updateCourseName(int id, String newCourseName) async {
+    // データベースの更新
+    await _database.update(
+      myCourseTable,
+      {'courseName': newCourseName}, // 新しいcourseNameの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
+  Future<void> updateMemo(int id, String newMemo) async {
+    await _database.update(
+      myCourseTable,
+      {'memo': newMemo}, // 新しいmemoの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
+  Future<void> updateClassRoom(int id, String newClassRoom) async {
+    await _database.update(
+      myCourseTable,
+      {'classRoom': newClassRoom}, // 新しいclassRoomの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
+  Future<void> _updateMyCourseFromMoodle(MyCourse newMyCourse) async {
+    // データベースを更新します
+    await _database.update(
+      myCourseTable,
+      newMyCourse.toMap(),
+      where: 'year = ? AND weekday = ? AND period = ? AND semester = ?',
+      whereArgs: [
+        newMyCourse.year,
+        newMyCourse.weekday,
+        newMyCourse.period,
+        newMyCourse.semester
+      ],
+    );
+  }
+
+  Future<void> resisterMyCourseFromMoodle(MyCourse myCourse) async {
     await _initMyCourseDatabase();
     try {
       await _insertMyCourse(myCourse);
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
-        await _updateMyCourse(myCourse);
+        await _updateMyCourseFromMoodle(myCourse);
       }
-      print(e);
     }
   }
 

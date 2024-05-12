@@ -179,11 +179,9 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   if (syllabusQueryResultList != null) {
     for (var syllabusQueryResult in syllabusQueryResultList) {
       MyCourse myCourse = MyCourse(
-          attendCount: null,
           classRoom: syllabusQueryResult.classRoom,
           color: moodleCourse.color,
           courseName: moodleCourse.courseName,
-          memo: null,
           pageID: moodleCourse.pageID,
           period: syllabusQueryResult.period,
           semester: syllabusQueryResult.semester,
