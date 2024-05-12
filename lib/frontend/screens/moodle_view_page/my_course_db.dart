@@ -2,6 +2,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import './syllabus.dart';
+import "../../../converter.dart";
 
 class SyllabusQueryResult {
   String courseName;
@@ -232,6 +233,23 @@ class MyCourseDatabaseHandler {
       return null;
     } else {
       return myCourseList;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>?> getNextCourseInfo(
+      DateTime datetime) async {
+    await _initMyCourseDatabase();
+    //30分後、何時限目かを取得する
+    int? nextPeriod =
+        datetime2Period(datetime.add(const Duration(minutes: 30)));
+    if (nextPeriod != null) {
+      List<Map<String, dynamic>> nextCourseList = await _database.rawQuery('''
+    SELECT * FROM $myCourseTable 
+    WHERE period = ? AND weekday = ? AND year = ?
+  ''', [nextPeriod, datetime.weekday, datetime2schoolYear(datetime)]);
+      return nextCourseList;
+    } else {
+      return null;
     }
   }
 }

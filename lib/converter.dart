@@ -55,6 +55,34 @@ String? period2duringTime(int period) {
   }
 }
 
+int? datetime2Period(DateTime datetime) {
+  // 各periodの開始時間を定義
+  List<DateTime> periodStartTimes = [
+    DateTime(datetime.year, datetime.month, datetime.day, 8, 50), // period 1
+    DateTime(datetime.year, datetime.month, datetime.day, 10, 40), // period 2
+    DateTime(datetime.year, datetime.month, datetime.day, 13, 10), // period 3
+    DateTime(datetime.year, datetime.month, datetime.day, 15, 5), // period 4
+    DateTime(datetime.year, datetime.month, datetime.day, 17, 0), // period 5
+  ];
+
+  // datetimeがどのperiodに属するかを判定
+  for (int i = 0; i < periodStartTimes.length; i++) {
+    DateTime startTime = periodStartTimes[i];
+    DateTime endTime = startTime
+        .add(const Duration(hours: 1, minutes: 40)); // 各periodは1時間40分間隔
+
+    if (datetime.isAfter(startTime) && datetime.isBefore(endTime)) {
+      return i + 1; // periodは1から始まるため、インデックスに1を加える
+    }
+  }
+
+  return null; // periodに該当しない場合はnullを返す
+}
+
+int datetime2schoolYear(DateTime datetime) {
+  return DateTime(datetime.year, datetime.month - 3, datetime.day).year;
+}
+
 String? weekday2string(int? weekday, String format) {
   if (weekday != null) {
     switch (format) {

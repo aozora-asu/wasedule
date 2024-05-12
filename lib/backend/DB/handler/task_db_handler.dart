@@ -352,7 +352,7 @@ class TaskDatabaseHelper {
     return count ?? 0;
   }
 
-  Future<List<Map<String, dynamic>>> getTaskListByTitle(
+  Future<List<Map<String, dynamic>>> getTaskListByCourseName(
       String courseName) async {
     await _initDatabase();
     List<Map<String, dynamic>> tasks = await _database.query(
