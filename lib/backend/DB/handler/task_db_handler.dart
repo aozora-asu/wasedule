@@ -18,7 +18,7 @@ class TaskDatabaseHelper {
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path,
-        version: 2, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 3, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
     await deleteExpairedTask(_database, 30);
   }
 
@@ -47,14 +47,16 @@ class TaskDatabaseHelper {
         dtEnd INTEGER,
         summary TEXT,
         description TEXT,
-        isDone INTEGER
+        isDone INTEGER,
+        pageID TEXT
       )
     ''');
   }
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    await db.execute('''
+    if (oldVersion == 1) {
+      await db.execute('''
     CREATE TABLE IF NOT EXISTS tasks_new(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT UNIQUE, -- UNIQUE,
@@ -62,37 +64,71 @@ class TaskDatabaseHelper {
         dtEnd INTEGER,
         summary TEXT,
         description TEXT,
-        isDone INTEGER
+        isDone INTEGER,
+        pageID TEXT
     )
   ''');
-    // 既存のデータを新しいテーブルに移行
-    var tasks = await db.query('tasks');
-    int correctDateInt;
-    for (var task in tasks) {
-      if (task["uid"] == null) {
-        correctDateInt = task["dtEnd"] as int;
-      } else {
-        DateTime correctDate =
-            DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
-        correctDateInt = correctDate
-            .subtract(const Duration(hours: 9))
-            .millisecondsSinceEpoch;
+      // 既存のデータを新しいテーブルに移行
+      var tasks = await db.query('tasks');
+      int correctDateInt;
+      for (var task in tasks) {
+        if (task["uid"] == null) {
+          correctDateInt = task["dtEnd"] as int;
+        } else {
+          DateTime correctDate =
+              DateTime.fromMillisecondsSinceEpoch(task["dtEnd"] as int);
+          correctDateInt = correctDate
+              .subtract(const Duration(hours: 9))
+              .millisecondsSinceEpoch;
+        }
+        await db.insert('tasks_new', {
+          'uid': task["uid"],
+          'title': task["title"],
+          'dtEnd': correctDateInt,
+          'summary': task["summary"],
+          'description': task["description"],
+          "isDone": task["isDone"],
+        });
       }
-      await db.insert('tasks_new', {
-        'uid': task["uid"],
-        'title': task["title"],
-        'dtEnd': correctDateInt,
-        'summary': task["summary"],
-        'description': task["description"],
-        "isDone": task["isDone"],
-      });
+
+      // 既存のテーブルを削除
+      await db.execute('DROP TABLE tasks');
+
+      // 新しいテーブルの名前を既存のテーブルの名前に変更
+      await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
     }
+    if (oldVersion == 2) {
+      await db.execute('''
+    CREATE TABLE IF NOT EXISTS tasks_new(
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid TEXT UNIQUE, -- UNIQUE,
+        title TEXT,
+        dtEnd INTEGER,
+        summary TEXT,
+        description TEXT,
+        isDone INTEGER,
+        pageID TEXT
+    )
+  ''');
+      // 既存のデータを新しいテーブルに移行
+      var tasks = await db.query('tasks');
+      for (var task in tasks) {
+        await db.insert('tasks_new', {
+          'uid': task["uid"],
+          'title': task["title"],
+          'dtEnd': task["dtEnd"],
+          'summary': task["summary"],
+          'description': task["description"],
+          "isDone": task["isDone"],
+        });
+      }
 
-    // 既存のテーブルを削除
-    await db.execute('DROP TABLE tasks');
+      // 既存のテーブルを削除
+      await db.execute('DROP TABLE tasks');
 
-    // 新しいテーブルの名前を既存のテーブルの名前に変更
-    await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
+      // 新しいテーブルの名前を既存のテーブルの名前に変更
+      await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
+    }
   }
 
   Future<void> _orderByDateTime() async {
@@ -198,6 +234,17 @@ class TaskDatabaseHelper {
       {'description': newDescription}, // 更新後の値
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+
+  Future<void> setpageID(String courseName, String pageID) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _initDatabase();
+    await _database.update(
+      'tasks',
+      {'pageID': pageID}, // 更新後の値
+      where: 'title = ?',
+      whereArgs: [courseName],
     );
   }
 

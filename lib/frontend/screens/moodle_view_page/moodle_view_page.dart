@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
 import 'package:html/dom.dart' as html;
@@ -89,6 +90,11 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     for (var myCourse in myCourseList) {
                       await MyCourseDatabaseHandler()
                           .resisterMyCourseFromMoodle(myCourse);
+
+                      await TaskDatabaseHelper().setpageID(
+                          myCourse.courseName
+                              .replaceAll(RegExp(r'[A-Za-z()\d]'), ''),
+                          myCourse.pageID!);
                     }
                   }
                 }
