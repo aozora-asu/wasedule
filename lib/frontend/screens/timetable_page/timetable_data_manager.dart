@@ -51,7 +51,7 @@ class TimeTableData {
     maxPeriod = 4;
     for (int i = 0; i < TDList.length; i++) {
         
-        int? targetWeekDay = TDList[i]["weekday"];
+        int targetWeekDay = TDList[i]["weekday"] ?? 7;
         int period = TDList[i]["period"] ?? 0;
         if(maxPeriod < period){
           maxPeriod = period;
@@ -60,15 +60,17 @@ class TimeTableData {
         if(sortedData.containsKey(targetWeekDay)) {
           sortedData[targetWeekDay]!.add(TDList.elementAt(i));
         }else{
-          sortedData[targetWeekDay ?? 7] = [TDList.elementAt(i)];
+          sortedData[targetWeekDay] = [TDList.elementAt(i)];
         }
     }
 
     for(int i = 0; i < sortedData.length; i++){
       List<Map<String,dynamic>> data = sortedData.values.elementAt(i);
       int targetKey = sortedData.keys.elementAt(i);
+      if(targetKey != 7){
       data.sort((a, b) => (a["period"] as int).compareTo(b["period"] as int));
       sortedData[targetKey] = data;
+      }
     }
     sortedDataByWeekDay = sortedData;
    return sortedData;

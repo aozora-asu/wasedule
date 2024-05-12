@@ -295,14 +295,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
                 ref.read(timeTableProvider).initUniversityScheduleByDay(thisYear,semesterNum);
-                print("DBから取得：");
                 for(int i = 0; i < snapshot.data!.length; i++){
-                  print(snapshot.data!.elementAt(i));
                 }
-                print("曜日でソート：");
                 for(int i = 0; i < ref.read(timeTableProvider).sortedDataByWeekDay.length; i++){
-                  print(ref.read(timeTableProvider).sortedDataByWeekDay.keys.elementAt(i));
-                  print(ref.read(timeTableProvider).sortedDataByWeekDay.values.elementAt(i));
                 }
                 return timeTableBody();
               }else{
