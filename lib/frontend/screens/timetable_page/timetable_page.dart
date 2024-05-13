@@ -574,7 +574,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
               == currentSemesterID()
             ){
-              bgColor = cellBackGroundColor(length,colorning);
+              bgColor = cellBackGroundColor(length,colorning).withOpacity(0.7);
               cellContents = timeTableSellsChild(
                 weekDay,index+1,length);
             }
@@ -663,7 +663,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         Color colorning = hexToColor(tableData.sortedDataByWeekDay[7]
             .elementAt(index)["color"]);
         int length = random.nextInt(1);
-        Color bgColor = cellBackGroundColor(length,colorning);
+        Color bgColor = cellBackGroundColor(length,colorning).withOpacity(0.7);
         Widget child = const SizedBox();
         if(tableData.sortedDataByWeekDay[7]
             .elementAt(index)["semester"] 

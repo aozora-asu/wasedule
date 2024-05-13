@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-//ここで使う色を定義します。main.dartで使ってます
+//ここで使う色を定義します。
 
 const MAIN_COLOR = Color.fromARGB(255, 142, 23, 40);
 const ACCENT_COLOR = Colors.orangeAccent;//Color.fromARGB(255,144,115,85);

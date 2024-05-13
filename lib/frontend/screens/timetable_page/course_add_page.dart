@@ -128,7 +128,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                             onTap: () async {
                               await showWeekdayAndPeriodDialogue();
                               setState(() {
-                                isBalid();
+                                isValid();
                               });
                             },
                             child: Text(courseTimeText,
@@ -169,10 +169,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                           String className = classNameController.text;
                           String classRoom = classRoomController.text;
                           String memo = memoController.text;
-                          if (isBalid()) {
+                          if (isValid()) {
                             //＠ここに時間割データの追加関数！！！
                             MyCourseDatabaseHandler()
-                                .resisterMyCourseFromMoodle(MyCourse(
+                                .resisterMyCourseFromMoodle(
+                                  MyCourse(
                                     classRoom: classRoom,
                                     color: "#96C78C",
                                     courseName: className,
@@ -185,7 +186,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                             widget.setTimetableState((){});
                             Navigator.pop(context);
                           } else {}
-                        }, isBalid() ? ACCENT_COLOR : Colors.grey, "   追加   "),
+                        }, isValid() ? ACCENT_COLOR : Colors.grey, "   追加   "),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ])
                     ]))));
@@ -209,7 +210,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     ));
   }
 
-  bool isBalid() {
+  bool isValid() {
     if (weekDay == null && period != null) {
       errorText = "*曜日を設定してください。";
       return false;
