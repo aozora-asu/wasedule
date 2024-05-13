@@ -9,7 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CoursePreview extends ConsumerStatefulWidget {
   late Map target;
-  CoursePreview({required this.target});
+  late StateSetter setTimetableState;
+  CoursePreview({
+    required this.target,
+    required this.setTimetableState
+    });
   @override
   _CoursePreviewState createState() => _CoursePreviewState();
 }
@@ -82,6 +86,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           //＠ここに授業名変更関数を登録！！！
                           await MyCourseDatabaseHandler()
                               .updateCourseName(id, value);
+                          widget.setTimetableState((){});
                         })
                       ]),
                       dividerModel,
@@ -118,6 +123,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           //＠ここに教室のアップデート関数！！！
                           await MyCourseDatabaseHandler()
                               .updateClassRoom(id, value);
+                          widget.setTimetableState((){});
                         })
                       ]),
                       dividerModel,
@@ -131,6 +137,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           int id = target["id"];
                           //＠ここにメモのアップデート関数！！！
                           await MyCourseDatabaseHandler().updateMemo(id, value);
+                          widget.setTimetableState((){});
                         }),
                       ]),
                       dividerModel,
@@ -143,6 +150,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                               //＠ここに削除実行関数！！！
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
+                              widget.setTimetableState((){});
+                              Navigator.pop(context);
                             }),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ])

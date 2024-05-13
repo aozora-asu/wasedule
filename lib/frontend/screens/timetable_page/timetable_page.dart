@@ -63,7 +63,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return CourseAddPage();
+                    return CourseAddPage(
+                      setTimetableState: setState,
+                    );
                  });
               },
               backgroundColor: ACCENT_COLOR,
@@ -546,7 +548,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   year:thisYear,
                   semester:currentSemesterID(),
                   weekDay:weekDay,
-                  period:index+1
+                  period:index+1,
+                  setTimetableState:setState,
                 );
             });
           }
@@ -752,7 +755,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return CoursePreview(target: targetData);
+                return CoursePreview(
+                  target: targetData,
+                  setTimetableState: setState,
+                  );
             });
           },
           child:Column(
@@ -788,7 +794,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return OndemandPreview(target:target);
+            return OndemandPreview(
+              target:target,
+              setTimetableState: setState,
+              );
         });
       },
       child:Stack(

@@ -12,7 +12,14 @@ class CourseAddPage extends ConsumerStatefulWidget {
   int? period;
   int? year;
   String? semester;
-  CourseAddPage({this.weekDay, this.period, this.year, this.semester});
+  late StateSetter setTimetableState;
+  CourseAddPage({
+    this.weekDay,
+    this.period,
+    this.year,
+    this.semester,
+    required this.setTimetableState
+    });
 
   @override
   _CourseAddPageState createState() => _CourseAddPageState();
@@ -175,6 +182,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                     syllabusID: null,
                                     weekday: weekDay,
                                     year: year!));
+                            widget.setTimetableState((){});
                             Navigator.pop(context);
                           } else {}
                         }, isBalid() ? ACCENT_COLOR : Colors.grey, "   追加   "),

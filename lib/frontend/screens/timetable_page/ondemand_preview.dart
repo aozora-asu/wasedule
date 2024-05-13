@@ -9,7 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OndemandPreview extends ConsumerStatefulWidget {
   late Map target;
-  OndemandPreview({required this.target});
+  late StateSetter setTimetableState;
+  OndemandPreview({
+    required this.target,
+    required this.setTimetableState
+    });
   @override
   _OndemandPreviewState createState() => _OndemandPreviewState();
 }
@@ -115,6 +119,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                           int id = target["id"];
                           //＠ここにメモのアップデート関数！！！
                           await MyCourseDatabaseHandler().updateMemo(id, value);
+                          widget.setTimetableState((){});
                         }),
                       ]),
                       dividerModel,
@@ -127,6 +132,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                               //＠ここに削除実行関数！！！
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
+                              Navigator.pop(context);
+                              widget.setTimetableState((){});
                             }),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ])
