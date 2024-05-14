@@ -66,6 +66,7 @@ Widget lengthBadge(int length, fontSize, bool hideZero) {
         decoration: const BoxDecoration(
           color: Colors.redAccent,
           shape: BoxShape.circle,
+          border: Border()
         ),
         padding: EdgeInsets.all(fontSize / 3),
         child: Text(

@@ -633,6 +633,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                     ref.read(taskDataProvider.notifier).state =
                                         TaskData();
                                     ref.read(taskDataProvider).isRenewed = true;
+                                    setState((){});
                                     //Navigator.pop(context);
                                   },
                                 ),
@@ -667,6 +668,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                     ref.read(taskDataProvider.notifier).state =
                                         TaskData();
                                     ref.read(taskDataProvider).isRenewed = true;
+                                     setState((){});
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -703,6 +705,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                             .state = TaskData();
                                         ref.read(taskDataProvider).isRenewed =
                                             true;
+                                         setState((){});
                                         Navigator.pop(context);
                                       },
                                       child: Text(
@@ -724,6 +727,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                   ref.read(taskDataProvider.notifier).state =
                                       TaskData();
                                   ref.read(taskDataProvider).isRenewed = true;
+                                   setState((){});
                                   Navigator.pop(context);
                                 },
                                 controller: descriptionController,
