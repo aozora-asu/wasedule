@@ -27,33 +27,30 @@ end
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
-# Remove the line below as it's already specified above.
-# install! 'cocoapods', :warn_for_unused_master_specs_repo => false
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  # target 'RunnerTests' do
-  #   inherit! :search_paths
-  # end
-    # Share Extension is name of Extension which you created which is in this case 'Share Extension'
-    # target 'shareToApp' do
-    #   inherit! :search_paths
-    # end
 end
 
+target 'HomeWidgetExtension' do
+  use_frameworks!
+  use_modular_headers!
+  
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
 
 post_install do |installer|
   installer.generated_projects.each do |project|
-        project.targets.each do |target|
-            target.build_configurations.each do |config|
-                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-             end
-        end
- end
-    installer.pods_project.targets.each do |target|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+  end
+  installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
   installer.pods_project.targets.each do |target|
@@ -67,4 +64,3 @@ post_install do |installer|
     end
   end
 end
-

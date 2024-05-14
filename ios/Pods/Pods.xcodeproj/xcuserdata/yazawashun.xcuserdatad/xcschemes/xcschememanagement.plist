@@ -74,35 +74,15 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>FirebaseInstallations-FirebaseInstallations_Privacy.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>FirebaseInstallations.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>FirebaseMessaging-FirebaseMessaging_Privacy.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>FirebaseMessaging.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>FirebaseSharedSwift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Flutter.xcscheme_^#shared#^_</key>
+		<key>Flutter.xcscheme</key>
 		<dict>
 			<key>isShown</key>
-			<true/>
+			<false/>
 		</dict>
 		<key>GTMSessionFetcher.xcscheme</key>
 		<dict>
@@ -169,6 +149,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-HomeWidgetExtension.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Runner.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -205,11 +190,6 @@
 			<false/>
 		</dict>
 		<key>firebase_core.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>firebase_messaging.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -300,6 +280,11 @@
 			<false/>
 		</dict>
 		<key>share_extend.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>share_plus-share_plus_privacy.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
