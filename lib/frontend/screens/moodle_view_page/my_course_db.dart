@@ -189,10 +189,17 @@ class MyCourseDatabaseHandler {
 
   Future<void> _updateMyCourseFromMoodle(MyCourse newMyCourse) async {
     await _initMyCourseDatabase();
-    // データベースを更新します
+
+    // MyCourseをMapに変換
+    Map<String, dynamic> courseMap = newMyCourse.toMap();
+    // "memo"キーと"attendCount"キーを削除
+    courseMap.remove("memo");
+    courseMap.remove("attendCount");
+
+    // データベースを更新
     await _database.update(
       myCourseTable,
-      newMyCourse.toMap(),
+      courseMap,
       where: 'year = ? AND weekday = ? AND period = ? AND semester = ?',
       whereArgs: [
         newMyCourse.year,

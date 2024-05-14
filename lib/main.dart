@@ -30,7 +30,7 @@ void main() async {
   await initializeDateFormatting(); // 初期化
   //以下swift連携用の設定
   // プラットフォームチャンネルの作成
-  const platform = MethodChannel('com.example.flutter_app/channel');
+  const platform = MethodChannel('com.example.wasedule');
 
   // 外部から呼び出される関数の実装
   platform.setMethodCallHandler((call) async {
@@ -38,7 +38,15 @@ void main() async {
       // 値を取得する処理を行う
       List<Map<String, dynamic>>? nextCourseList =
           await MyCourseDatabaseHandler().getNextCourseInfo(DateTime.now());
-      return nextCourseList;
+      print(nextCourseList);
+      return [
+        {
+          "classRoom": "101",
+          "courseName": "数学",
+          "period": "1",
+          "startTime": "09:00"
+        }
+      ];
     }
     return null;
   });

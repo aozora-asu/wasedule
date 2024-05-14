@@ -7,7 +7,7 @@ import flutter_local_notifications
 @objc class AppDelegate: FlutterAppDelegate {
 
     // メソッドチャネルの定義
-  private let methodChannelName = "com.example.show"
+  private let methodChannelName = "com.example.wasedule"
   public var result: FlutterResult?
   override func application(
     _ application: UIApplication,

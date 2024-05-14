@@ -39,9 +39,9 @@ target 'Runner' do
   #   inherit! :search_paths
   # end
     # Share Extension is name of Extension which you created which is in this case 'Share Extension'
-    target 'shareToApp' do
-      inherit! :search_paths
-    end
+    # target 'shareToApp' do
+    #   inherit! :search_paths
+    # end
 end
 
 

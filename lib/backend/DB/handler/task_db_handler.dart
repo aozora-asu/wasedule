@@ -357,8 +357,12 @@ class TaskDatabaseHelper {
     await _initDatabase();
     List<Map<String, dynamic>> tasks = await _database.query(
       'tasks',
-      where: 'title = ? AND isDone = ?',
-      whereArgs: [courseName.replaceAll(RegExp(r'[A-Za-z()\d]'), ''), 0],
+      where: 'title = ? AND isDone = ? AND  ? <= dtEnd',
+      whereArgs: [
+        courseName.replaceAll(RegExp(r'[A-Za-z()\d]'), ''),
+        0,
+        DateTime.now().millisecondsSinceEpoch
+      ],
     );
     return tasks;
   }
