@@ -128,7 +128,7 @@ class MyCourseDatabaseHandler {
         year INTEGER,
         pageID TEXT,
         syllabusID TEXT ,
-         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester)
+        CONSTRAINT unique_course UNIQUE (year, period, weekday, semester)
       )
     ''');
   }
