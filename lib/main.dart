@@ -32,10 +32,8 @@ void main() async {
   // プラットフォームチャンネルの作成
   const platform = MethodChannel('com.example.wasedule');
 
-  // 外部から呼び出される関数の実装
   platform.setMethodCallHandler((call) async {
     if (call.method == 'getNextCourse') {
-      // 値を取得する処理を行う
       List<Map<String, dynamic>>? nextCourseList =
           await MyCourseDatabaseHandler().getNextCourseInfo(DateTime.now());
       print(nextCourseList);
@@ -50,5 +48,6 @@ void main() async {
     }
     return null;
   });
+
   runApp(ProviderScope(child: MyApp()));
 }
