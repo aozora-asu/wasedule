@@ -35,12 +35,18 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
-target 'HomeWidgetExtension' do
-  use_frameworks!
-  use_modular_headers!
+ target 'HomeWidgetExtension' do
+   use_frameworks!
+   use_modular_headers!
+     # Inherit the settings from the main app
+     inherit! :search_paths
+     # Add required Firebase dependencies for the extension
+#     pod 'Firebase/Analytics'
+#     pod 'Firebase/Core'
+#  
   
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-end
+   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+ end
 
 post_install do |installer|
   installer.generated_projects.each do |project|
@@ -61,6 +67,20 @@ post_install do |installer|
   installer.pods_project.targets.each do |t|
     t.build_configurations.each do |config|
       config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+    end
+  end
+  installer.pods_project.targets.each do |target| 
+    target.build_configurations.each do |config| 
+      # Allow use of local compiler caches by using relative pathing for clang 
+      config.build_settings["CC"] = "clang" 
+      config.build_settings["LD"] = "clang" 
+      config.build_settings["CXX"] = "clang++" 
+      config.build_settings["LDPLUSPLUS"] = "clang++" 
+    end 
+  end 
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
     end
   end
 end

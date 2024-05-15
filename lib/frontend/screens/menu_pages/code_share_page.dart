@@ -347,7 +347,6 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                       height: SizeConfig.blockSizeHorizontal! * 3.5,
                       child: generateWeekThumbnail(),
                     ),
-
                     Expanded(
                       child: SingleChildScrollView(
                         child: Row(
@@ -364,7 +363,6 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                       ),
                     ),
                   ]))))
-
     ]);
   }
 
