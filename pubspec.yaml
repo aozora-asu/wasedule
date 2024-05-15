@@ -75,6 +75,13 @@ dependencies:
   html: ^0.15.4
   uuid: ^4.4.0
 
+#バージョン関連のエラーの解消です
+dependency_overrides:
+  flutter_colorpicker:
+    git:
+      url: https://github.com/mchome/flutter_colorpicker
+      ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -86,6 +93,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
