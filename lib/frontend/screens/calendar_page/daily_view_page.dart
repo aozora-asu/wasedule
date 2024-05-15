@@ -15,6 +15,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart' ;
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
@@ -294,7 +295,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       Widget value = const SizedBox();
       TextStyle dateTimeStyle =const TextStyle(
                   color: Colors.grey,
-                  fontSize: 20,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold);
       if(targetDayData.elementAt(index)["id"] == editingSchedule){
         dateTimeStyle = const TextStyle(
@@ -383,6 +384,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 5),
                     Row(children: [
                       const SizedBox(
                         width: 10,
@@ -390,7 +392,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       GestureDetector(
                         onTap: ()=> switchToEditMode(targetKey,index),
                         child:dateTimeData),
-                      const SizedBox(width: 15, height: 40),
+                      const SizedBox(width: 15),
                       GestureDetector(
                         onTap: ()=> switchToEditMode(targetKey,index),
                         child: tagChip(
@@ -412,7 +414,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                   overflow: TextOverflow.clip,
                                   style: const TextStyle(
                                       color: Colors.black,
-                                      fontSize: 30,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold),
                               )
                             ),
@@ -688,73 +690,86 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final data = ref.read(timeTableProvider);
     String startTime = data.returnBeginningTime(classData["period"]);
     String endTime = data.returnEndTime(classData["period"]);
-        return Column(children: [
-          const Divider(
-            height: 2,
-            thickness: 2,
-          ),
-          Container(
+
+        return GestureDetector(
+          onTap:(){
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CoursePreview(
+                  target: classData,
+                  setTimetableState: setState,
+                  taskList: const [],
+              );
+            });
+          },
+          child:Column(children: [
+            const Divider(
+              height: 2,
+              thickness: 2,
+            ),
+            Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(startTime +"~"+ endTime,
-                        style:const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(Icons.school,color:MAIN_COLOR,size:20),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(data.intToWeekday(classData["weekday"]) + "の授業",
-                        style:const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.normal)),
-                      const Spacer(),
-                    ]),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                width: SizeConfig.blockSizeHorizontal! * 70,
-                                child: Text(
-                                  classData["courseName"],
-                                  overflow: TextOverflow.clip,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold),
-                              )
-                            ),
-                          const Spacer(),
-                          Text(
-                            classData["classRoom"],
-                            overflow: TextOverflow.ellipsis,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 5),
+                  Row(children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(startTime +"~"+ endTime,
+                      style:const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Icon(Icons.school,color:MAIN_COLOR,size:20),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(data.intToWeekday(classData["weekday"]) + "の授業",
+                      style:const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.normal)),
+                    const Spacer(),
+                  ]),
+                  Row(
+                    children: [
+                      Expanded(child:
+                        Container(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            classData["courseName"],
+                            overflow: TextOverflow.clip,
                             style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 15,
+                                color: Colors.black,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
+                        )
+                      )
+                    ),
+                  Text(
+                    classData["classRoom"],
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ])
               ])
-            ])
-          ),
-        ]);
+            ),
+          ])
+        );
   }
 
   Future<void> timeBottomSheet() async{
@@ -814,7 +829,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               },
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all<Color?>(Colors.blueAccent),
+                                    WidgetStateProperty.all<Color?>(Colors.blueAccent),
                               ),
                               child: const Text("+ 開始時刻",
                                   style: TextStyle(color: Colors.white))),
@@ -850,7 +865,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               },
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all<Color?>(Colors.blueAccent),
+                                    WidgetStateProperty.all<Color?>(Colors.blueAccent),
                               ),
                               child: const Text("+ 終了時刻",
                                   style: TextStyle(color: Colors.white))),
@@ -906,9 +921,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       ),
     ]),
   );
-    
-    // print("tagID:" + tagIDController);
-    // print("tag:" + tagController.text);
+
     if(tagIDController != "" && tagIDController != null){
       tagObject = tagChip(
         tagIDController  ?? "", ref);
@@ -1463,7 +1476,7 @@ return GestureDetector(
                     child: ElevatedButton(
                       style: const ButtonStyle(
                           backgroundColor:
-                              MaterialStatePropertyAll(Colors.blueAccent)),
+                              WidgetStatePropertyAll(Colors.blueAccent)),
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.of(context).push(
