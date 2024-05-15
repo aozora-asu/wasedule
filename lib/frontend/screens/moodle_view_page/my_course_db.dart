@@ -82,8 +82,8 @@ class MyCourse {
   Map<String, dynamic> toMap() {
     return {
       "courseName": courseName,
-      "weekday": weekday,
-      "period": period,
+      "weekday": weekday ?? -1,
+      "period": period ?? -1,
       "semester": semester,
       "classRoom": classRoom,
       "memo": memo,
@@ -91,7 +91,7 @@ class MyCourse {
       "attendCount": attendCount,
       "year": year,
       "pageID": pageID,
-      "syllabusID": syllabusID,
+      "syllabusID": syllabusID ?? "",
     };
   }
 }
@@ -128,7 +128,7 @@ class MyCourseDatabaseHandler {
         year INTEGER,
         pageID TEXT,
         syllabusID TEXT ,
-        CONSTRAINT unique_course UNIQUE (year, period, weekday, semester)
+        CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
   }
@@ -222,6 +222,15 @@ class MyCourseDatabaseHandler {
         await _updateMyCourseFromMoodle(myCourse);
       }
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getUniqueCourseNameAndPageIDList() async {
+    List<Map<String, dynamic>> result = await _database.query(
+      myCourseTable,
+      columns: ['DISTINCT courseName', 'pageID'],
+    );
+
+    return result;
   }
 
   Future<bool> hasMyCourse() async {

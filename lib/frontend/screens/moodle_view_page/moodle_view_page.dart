@@ -90,12 +90,9 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     for (var myCourse in myCourseList) {
                       await MyCourseDatabaseHandler()
                           .resisterMyCourseFromMoodle(myCourse);
-
-                      await TaskDatabaseHelper().setpageID(
-                          myCourse.courseName
-                              .replaceAll(RegExp(r'[A-Za-z()\d]'), ''),
-                          myCourse.pageID!);
                     }
+
+                    await TaskDatabaseHelper().setpageID();
                   }
                 }
             }

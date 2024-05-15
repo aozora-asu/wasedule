@@ -3,7 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dar
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
-
+import "../../../frontend/screens/moodle_view_page/my_course_db.dart";
 import "../../http_request.dart";
 
 import '../../notify/notify_content.dart';
@@ -205,15 +205,22 @@ class TaskDatabaseHelper {
     );
   }
 
-  Future<void> setpageID(String courseName, String pageID) async {
+  Future<void> setpageID() async {
+    List<Map<String, dynamic>> pageIDAndCourseNameList =
+        await MyCourseDatabaseHandler().getUniqueCourseNameAndPageIDList();
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
-    await _database.update(
-      'tasks',
-      {'pageID': pageID}, // 更新後の値
-      where: 'title = ?',
-      whereArgs: [courseName],
-    );
+    for (var pageIDAndCourseName in pageIDAndCourseNameList) {
+      await _database.update(
+        'tasks',
+        {'pageID': pageIDAndCourseName["pageID"]}, // 更新後の値
+        where: 'title = ?',
+        whereArgs: [
+          pageIDAndCourseName["courseName"]!
+              .replaceAll(RegExp(r'[A-Za-z()\d]'), '')
+        ],
+      );
+    }
   }
 
   Future<void> unDisplay(int id) async {
@@ -299,6 +306,7 @@ class TaskDatabaseHelper {
     }
     await NotifyContent().setNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
+    await setpageID();
   }
 
   Future<void> resisterTaskListToDB(List<Map<String, dynamic>> taskList) async {
