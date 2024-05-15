@@ -245,8 +245,23 @@ class MyCourseDatabaseHandler {
 
   Future<List<Map<String, dynamic>>?> getMyCourse() async {
     await _initMyCourseDatabase();
-    List<Map<String, dynamic>> myCourseList =
-        await _database.rawQuery('SELECT * FROM $myCourseTable');
+
+    List<Map<String, dynamic>> myCourseList = await _database.rawQuery('''
+    SELECT 
+      CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday,
+      CASE WHEN period = -1 THEN NULL ELSE period END AS period,
+      courseName,
+      semester,
+      classRoom,
+      memo,
+      color,
+      attendCount,
+      year,
+      pageID,
+      syllabusID
+    FROM $myCourseTable
+  ''');
+
     if (myCourseList.isEmpty) {
       return null;
     } else {
@@ -262,7 +277,19 @@ class MyCourseDatabaseHandler {
         datetime2Period(datetime.add(const Duration(minutes: 30)));
     if (nextPeriod != null) {
       List<Map<String, dynamic>> nextCourseList = await _database.rawQuery('''
-    SELECT * FROM $myCourseTable 
+        SELECT 
+      CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday,
+      CASE WHEN period = -1 THEN NULL ELSE period END AS period,
+      courseName,
+      semester,
+      classRoom,
+      memo,
+      color,
+      attendCount,
+      year,
+      pageID,
+      syllabusID
+    FROM $myCourseTable
     WHERE period = ? AND weekday = ? AND year = ?
   ''', [nextPeriod, datetime.weekday, datetime2schoolYear(datetime)]);
       return nextCourseList;
