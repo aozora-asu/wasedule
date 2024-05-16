@@ -60,6 +60,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                                   children: [
                                     const SizedBox(height: 20),
                                     courseInfo(),
+                                    const SizedBox(height: 30),
+                                    relatedTasks(),
                                     const SizedBox(height: 20),
                                   ])))))));
     }));
