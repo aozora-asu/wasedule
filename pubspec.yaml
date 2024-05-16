@@ -75,6 +75,7 @@ dependencies:
   html: ^0.15.4
   uuid: ^4.4.0
   flutter_colorpicker: ^1.0.3
+  home_widget: ^0.6.0
 
 dev_dependencies:
   flutter_test:

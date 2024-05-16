@@ -146,7 +146,7 @@ class MyCourseDatabaseHandler {
     );
   }
 
-  Future<void> updateMyCourse(MyCourse newMyCourse, int id) async {
+  Future<void> updateMyCourse(int id, MyCourse newMyCourse) async {
     await _initMyCourseDatabase();
     await _database.update(
       myCourseTable,
@@ -200,12 +200,14 @@ class MyCourseDatabaseHandler {
     await _database.update(
       myCourseTable,
       courseMap,
-      where: 'year = ? AND weekday = ? AND period = ? AND semester = ?',
+      where:
+          'year = ? AND weekday = ? AND period = ? AND semester = ? AND syllabusID=?',
       whereArgs: [
         newMyCourse.year,
         newMyCourse.weekday,
         newMyCourse.period,
-        newMyCourse.semester
+        newMyCourse.semester,
+        newMyCourse.syllabusID
       ],
     );
   }
@@ -225,6 +227,7 @@ class MyCourseDatabaseHandler {
   }
 
   Future<List<Map<String, dynamic>>> getUniqueCourseNameAndPageIDList() async {
+    await _initMyCourseDatabase();
     List<Map<String, dynamic>> result = await _database.query(
       myCourseTable,
       columns: ['DISTINCT courseName', 'pageID'],

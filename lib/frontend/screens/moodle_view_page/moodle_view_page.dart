@@ -97,7 +97,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                 }
             }
           } catch (e) {
-            printWrapped(consoleMessage.message);
+            print(e);
+            //printWrapped(consoleMessage.message);
           }
         },
         initialUrlRequest: URLRequest(url: WebUri(initUrl)),

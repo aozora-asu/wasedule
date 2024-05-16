@@ -10,43 +10,44 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import "frontend/screens/moodle_view_page/syllabus.dart";
 import "./frontend/screens/moodle_view_page/my_course_db.dart";
+import 'package:home_widget/home_widget.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Bindingの初期化
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: '.env');
-  // タイムゾーンデータベースの初期化
   tz.initializeTimeZones();
-  // ローカルロケーションのタイムゾーンを東京に設定
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+  await initializeDateFormatting();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
-  await initializeDateFormatting(); // 初期化
-  //以下swift連携用の設定
-  // プラットフォームチャンネルの作成
   const platform = MethodChannel('com.example.wasedule');
 
   platform.setMethodCallHandler((call) async {
+    HomeWidget.saveWidgetData<String>('_srcText', "Sample Data from Dart");
+    HomeWidget.updateWidget(
+        name: 'HomeWidget',
+        androidName: 'SampleAppWidgetProvider',
+        iOSName: 'HomeWidgetExtention');
+
+    // AppGroupsの設定を行う
+    const appGroupID = "group.com.example.wasedule";
+    HomeWidget.setAppGroupId(appGroupID);
     if (call.method == 'getNextCourse') {
       List<Map<String, dynamic>>? nextCourseList =
           await MyCourseDatabaseHandler().getNextCourseInfo(DateTime.now());
       print(nextCourseList);
-      return [
+      return Future.value([
         {
           "classRoom": "101",
           "courseName": "数学",
           "period": "1",
           "startTime": "09:00"
         }
-      ];
+      ]);
     }
-    return null;
+    return Future.value(null);
   });
 
   runApp(ProviderScope(child: MyApp()));
