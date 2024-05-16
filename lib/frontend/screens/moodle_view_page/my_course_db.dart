@@ -217,7 +217,6 @@ class MyCourseDatabaseHandler {
     try {
       await _insertMyCourse(myCourse);
     } catch (e) {
-      print("$eが発生しました");
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
         print("更新します");
