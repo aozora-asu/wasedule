@@ -691,33 +691,33 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           &&tableData.sortedDataByWeekDay[7]
             .elementAt(index)["year"] 
             == thisYear){
-          child = FutureBuilder(
-
-            future: TaskDatabaseHelper().getTaskListByCourseName(
-                 tableData.sortedDataByWeekDay[7]
-            .elementAt(index)["courseName"]),
-
-            builder: (context,snapshot){
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return ondemandSellsChild(index,[]);
-              }else if (snapshot.hasData){
-                return ondemandSellsChild(index,snapshot.data!);
-              } else {
-                return ondemandSellsChild(index,[]);
-              }
-            });
-        }
-        return Container(
-              height: SizeConfig.blockSizeVertical! * cellHeight,
-              width: SizeConfig.blockSizeHorizontal! *cellWidth,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 0.5,
-                ),
+          child = Container(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            width: SizeConfig.blockSizeHorizontal! *cellWidth,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
               ),
-              child:child
-        ); 
+            ),
+            child:FutureBuilder(
+              future: TaskDatabaseHelper().getTaskListByCourseName(
+                  tableData.sortedDataByWeekDay[7]
+              .elementAt(index)["courseName"]),
+
+              builder: (context,snapshot){
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return ondemandSellsChild(index,[]);
+                }else if (snapshot.hasData){
+                  return ondemandSellsChild(index,snapshot.data!);
+                } else {
+                  return ondemandSellsChild(index,[]);
+                }
+              }
+            )
+          );
+        }
+        return child;
       });
   }
 
@@ -929,197 +929,21 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
   }
 
-Color hexToColor(String hexColor) {
-  // 16進数のカラーコードが#で始まる場合、#を削除する
-  if (hexColor.startsWith('#')) {
-    hexColor = hexColor.substring(1);
+  Color hexToColor(String hexColor) {
+    // 16進数のカラーコードが#で始まる場合、#を削除する
+    if (hexColor.startsWith('#')) {
+      hexColor = hexColor.substring(1);
+    }
+    
+    // 16進数のカラーコードをRGBに分解する
+    int hexValue = int.parse(hexColor, radix: 16);
+    int alpha = (hexValue >> 24) & 0xFF;
+    int red = (hexValue >> 16) & 0xFF;
+    int green = (hexValue >> 8) & 0xFF;
+    int blue = hexValue & 0xFF;
+    
+    // Colorオブジェクトを作成して返す
+    return Color.fromARGB(alpha, red, green, blue);
   }
-  
-  // 16進数のカラーコードをRGBに分解する
-  int hexValue = int.parse(hexColor, radix: 16);
-  int alpha = (hexValue >> 24) & 0xFF;
-  int red = (hexValue >> 16) & 0xFF;
-  int green = (hexValue >> 8) & 0xFF;
-  int blue = hexValue & 0xFF;
-  
-  // Colorオブジェクトを作成して返す
-  return Color.fromARGB(alpha, red, green, blue);
-}
 
 }
-
-
-  //これはUI表示調整用の仮データです。
-  Future<List<Map<String,dynamic>>> tempData() async{
-    List<Map<String,dynamic>> tempData = [
-      {"id":1,
-      "classID":"",
-      "courseName":"未来社会を作るセキュリティ最前線",
-      "weekday":1,
-      "period": 4,
-      "semester" : null,
-      "classRoom":"3-301",
-      "memo" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":5,
-      "classID":"",
-      "courseName":"社会科学特講（社会デザインの基礎理論）A",
-      "weekday":3,
-      "period":2,
-      "semester" : "spring_semester",
-      "classRoom":"7-209",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":6,
-      "classID":"",
-      "semester" : "spring_semester",
-      "courseName":"知識社会学",
-      "weekday":3,
-      "period": 3,
-      "classRoom":"14-B101",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":4,
-      "classID":"",
-      "courseName":"人間の安全保障論",
-      "weekday":2,
-      "period": 5,
-      "semester" : "spring_semester",
-      "classRoom":"14-502",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":0,
-      "classID":"",
-      "courseName":"経営学",
-      "weekday":1,
-      "period": 2,
-      "semester" : "spring_semester",
-      "classRoom":"14-402",
-      "memo" : null,
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":15,
-      "classID":"",
-      "courseName":"全く同じ授業だよ",
-      "weekday":3,
-      "period":2,
-      "semester" : "spring_semester",
-      "classRoom":"7-419",
-      "memorandom" :"",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":7,
-      "classID":"",
-      "semester" : "spring_semester",
-      "courseName":"ゼミナールⅡ（国際経済法研究／春学期）",
-      "weekday":3,
-      "period": 5,
-      "classRoom":"14-516",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":11,
-      "classID":"",
-      "courseName":"ディスアビリティ・スタディーズ",
-      "semester" : "spring_semester",
-      "weekday": null,
-      "period": null,
-      "classRoom": null,
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":8,
-      "classID":"",
-      "courseName":"日本語を教える１",
-      "semester" : "spring_semester",
-      "weekday":4,
-      "period": 2,
-      "classRoom":"22-201",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":3,
-      "classID":"",
-      "courseName":"経営学",
-      "weekday":2,
-      "period": 3,
-      "semester" : "spring_semester",
-      "classRoom":"14-402",
-      "memo" : null,
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":9,
-      "classID":"",
-      "courseName":"商業史1",
-      "semester" : "spring_semester",
-      "weekday": 5,
-      "period": 2,
-      "classRoom":"",
-      "memorandom" : "15-102",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-      {"id":16,
-      "classID":"",
-      "courseName":"全く同じ授業だよ",
-      "weekday":3,
-      "period":2,
-      "semester" : "spring_semester",
-      "classRoom":"7-419",
-      "memorandom" :"",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2025
-      },
-      {"id":16,
-      "classID":"",
-      "courseName":"全く同じ授業だえ～。",
-      "weekday":3,
-      "period":3,
-      "semester" : "spring_semester",
-      "classRoom":"7-419",
-      "memorandom" :"",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2025
-      },
-      {"id":10,
-      "classID":"",
-      "courseName":"現代政治分析(イタリア)",
-      "semester" : "spring_semester",
-      "weekday":5,
-      "period": 3,
-      "classRoom":"14-514",
-      "memorandom" : "",
-      "color" : "#e6e6fa",
-      "groupID" : "d34erws2",
-      "year" : 2024
-      },
-    ];
-    return tempData;
-  }
