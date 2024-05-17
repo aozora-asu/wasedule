@@ -17,7 +17,7 @@ class TimeTableDataLoader {
 class ConfigDataLoader {
   Future<void> initConfig(WidgetRef ref) async {
     await createConfigData("tips", 1, ref);
-    await createConfigData("todaysSchedule", 0, ref);
+    await createConfigData("todaysSchedule", 1, ref);
     await createConfigData("taskList", 1, ref);
     await createConfigData("moodleLink", 0, ref);
     await createConfigData("holidayPaint", 1, ref);
