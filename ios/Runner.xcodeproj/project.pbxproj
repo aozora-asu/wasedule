@@ -268,6 +268,7 @@
 				14F68DE52BF51337002B8E24 /* Frameworks */,
 				14F68DE62BF51337002B8E24 /* Resources */,
 				1407B8052BF5368A00A0B63A /* Embed Frameworks */,
+				1407B8072BF7796600A0B63A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -396,6 +397,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1407B8072BF7796600A0B63A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "generatedPath=\"$SRCROOT/Flutter/Generated.xcconfig\"\nversionNumber=$(grep FLUTTER_BUILD_NAME $generatedPath | cut -d '=' -f2 | tr -d '[:space:]')\nbuildNumber=$(grep FLUTTER_BUILD_NUMBER $generatedPath | cut -d '=' -f2 | tr -d '[:space:]')\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$SRCROOT/HomeWidget/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $versionNumber\" \"$SRCROOT/HomeWidget/Info.plist\"\n\n# 確認のためにエコー\necho \"Version Number: $versionNumber\"\necho \"Build Number: $buildNumber\"\n";
+		};
 		14BC5C8FBA5A6948487E1978 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
