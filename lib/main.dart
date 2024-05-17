@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/home_widget.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter/services.dart';
 import 'frontend/screens/common/eyecatch_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import "frontend/screens/moodle_view_page/syllabus.dart";
-import "./frontend/screens/moodle_view_page/my_course_db.dart";
-import 'package:home_widget/home_widget.dart';
+import './converter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,34 +19,9 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   await initializeDateFormatting();
+  NextCourseHomeWidget().updateNextCourse();
 
-  const platform = MethodChannel('com.example.wasedule');
-
-  platform.setMethodCallHandler((call) async {
-    HomeWidget.saveWidgetData<String>('_srcText', "Sample Data from Dart");
-    HomeWidget.updateWidget(
-        name: 'HomeWidget',
-        androidName: 'SampleAppWidgetProvider',
-        iOSName: 'HomeWidgetExtention');
-
-    // AppGroupsの設定を行う
-    const appGroupID = "group.com.example.wasedule";
-    HomeWidget.setAppGroupId(appGroupID);
-    if (call.method == 'getNextCourse') {
-      List<Map<String, dynamic>>? nextCourseList =
-          await MyCourseDatabaseHandler().getNextCourseInfo(DateTime.now());
-      print(nextCourseList);
-      return Future.value([
-        {
-          "classRoom": "101",
-          "courseName": "数学",
-          "period": "1",
-          "startTime": "09:00"
-        }
-      ]);
-    }
-    return Future.value(null);
-  });
+  print(datetime2termList(DateTime(2024, 5, 1)));
 
   runApp(ProviderScope(child: MyApp()));
 }

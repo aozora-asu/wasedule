@@ -151,10 +151,44 @@ int? weekdayToNumber(String? weekday) {
   }
 }
 
-// String now2term() {
-//   DateTime now = DateTime.now();
-//   switch (now.month) {
-//     case 1:
-//       return "spring_semester";
-//   }
-// }
+List<String> datetime2termList(DateTime currentDate) {
+  final Map<String, DateTime> wasedaCalendar2024 = {
+    "春学期開始": DateTime(2024, 4, 1),
+    "春学期授業開始": DateTime(2024, 4, 12),
+    "春クォーター終了": DateTime(2024, 6, 3),
+    "夏クォーター開始": DateTime(2024, 6, 4),
+    "春学期授業終了": DateTime(2024, 7, 29),
+    "夏季休業": DateTime(2024, 7, 30),
+    "秋学期開始": DateTime(2024, 9, 21),
+    "秋学期授業開始": DateTime(2024, 10, 4),
+    "秋クォーター終了": DateTime(2024, 11, 25),
+    "冬クォーター開始": DateTime(2024, 11, 26),
+    "冬季休業": DateTime(2024, 12, 24),
+    "秋学期授業終了": DateTime(2025, 2, 3),
+    "春季休業": DateTime(2025, 2, 4),
+  };
+
+  List<String> currentTerms = [];
+  List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
+
+  if (currentDate.isAfter(datetimeList[1]) &&
+      currentDate.isBefore(datetimeList[2])) {
+    currentTerms.addAll(["spring_semester", "spring_quarter"]);
+  }
+  if (currentDate.isAfter(datetimeList[3]) &&
+      currentDate.isBefore(datetimeList[4])) {
+    currentTerms.addAll(["spring_semester", "summer_quarter"]);
+  }
+  if (currentDate.isAfter(datetimeList[7]) &&
+      currentDate.isBefore(datetimeList[8])) {
+    currentTerms.addAll(["fall_semester", "fall_quarter"]);
+  }
+  if (currentDate.isAfter(datetimeList[9]) &&
+      currentDate.isBefore(datetimeList[11])) {
+    currentTerms.addAll(["fall_semester", "winter_quarter"]);
+  }
+  if (currentTerms.isNotEmpty) {
+    currentTerms.add("full_year");
+  }
+  return currentTerms;
+}

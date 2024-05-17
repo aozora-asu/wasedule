@@ -219,7 +219,6 @@ class MyCourseDatabaseHandler {
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
-        print("更新します");
         await _updateMyCourseFromMoodle(myCourse);
       }
     }
@@ -272,33 +271,35 @@ class MyCourseDatabaseHandler {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getNextCourseInfo(
-      DateTime datetime) async {
+  Future<List<Map<String, dynamic>>> getNextCourse() async {
     await _initMyCourseDatabase();
-    //30分後、何時限目かを取得する
-    int? nextPeriod =
-        datetime2Period(datetime.add(const Duration(minutes: 30)));
-    if (nextPeriod != null) {
-      List<Map<String, dynamic>> nextCourseList = await _database.rawQuery('''
-        SELECT 
-      CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday,
-      CASE WHEN period = -1 THEN NULL ELSE period END AS period,
-      id,
-      courseName,
-      semester,
-      classRoom,
-      memo,
-      color,
-      attendCount,
-      year,
-      pageID,
-      syllabusID
-    FROM $myCourseTable
-    WHERE period = ? AND weekday = ? AND year = ?
-  ''', [nextPeriod, datetime.weekday, datetime2schoolYear(datetime)]);
-      return nextCourseList;
-    } else {
-      return null;
-    }
+    DateTime now = DateTime.now();
+    List<String> semesters = datetime2termList(now);
+
+    List<Map<String, dynamic>> courses = await _database.query(myCourseTable,
+        columns: [
+          'CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday',
+          'CASE WHEN period = -1 THEN NULL ELSE period END AS period',
+          'id',
+          'courseName',
+          'semester',
+          'classRoom',
+          'memo',
+          'color',
+          'attendCount',
+          'year',
+          'pageID',
+          'syllabusID'
+        ],
+        where:
+            'year = ? AND period = ? AND weekday = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
+        whereArgs: [
+          datetime2schoolYear(now),
+          datetime2Period(now.add(const Duration(minutes: 30, days: -1))),
+          now.weekday,
+          ...semesters
+        ]);
+
+    return courses;
   }
 }
