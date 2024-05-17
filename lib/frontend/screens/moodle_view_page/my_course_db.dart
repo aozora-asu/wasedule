@@ -252,6 +252,7 @@ class MyCourseDatabaseHandler {
     SELECT 
       CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday,
       CASE WHEN period = -1 THEN NULL ELSE period END AS period,
+      id,
       courseName,
       semester,
       classRoom,
@@ -282,6 +283,7 @@ class MyCourseDatabaseHandler {
         SELECT 
       CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday,
       CASE WHEN period = -1 THEN NULL ELSE period END AS period,
+      id,
       courseName,
       semester,
       classRoom,
