@@ -289,13 +289,13 @@ class TaskDatabaseHelper {
     for (int i = 0; i < taskData["events"].length; i++) {
       // 1. TaskItemオブジェクトを作成
       taskItem = TaskItem(
-        uid: taskData["events"][i]["UID"],
-        summary: taskData["events"][i]["SUMMARY"],
-        description: taskData["events"][i]["DESCRIPTION"],
-        dtEnd: taskData["events"][i]["DTEND"],
-        title: taskData["events"][i]["CATEGORIES"] ?? "",
-        isDone: 0,
-      );
+          uid: taskData["events"][i]["UID"],
+          summary: taskData["events"][i]["SUMMARY"],
+          description: taskData["events"][i]["DESCRIPTION"],
+          dtEnd: taskData["events"][i]["DTEND"],
+          title: taskData["events"][i]["CATEGORIES"] ?? "",
+          isDone: 0,
+          pageID: null);
       // 2. データベースヘルパークラスを使用してデータベースに挿入
       try {
         await _database.insert('tasks', taskItem.toMap());
@@ -319,7 +319,8 @@ class TaskDatabaseHelper {
             isDone: task["isDone"],
             uid: task["uid"],
             description: task["description"],
-            summary: task["summary"]);
+            summary: task["summary"],
+            pageID: null);
         await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する

@@ -4,17 +4,17 @@ class TaskItem {
   int dtEnd;
   String? summary;
   String? description;
-
+  String? pageID;
   int isDone;
 
-  TaskItem({
-    this.uid,
-    required this.title,
-    required this.dtEnd,
-    this.summary,
-    this.description,
-    required this.isDone,
-  });
+  TaskItem(
+      {this.uid,
+      required this.title,
+      required this.dtEnd,
+      this.summary,
+      this.description,
+      required this.isDone,
+      required this.pageID});
 
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +24,7 @@ class TaskItem {
       'summary': summary,
       'description': description,
       "isDone": isDone,
+      "pageID": pageID
     };
   }
 }

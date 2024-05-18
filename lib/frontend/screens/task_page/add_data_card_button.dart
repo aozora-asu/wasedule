@@ -23,7 +23,8 @@ Future<void> registeTaskToDB(Map<String, dynamic> task) async {
       dtEnd: task["dtEnd"],
       isDone: 0,
       summary: task["summary"],
-      description: task["description"]);
+      description: task["description"],
+      pageID: null);
   await TaskDatabaseHelper().insertTask(taskItem);
 }
 
@@ -68,19 +69,16 @@ class InputForm {
   }
 }
 
-
 class AddDataCardButton extends ConsumerStatefulWidget {
   late StateSetter setosute;
 
-  AddDataCardButton({
-   required this.setosute
-  });
+  AddDataCardButton({required this.setosute});
 
   @override
   AddDataCardButtonState createState() => AddDataCardButtonState();
 }
 
-class AddDataCardButtonState extends ConsumerState<AddDataCardButton>{
+class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
   @override
   Widget build(BuildContext context) {
     final inputForm = ref.watch(inputFormProvider);
@@ -90,10 +88,10 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton>{
         onPressed: () {
           inputForm.clearContents();
           showDialog(
-            context: context,
-            builder: (BuildContext context){
-              return TaskInputForm(setosute: widget.setosute);
-          });
+              context: context,
+              builder: (BuildContext context) {
+                return TaskInputForm(setosute: widget.setosute);
+              });
         },
         foregroundColor: Colors.white,
         backgroundColor: ACCENT_COLOR,
@@ -105,152 +103,133 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton>{
 
 class TaskInputForm extends ConsumerStatefulWidget {
   late StateSetter setosute;
-  TaskInputForm({
-   required this.setosute
-  });
+  TaskInputForm({required this.setosute});
   @override
   TaskInputFormState createState() => TaskInputFormState();
 }
 
 class TaskInputFormState extends ConsumerState<TaskInputForm> {
-
   @override
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider);
     return GestureDetector(
-      child:Scaffold(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        body:Center(
-         child: Padding(
-          padding:const EdgeInsets.symmetric(horizontal:15),
-            child:pageBody()
-          ) 
+        body: Center(
+            child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: pageBody())),
       ),
-      ),
-      onTap: (){Navigator.pop(context);},
-      );
+      onTap: () {
+        Navigator.pop(context);
+      },
+    );
   }
 
-  Widget preview(){
-      final inputForm = ref.watch(inputFormProvider);
-      String dateEnd = "締め切り日*";
-      String timeEnd = "HH:MM*";
+  Widget preview() {
+    final inputForm = ref.watch(inputFormProvider);
+    String dateEnd = "締め切り日*";
+    String timeEnd = "HH:MM*";
 
-      if(inputForm.dtEndController.text.isNotEmpty){
-        DateTime dtEnd = DateTime.parse(inputForm.dtEndController.text);
-        dateEnd = DateFormat("MM月dd日(E)",'ja_JP').format(dtEnd);
-        timeEnd = DateFormat("HH:mm").format(dtEnd);
-      }
-      
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical:7,horizontal:10),
+    if (inputForm.dtEndController.text.isNotEmpty) {
+      DateTime dtEnd = DateTime.parse(inputForm.dtEndController.text);
+      dateEnd = DateFormat("MM月dd日(E)", 'ja_JP').format(dtEnd);
+      timeEnd = DateFormat("HH:mm").format(dtEnd);
+    }
+
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
         decoration: roundedBoxdecorationWithShadow(),
-        child:Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-
-          Text(dateEnd,
-              style: TextStyle(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            dateEnd,
+            style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize :SizeConfig.blockSizeHorizontal! *8,
-                color:Colors.black
-            ),
+                fontSize: SizeConfig.blockSizeHorizontal! * 8,
+                color: Colors.black),
           ),
-
-          Row(children:[
-
-            Text(timeEnd,
+          Row(children: [
+            Text(
+              timeEnd,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize :SizeConfig.blockSizeHorizontal! *3,
-                color:Colors.black
-              ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                  color: Colors.black),
             ),
-
-            const SizedBox(width:5),
-
+            const SizedBox(width: 5),
             Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2), // 影の色と透明度
-                      spreadRadius: 1.5, // 影の広がり
-                      blurRadius: 1, // ぼかしの強さ
-                      offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
-                    ),
-                  ]),
-              child: Row(children: [
-                CupertinoCheckbox(
-                    value: false,
-                    onChanged: (value) {}),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 60,
-                          child: Text(title(inputForm.summaryController.text),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
-                                fontWeight: FontWeight.w700)
-                              )
-                            ),
-                      SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 60,
-                          child: Text(category(inputForm.titleController.text),
-                            style: TextStyle(
-                              fontSize:SizeConfig.blockSizeVertical! * 1.75,
-                              color: Colors.grey,
-                    )
-                  )
-                )
-              ]),
-            ])
-          )
-         
-        ]),
-
-        const SizedBox(height:5),
-
-        const Divider(
-          thickness: 2.5,
-          indent: 7,
-          endIndent: 7,
-        ),
-
-      ])
-    );    
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2), // 影の色と透明度
+                        spreadRadius: 1.5, // 影の広がり
+                        blurRadius: 1, // ぼかしの強さ
+                        offset: const Offset(0, 1), // 影の位置（横方向、縦方向）
+                      ),
+                    ]),
+                child: Row(children: [
+                  CupertinoCheckbox(value: false, onChanged: (value) {}),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 60,
+                            child: Text(title(inputForm.summaryController.text),
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4.5,
+                                    fontWeight: FontWeight.w700))),
+                        SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 60,
+                            child:
+                                Text(category(inputForm.titleController.text),
+                                    style: TextStyle(
+                                      fontSize:
+                                          SizeConfig.blockSizeVertical! * 1.75,
+                                      color: Colors.grey,
+                                    )))
+                      ]),
+                ]))
+          ]),
+          const SizedBox(height: 5),
+          const Divider(
+            thickness: 2.5,
+            indent: 7,
+            endIndent: 7,
+          ),
+        ]));
   }
 
-  String title(String text){
-    if(text == ""){
+  String title(String text) {
+    if (text == "") {
       return "タスク名";
-    }else{
+    } else {
       return text;
     }
   }
 
-  String category(String text){
-    if(text == ""){
+  String category(String text) {
+    if (text == "") {
       return "カテゴリー*";
-    }else{
+    } else {
       return text;
     }
   }
 
-  String categoryWithNum(String text){
-    if(text == ""){
+  String categoryWithNum(String text) {
+    if (text == "") {
       return "④カテゴリー*";
-    }else{
+    } else {
       return text;
     }
   }
 
-  String description(String text){
-    if(text == ""){
+  String description(String text) {
+    if (text == "") {
       return "タスクの詳細";
-    }else{
+    } else {
       return text;
     }
   }
@@ -259,114 +238,101 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
     final inputForm = ref.watch(inputFormProvider);
     final taskData = ref.read(taskDataProvider);
     return SingleChildScrollView(
-      child: Column(children:[
- 
-     GestureDetector(
-        onTap: (){},
-        child:Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.symmetric(horizontal:20),
-          child: Column(
-            children: [
-
-            const SizedBox(height:10),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                  child: Row(children:[
-                    const Icon(Icons.check,size:35,color:Colors.grey),
-                    Text(
-                      ' 新タスクを入力',
-                      style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                      ),
-                    )
-                  ]) 
-              ),
-
-              const Divider(height:7),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 2,
-              ),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                //height: SizeConfig.blockSizeHorizontal! * 8.5,
-                child: TextField(
-                  controller: inputForm.summaryController,
-                  maxLines: null,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '①タスク名',
-                  ),
-                  onChanged: (value) {setState(() {});},
-                ),
-              ),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                //height: SizeConfig.blockSizeHorizontal! * 8.5,
-                child: TextField(
-                  textInputAction: TextInputAction.done,
-                  controller: inputForm.descriptionController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '②詳細'),
-                  onChanged: (value) {setState(() {});},
-                ),
-              ),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
-
-              DateTimePickerFormField(
-                  controller: inputForm.dtEndController,
-                  labelText: '③締め切り日時(２４時間表示)*',
-                  labelColor: requiredColour(inputForm.dtEndController.text)
-              ),
-
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 3,
-              ),
-
-
-              InkWell(
-                onTap:(){categoryBottomSheet();},
-                child:Container(
+        child: Column(children: [
+      GestureDetector(
+          onTap: () {},
+          child: Container(
+              decoration: roundedBoxdecorationWithShadow(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(children: [
+                const SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(children: [
+                      const Icon(Icons.check, size: 35, color: Colors.grey),
+                      Text(
+                        ' 新タスクを入力',
+                        style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                        ),
+                      )
+                    ])),
+                const Divider(height: 7),
+                SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 8.5,
-                  padding: const EdgeInsets.symmetric(vertical:5,horizontal:10),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(
-                      color: Colors.grey, 
-                      width: 1,            
+                  height: SizeConfig.blockSizeHorizontal! * 2,
+                ),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  //height: SizeConfig.blockSizeHorizontal! * 8.5,
+                  child: TextField(
+                    controller: inputForm.summaryController,
+                    maxLines: null,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '①タスク名',
                     ),
-                  ),
-                  child: Text(
-                    categoryWithNum(inputForm.titleController.text),
-                    style: TextStyle(
-                      color:requiredColour(inputForm.titleController.text),
-                      fontSize: 15
-                    )
+                    onChanged: (value) {
+                      setState(() {});
+                    },
                   ),
                 ),
-              ),
-              
-
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  height: SizeConfig.blockSizeHorizontal! * 3,
+                ),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  //height: SizeConfig.blockSizeHorizontal! * 8.5,
+                  child: TextField(
+                    textInputAction: TextInputAction.done,
+                    controller: inputForm.descriptionController,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(), labelText: '②詳細'),
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  height: SizeConfig.blockSizeHorizontal! * 3,
+                ),
+                DateTimePickerFormField(
+                    controller: inputForm.dtEndController,
+                    labelText: '③締め切り日時(２４時間表示)*',
+                    labelColor: requiredColour(inputForm.dtEndController.text)),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  height: SizeConfig.blockSizeHorizontal! * 3,
+                ),
+                InkWell(
+                  onTap: () {
+                    categoryBottomSheet();
+                  },
+                  child: Container(
+                    width: SizeConfig.blockSizeHorizontal! * 90,
+                    height: SizeConfig.blockSizeHorizontal! * 8.5,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(categoryWithNum(inputForm.titleController.text),
+                        style: TextStyle(
+                            color:
+                                requiredColour(inputForm.titleController.text),
+                            fontSize: 15)),
+                  ),
+                ),
                 ElevatedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     if (inputForm.dtEndController.text.isEmpty ||
                         inputForm.titleController.text.isEmpty) {
                       print("ボタン無効");
@@ -386,14 +352,13 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                       final newList = [...list, taskItem];
                       ref.read(taskDataProvider.notifier).state =
                           TaskData(taskDataList: newList);
-                     
+
                       ref.read(taskDataProvider).isRenewed = true;
                       inputForm.clearContents();
                       ref.read(calendarDataProvider.notifier).state =
                           CalendarData();
-                      
+
                       Navigator.of(context).popUntil((route) => route.isFirst);
-                      
                     }
                   },
                   style: ButtonStyle(
@@ -416,17 +381,12 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                   child:
                       const Text('追加', style: TextStyle(color: Colors.white)),
                 ),
-
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
                   height: SizeConfig.blockSizeHorizontal! * 5,
                 ),
-
-              ])
-          )
-        )
-      ]) 
-    );
+              ])))
+    ]));
   }
 
   Color tileColour(int index) {
@@ -543,78 +503,82 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                   Padding(
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスク名",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            title(inputForm.summaryController.text),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "カテゴリ",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            category(inputForm.titleController.text),
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "タスク名",
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.grey),
+                              ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスクの詳細",
-                            style: TextStyle(
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                title(inputForm.summaryController.text),
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeHorizontal! * 2,
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "カテゴリ",
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.grey),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                category(inputForm.titleController.text),
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeHorizontal! * 2,
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "タスクの詳細",
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 4,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeHorizontal! * 0.5,
+                            ),
+                            Text(
+                              description(inputForm.descriptionController.text),
+                              style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 0.5,
-                        ),
-                        Text(
-                          description(inputForm.descriptionController.text),
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 70,
-                        )
-                      ]))
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 70,
+                            )
+                          ]))
                 ],
               ),
             )));
@@ -622,39 +586,37 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
     );
   }
 
- void categoryBottomSheet(){
-  final inputForm = ref.read(inputFormProvider);
-  final taskData = ref.read(taskDataProvider);
-  showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    enableDrag: true,
-    barrierColor: Colors.black.withOpacity(0.5),
-    builder: (context) {        
-               
-      return  Container(
-        height:SizeConfig.blockSizeVertical! *30,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-        ),
-        margin:const  EdgeInsets.only(top: 80),
-        child: SizedBox(
-          child: Column(children:[
-            const SizedBox(height:10),
+  void categoryBottomSheet() {
+    final inputForm = ref.read(inputFormProvider);
+    final taskData = ref.read(taskDataProvider);
+    showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        enableDrag: true,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (context) {
+          return Container(
+            height: SizeConfig.blockSizeVertical! * 30,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            margin: const EdgeInsets.only(top: 80),
+            child: SizedBox(
+                child: Column(children: [
+              const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
-                child:
-                   Text(
-                    '    カテゴリーを選択*',
-                    style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                        color: requiredColour(inputForm.titleController.text)),
-                  ),
+                child: Text(
+                  '    カテゴリーを選択*',
+                  style: TextStyle(
+                      fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                      color: requiredColour(inputForm.titleController.text)),
+                ),
               ),
               Container(
                 width: SizeConfig.blockSizeHorizontal! * 90,
@@ -695,66 +657,59 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                       taskData.extractTitles(taskData.taskDataList).length,
                 ),
               ),
-
-                 Row(crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                  const Spacer(),
-                  TextButton(
-                      onPressed: () {
-                        inputForm.titleController.clear();
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('新しいカテゴリ名を追加'),
-                                content: TextField(
-                                  controller: inputForm.titleController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'カテゴリ名',
-                                      border: OutlineInputBorder()),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                const Spacer(),
+                TextButton(
+                    onPressed: () {
+                      inputForm.titleController.clear();
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('新しいカテゴリ名を追加'),
+                              content: TextField(
+                                controller: inputForm.titleController,
+                                decoration: const InputDecoration(
+                                    labelText: 'カテゴリ名',
+                                    border: OutlineInputBorder()),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // ダイアログを閉じる
+                                  },
+                                  child: const Text('戻る'),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(); // ダイアログを閉じる
-                                    },
-                                    child: const Text('戻る'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      String enteredText =
-                                          inputForm.titleController.text;
-                                      ref
-                                          .read(inputFormProvider.notifier)
-                                          .updateDateTimeFields();
-                                      Navigator.of(context).pop(); // ダイアログを閉じる
-                                    },
-                                    child: const Text('登録'),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      style: const ButtonStyle(
-                          padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      child: Text(
-                        "カテゴリの追加",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3),
-                      )),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                ]),
-
-          ])
-        ),
-      );
-   });
- }
-
-
-
+                                TextButton(
+                                  onPressed: () {
+                                    String enteredText =
+                                        inputForm.titleController.text;
+                                    ref
+                                        .read(inputFormProvider.notifier)
+                                        .updateDateTimeFields();
+                                    Navigator.of(context).pop(); // ダイアログを閉じる
+                                  },
+                                  child: const Text('登録'),
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                    child: Text(
+                      "カテゴリの追加",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 3),
+                    )),
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+              ]),
+            ])),
+          );
+        });
+  }
 }
 
 class DateTimePickerFormField extends ConsumerWidget {
@@ -796,13 +751,12 @@ class DateTimePickerFormField extends ConsumerWidget {
     if (pickedDate != null) {
       DateTime now = DateTime.now();
       TimeOfDay? pickedTime = TimeOfDay.fromDateTime(
-        await DatePicker.showTimePicker(
-        context,
-        showTitleActions: true,
-        showSecondsColumn: false,
-        currentTime: DateTime.now(),
-        locale: LocaleType.jp
-      ) ?? DateTime(now.year,now.month,now.day,23,59));
+          await DatePicker.showTimePicker(context,
+                  showTitleActions: true,
+                  showSecondsColumn: false,
+                  currentTime: DateTime.now(),
+                  locale: LocaleType.jp) ??
+              DateTime(now.year, now.month, now.day, 23, 59));
 
       // await showTimePicker(
       //   context: context,
@@ -857,6 +811,4 @@ class DateTimePickerFormField extends ConsumerWidget {
       ],
     );
   }
-
-
 }
