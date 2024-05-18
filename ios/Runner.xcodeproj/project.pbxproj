@@ -7,14 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1447E62D2BF8E221005EAAF7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A28A32BE5E6E300526CD3 /* WidgetKit.framework */; };
-		1447E62E2BF8E221005EAAF7 /* WidgetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 140A28A32BE5E6E300526CD3 /* WidgetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1447E6302BF8E222005EAAF7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A28A52BE5E6E300526CD3 /* SwiftUI.framework */; };
-		1447E6312BF8E222005EAAF7 /* SwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 140A28A52BE5E6E300526CD3 /* SwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1447E6322BF8E223005EAAF7 /* Pods_HomeWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7648EBB15C18A71E677DBBA /* Pods_HomeWidgetExtension.framework */; };
-		1447E6332BF8E223005EAAF7 /* Pods_HomeWidgetExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B7648EBB15C18A71E677DBBA /* Pods_HomeWidgetExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1447E6342BF8E225005EAAF7 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; };
-		1447E6352BF8E225005EAAF7 /* Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1447E6382BF8F8F9005EAAF7 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; };
+		1447E63B2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447E63A2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework */; };
+		1447E63C2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1447E63A2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		14F68DC12BF46DD6002B8E24 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A039A905BC3C66A21C9AC996 /* Pods_Runner.framework */; };
 		14F68DC22BF46DD6002B8E24 /* Pods_Runner.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A039A905BC3C66A21C9AC996 /* Pods_Runner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -34,6 +30,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1447E6362BF8F13C005EAAF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14F68DE72BF51337002B8E24;
+			remoteInfo = HomeWidgetExtension;
+		};
 		14F68DF72BF51339002B8E24 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
@@ -68,10 +71,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1447E6352BF8E225005EAAF7 /* Flutter.xcframework in Embed Frameworks */,
-				1447E6312BF8E222005EAAF7 /* SwiftUI.framework in Embed Frameworks */,
-				1447E6332BF8E223005EAAF7 /* Pods_HomeWidgetExtension.framework in Embed Frameworks */,
-				1447E62E2BF8E221005EAAF7 /* WidgetKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,6 +82,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				14F68DC22BF46DD6002B8E24 /* Pods_Runner.framework in Embed Frameworks */,
+				1447E63C2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,10 +92,9 @@
 /* Begin PBXFileReference section */
 		1407B8002BF5361800A0B63A /* Flutter.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:S8QB4VV633:FLUTTER.IO LLC"; lastKnownFileType = wrapper.xcframework; name = Flutter.xcframework; path = ../../../flutter/bin/cache/artifacts/engine/ios/Flutter.xcframework; sourceTree = "<group>"; };
 		1407B8062BF6675700A0B63A /* HomeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HomeWidgetExtension.entitlements; sourceTree = "<group>"; };
-		140A28A32BE5E6E300526CD3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		140A28A52BE5E6E300526CD3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		140B8FEC2B94C3B000E5346B /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		140B8FED2B94C3B000E5346B /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		1447E63A2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_HomeWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		14CC0B962BD53F69005DFB2A /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
@@ -135,10 +134,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1447E6342BF8E225005EAAF7 /* Flutter.xcframework in Frameworks */,
-				1447E6302BF8E222005EAAF7 /* SwiftUI.framework in Frameworks */,
+				1447E6382BF8F8F9005EAAF7 /* Flutter.xcframework in Frameworks */,
 				1447E6322BF8E223005EAAF7 /* Pods_HomeWidgetExtension.framework in Frameworks */,
-				1447E62D2BF8E221005EAAF7 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14F68DC12BF46DD6002B8E24 /* Pods_Runner.framework in Frameworks */,
+				1447E63B2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,10 +247,9 @@
 		D2F1C8DE1D18EAB6E02E6DB1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1447E63A2BF9023D005EAAF7 /* Pods_HomeWidgetExtension.framework */,
 				1407B8002BF5361800A0B63A /* Flutter.xcframework */,
 				A039A905BC3C66A21C9AC996 /* Pods_Runner.framework */,
-				140A28A32BE5E6E300526CD3 /* WidgetKit.framework */,
-				140A28A52BE5E6E300526CD3 /* SwiftUI.framework */,
 				B7648EBB15C18A71E677DBBA /* Pods_HomeWidgetExtension.framework */,
 			);
 			name = Frameworks;
@@ -269,7 +266,6 @@
 				14F68DE42BF51337002B8E24 /* Sources */,
 				14F68DE52BF51337002B8E24 /* Frameworks */,
 				14F68DE62BF51337002B8E24 /* Resources */,
-				1407B8072BF7796600A0B63A /* ShellScript */,
 				1447E62F2BF8E221005EAAF7 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -317,6 +313,7 @@
 			);
 			dependencies = (
 				14F68DF82BF51339002B8E24 /* PBXTargetDependency */,
+				1447E6372BF8F13C005EAAF7 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -399,23 +396,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1407B8072BF7796600A0B63A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "generatedPath=\"$SRCROOT/Flutter/Generated.xcconfig\"\nversionNumber=$(grep FLUTTER_BUILD_NAME $generatedPath | cut -d '=' -f2 | tr -d '[:space:]')\nbuildNumber=$(grep FLUTTER_BUILD_NUMBER $generatedPath | cut -d '=' -f2 | tr -d '[:space:]')\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$SRCROOT/HomeWidget/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $versionNumber\" \"$SRCROOT/HomeWidget/Info.plist\"\n\n# 確認のためにエコー\necho \"Version Number: $versionNumber\"\necho \"Build Number: $buildNumber\"\n";
-		};
 		14BC5C8FBA5A6948487E1978 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -542,6 +522,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1447E6372BF8F13C005EAAF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14F68DE72BF51337002B8E24 /* HomeWidgetExtension */;
+			targetProxy = 1447E6362BF8F13C005EAAF7 /* PBXContainerItemProxy */;
+		};
 		14F68DF82BF51339002B8E24 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 14F68DE72BF51337002B8E24 /* HomeWidgetExtension */;
@@ -1118,7 +1103,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				CUSTOM_GROUP_ID = group.com.example.wasedule;
 				DEVELOPMENT_TEAM = 34Y9P436S3;
-				ENABLE_BITCODE = Yes;
+				ENABLE_BITCODE = "";
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1440,7 +1425,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				CUSTOM_GROUP_ID = group.com.example.wasedule;
 				DEVELOPMENT_TEAM = 34Y9P436S3;
-				ENABLE_BITCODE = Yes;
+				ENABLE_BITCODE = "";
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1585,7 +1570,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				CUSTOM_GROUP_ID = group.com.example.wasedule;
 				DEVELOPMENT_TEAM = 34Y9P436S3;
-				ENABLE_BITCODE = Yes;
+				ENABLE_BITCODE = "";
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
