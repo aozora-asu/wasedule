@@ -92,7 +92,7 @@ int? datetime2Period(DateTime datetime) {
 }
 
 int datetime2schoolYear(DateTime datetime) {
-  return DateTime(datetime.year, datetime.month - 3, datetime.day).year;
+  return DateTime(datetime.year, datetime.month - 4, datetime.day).year;
 }
 
 String? weekday2string(int? weekday, String format) {
