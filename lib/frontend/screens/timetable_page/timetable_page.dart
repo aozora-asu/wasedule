@@ -13,6 +13,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_pr
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import "../../../backend/home_widget.dart";
 
 class TimeTablePage extends ConsumerStatefulWidget {
   @override
@@ -28,85 +29,82 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   void initState() {
     super.initState();
     initTargetSem();
+    NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: tableBackGroundImage(),
-            fit: BoxFit.cover,
-          )),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: SizeConfig.blockSizeHorizontal! * 2.5,
-              right: SizeConfig.blockSizeHorizontal! * 2.5,
-            ), 
-            child:ListView(
-              shrinkWrap: true,
-              children: [
-                const SizedBox(height:10),
-                timeTable(),
-                const SizedBox(height:30),
+      body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: tableBackGroundImage(),
+          fit: BoxFit.cover,
+        )),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: SizeConfig.blockSizeHorizontal! * 2.5,
+            right: SizeConfig.blockSizeHorizontal! * 2.5,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const SizedBox(height: 10),
+              timeTable(),
+              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
       floatingActionButton: Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! *12),
-          child: Row(children:[
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
+          child: Row(children: [
             const Spacer(),
             FloatingActionButton(
-              onPressed:(){
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CourseAddPage(
-                      setTimetableState: setState,
-                    );
-                 });
-              },
-              backgroundColor: ACCENT_COLOR,
-              child:const Icon(Icons.add,color:Colors.white)
-            ),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CourseAddPage(
+                          setTimetableState: setState,
+                        );
+                      });
+                },
+                backgroundColor: ACCENT_COLOR,
+                child: const Icon(Icons.add, color: Colors.white)),
             const SizedBox(width: 10),
             //timetableShareButton(context),
-          ])
-        ),
+          ])),
     );
   }
 
-  void initTargetSem(){
-    DateTime now = DateTime.now();  
-      thisYear = now.year;
-    if(now.month <= 3){
+  void initTargetSem() {
+    DateTime now = DateTime.now();
+    thisYear = now.year;
+    if (now.month <= 3) {
       thisYear -= 1;
     }
-      semesterNum = 0;
-    if(now.month <= 3){
+    semesterNum = 0;
+    if (now.month <= 3) {
       semesterNum = 4;
-    }else if(now.month <= 5){
+    } else if (now.month <= 5) {
       semesterNum = 1;
-    }else if(now.month <= 9){
+    } else if (now.month <= 9) {
       semesterNum = 2;
-    }else if(now.month <= 11){
+    } else if (now.month <= 11) {
       semesterNum = 3;
-    }else{
+    } else {
       semesterNum = 4;
     }
     targetSemester = thisYear.toString() + "-" + semesterNum.toString();
   }
 
-  
-
   void increasePgNumber() {
-    if(semesterNum == 3 || semesterNum == 4){
-      thisYear += 1;  
+    if (semesterNum == 3 || semesterNum == 4) {
+      thisYear += 1;
       semesterNum = 1;
-    }else{
+    } else {
       semesterNum = 3;
     }
     setState(() {
@@ -115,10 +113,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   void decreasePgNumber() {
-    if(semesterNum == 1 || semesterNum == 2){
-      thisYear -= 1;  
+    if (semesterNum == 1 || semesterNum == 2) {
+      thisYear -= 1;
       semesterNum = 3;
-    }else{
+    } else {
       semesterNum = 1;
     }
     setState(() {
@@ -126,274 +124,281 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     });
   }
 
-  Widget changeQuaterbutton(int type){
+  Widget changeQuaterbutton(int type) {
     int buttonSemester = 0;
-    if(type == 1){
+    if (type == 1) {
       buttonSemester = button1Semester();
-    }else{
+    } else {
       buttonSemester = button2Semester();
     }
 
     String quaterName = "";
-    switch(buttonSemester){
-      case 1:quaterName = "   春   ";
-      case 2:quaterName = "   夏   ";
-      case 3:quaterName = "   秋   ";
-      case 4:quaterName = "   冬   ";
+    switch (buttonSemester) {
+      case 1:
+        quaterName = "   春   ";
+      case 2:
+        quaterName = "   夏   ";
+      case 3:
+        quaterName = "   秋   ";
+      case 4:
+        quaterName = "   冬   ";
     }
 
     Color quaterColor = Colors.white;
-    switch(buttonSemester){
-      case 1:quaterColor = const Color.fromARGB(255, 255, 159, 191);
-      case 2:quaterColor = Colors.blueAccent;
-      case 3:quaterColor = const Color.fromARGB(255, 231, 85, 0);
-      case 4:quaterColor = Colors.cyan;
+    switch (buttonSemester) {
+      case 1:
+        quaterColor = const Color.fromARGB(255, 255, 159, 191);
+      case 2:
+        quaterColor = Colors.blueAccent;
+      case 3:
+        quaterColor = const Color.fromARGB(255, 231, 85, 0);
+      case 4:
+        quaterColor = Colors.cyan;
     }
 
-    return buttonModel(
-      (){
-        switchSemester();
-      },
-      buttonColor(buttonSemester,quaterColor),
-      quaterName);
+    return buttonModel(() {
+      switchSemester();
+    }, buttonColor(buttonSemester, quaterColor), quaterName);
   }
 
-  void switchSemester(){
-    if(semesterNum == 1){
+  void switchSemester() {
+    if (semesterNum == 1) {
       setState(() {
         semesterNum = 2;
       });
-    }else if(semesterNum == 2){
+    } else if (semesterNum == 2) {
       setState(() {
         semesterNum = 1;
       });
-    } else if(semesterNum == 3){
+    } else if (semesterNum == 3) {
       setState(() {
         semesterNum = 4;
       });
-    }else if(semesterNum == 4){
+    } else if (semesterNum == 4) {
       setState(() {
         semesterNum = 3;
       });
     }
   }
 
-  int button1Semester(){
-    if(semesterNum == 1){
-        return 1;
-    }else if(semesterNum == 2){
-        return 1;
-    } else if(semesterNum == 3){
-        return 3;
-    }else{
-       return 3;
+  int button1Semester() {
+    if (semesterNum == 1) {
+      return 1;
+    } else if (semesterNum == 2) {
+      return 1;
+    } else if (semesterNum == 3) {
+      return 3;
+    } else {
+      return 3;
     }
   }
 
-  int button2Semester(){
-    if(semesterNum == 1){
-        return 2;
-    }else if(semesterNum == 2){
-        return 2;
-    } else if(semesterNum == 3){
-        return 4;
-    }else{
-       return 4;
+  int button2Semester() {
+    if (semesterNum == 1) {
+      return 2;
+    } else if (semesterNum == 2) {
+      return 2;
+    } else if (semesterNum == 3) {
+      return 4;
+    } else {
+      return 4;
     }
   }
 
-  Color buttonColor(int buttonSemester,Color color){
-    if(semesterNum == buttonSemester){
+  Color buttonColor(int buttonSemester, Color color) {
+    if (semesterNum == buttonSemester) {
       return color;
-    }else{
+    } else {
       return Colors.grey[350]!;
     }
   }
 
-  String semesterText(){
+  String semesterText() {
     String result = "年  春学期";
-    if(semesterNum == 2){
+    if (semesterNum == 2) {
       result = "年  春学期";
-    }else if(semesterNum == 3){
+    } else if (semesterNum == 3) {
       result = "年  秋学期";
-    }else if(semesterNum == 4){
+    } else if (semesterNum == 4) {
       result = "年  秋学期";
     }
     return thisYear.toString() + result;
   }
 
-  String currentQuaterID(){
+  String currentQuaterID() {
     String result = "full_year";
-    if(semesterNum == 1){
+    if (semesterNum == 1) {
       result = "spring_quarter";
-    }else if(semesterNum == 2){
+    } else if (semesterNum == 2) {
       result = "summer_quarter";
-    }else if(semesterNum == 3){
+    } else if (semesterNum == 3) {
       result = "fall_quarter";
-    }else if(semesterNum == 4){
+    } else if (semesterNum == 4) {
       result = "winter_quarter";
     }
     return result;
   }
 
-  String currentSemesterID(){
+  String currentSemesterID() {
     String result = "full_year";
-    if(semesterNum == 1 || semesterNum == 2){
+    if (semesterNum == 1 || semesterNum == 2) {
       result = "spring_semester";
-    }else if(semesterNum == 3 || semesterNum == 4){
+    } else if (semesterNum == 3 || semesterNum == 4) {
       result = "fall_semester";
     }
     return result;
   }
 
-  Widget timeTable(){
+  Widget timeTable() {
     return Container(
-      decoration:BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child:Column(children:[
-        Row(children: [
-          IconButton(
-              onPressed: () {
-                decreasePgNumber();
-              },
-              icon: const Icon(Icons.arrow_back_ios),
-              iconSize: 20),
-          Text(
-            semesterText(),
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: const Offset(0, 3),
             ),
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  increasePgNumber();
-                });
-              },
-              icon: const Icon(Icons.arrow_forward_ios),
-              iconSize: 20),
-          const Spacer(),
-          changeQuaterbutton(1),
-          changeQuaterbutton(2),
-          const Spacer(),
-          ]),
-          FutureBuilder(
-            future: MyCourseDatabaseHandler().getMyCourse(),
-            builder:((context, snapshot) {
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return timeTableBody();
-              }else if (snapshot.hasError) {
-                return const SizedBox();
-              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
-                ref.read(timeTableProvider).initUniversityScheduleByDay(thisYear,semesterNum);
-                for(int i = 0; i < snapshot.data!.length; i++){
-                }
-                for(int i = 0; i < ref.read(timeTableProvider).sortedDataByWeekDay.length; i++){
-                }
-                return timeTableBody();
-              }else{
-                return noDataScreen();
-              }
-            }
-          )
-        )
-      ])
-    );
-  }
-
-  Widget noDataScreen(){
-    return SizedBox(
-      height: SizeConfig.blockSizeVertical! *80,
-      width: SizeConfig.blockSizeHorizontal! *85,
-      child: Center(child:
-        Column(
-         mainAxisAlignment: MainAxisAlignment.center,
-         children:[
-         Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
-         const SizedBox(height:20),
-         Text("時間割データはまだありません。",
-          style:TextStyle(fontSize: SizeConfig.blockSizeHorizontal! *5,
-            fontWeight: FontWeight.bold
-          )),
-        const SizedBox(height:15),
-        const Row(
-         mainAxisAlignment: MainAxisAlignment.center,
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children:[
-          Icon(Icons.school,color:MAIN_COLOR),
-          Text(" Moodle",
-           style:TextStyle(
-             color:MAIN_COLOR,
-             fontWeight: FontWeight.bold
-           )),
-           Expanded(child:Text(" ページから、時間割データを自動作成しましょう！",
-             overflow: TextOverflow.clip,))
-        ]),
-        const Icon(
-          Icons.keyboard_double_arrow_right,
-          color:MAIN_COLOR,
-          size: 150,),
-      ]))
-    );
-  }
-
-  Widget loadingScreen(){
-    return SizedBox(
-      height: SizeConfig.blockSizeVertical! *80,
-      width: SizeConfig.blockSizeHorizontal! *95,
-      child:const Center(
-        child:CircularProgressIndicator()
-      )
-    );
-  }
-
-  Widget timeTableBody(){
-    return Column(children:[
-          Row(children:[
-            Expanded(child:generatePrirodColumn()),
-            Column(children:[
-              generateWeekThumbnail(),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! *cellWidth * 6,
-                child:Row(children:[
-                  timetableSells(1),
-                  timetableSells(2),
-                  timetableSells(3),
-                  timetableSells(4),
-                  timetableSells(5),
-                  timetableSells(6),
-              ])
-             )
-            ])
-          ]),
-          SizedBox(height: SizeConfig.blockSizeVertical! *1),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "   ■ オンデマンド・その他",
-              style: TextStyle(
-                fontSize: 17.5,
+          ],
+        ),
+        child: Column(children: [
+          Row(children: [
+            IconButton(
+                onPressed: () {
+                  decreasePgNumber();
+                },
+                icon: const Icon(Icons.arrow_back_ios),
+                iconSize: 20),
+            Text(
+              semesterText(),
+              style: const TextStyle(
+                fontSize: 17,
                 fontWeight: FontWeight.w700,
               ),
-            )),
-          const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
+            ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    increasePgNumber();
+                  });
+                },
+                icon: const Icon(Icons.arrow_forward_ios),
+                iconSize: 20),
+            const Spacer(),
+            changeQuaterbutton(1),
+            changeQuaterbutton(2),
+            const Spacer(),
+          ]),
+          FutureBuilder(
+              future: MyCourseDatabaseHandler().getMyCourse(),
+              builder: ((context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return timeTableBody();
+                } else if (snapshot.hasError) {
+                  return const SizedBox();
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
+                  ref
+                      .read(timeTableProvider)
+                      .initUniversityScheduleByDay(thisYear, semesterNum);
+                  for (int i = 0; i < snapshot.data!.length; i++) {}
+                  for (int i = 0;
+                      i <
+                          ref
+                              .read(timeTableProvider)
+                              .sortedDataByWeekDay
+                              .length;
+                      i++) {}
+                  return timeTableBody();
+                } else {
+                  return noDataScreen();
+                }
+              }))
+        ]));
+  }
+
+  Widget noDataScreen() {
+    return SizedBox(
+        height: SizeConfig.blockSizeVertical! * 80,
+        width: SizeConfig.blockSizeHorizontal! * 85,
+        child: Center(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Image.asset('lib/assets/eye_catch/eyecatch.png',
+              height: 200, width: 200),
+          const SizedBox(height: 20),
+          Text("時間割データはまだありません。",
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold)),
+          const SizedBox(height: 15),
+          const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.school, color: MAIN_COLOR),
+                Text(" Moodle",
+                    style: TextStyle(
+                        color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+                Expanded(
+                    child: Text(
+                  " ページから、時間割データを自動作成しましょう！",
+                  overflow: TextOverflow.clip,
+                ))
+              ]),
+          const Icon(
+            Icons.keyboard_double_arrow_right,
+            color: MAIN_COLOR,
+            size: 150,
+          ),
+        ])));
+  }
+
+  Widget loadingScreen() {
+    return SizedBox(
+        height: SizeConfig.blockSizeVertical! * 80,
+        width: SizeConfig.blockSizeHorizontal! * 95,
+        child: const Center(child: CircularProgressIndicator()));
+  }
+
+  Widget timeTableBody() {
+    return Column(children: [
+      Row(children: [
+        Expanded(child: generatePrirodColumn()),
+        Column(children: [
+          generateWeekThumbnail(),
           SizedBox(
-              height: SizeConfig.blockSizeVertical! *cellHeight,
-              child:generateOndemandRow()),
-          const Divider(height: 0.5,thickness: 0.5,color:Colors.grey),
-          SizedBox(height: SizeConfig.blockSizeVertical! *3,)
+              width: SizeConfig.blockSizeHorizontal! * cellWidth * 6,
+              child: Row(children: [
+                timetableSells(1),
+                timetableSells(2),
+                timetableSells(3),
+                timetableSells(4),
+                timetableSells(5),
+                timetableSells(6),
+              ]))
+        ])
+      ]),
+      SizedBox(height: SizeConfig.blockSizeVertical! * 1),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "   ■ オンデマンド・その他",
+            style: TextStyle(
+              fontSize: 17.5,
+              fontWeight: FontWeight.w700,
+            ),
+          )),
+      const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+      SizedBox(
+          height: SizeConfig.blockSizeVertical! * cellHeight,
+          child: generateOndemandRow()),
+      const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+      SizedBox(
+        height: SizeConfig.blockSizeVertical! * 3,
+      )
     ]);
   }
 
@@ -403,117 +408,135 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget generateWeekThumbnail() {
     List<String> days = ["月", "火", "水", "木", "金", "土"];
     return SizedBox(
-      height: SizeConfig.blockSizeVertical! * 2.5,
-      child:ListView.builder(
+        height: SizeConfig.blockSizeVertical! * 2.5,
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            Color bgColor = Colors.white;
+            Color fontColor = Colors.grey;
+            if (index + 1 == DateTime.now().weekday && index != 6) {
+              bgColor = Colors.blueAccent;
+              fontColor = Colors.white;
+            }
+
+            return Container(
+                width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                height: SizeConfig.blockSizeVertical! * 2,
+                color: bgColor,
+                child: Center(
+                    child: Text(
+                  days.elementAt(index),
+                  style: TextStyle(color: fontColor),
+                )));
+          },
+          itemCount: 6,
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+        ));
+  }
+
+  Widget generatePrirodColumn() {
+    double fontSize = SizeConfig.blockSizeHorizontal! * 2;
+    Color grey = Colors.grey;
+
+    return Column(children: [
+      SizedBox(
+        height: SizeConfig.blockSizeVertical! * 2.5,
+      ),
+      ListView.separated(
         itemBuilder: (context, index) {
           Color bgColor = Colors.white;
           Color fontColor = Colors.grey;
-          if(index + 1 == DateTime.now().weekday 
-            && index != 6){
-            bgColor = Colors.blueAccent;
-            fontColor = Colors.white;
-          }
-
-          return Container(
-              width: SizeConfig.blockSizeHorizontal! *cellWidth,
-              height: SizeConfig.blockSizeVertical! * 2,
-              color:bgColor,
-              child: Center(
-                  child: Text(
-                days.elementAt(index),
-                style:TextStyle(color: fontColor),
-              )));
-        },
-        itemCount: 6,
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        physics: const NeverScrollableScrollPhysics(),
-      )
-    );
-  }
-
-  Widget generatePrirodColumn(){
-    double fontSize = SizeConfig.blockSizeHorizontal! *2;
-    Color grey = Colors.grey;
-    
-    return Column(children:[
-      SizedBox(height: SizeConfig.blockSizeVertical! * 2.5,),
-      ListView.separated(
-        itemBuilder:(context, index) {
-          Color bgColor = Colors.white;
-          Color fontColor = Colors.grey;            
           DateTime now = DateTime.now();
-          if(returnBeginningDateTime(index+1).isBefore(now)
-              && returnEndDateTime(index+1).isAfter(now)){
+          if (returnBeginningDateTime(index + 1).isBefore(now) &&
+              returnEndDateTime(index + 1).isAfter(now)) {
             bgColor = Colors.blueAccent;
             fontColor = Colors.white;
           }
 
           return Container(
-            height: SizeConfig.blockSizeVertical! * cellHeight,
-            decoration: BoxDecoration(
-              color: bgColor,
-              border: Border.all(
-                color: Colors.grey,
-                width: 0.5,
+              height: SizeConfig.blockSizeVertical! * cellHeight,
+              decoration: BoxDecoration(
+                color: bgColor,
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 0.5,
+                ),
               ),
-            ),
-            child: Padding(
-              padding:const EdgeInsets.symmetric(horizontal:3),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children:[
-                Text(returnBeginningTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
-                Text((index+1).toString(),style:TextStyle(color:fontColor,fontSize:fontSize*2,fontWeight: FontWeight.bold)),
-                Text(returnEndTime(index+1),style:TextStyle(color:fontColor,fontSize:fontSize),),
-              ])
-            ) 
-          );
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          returnBeginningTime(index + 1),
+                          style:
+                              TextStyle(color: fontColor, fontSize: fontSize),
+                        ),
+                        Text((index + 1).toString(),
+                            style: TextStyle(
+                                color: fontColor,
+                                fontSize: fontSize * 2,
+                                fontWeight: FontWeight.bold)),
+                        Text(
+                          returnEndTime(index + 1),
+                          style:
+                              TextStyle(color: fontColor, fontSize: fontSize),
+                        ),
+                      ])));
         },
-        separatorBuilder:(context, index) {
+        separatorBuilder: (context, index) {
           Widget resultinging = const SizedBox();
-          DateTime now = DateTime.now(); 
+          DateTime now = DateTime.now();
           Color bgColor = Colors.white;
-          if(returnEndDateTime(2).isBefore(now)
-              && returnBeginningDateTime(3).isAfter(now)){
+          if (returnEndDateTime(2).isBefore(now) &&
+              returnBeginningDateTime(3).isAfter(now)) {
             bgColor = const Color.fromRGBO(255, 204, 204, 1);
           }
-          if(index == 1){
-            resultinging = 
-              Container(
-                height:SizeConfig.blockSizeVertical! *2.5,
-                color:bgColor,
-                child:const Column(
-                  children:[
-                    Divider(color:Colors.grey,height:0.5,thickness: 0.5),
-                    Spacer(),
-                    Divider(color:Colors.grey,height:0.5,thickness: 0.5)
-                ])
-              );
+          if (index == 1) {
+            resultinging = Container(
+                height: SizeConfig.blockSizeVertical! * 2.5,
+                color: bgColor,
+                child: const Column(children: [
+                  Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
+                  Spacer(),
+                  Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
+                ]));
           }
           return resultinging;
         },
         itemCount: ref.read(timeTableProvider).maxPeriod,
         shrinkWrap: true,
-        physics:const NeverScrollableScrollPhysics(),
-        )
+        physics: const NeverScrollableScrollPhysics(),
+      )
     ]);
   }
 
-  Color cellBackGroundColor(int length,Color color){
+  Color cellBackGroundColor(int length, Color color) {
     Color bgColor = Colors.white;
-    switch(length){
-    case 0:bgColor = increaseRed(color,amount:0);
-    case 1:bgColor = increaseRed(color,amount:30);
-    case 2:bgColor = increaseRed(color,amount:60);
-    case 3:bgColor = increaseRed(color,amount:90);
-    case 4:bgColor = increaseRed(color,amount:120);
-    case 5:bgColor = increaseRed(color,amount:150);
-    case 6:bgColor = increaseRed(color,amount:180);
-    case 7:bgColor = increaseRed(color,amount:210);
-    case 8:bgColor = increaseRed(color,amount:240);
-    case 9:bgColor = increaseRed(color,amount:255);
-    default :bgColor = increaseRed(color,amount:255);
+    switch (length) {
+      case 0:
+        bgColor = increaseRed(color, amount: 0);
+      case 1:
+        bgColor = increaseRed(color, amount: 30);
+      case 2:
+        bgColor = increaseRed(color, amount: 60);
+      case 3:
+        bgColor = increaseRed(color, amount: 90);
+      case 4:
+        bgColor = increaseRed(color, amount: 120);
+      case 5:
+        bgColor = increaseRed(color, amount: 150);
+      case 6:
+        bgColor = increaseRed(color, amount: 180);
+      case 7:
+        bgColor = increaseRed(color, amount: 210);
+      case 8:
+        bgColor = increaseRed(color, amount: 240);
+      case 9:
+        bgColor = increaseRed(color, amount: 255);
+      default:
+        bgColor = increaseRed(color, amount: 255);
     }
     return bgColor;
   }
@@ -528,343 +551,317 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return Color.fromRGBO(red, green, blue, 1);
   }
 
-  Widget timetableSells(int weekDay){
+  Widget timetableSells(int weekDay) {
     final tableData = ref.read(timeTableProvider);
     return SizedBox(
-      width: SizeConfig.blockSizeHorizontal! *cellWidth, 
-      child:ListView.separated(
-      shrinkWrap: true,
-      itemCount: ref.read(timeTableProvider).maxPeriod,
-      physics: const NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      itemBuilder: (
-      (context, index) {
-        Color bgColor = Colors.white;
-        Widget cellContents = GestureDetector(
-          onTap:(){
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CourseAddPage(
-                  year:thisYear,
-                  semester:currentSemesterID(),
-                  weekDay:weekDay,
-                  period:index+1,
-                  setTimetableState:setState,
-                );
+        width: SizeConfig.blockSizeHorizontal! * cellWidth,
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemCount: ref.read(timeTableProvider).maxPeriod,
+          physics: const NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: ((context, index) {
+            Color bgColor = Colors.white;
+            Widget cellContents = GestureDetector(onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CourseAddPage(
+                      year: thisYear,
+                      semester: currentSemesterID(),
+                      weekDay: weekDay,
+                      period: index + 1,
+                      setTimetableState: setState,
+                    );
+                  });
             });
-          }
-        );
-        
 
-        if(tableData.currentSemesterClasses.containsKey(weekDay)
-          && returnExistingPeriod(tableData.currentSemesterClasses[weekDay]).contains(index+1)
-          &&tableData.currentSemesterClasses[weekDay]
-            .elementAt(returnIndexFromPeriod(
-              tableData.currentSemesterClasses[weekDay],index + 1))["year"] 
-            == thisYear){
-            Color colorning = hexToColor(tableData.currentSemesterClasses[weekDay]
-              .elementAt(returnIndexFromPeriod(
-                tableData.currentSemesterClasses[weekDay],index + 1))["color"] );
-            if(tableData.currentSemesterClasses[weekDay]
-              .elementAt(returnIndexFromPeriod(
-                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
-              == currentQuaterID() || 
-              tableData.currentSemesterClasses[weekDay]
-              .elementAt(returnIndexFromPeriod(
-                tableData.currentSemesterClasses[weekDay],index + 1))["semester"] 
-              == currentSemesterID()
-            ){
-              cellContents = FutureBuilder(
-
-                future: TaskDatabaseHelper().getTaskListByCourseName(
-                  tableData.currentSemesterClasses[weekDay]
+            if (tableData.currentSemesterClasses.containsKey(weekDay) &&
+                returnExistingPeriod(tableData.currentSemesterClasses[weekDay])
+                    .contains(index + 1) &&
+                tableData.currentSemesterClasses[weekDay].elementAt(
+                        returnIndexFromPeriod(
+                            tableData.currentSemesterClasses[weekDay],
+                            index + 1))["year"] ==
+                    thisYear) {
+              Color colorning = hexToColor(tableData
+                  .currentSemesterClasses[weekDay]
                   .elementAt(returnIndexFromPeriod(
-                  tableData.currentSemesterClasses[weekDay],index + 1))["courseName"]),
-
-                builder: (context,snapshot){
-                  if(snapshot.connectionState == ConnectionState.waiting){
-
-                    return timeTableSellsChild(
-                            weekDay,index+1,[]);
-
-                  }else if(snapshot.hasData){
-                    
-                    return timeTableSellsChild(
-                            weekDay,index+1,snapshot.data!);
-
-                  }else{
-
-                    return timeTableSellsChild(
-                            weekDay,index+1,[]);
-
-                  }
-                });
+                      tableData.currentSemesterClasses[weekDay],
+                      index + 1))["color"]);
+              if (tableData.currentSemesterClasses[weekDay].elementAt(
+                          returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay],
+                              index + 1))["semester"] ==
+                      currentQuaterID() ||
+                  tableData.currentSemesterClasses[weekDay].elementAt(
+                          returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay],
+                              index + 1))["semester"] ==
+                      currentSemesterID()) {
+                cellContents = FutureBuilder(
+                    future: TaskDatabaseHelper().getTaskListByCourseName(
+                        tableData.currentSemesterClasses[weekDay].elementAt(
+                            returnIndexFromPeriod(
+                                tableData.currentSemesterClasses[weekDay],
+                                index + 1))["courseName"]),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return timeTableSellsChild(weekDay, index + 1, []);
+                      } else if (snapshot.hasData) {
+                        return timeTableSellsChild(
+                            weekDay, index + 1, snapshot.data!);
+                      } else {
+                        return timeTableSellsChild(weekDay, index + 1, []);
+                      }
+                    });
+              }
             }
-        }
-        
-        Color lineColor = const Color.fromARGB(255, 152, 144, 144);
-        double lineWidth = 0.5;
-        DateTime now = DateTime.now();
-        if(returnBeginningDateTime(index+1).isBefore(now)
-            && returnEndDateTime(index+1).isAfter(now)
-            && now.weekday == weekDay
-            && weekDay <= 6){
-          lineWidth = 4;
-          lineColor = Colors.blueAccent;
-        }
-        
 
-        return Container(
-          width: SizeConfig.blockSizeHorizontal! *cellWidth,
-          height: SizeConfig.blockSizeVertical! * cellHeight,
-          decoration: BoxDecoration(
-            color: bgColor,
-            border: Border.all(
-              color: lineColor,
-              width: lineWidth,
-            ),
-          ),
-          child: cellContents
-        );
-      }),
+            Color lineColor = const Color.fromARGB(255, 152, 144, 144);
+            double lineWidth = 0.5;
+            DateTime now = DateTime.now();
+            if (returnBeginningDateTime(index + 1).isBefore(now) &&
+                returnEndDateTime(index + 1).isAfter(now) &&
+                now.weekday == weekDay &&
+                weekDay <= 6) {
+              lineWidth = 4;
+              lineColor = Colors.blueAccent;
+            }
 
-      separatorBuilder: (context, index) {
-        Widget resultinging = const SizedBox();
-        DateTime now = DateTime.now(); 
-        Color bgColor = Colors.white;
-        if(returnEndDateTime(2).isBefore(now)
-            && returnBeginningDateTime(3).isAfter(now)){
-          bgColor = const Color.fromRGBO(255, 204, 204, 1);
-        }
-        String childText = "";
-        if(weekDay == 2){
-          childText = "昼";
-        }
-        if(weekDay == 3){
-          childText = "休";
-        }
-        if(weekDay == 4){
-          childText = "み";
-        }
+            return Container(
+                width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                height: SizeConfig.blockSizeVertical! * cellHeight,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  border: Border.all(
+                    color: lineColor,
+                    width: lineWidth,
+                  ),
+                ),
+                child: cellContents);
+          }),
+          separatorBuilder: (context, index) {
+            Widget resultinging = const SizedBox();
+            DateTime now = DateTime.now();
+            Color bgColor = Colors.white;
+            if (returnEndDateTime(2).isBefore(now) &&
+                returnBeginningDateTime(3).isAfter(now)) {
+              bgColor = const Color.fromRGBO(255, 204, 204, 1);
+            }
+            String childText = "";
+            if (weekDay == 2) {
+              childText = "昼";
+            }
+            if (weekDay == 3) {
+              childText = "休";
+            }
+            if (weekDay == 4) {
+              childText = "み";
+            }
 
-        if(index == 1){
-          resultinging = 
-            Container(
-              height:SizeConfig.blockSizeVertical! *2.5,
-              color:bgColor,
-              child:Column(
-                children:[
-                  const Divider(color:Colors.grey,height:0.5,thickness: 0.5),
-                  const Spacer(),
-                  Text(childText, style: TextStyle(color:Colors.grey,fontSize: SizeConfig.blockSizeHorizontal! *3)),
-                  const Spacer(),
-                  const Divider(color:Colors.grey,height:0.5,thickness: 0.5)
-              ])
-            );
-          }
-          return resultinging;
-        },
-      )
-    );
+            if (index == 1) {
+              resultinging = Container(
+                  height: SizeConfig.blockSizeVertical! * 2.5,
+                  color: bgColor,
+                  child: Column(children: [
+                    const Divider(
+                        color: Colors.grey, height: 0.5, thickness: 0.5),
+                    const Spacer(),
+                    Text(childText,
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+                    const Spacer(),
+                    const Divider(
+                        color: Colors.grey, height: 0.5, thickness: 0.5)
+                  ]));
+            }
+            return resultinging;
+          },
+        ));
   }
- 
-  Widget generateOndemandRow(){
+
+  Widget generateOndemandRow() {
     final tableData = ref.read(timeTableProvider);
     int listLength = 0;
-    if(tableData.sortedDataByWeekDay.containsKey(7)){
-      listLength =tableData.sortedDataByWeekDay[7].length;
+    if (tableData.sortedDataByWeekDay.containsKey(7)) {
+      listLength = tableData.sortedDataByWeekDay[7].length;
     }
 
     return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.horizontal,
-      itemCount: listLength,
-      itemBuilder: (context,index){
-        Widget child = const SizedBox();
-        if(tableData.sortedDataByWeekDay[7]
-            .elementAt(index)["semester"] 
-            == currentQuaterID()
-          || tableData.sortedDataByWeekDay[7]
-            .elementAt(index)["semester"] 
-            == currentSemesterID()
-          &&tableData.sortedDataByWeekDay[7]
-            .elementAt(index)["year"] 
-            == thisYear){
-          child = Container(
-            height: SizeConfig.blockSizeVertical! * cellHeight,
-            width: SizeConfig.blockSizeHorizontal! *cellWidth,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 0.5,
-              ),
-            ),
-            child:FutureBuilder(
-              future: TaskDatabaseHelper().getTaskListByCourseName(
-                  tableData.sortedDataByWeekDay[7]
-              .elementAt(index)["courseName"]),
-
-              builder: (context,snapshot){
-                if(snapshot.connectionState == ConnectionState.waiting){
-                  return ondemandSellsChild(index,[]);
-                }else if (snapshot.hasData){
-                  return ondemandSellsChild(index,snapshot.data!);
-                } else {
-                  return ondemandSellsChild(index,[]);
-                }
-              }
-            )
-          );
-        }
-        return child;
-      });
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: listLength,
+        itemBuilder: (context, index) {
+          Widget child = const SizedBox();
+          if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                  currentQuaterID() ||
+              tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                      currentSemesterID() &&
+                  tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
+                      thisYear) {
+            child = Container(
+                height: SizeConfig.blockSizeVertical! * cellHeight,
+                width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 0.5,
+                  ),
+                ),
+                child: FutureBuilder(
+                    future: TaskDatabaseHelper().getTaskListByCourseName(
+                        tableData.sortedDataByWeekDay[7]
+                            .elementAt(index)["courseName"]),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return ondemandSellsChild(index, []);
+                      } else if (snapshot.hasData) {
+                        return ondemandSellsChild(index, snapshot.data!);
+                      } else {
+                        return ondemandSellsChild(index, []);
+                      }
+                    }));
+          }
+          return child;
+        });
   }
 
-  List<int> returnExistingPeriod(List<Map>target){
+  List<int> returnExistingPeriod(List<Map> target) {
     List<int> result = [];
-    for(int i = 0; i < target.length; i++){
+    for (int i = 0; i < target.length; i++) {
       result.add(target.elementAt(i)["period"]);
     }
     return result;
   }
 
-  int returnIndexFromPeriod(List<Map>target,int period){
+  int returnIndexFromPeriod(List<Map> target, int period) {
     int result = 0;
-    for(int i = 0; i < target.length; i++){
-      if(target.elementAt(i)["period"] == period){
+    for (int i = 0; i < target.length; i++) {
+      if (target.elementAt(i)["period"] == period) {
         result = i;
       }
     }
     return result;
   }
 
-  Widget timeTableSellsChild(int weekDay, int period, List<Map<String,dynamic>> taskList){
-    double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
+  Widget timeTableSellsChild(
+      int weekDay, int period, List<Map<String, dynamic>> taskList) {
+    double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
     final timeTableData = ref.read(timeTableProvider);
     Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
-          timeTableData.currentSemesterClasses[weekDay],period))["color"]);
-    Map targetData = timeTableData.currentSemesterClasses[weekDay]
-        .elementAt(returnIndexFromPeriod(
-          timeTableData.currentSemesterClasses[weekDay],period));
-    String className = 
-      timeTableData.currentSemesterClasses[weekDay]
-        .elementAt(returnIndexFromPeriod(
-          timeTableData.currentSemesterClasses[weekDay],period))["courseName"];
-    String? classRoom = timeTableData.currentSemesterClasses[weekDay]
-        .elementAt(returnIndexFromPeriod(
-          timeTableData.currentSemesterClasses[weekDay],period))["classRoom"];
+            timeTableData.currentSemesterClasses[weekDay], period))["color"]);
+    Map targetData = timeTableData.currentSemesterClasses[weekDay].elementAt(
+        returnIndexFromPeriod(
+            timeTableData.currentSemesterClasses[weekDay], period));
+    String className = timeTableData.currentSemesterClasses[weekDay].elementAt(
+        returnIndexFromPeriod(timeTableData.currentSemesterClasses[weekDay],
+            period))["courseName"];
+    String? classRoom = timeTableData.currentSemesterClasses[weekDay].elementAt(
+        returnIndexFromPeriod(timeTableData.currentSemesterClasses[weekDay],
+            period))["classRoom"];
     int taskLength = taskList.length;
-    
+
     Widget classRoomView = const SizedBox();
-    if(classRoom != null
-      && classRoom != ""
-      && classRoom != "-"){
-      classRoomView =Container(
-        decoration: BoxDecoration(
-          color:Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(2)),
-          border: Border.all(color:Colors.grey,width: 0.5)),
-      child:
-        Text(classRoom,
-          style:TextStyle(fontSize:SizeConfig.blockSizeHorizontal! *2.5,),
-          overflow: TextOverflow.visible,
-          maxLines: 2,
-        ));}
+    if (classRoom != null && classRoom != "" && classRoom != "-") {
+      classRoomView = Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+              border: Border.all(color: Colors.grey, width: 0.5)),
+          child: Text(
+            classRoom,
+            style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
+            ),
+            overflow: TextOverflow.visible,
+            maxLines: 2,
+          ));
+    }
 
-
-    return Stack(
-     children:[
+    return Stack(children: [
       Container(
-        width: SizeConfig.blockSizeHorizontal! *cellWidth,
-        color: cellBackGroundColor(taskLength,bgColor).withOpacity(0.7),
-        padding: const EdgeInsets.symmetric(horizontal:3),
-        child: InkWell(
-          onTap:(){
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CoursePreview(
-                  target: targetData,
-                  setTimetableState: setState,
-                  taskList: taskList,
-                  );
-            });
-          },
-          child:Column(
-          mainAxisAlignment:MainAxisAlignment.start,
-          children:[
-            SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
-            const Spacer(),
-
-            Text(className,
-              style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
-              maxLines: 4,
-              ),
-            const Spacer(),
-            classRoomView,
-            const Spacer()
-
-          ])
-        )
-        
-      ),
+          width: SizeConfig.blockSizeHorizontal! * cellWidth,
+          color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
+          padding: const EdgeInsets.symmetric(horizontal: 3),
+          child: InkWell(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CoursePreview(
+                        target: targetData,
+                        setTimetableState: setState,
+                        taskList: taskList,
+                      );
+                    });
+              },
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
+                const Spacer(),
+                Text(
+                  className,
+                  style: TextStyle(
+                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                  maxLines: 4,
+                ),
+                const Spacer(),
+                classRoomView,
+                const Spacer()
+              ]))),
       Align(
-        alignment:const Alignment(-1,-1),
-        child:lengthBadge(taskLength,fontSize,true)
-      ),
+          alignment: const Alignment(-1, -1),
+          child: lengthBadge(taskLength, fontSize, true)),
     ]);
   }
 
-  Widget ondemandSellsChild(int index, List<Map<String,dynamic>> taskList){
+  Widget ondemandSellsChild(int index, List<Map<String, dynamic>> taskList) {
     final tableData = ref.read(timeTableProvider);
     Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
-    double fontSize = SizeConfig.blockSizeHorizontal! *2.75;
+    double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
     String className = target["courseName"];
     int taskLength = taskList.length;
-    
-    Color colorning = hexToColor(tableData.sortedDataByWeekDay[7]
-        .elementAt(index)["color"]);
-    Color bgColor = cellBackGroundColor(taskLength,colorning).withOpacity(0.7);
+
+    Color colorning =
+        hexToColor(tableData.sortedDataByWeekDay[7].elementAt(index)["color"]);
+    Color bgColor = cellBackGroundColor(taskLength, colorning).withOpacity(0.7);
 
     return GestureDetector(
-      onTap:() {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return OndemandPreview(
-              target:target,
-              setTimetableState: setState,
-              taskList:taskList,
-            );
-        });
-      },
-      child:Stack(
-      children:[
-
-        Container(
-          color: bgColor,
-          padding: const EdgeInsets.symmetric(horizontal:3),
-          child:Column(
-          mainAxisAlignment:MainAxisAlignment.start,
-          children:[
-            SizedBox(height:SizeConfig.blockSizeVertical! *2.25),
-            const Spacer(),
-
-            Text(className,
-              style:TextStyle(fontSize:fontSize,overflow: TextOverflow.ellipsis),
-              maxLines: 4,
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return OndemandPreview(
+                  target: target,
+                  setTimetableState: setState,
+                  taskList: taskList,
+                );
+              });
+        },
+        child: Stack(children: [
+          Container(
+            color: bgColor,
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
+              const Spacer(),
+              Text(
+                className,
+                style: TextStyle(
+                    fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                maxLines: 4,
               ),
-            const Spacer(),
-          ]),
-        ),    
-        Align(
-          alignment:const Alignment(-1,-1),
-          child:lengthBadge(taskLength,fontSize,true)
-        ),
-      ])
-    );
+              const Spacer(),
+            ]),
+          ),
+          Align(
+              alignment: const Alignment(-1, -1),
+              child: lengthBadge(taskLength, fontSize, true)),
+        ]));
   }
 
   AssetImage tableBackGroundImage() {
@@ -878,54 +875,82 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           'lib/assets/calendar_background/ookuma_night.png');
     }
   }
-  
-  String returnBeginningTime(int period){
-    switch(period) {
-      case 1: return "08:50";
-      case 2: return "10:40";
-      case 3: return "13:10";
-      case 4: return "15:05";
-      case 5: return "17:00";
-      case 6: return "18:55";
-      default : return "20:45";
+
+  String returnBeginningTime(int period) {
+    switch (period) {
+      case 1:
+        return "08:50";
+      case 2:
+        return "10:40";
+      case 3:
+        return "13:10";
+      case 4:
+        return "15:05";
+      case 5:
+        return "17:00";
+      case 6:
+        return "18:55";
+      default:
+        return "20:45";
     }
   }
 
-  DateTime returnBeginningDateTime(int period){
+  DateTime returnBeginningDateTime(int period) {
     DateTime now = DateTime.now();
-    switch(period) {
-      case 1: return DateTime(now.year,now.month,now.day,8,50);
-      case 2: return DateTime(now.year,now.month,now.day,10,40);
-      case 3: return DateTime(now.year,now.month,now.day,13,10);
-      case 4: return DateTime(now.year,now.month,now.day,15,05);
-      case 5: return DateTime(now.year,now.month,now.day,17,00);
-      case 6: return DateTime(now.year,now.month,now.day,18,55);
-      default : return DateTime(now.year,now.month,now.day,20,45);
+    switch (period) {
+      case 1:
+        return DateTime(now.year, now.month, now.day, 8, 50);
+      case 2:
+        return DateTime(now.year, now.month, now.day, 10, 40);
+      case 3:
+        return DateTime(now.year, now.month, now.day, 13, 10);
+      case 4:
+        return DateTime(now.year, now.month, now.day, 15, 05);
+      case 5:
+        return DateTime(now.year, now.month, now.day, 17, 00);
+      case 6:
+        return DateTime(now.year, now.month, now.day, 18, 55);
+      default:
+        return DateTime(now.year, now.month, now.day, 20, 45);
     }
   }
 
-  String returnEndTime(int period){
-    switch(period) {
-      case 1: return "10:30";
-      case 2: return "12:20";
-      case 3: return "14:50";
-      case 4: return "16:45";
-      case 5: return "18:40";
-      case 6: return "20:35";
-      default : return "21:35";
+  String returnEndTime(int period) {
+    switch (period) {
+      case 1:
+        return "10:30";
+      case 2:
+        return "12:20";
+      case 3:
+        return "14:50";
+      case 4:
+        return "16:45";
+      case 5:
+        return "18:40";
+      case 6:
+        return "20:35";
+      default:
+        return "21:35";
     }
   }
 
-  DateTime returnEndDateTime(int period){
+  DateTime returnEndDateTime(int period) {
     DateTime now = DateTime.now();
-    switch(period) {
-      case 1: return DateTime(now.year,now.month,now.day,10,30);
-      case 2: return DateTime(now.year,now.month,now.day,12,20);
-      case 3: return DateTime(now.year,now.month,now.day,14,50);
-      case 4: return DateTime(now.year,now.month,now.day,16,45);
-      case 5: return DateTime(now.year,now.month,now.day,18,40);
-      case 6: return DateTime(now.year,now.month,now.day,20,35);
-      default : return DateTime(now.year,now.month,now.day,21,35);
+    switch (period) {
+      case 1:
+        return DateTime(now.year, now.month, now.day, 10, 30);
+      case 2:
+        return DateTime(now.year, now.month, now.day, 12, 20);
+      case 3:
+        return DateTime(now.year, now.month, now.day, 14, 50);
+      case 4:
+        return DateTime(now.year, now.month, now.day, 16, 45);
+      case 5:
+        return DateTime(now.year, now.month, now.day, 18, 40);
+      case 6:
+        return DateTime(now.year, now.month, now.day, 20, 35);
+      default:
+        return DateTime(now.year, now.month, now.day, 21, 35);
     }
   }
 
@@ -934,16 +959,15 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     if (hexColor.startsWith('#')) {
       hexColor = hexColor.substring(1);
     }
-    
+
     // 16進数のカラーコードをRGBに分解する
     int hexValue = int.parse(hexColor, radix: 16);
     int alpha = (hexValue >> 24) & 0xFF;
     int red = (hexValue >> 16) & 0xFF;
     int green = (hexValue >> 8) & 0xFF;
     int blue = hexValue & 0xFF;
-    
+
     // Colorオブジェクトを作成して返す
     return Color.fromARGB(alpha, red, green, blue);
   }
-
 }

@@ -187,7 +187,8 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
           semester: syllabusQueryResult.semester,
           syllabusID: syllabusQueryResult.syllabusID,
           weekday: syllabusQueryResult.weekday,
-          year: syllabusQueryResult.year);
+          year: syllabusQueryResult.year,
+          criteria: null);
       myCourseList.add(myCourse);
     }
   } else {

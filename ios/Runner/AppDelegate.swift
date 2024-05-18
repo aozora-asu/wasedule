@@ -14,7 +14,7 @@ import flutter_local_notifications
     ) -> Bool {
 
         if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+            UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
 
         // This is required to make any communication available in the action isolate.

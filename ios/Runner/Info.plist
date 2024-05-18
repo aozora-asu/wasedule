@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.1.1</string>
+	<string>16.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>6.1.1</string>
+	<string>16.0.0</string>
 	<!--シェア機能の設定-->
 	<key>AppGroupId</key>
 	<string>$(CUSTOM_GROUP_ID)</string>
@@ -87,6 +87,9 @@
 		<array>
     		<string>group.com.example.wasedule</string>
 		</array>
+	<!--Flutterの次期レンダリングエンジンの導入-->
+	<key>FLTEnableImpeller</key>
+	<true/>
 
 
 </dict>

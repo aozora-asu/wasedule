@@ -13,7 +13,7 @@ import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
-
+import '../../../backend/home_widget.dart';
 import '../common/loading.dart';
 
 void printWrapped(String text) {
@@ -93,6 +93,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     }
 
                     await TaskDatabaseHelper().setpageID();
+                    await NextCourseHomeWidget().updateNextCourse();
                   }
                 }
             }

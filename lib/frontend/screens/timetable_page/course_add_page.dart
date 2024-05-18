@@ -13,13 +13,12 @@ class CourseAddPage extends ConsumerStatefulWidget {
   int? year;
   String? semester;
   late StateSetter setTimetableState;
-  CourseAddPage({
-    this.weekDay,
-    this.period,
-    this.year,
-    this.semester,
-    required this.setTimetableState
-    });
+  CourseAddPage(
+      {this.weekDay,
+      this.period,
+      this.year,
+      this.semester,
+      required this.setTimetableState});
 
   @override
   _CourseAddPageState createState() => _CourseAddPageState();
@@ -172,8 +171,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                           if (isValid()) {
                             //＠ここに時間割データの追加関数！！！
                             MyCourseDatabaseHandler()
-                                .resisterMyCourseFromMoodle(
-                                  MyCourse(
+                                .resisterMyCourseFromMoodle(MyCourse(
                                     classRoom: classRoom,
                                     color: "#96C78C",
                                     courseName: className,
@@ -182,8 +180,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                     semester: semester,
                                     syllabusID: null,
                                     weekday: weekDay,
-                                    year: year!));
-                            widget.setTimetableState((){});
+                                    year: year!,
+                                    criteria: null));
+                            widget.setTimetableState(() {});
                             Navigator.pop(context);
                           } else {}
                         }, isValid() ? ACCENT_COLOR : Colors.grey, "   追加   "),

@@ -66,6 +66,7 @@ class MyCourse {
   String? pageID;
   int? attendCount;
   String? syllabusID;
+  String? criteria;
 
   MyCourse(
       {this.attendCount,
@@ -78,7 +79,8 @@ class MyCourse {
       required this.semester,
       required this.syllabusID,
       required this.weekday,
-      required this.year});
+      required this.year,
+      required this.criteria});
   Map<String, dynamic> toMap() {
     return {
       "courseName": courseName,
@@ -92,6 +94,7 @@ class MyCourse {
       "year": year,
       "pageID": pageID,
       "syllabusID": syllabusID ?? "",
+      "criteria": criteria
     };
   }
 }
@@ -127,7 +130,8 @@ class MyCourseDatabaseHandler {
         attendCount INTEGER,
         year INTEGER,
         pageID TEXT,
-        syllabusID TEXT ,
+        syllabusID TEXT,
+        criteria TEXT,
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
@@ -260,7 +264,8 @@ class MyCourseDatabaseHandler {
       attendCount,
       year,
       pageID,
-      syllabusID
+      syllabusID,
+      criteria
     FROM $myCourseTable
   ''');
 
@@ -289,13 +294,14 @@ class MyCourseDatabaseHandler {
           'attendCount',
           'year',
           'pageID',
-          'syllabusID'
+          'syllabusID',
+          'criteria'
         ],
         where:
             'year = ? AND period = ? AND weekday = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
         whereArgs: [
           datetime2schoolYear(now),
-          datetime2Period(now.add(const Duration(minutes: 30, days: -1))),
+          datetime2Period(now.add(const Duration(minutes: 30))),
           now.weekday,
           ...semesters
         ]);
