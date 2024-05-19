@@ -249,9 +249,10 @@ class TaskDatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getTaskFromDB() async {
     await _initDatabase();
-    await _orderByDateTime();
+
+    // dtEndを早い順（昇順）にソートしてデータを取得する
     final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM tasks');
+        await _database.rawQuery('SELECT * FROM tasks ORDER BY dtEnd ASC');
 
     return data;
   }
