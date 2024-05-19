@@ -475,9 +475,12 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
   late String notifyType;
   int? weekday;
-  String time = "08:00";
-  String timeForPreview = "08時間00分";
+  String timeFrequency = "08:00";
+  String timeFrequencyForPreview = "08時間00分";
   int days = 1;
+  String timeBeforeDtEnd = "08:00";
+  String timeBeforeDtEndForPreview = "08時間00分";
+
 
   Widget notificationFrequencySetting() {
     Widget borderModel = const Column(children: [
@@ -519,7 +522,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showTitleActions: true,
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
-                  time = DateFormat("HH:mm").format(date);
+                  timeFrequency = DateFormat("HH:mm").format(date);
                 });
               },
                   currentTime: DateTime(now.year, now.month, now.day, 12, 00),
@@ -534,7 +537,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Row(children: [
-                  Text(time,
+                  Text(timeFrequency,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const Icon(Icons.arrow_drop_down,
                       color: Color.fromARGB(255, 100, 100, 100))
@@ -580,7 +583,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               //＠ここで毎日or毎週通知をDB登録！！
               await NotifyDatabaseHandler().setNotifyConfig(NotifyConfig(
                   notifyType: notifyType,
-                  time: time,
+                  time: timeFrequency,
                   isValidNotify: 1,
                   days: days,
                   weekday: weekday));
@@ -616,8 +619,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showTitleActions: true,
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
-                  timeForPreview = DateFormat("HH時間mm分").format(date);
-                  time = DateFormat("HH:mm").format(date);
+                  timeBeforeDtEndForPreview= DateFormat("HH時間mm分").format(date);
+                  timeBeforeDtEnd = DateFormat("HH:mm").format(date);
                 });
               },
                   currentTime: DateTime(now.year, now.month, now.day, 12, 00),
@@ -632,7 +635,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Row(children: [
-                  Text(timeForPreview,
+                  Text(timeBeforeDtEndForPreview,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const Icon(Icons.arrow_drop_down,
                       color: Color.fromARGB(255, 100, 100, 100))
@@ -652,7 +655,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             //＠ここで締め切り前通知をDB登録！！
             await NotifyDatabaseHandler().setNotifyConfig(NotifyConfig(
                 notifyType: notifyType,
-                time: time,
+                time: timeBeforeDtEnd,
                 isValidNotify: 1,
                 days: days,
                 weekday: weekday));
