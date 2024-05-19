@@ -220,7 +220,11 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     String formatDuration(Duration duration) {
       int days = duration.inDays;
       int hours = duration.inHours % 24;
-      return 'あと${days}日${hours}時間';
+      if(days == 0){
+        return 'あと${hours}時間';
+      }else{
+        return 'あと${days}日${hours}時間';
+      }
     }
     String remainingTimeInString = formatDuration(remainingTime);
     return GestureDetector(
