@@ -8,6 +8,7 @@ import 'backend/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/services.dart';
 import './converter.dart';
 
 void main() async {
@@ -20,6 +21,12 @@ void main() async {
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
-
-  runApp(ProviderScope(child: MyApp()));
+  
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+     runApp(ProviderScope(child: MyApp()));
+  });
+  
 }
