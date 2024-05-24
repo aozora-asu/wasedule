@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
@@ -13,6 +15,8 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_pr
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import "../../../backend/home_widget.dart";
 
 class TimeTablePage extends ConsumerStatefulWidget {
@@ -24,12 +28,15 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late int thisYear;
   late int semesterNum;
   late String targetSemester;
+  late bool isScreenShotBeingTaken;
+  final ScreenshotController _screenShotController = ScreenshotController();
 
   @override
   void initState() {
     super.initState();
     initTargetSem();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
+    isScreenShotBeingTaken = false;
   }
 
   @override
@@ -74,17 +81,46 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 backgroundColor: ACCENT_COLOR,
                 child: const Icon(Icons.add, color: Colors.white)),
             const SizedBox(width: 10),
-            //timetableShareButton(context),
+            timetableShareButton(context),
           ])),
     );
   }
 
+  Widget timetableShareButton(BuildContext context) {
+    return FloatingActionButton(
+        heroTag: "timetable_2",
+        backgroundColor: MAIN_COLOR,
+        child: const Icon(Icons.ios_share, color: Colors.white),
+        onPressed: () async {
+          setState(() {
+            isScreenShotBeingTaken = true;
+          });
+          final screenshot = await _screenShotController.capture(
+            delay: const Duration(milliseconds: 500),
+          );
+          setState(() {
+            isScreenShotBeingTaken = false;
+          });
+          if (screenshot != null) {
+            final shareFile = XFile.fromData(screenshot, mimeType: "image/png");
+
+            await Share.shareXFiles([
+              shareFile,
+            ],
+                sharePositionOrigin: Rect.fromLTWH(
+                    0,
+                    0,
+                    MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height / 2));
+          }
+        });
+  }
+
   void initTargetSem() {
     DateTime now = DateTime.now();
-    thisYear = now.year;
-    if (now.month <= 3) {
-      thisYear -= 1;
-    }
+    thisYear = datetime2schoolYear(now);
+    List semesterList = datetime2termList(now);
+
     semesterNum = 0;
     if (now.month <= 3) {
       semesterNum = 4;
@@ -96,6 +132,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       semesterNum = 3;
     } else {
       semesterNum = 4;
+    }
+
+    if(semesterList.isNotEmpty){
+      String quarter = semesterList[1];
+      if (quarter == "spring_quarter") {
+        semesterNum = 1;
+      } else if (quarter == "summer_quarter") {
+        semesterNum = 2;
+      } else if (quarter == "fall_quarter") {
+         semesterNum = 3;
+      } else if (quarter == "winter_quarter") {
+        semesterNum = 4;
+      }
     }
     targetSemester = thisYear.toString() + "-" + semesterNum.toString();
   }
@@ -250,19 +299,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget timeTable() {
-    return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 3,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
+    return Screenshot(
+      controller:_screenShotController,
+      child:Container(
+        decoration: switchDecoration(),
         child: Column(children: [
           Row(children: [
             IconButton(
@@ -287,8 +327,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 icon: const Icon(Icons.arrow_forward_ios),
                 iconSize: 20),
             const Spacer(),
-            changeQuaterbutton(1),
-            changeQuaterbutton(2),
+            doNotContainScreenShot(changeQuaterbutton(1)),
+            doNotContainScreenShot(changeQuaterbutton(2)),
+            showOnlyScreenShot(LogoAndTitle(size: 5)),
             const Spacer(),
           ]),
           FutureBuilder(
@@ -316,8 +357,45 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   return noDataScreen();
                 }
               }))
-        ]));
+        ]))
+      );
   }
+
+  BoxDecoration switchDecoration() {
+    if (isScreenShotBeingTaken) {
+      return const BoxDecoration(color: Colors.white);
+    } else {
+      return BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5), // 影の色と透明度
+            spreadRadius: 2, // 影の広がり
+            blurRadius: 3, // ぼかしの強さ
+            offset: const Offset(0, 3), // 影の方向（横、縦）
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget doNotContainScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
+      return const SizedBox();
+    } else {
+      return target;
+    }
+  }
+
+  Widget showOnlyScreenShot(Widget target) {
+    if (isScreenShotBeingTaken) {
+      return target;
+    } else {
+      return const SizedBox();
+    }
+  }
+
 
   Widget noDataScreen() {
     return SizedBox(
@@ -812,9 +890,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 classRoomView,
                 const Spacer()
               ]))),
-      Align(
+      doNotContainScreenShot(
+        Align(
           alignment: const Alignment(-1, -1),
-          child: lengthBadge(taskLength, fontSize, true)),
+          child: lengthBadge(taskLength, fontSize, true))),
     ]);
   }
 
@@ -858,9 +937,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               const Spacer(),
             ]),
           ),
-          Align(
+          doNotContainScreenShot(
+            Align(
               alignment: const Alignment(-1, -1),
-              child: lengthBadge(taskLength, fontSize, true)),
+              child: lengthBadge(taskLength, fontSize, true)))
         ]));
   }
 

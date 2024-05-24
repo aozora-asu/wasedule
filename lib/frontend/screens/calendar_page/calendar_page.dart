@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -161,7 +162,9 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   void initTargetSem() {
     DateTime now = DateTime.now();
-    thisYear = now.year;
+    thisYear = datetime2schoolYear(now);
+    List semesterList = datetime2termList(now);
+
     if (now.month <= 3) {
       thisYear -= 1;
     }
@@ -179,6 +182,20 @@ class _CalendarState extends ConsumerState<Calendar> {
     } else {
       semesterNum == 5;
     }
+
+    if(semesterList.isNotEmpty){
+      String quarter = semesterList[1];
+      if (quarter == "spring_quarter") {
+        semesterNum = 1;
+      } else if (quarter == "summer_quarter") {
+        semesterNum = 2;
+      } else if (quarter == "fall_quarter") {
+         semesterNum = 3;
+      } else if (quarter == "winter_quarter") {
+        semesterNum = 4;
+      }
+    }
+
     targetSemester = thisYear.toString() + "-" + semesterNum.toString();
   }
 

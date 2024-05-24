@@ -6,11 +6,13 @@ class LogoAndTitle extends StatelessWidget{
   late double size;
   late Color? color;
   late bool? isLogoWhite;
+  late String? subTitle;
 
   LogoAndTitle({
     required this.size,
     this.isLogoWhite,
     this.color,
+    this.subTitle
   });
 
   @override
@@ -31,7 +33,7 @@ class LogoAndTitle extends StatelessWidget{
       thumbnail,
       Column(
         children:[
-        Text("早稲田生のための生活アプリ",
+        Text(subTitle ?? "早稲田生のための生活アプリ",
         style:TextStyle(fontSize:size,color:color ?? MAIN_COLOR,fontWeight:FontWeight.bold)),
         Text("わせジュール",
         style:TextStyle(fontSize:size*2 ,color:color ?? Colors.black,fontWeight:FontWeight.w800))

@@ -18,15 +18,31 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   late bool backButton;
+  late int? pageNum;
 
   CustomAppBar({
     required this.backButton,
+    this.pageNum,
     Key? key
   }) : super(key: key);
 
-  Color contentColor = Colors.white;
+
+    Color contentColor = Colors.white;
+    Color backgroundColor = Colors.transparent;
+    bool isLogoWhite = true;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    
+    if(pageNum != null){
+      if(pageNum == 0 ||
+         pageNum == 3 ||
+         pageNum == 4){
+          contentColor = Colors.black;
+          backgroundColor = Colors.transparent;
+          isLogoWhite = false;
+      }
+    }
     SizeConfig().init(context);
     Widget appBarContent = const SizedBox();
     if(!backButton){
@@ -42,9 +58,9 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
           LogoAndTitle(
             size: 7,
             color:contentColor,
-            isLogoWhite: true,
+            isLogoWhite: isLogoWhite,
+            subTitle: "早稲田から、落単をなくしたい。",
           ),
-          const Spacer(),
           const Spacer(),
           InkWell(
             child: Icon(Icons.notifications_outlined, color:contentColor),
@@ -80,8 +96,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
     return null;
    }
   }
-
-
 }
 
 Widget popupMenuButton(color){

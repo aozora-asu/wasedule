@@ -14,7 +14,6 @@ import '../screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../screens/common/app_bar.dart';
-import '../screens/common/burger_menu.dart';
 import '../screens/task_page/task_data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
@@ -64,15 +63,19 @@ class _AppPageState extends ConsumerState<AppPage> {
                    MoodleViewPage(),
                    ],
         onPageChanged: (value){
-            if(value == 4){
-              isExtendBottom = false;
-              isExtendBody = false;
-              physics = const NeverScrollableScrollPhysics();
-            }else if(value == 1 || value == 2){
+            if(value == 1 || value == 2){
               isExtendBody = true;
               isExtendBottom = true;
               physics = const ScrollPhysics();
-            }else{
+            }else if(value == 3){
+              isExtendBody = false;
+              isExtendBottom = true;
+              physics = const ScrollPhysics();
+            }else if(value == 4){
+              isExtendBottom = false;
+              isExtendBody = false;
+              physics = const NeverScrollableScrollPhysics();
+            } else{
               isExtendBody = false;
               isExtendBottom = true;
               physics = const ScrollPhysics();
@@ -93,7 +96,8 @@ class _AppPageState extends ConsumerState<AppPage> {
     return Scaffold(
       extendBodyBehindAppBar: isExtendBody,
       extendBody: isExtendBottom,
-      appBar: CustomAppBar(backButton: false),
+      appBar: CustomAppBar(
+        backButton: false),
       bottomNavigationBar:customBottomBar(
           context,
           _currentIndex,
