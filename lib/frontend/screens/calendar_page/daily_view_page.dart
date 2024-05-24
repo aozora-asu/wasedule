@@ -305,9 +305,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    Map<dynamic, dynamic> timeTableData = timeTable.currentSemesterClasses;
-    int weekDay = targetDay.weekday;
-    List<Map<String, dynamic>> targetDayList = timeTableData[weekDay] ?? [];
+    List<Map<String, dynamic>> targetDayList =timeTable.targetDateClasses(widget.target);
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map targetClass = targetDayList.elementAt(i);

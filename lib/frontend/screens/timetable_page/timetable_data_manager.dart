@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final timeTableProvider = StateNotifierProvider<TimeTableNotifier, TimeTableData>(
@@ -68,8 +69,8 @@ class TimeTableData {
       List<Map<String,dynamic>> data = sortedData.values.elementAt(i);
       int targetKey = sortedData.keys.elementAt(i);
       if(targetKey != 7){
-      data.sort((a, b) => (a["period"] as int).compareTo(b["period"] as int));
-      sortedData[targetKey] = data;
+        data.sort((a, b) => (a["period"] as int).compareTo(b["period"] as int));
+        sortedData[targetKey] = data;
       }
     }
     sortedDataByWeekDay = sortedData;
@@ -117,6 +118,33 @@ class TimeTableData {
     universityScheduleByWeekDay[4] = returnStringClassTime(thisYear,semesterNum,4);
     universityScheduleByWeekDay[5] = returnStringClassTime(thisYear,semesterNum,5);
     universityScheduleByWeekDay[6] = returnStringClassTime(thisYear,semesterNum,6);
+  }
+
+  List<Map<String,dynamic>> targetDateClasses(DateTime target){
+    List<Map<String,dynamic>> result = [];
+    int year = datetime2schoolYear(target);
+    String semester = "";
+    String quarter = "";
+    String fullYear = "";
+    int weekDay = target.weekday;
+    if(datetime2termList(target).isNotEmpty){
+      semester = datetime2termList(target)[0];
+      quarter = datetime2termList(target)[1];
+      fullYear = datetime2termList(target)[2];
+    }
+
+    for(var item in timeTableDataList){
+      if(item["year"] == year &&
+         item["weekday"] == weekDay){
+      if(item["semester"] == semester ||
+         item["semester"] == quarter ||
+         item["semester"] == fullYear){
+        result.add(item);
+      }}
+    }
+    result.sort((a, b) => a['period'].compareTo(b['period']));
+    return result;
+
   }
 
   String currentQuaterID(int semesterNum){

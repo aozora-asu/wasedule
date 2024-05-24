@@ -564,8 +564,6 @@ class _CalendarState extends ConsumerState<Calendar> {
             targetMonth.substring(0, 5) + month.toString().padLeft(2, '0');
       });
     }
-    print(thisYear);
-    print(semesterNum);
     targetMonth = decreasedMonth;
     generateCalendarData();
   }
@@ -796,38 +794,6 @@ class _CalendarState extends ConsumerState<Calendar> {
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
-            String universityClassData = ref
-                    .read(timeTableProvider)
-                    .universityScheduleByWeekDay[target.weekday] ??
-                "";
-            Widget universityClassView = const SizedBox();
-            if (universityClassData != "") {
-              universityClassView = switchWidget(
-                  Container(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(2))),
-                      margin: const EdgeInsets.symmetric(horizontal: 1),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(universityClassData,
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 7)),
-                            const Row(children: [
-                              Icon(Icons.school, color: MAIN_COLOR, size: 8),
-                              Text(" 授業",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 8)),
-                            ]),
-                            const Divider(
-                                height: 0.7,
-                                indent: 2,
-                                endIndent: 2,
-                                thickness: 0.7),
-                          ])),
-                  ConfigDataLoader()
-                      .searchConfigData("timetableInCalendarcell", ref));
-            }
             return InkWell(
               child: Container(
                   width: SizeConfig.blockSizeHorizontal! * 13.571,
@@ -857,7 +823,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                           endIndent: 2,
                           thickness: 0.7,
                         ),
-                        universityClassView,
                         Expanded(child: calendarCellsChild(target)),
                         holidayName(target),
                       ])),
@@ -926,83 +891,170 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget calendarCellsChild(DateTime target) {
-    Widget dateTimeData = Container();
-    final data = ref.watch(calendarDataProvider);
+    final data = ref.read(calendarDataProvider);
     String targetKey = target.year.toString() +
         "-" +
         target.month.toString().padLeft(2, "0") +
         "-" +
         target.day.toString().padLeft(2, "0");
-    if (data.sortedDataByDay.keys.contains(targetKey)) {
-      List<dynamic> targetDayData = data.sortedDataByDay[targetKey];
+    List targetDayData = data.sortedDataByDay[targetKey] ?? [];
+    DateTime targetDay = DateTime.parse(targetKey);
+    DateTime now = DateTime.now();
+    List<Map<DateTime, Widget>> mixedDataByTime = [];
+
+    Widget dividerModel =
+      const Divider(
+        height: 0.7,
+        indent: 2,
+        endIndent: 2,
+        thickness: 0.7,
+      );
+
+    //まずは予定データの生成
+    for (int index = 0; index < targetDayData.length; index++) {
+      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+
+      if (targetDayData.elementAt(index)["startTime"].trim() != "") {
+        DateFormat format = DateFormat.Hm();
+        DateTime time =
+            format.parse(targetDayData.elementAt(index)["startTime"]);
+        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+      }
+
+      Widget value = const SizedBox();
+      value = 
+        scheduleListChild(targetDayData, index);
+      
+      mixedDataByTime.add({key: value});
+    }
+
+    //予定データが生成されたところに時間割データを混ぜる
+    final timeTable = ref.read(timeTableProvider);
+    List<Map<String, dynamic>> targetDayList =timeTable.targetDateClasses(target);
+    if(targetDayList.isNotEmpty) {
+
+      Map firstClass = targetDayList.first;
+      Map lastClass = targetDayList.last;
+      String universityClassData =
+        timeTable.returnBeginningTime(firstClass["period"])
+        + "~"
+        + timeTable.returnEndTime(lastClass["period"]);
+      
+      DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
+      Widget value = switchWidget(
+          classListChild(universityClassData),
+        ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
+      mixedDataByTime.add({key: value});
+    }
+
+    //グチャグチャなデータをソートする
+    List<Map<DateTime, dynamic>> sortMapsByFirstKey(
+        List<Map<DateTime, dynamic>> list) {
+      list.sort((a, b) => a.keys.first.compareTo(b.keys.first));
+      return list;
+    }
+
+    List<Map<DateTime, dynamic>> sortedList =
+        sortMapsByFirstKey(mixedDataByTime);
+
       return SizedBox(
-          child: ListView.separated(
+          child: ListView.builder(
               itemBuilder: (context, index) {
-                if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
-                    targetDayData.elementAt(index)["endTime"].trim() != "") {
-                  dateTimeData = Text(
-                    " " +
-                        targetDayData.elementAt(index)["startTime"] +
-                        "～" +
-                        targetDayData.elementAt(index)["endTime"],
-                    style: const TextStyle(color: Colors.grey, fontSize: 7),
-                  );
-                } else if (targetDayData.elementAt(index)["startTime"].trim() !=
-                    "") {
-                  dateTimeData = Text(
-                    " " + targetDayData.elementAt(index)["startTime"],
-                    style: const TextStyle(color: Colors.grey, fontSize: 7),
-                  );
-                } else {
-                  dateTimeData = const Text(
-                    " 終日",
-                    style: TextStyle(color: Colors.grey, fontSize: 7),
-                  );
-                }
-                return publicContainScreenShot(
-                    SizedBox(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: dateTimeData),
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                tagThumbnail(
-                                    targetDayData.elementAt(index)["tagID"]),
-                                Flexible(
-                                  child: Text(
-                                    " " +
-                                        targetDayData
-                                            .elementAt(index)["subject"],
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 8),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                )
-                              ])
-                        ])),
-                    targetDayData.elementAt(index)["isPublic"]);
+                return sortedList.elementAt(index).values.first;
               },
-              separatorBuilder: (context, index) {
-                return publicContainScreenShot(
-                    const Divider(
-                      height: 0.7,
-                      indent: 2,
-                      endIndent: 2,
-                      thickness: 0.7,
-                    ),
-                    targetDayData.elementAt(index)["isPublic"]);
-              },
-              itemCount: targetDayData.length,
+              itemCount: mixedDataByTime.length,
               shrinkWrap: true,
               physics: const ClampingScrollPhysics()));
-    } else {
-      return const Center();
+  }
+
+  Widget scheduleListChild(targetDayData,index){
+    Widget dateTimeData = Container();
+    if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
+          targetDayData.elementAt(index)["endTime"].trim() != "") {
+        dateTimeData = Text(
+          " " +
+              targetDayData.elementAt(index)["startTime"] +
+              "～" +
+              targetDayData.elementAt(index)["endTime"],
+          style: const TextStyle(color: Colors.grey, fontSize: 7),
+        );
+      } else if (targetDayData.elementAt(index)["startTime"].trim() !=
+          "") {
+        dateTimeData = Text(
+          " " + targetDayData.elementAt(index)["startTime"],
+          style: const TextStyle(color: Colors.grey, fontSize: 7),
+        );
+      } else {
+        dateTimeData = const Text(
+          " 終日",
+          style: TextStyle(color: Colors.grey, fontSize: 7),
+        );
+      }
+      return publicContainScreenShot(
+          SizedBox(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: dateTimeData),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      tagThumbnail(
+                          targetDayData.elementAt(index)["tagID"]),
+                      Flexible(
+                        child: Text(
+                          " " +
+                              targetDayData
+                                  .elementAt(index)["subject"],
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 8),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
+                    ]),
+                const Divider(
+                  height: 0.7,
+                  indent: 2,
+                  endIndent: 2,
+                  thickness: 0.7,
+                )
+              ])),
+          targetDayData.elementAt(index)["isPublic"]);
+  }
+
+  Widget classListChild(String universityClassData){
+    Widget universityClassView = const SizedBox();
+    if (universityClassData != "") {
+      universityClassView = switchWidget(
+          Container(
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(2))),
+              margin: const EdgeInsets.symmetric(horizontal: 1),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(universityClassData,
+                        style: const TextStyle(
+                            color: Colors.grey, fontSize: 7)),
+                    const Row(children: [
+                      Icon(Icons.school, color: MAIN_COLOR, size: 8),
+                      Text(" 授業",
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 8)),
+                    ]),
+                    const Divider(
+                        height: 0.7,
+                        indent: 2,
+                        endIndent: 2,
+                        thickness: 0.7),
+                  ])),
+          ConfigDataLoader()
+              .searchConfigData("timetableInCalendarcell", ref));
     }
+    return universityClassView;
   }
 
   Widget tagThumbnail(id) {
@@ -1396,9 +1448,9 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    Map<dynamic, dynamic> timeTableData = timeTable.currentSemesterClasses;
-    int weekDay = targetDay.weekday;
-    List<Map<String, dynamic>> targetDayList = timeTableData[weekDay] ?? [];
+    // Map<dynamic, dynamic> timeTableData = timeTable.currentSemesterClasses;
+    // int weekDay = targetDay.weekday;
+    List<Map<String, dynamic>> targetDayList = timeTable.targetDateClasses(target);
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
@@ -1439,7 +1491,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       }
     }
 
-    if (data.sortedDataByDay[targetKey] == null) {
+    if(sortedWidgetList.isEmpty) {
       return const SizedBox();
     } else {
       return Column(children: [
