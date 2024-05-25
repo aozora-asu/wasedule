@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -26,6 +28,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   TextEditingController classRoomController = TextEditingController();
+  late int viewMode;
 
   @override
   void initState() {
@@ -34,11 +37,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     memoController.text = target["memo"] ?? "";
     classRoomController.text = target["classRoom"] ?? "";
     classNameController.text = target["courseName"] ?? "";
+    viewMode = 0;
   }
 
   @override
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 5);
+    if(viewMode == 1){
+      padding = EdgeInsets.zero;
+    }
     return GestureDetector(onTap: () {
       Navigator.pop(context);
     }, child: LayoutBuilder(
@@ -54,8 +62,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   child: Center(
                       child: SingleChildScrollView(
                           child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
+                              padding: padding,
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -73,6 +80,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     Widget dividerModel = const Divider(
       height: 2,
     );
+    EdgeInsets padding = const EdgeInsets.all(12.5);
+    if(viewMode == 1){
+      padding = const EdgeInsets.symmetric(vertical: 12.5);
+    }
 
     return GestureDetector(
         onTap: () {},
@@ -80,7 +91,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             decoration: roundedBoxdecorationWithShadow(),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Padding(
-                padding: const EdgeInsets.all(12.5),
+                padding: padding,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -94,6 +105,66 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           widget.setTimetableState((){});
                         })
                       ]),
+                      switchViewMode(dividerModel,target),
+                      const SizedBox(height:5),
+                      Row(children: [
+                        viewModeSwitch(),
+                        const Spacer(),
+                        GestureDetector(
+                            child: const Icon(Icons.delete, color: Colors.grey),
+                            onTap: () async {
+                              int id = target["id"];
+                              //＠ここに削除実行関数！！！
+                              await MyCourseDatabaseHandler()
+                                  .deleteMyCourse(id);
+                              widget.setTimetableState((){});
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                      ]),
+                    ]))));
+  }
+
+  Widget switchViewMode(dividerModel,target){
+
+      if(viewMode == 0){
+        return summaryContent(dividerModel,target);
+      }else{
+        return SyllabusWebView(pageID: widget.target["syllabusID"]);
+      }
+
+  }
+
+  Widget viewModeSwitch(){
+    Map target = widget.target;
+    if(target["syllabusID"] != null &&
+    target["syllabusID"] != ""){
+      if(viewMode == 0){
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 1;
+            });
+          },
+          Colors.lightBlueAccent,
+          " シラバス詳細 ");
+      }else{
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 0;
+            });
+          },
+          Colors.orangeAccent,
+          " 授業の概要 ");
+      }   
+    }else{
+      return const SizedBox();
+    }
+  }
+
+  Widget summaryContent(dividerModel,target){
+    return Column(children:[
                       dividerModel,
                       Row(children: [
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
@@ -146,21 +217,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                         }),
                       ]),
                       dividerModel,
-                      Row(children: [
-                        const Spacer(),
-                        GestureDetector(
-                            child: const Icon(Icons.delete, color: Colors.grey),
-                            onTap: () async {
-                              int id = target["id"];
-                              //＠ここに削除実行関数！！！
-                              await MyCourseDatabaseHandler()
-                                  .deleteMyCourse(id);
-                              widget.setTimetableState((){});
-                              Navigator.pop(context);
-                            }),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                      ])
-                    ]))));
+    ]);
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
