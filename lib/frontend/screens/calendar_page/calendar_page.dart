@@ -227,6 +227,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
+    ScrollController controller = ScrollController();
     return Scaffold(
         body: Container(
           decoration: BoxDecoration(
@@ -234,52 +235,60 @@ class _CalendarState extends ConsumerState<Calendar> {
             image: calendarBackGroundImage(),
             fit: BoxFit.cover,
           )),
-          child: ListView(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  left: SizeConfig.blockSizeHorizontal! * 2.5,
-                  right: SizeConfig.blockSizeHorizontal! * 2.5,
-                ),
-                child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: loadDataBases(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // データが取得されるまでの間
-                      return calendarBody();
-                    } else if (snapshot.hasError) {
-                      // エラーがある場合
-                      return const SizedBox();
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      //カレンダーが空の場合
-                      if (ref.read(taskDataProvider).isRenewed) {
-                        displayDB();
-                        ref.read(taskDataProvider).isRenewed = false;
+          child: Scrollbar(
+            controller: controller,
+            interactive: true,
+            radius: const Radius.circular(20),
+            thumbVisibility: true,
+            child:ListView(
+              primary: false,
+              controller:controller, 
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: SizeConfig.blockSizeHorizontal! * 2.5,
+                    right: SizeConfig.blockSizeHorizontal! * 2.5,
+                  ),
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: loadDataBases(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        // データが取得されるまでの間
+                        return calendarBody();
+                      } else if (snapshot.hasError) {
+                        // エラーがある場合
+                        return const SizedBox();
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        //カレンダーが空の場合
+                        if (ref.read(taskDataProvider).isRenewed) {
+                          displayDB();
+                          ref.read(taskDataProvider).isRenewed = false;
+                        }
+                        ref.read(calendarDataProvider).sortDataByDay();
+                        ref.read(timeTableProvider).sortDataByWeekDay(
+                            ref.read(timeTableProvider).timeTableDataList);
+                        return calendarBody();
+                      } else {
+                        //カレンダーがデータを持っている場合
+                        if (ref.read(taskDataProvider).isRenewed) {
+                          displayDB();
+                          ref.read(taskDataProvider).isRenewed = false;
+                        }
+                        ref.read(calendarDataProvider).getData(snapshot.data!);
+                        ref.read(taskDataProvider).getData(taskData);
+                        ref.read(calendarDataProvider).sortDataByDay();
+                        ref.read(timeTableProvider).sortDataByWeekDay(
+                            ref.read(timeTableProvider).timeTableDataList);
+                        ref
+                            .read(timeTableProvider)
+                            .initUniversityScheduleByDay(thisYear, semesterNum);
+                        return calendarBody();
                       }
-                      ref.read(calendarDataProvider).sortDataByDay();
-                      ref.read(timeTableProvider).sortDataByWeekDay(
-                          ref.read(timeTableProvider).timeTableDataList);
-                      return calendarBody();
-                    } else {
-                      //カレンダーがデータを持っている場合
-                      if (ref.read(taskDataProvider).isRenewed) {
-                        displayDB();
-                        ref.read(taskDataProvider).isRenewed = false;
-                      }
-                      ref.read(calendarDataProvider).getData(snapshot.data!);
-                      ref.read(taskDataProvider).getData(taskData);
-                      ref.read(calendarDataProvider).sortDataByDay();
-                      ref.read(timeTableProvider).sortDataByWeekDay(
-                          ref.read(timeTableProvider).timeTableDataList);
-                      ref
-                          .read(timeTableProvider)
-                          .initUniversityScheduleByDay(thisYear, semesterNum);
-                      return calendarBody();
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         floatingActionButton: Container(

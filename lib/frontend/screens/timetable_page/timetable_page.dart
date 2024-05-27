@@ -11,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/emptyclassroom.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
@@ -42,6 +43,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    ScrollController controller = ScrollController();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -49,20 +51,30 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           image: tableBackGroundImage(),
           fit: BoxFit.cover,
         )),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: SizeConfig.blockSizeHorizontal! * 2.5,
-            right: SizeConfig.blockSizeHorizontal! * 2.5,
+        child:Scrollbar(
+          controller: controller,
+          interactive: true,
+          radius: const Radius.circular(20),
+          thumbVisibility: true,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: SizeConfig.blockSizeHorizontal! * 2.5,
+              right: SizeConfig.blockSizeHorizontal! * 2.5,
+            ),
+            child: ListView(
+              primary: false,
+              controller: controller,
+              shrinkWrap: true,
+              children: [
+                const SizedBox(height: 10),
+                timeTable(),
+                const SizedBox(height: 20),
+                EmptyClassRoomView(),
+                const SizedBox(height: 80),
+              ],
+            ),
           ),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              const SizedBox(height: 10),
-              timeTable(),
-              const SizedBox(height: 30),
-            ],
-          ),
-        ),
+        )
       ),
       floatingActionButton: Container(
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),

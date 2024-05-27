@@ -52,6 +52,9 @@ dependencies:
   flutter_datetime_picker_plus: ^2.2.0
   flutter_dotenv: ^5.1.0
   flutter_inappwebview: ^6.0.0
+  flutter_map: ^7.0.0
+  latlong2: ^0.9.1
+  flutter_map_animations: ^0.7.0
 
   flutter_localizations:
     sdk: flutter
@@ -128,6 +131,20 @@ flutter:
     - lib/assets/tutorial_images/study_introduction.png
     - lib/assets/tutorial_images/task_add_button.png
     - lib/assets/tutorial_images/schedule_add_button.png
+
+    - lib/assets/map_images/location_pin.png
+
+    - lib/assets/map_images/waseda_building_3.png
+    - lib/assets/map_images/waseda_building_8.png
+    - lib/assets/map_images/waseda_building_11.png
+    - lib/assets/map_images/waseda_building_14.png
+    - lib/assets/map_images/waseda_building_15.png
+    - lib/assets/map_images/waseda_building_16.png
+    - lib/assets/map_images/waseda_building_21.png
+    - lib/assets/map_images/waseda_building_38.jpg
+    - lib/assets/map_images/waseda_building_53.jpg
+    - lib/assets/map_images/waseda_building_61.jpg
+    
 
     - lib/assets/schedule_share/schedule_backup_upload.png
     - lib/assets/schedule_share/schedule_backup_download.png
