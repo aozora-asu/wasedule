@@ -114,18 +114,18 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:m")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:m")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(dailyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 H:m")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -209,18 +209,18 @@ class NotifyContent {
         if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:m")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:m")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(weeklyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 H:m")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -333,15 +333,15 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:m")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:m")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
-          due = DateFormat("$n日後 H:m")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -365,7 +365,7 @@ class NotifyContent {
     for (var schedule in notifyScheduleList) {
       String startDatetime;
       if (schedule["startTime"] == "") {
-        startDatetime = "00:00";
+        startDatetime = "0:00";
       } else {
         startDatetime = schedule["startTime"];
       }
