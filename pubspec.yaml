@@ -134,6 +134,7 @@ flutter:
 
     - lib/assets/map_images/location_pin.png
     - lib/assets/map_images/library_pin.png
+    - lib/assets/map_images/food_pin.png
 
     - lib/assets/map_images/waseda_building_3.png
     - lib/assets/map_images/waseda_building_8.png
