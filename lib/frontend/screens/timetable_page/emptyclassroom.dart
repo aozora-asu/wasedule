@@ -49,7 +49,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
             alignment: Alignment.center,
             height:SizeConfig.blockSizeVertical! *6,
             child:Text(
-              "わせまっぷ(仮)",
+              "わせまっぷ(Beta版)",
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeVertical! *3,
                 fontWeight: FontWeight.bold
@@ -62,6 +62,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
               "Find your Waseda.",
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeVertical! *2,
+                color:Colors.blueGrey
               ))
           ),
            mapView(),
@@ -487,8 +488,8 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                           await mapWebViewController
                                   ?.getContentHeight() ??
                               100;
-                      if(!isMenu){
-                        mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);}
+                      // if(!isMenu){
+                      //   mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);}
                       setState(() {});
                     },
                     onContentSizeChanged:
@@ -636,9 +637,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                           await mapWebViewController
                                   ?.getContentHeight() ??
                               100;
-                      if(!isMenu){
-                        mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);
-                      }
+                      // if(!isMenu){
+                      //   mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);
+                      // }
                       setState(() {});
                     },
                     onContentSizeChanged:
