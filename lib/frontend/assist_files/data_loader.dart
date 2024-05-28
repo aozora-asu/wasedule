@@ -3,7 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TimeTableDataLoader {
@@ -54,10 +54,6 @@ class ConfigDataLoader {
         await CalendarConfigDatabaseHelper().getConfigFromDB();
     return arbeitList;
   }
-
-
-
-
 
   int searchConfigData(String widgetName, WidgetRef ref) {
     final calendarData = ref.watch(calendarDataProvider);
@@ -117,18 +113,18 @@ class UserInfoLoader {
   Future<String?> getUserIDSource(ref) async {
     Map<String, String?> userInfoMap =
         await UserDatabaseHelper().getBackupInfo();
-    
+
     String? rawDtEnd = userInfoMap["dtEnd"];
     String? userID = userInfoMap["backupID"];
-    insertDtEndToProvider(rawDtEnd,ref);
+    insertDtEndToProvider(rawDtEnd, ref);
     return userID;
   }
 
-  void insertDtEndToProvider(String? rawDtEnd, WidgetRef ref){
-   if(rawDtEnd != null){
-    DateTime dtEnd = DateTime.parse(rawDtEnd);
-    ref.read(calendarDataProvider).backUpDtEnd = dtEnd;
-   }
+  void insertDtEndToProvider(String? rawDtEnd, WidgetRef ref) {
+    if (rawDtEnd != null) {
+      DateTime dtEnd = DateTime.parse(rawDtEnd);
+      ref.read(calendarDataProvider).backUpDtEnd = dtEnd;
+    }
   }
 
   Future<void> insertDataToProvider(ref) async {

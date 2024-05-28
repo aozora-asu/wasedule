@@ -154,7 +154,6 @@ flutter:
     - lib/assets/map_images/waseda_central_library.jpg
     - lib/assets/map_images/waseda_toyama_library.jpg
     - lib/assets/map_images/waseda_rikou_library.jpg
-    
 
     - lib/assets/schedule_share/schedule_backup_upload.png
     - lib/assets/schedule_share/schedule_backup_download.png
@@ -165,6 +164,7 @@ flutter:
     - lib/frontend/screens/moodle_view_page/auto_login_checkbox.js
 
     - lib/frontend/screens/moodle_view_page/get_course_button.js
+    - lib/frontend/screens/timetable_page/scroll.js
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
