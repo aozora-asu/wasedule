@@ -1,5 +1,5 @@
 import 'package:flutter_calandar_app/converter.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:home_widget/home_widget.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';

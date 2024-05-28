@@ -3,7 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dar
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
-import "../../../frontend/screens/moodle_view_page/my_course_db.dart";
+import "my_course_db.dart";
 import "../../http_request.dart";
 
 import '../../notify/notify_content.dart';

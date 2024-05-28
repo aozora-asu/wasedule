@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +12,11 @@ import 'package:intl/intl.dart';
 class OndemandPreview extends ConsumerStatefulWidget {
   late Map target;
   late StateSetter setTimetableState;
-  late List<Map<String,dynamic>> taskList;
-  OndemandPreview({
-    required this.target,
-    required this.setTimetableState,
-    required this.taskList
-    });
+  late List<Map<String, dynamic>> taskList;
+  OndemandPreview(
+      {required this.target,
+      required this.setTimetableState,
+      required this.taskList});
   @override
   _OndemandPreviewState createState() => _OndemandPreviewState();
 }
@@ -102,8 +101,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                                 fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                 fontWeight: FontWeight.bold)),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        ]),
-                        Row(children:[
+                      ]),
+                      Row(children: [
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
                         Text(
                             target["year"].toString() +
@@ -125,7 +124,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                           int id = target["id"];
                           //＠ここにメモのアップデート関数！！！
                           await MyCourseDatabaseHandler().updateMemo(id, value);
-                          widget.setTimetableState((){});
+                          widget.setTimetableState(() {});
                         }),
                       ]),
                       dividerModel,
@@ -139,7 +138,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
                               Navigator.pop(context);
-                              widget.setTimetableState((){});
+                              widget.setTimetableState(() {});
                             }),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ])
@@ -180,39 +179,37 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     return result;
   }
 
-  Widget relatedTasks(){
-    if(widget.taskList.isNotEmpty){ 
+  Widget relatedTasks() {
+    if (widget.taskList.isNotEmpty) {
       return Container(
-        decoration: roundedBoxdecorationWithShadow(),
-        padding:const EdgeInsets.all(10.0),
-        width: SizeConfig.blockSizeHorizontal! *95,
-        child: Column(children:[
-          const Text("関連する課題",
-            style:TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold
-            )),
-          const Divider(thickness:1,height:10),
-          ListView.separated(
-            itemBuilder: (context,index){
-              return taskListChild(widget.taskList.elementAt(index));
-            },
-            separatorBuilder: (context,index){
-              return const SizedBox(height:5);
-            },
-            itemCount: widget.taskList.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-          )
-        ])
-      );
-    }else{
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.all(10.0),
+          width: SizeConfig.blockSizeHorizontal! * 95,
+          child: Column(children: [
+            const Text("関連する課題",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            const Divider(thickness: 1, height: 10),
+            ListView.separated(
+              itemBuilder: (context, index) {
+                return taskListChild(widget.taskList.elementAt(index));
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 5);
+              },
+              itemCount: widget.taskList.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+            )
+          ]));
+    } else {
       return const SizedBox();
     }
   }
 
-  Widget taskListChild(Map<String,dynamic> target){
-    DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(target["dtEnd"],);
+  Widget taskListChild(Map<String, dynamic> target) {
+    DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(
+      target["dtEnd"],
+    );
     String endDate = DateFormat("MM/dd").format(dtEnd);
     String endTime = DateFormat("HH:mm").format(dtEnd);
 
@@ -220,48 +217,50 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     String formatDuration(Duration duration) {
       int days = duration.inDays;
       int hours = duration.inHours % 24;
-      if(days == 0){
+      if (days == 0) {
         return 'あと${hours}時間';
-      }else{
+      } else {
         return 'あと${days}日${hours}時間';
       }
     }
+
     String remainingTimeInString = formatDuration(remainingTime);
     return GestureDetector(
-      onTap:(){
-        bottomSheet(target, ref, context, widget.setTimetableState);
-      },
-      child:Row(children:[
-        Column(children:[
-          Text(endDate,
-                style:const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-          Text(endTime,
-            style:const TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.normal,
-              color: Colors.grey)),
-        ]),
-        const SizedBox(width:5),
-        Expanded(child:
-          Container(
-            decoration:BoxDecoration(
-              color:Colors.white,
-              border: Border.all(color:Colors.grey),
-              borderRadius: BorderRadius.circular(10)
+        onTap: () {
+          bottomSheet(target, ref, context, widget.setTimetableState);
+        },
+        child: Row(children: [
+          Column(children: [
+            Text(
+              endDate,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            padding: const EdgeInsets.symmetric(vertical:5,horizontal:15),
-            child:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-                Text(remainingTimeInString,
-                  style:const TextStyle(color:Colors.redAccent)),
-                Text(target["summary"],
-                  style:const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),)
-            ])
-          )
-        )
-      ])
-    );
+            Text(endTime,
+                style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey)),
+          ]),
+          const SizedBox(width: 5),
+          Expanded(
+              child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(remainingTimeInString,
+                            style: const TextStyle(color: Colors.redAccent)),
+                        Text(
+                          target["summary"],
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        )
+                      ])))
+        ]));
   }
-
 }

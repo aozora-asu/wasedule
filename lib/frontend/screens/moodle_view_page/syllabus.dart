@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as html;
 import 'package:uuid/uuid.dart';
-import "./my_course_db.dart";
+import "../../../backend/DB/handler/my_course_db.dart";
 
 class RequestQuery {
   String? keyword;
