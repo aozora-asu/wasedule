@@ -59,7 +59,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
           SizedBox(
             height:SizeConfig.blockSizeVertical! *3,
             child:Text(
-              "Map",
+              "Find your Waseda.",
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeVertical! *2,
               ))
@@ -86,7 +86,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
 
   Map<String,LatLng> buildingLocations = const {
     "3" : LatLng(35.70924536312012, 139.72010069094065),
+    "7" : LatLng(35.70920076884335, 139.7194839350231),
     "8" : LatLng(35.70834887366013, 139.71985092673003),
+    "10" : LatLng(35.70847845517725, 139.71855810455077),
     "11" : LatLng(35.70901405731995, 139.71892837146606),
     "14" : LatLng(35.70982154825793, 139.7185954055238),
     "15" : LatLng(35.71024833967154, 139.71849563827368),
@@ -104,9 +106,13 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
     "52" : LatLng(35.705637188098656, 139.70709957841908),
     "53" : LatLng(35.70563507207901, 139.70751912052745),
     "54" : LatLng(35.70564142013665, 139.70788393977944),
+    "56" : LatLng(35.70649788798856, 139.7077277949618),
+    "57" : LatLng(35.70648095030999, 139.70723853939802),
+    "60" : LatLng(35.70604544935449, 139.7061200057127),
     "61" : LatLng(35.706045288457254, 139.70576259562358),
     "rikou_library" : LatLng(35.70602782207398, 139.70674367727975),
-    "rikou_food" : LatLng(35.7063853743607, 139.70790713805997),
+    "rikou_food" : LatLng(35.706287268366445, 139.70799168375845),
+    "rikou_food_63" : LatLng(35.7058358787014, 139.70525311831892),
 
     "tokorozawa_library" : LatLng(35.78520285349271, 139.39840174340995),
     "tokorozawa_food" : LatLng(35.78548026847353, 139.3985115677744),
@@ -115,7 +121,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
 
   Map<String,AssetImage> buildingImages = const {
     "3" : AssetImage('lib/assets/map_images/waseda_building_3.png'),
+    "7" : AssetImage('lib/assets/map_images/waseda_building_7.jpg'),
     "8" : AssetImage('lib/assets/map_images/waseda_building_8.png'),
+    "10" : AssetImage('lib/assets/map_images/waseda_building_10.jpg'),
     "11" : AssetImage('lib/assets/map_images/waseda_building_11.png'),
     "14" : AssetImage('lib/assets/map_images/waseda_building_14.png'),
     "15" : AssetImage('lib/assets/map_images/waseda_building_15.png'),
@@ -130,6 +138,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
     "52" : AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
     "53" : AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
     "54" : AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
+    "56" : AssetImage('lib/assets/map_images/waseda_building_56.jpg'),
+    "57" : AssetImage('lib/assets/map_images/waseda_building_57.jpg'),
+    "60" : AssetImage('lib/assets/map_images/waseda_building_60.jpg'),
     "61" : AssetImage('lib/assets/map_images/waseda_building_61.jpg'),
     "rikou_library" : AssetImage('lib/assets/map_images/waseda_rikou_library.jpg'),
 
@@ -146,6 +157,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
     "ground_slope_food" : "https://www.wcoop.ne.jp/schedule/schedule_",
     "toyama_food" : "https://www.wcoop.ne.jp/schedule/schedule_",
     "rikou_food" : "https://www.wcoop.ne.jp/schedule/schedule_",
+    "rikou_food_63" : "https://www.wcoop.ne.jp/schedule/schedule_",
     "tokorozawa_food" : "https://www.wcoop.ne.jp/schedule/schedule_",
   };
 
@@ -173,7 +185,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   foodPin("ground_slope_food"),
                   foodPin("ookuma_garden_food"),
                   markerPin("3"),
+                  markerPin("7"),
                   markerPin("8"),
+                  markerPin("10"),
                   markerPin("11"),
                   markerPin("14"),
                   markerPin("15"),
@@ -186,11 +200,15 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   markerPin("33"),
                   
                   foodPin("rikou_food"),
+                  foodPin("rikou_food_63"),
                   libraryPin("rikou_library"),
                   markerPin("52"),
                   markerPin("53"),
                   markerPin("54"),
+                  markerPin("56"),
+                  markerPin("57"),
                   markerPin("61"),
+                  markerPin("60"),
                   
                   foodPin("tokorozawa_food"),
                   libraryPin("tokorozawa_library"),
@@ -326,7 +344,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   Text(
                     " "+location+'号館',
                     style: TextStyle(
-                      fontSize: SizeConfig.blockSizeVertical! *4,
+                      fontSize: SizeConfig.blockSizeVertical! *3,
                       fontWeight: FontWeight.bold))
                   ])
                 ),
@@ -412,10 +430,11 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   Text(
                     " "+ buildingName,
                     style: TextStyle(
-                      fontSize: SizeConfig.blockSizeVertical! *4,
+                      fontSize: SizeConfig.blockSizeVertical! *3,
                       fontWeight: FontWeight.bold))
-                  ])
-                ),
+                ])
+              ),
+              SizedBox(height: SizeConfig.blockSizeVertical! *1),
               //const Divider(height: 2,thickness: 2,),
               Row(children:[
                 SizedBox(width: SizeConfig.safeBlockHorizontal! *3),
@@ -438,6 +457,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   " WINE(蔵書検索) "
                 )
               ]),
+              SizedBox(height: SizeConfig.blockSizeVertical! *1),
               Expanded(
                 child:Stack(
                 children:[
@@ -447,7 +467,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
             width: SizeConfig.blockSizeHorizontal! * 100,
             height: SizeConfig.blockSizeVertical! * 75,
             decoration:
-                BoxDecoration(border: Border.all()),
+                BoxDecoration(border: Border.all(color:Colors.grey)),
               child: Container(
                   width: SizeConfig.blockSizeHorizontal! *
                       100,
@@ -510,6 +530,10 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
         buildingName = " 理工カフェテリア";
         scrollDistance = 28700;
         break;
+      case "rikou_food_63":
+        buildingName = " 63号館カフェテリア";
+        scrollDistance = 30200;
+        break;
       case "tokorozawa_food":
         buildingName = " 所沢食堂 ";
         scrollDistance = 35700;
@@ -555,10 +579,11 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   Text(
                     " "+ buildingName,
                     style: TextStyle(
-                      fontSize: SizeConfig.blockSizeVertical! *4,
+                      fontSize: SizeConfig.blockSizeVertical! *3,
                       fontWeight: FontWeight.bold))
-                  ])
-                ),
+                ])
+              ),
+              SizedBox(height: SizeConfig.blockSizeVertical! *1),
               //const Divider(height: 2,thickness: 2,),
               Row(children:[
                 SizedBox(width: SizeConfig.safeBlockHorizontal! *3),
@@ -579,8 +604,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   },
                   Colors.yellow,
                   " メニュー "
-                )
+                ),
               ]),
+              SizedBox(height: SizeConfig.blockSizeVertical! *1),
               Expanded(
                 child:Stack(
                 children:[
@@ -590,7 +616,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
             width: SizeConfig.blockSizeHorizontal! * 100,
             height: SizeConfig.blockSizeVertical! * 75,
             decoration:
-                BoxDecoration(border: Border.all()),
+                BoxDecoration(border: Border.all(color:Colors.grey)),
               child: Container(
                   width: SizeConfig.blockSizeHorizontal! *
                       100,
