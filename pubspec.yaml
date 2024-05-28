@@ -133,6 +133,7 @@ flutter:
     - lib/assets/tutorial_images/schedule_add_button.png
 
     - lib/assets/map_images/location_pin.png
+    - lib/assets/map_images/library_pin.png
 
     - lib/assets/map_images/waseda_building_3.png
     - lib/assets/map_images/waseda_building_8.png
@@ -144,6 +145,9 @@ flutter:
     - lib/assets/map_images/waseda_building_38.jpg
     - lib/assets/map_images/waseda_building_53.jpg
     - lib/assets/map_images/waseda_building_61.jpg
+    - lib/assets/map_images/waseda_central_library.jpg
+    - lib/assets/map_images/waseda_toyama_library.jpg
+    - lib/assets/map_images/waseda_rikou_library.jpg
     
 
     - lib/assets/schedule_share/schedule_backup_upload.png
