@@ -115,6 +115,7 @@ flutter:
     - lib/assets/eye_catch/eyecatch.png
     - lib/assets/eye_catch/eyecatch_white.png
     - lib/assets/eye_catch/app_logo.png
+    - lib/assets/eye_catch/wase_map_logo.png
 
     - lib/assets/calendar_background/ookuma_morning.png
     - lib/assets/calendar_background/ookuma_day.png
