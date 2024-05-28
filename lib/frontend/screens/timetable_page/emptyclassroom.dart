@@ -46,13 +46,27 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
         ),
         child: Column(children: [
           Container(
-              alignment: Alignment.center,
-              height: SizeConfig.blockSizeVertical! * 6,
-              child: Text("わせまっぷ(Beta版)",
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeVertical! * 3,
-                      fontWeight: FontWeight.bold))),
-          const Divider(height: 1),
+
+            alignment: Alignment.center,
+            height:SizeConfig.blockSizeVertical! *6,
+            child:Row(children:[
+              const Spacer(),
+              SizedBox(
+                height:SizeConfig.blockSizeVertical! *4,
+                child:Image.asset('lib/assets/eye_catch/wase_map_logo.png')),
+              SizedBox(width:SizeConfig.blockSizeHorizontal! *2),
+              Text(
+                "わせまっぷ(Beta版)",
+                style: TextStyle(
+                  fontSize: SizeConfig.blockSizeVertical! *3,
+                  fontWeight: FontWeight.bold
+              )),
+              const Spacer()
+            ])
+              
+          ),
+          const Divider(height:1),
+
           SizedBox(
               height: SizeConfig.blockSizeVertical! * 3,
               child: Text("Find your Waseda.",
