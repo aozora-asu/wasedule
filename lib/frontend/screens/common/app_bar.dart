@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
@@ -9,6 +12,7 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.da
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import 'package:flutter_calandar_app/test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -55,11 +59,19 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
         elevation: 2,
         title: 
         Row(children: <Widget>[
-          LogoAndTitle(
-            size: 7,
-            color:contentColor,
-            isLogoWhite: isLogoWhite,
-            subTitle: "早稲田から、落単をなくしたい。",
+
+          GestureDetector(
+            onTap:(){
+              if(Platform.isIOS){
+                showFeedBackDialog(context);
+              }
+            },
+            child:LogoAndTitle(
+              size: 7,
+              color:contentColor,
+              isLogoWhite: isLogoWhite,
+              subTitle: "早稲田から、落単をなくしたい。",
+            )
           ),
           const Spacer(),
           InkWell(
@@ -97,6 +109,31 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
    }
   }
 }
+
+  void showFeedBackDialog(BuildContext context) {
+    final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:const Text("アプリをご利用いただきありがとうございます！"),
+          content: const Text("感想や評価など、ぜひアプリストアまでお寄せください！"),
+          actions: <Widget>[
+            buttonModel(
+              (){
+                  _urlLaunchWithStringButton.launchUriWithString(
+                  context,
+                  "https://apps.apple.com/jp/app/%E3%82%8F%E3%81%9B%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/id6479050214",
+                );
+              },
+              MAIN_COLOR,
+              " ストアへ "
+              )
+          ],
+        );
+      },
+    );
+  }
 
 Widget popupMenuButton(color){
   return PopupMenuButton(
