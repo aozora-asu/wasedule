@@ -246,8 +246,8 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
           Container(
             padding:const EdgeInsets.all(2),
             decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: Colors.black,
-              borderRadius: BorderRadius.circular(12.0), // 角の丸み
             ),
             child: Text(
               location,
@@ -269,7 +269,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
         point: buildingLocations[location]!, 
         child: GestureDetector(
           onTap: (){
-            showWebViewButtomSheet(location);
+            showLibraryButtomSheet(location);
           },
           child:Image.asset('lib/assets/map_images/library_pin.png')),  
         rotate: true,
@@ -349,9 +349,10 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
       });
     }
 
-    void showWebViewButtomSheet(String location){
+    void showLibraryButtomSheet(String location){
     int scrollDistance = 0;
     String buildingName = "";
+    bool isMenu = false;
     Image pinImage = Image.asset('lib/assets/map_images/library_pin.png');
     switch(location) {
       case "central_library":
@@ -384,7 +385,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         return Container(
-          height: SizeConfig.blockSizeVertical! *60,
+          height: SizeConfig.blockSizeVertical! *70,
           decoration:const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -415,7 +416,28 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                       fontWeight: FontWeight.bold))
                   ])
                 ),
-              const Divider(height: 2,thickness: 2,),
+              //const Divider(height: 2,thickness: 2,),
+              Row(children:[
+                SizedBox(width: SizeConfig.safeBlockHorizontal! *3),
+                buttonModel(
+                  (){
+                    isMenu = false;
+                    mapWebViewController.loadUrl(
+                     urlRequest: URLRequest(url: WebUri(webLinks[location]! + yearAndMonth)));
+                  },
+                  Colors.greenAccent,
+                  " 開館時間 "
+                ),
+                  buttonModel(
+                  ()async{
+                    isMenu = true;
+                    await mapWebViewController.loadUrl(
+                     urlRequest: URLRequest(url: WebUri("https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE")));
+                  },
+                  MAIN_COLOR,
+                  " WINE(蔵書検索) "
+                )
+              ]),
               Expanded(
                 child:Stack(
                 children:[
@@ -445,7 +467,8 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                           await mapWebViewController
                                   ?.getContentHeight() ??
                               100;
-                      mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);
+                      if(!isMenu){
+                        mapWebViewController.scrollBy(x:0,y:scrollDistance,animated: true);}
                       setState(() {});
                     },
                     onContentSizeChanged:
@@ -536,6 +559,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                       fontWeight: FontWeight.bold))
                   ])
                 ),
+              //const Divider(height: 2,thickness: 2,),
               Row(children:[
                 SizedBox(width: SizeConfig.safeBlockHorizontal! *3),
                 buttonModel(
@@ -557,7 +581,6 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
                   " メニュー "
                 )
               ]),
-              const Divider(height: 2,thickness: 2,),
               Expanded(
                 child:Stack(
                 children:[
