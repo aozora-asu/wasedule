@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -94,15 +92,19 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(children: [
+                      Row(
+                       crossAxisAlignment: CrossAxisAlignment.end,
+                       children: [
                         textFieldModel("授業名を入力…", classNameController,
                             FontWeight.bold, 30.0, (value) async {
                           int id = target["id"];
                           //＠ここに授業名変更関数を登録！！！
                           await MyCourseDatabaseHandler()
                               .updateCourseName(id, value);
-                          widget.setTimetableState(() {});
-                        })
+                          widget.setTimetableState((){});
+                        }),
+                        descriptionModeSwitch(),
+
                       ]),
                       switchViewMode(dividerModel, target),
                       const SizedBox(height: 5),
@@ -134,21 +136,43 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget viewModeSwitch() {
     Map target = widget.target;
-    if (target["syllabusID"] != null && target["syllabusID"] != "") {
-      if (viewMode == 0) {
-        return buttonModel(() {
-          setState(() {
-            viewMode = 1;
-          });
-        }, Colors.lightBlueAccent, " シラバス詳細 ");
-      } else {
-        return buttonModel(() {
-          setState(() {
-            viewMode = 0;
-          });
-        }, Colors.orangeAccent, " 授業の概要 ");
-      }
-    } else {
+    if(target["syllabusID"] != null &&
+    target["syllabusID"] != ""){
+      if(viewMode == 0){
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 1;
+            });
+          },
+          Colors.blueAccent,
+          " シラバス詳細 ");
+      }else{
+        return const SizedBox();
+      }   
+    }else{
+      return const SizedBox();
+    }
+  }
+
+  Widget descriptionModeSwitch(){
+    Map target = widget.target;
+    if(target["syllabusID"] != null &&
+    target["syllabusID"] != ""){
+      if(viewMode == 0){
+        return const SizedBox();
+      }else{
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 0;
+            });
+          },
+          Colors.blueAccent,
+          " もどる ");
+      }   
+    }else{
+
       return const SizedBox();
     }
   }
