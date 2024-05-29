@@ -11,7 +11,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/emptyclassroom.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/emptyclassroom_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
