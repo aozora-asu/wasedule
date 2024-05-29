@@ -74,14 +74,14 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
   }
 
   Map<String, LatLng> campusLocations = const {
-    "waseda": LatLng(35.70943486485431, 139.71912124551386),
+    "waseda": LatLng(35.70918661596566, 139.71979758630098),
     "toyama": LatLng(35.70562816868803, 139.7176382479536),
     "nishi_waseda": LatLng(35.70604328321409, 139.70671670575553),
     "tokorozawa": LatLng(35.78696579219986, 139.39954205621635),
   };
 
   Map<String,double> initMapZoom =  const {
-    "waseda" : 16.5,
+    "waseda" : 16.2,
     "toyama" : 17.2,
     "nishi_waseda" : 16.75,
     "tokorozawa" : 16,
@@ -192,7 +192,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
               initialCenter: campusLocations["waseda"]!,
               initialZoom: initMapZoom["waseda"]!,
               interactionOptions:const InteractionOptions(
-                flags: InteractiveFlag.pinchZoom,
+                flags: InteractiveFlag.none,
               )
             ),
             children: [
