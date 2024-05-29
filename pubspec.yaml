@@ -169,6 +169,7 @@ flutter:
     - lib/frontend/screens/moodle_view_page/auto_login_checkbox.js
 
     - lib/frontend/screens/moodle_view_page/get_course_button.js
+    - lib/frontend/assist_files/scroll_controller.js
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
