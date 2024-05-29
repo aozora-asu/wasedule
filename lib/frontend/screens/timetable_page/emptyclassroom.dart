@@ -91,7 +91,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
     "waseda" : 16.5,
     "toyama" : 16.5,
     "nishi_waseda" : 16.5,
-    "tokorozawa" : 16.5,
+    "tokorozawa" : 16,
   };
 
   Map<String,LatLng> buildingLocations = const {
@@ -232,26 +232,30 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
           child:Row(
             children:[
             buttonModel(
-              (){
-                _animatedMapController.animateTo(dest:campusLocations["waseda"]);
+              ()async{
+                await _animatedMapController.animateTo(dest:campusLocations["waseda"]);
+                await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
               },
               Colors.blue,
               "  早稲田  "),
               buttonModel(
-              (){
-                _animatedMapController.animateTo(dest:campusLocations["toyama"]);
+              ()async{
+                await _animatedMapController.animateTo(dest:campusLocations["toyama"]);
+                await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
               },
               Colors.blue,
               "   戸山   "),
               buttonModel(
-              (){
-                _animatedMapController.animateTo(dest:campusLocations["nishi_waseda"]);
+              ()async{
+                await _animatedMapController.animateTo(dest:campusLocations["nishi_waseda"]);
+                await _animatedMapController.animatedZoomTo(initMapZoom["nishi_waseda"]!);
               },
               Colors.blue,
               " 西早稲田 "),
               buttonModel(
-              (){
-                _animatedMapController.animateTo(dest:campusLocations["tokorozawa"]);
+              ()async{
+                await _animatedMapController.animateTo(dest:campusLocations["tokorozawa"]);
+                await _animatedMapController.animatedZoomTo(initMapZoom["tokorozawa"]!);
               },
               Colors.blue,
               "   所沢   "),
@@ -261,6 +265,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView> with Ti
   }
 
   Marker markerPin(String location){
+    Image.asset('lib/assets/map_images/location_pin_notempty.png');
     return Marker(
         width: 45.0,
         height: 45.0,
