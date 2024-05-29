@@ -7,7 +7,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
@@ -46,36 +46,35 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ScrollController controller = ScrollController();
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: tableBackGroundImage(),
-          fit: BoxFit.cover,
-        )),
-        child:Scrollbar(
-          controller: controller,
-          interactive: true,
-          radius: const Radius.circular(20),
-          thumbVisibility: true,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: SizeConfig.blockSizeHorizontal! * 2.5,
-              right: SizeConfig.blockSizeHorizontal! * 2.5,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: tableBackGroundImage(),
+            fit: BoxFit.cover,
+          )),
+          child: Scrollbar(
+            controller: controller,
+            interactive: true,
+            radius: const Radius.circular(20),
+            thumbVisibility: true,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: SizeConfig.blockSizeHorizontal! * 2.5,
+                right: SizeConfig.blockSizeHorizontal! * 2.5,
+              ),
+              child: ListView(
+                primary: false,
+                controller: controller,
+                shrinkWrap: true,
+                children: [
+                  const SizedBox(height: 10),
+                  timeTable(),
+                  const SizedBox(height: 20),
+                  EmptyClassRoomView(),
+                  const SizedBox(height: 80),
+                ],
+              ),
             ),
-            child: ListView(
-              primary: false,
-              controller: controller,
-              shrinkWrap: true,
-              children: [
-                const SizedBox(height: 10),
-                timeTable(),
-                const SizedBox(height: 20),
-                EmptyClassRoomView(),
-                const SizedBox(height: 80),
-              ],
-            ),
-          ),
-        )
-      ),
+          )),
       floatingActionButton: Container(
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
@@ -146,14 +145,14 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       semesterNum = 4;
     }
 
-    if(semesterList.isNotEmpty){
+    if (semesterList.isNotEmpty) {
       String quarter = semesterList[1];
       if (quarter == "spring_quarter") {
         semesterNum = 1;
       } else if (quarter == "summer_quarter") {
         semesterNum = 2;
       } else if (quarter == "fall_quarter") {
-         semesterNum = 3;
+        semesterNum = 3;
       } else if (quarter == "winter_quarter") {
         semesterNum = 4;
       }
@@ -312,65 +311,66 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   Widget timeTable() {
     return Screenshot(
-      controller:_screenShotController,
-      child:Container(
-        decoration: switchDecoration(),
-        child: Column(children: [
-          Row(children: [
-            IconButton(
-                onPressed: () {
-                  decreasePgNumber();
-                },
-                icon: const Icon(Icons.arrow_back_ios),
-                iconSize: 20),
-            Text(
-              semesterText(),
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    increasePgNumber();
-                  });
-                },
-                icon: const Icon(Icons.arrow_forward_ios),
-                iconSize: 20),
-            const Spacer(),
-            doNotContainScreenShot(changeQuaterbutton(1)),
-            doNotContainScreenShot(changeQuaterbutton(2)),
-            showOnlyScreenShot(LogoAndTitle(size: 5)),
-            const Spacer(),
-          ]),
-          FutureBuilder(
-              future: MyCourseDatabaseHandler().getMyCourse(),
-              builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return timeTableBody();
-                } else if (snapshot.hasError) {
-                  return const SizedBox();
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  ref.read(timeTableProvider).sortDataByWeekDay(snapshot.data!);
-                  ref
-                      .read(timeTableProvider)
-                      .initUniversityScheduleByDay(thisYear, semesterNum);
-                  for (int i = 0; i < snapshot.data!.length; i++) {}
-                  for (int i = 0;
-                      i <
-                          ref
-                              .read(timeTableProvider)
-                              .sortedDataByWeekDay
-                              .length;
-                      i++) {}
-                  return timeTableBody();
-                } else {
-                  return noDataScreen();
-                }
-              }))
-        ]))
-      );
+        controller: _screenShotController,
+        child: Container(
+            decoration: switchDecoration(),
+            child: Column(children: [
+              Row(children: [
+                IconButton(
+                    onPressed: () {
+                      decreasePgNumber();
+                    },
+                    icon: const Icon(Icons.arrow_back_ios),
+                    iconSize: 20),
+                Text(
+                  semesterText(),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        increasePgNumber();
+                      });
+                    },
+                    icon: const Icon(Icons.arrow_forward_ios),
+                    iconSize: 20),
+                const Spacer(),
+                doNotContainScreenShot(changeQuaterbutton(1)),
+                doNotContainScreenShot(changeQuaterbutton(2)),
+                showOnlyScreenShot(LogoAndTitle(size: 5)),
+                const Spacer(),
+              ]),
+              FutureBuilder(
+                  future: MyCourseDatabaseHandler().getMyCourse(),
+                  builder: ((context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return timeTableBody();
+                    } else if (snapshot.hasError) {
+                      return const SizedBox();
+                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      ref
+                          .read(timeTableProvider)
+                          .sortDataByWeekDay(snapshot.data!);
+                      ref
+                          .read(timeTableProvider)
+                          .initUniversityScheduleByDay(thisYear, semesterNum);
+                      for (int i = 0; i < snapshot.data!.length; i++) {}
+                      for (int i = 0;
+                          i <
+                              ref
+                                  .read(timeTableProvider)
+                                  .sortedDataByWeekDay
+                                  .length;
+                          i++) {}
+                      return timeTableBody();
+                    } else {
+                      return noDataScreen();
+                    }
+                  }))
+            ])));
   }
 
   BoxDecoration switchDecoration() {
@@ -407,7 +407,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       return const SizedBox();
     }
   }
-
 
   Widget noDataScreen() {
     return SizedBox(
@@ -902,8 +901,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 classRoomView,
                 const Spacer()
               ]))),
-      doNotContainScreenShot(
-        Align(
+      doNotContainScreenShot(Align(
           alignment: const Alignment(-1, -1),
           child: lengthBadge(taskLength, fontSize, true))),
     ]);
@@ -949,8 +947,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               const Spacer(),
             ]),
           ),
-          doNotContainScreenShot(
-            Align(
+          doNotContainScreenShot(Align(
               alignment: const Alignment(-1, -1),
               child: lengthBadge(taskLength, fontSize, true)))
         ]));

@@ -1,7 +1,7 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import './syllabus.dart';
+import '../../../frontend/screens/moodle_view_page/syllabus.dart';
 import "../../../converter.dart";
 
 class SyllabusQueryResult {
@@ -301,7 +301,7 @@ class MyCourseDatabaseHandler {
             'year = ? AND period = ? AND weekday = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
         whereArgs: [
           datetime2schoolYear(now),
-          datetime2Period(now.add(const Duration(minutes: 30))),
+          datetime2Period(now.add(const Duration(minutes: 70))),
           now.weekday,
           ...semesters
         ]);
