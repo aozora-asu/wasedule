@@ -191,6 +191,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
             options: MapOptions(
               initialCenter: campusLocations["waseda"]!,
               initialZoom: initMapZoom["waseda"]!,
+              interactionOptions:const InteractionOptions(
+                flags: InteractiveFlag.pinchZoom,
+              )
             ),
             children: [
               TileLayer(
