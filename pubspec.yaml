@@ -139,8 +139,10 @@ flutter:
     - lib/assets/map_images/food_pin.png
 
     - lib/assets/map_images/waseda_building_3.png
+    - lib/assets/map_images/waseda_building_6.jpg
     - lib/assets/map_images/waseda_building_7.jpg
     - lib/assets/map_images/waseda_building_8.png
+
     - lib/assets/map_images/waseda_building_10.jpg
     - lib/assets/map_images/waseda_building_11.png
     - lib/assets/map_images/waseda_building_14.png
@@ -153,6 +155,7 @@ flutter:
     - lib/assets/map_images/waseda_building_57.jpg
     - lib/assets/map_images/waseda_building_60.jpg
     - lib/assets/map_images/waseda_building_61.jpg
+    - lib/assets/map_images/waseda_building_63.jpg
     - lib/assets/map_images/waseda_central_library.jpg
     - lib/assets/map_images/waseda_toyama_library.jpg
     - lib/assets/map_images/waseda_rikou_library.jpg
