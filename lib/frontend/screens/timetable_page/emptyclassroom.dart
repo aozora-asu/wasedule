@@ -46,27 +46,22 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
         ),
         child: Column(children: [
           Container(
-
-            alignment: Alignment.center,
-            height:SizeConfig.blockSizeVertical! *6,
-            child:Row(children:[
-              const Spacer(),
-              SizedBox(
-                height:SizeConfig.blockSizeVertical! *4,
-                child:Image.asset('lib/assets/eye_catch/wase_map_logo.png')),
-              SizedBox(width:SizeConfig.blockSizeHorizontal! *2),
-              Text(
-                "わせまっぷ(Beta版)",
-                style: TextStyle(
-                  fontSize: SizeConfig.blockSizeVertical! *3,
-                  fontWeight: FontWeight.bold
-              )),
-              const Spacer()
-            ])
-              
-          ),
-          const Divider(height:1),
-
+              alignment: Alignment.center,
+              height: SizeConfig.blockSizeVertical! * 6,
+              child: Row(children: [
+                const Spacer(),
+                SizedBox(
+                    height: SizeConfig.blockSizeVertical! * 4,
+                    child:
+                        Image.asset('lib/assets/eye_catch/wase_map_logo.png')),
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+                Text("わせまっぷ(Beta版)",
+                    style: TextStyle(
+                        fontSize: SizeConfig.blockSizeVertical! * 3,
+                        fontWeight: FontWeight.bold)),
+                const Spacer()
+              ])),
+          const Divider(height: 1),
           SizedBox(
               height: SizeConfig.blockSizeVertical! * 3,
               child: Text("Find your Waseda.",
@@ -85,12 +80,11 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
     "tokorozawa": LatLng(35.78696579219986, 139.39954205621635),
   };
 
-  Map<String,double> initMapZoom =  const {
-    "waseda" : 16.5,
-    "toyama" : 16.5,
-    "nishi_waseda" : 16.5,
-    "tokorozawa" : 16,
-
+  Map<String, double> initMapZoom = const {
+    "waseda": 16.5,
+    "toyama": 16.5,
+    "nishi_waseda": 16.5,
+    "tokorozawa": 16,
   };
 
   Map<String, LatLng> buildingLocations = const {
@@ -180,8 +174,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: const ['a', 'b', 'c'],
               ),
               MarkerLayer(
@@ -219,43 +212,36 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
             ],
           )),
       SizedBox(
-        height: SizeConfig.blockSizeVertical! *5,
-          child:Row(
-            children:[
-            buttonModel(
-              ()async{
-                await _animatedMapController.animateTo(dest:campusLocations["waseda"]);
-                await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
-              },
-              Colors.blue,
-              "  早稲田  "),
-              buttonModel(
-              ()async{
-                await _animatedMapController.animateTo(dest:campusLocations["toyama"]);
-                await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
-              },
-              Colors.blue,
-              "   戸山   "),
-              buttonModel(
-              ()async{
-                await _animatedMapController.animateTo(dest:campusLocations["nishi_waseda"]);
-                await _animatedMapController.animatedZoomTo(initMapZoom["nishi_waseda"]!);
-              },
-              Colors.blue,
-              " 西早稲田 "),
-              buttonModel(
-              ()async{
-                await _animatedMapController.animateTo(dest:campusLocations["tokorozawa"]);
-                await _animatedMapController.animatedZoomTo(initMapZoom["tokorozawa"]!);
-              },
-              Colors.blue,
-              "   所沢   "),
-          ]),
-        )
+        height: SizeConfig.blockSizeVertical! * 5,
+        child: Row(children: [
+          buttonModel(() async {
+            await _animatedMapController.animateTo(
+                dest: campusLocations["waseda"]);
+            await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
+          }, Colors.blue, "  早稲田  "),
+          buttonModel(() async {
+            await _animatedMapController.animateTo(
+                dest: campusLocations["toyama"]);
+            await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
+          }, Colors.blue, "   戸山   "),
+          buttonModel(() async {
+            await _animatedMapController.animateTo(
+                dest: campusLocations["nishi_waseda"]);
+            await _animatedMapController
+                .animatedZoomTo(initMapZoom["nishi_waseda"]!);
+          }, Colors.blue, " 西早稲田 "),
+          buttonModel(() async {
+            await _animatedMapController.animateTo(
+                dest: campusLocations["tokorozawa"]);
+            await _animatedMapController
+                .animatedZoomTo(initMapZoom["tokorozawa"]!);
+          }, Colors.blue, "   所沢   "),
+        ]),
+      )
     ]);
   }
 
-  Marker markerPin(String location){
+  Marker markerPin(String location) {
     Image.asset('lib/assets/map_images/location_pin_notempty.png');
     return Marker(
       width: 45.0,
