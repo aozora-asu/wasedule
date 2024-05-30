@@ -80,6 +80,8 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   home_widget: ^0.6.0
   #workmanager: ^0.5.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +94,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
+  hive_generator: ^1.1.1
+  build_runner: ^2.1.5
 dependency_overrides:
   flutter_colorpicker:
     git:

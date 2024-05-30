@@ -31,27 +31,28 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                   height: SizeConfig.blockSizeVertical! * _height,
                   child: InAppWebView(
                     key: webMoodleViewKey,
+                    onConsoleMessage: (controller, consoleMessage) async {
+                      print(consoleMessage.message);
+                    },
                     initialUrlRequest: URLRequest(
                         url: WebUri(
                             "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=" +
                                 pageID)),
-                    onWebViewCreated: (controller) {
+                    onWebViewCreated: (controller) async {
                       webMoodleViewController = controller;
+                      String javascriptCode = await rootBundle.loadString(
+                          'lib/frontend/assist_files/scroll_controller.js');
+                      await webMoodleViewController.evaluateJavascript(
+                          source: javascriptCode);
                     },
                     onLoadStop: (a, b) async {
                       String javascriptCode = await rootBundle.loadString(
                           'lib/frontend/assist_files/scroll_controller.js');
                       await webMoodleViewController.evaluateJavascript(
                           source: javascriptCode);
-                      _height =
-                          await webMoodleViewController?.getContentHeight() ??
-                              100;
                       setState(() {});
                     },
                     onContentSizeChanged: (a, b, c) async {
-                      _height =
-                          await webMoodleViewController?.getContentHeight() ??
-                              100;
                       setState(() {});
                     },
                   )),
