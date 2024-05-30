@@ -331,14 +331,16 @@ List<String> extractClassRoom(String input) {
   return result;
 }
 
-Future<Map<String, Map<String, Map<String, List<String>>>>> vacntRoomList(
-    int buildingNum) async {
+Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
+    vacntRoomList(int buildingNum) async {
   List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
   RequestQuery requestQuery;
   String htmlString;
   String? semester;
   List<Map<String, int?>> periodAndDateList;
-  Map<String, Map<String, Map<String, List<String>>>> vacantClassRoomMap = {};
+
+  Map<String, Map<String, Map<String, Map<String, List<String>>>>>
+      vacantClassRoomMap = {};
   Map<String, Map<String, List<String>>> emptyroomWeekdayAndPeriod = {};
   Map<String, List<String>> map = {};
   List<String> quarterList = [];
@@ -391,9 +393,18 @@ Future<Map<String, Map<String, Map<String, List<String>>>>> vacntRoomList(
           quarterList = semester2quarterList(semester);
           for (var quarter in quarterList) {
             if (vacantClassRoomMap.containsKey(quarter)) {
-              vacantClassRoomMap[quarter]!.addAll(emptyroomWeekdayAndPeriod);
+              if (vacantClassRoomMap[quarter]!
+                  .containsKey(buildingNum.toString())) {
+                vacantClassRoomMap[quarter]![buildingNum.toString()]!
+                    .addAll(emptyroomWeekdayAndPeriod);
+              } else {
+                vacantClassRoomMap[quarter]![buildingNum.toString()] =
+                    emptyroomWeekdayAndPeriod;
+              }
             } else {
-              vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
+              vacantClassRoomMap[quarter] = {
+                buildingNum.toString(): emptyroomWeekdayAndPeriod
+              };
             }
           }
         }
