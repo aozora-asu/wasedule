@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_calandar_app/converter.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
-
+import "./classRoom.dart";
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as html;
 import 'package:uuid/uuid.dart';
@@ -122,12 +126,12 @@ class RequestQuery {
   }
 }
 
-Future<String> fetchSyllabusResults(RequestQuery requestBody) async {
+Future<String> fetchSyllabusResults(RequestQuery requestQuery) async {
   // リクエストを送信
   final response = await http.post(
     Uri.parse('https://www.wsl.waseda.jp/syllabus/JAA101.php'),
-    headers: requestBody.makeHeader(),
-    body: requestBody.makeBody(),
+    headers: requestQuery.makeHeader(),
+    body: requestQuery.makeBody(),
   );
 
   // レスポンスを処理
@@ -327,135 +331,77 @@ List<String> extractClassRoom(String input) {
   return result;
 }
 
-Future<Set<String>> getClassRoomSet() async {
-  var _set = <String>{};
-  for (int i = 1; i <= 57; i++) {
-    RequestQuery requestQuery =
-        RequestQuery(p_youbi: "1", p_number: "100", p_page: i.toString());
-    List<SyllabusQueryResult>? syllabusQueryResultList;
-    syllabusQueryResultList =
-        _getAllCourse(await fetchSyllabusResults(requestQuery));
-    if (syllabusQueryResultList != null) {
-      for (var syllabusQueryResult in syllabusQueryResultList) {
-        _set.add(syllabusQueryResult.classRoom);
+Future<Map<String, Map<String, Map<String, List<String>>>>> vacntRoomList(
+    int buildingNum) async {
+  List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
+  RequestQuery requestQuery;
+  String htmlString;
+  String? semester;
+  List<Map<String, int?>> periodAndDateList;
+  Map<String, Map<String, Map<String, List<String>>>> vacantClassRoomMap = {};
+  Map<String, Map<String, List<String>>> emptyroomWeekdayAndPeriod = {};
+  Map<String, List<String>> map = {};
+  List<String> quarterList = [];
+  for (int i = 1; i <= 7; i++) {
+    for (int j = 1; j <= 6; j++) {
+      map = {j.toString(): List<String>.from(classRoomList)};
+      if (emptyroomWeekdayAndPeriod.containsKey(i.toString())) {
+        emptyroomWeekdayAndPeriod[i.toString()]!.addAll(map);
+      } else {
+        emptyroomWeekdayAndPeriod[i.toString()] = map;
       }
     }
   }
-  for (int i = 1; i <= 65; i++) {
-    RequestQuery requestQuery =
-        RequestQuery(p_youbi: "2", p_number: "100", p_page: i.toString());
-    List<SyllabusQueryResult>? syllabusQueryResultList;
-    syllabusQueryResultList =
-        _getAllCourse(await fetchSyllabusResults(requestQuery));
-    if (syllabusQueryResultList != null) {
-      for (var syllabusQueryResult in syllabusQueryResultList) {
-        _set.add(syllabusQueryResult.classRoom);
-      }
-    }
-  }
-  for (int i = 1; i <= 47; i++) {
-    RequestQuery requestQuery =
-        RequestQuery(p_youbi: "3", p_number: "100", p_page: i.toString());
-    List<SyllabusQueryResult>? syllabusQueryResultList;
-    syllabusQueryResultList =
-        _getAllCourse(await fetchSyllabusResults(requestQuery));
-    if (syllabusQueryResultList != null) {
-      for (var syllabusQueryResult in syllabusQueryResultList) {
-        _set.add(syllabusQueryResult.classRoom);
-      }
-    }
-  }
-  for (int i = 1; i <= 64; i++) {
-    RequestQuery requestQuery =
-        RequestQuery(p_youbi: "4", p_number: "100", p_page: i.toString());
-    List<SyllabusQueryResult>? syllabusQueryResultList;
-    syllabusQueryResultList =
-        _getAllCourse(await fetchSyllabusResults(requestQuery));
-    if (syllabusQueryResultList != null) {
-      for (var syllabusQueryResult in syllabusQueryResultList) {
-        _set.add(syllabusQueryResult.classRoom);
-      }
-    }
-  }
-  for (int i = 1; i <= 55; i++) {
-    RequestQuery requestQuery =
-        RequestQuery(p_youbi: "5", p_number: "100", p_page: i.toString());
-    List<SyllabusQueryResult>? syllabusQueryResultList;
-    syllabusQueryResultList =
-        _getAllCourse(await fetchSyllabusResults(requestQuery));
-    if (syllabusQueryResultList != null) {
-      for (var syllabusQueryResult in syllabusQueryResultList) {
-        _set.add(syllabusQueryResult.classRoom);
-      }
-    }
-  }
-  makeClassRoomMap(_set);
 
-  return _set;
-}
-
-List<SyllabusQueryResult>? _getAllCourse(String htmlString) {
-  final document = html_parser.parse(htmlString);
-  final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
-  List<SyllabusQueryResult> syllabusQueryResultList = [];
-  if (trElements.isNotEmpty) {
-    trElements.removeAt(0);
-    for (var trElement in trElements) {
-      final tdElements = trElement.querySelectorAll("td");
-
-      List<Map<String, int?>> periodAndDateList =
-          extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
-      List<String> classRoomList = extractClassRoom(
-          zenkaku2hankaku(tdElements[7].innerHtml.replaceAll("<br>", "\n")));
-
-      for (var periodAndDate in periodAndDateList) {
-        for (var classRoom in classRoomList) {
-          SyllabusQueryResult syllabusResult = SyllabusQueryResult(
-              courseName: tdElements[2].text,
-              classRoom: classRoom,
-              period: periodAndDate["period"],
-              weekday: periodAndDate["weekday"],
-              semester: convertSemester(tdElements[5].text),
-              year: int.parse(tdElements[0].text),
-              syllabusID: null);
-
-          syllabusQueryResultList.add(syllabusResult);
+  for (var classRoom in classRoomList) {
+    requestQuery = RequestQuery(
+      p_gakki: "1",
+      keyword: classRoom,
+      p_number: "100",
+    );
+    htmlString = await fetchSyllabusResults(requestQuery);
+    final document = html_parser.parse(htmlString);
+    final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
+    if (trElements.isNotEmpty) {
+      trElements.removeAt(0);
+      //検索結果の羅列から、一行ずつみていく
+      for (var trElement in trElements) {
+        final tdElements = trElement.querySelectorAll("td");
+        periodAndDateList =
+            extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
+        //時限-曜日が複数羅列している時の処理
+        for (var periodAndDate in periodAndDateList) {
+          if (periodAndDate["weekday"] != null &&
+              periodAndDate["period"] != null) {
+            String weekday = periodAndDate["weekday"].toString();
+            String period = periodAndDate["period"].toString();
+            if (emptyroomWeekdayAndPeriod.containsKey(weekday) &&
+                emptyroomWeekdayAndPeriod[weekday]!.containsKey(period)) {
+              // removeの前にコピーを作成
+              List<String> updatedClassRooms = List<String>.from(
+                  emptyroomWeekdayAndPeriod[weekday]![period]!);
+              updatedClassRooms.remove(classRoom);
+              emptyroomWeekdayAndPeriod[weekday]![period] = updatedClassRooms;
+            }
+          }
+        }
+        semester = convertSemester(tdElements[5].text);
+        //開講学期があれば
+        if (semester != null) {
+          quarterList = semester2quarterList(semester);
+          for (var quarter in quarterList) {
+            if (vacantClassRoomMap.containsKey(quarter)) {
+              vacantClassRoomMap[quarter]!.addAll(emptyroomWeekdayAndPeriod);
+            } else {
+              vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
+            }
+          }
         }
       }
-    }
-
-    return syllabusQueryResultList;
-  } else {
-    return null;
-  }
-}
-
-Map<String, List<String>> makeClassRoomMap(Set set) {
-  RegExp _pattern3 = RegExp(r'(\d+)-(.*)');
-  Map<String, List<String>> map = {};
-  for (var s in set) {
-    Iterable<RegExpMatch> matches = _pattern3.allMatches(s);
-    for (var match in matches) {
-      if (map.containsKey("\"${match.group(1)}\"")) {
-        map["\"${match.group(1)}\""]!
-            .add("\"${match.group(1)}-${match.group(2)!}\"");
-      } else {
-        map["\"${match.group(1)!}\""] = [
-          "\"${match.group(1)}-${match.group(2)!}\""
-        ];
-      }
+    } else {
+      return {};
     }
   }
 
-  for (var value in map.values) {
-    value.sort();
-  }
-  printWrapped(map.toString());
-
-  return map;
-}
-
-void printWrapped(String text) {
-  final pattern = new RegExp('.{1,500}'); // 800 is the size of each chunk
-  pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  return vacantClassRoomMap;
 }

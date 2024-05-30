@@ -204,3 +204,51 @@ List<String> datetime2termList(DateTime currentDate) {
   }
   return currentTerms;
 }
+
+List<String> semester2quarterList(String text) {
+  switch (text) {
+    case "spring_quarter":
+      return ["spring_quarter"];
+    case "summer_quarter":
+      return ["summer_quarter"];
+    case "spring_semster":
+      return ["spring_quarter", "summer_quarter"];
+    case "fall_quarter":
+      return ["fall_quarter"];
+    case "winter_quarter":
+      return ["winter_quarter"];
+    case "fall_semster":
+      return ["fall_quarter", "winter_quarter"];
+    case "full_year":
+      return [
+        "spring_quarter",
+        "summer_quarter",
+        "fall_quarter",
+        "winter_quarter"
+      ];
+
+    default:
+      return [];
+  }
+}
+
+String? convertSemester(String? text) {
+  switch (text) {
+    case "春クォーター":
+      return "spring_quarter";
+    case "夏クォーター":
+      return "summer_quarter";
+    case "春学期":
+      return "spring_semester";
+    case "秋クォーター":
+      return "fall_quarter";
+    case "冬クォーター":
+      return "winter_quarter";
+    case "秋学期":
+      return "fall_semester";
+    case "通年":
+      return "full_year";
+    default:
+      return null;
+  }
+}
