@@ -241,6 +241,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           maxLines: null,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
+              fillColor: Colors.white,
+              filled: true,
               border: InputBorder.none, hintText: hintText),
           style: TextStyle(
               fontSize: fontSize, color: Colors.black, fontWeight: weight),

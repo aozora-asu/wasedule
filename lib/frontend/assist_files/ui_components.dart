@@ -78,3 +78,20 @@ Widget lengthBadge(int length, fontSize, bool hideZero) {
         ));
   }
 }
+
+LinearGradient gradationDecoration(
+  {Color color1 = MAIN_COLOR,
+   Color color2 = Colors.black}){
+  return LinearGradient(
+      begin: FractionalOffset.topLeft,
+      end: FractionalOffset.bottomRight,
+      colors: [
+        color1,
+        color2,
+      ],
+      stops: const [
+        0.0,
+        1.0,
+      ]
+  );
+}
