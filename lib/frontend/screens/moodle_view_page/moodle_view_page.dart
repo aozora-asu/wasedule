@@ -116,6 +116,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                   'lib/frontend/screens/moodle_view_page/get_course_button.js');
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
+
             // case moodleLoginUrl:
             //   javascriptCode = await rootBundle.loadString(
             //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
