@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -340,9 +342,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
-              decoration: const BoxDecoration(
+              decoration:const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
+                borderRadius:BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -352,9 +354,11 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 Container(
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
+                      gradient: gradationDecoration(
+                        color2:Colors.black),
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius:const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -365,7 +369,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                       Text(" " + location + '号館',
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
-                              fontWeight: FontWeight.bold))
+                              fontWeight: FontWeight.bold,
+                              color:Colors.white
+                              ))
                     ])),
                 const Divider(
                   height: 2,
@@ -379,10 +385,85 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                           image: buildingImages[location]!, fit: BoxFit.cover),
                     ),
                   ),
-                  Container(color: Colors.white.withOpacity(0.6))
+                  Container(
+                      height: SizeConfig.blockSizeVertical! * 60,
+                      color: Colors.white.withOpacity(0.6),
+                      padding:const EdgeInsets.all(10),
+                      child: emptyClassRooms(location),
+                    )
                 ]))
               ]));
         });
+  }
+
+  Widget emptyClassRooms(String location){
+    DateTime now = DateTime.now();
+    String current_quarter = datetime2termList(now)[1];
+    int current_period = datetime2Period(now) ?? 0;
+
+    return FutureBuilder(
+      future: vacntRoomList(int.parse(location)),
+      builder: (context,snapshot){
+        if(snapshot.connectionState==ConnectionState.waiting){
+         return const Center(
+          child:CircularProgressIndicator(color: MAIN_COLOR));
+        }else if(snapshot.hasData){
+          String searchResult = "授業期間外です。";
+
+          Map<String, Map<String, dynamic>> quarterMap = 
+            snapshot.data![current_quarter] ?? {};
+
+          Map<String, dynamic> buildingMap = 
+            quarterMap[location] ?? {};
+
+          dynamic weekDayMap = 
+            buildingMap[now.weekday.toString()] ?? {};
+
+          dynamic periodList = 
+            weekDayMap[current_period.toString()] ?? [];
+          
+          if(current_period == 0){
+            searchResult = "授業時間外です。";
+          }else if(periodList.isEmpty){
+            searchResult = "空き教室はありません。";
+          }else{
+            searchResult = periodList.join('\n');
+          }
+
+
+          return SingleChildScrollView(
+            child:Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:[
+              Text("現在の空き教室",
+                style:TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: SizeConfig.blockSizeHorizontal! *6,
+                  color:Colors.blueGrey
+                )),
+              Container(
+                width: SizeConfig.blockSizeHorizontal! *100,
+                padding: const EdgeInsets.all(7.5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7.0),
+                  gradient: gradationDecoration()
+                ),
+                child: Text(
+                  searchResult,
+                  style:TextStyle(
+                    color:Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize:SizeConfig.blockSizeHorizontal! *5,
+                  ))
+              )
+            ]));
+        }else{
+          return const Center(
+          child:CircularProgressIndicator(color: Colors.red));
+        }
+      });
+
+
   }
 
   void showLibraryButtomSheet(String location) {
@@ -436,9 +517,12 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 Container(
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      gradient: gradationDecoration(
+                        color1:Colors.orange,
+                        color2:Colors.brown),
+                      borderRadius:const  BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -449,10 +533,11 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                       Text(" " + buildingName,
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
-                              fontWeight: FontWeight.bold))
+                              fontWeight: FontWeight.bold,
+                              color:Colors.white
+                              ))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
-                //const Divider(height: 2,thickness: 2,),
                 Row(children: [
                   SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
                   buttonModel(() {
@@ -583,9 +668,12 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 Container(
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
+                      gradient: gradationDecoration(
+                        color1:Colors.red,
+                        color2:Colors.brown),
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius:const  BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -596,7 +684,8 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                       Text(" " + buildingName,
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
-                              fontWeight: FontWeight.bold))
+                              fontWeight: FontWeight.bold,
+                              color:Colors.white))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 //const Divider(height: 2,thickness: 2,),
