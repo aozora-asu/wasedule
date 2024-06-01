@@ -401,8 +401,8 @@ Future<bool> hasVacantRoom(int buildingNum) async {
   RequestQuery requestQuery;
   String htmlString;
   String? semester;
-  DateTime now = DateTime.now().subtract(Duration(days: 1, hours: 5));
-  print("${now.weekday.toString()}${datetime2Period(now)}限");
+  DateTime now = DateTime.now();
+
   List<String> nowSemester = datetime2termList(now);
   bool hasVacantRoom = false; // 初期値をfalseに設定
 
