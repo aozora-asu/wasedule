@@ -401,7 +401,8 @@ Future<bool> hasVacantRoom(int buildingNum) async {
   RequestQuery requestQuery;
   String htmlString;
   String? semester;
-  DateTime now = DateTime.now();
+  DateTime now = DateTime.now().subtract(Duration(days: 1, hours: 5));
+  print("${now.weekday.toString()}${datetime2Period(now)}限");
   List<String> nowSemester = datetime2termList(now);
   bool hasVacantRoom = false; // 初期値をfalseに設定
 
@@ -420,23 +421,24 @@ Future<bool> hasVacantRoom(int buildingNum) async {
       for (var trElement in trElements) {
         final tdElements = trElement.querySelectorAll("td");
         semester = convertSemester(tdElements[5].text);
-        // 開講学期があれば
-        if (semester != null) {
-          if (nowSemester.contains(semester)) {
-            // クラスが開いている場合
-
-            hasVacantRoom = true; // trueに設定
-            break; // すでに開いているクラスが見つかったらループを抜ける
-          }
+        // 開講学期がnowSemesterに含まれていない場合、クラスが空いている
+        if (semester == null || !nowSemester.contains(semester)) {
+          //print("$classRoomは開いています");
+          hasVacantRoom = true; // クラスが空いていると判定
+          break; // すでに空いているクラスが見つかったらループを抜ける
         }
       }
+    } else {
+      //print("$classRoomは開いています (検索結果なし)");
+      hasVacantRoom = true; // 検索結果が空の場合、クラスが空いていると判定
+      break;
     }
     if (hasVacantRoom) {
-      // クラスが開いている場合はループを抜ける
+      // クラスが空いている場合はループを抜ける
       break;
     }
   }
 
-  // 少なくとも1つのクラスが開いている場合にtrueを返す
+  // 少なくとも1つのクラスが空いている場合にtrueを返す
   return hasVacantRoom;
 }
