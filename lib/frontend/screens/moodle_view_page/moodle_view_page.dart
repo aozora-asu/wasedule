@@ -15,9 +15,11 @@ import 'dart:convert';
 import 'dart:io';
 import '../../../backend/home_widget.dart';
 import '../common/loading.dart';
+import "./request_calendar_url.dart";
+import "../../../backend/DB/handler/user_info_db_handler.dart";
 
 void printWrapped(String text) {
-  final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+  final pattern = new RegExp('.{1,500}'); // 800 is the size of each chunk
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
@@ -49,6 +51,9 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
   // static const String microsoftLoginUrl =
   //     "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/saml2?SAMLRequest=hVJdb5wwEPwryO9gMAcH1nHRNaeqJ6XNKZA%2B9KVauCXnytjUa5L235fcR5W%2BpK%2F27MzOzK5ufg06eEZHypqKJVHMAjSdPSjzVLHH5mNYsJv1imDQYpSbyR%2FNA%2F6ckHwwDxqS55%2BKTc5IC6RIGhiQpO9kvfl8J0UUy9FZbzurWbAhQudnqVtraBrQ1eieVYePD3cVO3o%2FkuRcgTqMkYLoBQgPEP0Y%2BfzAZ5ZeaeSnJfgrueD7%2B7rhdX3Pgu28kjLgTzauTNo%2BKRMNqnOWbO%2Bt0cpg1NmBt2mRZ8lShGVRLMNFm0JYlH0flhmkWVuKftGl%2FOSNBbttxb6LZQJ9mS%2FaJEvEIRVpBiAgzxGhLESLM4xowp0hD8ZXTMRiEcZZGIsmiWWWyCyPyrz4xoL9JY0PypxTfi%2B69gwi%2Balp9uGrXRZ8vbY1A9ilG3lSd29LeZ8Yrk2w9X9yp6NqW6vRH1f8rdbfq%2Fgyk%2B%2B2e6tV9zvYaG1fbh2Cx4p5NyHj68vcv%2Fez%2FgM%3D&RelayState=e2s1";
   String initUrl = moodleUrl;
+  String cookies = "";
+  String sessionKey = "";
+  bool isAllowAutoLogin = true;
 
   @override
   void initState() {
@@ -96,9 +101,12 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     await NextCourseHomeWidget().updateNextCourse();
                   }
                 }
+              case "calendarUrl":
+                await UserDatabaseHelper()
+                    .resisterUserInfo(messageData["calendarUrl"]);
             }
           } catch (e) {
-            print(e);
+            print(consoleMessage.message);
             //printWrapped(consoleMessage.message);
           }
         },
@@ -117,20 +125,10 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
 
-            // case moodleLoginUrl:
-            //   javascriptCode = await rootBundle.loadString(
-            //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
-            //   await webViewController.evaluateJavascript(
-            //       source: javascriptCode);
             case mywasedaErrorUrl:
               webViewController.loadUrl(
                 urlRequest: URLRequest(url: WebUri(mywasedaUrl)),
               );
-            // case microsoftLoginUrl:
-            //   javascriptCode = await rootBundle.loadString(
-            //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
-            //   await webViewController.evaluateJavascript(
-            //       source: javascriptCode);
           }
         },
       )),
