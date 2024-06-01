@@ -31,8 +31,6 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
     ref.watch(taskDataProvider);
 
     return Scaffold(
-        appBar: CustomAppBar(backButton: true,),
-        drawer: burgerMenu(),
         body: SizedBox(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

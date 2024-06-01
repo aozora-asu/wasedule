@@ -34,31 +34,32 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
-          backgroundColor: MAIN_COLOR,
-          elevation: 10,
-          title: Column(
-            children: <Widget>[
-              Row(children: [
-                const Icon(
-                  Icons.backup,
-                  color: WIDGET_COLOR,
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 4,
-                ),
-                Text(
-                  'データバックアップ',
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white),
-                ),
-              ])
-            ],
-          ),
-        ),
+        // appBar: AppBar(
+        //   leading: const BackButton(color: WHITE),
+        //   backgroundColor: MAIN_COLOR,
+        //   elevation: 10,
+        //   title: Column(
+        //     children: <Widget>[
+        //       Row(children: [
+        //         const Icon(
+        //           Icons.backup,
+        //           color: WIDGET_COLOR,
+        //         ),
+        //         SizedBox(
+        //           width: SizeConfig.blockSizeHorizontal! * 4,
+        //         ),
+        //         Text(
+        //           'データバックアップ',
+        //           style: TextStyle(
+        //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
+        //               fontWeight: FontWeight.w800,
+        //               color: WHITE),
+        //         ),
+        //       ])
+        //     ],
+        backgroundColor: WHITE,
+        //   ),
+        // ),
         body: SingleChildScrollView(
             child: Center(
                 child: Column(children: [
@@ -149,9 +150,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         MAIN_COLOR,
         const Row(children: [
           SizedBox(width: 20),
-          Icon(Icons.backup, color: Colors.white),
+          Icon(Icons.backup, color: WHITE),
           SizedBox(width: 20),
-          Text("データをバックアップ", style: TextStyle(color: Colors.white))
+          Text("データをバックアップ", style: TextStyle(color: WHITE))
         ]));
   }
 
@@ -267,9 +268,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         ACCENT_COLOR,
         const Row(children: [
           SizedBox(width: 20),
-          Icon(Icons.downloading_outlined, color: Colors.white),
+          Icon(Icons.downloading_outlined, color: WHITE),
           SizedBox(width: 20),
-          Text("バックアップを復元", style: TextStyle(color: Colors.white))
+          Text("バックアップを復元", style: TextStyle(color: WHITE))
         ]));
   }
 
@@ -316,9 +317,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 MAIN_COLOR,
                 const Row(children: [
                   SizedBox(width: 20),
-                  Icon(Icons.downloading_outlined, color: Colors.white),
+                  Icon(Icons.downloading_outlined, color: WHITE),
                   SizedBox(width: 20),
-                  Text("ダウンロード実行", style: TextStyle(color: Colors.white))
+                  Text("ダウンロード実行", style: TextStyle(color: WHITE))
                 ]))
           ],
         );

@@ -16,12 +16,12 @@ import 'package:flutter/services.dart' show rootBundle;
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;
 
-class EmptyClassRoomView extends ConsumerStatefulWidget {
+class WasedaMapPage extends ConsumerStatefulWidget {
   @override
-  _EmptyClassRoomViewState createState() => _EmptyClassRoomViewState();
+  _WasedaMapPageState createState() => _WasedaMapPageState();
 }
 
-class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
+class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late final _animatedMapController = AnimatedMapController(vsync: this);
@@ -29,50 +29,9 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.5), // 影の色と透明度
-              spreadRadius: 2, // 影の広がり
-              blurRadius: 3, // ぼかしの強さ
-              offset: const Offset(0, 3), // 影の方向（横、縦）
-            ),
-          ],
-        ),
-        padding: EdgeInsets.only(
-          left: SizeConfig.blockSizeHorizontal! * 2.5,
-          right: SizeConfig.blockSizeHorizontal! * 2.5,
-        ),
-        child: Column(children: [
-          Container(
-              alignment: Alignment.center,
-              height: SizeConfig.blockSizeVertical! * 6,
-              child: Row(children: [
-                const Spacer(),
-                SizedBox(
-                    height: SizeConfig.blockSizeVertical! * 4,
-                    child:
-                        Image.asset('lib/assets/eye_catch/wase_map_logo.png')),
-                SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
-                Text("わせまっぷ(Beta版)",
-                    style: TextStyle(
-                        fontSize: SizeConfig.blockSizeVertical! * 3,
-                        fontWeight: FontWeight.bold)),
-                const Spacer()
-              ])),
-          const Divider(height: 1),
-          SizedBox(
-              height: SizeConfig.blockSizeVertical! * 3,
-              child: Text("Find your Waseda.",
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeVertical! * 2,
-                      color: Colors.blueGrey))),
-          mapView(),
-          SizedBox(height: SizeConfig.blockSizeVertical! * 4)
-        ]));
+    return Scaffold(
+      body:mapView(),
+    );
   }
 
   Map<String, LatLng> campusLocations = const {
@@ -183,18 +142,20 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
   };
 
   Widget mapView() {
-    return Column(children: [
+    return Stack(children: [
       Container(
+        height: SizeConfig.blockSizeVertical! *80,
           decoration:
-              BoxDecoration(border: Border.all(color: Colors.grey, width: 1.5)),
-          height: SizeConfig.blockSizeVertical! * 50,
+              BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.5),
+                color: WHITE),
           child: FlutterMap(
             mapController: _animatedMapController.mapController,
             options: MapOptions(
               initialCenter: campusLocations["waseda"]!,
               initialZoom: initMapZoom["waseda"]!,
               interactionOptions:const InteractionOptions(
-                flags: InteractiveFlag.none,
+                flags: InteractiveFlag.all,
               )
             ),
             children: [
@@ -246,31 +207,41 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
             ],
           )),
       SizedBox(
-        height: SizeConfig.blockSizeVertical! * 5,
-        child: Row(children: [
-          buttonModel(() async {
-            await _animatedMapController.animateTo(
-                dest: campusLocations["waseda"]);
-            await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
-          }, Colors.blue, "  早稲田  "),
-          buttonModel(() async {
-            await _animatedMapController.animateTo(
-                dest: campusLocations["toyama"]);
-            await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
-          }, Colors.blue, "   戸山   "),
-          buttonModel(() async {
-            await _animatedMapController.animateTo(
-                dest: campusLocations["nishi_waseda"]);
-            await _animatedMapController
-                .animatedZoomTo(initMapZoom["nishi_waseda"]!);
-          }, Colors.blue, " 西早稲田 "),
-          buttonModel(() async {
-            await _animatedMapController.animateTo(
-                dest: campusLocations["tokorozawa"]);
-            await _animatedMapController
-                .animatedZoomTo(initMapZoom["tokorozawa"]!);
-          }, Colors.blue, "   所沢   "),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+          Text(" わせまっぷ",
+            style: TextStyle(
+              color:Colors.blueGrey,
+              fontSize: SizeConfig.blockSizeHorizontal! *10,
+              fontWeight: FontWeight.bold
+            ),
+            ),
+          Row(children: [
+            buttonModel(() async {
+              await _animatedMapController.animateTo(
+                  dest: campusLocations["waseda"]);
+              await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
+            }, Colors.blue, "  早稲田  "),
+            buttonModel(() async {
+              await _animatedMapController.animateTo(
+                  dest: campusLocations["toyama"]);
+              await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
+            }, Colors.blue, "   戸山   "),
+            buttonModel(() async {
+              await _animatedMapController.animateTo(
+                  dest: campusLocations["nishi_waseda"]);
+              await _animatedMapController
+                  .animatedZoomTo(initMapZoom["nishi_waseda"]!);
+            }, Colors.blue, " 西早稲田 "),
+            buttonModel(() async {
+              await _animatedMapController.animateTo(
+                  dest: campusLocations["tokorozawa"]);
+              await _animatedMapController
+                  .animatedZoomTo(initMapZoom["tokorozawa"]!);
+            }, Colors.blue, "   所沢   "),
+          ]),
+        ])
       )
     ]);
   }
@@ -296,7 +267,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
               child: Text(
                 location,
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.white),
+                    fontWeight: FontWeight.bold, color: WHITE),
               ),
             )
           ])),
@@ -343,7 +314,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
               decoration:const BoxDecoration(
-                color: Colors.white,
+                color: WHITE,
                 borderRadius:BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -357,7 +328,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                     decoration: BoxDecoration(
                       gradient: gradationDecoration(
                         color2:Colors.black),
-                      color: Colors.white,
+                      color: WHITE,
                       borderRadius:const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
@@ -370,7 +341,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:Colors.white
+                              color:WHITE
                               ))
                     ])),
                 const Divider(
@@ -387,7 +358,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                   ),
                   Container(
                       height: SizeConfig.blockSizeVertical! * 60,
-                      color: Colors.white.withOpacity(0.6),
+                      color: WHITE.withOpacity(0.6),
                       padding:const EdgeInsets.all(10),
                       child: emptyClassRooms(location),
                     )
@@ -451,7 +422,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 child: Text(
                   searchResult,
                   style:TextStyle(
-                    color:Colors.white,
+                    color:WHITE,
                     fontWeight: FontWeight.bold,
                     fontSize:SizeConfig.blockSizeHorizontal! *5,
                   ))
@@ -506,7 +477,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
           return Container(
               height: SizeConfig.blockSizeVertical! * 70,
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: WHITE,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -518,7 +489,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: WHITE,
                       gradient: gradationDecoration(
                         color1:Colors.orange,
                         color2:Colors.brown),
@@ -534,7 +505,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:Colors.white
+                              color:WHITE
                               ))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
@@ -558,7 +529,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 Expanded(
                     child: Stack(children: [
                   Container(
-                      color: Colors.white.withOpacity(0.6),
+                      color: WHITE.withOpacity(0.6),
                       child: Container(
                         width: SizeConfig.blockSizeHorizontal! * 100,
                         height: SizeConfig.blockSizeVertical! * 75,
@@ -657,7 +628,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
           return Container(
               height: SizeConfig.blockSizeVertical! * 75,
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: WHITE,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -672,7 +643,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                       gradient: gradationDecoration(
                         color1:Colors.red,
                         color2:Colors.brown),
-                      color: Colors.white,
+                      color: WHITE,
                       borderRadius:const  BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
@@ -685,7 +656,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:Colors.white))
+                              color:WHITE))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 //const Divider(height: 2,thickness: 2,),
@@ -708,7 +679,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
                 Expanded(
                     child: Stack(children: [
                   Container(
-                      color: Colors.white.withOpacity(0.6),
+                      color: WHITE.withOpacity(0.6),
                       child: Container(
                         width: SizeConfig.blockSizeHorizontal! * 100,
                         height: SizeConfig.blockSizeVertical! * 75,

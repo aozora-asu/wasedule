@@ -230,11 +230,12 @@ class _CalendarState extends ConsumerState<Calendar> {
     ScrollController controller = ScrollController();
     return Scaffold(
         body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: calendarBackGroundImage(),
-            fit: BoxFit.cover,
-          )),
+          decoration:const BoxDecoration(
+            //   image: DecorationImage(
+            // image: calendarBackGroundImage(),
+            // fit: BoxFit.cover)
+            color:WHITE
+          ),
           child: Scrollbar(
             controller: controller,
             interactive: true,
@@ -246,8 +247,8 @@ class _CalendarState extends ConsumerState<Calendar> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                    left: SizeConfig.blockSizeHorizontal! * 2.5,
-                    right: SizeConfig.blockSizeHorizontal! * 2.5,
+                    left: SizeConfig.blockSizeHorizontal! *0, //2.5,
+                    right: SizeConfig.blockSizeHorizontal! *0,
                   ),
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: loadDataBases(),
@@ -325,12 +326,6 @@ class _CalendarState extends ConsumerState<Calendar> {
           taskDataListList(
               ConfigDataLoader().searchConfigInfo("taskList", ref)),
           ConfigDataLoader().searchConfigData("taskList", ref)),
-      switchWidget(
-          Column(children: [
-            MoodleUrlLauncher(width: 100),
-            const SizedBox(height: 5)
-          ]),
-          ConfigDataLoader().searchConfigData("moodleLink", ref)),
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(
@@ -373,11 +368,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                               );
                             },
                             icon: const Icon(Icons.tag,
-                                size: 15, color: Colors.white),
+                                size: 15, color: WHITE),
                             label: const Text('タグとテンプレート',
                                 style: TextStyle(
                                     fontSize: 10,
-                                    color: Colors.white,
+                                    color: WHITE,
                                     fontWeight: FontWeight.bold)),
                             style: const ButtonStyle(
                               backgroundColor:
@@ -410,22 +405,22 @@ class _CalendarState extends ConsumerState<Calendar> {
                       showOnlyScreenShot(screenShotDateTime()),
                       const SizedBox(width: 7)
                     ]),
-                    doNotContainScreenShot(
-                        menuListChild(Icons.groups_rounded, "予定の配信", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DataUploadPage()),
-                      );
-                    })),
-                    doNotContainScreenShot(
-                        menuListChild(Icons.school, "年間行事予定", () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UnivSchedulePage()),
-                      );
-                    })),
+                    // doNotContainScreenShot(
+                    //     menuListChild(Icons.groups_rounded, "予定の配信", () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => DataUploadPage()),
+                    //   );
+                    // })),
+                    // doNotContainScreenShot(
+                    //     menuListChild(Icons.school, "年間行事予定", () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => UnivSchedulePage()),
+                    //   );
+                    // })),
                     const SizedBox(height: 20)
                   ])))),
       menu()
@@ -472,31 +467,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ]))),
 
         const SizedBox(height: 15),
-        Row(children: [
-          menuPanel(Icons.link_rounded, "Moodle URL登録", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-            );
-          }),
-          SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 5,
-          ),
-          menuPanel(Icons.lightbulb, "使い方ガイド", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HowToUsePage()),
-            );
-          })
-        ]),
-        const SizedBox(height: 15),
         menuList(Icons.info, "その他", false, [
-          menuListChild(Icons.backup, "データバックアップ", () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataDownloadPage()),
-            );
-          }),
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
@@ -520,7 +491,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return FloatingActionButton(
         heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
-        child: const Icon(Icons.ios_share, color: Colors.white),
+        child: const Icon(Icons.ios_share, color: WHITE),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -737,7 +708,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return ListView.builder(
       itemBuilder: (context, index) {
         return SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 13.571,
+            width: SizeConfig.blockSizeHorizontal! * 14.285,
             height: SizeConfig.blockSizeVertical! * 2,
             child: Center(
                 child: Text(
@@ -815,14 +786,14 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! * 13.571,
+        width: SizeConfig.blockSizeHorizontal! * 14.285,
         child: ListView.builder(
           itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return InkWell(
               child: Container(
-                  width: SizeConfig.blockSizeHorizontal! * 13.571,
+                  width: SizeConfig.blockSizeHorizontal! * 14.285,
                   height: SizeConfig.blockSizeVertical! * 14,
                   decoration: BoxDecoration(
                     color: cellColour(target),
@@ -888,7 +859,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
       return const Color.fromARGB(255, 255, 239, 239);
     } else {
-      return Colors.white;
+      return WHITE;
     }
   }
 
@@ -910,7 +881,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             (sortedData[target]?.length ?? 0).toString(),
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: WHITE,
                 fontSize: fontSize),
           ));
     }
@@ -1035,7 +1006,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               targetDayData
                                   .elementAt(index)["subject"],
                           style: const TextStyle(
-                              color: Colors.black, fontSize: 8),
+                              color: BLACK, fontSize: 8),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1069,7 +1040,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       Icon(Icons.school, color: MAIN_COLOR, size: 8),
                       Text(" 授業",
                           style: TextStyle(
-                              color: Colors.black, fontSize: 8)),
+                              color: BLACK, fontSize: 8)),
                     ]),
                     const Divider(
                         height: 0.7,
@@ -1110,11 +1081,11 @@ class _CalendarState extends ConsumerState<Calendar> {
         width: SizeConfig.blockSizeHorizontal! * 45,
         height: SizeConfig.blockSizeHorizontal! * 45,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: WHITE,
           borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              color: BLACK.withOpacity(0.5), // 影の色と透明度
               spreadRadius: 2, // 影の広がり
               blurRadius: 3, // ぼかしの強さ
               offset: const Offset(0, 3), // 影の方向（横、縦）
@@ -1139,11 +1110,11 @@ class _CalendarState extends ConsumerState<Calendar> {
         width: SizeConfig.blockSizeHorizontal! * 95,
         height: SizeConfig.blockSizeHorizontal! * 45,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: WHITE,
           borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              color: BLACK.withOpacity(0.5), // 影の色と透明度
               spreadRadius: 2, // 影の広がり
               blurRadius: 3, // ぼかしの強さ
               offset: const Offset(0, 3), // 影の方向（横、縦）
@@ -1168,7 +1139,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               height: SizeConfig.blockSizeVertical! * 6,
-              color: Colors.white,
+              color: WHITE,
               child: Center(
                   child: Row(children: [
                 const SizedBox(width: 30),
@@ -1202,7 +1173,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         child: Column(children: [
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
-              color: Colors.white,
+              color: WHITE,
               child: child),
           divider
         ]));
@@ -1218,7 +1189,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       Container(
           width: SizeConfig.blockSizeHorizontal! * 95,
           height: SizeConfig.blockSizeVertical! * 3,
-          color: Colors.white,
+          color: WHITE,
           child: Center(
               child: Row(children: [
             const SizedBox(width: 10),
@@ -1230,7 +1201,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             Text(text,
                 style: TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                    color: Colors.black,
+                    color: BLACK,
                     fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
@@ -1256,11 +1227,11 @@ class _CalendarState extends ConsumerState<Calendar> {
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: WHITE,
           borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5), // 影の色と透明度
+              color: BLACK.withOpacity(0.5), // 影の色と透明度
               spreadRadius: 2, // 影の広がり
               blurRadius: 3, // ぼかしの強さ
               offset: const Offset(0, 3), // 影の方向（横、縦）
@@ -1361,7 +1332,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 borderRadius: BorderRadius.circular(12.5), // 角丸の半径を指定
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.5), // 影の色と透明度
+                    color: BLACK.withOpacity(0.5), // 影の色と透明度
                     spreadRadius: 2, // 影の広がり
                     blurRadius: 3, // ぼかしの強さ
                     offset: const Offset(0, 3), // 影の方向（横、縦）
@@ -1377,15 +1348,15 @@ class _CalendarState extends ConsumerState<Calendar> {
                         Text(
                           category,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: WHITE,
                               fontWeight: FontWeight.bold,
                               fontSize: 10),
                         ),
-                        const Divider(color: Colors.white, height: 2),
+                        const Divider(color: WHITE, height: 2),
                         Text(
                           content,
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 12.5),
+                              color: WHITE, fontSize: 12.5),
                           overflow: TextOverflow.clip,
                         )
                       ])),
@@ -1427,19 +1398,19 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: Colors.white);
+      return const BoxDecoration(color: WHITE);
     } else {
       return BoxDecoration(
-        color: Colors.white,
+        color: WHITE,
         borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5), // 影の色と透明度
-            spreadRadius: 2, // 影の広がり
-            blurRadius: 3, // ぼかしの強さ
-            offset: const Offset(0, 3), // 影の方向（横、縦）
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: BLACK.withOpacity(0.5), // 影の色と透明度
+        //     spreadRadius: 2, // 影の広がり
+        //     blurRadius: 3, // ぼかしの強さ
+        //     offset: const Offset(0, 3), // 影の方向（横、縦）
+        //   ),
+        // ],
       );
     }
   }
@@ -1766,7 +1737,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 .first["subject"],
                         overflow: TextOverflow.clip,
                         style: TextStyle(
-                            color: Colors.black,
+                            color: BLACK,
                             fontSize: SizeConfig.blockSizeHorizontal! * 5,
                             fontWeight: FontWeight.bold),
                       ))
@@ -1977,7 +1948,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 .first["courseName"],
                         overflow: TextOverflow.clip,
                         style: TextStyle(
-                            color: Colors.black,
+                            color: BLACK,
                             fontSize: SizeConfig.blockSizeHorizontal! * 5,
                             fontWeight: FontWeight.bold),
                       ))
@@ -2170,7 +2141,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               sortedData[target]!.elementAt(index)["summary"] ??
                                   "(詳細なし)",
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: BLACK,
                                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                                   fontWeight: FontWeight.bold),
                             )
@@ -2226,7 +2197,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             height: SizeConfig.blockSizeVertical! * 60,
             margin: const EdgeInsets.only(top: 0),
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: WHITE,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -2238,7 +2209,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 children: [
                   Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: WHITE,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
@@ -2306,7 +2277,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
-                                color: Colors.black),
+                                color: BLACK),
                           ),
                         ),
                         Align(
@@ -2339,7 +2310,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
-                                color: Colors.black),
+                                color: BLACK),
                           ),
                         ),
                         Align(
@@ -2372,7 +2343,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                                 fontWeight: FontWeight.normal,
-                                color: Colors.black),
+                                color: BLACK),
                           ),
                         ),
                         SizedBox(
@@ -2397,8 +2368,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        MoodleUrlLauncher(width: 100),
                         const SizedBox(height: 7.5),
                       ]))
                 ],

@@ -459,45 +459,49 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
-          backgroundColor: MAIN_COLOR,
-          elevation: 10,
-          title: Column(
-            children: <Widget>[
-              Row(children: [
-                const Icon(
-                  Icons.data_exploration_outlined,
-                  color: WIDGET_COLOR,
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 4,
-                ),
-                Text(
-                  'アルバイト',
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white),
-                ),
-              ])
-            ],
-          ),
-        ),
+          // appBar: AppBar(
+          //   leading: const BackButton(color: WHITE),
+          //   backgroundColor: MAIN_COLOR,
+          //   elevation: 10,
+          //   title: Column(
+          //     children: <Widget>[
+          //       Row(children: [
+          //         const Icon(
+          //           Icons.data_exploration_outlined,
+          //           color: WIDGET_COLOR,
+          //         ),
+          //         SizedBox(
+          //           width: SizeConfig.blockSizeHorizontal! * 4,
+          //         ),
+          //         Text(
+          //           'アルバイト',
+          //           style: TextStyle(
+          //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
+          //               fontWeight: FontWeight.w800,
+          //               color:  WHITE),
+          //         ),
+          //       ])
+          //     ],
+          //   ),
+          // ),
         body: Column(children: [
-          SizedBox(
-              child: Row(children: [
-            IconButton(
+          Container(
+            color:WHITE,
+            child: Row(children: [
+              IconButton(
                 onPressed: () {
                   decreasePgNumber();
                 },
                 icon: const Icon(Icons.arrow_back_ios),
-                iconSize: 20),
+                iconSize: 20,
+                color:BLACK
+                ),
             Text(
               widget.targetMonth,
               style: const TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
+                color:BLACK
               ),
             ),
             IconButton(
@@ -507,7 +511,9 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   });
                 },
                 icon: const Icon(Icons.arrow_forward_ios),
-                iconSize: 20),
+                iconSize: 20,
+                color:BLACK
+                ),
           ])),
           const Divider(height: 1),
           Expanded(
@@ -627,7 +633,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                                 .round()) +
                                                         " 円",
                                                     style: TextStyle(
-                                                        color: Colors.black,
+                                                        color: BLACK,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: SizeConfig
@@ -896,7 +902,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"]) +
                   "円",
               style: const TextStyle(
-                  color: Colors.white,
+                  color:  WHITE,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
@@ -905,7 +911,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                   ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"]) +
                   "円",
               style: const TextStyle(
-                  color: Colors.white,
+                  color:  WHITE,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             )
@@ -936,7 +942,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                         Text(
                           sortedData.elementAt(index)["title"] ?? "(詳細なし)",
                           style: const TextStyle(
-                              color: Colors.white,
+                              color:  WHITE,
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               overflow: TextOverflow.clip
@@ -969,7 +975,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
-        color: Colors.white,
+        color:  WHITE,
         child: Padding(
             padding: const EdgeInsets.all(8),
             child:
@@ -1039,7 +1045,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       TextEditingController controller, List<FocusNode> _nodeList) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Colors.white,
+      keyboardBarColor:  WHITE,
       nextFocus: false,
       actions: [
         for (var _node in _nodeList) ...{
@@ -1297,7 +1303,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
 BoxDecoration roundedBoxdecorationWithShadow() {
   return BoxDecoration(
-      color: Colors.white, // コンテナの背景色
+      color:  WHITE, // コンテナの背景色
       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
       boxShadow: [
         BoxShadow(
