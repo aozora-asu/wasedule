@@ -26,6 +26,7 @@ class NotifyConfig {
 }
 
 class NotifyFormat {
+  //notifyFormat M/d etc
   String? notifyFormat;
   int isContainWeekday;
   NotifyFormat({required this.isContainWeekday, required this.notifyFormat});
@@ -44,11 +45,14 @@ class NotifyDatabaseHandler {
   NotifyDatabaseHandler() {
     _initNotifyDatabase();
   }
-
   Future<void> _initNotifyDatabase() async {
     String path = join(await getDatabasesPath(), '$databaseName.db');
-    _database =
-        await openDatabase(path, version: 1, onCreate: _createNotifyDatabase);
+    _database = await openDatabase(
+      path,
+      version: 2,
+      onCreate: _createNotifyDatabase,
+      onUpgrade: _updateNotifyDatabase,
+    );
   }
 
   // データベースの作成
@@ -70,6 +74,55 @@ class NotifyDatabaseHandler {
         isValidNotify INTEGER
       )
     ''');
+    await _addDefaultConfigData(db);
+    await _addDefaultFormatData(db);
+  }
+
+  Future<void> _updateNotifyDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    // データベースのバージョンごとのアップデート処理を行う
+    if (oldVersion == 1) {
+      // バージョン1からバージョン2へのアップデート処理
+      // データが存在しない場合のみデフォルトのデータを挿入
+      List<Map<String, dynamic>> config = await db.query(configTable);
+      if (config.isEmpty) {
+        await _addDefaultConfigData(db);
+      }
+      List<Map<String, dynamic>> format = await db.query(configTable);
+      if (format.isEmpty) {
+        await _addDefaultFormatData(db);
+      }
+    }
+  }
+
+  // デフォルトのデータを挿入するメソッド
+  Future<void> _addDefaultConfigData(Database db) async {
+    // config テーブルにデフォルトのデータを挿入
+    await db.insert(
+        configTable,
+        NotifyConfig(
+                notifyType: "daily",
+                time: "08:00",
+                isValidNotify: 1,
+                days: 1,
+                weekday: null)
+            .toMap());
+    await db.insert(
+        configTable,
+        NotifyConfig(
+                notifyType: "beforeHour",
+                time: "23:59",
+                isValidNotify: 1,
+                days: null,
+                weekday: null)
+            .toMap());
+  }
+
+  // デフォルトのデータを挿入するメソッド
+  Future<void> _addDefaultFormatData(Database db) async {
+    // config テーブルにデフォルトのデータを挿入
+    await db.insert(formatTable,
+        NotifyFormat(isContainWeekday: 1, notifyFormat: "M/d").toMap());
   }
 
   Future<void> _insertNotifyFormat(NotifyFormat notifyFormat) async {
