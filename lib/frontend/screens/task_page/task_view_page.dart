@@ -185,8 +185,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   heroTag: "task_2",
                   onPressed: () async {
                     if (isLoad == false) {
-                      await loadData();
                       isLoad = true;
+                      await loadData();
+                      isLoad = false;
                     }
                   },
                   backgroundColor: MAIN_COLOR,
@@ -522,9 +523,9 @@ void bottomSheet(targetData, ref, context, setState) {
   Widget dividerModel = const Divider(height: 1);
   int _height = (SizeConfig.blockSizeVertical! * 100).round();
 
-  Widget webView(String? pageID){
-    if(pageID != null){
-      return Column(children:[
+  Widget webView(String? pageID) {
+    if (pageID != null) {
+      return Column(children: [
         indexModel("■ Moodle ページビュー"),
         SizedBox(
           height: SizeConfig.blockSizeVertical! * 1,
@@ -532,14 +533,11 @@ void bottomSheet(targetData, ref, context, setState) {
         Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
             height: SizeConfig.blockSizeVertical! * 75,
-            decoration:
-                BoxDecoration(border: Border.all()),
+            decoration: BoxDecoration(border: Border.all()),
             child: SingleChildScrollView(
               child: Container(
-                  width: SizeConfig.blockSizeHorizontal! *
-                      100,
-                  height: SizeConfig.blockSizeVertical! *
-                      _height,
+                  width: SizeConfig.blockSizeHorizontal! * 100,
+                  height: SizeConfig.blockSizeVertical! * _height,
                   child: InAppWebView(
                     key: webMoodleViewKey,
                     initialUrlRequest: URLRequest(
@@ -547,30 +545,27 @@ void bottomSheet(targetData, ref, context, setState) {
                         //ここに課題ページのURLを受け渡し！
 
                         url: WebUri(
-                            "https://wsdmoodle.waseda.jp/course/view.php?id=" + pageID)),
+                            "https://wsdmoodle.waseda.jp/course/view.php?id=" +
+                                pageID)),
                     onWebViewCreated: (controller) {
-                      webMoodleViewController =
-                          controller;
+                      webMoodleViewController = controller;
                     },
                     onLoadStop: (a, b) async {
                       _height =
-                          await webMoodleViewController
-                                  ?.getContentHeight() ??
+                          await webMoodleViewController?.getContentHeight() ??
                               100;
                       setState(() {});
                     },
-                    onContentSizeChanged:
-                        (a, b, c) async {
+                    onContentSizeChanged: (a, b, c) async {
                       _height =
-                          await webMoodleViewController
-                                  ?.getContentHeight() ??
+                          await webMoodleViewController?.getContentHeight() ??
                               100;
                       setState(() {});
                     },
                   )),
             )),
       ]);
-    }else{
+    } else {
       return const SizedBox();
     }
   }
@@ -633,7 +628,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                     ref.read(taskDataProvider.notifier).state =
                                         TaskData();
                                     ref.read(taskDataProvider).isRenewed = true;
-                                    setState((){});
+                                    setState(() {});
                                     //Navigator.pop(context);
                                   },
                                 ),
@@ -668,7 +663,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                     ref.read(taskDataProvider.notifier).state =
                                         TaskData();
                                     ref.read(taskDataProvider).isRenewed = true;
-                                     setState((){});
+                                    setState(() {});
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -705,7 +700,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                             .state = TaskData();
                                         ref.read(taskDataProvider).isRenewed =
                                             true;
-                                         setState((){});
+                                        setState(() {});
                                         Navigator.pop(context);
                                       },
                                       child: Text(
@@ -727,7 +722,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                   ref.read(taskDataProvider.notifier).state =
                                       TaskData();
                                   ref.read(taskDataProvider).isRenewed = true;
-                                   setState((){});
+                                  setState(() {});
                                   Navigator.pop(context);
                                 },
                                 controller: descriptionController,
