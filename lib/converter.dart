@@ -1,7 +1,7 @@
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'dart:ui';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 String? period2startTime(int period) {
@@ -251,4 +251,22 @@ String? convertSemester(String? text) {
     default:
       return null;
   }
+}
+
+//これはuiで見た目を変える用
+String HHmm2Hmm(String HHmmString) {
+  // HH:mm 形式の文字列を DateTime オブジェクトに変換
+  DateTime dateTime = DateFormat('HH:mm').parse(HHmmString);
+
+  // H:mm 形式にフォーマットして文字列に変換
+  return DateFormat('H:mm').format(dateTime);
+}
+
+//こっちはdbに入れる時に
+String Hmm2HHmm(String HmmString) {
+  // H:mm 形式の文字列を DateTime オブジェクトに変換
+  DateTime dateTime = DateFormat('H:mm').parse(HmmString);
+
+  // HH:mm 形式にフォーマットして文字列に変換
+  return DateFormat('HH:mm').format(dateTime);
 }
