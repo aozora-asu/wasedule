@@ -88,7 +88,7 @@ class NotifyDatabaseHandler {
       if (config.isEmpty) {
         await _addDefaultConfigData(db);
       }
-      List<Map<String, dynamic>> format = await db.query(configTable);
+      List<Map<String, dynamic>> format = await db.query(formatTable);
       if (format.isEmpty) {
         await _addDefaultFormatData(db);
       }
