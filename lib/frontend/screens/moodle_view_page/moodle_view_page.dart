@@ -54,10 +54,12 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
   String cookies = "";
   String sessionKey = "";
   bool isAllowAutoLogin = true;
+  late Future<Map<String, dynamic>> autoLoginInfo;
 
   @override
   void initState() {
     super.initState();
+    autoLoginInfo = checkSession();
   }
 
   @override
@@ -82,7 +84,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
             messageData = jsonDecode(consoleMessage.message);
             switch (messageData.keys.first) {
               case "isAllowAutoLogin":
-                print(messageData["isAllowAutoLogin"]);
+                isAllowAutoLogin = messageData["isAllowAutoLogin"];
+                await acceptAutoLogin(isAllowAutoLogin);
               case "myCourseData":
                 for (var myCourseData in messageData["myCourseData"] as List) {
                   List<MyCourse>? myCourseList = await getMyCourse(MoodleCourse(
@@ -122,6 +125,11 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
             case moodleUrl:
               javascriptCode = await rootBundle.loadString(
                   'lib/frontend/screens/moodle_view_page/get_course_button.js');
+              await webViewController.evaluateJavascript(
+                  source: javascriptCode);
+            case moodleLoginUrl:
+              javascriptCode = await rootBundle.loadString(
+                  'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
 

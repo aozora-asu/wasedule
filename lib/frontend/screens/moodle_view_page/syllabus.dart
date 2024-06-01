@@ -208,27 +208,6 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   return myCourseList;
 }
 
-String? convertSemester(String? text) {
-  switch (text) {
-    case "春クォーター":
-      return "spring_quarter";
-    case "夏クォーター":
-      return "summer_quarter";
-    case "春学期":
-      return "spring_semester";
-    case "秋クォーター":
-      return "fall_quarter";
-    case "冬クォーター":
-      return "winter_quarter";
-    case "秋学期":
-      return "fall_semester";
-    case "通年":
-      return "full_year";
-    default:
-      return null;
-  }
-}
-
 int? _weekdayToNumber(String? weekday) {
   switch (weekday) {
     case '月':
@@ -415,4 +394,49 @@ Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
   }
 
   return vacantClassRoomMap;
+}
+
+Future<bool> hasVacantRoom(int buildingNum) async {
+  List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
+  RequestQuery requestQuery;
+  String htmlString;
+  String? semester;
+  DateTime now = DateTime.now();
+  List<String> nowSemester = datetime2termList(now);
+  bool hasVacantRoom = false; // 初期値をfalseに設定
+
+  for (var classRoom in classRoomList) {
+    requestQuery = RequestQuery(
+      keyword: classRoom,
+      p_youbi: now.weekday.toString(),
+      p_jigen: "${datetime2Period(now)}${datetime2Period(now)}",
+    );
+    htmlString = await fetchSyllabusResults(requestQuery);
+    final document = html_parser.parse(htmlString);
+    final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
+    if (trElements.isNotEmpty) {
+      trElements.removeAt(0);
+      // 検索結果の羅列から、一行ずつみていく
+      for (var trElement in trElements) {
+        final tdElements = trElement.querySelectorAll("td");
+        semester = convertSemester(tdElements[5].text);
+        // 開講学期があれば
+        if (semester != null) {
+          if (nowSemester.contains(semester)) {
+            // クラスが開いている場合
+
+            hasVacantRoom = true; // trueに設定
+            break; // すでに開いているクラスが見つかったらループを抜ける
+          }
+        }
+      }
+    }
+    if (hasVacantRoom) {
+      // クラスが開いている場合はループを抜ける
+      break;
+    }
+  }
+
+  // 少なくとも1つのクラスが開いている場合にtrueを返す
+  return hasVacantRoom;
 }

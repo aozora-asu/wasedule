@@ -24,7 +24,7 @@ void main() async {
   await Hive.initFlutter();
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
-
+  print(await hasVacantRoom(54));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
