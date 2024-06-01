@@ -311,7 +311,7 @@ List<String> extractClassRoom(String input) {
 }
 
 Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
-    vacntRoomList(int buildingNum) async {
+    vacantRoomList(int buildingNum) async {
   List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
   RequestQuery requestQuery;
   String htmlString;

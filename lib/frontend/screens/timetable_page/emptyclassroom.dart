@@ -390,7 +390,7 @@ class _EmptyClassRoomViewState extends ConsumerState<EmptyClassRoomView>
     int current_period = datetime2Period(now) ?? 0;
 
     return FutureBuilder(
-        future: vacntRoomList(int.parse(location)),
+        future: vacantRoomList(int.parse(location)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
