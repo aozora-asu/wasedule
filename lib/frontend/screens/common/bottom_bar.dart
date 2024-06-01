@@ -23,7 +23,6 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         border:const Border(top:BorderSide(color:PALE_MAIN_COLOR,width: 4.5)),
         color: MAIN_COLOR.withOpacity(0.95),
         borderRadius:const BorderRadius.all(Radius.circular(0)),
-        //boxShadow:[BoxShadow(blurRadius:2,)]
         ),
       child:BottomNavigationBar(
         currentIndex: currentIndex,
@@ -34,8 +33,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         unselectedItemColor: unSelectedColor,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: '学習記録',
+            icon: Icon(Icons.location_on),
+            label: 'わせまっぷ',
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(

@@ -11,7 +11,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/emptyclassroom.dart';
+import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
@@ -46,11 +46,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ScrollController controller = ScrollController();
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: tableBackGroundImage(),
-            fit: BoxFit.cover,
-          )),
+          decoration:const BoxDecoration(
+              color:WHITE
+          ),
           child: Scrollbar(
             controller: controller,
             interactive: true,
@@ -58,18 +56,15 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             thumbVisibility: true,
             child: Padding(
               padding: EdgeInsets.only(
-                left: SizeConfig.blockSizeHorizontal! * 2.5,
-                right: SizeConfig.blockSizeHorizontal! * 2.5,
+                left: SizeConfig.blockSizeHorizontal! * 0,//2.5
+                right: SizeConfig.blockSizeHorizontal! * 0,
               ),
               child: ListView(
                 primary: false,
                 controller: controller,
                 shrinkWrap: true,
                 children: [
-                  const SizedBox(height: 10),
                   timeTable(),
-                  const SizedBox(height: 20),
-                  EmptyClassRoomView(),
                   const SizedBox(height: 80),
                 ],
               ),
@@ -90,7 +85,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       });
                 },
                 backgroundColor: ACCENT_COLOR,
-                child: const Icon(Icons.add, color: Colors.white)),
+                child: const Icon(Icons.add, color: WHITE)),
             const SizedBox(width: 10),
             timetableShareButton(context),
           ])),
@@ -101,7 +96,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return FloatingActionButton(
         heroTag: "timetable_2",
         backgroundColor: MAIN_COLOR,
-        child: const Icon(Icons.ios_share, color: Colors.white),
+        child: const Icon(Icons.ios_share, color: WHITE),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -204,7 +199,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         quaterName = "   冬   ";
     }
 
-    Color quaterColor = Colors.white;
+    Color quaterColor = WHITE;
     switch (buttonSemester) {
       case 1:
         quaterColor = const Color.fromARGB(255, 255, 159, 191);
@@ -375,19 +370,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: Colors.white);
+      return const BoxDecoration(color: WHITE);
     } else {
       return BoxDecoration(
-        color: Colors.white,
+        color: WHITE,
         borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5), // 影の色と透明度
-            spreadRadius: 2, // 影の広がり
-            blurRadius: 3, // ぼかしの強さ
-            offset: const Offset(0, 3), // 影の方向（横、縦）
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.5), // 影の色と透明度
+        //     spreadRadius: 2, // 影の広がり
+        //     blurRadius: 3, // ぼかしの強さ
+        //     offset: const Offset(0, 3), // 影の方向（横、縦）
+        //   ),
+        //],
       );
     }
   }
@@ -491,7 +486,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  double cellWidth = 14.5;
+  double cellWidth = 15.3;
   double cellHeight = 14;
 
   Widget generateWeekThumbnail() {
@@ -500,11 +495,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         height: SizeConfig.blockSizeVertical! * 2.5,
         child: ListView.builder(
           itemBuilder: (context, index) {
-            Color bgColor = Colors.white;
+            Color bgColor = WHITE;
             Color fontColor = Colors.grey;
             if (index + 1 == DateTime.now().weekday && index != 6) {
               bgColor = Colors.blueAccent;
-              fontColor = Colors.white;
+              fontColor = WHITE;
             }
 
             return Container(
@@ -534,13 +529,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       ),
       ListView.separated(
         itemBuilder: (context, index) {
-          Color bgColor = Colors.white;
+          Color bgColor = WHITE;
           Color fontColor = Colors.grey;
           DateTime now = DateTime.now();
           if (returnBeginningDateTime(index + 1).isBefore(now) &&
               returnEndDateTime(index + 1).isAfter(now)) {
             bgColor = Colors.blueAccent;
-            fontColor = Colors.white;
+            fontColor = WHITE;
           }
 
           return Container(
@@ -577,7 +572,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         separatorBuilder: (context, index) {
           Widget resultinging = const SizedBox();
           DateTime now = DateTime.now();
-          Color bgColor = Colors.white;
+          Color bgColor = WHITE;
           if (returnEndDateTime(2).isBefore(now) &&
               returnBeginningDateTime(3).isAfter(now)) {
             bgColor = const Color.fromRGBO(255, 204, 204, 1);
@@ -602,7 +597,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Color cellBackGroundColor(int length, Color color) {
-    Color bgColor = Colors.white;
+    Color bgColor = WHITE;
     switch (length) {
       case 0:
         bgColor = increaseRed(color, amount: 0);
@@ -650,7 +645,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: ((context, index) {
-            Color bgColor = Colors.white;
+            Color bgColor = WHITE;
             Widget cellContents = GestureDetector(onTap: () {
               showDialog(
                   context: context,
@@ -733,7 +728,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           separatorBuilder: (context, index) {
             Widget resultinging = const SizedBox();
             DateTime now = DateTime.now();
-            Color bgColor = Colors.white;
+            Color bgColor = WHITE;
             if (returnEndDateTime(2).isBefore(now) &&
                 returnBeginningDateTime(3).isAfter(now)) {
               bgColor = const Color.fromRGBO(255, 204, 204, 1);
@@ -857,7 +852,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     if (classRoom != null && classRoom != "" && classRoom != "-") {
       classRoomView = Container(
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: WHITE,
               borderRadius: const BorderRadius.all(Radius.circular(2)),
               border: Border.all(color: Colors.grey, width: 0.5)),
           child: Text(

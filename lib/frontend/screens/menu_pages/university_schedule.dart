@@ -37,31 +37,31 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
-          backgroundColor: MAIN_COLOR,
-          elevation: 10,
-          title: Column(
-            children: <Widget>[
-              Row(children: [
-                const Icon(
-                  Icons.school,
-                  color: WIDGET_COLOR,
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 4,
-                ),
-                Text(
-                  '年間行事予定',
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white),
-                ),
-              ])
-            ],
-          ),
-        ),
+        // appBar: AppBar(
+        //   leading: const BackButton(color: WHITE),
+        //   backgroundColor: MAIN_COLOR,
+        //   elevation: 10,
+        //   title: Column(
+        //     children: <Widget>[
+        //       Row(children: [
+        //         const Icon(
+        //           Icons.school,
+        //           color: WIDGET_COLOR,
+        //         ),
+        //         SizedBox(
+        //           width: SizeConfig.blockSizeHorizontal! * 4,
+        //         ),
+        //         Text(
+        //           '年間行事予定',
+        //           style: TextStyle(
+        //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
+        //               fontWeight: FontWeight.w800,
+        //               color: WHITE),
+        //         ),
+        //       ])
+        //     ],
+        //   ),
+        // ),
         body: SingleChildScrollView(
           child: Center(
            child: Column(children: [
@@ -136,11 +136,11 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         MAIN_COLOR,
         const Row(children:[
           Spacer(),
-          Icon(Icons.downloading_outlined,color:Colors.white),
+          Icon(Icons.downloading_outlined,color:WHITE),
           SizedBox(width:30),
           Text(
           "大学年間行事予定",
-          style: TextStyle(color:Colors.white),  
+          style: TextStyle(color:WHITE),  
           ),
           Spacer()
         ])
@@ -158,11 +158,11 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         ACCENT_COLOR,
         const Row(children:[
           Spacer(),
-          Icon(Icons.downloading_outlined,color:Colors.white),
+          Icon(Icons.downloading_outlined,color:WHITE),
           SizedBox(width:30),
           Text(
           "各学部年間行事予定",
-          style: TextStyle(color:Colors.white),  
+          style: TextStyle(color:WHITE),  
           ),
           Spacer()
         ])
@@ -351,7 +351,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                   alphabet,
                   style: TextStyle(
                     fontSize:SizeConfig.blockSizeHorizontal! *2.75,
-                    color:Colors.white,
+                    color:WHITE,
                     fontWeight: FontWeight.bold
                   ),
               ),
@@ -401,9 +401,9 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                 MAIN_COLOR,
                 const Row(children: [
                   SizedBox(width: 20),
-                  Icon(Icons.downloading_outlined, color: Colors.white),
+                  Icon(Icons.downloading_outlined, color: WHITE),
                   SizedBox(width: 20),
-                  Text("ダウンロード実行", style: TextStyle(color: Colors.white))
+                  Text("ダウンロード実行", style: TextStyle(color: WHITE))
                 ]))
           ],
         );

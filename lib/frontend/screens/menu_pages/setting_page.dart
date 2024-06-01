@@ -18,13 +18,20 @@ import "../../../backend/notify/notify_content.dart";
 
 class SettingsPage extends StatelessWidget {
   int? initIndex;
-  SettingsPage({this.initIndex});
+  bool? isAppBar;
+  SettingsPage({
+    this.initIndex,
+    this.isAppBar
+    });
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(color: Colors.white),
+    bool showAppBar = isAppBar ?? true;
+    PreferredSizeWidget? appBar;
+    if(showAppBar){
+      appBar = AppBar(
+        leading: const BackButton(color: WHITE),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: const Column(
@@ -39,12 +46,17 @@ class SettingsPage extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white),
+                    color: WHITE),
               ),
             ])
           ],
         ),
-      ),
+      );
+    }
+
+
+    return Scaffold(
+      appBar: appBar,
       body: MyWidget(initIndex: initIndex ?? 0),
     );
   }
@@ -118,7 +130,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   KeyboardActionsConfig _buildConfig(TextEditingController controller) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Colors.white,
+      keyboardBarColor: WHITE,
       nextFocus: false,
       actions: [
         KeyboardActionsItem(
@@ -224,8 +236,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     configSwitch("近日締切のタスク", "taskList"),
                     const SizedBox(height: 5),
                     configTextField("表示日数：", "taskList", controller),
-                    borderModel,
-                    configSwitch("Waseda Moodle リンク", "moodleLink"),
                     borderModel,
                     configSwitch("アルバイト推計収入", "arbeitPreview"),
                     borderModel,
@@ -601,7 +611,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 child: const Row(children: [
                   Text("   追加   ",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white)),
+                          fontWeight: FontWeight.bold, color: WHITE)),
                 ])),
           ),
           const SizedBox(width: 5)

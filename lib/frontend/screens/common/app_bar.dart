@@ -56,35 +56,37 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
     return AppBar(
         backgroundColor:MAIN_COLOR.withOpacity(0.95),
+        
         elevation: 2,
         title: 
-        Row(children: <Widget>[
-
-          GestureDetector(
-            onTap:(){
-              if(Platform.isIOS){
-                showFeedBackDialog(context);
-              }
-            },
-            child:LogoAndTitle(
-              size: 7,
-              color:contentColor,
-              isLogoWhite: isLogoWhite,
-              subTitle: "早稲田から、落単をなくしたい。",
-            )
-          ),
-          const Spacer(),
-          InkWell(
-            child: Icon(Icons.notifications_outlined, color:contentColor),
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage(initIndex:1)),
-              );
-            },
-          ),
-          popupMenuButton(contentColor)
-        ]),
+        Container(
+          child:Row(children: <Widget>[
+            GestureDetector(
+              onTap:(){
+                if(Platform.isIOS){
+                  showFeedBackDialog(context);
+                }
+              },
+              child:LogoAndTitle(
+                size: 7,
+                color:contentColor,
+                isLogoWhite: isLogoWhite,
+                subTitle: "早稲田から、落単をなくしたい。",
+              )
+            ),
+            const Spacer(),
+            InkWell(
+              child: Icon(Icons.notifications_outlined, color:contentColor),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage(initIndex:1)),
+                );
+              },
+            ),
+            popupMenuButton(contentColor)
+          ])
+        ),
          leading: switchLeading(context),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -109,6 +111,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
    }
   }
 }
+
 
   void showFeedBackDialog(BuildContext context) {
     final _urlLaunchWithStringButton = UrlLaunchWithStringButton();

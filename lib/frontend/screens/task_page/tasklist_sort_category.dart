@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
@@ -168,13 +169,13 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               const Spacer(),
               checkedListLength(15.0),
               const SizedBox(width: 15),
-              const Icon(Icons.delete, color: Colors.white),
+              const Icon(Icons.delete, color: WHITE),
               const Text(
                 "   Done!!!   ",
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    TextStyle(color: WHITE, fontWeight: FontWeight.bold),
               ),
-              const Icon(Icons.delete, color: Colors.white),
+              const Icon(Icons.delete, color: WHITE),
               const Spacer(),
             ]),
           ));
@@ -187,7 +188,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     final taskData = ref.watch(taskDataProvider);
     return Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: WHITE,
           shape: BoxShape.circle,
         ),
         padding: EdgeInsets.all(fontSize / 3),
@@ -239,7 +240,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: WHITE,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                       border: Border.all(color:Colors.grey,width: 1)
                       ),

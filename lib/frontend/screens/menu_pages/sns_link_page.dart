@@ -16,7 +16,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
   SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(color:Colors.white),
+        leading: const BackButton(color:WHITE),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: Column(
@@ -32,7 +32,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! *5,
                 fontWeight: FontWeight.w800,
-                color:Colors.white
+                color:WHITE
               ),
             ),
             ]
@@ -60,9 +60,6 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          InstaUrlLauncher(),
          const SizedBox(height:5),
          XUrlLauncher(),
-         const SizedBox(height:20),
-         const Text("Waseda Moodleへのアクセスはこちらから！"),
-         MoodleUrlLauncher(width:80),
          const SizedBox(height:30)
         ])
       ))
@@ -146,29 +143,6 @@ class XUrlLauncher extends StatelessWidget {
   }
 }
 
-class MoodleUrlLauncher extends StatelessWidget {
-  int width;
-  MoodleUrlLauncher({
-    Key? key,
-    required this.width
-    }) : super(key: key);
-
-  final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return buttonModel(
-          () {
-            _urlLaunchWithStringButton.launchUriWithString(
-              context,
-              "https://wsdmoodle.waseda.jp/",
-            );
-          },
-          Colors.orange,
-          "   Waseda Moodle リンク   "
-        );
-  }
-}
 
 class PrivacyPolicyLauncher extends StatelessWidget {
   PrivacyPolicyLauncher({
