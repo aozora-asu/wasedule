@@ -290,7 +290,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   }
 
   Marker markerPin(String location) {
-    Image.asset('lib/assets/map_images/location_pin_notempty.png');
     return Marker(
       width: 45.0,
       height: 45.0,
@@ -299,21 +298,52 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           onTap: () {
             showDetailButtomSheet(location);
           },
-          child: Stack(children: [
-            Image.asset('lib/assets/map_images/location_pin.png'),
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black,
-              ),
-              child: Text(
-                location,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: WHITE),
-              ),
-            )
-          ])),
+          child: FutureBuilder(
+            future:hasVacantRoom(int.parse(location)),
+            builder:(context,snapShot){
+              if(snapShot.connectionState == ConnectionState.done){
+                bool isVacant = snapShot.data!;
+                Image pinImage = Image.asset('lib/assets/map_images/location_pin.png');
+                if(isVacant){
+                  pinImage = Image.asset('lib/assets/map_images/location_pin_notempty.png');
+                }
+                return Stack(children: [
+                  pinImage,
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration:const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black,
+                    ),
+                    child: Text(
+                      location,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: WHITE),
+                    ),
+                  )
+                ]);
+
+              }else{
+
+                return Stack(children: [
+                  Image.asset('lib/assets/map_images/location_pin.png'),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration:const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black,
+                    ),
+                    child: Text(
+                      location,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: WHITE),
+                    ),
+                  )
+                ]);
+              }
+            },
+          )
+            ),
       rotate: true,
     );
   }

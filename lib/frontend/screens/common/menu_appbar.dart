@@ -206,8 +206,8 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         ],
         borderRadius:const BorderRadius.all(Radius.circular(12.5)),
         gradient: gradationDecoration(
-          color1:const Color.fromARGB(255, 225, 225, 225),
-          color2:const Color.fromARGB(255, 225, 225, 225),)
+          color1:const Color.fromARGB(255, 200, 200, 200),
+          color2:const Color.fromARGB(255, 200, 200, 200),)
       );
     }
 
