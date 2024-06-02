@@ -41,9 +41,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 5);
-    if (viewMode == 1) {
-      padding = EdgeInsets.zero;
-    }
+    // if (viewMode == 1) {
+    //   padding = EdgeInsets.zero;
+    // }
     return GestureDetector(onTap: () {
       Navigator.pop(context);
     }, child: LayoutBuilder(
@@ -78,52 +78,55 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       height: 2,
     );
     EdgeInsets padding = const EdgeInsets.all(12.5);
-    if (viewMode == 1) {
-      padding = const EdgeInsets.symmetric(vertical: 12.5);
-    }
+    // if (viewMode == 1) {
+    //   padding = const EdgeInsets.symmetric(vertical: 12.5);
+    // }
 
     return GestureDetector(
-        onTap: () {},
-        child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
-            width: SizeConfig.blockSizeHorizontal! * 100,
-            child: Padding(
-                padding: padding,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                       crossAxisAlignment: CrossAxisAlignment.end,
-                       children: [
-                        textFieldModel("授業名を入力…", classNameController,
-                            FontWeight.bold, 30.0, (value) async {
-                          int id = target["id"];
-                          //＠ここに授業名変更関数を登録！！！
-                          await MyCourseDatabaseHandler()
-                              .updateCourseName(id, value);
-                          widget.setTimetableState((){});
-                        }),
-                        descriptionModeSwitch(),
+      onTap: () {},
+      child: Container(
+        decoration: roundedBoxdecorationWithShadow(),
+        width: SizeConfig.blockSizeHorizontal! * 100,
+        child: Padding(
+          padding: padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                textFieldModel("授業名を入力…", classNameController,
+                    FontWeight.bold, 30.0, (value) async {
+                  int id = target["id"];
+                  //＠ここに授業名変更関数を登録！！！
+                  await MyCourseDatabaseHandler()
+                      .updateCourseName(id, value);
+                  widget.setTimetableState((){});
+                }),
+                descriptionModeSwitch(),
 
-                      ]),
-                      switchViewMode(dividerModel, target),
-                      const SizedBox(height: 5),
-                      Row(children: [
-                        viewModeSwitch(),
-                        const Spacer(),
-                        GestureDetector(
-                            child: const Icon(Icons.delete, color: Colors.grey),
-                            onTap: () async {
-                              int id = target["id"];
-                              //＠ここに削除実行関数！！！
-                              await MyCourseDatabaseHandler()
-                                  .deleteMyCourse(id);
-                              widget.setTimetableState(() {});
-                              Navigator.pop(context);
-                            }),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                      ]),
-                    ]))));
+              ]),
+              switchViewMode(dividerModel, target),
+              const SizedBox(height: 5),
+              Row(children: [
+                viewModeSwitch(),
+                const Spacer(),
+                GestureDetector(
+                  child: const Icon(Icons.delete, color: Colors.grey),
+                  onTap: () async {
+                    int id = target["id"];
+                    //＠ここに削除実行関数！！！
+                    await MyCourseDatabaseHandler()
+                        .deleteMyCourse(id);
+                    widget.setTimetableState(() {});
+                    Navigator.pop(context);
+                  }),
+              SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+            ]),
+          ])
+        )
+      )
+    );
   }
 
   Widget switchViewMode(dividerModel, target) {
@@ -241,7 +244,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           maxLines: null,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
-              fillColor: Colors.white,
+              fillColor: WHITE,
               filled: true,
               border: InputBorder.none, hintText: hintText),
           style: TextStyle(
@@ -355,7 +358,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: WHITE,
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10)),
                   padding:

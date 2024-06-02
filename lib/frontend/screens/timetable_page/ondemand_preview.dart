@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -24,13 +26,15 @@ class OndemandPreview extends ConsumerStatefulWidget {
 class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
-
+  late int viewMode;
+    
   @override
   void initState() {
     super.initState();
     Map target = widget.target;
     memoController.text = target["memo"] ?? "";
     classNameController.text = target["courseName"] ?? "";
+    viewMode = 0;
   }
 
   @override
@@ -72,77 +76,140 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       height: 2,
     );
 
+
+  Widget switchViewMode(dividerModel, target) {
+    if (viewMode == 0) {
+      return summaryContent(dividerModel, target);
+    } else {
+      return SyllabusWebView(pageID: widget.target["syllabusID"]);
+    }
+  }
+
+  Widget viewModeSwitch() {
+    Map target = widget.target;
+    if(target["syllabusID"] != null &&
+    target["syllabusID"] != ""){
+      if(viewMode == 0){
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 1;
+            });
+          },
+          Colors.blueAccent,
+          " シラバス詳細 ");
+      }else{
+        return const SizedBox();
+      }   
+    }else{
+      return const SizedBox();
+    }
+  }
+
+  Widget descriptionModeSwitch(){
+    Map target = widget.target;
+    if(target["syllabusID"] != null &&
+    target["syllabusID"] != ""){
+      if(viewMode == 0){
+        return const SizedBox();
+      }else{
+        return buttonModel(
+          (){
+            setState(() {
+              viewMode = 0;
+            });
+          },
+          Colors.blueAccent,
+          " もどる ");
+      }   
+    }else{
+
+      return const SizedBox();
+    }
+  }
+
     return GestureDetector(
-        onTap: () {},
-        child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
-            width: SizeConfig.blockSizeHorizontal! * 100,
-            child: Padding(
-                padding: const EdgeInsets.all(12.5),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        textFieldModel("授業名を入力…", classNameController,
-                            FontWeight.bold, 30.0, (value) async {
-                          int id = target["id"];
-                          //＠ここに授業名のアップデート関数！！！
-                          await MyCourseDatabaseHandler()
-                              .updateCourseName(id, value);
-                        })
-                      ]),
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.info, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        Text("オンデマンド/その他",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                                fontWeight: FontWeight.bold)),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                      ]),
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                        Text(
-                            target["year"].toString() +
-                                " " +
-                                targetSemester(target["semester"]),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                color: Colors.grey)),
-                        const Spacer(),
-                      ]),
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.sticky_note_2, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        textFieldModel(
-                            "授業メモを入力…", memoController, FontWeight.normal, 20.0,
-                            (value) async {
-                          int id = target["id"];
-                          //＠ここにメモのアップデート関数！！！
-                          await MyCourseDatabaseHandler().updateMemo(id, value);
-                          widget.setTimetableState(() {});
-                        }),
-                      ]),
-                      dividerModel,
-                      Row(children: [
-                        const Spacer(),
-                        GestureDetector(
-                            child: Icon(Icons.delete, color: Colors.grey),
-                            onTap: () async {
-                              int id = target["id"];
-                              //＠ここに削除実行関数！！！
-                              await MyCourseDatabaseHandler()
-                                  .deleteMyCourse(id);
-                              Navigator.pop(context);
-                              widget.setTimetableState(() {});
-                            }),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                      ])
-                    ]))));
+      onTap: () {},
+      child: Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          width: SizeConfig.blockSizeHorizontal! * 100,
+          child: Padding(
+              padding: const EdgeInsets.all(12.5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      textFieldModel("授業名を入力…", classNameController,
+                          FontWeight.bold, 30.0, (value) async {
+                        int id = target["id"];
+                        //＠ここに授業名のアップデート関数！！！
+                        await MyCourseDatabaseHandler()
+                            .updateCourseName(id, value);
+                      }),
+                      descriptionModeSwitch(),
+                    ]),
+                    switchViewMode(dividerModel, target),
+                    Row(children: [
+                      viewModeSwitch(),
+                      const Spacer(),
+                      GestureDetector(
+                          child: Icon(Icons.delete, color: Colors.grey),
+                          onTap: () async {
+                            int id = target["id"];
+                            //＠ここに削除実行関数！！！
+                            await MyCourseDatabaseHandler()
+                                .deleteMyCourse(id);
+                            Navigator.pop(context);
+                            widget.setTimetableState(() {});
+                          }),
+                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                    ])
+                  ])
+                )
+              )
+            );
+  }
+
+  Widget summaryContent(dividerModel, target) {
+    return Column(children: [
+      dividerModel,
+      Row(children: [
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+        const Icon(Icons.info, color: MAIN_COLOR),
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+        Text("オンデマンド/その他",
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                fontWeight: FontWeight.bold)),
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+      ]),
+      Row(children: [
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+        Text(
+            target["year"].toString() +
+                " " +
+                targetSemester(target["semester"]),
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                color: Colors.grey)),
+        const Spacer(),
+      ]),
+      dividerModel,
+      Row(children: [
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+        const Icon(Icons.sticky_note_2, color: MAIN_COLOR),
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+        textFieldModel(
+            "授業メモを入力…", memoController, FontWeight.normal, 20.0,
+            (value) async {
+          int id = target["id"];
+          //＠ここにメモのアップデート関数！！！
+          await MyCourseDatabaseHandler().updateMemo(id, value);
+          widget.setTimetableState(() {});
+        }),
+      ]),
+      dividerModel,
+    ]);
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
@@ -154,8 +221,10 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           maxLines: null,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
-              border: InputBorder.none, hintText: hintText),
-          style: TextStyle(
+            filled: true,
+            fillColor: WHITE,
+            border: InputBorder.none, hintText: hintText),
+            style: TextStyle(
               color: Colors.black, fontWeight: weight, fontSize: fontSize),
           onSubmitted: onSubmitted),
     ));
@@ -245,7 +314,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: WHITE,
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10)),
                   padding:
@@ -263,4 +332,5 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                       ])))
         ]));
   }
+
 }
