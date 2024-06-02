@@ -85,9 +85,11 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      backgroundColor: WHITE,
       body: Row(
         children: [
           NavigationRail(
+            backgroundColor: WHITE,
             labelType: NavigationRailLabelType.selected,
             selectedIconTheme: const IconThemeData(color: MAIN_COLOR),
             selectedLabelTextStyle: const TextStyle(color: MAIN_COLOR),
@@ -561,8 +563,16 @@ class _MainContentsState extends ConsumerState<MainContents> {
           SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 15,
             child: DropdownButtonFormField(
-              decoration: const InputDecoration.collapsed(
-                  hintText: "日数", border: OutlineInputBorder()),
+              value: days,
+              isDense: true,
+              padding: EdgeInsets.zero,
+              decoration: InputDecoration.collapsed(
+                  hintText: "",
+                  border:const OutlineInputBorder(),
+                  hintStyle: TextStyle(
+                    fontSize:SizeConfig.blockSizeHorizontal! * 4,
+                  )
+                  ),
               items: const [
                 DropdownMenuItem(value: 1, child: Text(" １")),
                 DropdownMenuItem(value: 2, child: Text(" ２")),
