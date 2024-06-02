@@ -57,7 +57,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     }
     SizeConfig().init(context);
     return Scaffold(
-      body:mapView(),
+      body: mapView(),
     );
   }
 
@@ -68,16 +68,16 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "tokorozawa": LatLng(35.78696579219986, 139.39954205621635),
   };
 
-  Map<String,double> initMapZoom =  const {
-    "waseda" : 16.2,
-    "toyama" : 17.2,
-    "nishi_waseda" : 16.75,
-    "tokorozawa" : 16,
+  Map<String, double> initMapZoom = const {
+    "waseda": 16.2,
+    "toyama": 17.2,
+    "nishi_waseda": 16.75,
+    "tokorozawa": 16,
   };
 
   Map<String, LatLng> buildingLocations = const {
     "3": LatLng(35.70924536312012, 139.72010069094065),
-    "6" : LatLng(35.71001460124641, 139.7191717115086),
+    "6": LatLng(35.71001460124641, 139.7191717115086),
     "7": LatLng(35.70920076884335, 139.7194839350231),
     "8": LatLng(35.70834887366013, 139.71985092673003),
     "10": LatLng(35.70847845517725, 139.71855810455077),
@@ -88,7 +88,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "central_library": LatLng(35.7109364274621, 139.718125412829861),
     "ookuma_garden_food": LatLng(35.70894841097691, 139.72238604346498),
     "ground_slope_food": LatLng(35.70995133688496, 139.71713024030635),
-    
     "31": LatLng(35.70541570674681, 139.7179363336403),
     "32": LatLng(35.70509109144369, 139.718370179258),
     "33": LatLng(35.70500553370184, 139.71779068546866),
@@ -97,7 +96,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "38": LatLng(35.705410811083695, 139.71885914410385),
     "toyama_library": LatLng(35.70511867745611, 139.71871750748542),
     "toyama_food": LatLng(35.70542144323193, 139.71858283951815),
-    
     "52": LatLng(35.705637188098656, 139.70709957841908),
     "53": LatLng(35.70563507207901, 139.70751912052745),
     "54": LatLng(35.70564142013665, 139.70788393977944),
@@ -105,13 +103,12 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "57": LatLng(35.70648095030999, 139.70723853939802),
     "60": LatLng(35.70604544935449, 139.7061200057127),
     "61": LatLng(35.706045288457254, 139.70576259562358),
-    "63" : LatLng(35.70584785402546, 139.7050880608981),
+    "63": LatLng(35.70584785402546, 139.7050880608981),
     "rikou_library": LatLng(35.70602782207398, 139.70674367727975),
     "rikou_food": LatLng(35.706287268366445, 139.70799168375845),
     "rikou_food_63": LatLng(35.70613476708157, 139.70544846698553),
-    
-    "100" : LatLng(35.78526683441956, 139.39946516174751),
-    "101" : LatLng(35.78866719695889, 139.39950043751176),
+    "100": LatLng(35.78526683441956, 139.39946516174751),
+    "101": LatLng(35.78866719695889, 139.39950043751176),
     "tokorozawa_library": LatLng(35.78520285349271, 139.39840174340995),
     "tokorozawa_food": LatLng(35.78548026847353, 139.3985115677744),
   };
@@ -128,7 +125,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "16": AssetImage('lib/assets/map_images/waseda_building_16.png'),
     "central_library":
         AssetImage('lib/assets/map_images/waseda_central_library.jpg'),
-    
     "31": AssetImage('lib/assets/map_images/waseda_building_38.jpg'),
     "32": AssetImage('lib/assets/map_images/waseda_building_38.jpg'),
     "33": AssetImage('lib/assets/map_images/waseda_building_38.jpg'),
@@ -137,7 +133,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "38": AssetImage('lib/assets/map_images/waseda_building_38.jpg'),
     "toyama_library":
         AssetImage('lib/assets/map_images/waseda_toyama_library.jpg'),
-    
     "52": AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
     "53": AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
     "54": AssetImage('lib/assets/map_images/waseda_building_53.jpg'),
@@ -148,7 +143,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "63": AssetImage('lib/assets/map_images/waseda_building_63.jpg'),
     "rikou_library":
         AssetImage('lib/assets/map_images/waseda_rikou_library.jpg'),
-    
     "100": AssetImage('lib/assets/map_images/waseda_building_21.png'),
     "101": AssetImage('lib/assets/map_images/waseda_building_21.png'),
     "tokorozawa_library":
@@ -168,24 +162,20 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "tokorozawa_food": "https://www.wcoop.ne.jp/schedule/schedule_",
   };
 
-  Widget mapView(){
-
+  Widget mapView() {
     return Stack(children: [
       Container(
-        height: SizeConfig.blockSizeVertical! *80,
-          decoration:
-              BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 1.5),
-                color: WHITE),
+          height: SizeConfig.blockSizeVertical! * 80,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1.5), color: WHITE),
           child: FlutterMap(
             mapController: _animatedMapController.mapController,
             options: MapOptions(
-              initialCenter: campusLocations.values.elementAt(initCampusNum),
-              initialZoom: initMapZoom.values.elementAt(initCampusNum),
-              interactionOptions:const InteractionOptions(
-                flags: InteractiveFlag.all,
-              )
-            ),
+                initialCenter: campusLocations.values.elementAt(initCampusNum),
+                initialZoom: initMapZoom.values.elementAt(initCampusNum),
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.all,
+                )),
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -204,7 +194,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   markerPin("16"),
                   markerPin("15"),
                   markerPin("14"),
-
                   libraryPin("toyama_library"),
                   foodPin("toyama_food"),
                   markerPin("31"),
@@ -213,7 +202,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   markerPin("34"),
                   markerPin("36"),
                   markerPin("38"),
-
                   foodPin("rikou_food"),
                   foodPin("rikou_food_63"),
                   libraryPin("rikou_library"),
@@ -225,7 +213,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   markerPin("61"),
                   markerPin("60"),
                   markerPin("63"),
-
                   foodPin("tokorozawa_food"),
                   libraryPin("tokorozawa_library"),
                   markerPin("100"),
@@ -235,57 +222,55 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             ],
           )),
       SizedBox(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:[
-          Text(" わせまっぷ",
-            style: TextStyle(
-              color:Colors.blueGrey,
-              fontSize: SizeConfig.blockSizeHorizontal! *10,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-          Divider(
-            color:Colors.blueGrey,
-            endIndent:  SizeConfig.blockSizeHorizontal! *30,
-            thickness: 3,
-            height: 3,
-          ),
-          const SizedBox(height:5),
-          Row(children: [
-            buttonModel(() async {
-              final pref = await SharedPreferences.getInstance();
-              pref.setInt("initCampusNum",0);
-              await _animatedMapController.animateTo(
-                  dest: campusLocations["waseda"]);
-              await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
-            }, Colors.blue, "  早稲田  "),
-            buttonModel(() async {
-              final pref = await SharedPreferences.getInstance();
-              pref.setInt("initCampusNum",1);
-              await _animatedMapController.animateTo(
-                  dest: campusLocations["toyama"]);
-              await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
-            }, Colors.blue, "   戸山   "),
-            buttonModel(() async {
-              final pref = await SharedPreferences.getInstance();
-              pref.setInt("initCampusNum",2);
-              await _animatedMapController.animateTo(
-                  dest: campusLocations["nishi_waseda"]);
-              await _animatedMapController
-                  .animatedZoomTo(initMapZoom["nishi_waseda"]!);
-            }, Colors.blue, " 西早稲田 "),
-            buttonModel(() async {
-              final pref = await SharedPreferences.getInstance();
-              pref.setInt("initCampusNum",3);
-              await _animatedMapController.animateTo(
-                  dest: campusLocations["tokorozawa"]);
-              await _animatedMapController
-                  .animatedZoomTo(initMapZoom["tokorozawa"]!);
-            }, Colors.blue, "   所沢   "),
-          ]),
-        ])
-      )
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          " わせまっぷ",
+          style: TextStyle(
+              color: Colors.blueGrey,
+              fontSize: SizeConfig.blockSizeHorizontal! * 10,
+              fontWeight: FontWeight.bold),
+        ),
+        Divider(
+          color: Colors.blueGrey,
+          endIndent: SizeConfig.blockSizeHorizontal! * 30,
+          thickness: 3,
+          height: 3,
+        ),
+        const SizedBox(height: 5),
+        Row(children: [
+          buttonModel(() async {
+            final pref = await SharedPreferences.getInstance();
+            pref.setInt("initCampusNum", 0);
+            await _animatedMapController.animateTo(
+                dest: campusLocations["waseda"]);
+            await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
+          }, Colors.blue, "  早稲田  "),
+          buttonModel(() async {
+            final pref = await SharedPreferences.getInstance();
+            pref.setInt("initCampusNum", 1);
+            await _animatedMapController.animateTo(
+                dest: campusLocations["toyama"]);
+            await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
+          }, Colors.blue, "   戸山   "),
+          buttonModel(() async {
+            final pref = await SharedPreferences.getInstance();
+            pref.setInt("initCampusNum", 2);
+            await _animatedMapController.animateTo(
+                dest: campusLocations["nishi_waseda"]);
+            await _animatedMapController
+                .animatedZoomTo(initMapZoom["nishi_waseda"]!);
+          }, Colors.blue, " 西早稲田 "),
+          buttonModel(() async {
+            final pref = await SharedPreferences.getInstance();
+            pref.setInt("initCampusNum", 3);
+            await _animatedMapController.animateTo(
+                dest: campusLocations["tokorozawa"]);
+            await _animatedMapController
+                .animatedZoomTo(initMapZoom["tokorozawa"]!);
+          }, Colors.blue, "   所沢   "),
+        ]),
+      ]))
     ]);
   }
 
@@ -299,19 +284,21 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             showDetailButtomSheet(location);
           },
           child: FutureBuilder(
-            future:hasVacantRoom(int.parse(location)),
-            builder:(context,snapShot){
-              if(snapShot.connectionState == ConnectionState.done){
+            future: hasVacantRoom(int.parse(location)),
+            builder: (context, snapShot) {
+              if (snapShot.connectionState == ConnectionState.done) {
                 bool isVacant = snapShot.data!;
-                Image pinImage = Image.asset('lib/assets/map_images/location_pin.png');
-                if(isVacant){
-                  pinImage = Image.asset('lib/assets/map_images/location_pin_notempty.png');
+                Image pinImage =
+                    Image.asset('lib/assets/map_images/location_pin.png');
+                if (isVacant) {
+                  pinImage = Image.asset(
+                      'lib/assets/map_images/location_pin_notempty.png');
                 }
                 return Stack(children: [
                   pinImage,
                   Container(
                     padding: const EdgeInsets.all(2),
-                    decoration:const BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.black,
                     ),
@@ -322,14 +309,12 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                   )
                 ]);
-
-              }else{
-
+              } else {
                 return Stack(children: [
                   Image.asset('lib/assets/map_images/location_pin.png'),
                   Container(
                     padding: const EdgeInsets.all(2),
-                    decoration:const BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.black,
                     ),
@@ -342,8 +327,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 ]);
               }
             },
-          )
-            ),
+          )),
       rotate: true,
     );
   }
@@ -386,9 +370,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
-              decoration:const BoxDecoration(
+              decoration: const BoxDecoration(
                 color: WHITE,
-                borderRadius:BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -399,10 +383,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
                     decoration: BoxDecoration(
-                      gradient: gradationDecoration(
-                        color2:Colors.black),
+                      gradient: gradationDecoration(color2: Colors.black),
                       color: WHITE,
-                      borderRadius:const BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -414,8 +397,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:WHITE
-                              ))
+                              color: WHITE))
                     ])),
                 const Divider(
                   height: 2,
@@ -430,84 +412,73 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                   ),
                   Container(
-                      height: SizeConfig.blockSizeVertical! * 60,
-                      color: WHITE.withOpacity(0.6),
-                      padding:const EdgeInsets.all(10),
-                      child: emptyClassRooms(location),
-                    )
+                    height: SizeConfig.blockSizeVertical! * 60,
+                    color: WHITE.withOpacity(0.6),
+                    padding: const EdgeInsets.all(10),
+                    child: emptyClassRooms(location),
+                  )
                 ]))
               ]));
         });
   }
 
-  Widget emptyClassRooms(String location){
+  Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
     String current_quarter = datetime2termList(now)[1];
     int current_period = datetime2Period(now) ?? 0;
 
     return FutureBuilder(
-      future: vacantRoomList(int.parse(location)),
-      builder: (context,snapshot){
-        if(snapshot.connectionState==ConnectionState.waiting){
-         return const Center(
-          child:CircularProgressIndicator(color: MAIN_COLOR));
-        }else if(snapshot.hasData){
-          String searchResult = "授業期間外です。";
+        future: vacantRoomList(int.parse(location)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: MAIN_COLOR));
+          } else if (snapshot.hasData) {
+            String searchResult = "授業期間外です。";
 
-          Map<String, Map<String, dynamic>> quarterMap = 
-            snapshot.data![current_quarter] ?? {};
+            Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
 
-          Map<String, dynamic> buildingMap = 
-            quarterMap[location] ?? {};
+            Map<String, dynamic> buildingMap = quarterMap[location] ?? {};
 
-          dynamic weekDayMap = 
-            buildingMap[now.weekday.toString()] ?? {};
+            dynamic weekDayMap = buildingMap[now.weekday.toString()] ?? {};
 
-          dynamic periodList = 
-            weekDayMap[current_period.toString()] ?? [];
-          
-          if(current_period == 0){
-            searchResult = "授業時間外です。";
-          }else if(periodList.isEmpty){
-            searchResult = "空き教室はありません。";
-          }else{
-            searchResult = periodList.join('\n');
+            dynamic periodList = weekDayMap[current_period.toString()] ?? [];
+
+            if (current_period == 0) {
+              searchResult = "授業時間外です。";
+            } else if (periodList.isEmpty) {
+              searchResult = "空き教室はありません。";
+            } else {
+              searchResult = periodList.join('\n');
+            }
+
+            return SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text("現在の空き教室",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                          color: Colors.blueGrey)),
+                  Container(
+                      width: SizeConfig.blockSizeHorizontal! * 100,
+                      padding: const EdgeInsets.all(7.5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.0),
+                          gradient: gradationDecoration()),
+                      child: Text(searchResult,
+                          style: TextStyle(
+                            color: WHITE,
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          )))
+                ]));
+          } else {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.red));
           }
-
-
-          return SingleChildScrollView(
-            child:Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children:[
-              Text("現在の空き教室",
-                style:TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: SizeConfig.blockSizeHorizontal! *6,
-                  color:Colors.blueGrey
-                )),
-              Container(
-                width: SizeConfig.blockSizeHorizontal! *100,
-                padding: const EdgeInsets.all(7.5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(7.0),
-                  gradient: gradationDecoration()
-                ),
-                child: Text(
-                  searchResult,
-                  style:TextStyle(
-                    color:WHITE,
-                    fontWeight: FontWeight.bold,
-                    fontSize:SizeConfig.blockSizeHorizontal! *5,
-                  ))
-              )
-            ]));
-        }else{
-          return const Center(
-          child:CircularProgressIndicator(color: Colors.red));
-        }
-      });
-
-
+        });
   }
 
   void showLibraryButtomSheet(String location) {
@@ -564,9 +535,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     decoration: BoxDecoration(
                       color: WHITE,
                       gradient: gradationDecoration(
-                        color1:Colors.orange,
-                        color2:Colors.brown),
-                      borderRadius:const  BorderRadius.only(
+                          color1: Colors.orange, color2: Colors.brown),
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -578,8 +548,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:WHITE
-                              ))
+                              color: WHITE))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 Row(children: [
@@ -714,10 +683,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     width: SizeConfig.blockSizeHorizontal! * 100,
                     decoration: BoxDecoration(
                       gradient: gradationDecoration(
-                        color1:Colors.red,
-                        color2:Colors.brown),
+                          color1: Colors.red, color2: Colors.brown),
                       color: WHITE,
-                      borderRadius:const  BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
@@ -729,7 +697,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color:WHITE))
+                              color: WHITE))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 //const Divider(height: 2,thickness: 2,),

@@ -163,7 +163,7 @@ int? weekdayToNumber(String? weekday) {
   }
 }
 
-List<String> datetime2termList(DateTime currentDate) {
+List<String> datetime2termList(DateTime datetime) {
   final Map<String, DateTime> wasedaCalendar2024 = {
     "春学期開始": DateTime(2024, 4, 1),
     "春学期授業開始": DateTime(2024, 4, 12),
@@ -183,26 +183,38 @@ List<String> datetime2termList(DateTime currentDate) {
   List<String> currentTerms = [];
   List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
 
-  if (currentDate.isAfter(datetimeList[1]) &&
-      currentDate.isBefore(datetimeList[2])) {
+  if (datetime.isAfter(datetimeList[1]) && datetime.isBefore(datetimeList[2])) {
     currentTerms.addAll(["spring_semester", "spring_quarter"]);
   }
-  if (currentDate.isAfter(datetimeList[3]) &&
-      currentDate.isBefore(datetimeList[4])) {
+  if (datetime.isAfter(datetimeList[3]) && datetime.isBefore(datetimeList[4])) {
     currentTerms.addAll(["spring_semester", "summer_quarter"]);
   }
-  if (currentDate.isAfter(datetimeList[7]) &&
-      currentDate.isBefore(datetimeList[8])) {
+  if (datetime.isAfter(datetimeList[7]) && datetime.isBefore(datetimeList[8])) {
     currentTerms.addAll(["fall_semester", "fall_quarter"]);
   }
-  if (currentDate.isAfter(datetimeList[9]) &&
-      currentDate.isBefore(datetimeList[11])) {
+  if (datetime.isAfter(datetimeList[9]) &&
+      datetime.isBefore(datetimeList[11])) {
     currentTerms.addAll(["fall_semester", "winter_quarter"]);
   }
   if (currentTerms.isNotEmpty) {
     currentTerms.add("full_year");
   }
   return currentTerms;
+}
+
+String? datetime2quarter(DateTime datetime) {
+  List<String> currentTermList = datetime2termList(datetime);
+  if (currentTermList.contains("spring_quarter")) {
+    return "spring_quarter";
+  } else if (currentTermList.contains("summer_quarter")) {
+    return "summer_quarter";
+  } else if (currentTermList.contains("fall_quarter")) {
+    return "fall_quarter";
+  } else if (currentTermList.contains("winter_quarter")) {
+    return "winter_quarter";
+  } else {
+    return null;
+  }
 }
 
 List<String> semester2quarterList(String text) {
