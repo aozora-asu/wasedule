@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../assist_files/size_config.dart';
 import '../menu_pages/setting_page.dart';
-import '../menu_pages/url_register_page.dart';
+
 
 class burgerMenu extends ConsumerWidget {
 
@@ -37,13 +37,6 @@ class burgerMenu extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-
-          menuPanel(
-            Icons.add_link,
-            "Moodle URLの登録",
-            MaterialPageRoute(builder: (context) => UrlRegisterPage()),
-            context
           ),
 
           menuPanel(
