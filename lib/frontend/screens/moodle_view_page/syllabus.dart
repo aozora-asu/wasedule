@@ -310,13 +310,14 @@ List<String> extractClassRoom(String input) {
   return result;
 }
 
-Future<Map<String, Map<String, Map<String, List<String>>>>> vacantRoomList(
+Future<Map<String, Map<String, List<String>>>?> vacantRoomList(
     int buildingNum) async {
   List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
   RequestQuery requestQuery;
   String htmlString;
   String? semester;
   List<Map<String, int?>> periodAndDateList;
+  DateTime now = DateTime.now();
 
   Map<String, Map<String, Map<String, List<String>>>> vacantClassRoomMap = {};
   Map<String, Map<String, List<String>>> emptyroomWeekdayAndPeriod = {};
@@ -388,8 +389,11 @@ Future<Map<String, Map<String, Map<String, List<String>>>>> vacantRoomList(
     }
   }
   printWrapped(vacantClassRoomMap["fall_quarter"].toString());
-
-  return vacantClassRoomMap;
+  if (datetime2quarter(now) != null) {
+    return vacantClassRoomMap[datetime2quarter(now)];
+  } else {
+    return null;
+  }
 }
 
 Future<bool> hasVacantRoom(int buildingNum) async {
