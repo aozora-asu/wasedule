@@ -310,16 +310,15 @@ List<String> extractClassRoom(String input) {
   return result;
 }
 
-Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
-    vacantRoomList(int buildingNum) async {
+Future<Map<String, Map<String, Map<String, List<String>>>>> vacantRoomList(
+    int buildingNum) async {
   List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
   RequestQuery requestQuery;
   String htmlString;
   String? semester;
   List<Map<String, int?>> periodAndDateList;
 
-  Map<String, Map<String, Map<String, Map<String, List<String>>>>>
-      vacantClassRoomMap = {};
+  Map<String, Map<String, Map<String, List<String>>>> vacantClassRoomMap = {};
   Map<String, Map<String, List<String>>> emptyroomWeekdayAndPeriod = {};
   Map<String, List<String>> map = {};
   List<String> quarterList = [];
@@ -336,7 +335,7 @@ Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
 
   for (var classRoom in classRoomList) {
     requestQuery = RequestQuery(
-      p_gakki: "1",
+      // p_gakki: "1",
       keyword: classRoom,
       p_number: "100",
     );
@@ -374,16 +373,12 @@ Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
             if (vacantClassRoomMap.containsKey(quarter)) {
               if (vacantClassRoomMap[quarter]!
                   .containsKey(buildingNum.toString())) {
-                vacantClassRoomMap[quarter]![buildingNum.toString()]!
-                    .addAll(emptyroomWeekdayAndPeriod);
+                vacantClassRoomMap[quarter]!.addAll(emptyroomWeekdayAndPeriod);
               } else {
-                vacantClassRoomMap[quarter]![buildingNum.toString()] =
-                    emptyroomWeekdayAndPeriod;
+                vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
               }
             } else {
-              vacantClassRoomMap[quarter] = {
-                buildingNum.toString(): emptyroomWeekdayAndPeriod
-              };
+              vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
             }
           }
         }
@@ -392,6 +387,7 @@ Future<Map<String, Map<String, Map<String, Map<String, List<String>>>>>>
       return {};
     }
   }
+  printWrapped(vacantClassRoomMap["fall_quarter"].toString());
 
   return vacantClassRoomMap;
 }
