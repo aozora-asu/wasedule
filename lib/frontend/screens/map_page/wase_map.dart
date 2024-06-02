@@ -378,66 +378,66 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   void showDetailButtomSheet(String location) {
     showModalBottomSheet<void>(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        enableDrag: true,
-        barrierColor: Colors.black.withOpacity(0.5),
-        builder: (context) {
-          return Container(
-              height: SizeConfig.blockSizeVertical! * 60,
-              decoration:const BoxDecoration(
-                color: WHITE,
-                borderRadius:BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
-                ),
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      enableDrag: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) {
+        return Container(
+            height: SizeConfig.blockSizeVertical! * 60,
+            decoration:const BoxDecoration(
+              color: WHITE,
+              borderRadius:BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
-              margin: const EdgeInsets.only(top: 20),
-              child: Column(children: [
-                Container(
-                    height: SizeConfig.blockSizeVertical! * 6,
-                    width: SizeConfig.blockSizeHorizontal! * 100,
-                    decoration: BoxDecoration(
-                      gradient: gradationDecoration(
-                        color2:Colors.black),
-                      color: WHITE,
-                      borderRadius:const BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                      ),
-                    ),
-                    child: Row(children: [
-                      SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
-                      Image.asset('lib/assets/map_images/location_pin.png'),
-                      Text(" " + location + '号館',
-                          style: TextStyle(
-                              fontSize: SizeConfig.blockSizeVertical! * 3,
-                              fontWeight: FontWeight.bold,
-                              color:WHITE
-                              ))
-                    ])),
-                const Divider(
-                  height: 2,
-                  thickness: 2,
-                ),
-                Expanded(
-                    child: Stack(children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: buildingImages[location]!, fit: BoxFit.cover),
+            ),
+            margin: const EdgeInsets.only(top: 20),
+            child: Column(children: [
+              Container(
+                  height: SizeConfig.blockSizeVertical! * 6,
+                  width: SizeConfig.blockSizeHorizontal! * 100,
+                  decoration: BoxDecoration(
+                    gradient: gradationDecoration(
+                      color2:Colors.black),
+                    color: WHITE,
+                    borderRadius:const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
                     ),
                   ),
-                  Container(
-                      height: SizeConfig.blockSizeVertical! * 60,
-                      color: WHITE.withOpacity(0.6),
-                      padding:const EdgeInsets.all(10),
-                      child: emptyClassRooms(location),
-                    )
-                ]))
-              ]));
-        });
+                  child: Row(children: [
+                    SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
+                    Image.asset('lib/assets/map_images/location_pin.png'),
+                    Text(" " + location + '号館',
+                        style: TextStyle(
+                            fontSize: SizeConfig.blockSizeVertical! * 3,
+                            fontWeight: FontWeight.bold,
+                            color:WHITE
+                            ))
+                  ])),
+              const Divider(
+                height: 2,
+                thickness: 2,
+              ),
+              Expanded(
+                  child: Stack(children: [
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: buildingImages[location]!, fit: BoxFit.cover),
+                  ),
+                ),
+                Container(
+                    height: SizeConfig.blockSizeVertical! * 60,
+                    color: WHITE.withOpacity(0.6),
+                    padding:const EdgeInsets.all(10),
+                    child: emptyClassRooms(location),
+                  )
+              ]))
+            ]));
+      });
   }
 
   Widget emptyClassRooms(String location){
@@ -453,15 +453,16 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           child:CircularProgressIndicator(color: MAIN_COLOR));
         }else if(snapshot.hasData){
           String searchResult = "授業期間外です。";
+          print(snapshot.data!);
 
           Map<String, Map<String, dynamic>> quarterMap = 
             snapshot.data![current_quarter] ?? {};
 
-          Map<String, dynamic> buildingMap = 
-            quarterMap[location] ?? {};
+          // Map<String, dynamic> buildingMap = 
+          //   quarterMap[location] ?? {};
 
           dynamic weekDayMap = 
-            buildingMap[now.weekday.toString()] ?? {};
+           quarterMap[now.weekday.toString()] ?? {};
 
           dynamic periodList = 
             weekDayMap[current_period.toString()] ?? [];
@@ -473,7 +474,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           }else{
             searchResult = periodList.join('\n');
           }
-
 
           return SingleChildScrollView(
             child:Column(

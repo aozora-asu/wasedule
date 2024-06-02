@@ -145,55 +145,6 @@ Widget popupMenuButton(color){
     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
       PopupMenuItem(
         child: ListTile(
-          leading:const Icon(Icons.add_link,color:MAIN_COLOR),
-          title :const Text('Moodle URLの登録'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UrlRegisterPage())
-            );
-          }
-        )
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading:const Icon(Icons.school,color:MAIN_COLOR),
-          title :const Text('使い方ガイド'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HowToUsePage()));
-          }
-        )
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading:const Icon(Icons.tag,color:MAIN_COLOR),
-          title :const Text('タグとテンプレート'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TagAndTemplatePage()));
-          }
-        )
-      ),
-      PopupMenuItem(
-        child: ListTile(
-          leading:const Icon(Icons.currency_yen_rounded,color:MAIN_COLOR),
-          title :const Text('アルバイト'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:DateFormat('yyyy/MM').format(DateTime.now()))));
-          }
-        )
-      ),
-      PopupMenuItem(
-        child: ListTile(
           leading:const Icon(Icons.info_rounded,color:MAIN_COLOR),
           title :const Text('サポート'),
           onTap:(){
