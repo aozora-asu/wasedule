@@ -88,64 +88,26 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
     Widget dividerModel = const VerticalDivider(
-      width: 4,
-      thickness: 1.5,
+      width: 2,
+      thickness: 1,
       color: Colors.grey,
-      indent: 0,
+      indent: 4,
       endIndent: 4,
     );
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
+        backgroundColor: WHITE,
         body: Column(children: [
-          Row(children: [
-            const Icon(Icons.arrow_left, color: Colors.grey),
+          Container(
+            color: MAIN_COLOR,
+           child:Row(children: [
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
                   height: SizeConfig.blockSizeVertical! * 4.5,
                   child: Row(children: [
-                    dividerModel,
-                    TextButton(
-                      child: Row(children: [
-                        const Text("期限切れ ",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        listLengthView(
-                          ref
-                              .watch(taskDataProvider)
-                              .expiredTaskDataList
-                              .length,
-                          SizeConfig.blockSizeVertical! * 1.205,
-                        )
-                      ]),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ExpiredTaskPage(setosute: setState)),
-                        );
-                      },
-                    ),
-                    dividerModel,
-                    TextButton(
-                      child: const Text("削除済み",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  DeletedTaskPage(setosute: setState)),
-                        );
-                      },
-                    ),
-                    dividerModel,
                     Align(
                       alignment: Alignment.centerLeft,
                       child: foldStateSwitch(),
@@ -156,21 +118,21 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     TextButton(
                       child: const Text("お問い合わせ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.red)),
+                              fontWeight: FontWeight.bold, color: WHITE)),
                       onPressed: () {
                         showErrorReportDialogue(context);
                       },
                     ),
-                    dividerModel
                   ]),
                 ),
               ),
             ),
-            const Icon(Icons.arrow_right, color: Colors.grey)
-          ]),
+          ])
+          ),
           const Divider(thickness: 1, height: 1, color: Colors.grey),
           Expanded(child: pages())
-        ]),
+        ])
+        ,
         floatingActionButton: Container(
             margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
             child: Row(
@@ -192,7 +154,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   },
                   backgroundColor: MAIN_COLOR,
                   child:
-                      const Icon(Icons.refresh_outlined, color: Colors.white),
+                      const Icon(Icons.refresh_outlined, color: WHITE),
                 ),
               ],
             )));
@@ -320,7 +282,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -329,7 +291,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("展開",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
       default:
         return TextButton(
             onPressed: () {
@@ -338,7 +300,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
     }
   }
 
@@ -353,7 +315,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("期限順",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
 
       default:
         return TextButton(
@@ -363,7 +325,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("カテゴリ別",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
     }
   }
 }
@@ -488,7 +450,7 @@ Widget listLengthView(int target, double fontSize) {
           target.toString(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: WHITE,
               fontSize: fontSize),
         ));
   }
@@ -581,7 +543,7 @@ void bottomSheet(targetData, ref, context, setState) {
               height: SizeConfig.blockSizeVertical! * 85,
               margin: const EdgeInsets.only(top: 0),
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: WHITE,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -763,12 +725,12 @@ void bottomSheet(targetData, ref, context, setState) {
                                   const Row(
                                     children: [
                                       Spacer(),
-                                      Icon(Icons.delete, color: Colors.white),
+                                      Icon(Icons.delete, color: WHITE),
                                       SizedBox(width: 10),
                                       Text(
                                         "削除",
                                         style: TextStyle(
-                                            color: Colors.white,
+                                            color: WHITE,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Spacer()
@@ -789,7 +751,7 @@ void bottomSheet(targetData, ref, context, setState) {
         ]),
         Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: WHITE,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -848,7 +810,7 @@ void bottomSheet(targetData, ref, context, setState) {
 Widget menuBar() {
   return Container(
       decoration: const BoxDecoration(
-          color: Colors.white,
+          color: WHITE,
           border: Border(top: BorderSide(color: Colors.grey))),
       child: Row(children: [
         IconButton(

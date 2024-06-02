@@ -44,31 +44,31 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         ref.watch(scheduleFormProvider).tagController.text);
     SizeConfig().init(context);
     return Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
-          backgroundColor: MAIN_COLOR,
-          elevation: 10,
-          title: Column(
-            children: <Widget>[
-              Row(children: [
-                const Icon(
-                  Icons.group,
-                  color: WIDGET_COLOR,
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 4,
-                ),
-                Text(
-                  '予定の配信/受信',
-                  style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white),
-                ),
-              ])
-            ],
-          ),
-        ),
+        // appBar: AppBar(
+        //   leading: const BackButton(color: WHITE),
+        //   backgroundColor: MAIN_COLOR,
+        //   elevation: 10,
+        //   title: Column(
+        //     children: <Widget>[
+        //       Row(children: [
+        //         const Icon(
+        //           Icons.group,
+        //           color: WIDGET_COLOR,
+        //         ),
+        //         SizedBox(
+        //           width: SizeConfig.blockSizeHorizontal! * 4,
+        //         ),
+        //         Text(
+        //           '予定の配信/受信',
+        //           style: TextStyle(
+        //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
+        //               fontWeight: FontWeight.w800,
+        //               color: WHITE),
+        //         ),
+        //       ])
+        //     ],
+        //   ),
+        // ),
         body: SingleChildScrollView(
             child: Center(
                 child: Column(children: [
@@ -155,9 +155,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       const Row(
         children: [
           SizedBox(width: 20),
-          Icon(Icons.more_vert_rounded, color: Colors.white),
+          Icon(Icons.more_vert_rounded, color: WHITE),
           SizedBox(width: 20),
-          Text("タグを選択", style: TextStyle(color: Colors.white)),
+          Text("タグを選択", style: TextStyle(color: WHITE)),
         ],
       ),
     );
@@ -293,9 +293,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           MAIN_COLOR,
           const Row(children: [
             SizedBox(width: 20),
-            Icon(Icons.backup, color: Colors.white),
+            Icon(Icons.backup, color: WHITE),
             SizedBox(width: 20),
-            Text("予定をアップロード", style: TextStyle(color: Colors.white))
+            Text("予定をアップロード", style: TextStyle(color: WHITE))
           ]));
     } else {
       return const SizedBox();
@@ -387,9 +387,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.upload_file, color: Colors.white),
+                      Icon(Icons.upload_file, color: WHITE),
                       SizedBox(width: 20),
-                      Text("アップロード", style: TextStyle(color: Colors.white)),
+                      Text("アップロード", style: TextStyle(color: WHITE)),
                     ],
                   ),
                 ),
@@ -615,12 +615,12 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   const Row(children: [
                     Icon(
                       Icons.qr_code_2_outlined,
-                      color: Colors.white,
+                      color: WHITE,
                     ),
                     SizedBox(width: 5),
                     Text("共有",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: WHITE,
                           fontWeight: FontWeight.bold,
                         )),
                   ])),
@@ -705,9 +705,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       const Row(
         children: [
           SizedBox(width: 20),
-          Icon(Icons.install_mobile, color: Colors.white),
+          Icon(Icons.install_mobile, color: WHITE),
           SizedBox(width: 20),
-          Text("予定を受信する", style: TextStyle(color: Colors.white)),
+          Text("予定を受信する", style: TextStyle(color: WHITE)),
         ],
       ),
     );

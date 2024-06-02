@@ -8,6 +8,8 @@ const WIDGET_COLOR = Color.fromARGB(255, 255, 255, 255);
 const WIDGET_OUTLINE_COLOR = Color.fromARGB(255, 227, 227, 227);
 const BACKGROUND_COLOR = Color.fromARGB(255, 245, 245, 245);
 const PALE_MAIN_COLOR = Color.fromARGB(255, 184, 113, 113);
+const WHITE = Color.fromRGBO(244, 245, 247, 1);
+const BLACK = Color.fromRGBO(51,51,51,1);
 
 const WASEDA_PSE_COLOR = Color.fromARGB(255, 255, 120, 9);
 const WASEDA_LAW_COLOR = Color.fromARGB(255, 0, 142, 97);
@@ -22,3 +24,18 @@ const WASEDA_SSS_COLOR = Color.fromARGB(255, 235, 211, 0);
 const WASEDA_HUM_COLOR = Color.fromARGB(255, 0, 175, 239);
 const WASEDA_SPS_COLOR = Color.fromARGB(255, 9, 109, 224);
 const WASEDA_SILS_COLOR = Color.fromARGB(255, 87, 174, 190);
+
+
+Color lighten(Color color, [double amount = 0.1]) {
+  assert(amount >= 0 && amount <= 1);
+  final hsl = HSLColor.fromColor(color);
+  final hslLightened = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+  return hslLightened.toColor();
+}
+
+Color darken(Color color, [double amount = 0.1]) {
+  assert(amount >= 0 && amount <= 1);
+  final hsl = HSLColor.fromColor(color);
+  final hslDarkened = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+  return hslDarkened.toColor();
+}

@@ -4,8 +4,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
+import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 
 import '../screens/calendar_page/calendar_page.dart';
@@ -28,7 +38,8 @@ class AppPage extends ConsumerStatefulWidget {
 }
 
 class _AppPageState extends ConsumerState<AppPage> {
-  int _currentIndex =0;
+  int _currentIndex = 0;
+  int _currentSubIndex = 0;
   PageController pageController =  PageController();
 
   @override
@@ -41,9 +52,18 @@ class _AppPageState extends ConsumerState<AppPage> {
   void _onItemTapped(int index) {
     ref.read(taskDataProvider).isInit = true;
     setState(() {
+      _currentSubIndex = 0;
       _currentIndex = index;
     });
     pageController.jumpToPage(index);
+  }
+
+  void _onTabTapped(int subIndex) {
+    ref.read(taskDataProvider).isInit = true;
+    setState(() {
+      _currentSubIndex = subIndex;
+    });
+    //pageController.jumpToPage(subIndex);
   }
 
   ScrollPhysics physics = const ScrollPhysics();
@@ -51,19 +71,34 @@ class _AppPageState extends ConsumerState<AppPage> {
   bool isExtendBottom = true;
   bool showAppBar = true;
   Timer? _timer;
+  bool showChildMenu = true;
+
+  void _switchChildMenu() {
+    setState(() {
+      if(showChildMenu){
+        showChildMenu = false;
+      }else{
+        showChildMenu = true;
+      }
+    });
+  }
 
   Widget pageView(){
     return PageView(
         physics: physics,
         controller: pageController,
-        children: [TaskPage(),
+        children: [WasedaMapPage(),
                    TimeTablePage(),
-                   const Calendar(),
-                   TaskViewPage(),
+                   calendarSubPages()[_currentSubIndex],
+                   taskSubPages()[_currentSubIndex],
                    MoodleViewPage(),
                    ],
         onPageChanged: (value){
-            if(value == 1 || value == 2){
+            if(value == 0){
+              isExtendBody = false;
+              isExtendBottom = false;
+              physics = const ScrollPhysics();
+            }else if(value == 1 || value == 2){
               isExtendBody = true;
               isExtendBottom = true;
               physics = const ScrollPhysics();
@@ -81,6 +116,7 @@ class _AppPageState extends ConsumerState<AppPage> {
               physics = const ScrollPhysics();
             }
             setState((){
+              _currentSubIndex = 0;
               _currentIndex = value;
             });
         },
@@ -89,28 +125,76 @@ class _AppPageState extends ConsumerState<AppPage> {
 
   @override
   Widget build(BuildContext context) {
-  ref.watch(taskDataProvider);
-  Widget body;
-  body = pageView();
+    ref.watch(taskDataProvider);
+    SizeConfig().init(context);
+    Widget body;
+    double height = SizeConfig.blockSizeVertical! *10;
+    body = pageView();
+    if(_currentSubIndex != 0){
+        isExtendBody = false;
+        isExtendBottom = false;
+        physics = const ScrollPhysics();
+    }
+
+    if(!showChildMenu){
+      height = SizeConfig.blockSizeHorizontal! *15;
+    }
 
     return Scaffold(
-      extendBodyBehindAppBar: isExtendBody,
+      extendBodyBehindAppBar: false,
       extendBody: isExtendBottom,
-      appBar: CustomAppBar(
-        backButton: false),
+      appBar: PreferredSize(
+        preferredSize: Size(
+          SizeConfig.blockSizeHorizontal! *100,
+          height),
+        child:MenuAppBar(
+            currentIndex: _currentIndex,
+            onItemTapped: _onItemTapped,
+            currentSubIndex: _currentSubIndex,
+            onTabTapped: _onTabTapped,
+            setosute: setState,
+            isChildmenuExpand: showChildMenu,
+            changeChildmenuState: _switchChildMenu,
+          )
+        ),
       bottomNavigationBar:customBottomBar(
           context,
           _currentIndex,
           _onItemTapped,
           setState
         ),
-      body: body,
-    );
+      body:body
+    ); 
   }
+
+  List<Widget> calendarSubPages(){
+      String thisMonth = DateTime.now().year.toString() +
+      "/" +
+      DateTime.now().month.toString().padLeft(2, '0');
+    return [const Calendar(),
+            ArbeitStatsPage(targetMonth: thisMonth),
+            DataUploadPage(),
+            UnivSchedulePage(),
+            SettingsPage(isAppBar:false),
+            DataDownloadPage(),
+           ];
+  }
+
+  List<Widget> taskSubPages(){
+    return [TaskViewPage(),
+            ExpiredTaskPage(setosute: setState),
+            DeletedTaskPage(setosute: setState),
+            SettingsPage(initIndex:1,isAppBar: false,),
+            TaskPage(),
+            TaskPage(),
+           ];
+  }
+
 
   void startTimer() {
     _timer?.cancel();
-    _timer = Timer(const Duration(seconds: 4), () {
+    _timer = Timer(const Duration(seconds: 4),
+    () {
       setState(() {
        if(_currentIndex != 3){
         showAppBar = false;
