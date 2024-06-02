@@ -155,6 +155,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     }
 
     if(subIndex == 0 && currentSubIndex == 0){
+
       iconColor = WHITE;
       middleBarColor = MAIN_COLOR;
       decoration = BoxDecoration(
@@ -180,6 +181,16 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         gradient: gradationDecoration(
           color1:MAIN_COLOR,
           color2:MAIN_COLOR)
+        );
+        
+      iconColor = WHITE;
+      middleBarColor = MAIN_COLOR;
+      decoration = BoxDecoration(
+        borderRadius:const BorderRadius.only(
+          topLeft:Radius.circular(7.5),
+          topRight:Radius.circular(7.5),
+        ),
+        gradient: gradationDecoration(color1:MAIN_COLOR,color2:MAIN_COLOR)
       );
 
     }else if(subIndex == currentSubIndex){
@@ -415,18 +426,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     return subPageTabs;
   }
 
-  AssetImage backGroundImage() {
-    return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
-    if (DateTime.now().hour >= 5 && DateTime.now().hour <= 9) {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_morning.png');
-    } else if (DateTime.now().hour >= 9 && DateTime.now().hour <= 17) {
-      return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
-    } else {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_night.png');
-    }
-  }
 
 
 }
@@ -439,6 +438,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         return AlertDialog(
           title:const Text("アプリをご利用いただきありがとうございます！"),
           content: const Text("感想や評価など、ぜひアプリストアまでお寄せください！"),
+          backgroundColor: WHITE,
           actions: <Widget>[
             buttonModel(
               (){
