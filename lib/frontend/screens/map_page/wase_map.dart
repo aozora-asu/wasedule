@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;
@@ -26,8 +27,34 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   final MapController mapController = MapController();
   late final _animatedMapController = AnimatedMapController(vsync: this);
   String yearAndMonth = DateFormat("yyyyMM").format(DateTime.now());
+  late int initCampusNum;
+  bool _isLoading = true; // 初期化中かどうかのフラグ
+
+  @override
+  void initState() {
+    super.initState();
+    initPrefarence();
+  }
+
+  Future<void> initPrefarence() async {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getInt('initCampusNum') == null) {
+      initCampusNum = 0;
+      await pref.setInt('initCampusNum', 0);
+    } else {
+      initCampusNum = pref.getInt('initCampusNum')!;
+    }
+    setState(() {
+      _isLoading = false; // 初期化が完了したらフラグを更新
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      // 初期化中はローディング表示
+      return const Center(child: CircularProgressIndicator());
+    }
     SizeConfig().init(context);
     return Scaffold(
       body:mapView(),
@@ -141,7 +168,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     "tokorozawa_food": "https://www.wcoop.ne.jp/schedule/schedule_",
   };
 
-  Widget mapView() {
+  Widget mapView(){
+
     return Stack(children: [
       Container(
         height: SizeConfig.blockSizeVertical! *80,
@@ -152,8 +180,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           child: FlutterMap(
             mapController: _animatedMapController.mapController,
             options: MapOptions(
-              initialCenter: campusLocations["waseda"]!,
-              initialZoom: initMapZoom["waseda"]!,
+              initialCenter: campusLocations.values.elementAt(initCampusNum),
+              initialZoom: initMapZoom.values.elementAt(initCampusNum),
               interactionOptions:const InteractionOptions(
                 flags: InteractiveFlag.all,
               )
@@ -216,25 +244,40 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
               fontSize: SizeConfig.blockSizeHorizontal! *10,
               fontWeight: FontWeight.bold
             ),
-            ),
+          ),
+          Divider(
+            color:Colors.blueGrey,
+            endIndent:  SizeConfig.blockSizeHorizontal! *30,
+            thickness: 3,
+            height: 3,
+          ),
+          const SizedBox(height:5),
           Row(children: [
             buttonModel(() async {
+              final pref = await SharedPreferences.getInstance();
+              pref.setInt("initCampusNum",0);
               await _animatedMapController.animateTo(
                   dest: campusLocations["waseda"]);
               await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
             }, Colors.blue, "  早稲田  "),
             buttonModel(() async {
+              final pref = await SharedPreferences.getInstance();
+              pref.setInt("initCampusNum",1);
               await _animatedMapController.animateTo(
                   dest: campusLocations["toyama"]);
               await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
             }, Colors.blue, "   戸山   "),
             buttonModel(() async {
+              final pref = await SharedPreferences.getInstance();
+              pref.setInt("initCampusNum",2);
               await _animatedMapController.animateTo(
                   dest: campusLocations["nishi_waseda"]);
               await _animatedMapController
                   .animatedZoomTo(initMapZoom["nishi_waseda"]!);
             }, Colors.blue, " 西早稲田 "),
             buttonModel(() async {
+              final pref = await SharedPreferences.getInstance();
+              pref.setInt("initCampusNum",3);
               await _animatedMapController.animateTo(
                   dest: campusLocations["tokorozawa"]);
               await _animatedMapController
