@@ -2,20 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
-import 'package:flutter_calandar_app/test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
  int type = 0;
 
@@ -60,9 +54,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
       }
     }
     SizeConfig().init(context);
+    Color itemColor = WHITE;
 
     return AppBar(
-        backgroundColor:WHITE, //MAIN_COLOR.withOpacity(0.95),
+        backgroundColor:BLACK, //MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         // flexibleSpace: 
         // Stack(
@@ -84,14 +79,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
               },
               child:LogoAndTitle(
                 size: 7,
-                color:BLACK,
-                isLogoWhite: false,
+                color:itemColor ,
+                isLogoWhite:true,
                 subTitle: "早稲田から、落単をなくしたい。",
               )
             ),
             const Spacer(),
             InkWell(
-              child: Icon(Icons.notifications_outlined, color:BLACK),
+              child: Icon(Icons.notifications_outlined, color:itemColor),
               onTap: (){
                 Navigator.push(
                   context,
@@ -99,7 +94,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
                 );
               },
             ),
-            popupMenuButton(BLACK)
+            popupMenuButton(itemColor)
           ]),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(

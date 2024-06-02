@@ -290,7 +290,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 bool isVacant = snapShot.data!;
                 Image pinImage =
                     Image.asset('lib/assets/map_images/location_pin.png');
-                if (isVacant) {
+                if (!isVacant) {
                   pinImage = Image.asset(
                       'lib/assets/map_images/location_pin_notempty.png');
                 }
@@ -474,6 +474,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           )))
                 ]));
           } else {
+            print("エラー：" + snapshot.error.toString());
             return const Center(
                 child: CircularProgressIndicator(color: Colors.red));
           }
