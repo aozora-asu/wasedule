@@ -405,23 +405,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                       showOnlyScreenShot(screenShotDateTime()),
                       const SizedBox(width: 7)
                     ]),
-                    // doNotContainScreenShot(
-                    //     menuListChild(Icons.groups_rounded, "予定の配信", () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => DataUploadPage()),
-                    //   );
-                    // })),
-                    // doNotContainScreenShot(
-                    //     menuListChild(Icons.school, "年間行事予定", () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => UnivSchedulePage()),
-                    //   );
-                    // })),
-                    const SizedBox(height: 20)
                   ])))),
       menu()
     ]);
@@ -433,18 +416,6 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeVertical! * 3,
       ),
       Column(children: [
-        // scheduleEmptyFlag(
-        //   ref,
-        //   menuListChild(Icons.ios_share_rounded, "SNS共有コンテンツ",
-        //       () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => SnsContentsPage()),
-        //     );
-        //   }),
-        // )
-
         tagEmptyFlag(
             ref,
             GestureDetector(
@@ -467,7 +438,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ]))),
 
         const SizedBox(height: 15),
-        menuList(Icons.info, "その他", false, [
+          const Divider(height:1),
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
@@ -479,8 +450,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               context,
               MaterialPageRoute(builder: (context) => SnsLinkPage()),
             );
-          })
-        ]),
+          }),
         const SizedBox(height: 15),
         const SizedBox(height: 30),
       ])

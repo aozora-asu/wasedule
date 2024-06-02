@@ -749,6 +749,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
           }
 
           return Card(
+            color: WHITE,
+            elevation: 1.5,
               child: Padding(
                   padding: const EdgeInsets.all(5),
                   child: Row(children: [

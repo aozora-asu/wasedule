@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/url_register_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -178,7 +180,7 @@ class _IntroPageState extends State<IntroPage> {
           title : const Text("URLを登録してみましょう"), 
           actions: <Widget>[
           Column(children:[
-            const Text("ガイドに従って、「Waseda Moodle」のURLをアプリに登録しましょう！登録すると、以降はアプリに課題が自動取得されます。"),
+            const Text("'Moodle'ページから、「Waseda Moodle」のURLをアプリに登録しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「カレンダーURLを自動登録する」\n\n登録すると、以降はアプリに課題が自動取得されます。"),
             SizedBox(
               width:1000,
               child:ElevatedButton(
@@ -191,12 +193,15 @@ class _IntroPageState extends State<IntroPage> {
                   );
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => UrlRegisterPage(),
+                      builder: (_) => Scaffold(
+                        appBar:CustomAppBar(backButton: true),
+                        body:MoodleViewPage()
+                      ),
                     ),
                   );
                 },
                 style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
-                child: const Text("登録画面へ    →",style:TextStyle(color:Colors.white),),
+                child: const Text("登録画面へ",style:TextStyle(color:Colors.white),),
               ),
             ),
           ]) ,

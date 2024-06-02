@@ -100,7 +100,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         backgroundColor: WHITE,
         body: Column(children: [
           Container(
-            color: MAIN_COLOR,
+            color: WHITE,
            child:Row(children: [
             Expanded(
               child: SingleChildScrollView(
@@ -118,7 +118,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     TextButton(
                       child: const Text("お問い合わせ",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, color: WHITE)),
+                              fontWeight: FontWeight.bold,)),
                       onPressed: () {
                         showErrorReportDialogue(context);
                       },
@@ -282,7 +282,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       case 1:
         return TextButton(
             onPressed: () {
@@ -291,7 +291,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("展開",
-                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
       default:
         return TextButton(
             onPressed: () {
@@ -300,7 +300,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
     }
   }
 
@@ -315,7 +315,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("期限順",
-                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
+                style: TextStyle(fontWeight: FontWeight.bold)));
 
       default:
         return TextButton(
@@ -325,7 +325,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("カテゴリ別",
-                style: TextStyle(fontWeight: FontWeight.bold,color:WHITE)));
+                style: TextStyle(fontWeight: FontWeight.bold,)));
     }
   }
 }

@@ -14,21 +14,31 @@ class _NoTaskPageState extends State<NoTaskPage> {
   Widget build(BuildContext context) {
   SizeConfig().init(context);
     return Scaffold(
-        body:Padding(
-          padding:const EdgeInsets.all(20),
-          child:Column(children:[
-          const Spacer(),
-          Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
-          const Spacer(),
-          const Text("現在課題はありません",style:TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
-          const SizedBox(height:20),
-          const Text("● [+]ボタンから新しいタスクを追加してみましょう！\n● Waseda MoodleのURLを登録して、自動で課題を取得できるようにしましょう！"),
-          const SizedBox(height:15),
-          urlPageButton(),
-          const Spacer(),
-          const Spacer(),
-          const Spacer(),
-        ])
+      backgroundColor: WHITE,
+      body:Padding(
+        padding:const EdgeInsets.all(20),
+        child:Column(
+          children:[
+        const Spacer(),
+        Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
+        const Spacer(),
+        Text("現在課題はありません。",style:TextStyle(fontWeight: FontWeight.bold,fontSize: SizeConfig.blockSizeHorizontal! * 5,),),
+        const SizedBox(height:20),
+        const Align(
+          alignment: Alignment.centerLeft,
+          child:Text("■  [+]ボタンから新しいタスクを追加してみましょう！")),
+        const SizedBox(height:5),
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text("■  MoodleページからWaseda MoodleのURLを取得して、自動で課題を取得できるようにしましょう！"),
+          ),
+        const Icon(
+          Icons.keyboard_double_arrow_right,
+          color: MAIN_COLOR,
+          size: 150,
+        ),
+        const Spacer(),
+      ])
       )
     );
   }
