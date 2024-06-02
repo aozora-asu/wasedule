@@ -426,7 +426,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
-    String current_quarter = datetime2termList(now)[1];
     int current_period = datetime2Period(now) ?? 0;
 
     return FutureBuilder(
@@ -440,9 +439,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
             Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
 
-            Map<String, dynamic> buildingMap = quarterMap[location] ?? {};
-
-            dynamic weekDayMap = buildingMap[now.weekday.toString()] ?? {};
+            dynamic weekDayMap = quarterMap[now.weekday.toString()] ?? {};
 
             dynamic periodList = weekDayMap[current_period.toString()] ?? [];
 
