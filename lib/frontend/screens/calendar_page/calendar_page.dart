@@ -233,7 +233,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             //   image: DecorationImage(
             // image: calendarBackGroundImage(),
             // fit: BoxFit.cover)
-            color:WHITE
+            color:BACKGROUND_COLOR
           ),
           child: Scrollbar(
             controller: controller,
@@ -425,7 +425,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           builder: (_) =>
                               ArbeitStatsPage(targetMonth: targetMonth)));
                 },
-                child: menuList(Icons.currency_yen, "アルバイト", true, [
+                child: menuList(Icons.currency_yen, "", true, [
                   menuListChild(Icons.currency_yen, "アルバイト", () {
                     Navigator.push(
                         context,
@@ -437,7 +437,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ]))),
 
         const SizedBox(height: 15),
-          const Divider(height:1),
           menuListChild(Icons.settings, "設定", () {
             Navigator.push(
               context,
@@ -451,7 +450,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             );
           }),
         const SizedBox(height: 15),
-        const SizedBox(height: 30),
+        const SizedBox(height: 20),
       ])
     ]);
   }
@@ -477,11 +476,11 @@ class _CalendarState extends ConsumerState<Calendar> {
             await Share.shareXFiles([
               shareFile,
             ],
-                sharePositionOrigin: Rect.fromLTWH(
-                    0,
-                    0,
-                    MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height / 2));
+              sharePositionOrigin: Rect.fromLTWH(
+                0,
+                0,
+                MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height / 2));
           }
         });
   }
@@ -997,7 +996,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       universityClassView = switchWidget(
           Container(
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
               margin: const EdgeInsets.symmetric(horizontal: 1),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1051,15 +1050,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeHorizontal! * 45,
         decoration: BoxDecoration(
           color: WHITE,
-          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-          boxShadow: [
-            BoxShadow(
-              color: BLACK.withOpacity(0.5), // 影の色と透明度
-              spreadRadius: 2, // 影の広がり
-              blurRadius: 3, // ぼかしの強さ
-              offset: const Offset(0, 3), // 影の方向（横、縦）
-            ),
-          ],
+          borderRadius: BorderRadius.circular(20), // 角丸の半径を指定
         ),
         child: Center(
             child: Column(children: [
@@ -1080,15 +1071,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         height: SizeConfig.blockSizeHorizontal! * 45,
         decoration: BoxDecoration(
           color: WHITE,
-          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-          boxShadow: [
-            BoxShadow(
-              color: BLACK.withOpacity(0.5), // 影の色と透明度
-              spreadRadius: 2, // 影の広がり
-              blurRadius: 3, // ぼかしの強さ
-              offset: const Offset(0, 3), // 影の方向（横、縦）
-            ),
-          ],
+          borderRadius: BorderRadius.circular(20), // 角丸の半径を指定
         ),
         child: Center(
             child: Column(children: [
@@ -1111,7 +1094,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               color: WHITE,
               child: Center(
                   child: Row(children: [
-                const SizedBox(width: 30),
+                const SizedBox(width: 20),
                 Icon(icon, color: MAIN_COLOR, size: 40),
                 const Spacer(),
                 Text(text,
@@ -1120,19 +1103,23 @@ class _CalendarState extends ConsumerState<Calendar> {
                     )),
                 const Spacer(),
               ]))),
-          const Divider(height: 1)
+          Container(height:2,color:BACKGROUND_COLOR)
         ]));
   }
 
   Widget taskListChild(
       Widget child, void Function() ontap, bool isDivider, bool isIndent) {
     double indent = 0;
+    BorderRadius radius = BorderRadius.circular(0);
     if (!isIndent) {
       indent = 10;
     }
+    indent = 10;
+    
+      radius = BorderRadius.circular(20);
 
     Widget divider = const SizedBox();
-    if (isDivider) {
+    if (isDivider && !isIndent) {
       divider =
           Divider(height: 1, thickness: 1, indent: indent, endIndent: indent);
     }
@@ -1142,9 +1129,11 @@ class _CalendarState extends ConsumerState<Calendar> {
         child: Column(children: [
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
-              color: WHITE,
+              decoration:BoxDecoration(
+                color: WHITE,
+                borderRadius: radius
+                ),
               child: child),
-          divider
         ]));
   }
 
@@ -1174,7 +1163,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                     fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
-      const Divider(height: 1, indent: 10, endIndent: 10)
+      const Divider(height: 2,thickness:2, indent: 10, endIndent: 10, color:BACKGROUND_COLOR)
     ]);
   }
 
@@ -1197,21 +1186,13 @@ class _CalendarState extends ConsumerState<Calendar> {
         width: SizeConfig.blockSizeHorizontal! * 95,
         decoration: BoxDecoration(
           color: WHITE,
-          borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-          boxShadow: [
-            BoxShadow(
-              color: BLACK.withOpacity(0.5), // 影の色と透明度
-              spreadRadius: 2, // 影の広がり
-              blurRadius: 3, // ぼかしの強さ
-              offset: const Offset(0, 3), // 影の方向（横、縦）
-            ),
-          ],
+          borderRadius: BorderRadius.circular(20), // 角丸の半径を指定
         ),
         child: Column(children: [
           SizedBox(
               height: SizeConfig.safeBlockVertical! * 3,
               child: Row(children: [
-                const SizedBox(width: 10),
+                const SizedBox(width:15),
                 Icon(headerIcon,
                     size: SizeConfig.safeBlockVertical! * 2,
                     color: Colors.grey),
@@ -1223,9 +1204,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                 ),
                 const Spacer(),
                 customButton,
-                const SizedBox(width: 15),
+                const SizedBox(width: 20),
               ])),
-          const Divider(height: 1),
+          //const Divider(height: 1),
           ListView.builder(
             itemBuilder: (context, index) {
               return child.elementAt(index);
@@ -1234,7 +1215,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: child.length,
           ),
-          SizedBox(height: SizeConfig.safeBlockVertical! * 2),
+          //SizedBox(height: SizeConfig.safeBlockVertical! * 2),
         ]));
   }
 
@@ -1299,14 +1280,6 @@ class _CalendarState extends ConsumerState<Calendar> {
               decoration: BoxDecoration(
                 color: Colors.redAccent,
                 borderRadius: BorderRadius.circular(12.5), // 角丸の半径を指定
-                boxShadow: [
-                  BoxShadow(
-                    color: BLACK.withOpacity(0.5), // 影の色と透明度
-                    spreadRadius: 2, // 影の広がり
-                    blurRadius: 3, // ぼかしの強さ
-                    offset: const Offset(0, 3), // 影の方向（横、縦）
-                  ),
-                ],
               ),
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -1369,17 +1342,9 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (isScreenShotBeingTaken) {
       return const BoxDecoration(color: WHITE);
     } else {
-      return BoxDecoration(
+      return const BoxDecoration(
         color: WHITE,
-        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: BLACK.withOpacity(0.5), // 影の色と透明度
-        //     spreadRadius: 2, // 影の広がり
-        //     blurRadius: 3, // ぼかしの強さ
-        //     offset: const Offset(0, 3), // 影の方向（横、縦）
-        //   ),
-        // ],
+        //borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
       );
     }
   }
@@ -1461,19 +1426,18 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const SizedBox();
     } else {
       return Column(children: [
-        menuList(Icons.calendar_month, "きょうの予定", true, [
-          Container(
-              height: SizeConfig.blockSizeVertical! * 3,
-              decoration: const BoxDecoration(),
-              child: Text(
-                DateFormat("   yyyy年MM月dd日 (E)").format(DateTime.now()),
-                style: const TextStyle(
-                    color: Colors.grey, fontWeight: FontWeight.bold),
-              )),
-          const Divider(height: 1, indent: 10, endIndent: 10),
-          ListView.builder(
+        menuList(
+          Icons.calendar_month,
+          "きょうの予定" + DateFormat("   MM月dd日 (E)").format(DateTime.now()),
+          true,
+          [
+          Container(height:2,color:BACKGROUND_COLOR),
+          ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return sortedWidgetList.elementAt(index).values.first;
+            },
+            separatorBuilder: (context, index) {
+              return Container(height:2,color:BACKGROUND_COLOR);
             },
             itemCount: sortedWidgetList.length,
             shrinkWrap: true,
@@ -1505,7 +1469,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         "") {
       dateTimeData = Text(
         sortedMapList.elementAt(index).values.first["startTime"],
-        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold),
       );
     } else {
       dateTimeData = Text(
@@ -1690,26 +1656,26 @@ class _CalendarState extends ConsumerState<Calendar> {
             ]),
           ),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(12.5),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   tagThumbnailer,
-                  SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 75,
-                      child: Text(
-                        " " +
-                            sortedMapList
-                                .elementAt(index)
-                                .values
-                                .first["subject"],
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                            color: BLACK,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                            fontWeight: FontWeight.bold),
-                      ))
+                  Container(
+                    width: SizeConfig.blockSizeHorizontal! * 70,
+                    child: Text(
+                      " " +
+                          sortedMapList
+                              .elementAt(index)
+                              .values
+                              .first["subject"],
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                          color: BLACK,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
+                          fontWeight: FontWeight.bold),
+                    ))
                 ]),
           )
         ]))
@@ -1877,7 +1843,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             ]),
           ),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(12.5),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1918,7 +1884,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                         overflow: TextOverflow.clip,
                         style: TextStyle(
                             color: BLACK,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
                             fontWeight: FontWeight.bold),
                       ))
                 ]),
@@ -1959,13 +1925,17 @@ class _CalendarState extends ConsumerState<Calendar> {
     } else {
       return Column(children: [
         menuList(Icons.check, "近日締切の課題", true, [
+          Container(height:2,color:BACKGROUND_COLOR),
           noneTaskWidget,
-          ListView.builder(
+          ListView.separated(
             itemBuilder: (context, index) {
               DateTime targetDay = today.add(Duration(days: index));
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [taskDataList(targetDay, index)]);
+            },
+            separatorBuilder: (context, index) {
+              return Container(height:2,color:BACKGROUND_COLOR);
             },
             itemCount: fromNow,
             shrinkWrap: true,
@@ -1994,7 +1964,10 @@ class _CalendarState extends ConsumerState<Calendar> {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         title,
         taskListHeader(indexText, fromNow),
-        ListView.builder(
+        ListView.separated(
+          separatorBuilder: (context, index) {
+            return Container(height:2,color:BACKGROUND_COLOR);
+          },
           itemBuilder: (BuildContext context, int index) {
             String timeEnd = DateFormat("HH:mm").format(
                 DateTime.fromMillisecondsSinceEpoch(
@@ -2101,7 +2074,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(12.5),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -2111,7 +2084,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                   "(詳細なし)",
                               style: TextStyle(
                                   color: BLACK,
-                                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                                  fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
                                   fontWeight: FontWeight.bold),
                             )
                           ]),
@@ -2177,19 +2150,12 @@ class _CalendarState extends ConsumerState<Calendar> {
               child: Column(
                 children: [
                   Container(
-                      decoration: BoxDecoration(
+                      decoration:const BoxDecoration(
                         color: WHITE,
-                        borderRadius: const BorderRadius.only(
+                        borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.withOpacity(0.6),
-                              spreadRadius: 2,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2)),
-                        ],
                       ),
                       alignment: Alignment.center,
                       height: SizeConfig.blockSizeHorizontal! * 13,
@@ -2220,7 +2186,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                     ),
                                   ),
                                   Text(
-                                    "  の詳細",
+                                    "  の概要",
                                     style: TextStyle(
                                         fontSize:
                                             SizeConfig.blockSizeHorizontal! * 5,
@@ -2233,9 +2199,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                           ),
                         ],
                       )),
-                  SizedBox(
-                    height: SizeConfig.blockSizeHorizontal! * 2,
-                  ),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1),
+                  const Divider(height:1),
+                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1),
                   Padding(
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Column(children: [
@@ -2377,10 +2343,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
+          padding: const EdgeInsets.all(10),
           child: Column(children: [
             Text(year + "年 推計年収", style: titletyle),
-            const Divider(height: 1),
+            const Divider(height: 1,color:Colors.transparent),
             Text(
                 ArbeitCalculator().formatNumberWithComma(ArbeitCalculator()
                         .yearlyWageSumWithAdditionalWorkTime(
@@ -2388,15 +2354,15 @@ class _CalendarState extends ConsumerState<Calendar> {
                     " 円",
                 style: previewStyle),
           ])),
-      const Divider(height: 1),
+      Container(height:2,color:BACKGROUND_COLOR),
       IntrinsicHeight(
         child: Row(children: [
           Expanded(
             child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.all(10),
                 child: Column(children: [
                   Text(month + "月 推計月収", style: titletyle),
-                  const Divider(height: 1),
+                  
                   Text(
                       ArbeitCalculator().formatNumberWithComma(
                               ArbeitCalculator()
@@ -2407,13 +2373,13 @@ class _CalendarState extends ConsumerState<Calendar> {
                       style: previewStyle),
                 ])),
           ),
-          const VerticalDivider(width: 1),
+          const VerticalDivider(width: 2,thickness:2,color:BACKGROUND_COLOR),
           Expanded(
             child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.all(10),
                 child: Column(children: [
                   Text(month + "月  労働時間合計", style: titletyle),
-                  const Divider(height: 1),
+                  
                   Text(
                       workTimeSum.inHours.toString() +
                           "時間" +
@@ -2424,7 +2390,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           ),
         ]),
       ),
-      const Divider(height: 1),
+      //const Divider(height: 1),
     ]);
   }
 }

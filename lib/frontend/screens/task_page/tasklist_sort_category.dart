@@ -239,10 +239,10 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               ),
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
-                  decoration: BoxDecoration(
+                  decoration:const BoxDecoration(
                       color: WHITE,
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      border: Border.all(color:Colors.grey,width: 1)
+                      //border: Border.all(color:Colors.grey,width: 1)
                       ),
                   child: Row(children: [
                     CupertinoCheckbox(
