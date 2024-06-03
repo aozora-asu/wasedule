@@ -388,7 +388,6 @@ Future<Map<String, Map<String, List<String>>>?> vacantRoomList(
       return {};
     }
   }
-  printWrapped(vacantClassRoomMap["fall_quarter"].toString());
   if (datetime2quarter(now) != null) {
     return vacantClassRoomMap[datetime2quarter(now)];
   } else {
