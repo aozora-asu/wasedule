@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:intl/date_time_patterns.dart';
 
 import 'dart:ui';
 import 'package:intl/intl.dart';
@@ -183,17 +184,28 @@ List<String> datetime2termList(DateTime datetime) {
   List<String> currentTerms = [];
   List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
 
-  if (datetime.isAfter(datetimeList[1]) && datetime.isBefore(datetimeList[2])) {
+  if ((datetime.isAfter(datetimeList[1]) &&
+          datetime.isBefore(datetimeList[2])) ||
+      datetime.isAtSameMomentAs(datetimeList[2]) ||
+      datetime.isAtSameMomentAs(datetimeList[1])) {
     currentTerms.addAll(["spring_semester", "spring_quarter"]);
   }
-  if (datetime.isAfter(datetimeList[3]) && datetime.isBefore(datetimeList[4])) {
+  if ((datetime.isAfter(datetimeList[3]) &&
+          datetime.isBefore(datetimeList[4])) ||
+      datetime.isAtSameMomentAs(datetimeList[3]) ||
+      datetime.isAtSameMomentAs(datetimeList[4])) {
     currentTerms.addAll(["spring_semester", "summer_quarter"]);
   }
-  if (datetime.isAfter(datetimeList[7]) && datetime.isBefore(datetimeList[8])) {
+  if ((datetime.isAfter(datetimeList[7]) &&
+          datetime.isBefore(datetimeList[8])) ||
+      datetime.isAtSameMomentAs(datetimeList[7]) ||
+      datetime.isAtSameMomentAs(datetimeList[8])) {
     currentTerms.addAll(["fall_semester", "fall_quarter"]);
   }
-  if (datetime.isAfter(datetimeList[9]) &&
-      datetime.isBefore(datetimeList[11])) {
+  if ((datetime.isAfter(datetimeList[9]) &&
+          datetime.isBefore(datetimeList[11])) ||
+      datetime.isAtSameMomentAs(datetimeList[9]) ||
+      datetime.isAtSameMomentAs(datetimeList[11])) {
     currentTerms.addAll(["fall_semester", "winter_quarter"]);
   }
   if (currentTerms.isNotEmpty) {
