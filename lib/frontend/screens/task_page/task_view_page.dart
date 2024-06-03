@@ -97,10 +97,10 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: WHITE,
+        backgroundColor: BACKGROUND_COLOR,
         body: Column(children: [
           Container(
-            color: WHITE,
+            color: BACKGROUND_COLOR,
            child:Row(children: [
             Expanded(
               child: SingleChildScrollView(
@@ -129,7 +129,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
             ),
           ])
           ),
-          const Divider(thickness: 1, height: 1, color: Colors.grey),
+          //const Divider(thickness: 1, height: 1, color: Colors.grey),
           Expanded(child: pages())
         ])
         ,

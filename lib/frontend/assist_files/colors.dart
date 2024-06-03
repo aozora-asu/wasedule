@@ -6,10 +6,12 @@ const MAIN_COLOR = Color.fromARGB(255, 142, 23, 40);
 const ACCENT_COLOR = Colors.orangeAccent;//Color.fromARGB(255,144,115,85);
 const WIDGET_COLOR = Color.fromARGB(255, 255, 255, 255);
 const WIDGET_OUTLINE_COLOR = Color.fromARGB(255, 227, 227, 227);
-const BACKGROUND_COLOR = Color.fromARGB(255, 245, 245, 245);
+const BACKGROUND_COLOR = Color.fromRGBO(238, 238, 238, 1);
 const PALE_MAIN_COLOR = Color.fromARGB(255, 184, 113, 113);
-const WHITE = Color.fromRGBO(244, 245, 247, 1);
-const BLACK = Color.fromRGBO(51,51,51,1);
+
+const WHITE = Color.fromRGBO(255, 255, 255, 1); //(244, 245, 247, 1);
+const BLACK = Color.fromRGBO(17,17,17,1); //(51,51,51,1);
+const BLUEGREY = Color.fromRGBO(53,82,96,1);
 
 const WASEDA_PSE_COLOR = Color.fromARGB(255, 255, 120, 9);
 const WASEDA_LAW_COLOR = Color.fromARGB(255, 0, 142, 97);

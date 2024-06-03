@@ -46,7 +46,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   void initState() {
     super.initState();
     _currentIndex = widget.initIndex ?? 2;
-    pageController = PageController(initialPage:widget.initIndex ?? 2);
+    pageController = PageController(initialPage: 0);//widget.initIndex ?? 2);
   }
 
   void _onItemTapped(int index) {
@@ -54,6 +54,14 @@ class _AppPageState extends ConsumerState<AppPage> {
     setState(() {
       _currentSubIndex = 0;
       _currentIndex = index;
+    });
+     pageController.jumpToPage(0);
+  }
+
+    void _onSlided(int index) {
+    ref.read(taskDataProvider).isInit = true;
+    setState(() {
+      _currentSubIndex = index;
     });
     pageController.jumpToPage(index);
   }
@@ -82,31 +90,36 @@ class _AppPageState extends ConsumerState<AppPage> {
       }
     });
   }
+  
+  List<List<Widget>> parentPages(){
+    return [[WasedaMapPage()],
+            [TimeTablePage()],
+            calendarSubPages(),
+            taskSubPages(),
+            [MoodleViewPage()],
+            ];
+  }
+
 
   Widget pageView(){
     return PageView(
         physics: physics,
         controller: pageController,
-        children: [WasedaMapPage(),
-                   TimeTablePage(),
-                   calendarSubPages()[_currentSubIndex],
-                   taskSubPages()[_currentSubIndex],
-                   MoodleViewPage(),
-                   ],
+        children: parentPages().elementAt(_currentIndex),
         onPageChanged: (value){
-            if(value == 0){
+            if(_currentIndex == 0){
               isExtendBody = false;
               isExtendBottom = false;
               physics = const ScrollPhysics();
-            }else if(value == 1 || value == 2){
+            }else if(_currentIndex == 1 || _currentIndex == 2){
               isExtendBody = true;
               isExtendBottom = true;
               physics = const ScrollPhysics();
-            }else if(value == 3){
+            }else if(_currentIndex == 3){
               isExtendBody = false;
               isExtendBottom = true;
               physics = const ScrollPhysics();
-            }else if(value == 4){
+            }else if(_currentIndex == 4){
               isExtendBottom = false;
               isExtendBody = false;
               physics = const NeverScrollableScrollPhysics();
@@ -116,8 +129,7 @@ class _AppPageState extends ConsumerState<AppPage> {
               physics = const ScrollPhysics();
             }
             setState((){
-              _currentSubIndex = 0;
-              _currentIndex = value;
+              _currentSubIndex = value;
             });
         },
     );
@@ -134,10 +146,6 @@ class _AppPageState extends ConsumerState<AppPage> {
         isExtendBody = false;
         isExtendBottom = false;
         physics = const ScrollPhysics();
-    }
-
-    if(!showChildMenu){
-      height = SizeConfig.blockSizeHorizontal! *15;
     }
 
     return Scaffold(

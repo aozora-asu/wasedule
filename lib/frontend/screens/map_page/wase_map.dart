@@ -459,7 +459,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: SizeConfig.blockSizeHorizontal! * 6,
-                          color: Colors.blueGrey)),
+                          color: BLUEGREY)),
                   Container(
                       width: SizeConfig.blockSizeHorizontal! * 100,
                       padding: const EdgeInsets.all(7.5),

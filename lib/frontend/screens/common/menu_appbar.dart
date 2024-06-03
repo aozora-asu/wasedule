@@ -54,10 +54,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
       }
     }
     SizeConfig().init(context);
-    Color itemColor = WHITE;
+    Color itemColor = BLACK;
 
     return AppBar(
-        backgroundColor:BLACK, //MAIN_COLOR.withOpacity(0.95),
+        backgroundColor:WHITE, //MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         // flexibleSpace: 
         // Stack(
@@ -80,7 +80,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
               child:LogoAndTitle(
                 size: 7,
                 color:itemColor ,
-                isLogoWhite:true,
+                isLogoWhite:false,
                 subTitle: "早稲田から、落単をなくしたい。",
               )
             ),
@@ -135,85 +135,16 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
      bool showExpiredTasks = false,
      }
   ){
-    Widget panelName = Text(title,
-      style: TextStyle(
-        fontSize:SizeConfig.blockSizeHorizontal! *3,));
     BoxDecoration? decoration;
-    Color iconColor = Colors.blueGrey;
+    Color iconColor = BLUEGREY;
     double iconSize = SizeConfig.blockSizeHorizontal! *4;
-    Color middleBarColor = Colors.transparent;
-    Color underBarColor = PALE_MAIN_COLOR;
+    Color underBarColor = Colors.transparent;
 
-    if(currentSubIndex == 0){
-      underBarColor = MAIN_COLOR;
-    }
 
     if(subIndex == 0 && currentSubIndex == 0){
-
-      iconColor = WHITE;
-      middleBarColor = MAIN_COLOR;
-      decoration = BoxDecoration(
-        borderRadius:const BorderRadius.only(
-          topLeft:Radius.circular(7.5),
-          topRight:Radius.circular(7.5),
-        ),
-        gradient: gradationDecoration(color1:MAIN_COLOR,color2:MAIN_COLOR)
-      );
-
-    }else if(subIndex == 0){
-
-      iconColor = WHITE;
-      decoration = BoxDecoration(
-        boxShadow:[
-          BoxShadow(
-            color: Colors.black.withOpacity(0.25), // 影の色
-            spreadRadius: 1, // 影の広がり
-            blurRadius: 1, // ぼかしの範囲
-          ),
-        ],
-        borderRadius:const BorderRadius.all(Radius.circular(12.5)),
-        gradient: gradationDecoration(
-          color1:MAIN_COLOR,
-          color2:MAIN_COLOR)
-        );
-        
-      iconColor = WHITE;
-      middleBarColor = MAIN_COLOR;
-      decoration = BoxDecoration(
-        borderRadius:const BorderRadius.only(
-          topLeft:Radius.circular(7.5),
-          topRight:Radius.circular(7.5),
-        ),
-        gradient: gradationDecoration(color1:MAIN_COLOR,color2:MAIN_COLOR)
-      );
-
+      underBarColor = MAIN_COLOR;
     }else if(subIndex == currentSubIndex){
-
-      iconColor = WHITE;
-      middleBarColor = color1;
-      decoration = BoxDecoration(
-        borderRadius:const BorderRadius.only(
-          topLeft:Radius.circular(7.5),
-          topRight:Radius.circular(7.5),
-        ),
-        gradient: gradationDecoration(color1:color1,color2:color2)
-      );
-
-    }else{
-
-      decoration = BoxDecoration(
-        boxShadow:[
-          BoxShadow(
-            color: Colors.black.withOpacity(0.25), // 影の色
-            spreadRadius: 1, // 影の広がり
-            blurRadius: 1, // ぼかしの範囲
-          ),
-        ],
-        borderRadius:const BorderRadius.all(Radius.circular(12.5)),
-        gradient: gradationDecoration(
-          color1:const Color.fromARGB(255, 200, 200, 200),
-          color2:const Color.fromARGB(255, 200, 200, 200),)
-      );
+      underBarColor = MAIN_COLOR;
     }
 
     Widget headerIcon = 
@@ -225,10 +156,9 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
     if(showExpiredTasks){
       headerIcon =  listLengthView(
-        ref
-            .watch(taskDataProvider)
-            .expiredTaskDataList
-            .length,
+        ref.watch(taskDataProvider)
+           .expiredTaskDataList
+           .length,
         SizeConfig.blockSizeVertical! * 1.205,
       );
     }
@@ -242,19 +172,17 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         crossAxisAlignment: CrossAxisAlignment.center,
         children:[
         Container(height: SizeConfig.blockSizeVertical! *0.5,),
-        
         Container(
           width: SizeConfig.blockSizeHorizontal! *20,
-          height: SizeConfig.blockSizeVertical! *3.5,
+          height: SizeConfig.blockSizeVertical! *4,
           decoration: decoration,
-          padding:EdgeInsets.symmetric(horizontal:SizeConfig.blockSizeHorizontal! *1),
           child:Row(children:[
             const Spacer(),
             headerIcon,
             SizedBox(width:SizeConfig.blockSizeHorizontal! *1),
             Text(title,
               style:TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! *2,
+                fontSize: SizeConfig.blockSizeHorizontal! *2.25,
                 fontWeight: FontWeight.bold,
                 color: iconColor
               ),  
@@ -265,12 +193,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         Container(
           width: SizeConfig.blockSizeHorizontal! *20,
           height: SizeConfig.blockSizeVertical! *0.5,
-          color: middleBarColor
-        ),
-        Container(
-          width: SizeConfig.blockSizeHorizontal! *20,
-          height: SizeConfig.blockSizeVertical! *0.5,
-          color: underBarColor
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: underBarColor
+          ),
         ),
         
       ])
@@ -278,11 +204,8 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
   }
 
   Widget space(double width){
-    Color underBarColor = PALE_MAIN_COLOR;
+    Color underBarColor = Colors.transparent;
     
-    if(currentSubIndex == 0){
-      underBarColor = MAIN_COLOR;
-    }
 
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,

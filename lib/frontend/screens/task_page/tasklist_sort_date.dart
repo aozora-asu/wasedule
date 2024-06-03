@@ -6,6 +6,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
@@ -40,7 +41,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
       Expanded(
         child: ListView.builder(
-
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int keyIndex) {
           DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
@@ -58,22 +58,22 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(children: [
+                                  // lengthBadge(
+                                  //   sortedData.values.elementAt(keyIndex).length,
+                                  //   SizeConfig.blockSizeHorizontal!*4.25,
+                                  //   false),
+                                  const SizedBox(width:5),
                                   Text(
                                     adjustedDtEnd,
                                     style: TextStyle(
                                         fontSize:
                                             SizeConfig.blockSizeHorizontal! * 7,
-                                        fontWeight: FontWeight.w800),
-                                  ),
-                                    Text(
-                                        " ${sortedData.values.elementAt(keyIndex).length}件",
-                                        style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                4.25,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.grey))
+                                        fontWeight: FontWeight.w800,
+                                        color:BLUEGREY
+                                        ),
+                                    ),
                                   ]),
+                                  const SizedBox(height:5),
                                   remainingTime(dateEnd)
                                 ]),
                           ]),
@@ -88,9 +88,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                         thickness: 1,
                         indent: 3,
                         endIndent: 3,
+                        color:Colors.transparent
                       )
                     ]));
           },
+
           itemCount: sortedData.keys.length,
         ),
       )
@@ -144,42 +146,42 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider);
     if (ref.read(taskDataProvider).isButton) {
       return InkWell(
-          onTap: () {
-            setState(() {
-              for (int i = 0;
-                  i < ref.watch(taskDataProvider).chosenTaskIdList.length;
-                  i++) {
-                int targetId =
-                    ref.watch(taskDataProvider).chosenTaskIdList.elementAt(i);
-                TaskDatabaseHelper().unDisplay(targetId);
-              }
-            });
-            final list = ref.read(taskDataProvider).taskDataList;
-            final newList = [...list];
-            ref.read(taskDataProvider.notifier).state =
-                TaskData(taskDataList: newList);
-            ref.read(taskDataProvider).isRenewed = true;
-            ref.read(taskDataProvider).sortDataByDtEnd(list);
-            setState(() {});
-          },
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 100,
-            height: SizeConfig.blockSizeVertical! * 10,
-            color: Colors.redAccent,
-            child: Row(children: [
-              const Spacer(),
-              checkedListLength(15.0),
-              const SizedBox(width: 15),
-              const Icon(Icons.delete, color: WHITE),
-              const Text(
-                "   Done!!!   ",
-                style:
-                    TextStyle(color: WHITE, fontWeight: FontWeight.bold),
-              ),
-              const Icon(Icons.delete, color: WHITE),
-              const Spacer(),
-            ]),
-          ));
+        onTap: () {
+          setState(() {
+            for (int i = 0;
+                i < ref.watch(taskDataProvider).chosenTaskIdList.length;
+                i++) {
+              int targetId =
+                  ref.watch(taskDataProvider).chosenTaskIdList.elementAt(i);
+              TaskDatabaseHelper().unDisplay(targetId);
+            }
+          });
+          final list = ref.read(taskDataProvider).taskDataList;
+          final newList = [...list];
+          ref.read(taskDataProvider.notifier).state =
+              TaskData(taskDataList: newList);
+          ref.read(taskDataProvider).isRenewed = true;
+          ref.read(taskDataProvider).sortDataByDtEnd(list);
+          setState(() {});
+        },
+        child: Container(
+          width: SizeConfig.blockSizeHorizontal! * 100,
+          height: SizeConfig.blockSizeVertical! * 10,
+          color: Colors.redAccent,
+          child: Row(children: [
+            const Spacer(),
+            checkedListLength(15.0),
+            const SizedBox(width: 15),
+            const Icon(Icons.delete, color: WHITE),
+            const Text(
+              "   Done!!!   ",
+              style:
+                  TextStyle(color: WHITE, fontWeight: FontWeight.bold),
+            ),
+            const Icon(Icons.delete, color: WHITE),
+            const Spacer(),
+          ]),
+        ));
     } else {
       return Container(height: 0);
     }
@@ -256,8 +258,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       if (difference >= const Duration(days: 4)) {
         return Container(
             decoration: BoxDecoration(
-              color: Colors.blueGrey, // 背景色を指定
-              borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
+              color: BLUEGREY,
+              borderRadius: BorderRadius.circular(6), // 角丸にする場合は設定
             ),
             child: Text(
               ("  あと${difference.inDays + 1} 日  "),
@@ -270,8 +272,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       } else {
         return Container(
             decoration: BoxDecoration(
-              color: Colors.red, // 背景色を指定
-              borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
+              color: Colors.redAccent, // 背景色を指定
+              borderRadius: BorderRadius.circular(6), // 角丸にする場合は設定
             ),
             child: repeatdaysLeft(dtEnd));
       }
@@ -281,7 +283,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       return Container(
           decoration: BoxDecoration(
             color: Colors.red, // 背景色を指定
-            borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
+            borderRadius: BorderRadius.circular(6), // 角丸にする場合は設定
           ),
           child: Text(
             ("  今日まで  "),
@@ -295,7 +297,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       return Container(
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 0, 0, 0), // 背景色を指定
-            borderRadius: BorderRadius.circular(15), // 角丸にする場合は設定
+            borderRadius: BorderRadius.circular(6), // 角丸にする場合は設定
           ),
           child: Text(
             ' 期限切れ ',
@@ -312,12 +314,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Container(
-      child: ListView.builder(
+      child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int valueIndex) {
           return Container(child: dtEndTaskChild(keyIndex, valueIndex));
         },
+        separatorBuilder: (context, index){
+            return const SizedBox(height:2);
+          },
         itemCount: widget
             .sortedData[widget.sortedData.keys.elementAt(keyIndex)]!.length,
       ),
@@ -331,27 +336,65 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     DateTime dateEnd = widget.sortedData.keys.elementAt(keyIndex);
     List<Map<String, dynamic>> childData = widget.sortedData[dateEnd]!;
     Map<String, dynamic> targetData = childData.elementAt(valueIndex);
-
+    BorderRadius radius = const BorderRadius.all(Radius.circular(2));
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
+    EdgeInsets boxInset = const EdgeInsets.only(left: 8.0);
+    Widget separator = Container(
+      height:2,
+      width:SizeConfig.blockSizeHorizontal! * 80,
+      color: BACKGROUND_COLOR
+    );
+
+    if(valueIndex == 0 && valueIndex == childData.length - 1){
+
+      radius = const BorderRadius.all(Radius.circular(20));
+      separator = const SizedBox();
+      boxInset = const EdgeInsets.only(left: 8.0,top:12.0);
+
+    }else if(valueIndex == 0){
+      
+      radius = const BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+        bottomLeft: Radius.circular(2),
+        bottomRight: Radius.circular(2),
+      );
+      boxInset = const EdgeInsets.only(left: 8.0,top:12.0);
+
+    }else if(valueIndex == childData.length - 1){
+      
+        radius = const BorderRadius.only(
+          topLeft:Radius.circular(2),
+          topRight: Radius.circular(2),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+      );
+      separator = const SizedBox();
+
+    }
 
     return Row(children: [
       Text(truncateTimeEnd(targetData),
           style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
-              fontWeight: FontWeight.w700)),
+              fontWeight: FontWeight.w700,
+              color:BLUEGREY)),
       InkWell(
           onTap: () {
             bottomSheet(targetData,ref,context,setState);
           },
-          child: Container(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
-              child: Container(
-                  decoration: BoxDecoration(
+          child: 
+              Container(
+                padding: boxInset,
+                child: Container(
+                  padding:const EdgeInsets.all(10),
+                  decoration:BoxDecoration(
                       color: WHITE,
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      border: Border.all(color:Colors.grey,width: 1)
-                      ),
-                  child: Row(children: [
+                      borderRadius:  radius,
+                    ),
+                child:
+                  Column(children:[
+                   Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
                         onChanged: (value) {
@@ -378,23 +421,29 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 69,
+                              width: SizeConfig.blockSizeHorizontal! * 64,
                               child: Text(targetData["summary"] ?? "(詳細なし)",
                                   style: TextStyle(
                                       fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 4.5,
-                                      fontWeight: FontWeight.w700))),
+                                          SizeConfig.blockSizeHorizontal! * 4,
+                                      fontWeight: FontWeight.w700,
+                                      color:BLACK
+                                      ))),
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 69,
+                              width: SizeConfig.blockSizeHorizontal! * 64,
                               child: Text(targetData["title"] ?? "(タイトルなし)",
                                   style: TextStyle(
                                     fontSize:
                                         SizeConfig.blockSizeVertical! * 1.75,
                                     color: Colors.grey,
-                                  )))
-                        ]),
-                  ]))))
-    ]);
+                          )))
+                      ]),
+                  ]),
+              ]),
+             )
+            )
+          )
+       ]);
   }
 
 
