@@ -44,6 +44,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         ref.watch(scheduleFormProvider).tagController.text);
     SizeConfig().init(context);
     return Scaffold(
+        backgroundColor: WHITE,
         // appBar: AppBar(
         //   leading: const BackButton(color: WHITE),
         //   backgroundColor: MAIN_COLOR,
@@ -75,7 +76,12 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           thumbnailImage(),
           Container(
               width: SizeConfig.blockSizeHorizontal! * 100,
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration:const BoxDecoration(
+                color:BACKGROUND_COLOR,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30))
+              ),
               child: Column(children: [
                 const SizedBox(height: 15),
                 toggleSwitch(),

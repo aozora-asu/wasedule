@@ -337,7 +337,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                             decreasePgNumber();
                           },
                           icon: const Icon(Icons.arrow_back_ios),
-                          iconSize: 20),
+                          iconSize: 20,
+                          color:BLUEGREY),
                       Text(
                         targetMonth,
                         style: const TextStyle(
@@ -352,7 +353,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                             });
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
-                          iconSize: 20),
+                          iconSize: 20,
+                          color:BLUEGREY),
                       doNotContainScreenShot(scheduleEmptyFlag(
                         ref,
                         SizedBox(
@@ -375,7 +377,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                     fontWeight: FontWeight.bold)),
                             style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(Colors.blueAccent),
+                                  MaterialStatePropertyAll(BLUEGREY),
                             ),
                           ),
                         ),
@@ -398,7 +400,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                           generateCalendarCells("friday"),
                           generateCalendarCells("saturday")
                         ])),
-                    const Divider(height: 0.5, thickness: 0.5),
                     Row(children: [
                       const Spacer(),
                       showOnlyScreenShot(screenShotDateTime()),
@@ -423,18 +424,20 @@ class _CalendarState extends ConsumerState<Calendar> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              ArbeitStatsPage(targetMonth: targetMonth)));
+                              ArbeitStatsPage(targetMonth: targetMonth,isAppbar: true,)));
                 },
-                child: menuList(Icons.currency_yen, "", true, [
+                child: menuList(Icons.currency_yen, "",false,
+                 [
                   menuListChild(Icons.currency_yen, "アルバイト", () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (_) =>
-                                ArbeitStatsPage(targetMonth: targetMonth)));
+                                ArbeitStatsPage(targetMonth: targetMonth,isAppbar: true)));
                   }),
                   loadArbeitStatsPreview(targetMonth)
-                ]))),
+                ],showIcon: false
+                ))),
 
         const SizedBox(height: 15),
           menuListChild(Icons.settings, "設定", () {
@@ -681,7 +684,9 @@ class _CalendarState extends ConsumerState<Calendar> {
             child: Center(
                 child: Text(
               days.elementAt(index),
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(
+                color: BLUEGREY,
+                fontWeight:FontWeight.bold),
             )));
       },
       itemCount: 7,
@@ -764,10 +769,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                   width: SizeConfig.blockSizeHorizontal! * 14.285,
                   height: SizeConfig.blockSizeVertical! * 14,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3.5),
                     color: cellColour(target),
                     border: Border.all(
-                      color: Colors.grey,
-                      width: 0.5,
+                      color: BACKGROUND_COLOR,
+                      width: 1.5,
                     ),
                   ),
                   child: Column(
@@ -777,17 +783,16 @@ class _CalendarState extends ConsumerState<Calendar> {
                         Row(children: [
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text(target.day.toString())),
+                              child: Text(
+                                target.day.toString(),
+                                style: TextStyle(
+                                  color: dateColour(target),
+                                  fontWeight:FontWeight.bold)
+                                )),
                           const Spacer(),
                           doNotContainScreenShot(taskListLength(target, 9.0)),
                           const SizedBox(width: 3)
                         ]),
-                        const Divider(
-                          height: 0.7,
-                          indent: 2,
-                          endIndent: 2,
-                          thickness: 0.7,
-                        ),
                         Expanded(child: calendarCellsChild(target)),
                         holidayName(target),
                       ])),
@@ -814,20 +819,69 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (target.year == DateTime.now().year &&
         target.month == DateTime.now().month &&
         target.day == DateTime.now().day) {
-      return const Color.fromRGBO(255, 204, 204, 1);
+      return const Color.fromARGB(255, 255, 160, 160);
     } else if (target.month != targetmonthDT.month) {
-      return const Color.fromARGB(255, 242, 242, 242);
+      return const Color.fromARGB(255, 225, 225, 225);
     } else if (isHoliday.elementAt(target.day) &&
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
-      return const Color.fromARGB(255, 255, 239, 239);
+      return const Color.fromARGB(255, 255, 200, 200);
     } else if (target.weekday == 6 &&
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
-      return const Color.fromARGB(255, 227, 238, 255);
+      return const Color.fromARGB(255, 225, 225, 255);
     } else if (target.weekday == 7 &&
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
-      return const Color.fromARGB(255, 255, 239, 239);
+      return const Color.fromARGB(255, 255, 215, 215);
     } else {
       return WHITE;
+    }
+  }
+
+
+  Color dateColour(DateTime target) {
+    DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
+        int.parse(targetMonth.substring(5, 7)));
+
+    if (target.year == DateTime.now().year &&
+        target.month == DateTime.now().month &&
+        target.day == DateTime.now().day) {
+      return BLUEGREY;
+    } else if (target.month != targetmonthDT.month) {
+      return const Color.fromARGB(255, 170, 170, 170);
+    } else if (isHoliday.elementAt(target.day) &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return BLUEGREY;
+    } else if (target.weekday == 6 &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return BLUEGREY;
+    } else if (target.weekday == 7 &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return BLUEGREY;
+    } else {
+      return BLUEGREY;
+    }
+  }
+
+  Color cellChildColour(DateTime target) {
+    DateTime targetmonthDT = DateTime(int.parse(targetMonth.substring(0, 4)),
+        int.parse(targetMonth.substring(5, 7)));
+
+    if (target.year == DateTime.now().year &&
+        target.month == DateTime.now().month &&
+        target.day == DateTime.now().day) {
+      return lighten(cellColour(target));
+    } else if (target.month != targetmonthDT.month) {
+      return const Color.fromARGB(255, 225, 225, 225);
+    } else if (isHoliday.elementAt(target.day) &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return lighten(cellColour(target),0.03);
+    } else if (target.weekday == 6 &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return lighten(cellColour(target),0.03);
+    } else if (target.weekday == 7 &&
+        ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
+      return lighten(cellColour(target),0.03);
+    } else {
+      return BACKGROUND_COLOR;
     }
   }
 
@@ -888,7 +942,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
       Widget value = const SizedBox();
       value = 
-        scheduleListChild(targetDayData, index);
+        scheduleListChild(targetDayData, index,target);
       
       mixedDataByTime.add({key: value});
     }
@@ -907,7 +961,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       
       DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
       Widget value = switchWidget(
-          classListChild(universityClassData),
+          classListChild(universityClassData,target),
         ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
       mixedDataByTime.add({key: value});
     }
@@ -932,7 +986,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               physics: const ClampingScrollPhysics()));
   }
 
-  Widget scheduleListChild(targetDayData,index){
+  Widget scheduleListChild(targetDayData,index,target){
     Widget dateTimeData = Container();
     if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
           targetDayData.elementAt(index)["endTime"].trim() != "") {
@@ -980,17 +1034,18 @@ class _CalendarState extends ConsumerState<Calendar> {
                         ),
                       )
                     ]),
-                const Divider(
-                  height: 0.7,
-                  indent: 2,
-                  endIndent: 2,
-                  thickness: 0.7,
+                Divider(
+                  height: 2,
+                  indent: 2.75,
+                  endIndent: 2.75,
+                  thickness: 2,
+                  color:cellChildColour(target)
                 )
               ])),
           targetDayData.elementAt(index)["isPublic"]);
   }
 
-  Widget classListChild(String universityClassData){
+  Widget classListChild(String universityClassData,target){
     Widget universityClassView = const SizedBox();
     if (universityClassData != "") {
       universityClassView = switchWidget(
@@ -1010,11 +1065,14 @@ class _CalendarState extends ConsumerState<Calendar> {
                           style: TextStyle(
                               color: BLACK, fontSize: 8)),
                     ]),
-                    const Divider(
-                        height: 0.7,
-                        indent: 2,
-                        endIndent: 2,
-                        thickness: 0.7),
+                    Divider(
+                      height: 2,
+                      indent: 2.75,
+                      endIndent: 2.75,
+                      thickness: 2,
+                      color:cellChildColour(target),
+
+                    )
                   ])),
           ConfigDataLoader()
               .searchConfigData("timetableInCalendarcell", ref));
@@ -1168,7 +1226,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget menuList(IconData headerIcon, String headerText, bool showCustomButton,
-      List<Widget> child) {
+      List<Widget> child,{bool showIcon = true}) {
     Widget customButton = const SizedBox();
     if (showCustomButton) {
       customButton = InkWell(
@@ -1181,6 +1239,12 @@ class _CalendarState extends ConsumerState<Calendar> {
           child: Icon(Icons.settings,
               size: SizeConfig.safeBlockVertical! * 2.5, color: Colors.grey));
     }
+    Widget icon = const SizedBox();
+      if (showIcon) {
+        icon = Icon(headerIcon,
+          size: SizeConfig.safeBlockVertical! * 2,
+          color: Colors.grey);
+      }
 
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
@@ -1193,9 +1257,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               height: SizeConfig.safeBlockVertical! * 3,
               child: Row(children: [
                 const SizedBox(width:15),
-                Icon(headerIcon,
-                    size: SizeConfig.safeBlockVertical! * 2,
-                    color: Colors.grey),
+                icon,
                 Text(
                   " " + headerText,
                   style: TextStyle(
@@ -1340,10 +1402,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: WHITE);
+      return const BoxDecoration(color: BACKGROUND_COLOR);
     } else {
       return const BoxDecoration(
-        color: WHITE,
+        color: BACKGROUND_COLOR,
         //borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
       );
     }
@@ -1874,7 +1936,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                             fontSize: SizeConfig.blockSizeHorizontal! * 3)),
                   ]),
                   SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 75,
+                      width: SizeConfig.blockSizeHorizontal! * 65,
                       child: Text(
                         " " +
                             sortedMapList

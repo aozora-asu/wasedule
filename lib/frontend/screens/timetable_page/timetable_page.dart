@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/converter.dart';
@@ -47,7 +48,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return Scaffold(
       body: Container(
           decoration:const BoxDecoration(
-              color:WHITE
+              color:BACKGROUND_COLOR
           ),
           child: Scrollbar(
             controller: controller,
@@ -316,7 +317,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       decreasePgNumber();
                     },
                     icon: const Icon(Icons.arrow_back_ios),
-                    iconSize: 20),
+                    iconSize: 20,
+                    color:BLUEGREY),
                 Text(
                   semesterText(),
                   style: const TextStyle(
@@ -331,7 +333,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       });
                     },
                     icon: const Icon(Icons.arrow_forward_ios),
-                    iconSize: 20),
+                    iconSize: 20,
+                    color:BLUEGREY),
                 const Spacer(),
                 doNotContainScreenShot(changeQuaterbutton(1)),
                 doNotContainScreenShot(changeQuaterbutton(2)),
@@ -370,19 +373,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: WHITE);
+      return const BoxDecoration(color: BACKGROUND_COLOR);
     } else {
-      return BoxDecoration(
-        color: WHITE,
-        borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.5), // 影の色と透明度
-        //     spreadRadius: 2, // 影の広がり
-        //     blurRadius: 3, // ぼかしの強さ
-        //     offset: const Offset(0, 3), // 影の方向（横、縦）
-        //   ),
-        //],
+      return const BoxDecoration(
+        color:BACKGROUND_COLOR,
       );
     }
   }
@@ -414,9 +408,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               height: 200, width: 200),
           const SizedBox(height: 20),
           Text("時間割データはまだありません。",
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                  fontWeight: FontWeight.bold)),
+            style: TextStyle(
+              fontSize: SizeConfig.blockSizeHorizontal! * 5,
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
           const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -469,17 +463,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       const Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "   ■ オンデマンド・その他",
+            "   オンデマンド・その他",
             style: TextStyle(
               fontSize: 17.5,
               fontWeight: FontWeight.w700,
+              color:BLUEGREY
             ),
           )),
-      const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
           child: generateOndemandRow()),
-      const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
       SizedBox(
         height: SizeConfig.blockSizeVertical! * 3,
       )
@@ -495,10 +488,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         height: SizeConfig.blockSizeVertical! * 2.5,
         child: ListView.builder(
           itemBuilder: (context, index) {
-            Color bgColor = WHITE;
-            Color fontColor = Colors.grey;
+            Color bgColor = BACKGROUND_COLOR;
+            Color fontColor = BLUEGREY;
             if (index + 1 == DateTime.now().weekday && index != 6) {
-              bgColor = Colors.blueAccent;
+              bgColor = MAIN_COLOR;
               fontColor = WHITE;
             }
 
@@ -509,7 +502,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 child: Center(
                     child: Text(
                   days.elementAt(index),
-                  style: TextStyle(color: fontColor),
+                  style: TextStyle(
+                    color: fontColor,
+                    fontWeight:FontWeight.bold),
                 )));
           },
           itemCount: 6,
@@ -520,8 +515,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget generatePrirodColumn() {
-    double fontSize = SizeConfig.blockSizeHorizontal! * 2;
-    Color grey = Colors.grey;
+    double fontSize = SizeConfig.blockSizeHorizontal! * 2.25;
 
     return Column(children: [
       SizedBox(
@@ -529,12 +523,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       ),
       ListView.separated(
         itemBuilder: (context, index) {
-          Color bgColor = WHITE;
-          Color fontColor = Colors.grey;
+          Color bgColor = BACKGROUND_COLOR;
+          Color fontColor = BLUEGREY;
           DateTime now = DateTime.now();
           if (returnBeginningDateTime(index + 1).isBefore(now) &&
               returnEndDateTime(index + 1).isAfter(now)) {
-            bgColor = Colors.blueAccent;
+            bgColor = MAIN_COLOR;
             fontColor = WHITE;
           }
 
@@ -542,10 +536,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
                 color: bgColor,
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 0.5,
-                ),
               ),
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -555,36 +545,42 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         Text(
                           returnBeginningTime(index + 1),
                           style:
-                              TextStyle(color: fontColor, fontSize: fontSize),
+                              TextStyle(
+                                color: fontColor,
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold),
                         ),
                         Text((index + 1).toString(),
                             style: TextStyle(
                                 color: fontColor,
-                                fontSize: fontSize * 2,
+                                fontSize: fontSize * 2.2,
                                 fontWeight: FontWeight.bold)),
                         Text(
                           returnEndTime(index + 1),
                           style:
-                              TextStyle(color: fontColor, fontSize: fontSize),
+                              TextStyle(
+                                color: fontColor,
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold),
                         ),
                       ])));
         },
         separatorBuilder: (context, index) {
           Widget resultinging = const SizedBox();
           DateTime now = DateTime.now();
-          Color bgColor = WHITE;
+          Color bgColor = BACKGROUND_COLOR;
           if (returnEndDateTime(2).isBefore(now) &&
               returnBeginningDateTime(3).isAfter(now)) {
-            bgColor = const Color.fromRGBO(255, 204, 204, 1);
+            bgColor = MAIN_COLOR;
           }
           if (index == 1) {
             resultinging = Container(
                 height: SizeConfig.blockSizeVertical! * 2.5,
                 color: bgColor,
                 child: const Column(children: [
-                  Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
+                  //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
                   Spacer(),
-                  Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
+                  //Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
                 ]));
           }
           return resultinging;
@@ -702,8 +698,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               }
             }
 
-            Color lineColor = const Color.fromARGB(255, 152, 144, 144);
-            double lineWidth = 0.5;
+            Color lineColor = BACKGROUND_COLOR;
+            double lineWidth = 2;
             DateTime now = DateTime.now();
             if (returnBeginningDateTime(index + 1).isBefore(now) &&
                 returnEndDateTime(index + 1).isAfter(now) &&
@@ -722,16 +718,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     color: lineColor,
                     width: lineWidth,
                   ),
+                  borderRadius: BorderRadius.circular(4)
                 ),
                 child: cellContents);
           }),
           separatorBuilder: (context, index) {
             Widget resultinging = const SizedBox();
             DateTime now = DateTime.now();
-            Color bgColor = WHITE;
+            Color bgColor = BACKGROUND_COLOR;
             if (returnEndDateTime(2).isBefore(now) &&
                 returnBeginningDateTime(3).isAfter(now)) {
-              bgColor = const Color.fromRGBO(255, 204, 204, 1);
+              bgColor = MAIN_COLOR;
             }
             String childText = "";
             if (weekDay == 2) {
@@ -749,16 +746,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   height: SizeConfig.blockSizeVertical! * 2.5,
                   color: bgColor,
                   child: Column(children: [
-                    const Divider(
-                        color: Colors.grey, height: 0.5, thickness: 0.5),
                     const Spacer(),
                     Text(childText,
                         style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+                            color: BLUEGREY,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                            fontWeight:FontWeight.bold),),
                     const Spacer(),
-                    const Divider(
-                        color: Colors.grey, height: 0.5, thickness: 0.5)
                   ]));
             }
             return resultinging;
@@ -790,9 +784,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.grey,
-                    width: 0.5,
+                    color: BACKGROUND_COLOR,
+                    width: 2,
                   ),
+                  borderRadius: BorderRadius.circular(4)
                 ),
                 child: FutureBuilder(
                     future: TaskDatabaseHelper().getTaskListByCourseName(
@@ -851,10 +846,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     Widget classRoomView = const SizedBox();
     if (classRoom != null && classRoom != "" && classRoom != "-") {
       classRoomView = Container(
-          decoration: BoxDecoration(
+          decoration:const  BoxDecoration(
               color: WHITE,
-              borderRadius: const BorderRadius.all(Radius.circular(2)),
-              border: Border.all(color: Colors.grey, width: 0.5)),
+              borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
             style: TextStyle(
@@ -868,7 +862,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return Stack(children: [
       Container(
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
-          color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
+          decoration:BoxDecoration(
+            color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
+            borderRadius: BorderRadius.circular(2)
+            ),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           child: InkWell(
               onTap: () {
@@ -927,7 +924,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         },
         child: Stack(children: [
           Container(
-            color: bgColor,
+            decoration:BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(2)
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [

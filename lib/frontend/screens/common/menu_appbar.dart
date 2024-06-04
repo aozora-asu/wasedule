@@ -57,7 +57,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     Color itemColor = BLACK;
 
     return AppBar(
-        backgroundColor:WHITE, //MAIN_COLOR.withOpacity(0.95),
+        backgroundColor:BACKGROUND_COLOR, //MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         // flexibleSpace: 
         // Stack(
@@ -86,7 +86,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             ),
             const Spacer(),
             InkWell(
-              child: Icon(Icons.notifications_outlined, color:itemColor),
+              child: Icon(Icons.notifications_outlined, color:BLUEGREY),
               onTap: (){
                 Navigator.push(
                   context,
@@ -94,7 +94,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
                 );
               },
             ),
-            popupMenuButton(itemColor)
+            popupMenuButton(BLUEGREY)
           ]),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -143,8 +143,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
     if(subIndex == 0 && currentSubIndex == 0){
       underBarColor = MAIN_COLOR;
+      iconColor = MAIN_COLOR;
     }else if(subIndex == currentSubIndex){
       underBarColor = MAIN_COLOR;
+      iconColor = MAIN_COLOR;
     }
 
     Widget headerIcon = 
@@ -256,17 +258,18 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           space(1.0),
           subMenuPanel(
             ref,
-            icon:Icons.currency_yen,
+            icon:Icons.groups,
             subIndex:1,
-            title: "アルバイト"
+            title: "予定シェア"
           ),
           space(1.0),
           subMenuPanel(
             ref,
-            icon:Icons.groups,
+            icon:Icons.currency_yen,
             subIndex:2,
-            title: "予定シェア"
+            title: "アルバイト"
           ),
+
           space(1.0),
           subMenuPanel(
             ref,

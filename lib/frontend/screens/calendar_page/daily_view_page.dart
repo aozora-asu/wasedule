@@ -187,7 +187,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             ])),
         const SizedBox(height: 50),
         Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration:BoxDecoration(
+              color:BACKGROUND_COLOR,
+              borderRadius: BorderRadius.circular(30)
+            ),
             child: Column(children: [
               Align(
                 alignment: Alignment.centerLeft,
@@ -199,15 +202,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     'この日が期限の課題',
                     style: TextStyle(
                         fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                        color: Colors.black,
+                        color: BLUEGREY,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                   taskListLength(24.0),
                 ]),
-              ),
-              const Divider(
-                height: 1,
               ),
               SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),
               taskDataList(),
@@ -1138,7 +1138,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           dateTimeData = Text(
             sortedData[widget.target]!.elementAt(index)["title"],
             style: const TextStyle(
-                color: Colors.grey, fontSize: 15, fontWeight: FontWeight.bold),
+                color: Colors.grey, fontSize: 12.5, fontWeight: FontWeight.bold),
           );
           DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(
               sortedData[widget.target]!.elementAt(index)["dtEnd"]);
@@ -1151,17 +1151,19 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     ":" +
                     dtEnd.minute.toString().padLeft(2, "0"),
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color:BLUEGREY),
               ),
               const Spacer(),
               Container(
                 width: SizeConfig.blockSizeHorizontal! * 80,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15),
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(color: Colors.grey, width: 1)),
+                    borderRadius: BorderRadius.circular(25)),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1171,7 +1173,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                             "(詳細なし)",
                         style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 20,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold),
                       ),
                       dateTimeData,

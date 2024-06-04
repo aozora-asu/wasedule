@@ -37,6 +37,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
         // appBar: AppBar(
         //   leading: const BackButton(color: WHITE),
         //   backgroundColor: MAIN_COLOR,

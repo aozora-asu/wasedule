@@ -413,8 +413,12 @@ class ArbeitCalculator{
 
 class ArbeitStatsPage extends ConsumerStatefulWidget {
   String targetMonth;
+  bool? isAppbar;
 
-  ArbeitStatsPage({required this.targetMonth});
+  ArbeitStatsPage({
+    required this.targetMonth,
+    this.isAppbar});
+
   @override
   ArbeitStatsPageState createState() => ArbeitStatsPageState();
 }
@@ -439,6 +443,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     String month = widget.targetMonth.substring(5, 7);
     String targetKey = year + "-" + month;
     Widget estimatedMonthlyIncome = Container();
+    bool isAppBar = widget.isAppbar ?? false;
 
     if (includeFee == 1) {
       estimatedMonthlyIncome = Text(
@@ -457,36 +462,42 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeHorizontal! * 15));
     }
+    PreferredSizeWidget? appbar;
+    if(isAppBar){
+        appbar =  AppBar(
+      leading: const BackButton(color: WHITE),
+      backgroundColor: MAIN_COLOR,
+      elevation: 10,
+      title: Column(
+        children: <Widget>[
+          Row(children: [
+            const Icon(
+              Icons.data_exploration_outlined,
+              color: WIDGET_COLOR,
+            ),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 4,
+            ),
+            Text(
+              'アルバイト',
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.w800,
+                  color:  WHITE),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+    
+
 
     return Scaffold(
-          // appBar: AppBar(
-          //   leading: const BackButton(color: WHITE),
-          //   backgroundColor: MAIN_COLOR,
-          //   elevation: 10,
-          //   title: Column(
-          //     children: <Widget>[
-          //       Row(children: [
-          //         const Icon(
-          //           Icons.data_exploration_outlined,
-          //           color: WIDGET_COLOR,
-          //         ),
-          //         SizedBox(
-          //           width: SizeConfig.blockSizeHorizontal! * 4,
-          //         ),
-          //         Text(
-          //           'アルバイト',
-          //           style: TextStyle(
-          //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
-          //               fontWeight: FontWeight.w800,
-          //               color:  WHITE),
-          //         ),
-          //       ])
-          //     ],
-          //   ),
-          // ),
+        appBar:appbar,
         body: Column(children: [
           Container(
-            color:WHITE,
+            color:BACKGROUND_COLOR,
             child: Row(children: [
               IconButton(
                 onPressed: () {
@@ -518,12 +529,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           const Divider(height: 1),
           Expanded(
             child: Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                image:
-                    AssetImage('lib/assets/page_background/ookuma_statue.jpg'),
-                fit: BoxFit.cover,
-              )),
+              decoration: const BoxDecoration(color:BACKGROUND_COLOR),
               child: SingleChildScrollView(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -537,7 +543,8 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                           '連結データ',
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                              color: charColor),
+                              color: BLUEGREY,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                       ]),
@@ -596,7 +603,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               child: const Text("値の計算方法について")),
                                         ]),
                                       ])),
-                              const SizedBox(height: 60),
+                              const SizedBox(height: 20),
                               Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -758,11 +765,6 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                               )
                               ])),
                     const SizedBox(height: 30),
-                    const Divider(
-                      thickness: 3,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
                     const SizedBox(height: 5),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -772,7 +774,8 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                           '個別データ',
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                              color: charColor),
+                              color: BLUEGREY,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                       ]),
@@ -925,14 +928,6 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                     decoration: BoxDecoration(
                       color: sortedData.elementAt(index)["color"], // コンテナの背景色
                       borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                          spreadRadius: 2, // 影の広がり
-                          blurRadius: 4, // 影のぼかし
-                          offset: const Offset(0, 2), // 影の方向（横、縦）
-                        ),
-                      ],
                     ),
                     child: Column(children: [
                       Row(children: [
@@ -1303,14 +1298,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
 BoxDecoration roundedBoxdecorationWithShadow() {
   return BoxDecoration(
-      color:  WHITE, // コンテナの背景色
-      borderRadius: BorderRadius.circular(12.0), // 角丸の半径
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-          spreadRadius: 2, // 影の広がり
-          blurRadius: 4, // 影のぼかし
-          offset: const Offset(0, 2), // 影の方向（横、縦）
-        )
-      ]);
+      color:  WHITE,
+      borderRadius: BorderRadius.circular(25.0)
+    );
 }

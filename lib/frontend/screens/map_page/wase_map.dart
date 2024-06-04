@@ -227,7 +227,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         Text(
           " わせまっぷ",
           style: TextStyle(
-              color: Colors.blueGrey,
+              color: BLUEGREY,
               fontSize: SizeConfig.blockSizeHorizontal! * 10,
               fontWeight: FontWeight.bold),
         ),

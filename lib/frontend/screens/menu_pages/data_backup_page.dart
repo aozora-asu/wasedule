@@ -65,8 +65,11 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 child: Column(children: [
           thumbnailImage(),
           Container(
+              
               width: SizeConfig.blockSizeHorizontal! * 100,
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: BACKGROUND_COLOR,),
               child: Column(children: [
                 const SizedBox(height: 15),
                 toggleSwitch(),

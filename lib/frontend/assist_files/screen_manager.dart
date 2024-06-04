@@ -71,7 +71,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     setState(() {
       _currentSubIndex = subIndex;
     });
-    //pageController.jumpToPage(subIndex);
+    pageController.jumpToPage(subIndex);
   }
 
   ScrollPhysics physics = const ScrollPhysics();
@@ -180,8 +180,8 @@ class _AppPageState extends ConsumerState<AppPage> {
       "/" +
       DateTime.now().month.toString().padLeft(2, '0');
     return [const Calendar(),
-            ArbeitStatsPage(targetMonth: thisMonth),
             DataUploadPage(),
+            ArbeitStatsPage(targetMonth: thisMonth),
             UnivSchedulePage(),
             SettingsPage(isAppBar:false),
             DataDownloadPage(),

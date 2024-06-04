@@ -56,6 +56,7 @@ class SettingsPage extends StatelessWidget {
 
 
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       appBar: appBar,
       body: MyWidget(initIndex: initIndex ?? 0),
     );
@@ -85,7 +86,7 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      backgroundColor: WHITE,
+      backgroundColor: BACKGROUND_COLOR,
       body: Row(
         children: [
           NavigationRail(
@@ -93,7 +94,6 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
             labelType: NavigationRailLabelType.selected,
             selectedIconTheme: const IconThemeData(color: MAIN_COLOR),
             selectedLabelTextStyle: const TextStyle(color: MAIN_COLOR),
-            elevation: 20,
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.calendar_today),
@@ -199,7 +199,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   Widget calendarBody() {
     Widget borderModel = const Column(children: [
       SizedBox(height: 2.5),
-      Divider(height: 1),
+      Divider(height: 2,thickness:2,color:BACKGROUND_COLOR),
       SizedBox(height: 2.5),
     ]);
 
@@ -222,12 +222,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     Text(
                       '画面表示のカスタマイズ',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5),
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold,
+                          color:BLUEGREY),
                     ),
                     const Divider(
                       height: 2,
                       thickness: 2,
-                      color: ACCENT_COLOR,
+                      color: BLUEGREY,
                     ),
                     const SizedBox(height: 2),
                     configSwitch("Tipsとお知らせ", "tips"),
@@ -252,12 +254,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     Text(
                       'カレンダーの設定',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5),
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold,
+                          color:BLUEGREY
+                          ),
                     ),
                     const Divider(
                       height: 2,
                       thickness: 2,
-                      color: ACCENT_COLOR,
+                      color: BLUEGREY,
                     ),
                     const SizedBox(height: 2),
                     configSwitch("土日祝日の着色", "holidayPaint"),
@@ -432,12 +437,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '通知頻度の設定',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5),
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
+              fontWeight: FontWeight.bold,
+              color:BLUEGREY),
             ),
             const Divider(
               height: 2,
               thickness: 2,
-              color: ACCENT_COLOR,
+              color: BLUEGREY,
             ),
             const SizedBox(height: 2),
             notificationFrequencySetting(),
@@ -457,12 +464,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '通知フォーマットの設定',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5),
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
+              fontWeight: FontWeight.bold,
+              color:BLUEGREY),
             ),
             const Divider(
               height: 2,
               thickness: 2,
-              color: ACCENT_COLOR,
+              color: BLUEGREY,
             ),
             const SizedBox(height: 2),
             notificarionFormatSetting(),
@@ -612,9 +621,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
             child: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: ACCENT_COLOR,
+                  color: BLUEGREY,
                   border: Border.all(
-                      color: const Color.fromARGB(255, 255, 216, 130),
+                      color: Colors.grey,
                       width: 1),
                   borderRadius: BorderRadius.circular(5),
                 ),
@@ -680,7 +689,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 days: days,
                 weekday: weekday));
             await NotifyContent().setNotify();
-          }, ACCENT_COLOR, "   追加   "),
+          }, BLUEGREY, "   追加   "),
           const SizedBox(width: 5)
         ]),
       ),
@@ -850,7 +859,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         child: Row(children: [
           const Text("曜日を含む："),
           CupertinoCheckbox(
-              activeColor: ACCENT_COLOR,
+              activeColor:BLUEGREY,
               value: isContainWeekday,
               onChanged: (value) {
                 setState(() {
@@ -865,7 +874,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 isContainWeekday: isContainWeekday ? 1 : 0,
                 notifyFormat: notifyFormat));
             await NotifyContent().setNotify();
-          }, ACCENT_COLOR, "   変更   "),
+          }, BLUEGREY, "   変更   "),
           const SizedBox(width: 5)
         ]),
       ),
@@ -878,7 +887,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         const Spacer(),
         buttonModel(() async {
           await NotifyContent().sampleNotify();
-        }, ACCENT_COLOR, "サンプル通知"),
+        }, BLUEGREY, "サンプル通知"),
       ])
     ]);
   }
