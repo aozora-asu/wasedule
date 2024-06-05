@@ -445,8 +445,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     int current_period = datetime2Period(now) ?? 0;
 
     return FutureBuilder(
-        future: IsarHandler()
-            .getVacantRoomList(isar!, location, now.weekday, current_period),
+        future: IsarHandler().getNowVacantRoomList(isar!, location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
