@@ -235,13 +235,13 @@ List<String> semester2quarterList(String text) {
       return ["spring_quarter"];
     case "summer_quarter":
       return ["summer_quarter"];
-    case "spring_semster":
+    case "spring_semester":
       return ["spring_quarter", "summer_quarter"];
     case "fall_quarter":
       return ["fall_quarter"];
     case "winter_quarter":
       return ["winter_quarter"];
-    case "fall_semster":
+    case "fall_semester":
       return ["fall_quarter", "winter_quarter"];
     case "full_year":
       return [
