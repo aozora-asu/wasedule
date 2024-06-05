@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
@@ -231,7 +232,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     return Row(children: [
       InkWell(
           onTap: () {
-            bottomSheet(targetData,ref,context,setState);
+            bottomSheet(context,targetData,setState);
           },
           child: Container(
               constraints: BoxConstraints(

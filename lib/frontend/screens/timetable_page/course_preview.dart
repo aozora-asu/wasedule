@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -339,8 +340,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
     String remainingTimeInString = formatDuration(remainingTime);
     return GestureDetector(
-        onTap: () {
-          bottomSheet(target, ref, context, widget.setTimetableState);
+        onTap: () async{
+          await bottomSheet(context,target, widget.setTimetableState);
         },
         child: Row(children: [
           Column(children: [

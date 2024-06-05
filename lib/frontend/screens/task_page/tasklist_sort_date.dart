@@ -9,6 +9,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:intl/intl.dart';
 import 'task_data_manager.dart';
@@ -380,8 +381,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               fontWeight: FontWeight.w700,
               color:BLUEGREY)),
       InkWell(
-          onTap: () {
-            bottomSheet(targetData,ref,context,setState);
+          onTap: () async{
+            await bottomSheet(context,targetData,setState);
           },
           child: 
               Container(
