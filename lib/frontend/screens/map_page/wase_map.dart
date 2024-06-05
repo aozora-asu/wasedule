@@ -28,7 +28,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   late final _animatedMapController = AnimatedMapController(vsync: this);
   String yearAndMonth = DateFormat("yyyyMM").format(DateTime.now());
   late int initCampusNum;
-  bool _isLoading = true; // 初期化中かどうかのフラグ
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -45,19 +45,31 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
       initCampusNum = pref.getInt('initCampusNum')!;
     }
     setState(() {
-      _isLoading = false; // 初期化が完了したらフラグを更新
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      // 初期化中はローディング表示
       return const Center(child: CircularProgressIndicator());
     }
     SizeConfig().init(context);
     return Scaffold(
       body: mapView(),
+      floatingActionButton: Container(
+            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
+            child: FloatingActionButton(
+          heroTag: "map_1",
+          onPressed: () async {
+            //＠ここに地図データのダウンロード関数を登録！！
+
+          },
+          backgroundColor: MAIN_COLOR,
+          child:
+              const Icon(Icons.refresh_outlined, color: WHITE),
+        ),
+      )
     );
   }
 
@@ -222,15 +234,25 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             ],
           )),
       SizedBox(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          " わせまっぷ",
-          style: TextStyle(
-              color: BLUEGREY,
-              fontSize: SizeConfig.blockSizeHorizontal! * 10,
-              fontWeight: FontWeight.bold),
-        ),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children:[
+          Text(
+            " わせまっぷ",
+            style: TextStyle(
+                color: BLUEGREY,
+                fontSize: SizeConfig.blockSizeHorizontal! * 10,
+                fontWeight: FontWeight.bold),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: (){
+
+            },
+            icon:Icon(
+              Icons.bookmark,color:BLUEGREY,
+              size: SizeConfig.blockSizeHorizontal! * 12))
+        ]),
         Divider(
           color: Colors.blueGrey,
           endIndent: SizeConfig.blockSizeHorizontal! * 30,

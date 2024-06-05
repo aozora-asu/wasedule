@@ -85,7 +85,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         );
                       });
                 },
-                backgroundColor: ACCENT_COLOR,
+                backgroundColor: PALE_MAIN_COLOR,
                 child: const Icon(Icons.add, color: WHITE)),
             const SizedBox(width: 10),
             timetableShareButton(context),
@@ -324,6 +324,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
+                    color:BLUEGREY
                   ),
                 ),
                 IconButton(

@@ -1,5 +1,6 @@
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
@@ -344,6 +345,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w700,
+                          color:BLUEGREY
                         ),
                       ),
                       IconButton(
@@ -355,6 +357,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                           icon: const Icon(Icons.arrow_forward_ios),
                           iconSize: 20,
                           color:BLUEGREY),
+                      const Spacer(),
                       doNotContainScreenShot(scheduleEmptyFlag(
                         ref,
                         SizedBox(
@@ -382,7 +385,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                           ),
                         ),
                       )),
-                      showOnlyScreenShot(LogoAndTitle(size: 7))
+                      showOnlyScreenShot(LogoAndTitle(size: 7)),
+                     SizedBox(
+                          width: SizeConfig.blockSizeHorizontal! * 3)
                     ]),
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 100,
@@ -1147,9 +1152,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         onTap: ontap,
         child: Column(children: [
           Container(
+              decoration: roundedBoxdecorationWithShadow(radiusType: 2),
               width: SizeConfig.blockSizeHorizontal! * 95,
               height: SizeConfig.blockSizeVertical! * 6,
-              color: WHITE,
               child: Center(
                   child: Row(children: [
                 const SizedBox(width: 20),

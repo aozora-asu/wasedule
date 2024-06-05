@@ -559,7 +559,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                             children: [
                               Container(
                                   padding: const EdgeInsets.all(10),
-                                  decoration: roundedBoxdecorationWithShadow(),
+                                  decoration: roundedBoxdecorationWithShadow(radiusType: 1),
                                   child: Column(
                                       //crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -604,7 +604,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               child: const Text("値の計算方法について")),
                                         ]),
                                       ])),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 2),
                               Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -616,7 +616,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                         Container(
                                           padding: const EdgeInsets.all(10),
                                           decoration:
-                                              roundedBoxdecorationWithShadow(),
+                                              roundedBoxdecorationWithShadow(radiusType: 2),
                                           child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -650,10 +650,10 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               ]),
                                         ),
                                       ])),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 2),
                               Container(
                                 padding: const EdgeInsets.all(10),
-                                decoration: roundedBoxdecorationWithShadow(),
+                                decoration: roundedBoxdecorationWithShadow(radiusType: 2),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -706,10 +706,10 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                   ]),
                                 ),
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 2),
                               Container(
                                 padding: const EdgeInsets.all(10),
-                                decoration: roundedBoxdecorationWithShadow(),
+                                decoration: roundedBoxdecorationWithShadow(radiusType: 3),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
