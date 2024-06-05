@@ -1,6 +1,3 @@
-// これらのimportは必要に応じて追加してください
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/classRoom.dart';
 import 'package:isar/isar.dart';
 part 'vacant_room.g.dart';
 

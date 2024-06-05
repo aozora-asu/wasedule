@@ -58,21 +58,18 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     }
     SizeConfig().init(context);
     return Scaffold(
-      body: mapView(),
-      floatingActionButton: Container(
-            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
-            child: FloatingActionButton(
-          heroTag: "map_1",
-          onPressed: () async {
-            //＠ここに地図データのダウンロード関数を登録！！
-
-          },
-          backgroundColor: MAIN_COLOR,
-          child:
-              const Icon(Icons.refresh_outlined, color: WHITE),
-        ),
-      )
-    );
+        body: mapView(),
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
+          child: FloatingActionButton(
+            heroTag: "map_1",
+            onPressed: () async {
+              //＠ここに地図データのダウンロード関数を登録！！
+            },
+            backgroundColor: MAIN_COLOR,
+            child: const Icon(Icons.refresh_outlined, color: WHITE),
+          ),
+        ));
   }
 
   Map<String, LatLng> campusLocations = const {
@@ -236,9 +233,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             ],
           )),
       SizedBox(
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children:[
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
           Text(
             " わせまっぷ",
             style: TextStyle(
@@ -248,12 +245,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           ),
           const Spacer(),
           IconButton(
-            onPressed: (){
-
-            },
-            icon:Icon(
-              Icons.bookmark,color:BLUEGREY,
-              size: SizeConfig.blockSizeHorizontal! * 12))
+              onPressed: () {},
+              icon: Icon(Icons.bookmark,
+                  color: BLUEGREY, size: SizeConfig.blockSizeHorizontal! * 12))
         ]),
         Divider(
           color: Colors.blueGrey,
@@ -446,62 +440,63 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         });
   }
 
-  // Widget emptyClassRooms(String location) {
-  //   DateTime now = DateTime.now();
-  //   int current_period = datetime2Period(now) ?? 0;
+  Widget emptyClassRooms(String location) {
+    DateTime now = DateTime.now();
+    int current_period = datetime2Period(now) ?? 0;
 
-  //   return FutureBuilder(
-  //       future: IsarHandler().getVacantRoomList(building, quarter, weekday, period),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //               child: CircularProgressIndicator(color: MAIN_COLOR));
-  //         } else if (snapshot.hasData) {
-  //           String searchResult = "授業期間外です。";
+    return FutureBuilder(
+        future: IsarHandler()
+            .getVacantRoomList(isar!, location, now.weekday, current_period),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: MAIN_COLOR));
+          } else if (snapshot.hasData) {
+            String searchResult = "授業期間外です。";
 
-  //           // Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
+            // Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
 
-  //           // dynamic weekDayMap = quarterMap[now.weekday.toString()] ?? {};
+            // dynamic weekDayMap = quarterMap[now.weekday.toString()] ?? {};
 
-  //           // dynamic periodList = weekDayMap[current_period.toString()] ?? [];
+            // dynamic periodList = weekDayMap[current_period.toString()] ?? [];
 
-  //           // if (current_period == 0) {
-  //           //   searchResult = "授業時間外です。";
-  //           // } else if (periodList.isEmpty) {
-  //           //   searchResult = "空き教室はありません。";
-  //           // } else {
-  //           //   searchResult = periodList.join('\n');
-  //           // }
+            if (current_period == 0) {
+              searchResult = "授業時間外です。";
+            } else if (snapshot.data!.isEmpty) {
+              searchResult = "空き教室はありません。";
+            } else {
+              searchResult = snapshot.data!.join('\n');
+            }
 
-  //           return SingleChildScrollView(
-  //               child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                 Text("現在の空き教室",
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.bold,
-  //                         fontSize: SizeConfig.blockSizeHorizontal! * 6,
-  //                         color: BLUEGREY)),
-  //                 Container(
-  //                     width: SizeConfig.blockSizeHorizontal! * 100,
-  //                     padding: const EdgeInsets.all(7.5),
-  //                     decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(7.0),
-  //                         gradient: gradationDecoration()),
-  //                     child: Text(searchResult,
-  //                         style: TextStyle(
-  //                           color: WHITE,
-  //                           fontWeight: FontWeight.bold,
-  //                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
-  //                         )))
-  //               ]));
-  //         } else {
-  //           print("エラー：" + snapshot.error.toString());
-  //           return const Center(
-  //               child: CircularProgressIndicator(color: Colors.red));
-  //         }
-  //       });
-  // }
+            return SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text("現在の空き教室",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                          color: BLUEGREY)),
+                  Container(
+                      width: SizeConfig.blockSizeHorizontal! * 100,
+                      padding: const EdgeInsets.all(7.5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.0),
+                          gradient: gradationDecoration()),
+                      child: Text(searchResult,
+                          style: TextStyle(
+                            color: WHITE,
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          )))
+                ]));
+          } else {
+            print("エラー：" + snapshot.error.toString());
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.red));
+          }
+        });
+  }
 
   void showLibraryButtomSheet(String location) {
     String buildingName = "";
