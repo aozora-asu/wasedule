@@ -29,8 +29,7 @@ void main() async {
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
   WidgetsFlutterBinding.ensureInitialized();
-  await resisterVacantRoomList("54");
-  print(await IsarHandler().getVacantRoomList(isar!, "54", 1, 1));
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

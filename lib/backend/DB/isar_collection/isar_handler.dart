@@ -15,7 +15,7 @@ class IsarHandler {
     if (isar == null || !isar!.isOpen) {
       final dir = await getApplicationDocumentsDirectory();
       isar = await Isar.open([BuildingSchema, ClassRoomSchema, HasClassSchema],
-          directory: dir.path);
+          directory: dir.path, inspector: false);
     }
 
     return isar!;
