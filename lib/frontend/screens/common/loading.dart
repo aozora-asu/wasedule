@@ -34,6 +34,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:BACKGROUND_COLOR,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

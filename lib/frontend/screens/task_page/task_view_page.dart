@@ -14,6 +14,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.da
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'tasklist_sort_date.dart';
 import 'dart:async';
@@ -468,11 +469,12 @@ Widget indexModel(String text) {
             color: Colors.grey),
       ),
     ),
-    const Divider(height: 1),
   ]);
 }
 
-void bottomSheet(targetData, ref, context, setState) {
+bool isEditing = false;
+
+Future<void> bottomSheet(targetData, ref, context, setState) async{
   TextEditingController summaryController =
       TextEditingController(text: targetData["summary"] ?? "");
   TextEditingController titleController =
@@ -484,6 +486,19 @@ void bottomSheet(targetData, ref, context, setState) {
   String? pageID = targetData["pageID"];
   Widget dividerModel = const Divider(height: 1);
   int _height = (SizeConfig.blockSizeVertical! * 100).round();
+  String taskDraft = "";
+  isEditing = false;
+  double bottomMargin = 50;
+  if(isEditing){
+    bottomMargin = 50;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+  if(prefs.getString(targetData["id"].toString()) != null){
+    taskDraft = prefs.getString(targetData["id"].toString())!;
+  }
+  TextEditingController taskDraftController =
+    TextEditingController(text: taskDraft);
 
   Widget webView(String? pageID) {
     if (pageID != null) {
@@ -543,7 +558,7 @@ void bottomSheet(targetData, ref, context, setState) {
               height: SizeConfig.blockSizeVertical! * 85,
               margin: const EdgeInsets.only(top: 0),
               decoration: const BoxDecoration(
-                color: WHITE,
+                color:BACKGROUND_COLOR,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -560,10 +575,9 @@ void bottomSheet(targetData, ref, context, setState) {
                         Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Column(children: [
-                              indexModel("■タスク名"),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextField(
+                              textFieldModel(
+                                "タスク名",1,
+                                TextField(
                                   controller: summaryController,
                                   maxLines: null,
                                   textInputAction: TextInputAction.done,
@@ -579,7 +593,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                   style: TextStyle(
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 4,
-                                      fontWeight: FontWeight.w400),
+                                      fontWeight: FontWeight.bold),
                                   onSubmitted: (value) {
                                     TaskDatabaseHelper()
                                         .updateSummary(id, value);
@@ -595,12 +609,8 @@ void bottomSheet(targetData, ref, context, setState) {
                                   },
                                 ),
                               ),
-                              SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2),
-                              indexModel("■ カテゴリ"),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextField(
+                              textFieldModel(
+                                "カテゴリ",2,TextField(
                                   controller: titleController,
                                   maxLines: 1,
                                   decoration: const InputDecoration.collapsed(
@@ -615,7 +625,7 @@ void bottomSheet(targetData, ref, context, setState) {
                                   style: TextStyle(
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 4,
-                                      fontWeight: FontWeight.w400),
+                                      fontWeight: FontWeight.bold),
                                   onSubmitted: (value) {
                                     TaskDatabaseHelper().updateTitle(id, value);
 
@@ -630,12 +640,9 @@ void bottomSheet(targetData, ref, context, setState) {
                                   },
                                 ),
                               ),
-                              SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2),
-                              indexModel("■ 締切日時"),
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: GestureDetector(
+                              textFieldModel(
+                                "締切日時",2,
+                                GestureDetector(
                                       onTap: () async {
                                         TextEditingController controller =
                                             TextEditingController();
@@ -667,11 +674,13 @@ void bottomSheet(targetData, ref, context, setState) {
                                       },
                                       child: Text(
                                           DateFormat("yyyy年MM月dd日  HH時mm分")
-                                              .format(dtEnd)))),
-                              SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2),
-                              indexModel("■ タスクの詳細"),
-                              TextField(
+                                              .format(dtEnd),
+                                              style:const TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                              )),
+                              textFieldModel(
+                                "タスクの詳細",2,
+                                TextField(
                                 maxLines: null,
                                 textInputAction: TextInputAction.done,
                                 onSubmitted: (value) {
@@ -685,7 +694,6 @@ void bottomSheet(targetData, ref, context, setState) {
                                       TaskData();
                                   ref.read(taskDataProvider).isRenewed = true;
                                   setState(() {});
-                                  Navigator.pop(context);
                                 },
                                 controller: descriptionController,
                                 style: TextStyle(
@@ -700,48 +708,83 @@ void bottomSheet(targetData, ref, context, setState) {
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
+                              ),),
+
+                              textFieldModel(
+                                "タスクの削除",3,
+                                buttonModelWithChild(() async {
+                                  TaskDatabaseHelper().unDisplay(id);
+                                  setState(() {});
+                                  final list =
+                                      ref.read(taskDataProvider).taskDataList;
+                                  List<Map<String, dynamic>> newList = [...list];
+                                  ref.read(taskDataProvider.notifier).state =
+                                      TaskData(taskDataList: newList);
+                                  ref.read(taskDataProvider).isRenewed = true;
+                                  ref
+                                      .read(taskDataProvider)
+                                      .sortDataByDtEnd(list);
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                    Colors.red,
+                                    const Row(
+                                      children: [
+                                        Spacer(),
+                                        Icon(Icons.delete, color: WHITE),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "削除",
+                                          style: TextStyle(
+                                              color: WHITE,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Spacer()
+                                      ],
+                                    )),
                               ),
-                              SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2),
-                              indexModel("■ タスクの削除"),
-                              SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 1),
-                              buttonModelWithChild(() async {
-                                TaskDatabaseHelper().unDisplay(id);
-                                setState(() {});
-                                final list =
-                                    ref.read(taskDataProvider).taskDataList;
-                                List<Map<String, dynamic>> newList = [...list];
-                                ref.read(taskDataProvider.notifier).state =
-                                    TaskData(taskDataList: newList);
-                                ref.read(taskDataProvider).isRenewed = true;
-                                ref
-                                    .read(taskDataProvider)
-                                    .sortDataByDtEnd(list);
-                                setState(() {});
-                                Navigator.pop(context);
-                              },
-                                  Colors.red,
-                                  const Row(
-                                    children: [
-                                      Spacer(),
-                                      Icon(Icons.delete, color: WHITE),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        "削除",
-                                        style: TextStyle(
-                                            color: WHITE,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Spacer()
-                                    ],
-                                  )),
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 2,
                               ),
                               webView(pageID),
                               SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 10,
+                                height: SizeConfig.blockSizeVertical! * 2,
+                              ),
+                              textFieldModel(
+                                "課題の下書き",0,
+                                TextField(
+                                  maxLines: null,
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    prefs.setString(targetData["id"].toString(),taskDraftController.text);
+                                    setState(() {});
+                                  },
+                                  onTap: () {
+                                    setState((){
+                                      isEditing = true;
+                                    });
+                                  },
+                                  onTapOutside: (event) {
+                                    setState((){
+                                      isEditing = false;
+                                    });
+                                  },
+                                  controller: taskDraftController,
+                                  style: TextStyle(
+                                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    hintText: "(課題の下書きをここに作成…)",
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                              ),),
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * bottomMargin,
                               ),
                             ])),
                       ],
@@ -750,20 +793,12 @@ void bottomSheet(targetData, ref, context, setState) {
           menuBar(),
         ]),
         Container(
-            decoration: BoxDecoration(
-              color: WHITE,
-              borderRadius: const BorderRadius.only(
+            decoration:const BoxDecoration(
+              color: BACKGROUND_COLOR,
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // 影の色と透明度
-                  spreadRadius: 2, // 影の広がり
-                  blurRadius: 4, // 影のぼかし
-                  offset: const Offset(0, 2), // 影の方向（横、縦）
-                ),
-              ],
             ),
             alignment: Alignment.center,
             height: SizeConfig.blockSizeHorizontal! * 13,
@@ -805,6 +840,22 @@ void bottomSheet(targetData, ref, context, setState) {
       ]);
     },
   );
+}
+
+Widget textFieldModel(String title,int type,Widget child){
+  return Container(
+    decoration: roundedBoxdecorationWithShadow(radiusType:type),
+    margin: const EdgeInsets.symmetric(vertical:1),
+    padding: const EdgeInsets.all(15),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        indexModel(title),
+        child
+      ],
+    ),
+  );
+
 }
 
 Widget menuBar() {

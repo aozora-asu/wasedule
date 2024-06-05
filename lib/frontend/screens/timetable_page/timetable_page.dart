@@ -706,7 +706,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 now.weekday == weekDay &&
                 weekDay <= 6) {
               lineWidth = 4;
-              lineColor = Colors.blueAccent;
+              lineColor = MAIN_COLOR;
             }
 
             return Container(

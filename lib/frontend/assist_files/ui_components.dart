@@ -95,3 +95,47 @@ LinearGradient gradationDecoration(
       ]
   );
 }
+
+BorderRadius boxRadius({int type = 0}){
+  double endRadius = 30;
+  double middleRadius = 3;
+
+  switch(type){
+    case 1: 
+      return BorderRadius.only(
+        topLeft: Radius.circular(endRadius),
+        topRight: Radius.circular(endRadius),
+        bottomLeft: Radius.circular(middleRadius),
+        bottomRight: Radius.circular(middleRadius),
+      );
+    case 2:
+      return BorderRadius.only(
+        topLeft: Radius.circular(middleRadius),
+        topRight: Radius.circular(middleRadius),
+        bottomLeft: Radius.circular(middleRadius),
+        bottomRight: Radius.circular(middleRadius),
+      );
+    case 3:
+      return BorderRadius.only(
+        topLeft: Radius.circular(middleRadius),
+        topRight: Radius.circular(middleRadius),
+        bottomLeft: Radius.circular(endRadius),
+        bottomRight: Radius.circular(endRadius),
+      );
+    default: 
+      return BorderRadius.only(
+        topLeft: Radius.circular(endRadius),
+        topRight: Radius.circular(endRadius),
+        bottomLeft: Radius.circular(endRadius),
+        bottomRight: Radius.circular(endRadius),
+      );
+  }
+  
+}
+
+BoxDecoration roundedBoxdecorationWithShadow({int radiusType = 0}) {
+  return BoxDecoration(
+      color:  WHITE,
+      borderRadius: boxRadius(type: radiusType)
+    );
+}
