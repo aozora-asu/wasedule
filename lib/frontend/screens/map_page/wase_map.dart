@@ -302,13 +302,13 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             showDetailButtomSheet(location);
           },
           child: FutureBuilder(
-            future: IsarHandler().isNowVacant(isar!, location),
+            future: IsarHandler().getNowVacantRoomList(isar!, location),
             builder: (context, snapShot) {
               if (snapShot.connectionState == ConnectionState.done) {
-                bool isVacant = snapShot.data!;
+                bool hasVacantRoom = snapShot.data!.isNotEmpty;
                 Image pinImage =
                     Image.asset('lib/assets/map_images/location_pin.png');
-                if (!isVacant) {
+                if (!hasVacantRoom) {
                   pinImage = Image.asset(
                       'lib/assets/map_images/location_pin_notempty.png');
                 }
