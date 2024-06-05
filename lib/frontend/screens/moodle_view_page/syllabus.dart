@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'dart:math';
 import "./classRoom.dart";
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as html;
 import 'package:uuid/uuid.dart';
 import "../../../backend/DB/handler/my_course_db.dart";
+import "../../../main.dart";
 
 class RequestQuery {
   String? p_number;
@@ -310,30 +316,18 @@ List<String> extractClassRoom(String input) {
   return result;
 }
 
-Future<Map<String, Map<String, List<String>>>?> vacantRoomList(
-    int buildingNum) async {
-  List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
+Future<void> resisterVacantRoomList(String buildingNum) async {
+  List<String> classRoomList = classMap[buildingNum] ?? [];
+  Map<String, Map<String, Map<String, List<String>>>> copyQuarterClassRoomList =
+      {};
   RequestQuery requestQuery;
   String htmlString;
-  String? semester;
-  List<Map<String, int?>> periodAndDateList;
+  List<Map<String, int?>> _periodAndDateList;
   DateTime now = DateTime.now();
 
-  Map<String, Map<String, Map<String, List<String>>>> vacantClassRoomMap = {};
-  Map<String, Map<String, List<String>>> emptyroomWeekdayAndPeriod = {};
-  Map<String, List<String>> map = {};
   List<String> quarterList = [];
-  for (int i = 1; i <= 7; i++) {
-    for (int j = 1; j <= 6; j++) {
-      map = {j.toString(): List<String>.from(classRoomList)};
-      if (emptyroomWeekdayAndPeriod.containsKey(i.toString())) {
-        emptyroomWeekdayAndPeriod[i.toString()]!.addAll(map);
-      } else {
-        emptyroomWeekdayAndPeriod[i.toString()] = map;
-      }
-    }
-  }
-
+  copyQuarterClassRoomList =
+      _createQuarterClassRoomMap(buildingNum: buildingNum);
   for (var classRoom in classRoomList) {
     requestQuery = RequestQuery(
       // p_gakki: "1",
@@ -345,99 +339,74 @@ Future<Map<String, Map<String, List<String>>>?> vacantRoomList(
     final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
     if (trElements.isNotEmpty) {
       trElements.removeAt(0);
-      //検索結果の羅列から、一行ずつみていく
+
       for (var trElement in trElements) {
         final tdElements = trElement.querySelectorAll("td");
-        periodAndDateList =
+        _periodAndDateList =
             extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
-        //時限-曜日が複数羅列している時の処理
-        for (var periodAndDate in periodAndDateList) {
-          if (periodAndDate["weekday"] != null &&
-              periodAndDate["period"] != null) {
-            String weekday = periodAndDate["weekday"].toString();
-            String period = periodAndDate["period"].toString();
-            if (emptyroomWeekdayAndPeriod.containsKey(weekday) &&
-                emptyroomWeekdayAndPeriod[weekday]!.containsKey(period)) {
-              // removeの前にコピーを作成
-              List<String> updatedClassRooms = List<String>.from(
-                  emptyroomWeekdayAndPeriod[weekday]![period]!);
-              updatedClassRooms.remove(classRoom);
-              emptyroomWeekdayAndPeriod[weekday]![period] = updatedClassRooms;
-            }
-          }
-        }
-        semester = convertSemester(tdElements[5].text);
-        //開講学期があれば
+        String? semester = convertSemester(tdElements[5].text);
         if (semester != null) {
           quarterList = semester2quarterList(semester);
+
+          //クォーター制に分割して、合致するところにデータを挿入する
           for (var quarter in quarterList) {
-            if (vacantClassRoomMap.containsKey(quarter)) {
-              if (vacantClassRoomMap[quarter]!
-                  .containsKey(buildingNum.toString())) {
-                vacantClassRoomMap[quarter]!.addAll(emptyroomWeekdayAndPeriod);
-              } else {
-                vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
+            //時限-曜日が複数羅列している時の処理
+            for (var periodAndDate in _periodAndDateList) {
+              if (periodAndDate["weekday"] != null &&
+                  periodAndDate["period"] != null) {
+                int weekday = periodAndDate["weekday"]!;
+                int period = periodAndDate["period"]!;
+
+                IsarHandler().resisterClassRoom(
+                    isar!,
+                    Building(buildingName: buildingNum),
+                    ClassRoom(classRoomName: classRoom),
+                    HasClass(
+                        weekday: weekday, period: period, quarter: quarter));
               }
-            } else {
-              vacantClassRoomMap[quarter] = emptyroomWeekdayAndPeriod;
             }
           }
+        } else {
+          continue;
         }
       }
     } else {
-      return {};
+      continue;
     }
-  }
-  if (datetime2quarter(now) != null) {
-    return vacantClassRoomMap[datetime2quarter(now)];
-  } else {
-    return null;
   }
 }
 
-Future<bool> hasVacantRoom(int buildingNum) async {
-  List<String> classRoomList = classMap[buildingNum.toString()] ?? [];
-  RequestQuery requestQuery;
-  String htmlString;
-  String? semester;
-  DateTime now = DateTime.now();
+Map<String, Map<String, Map<String, List<String>>>> _createQuarterClassRoomMap(
+    {required String buildingNum}) {
+  Map<String, Map<String, Map<String, List<String>>>> quarterClassRoomMap = {};
 
-  List<String> nowSemester = datetime2termList(now);
-  bool hasVacantRoom = false; // 初期値をfalseに設定
+  // Define quarters
+  List<String> quarters = [
+    "spring_quarter",
+    "summer_quarter",
+    "fall_quarter",
+    "winter_quarter"
+  ];
 
-  for (var classRoom in classRoomList) {
-    requestQuery = RequestQuery(
-      keyword: classRoom,
-      p_youbi: now.weekday.toString(),
-      p_jigen: "${datetime2Period(now)}${datetime2Period(now)}",
-    );
-    htmlString = await fetchSyllabusResults(requestQuery);
-    final document = html_parser.parse(htmlString);
-    final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
-    if (trElements.isNotEmpty) {
-      trElements.removeAt(0);
-      // 検索結果の羅列から、一行ずつみていく
-      for (var trElement in trElements) {
-        final tdElements = trElement.querySelectorAll("td");
-        semester = convertSemester(tdElements[5].text);
-        // 開講学期がnowSemesterに含まれていない場合、クラスが空いている
-        if (semester == null || !nowSemester.contains(semester)) {
-          //print("$classRoomは開いています");
-          hasVacantRoom = true; // クラスが空いていると判定
-          break; // すでに空いているクラスが見つかったらループを抜ける
-        }
+  // Iterate over quarters
+  for (String quarter in quarters) {
+    quarterClassRoomMap.putIfAbsent(quarter, () => {});
+
+    // Iterate over days (Monday to Friday)
+    for (int day = 1; day <= 5; day++) {
+      quarterClassRoomMap[quarter]!.putIfAbsent(day.toString(), () => {});
+
+      // Iterate over periods (1st to 6rd)
+      for (int period = 1; period <= 6; period++) {
+        quarterClassRoomMap[quarter]![day.toString()]!
+            .putIfAbsent(period.toString(), () => []);
+
+        // Insert classRoomList based on buildingNum
+        List<String> classRoomList = classMap[buildingNum] ?? [];
+        quarterClassRoomMap[quarter]![day.toString()]![period.toString()]!
+            .addAll(classRoomList);
       }
-    } else {
-      //print("$classRoomは開いています (検索結果なし)");
-      hasVacantRoom = true; // 検索結果が空の場合、クラスが空いていると判定
-      break;
-    }
-    if (hasVacantRoom) {
-      // クラスが空いている場合はループを抜ける
-      break;
     }
   }
-
-  // 少なくとも1つのクラスが空いている場合にtrueを返す
-  return hasVacantRoom;
+  return quarterClassRoomMap;
 }

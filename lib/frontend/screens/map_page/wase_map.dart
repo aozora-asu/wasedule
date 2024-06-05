@@ -13,6 +13,8 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
+import "../../../backend/DB/isar_collection/isar_handler.dart";
+import "../../../backend/DB/isar_collection/isar_handler.dart";
 
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;
@@ -284,7 +286,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             showDetailButtomSheet(location);
           },
           child: FutureBuilder(
-            future: hasVacantRoom(int.parse(location)),
+            future: IsarHandler().isNowVacant(isar!, location),
             builder: (context, snapShot) {
               if (snapShot.connectionState == ConnectionState.done) {
                 bool isVacant = snapShot.data!;
@@ -362,124 +364,122 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   void showDetailButtomSheet(String location) {
     showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      enableDrag: true,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) {
-        return Container(
-            height: SizeConfig.blockSizeVertical! * 60,
-            decoration:const BoxDecoration(
-              color: WHITE,
-              borderRadius:BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        enableDrag: true,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (context) {
+          return Container(
+              height: SizeConfig.blockSizeVertical! * 60,
+              decoration: const BoxDecoration(
+                color: WHITE,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
               ),
-            ),
-            margin: const EdgeInsets.only(top: 20),
-            child: Column(children: [
-              Container(
-                  height: SizeConfig.blockSizeVertical! * 6,
-                  width: SizeConfig.blockSizeHorizontal! * 100,
-                  decoration: BoxDecoration(
-                    gradient: gradationDecoration(
-                      color2:Colors.black),
-                    color: WHITE,
-                    borderRadius:const BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
+              margin: const EdgeInsets.only(top: 20),
+              child: Column(children: [
+                Container(
+                    height: SizeConfig.blockSizeVertical! * 6,
+                    width: SizeConfig.blockSizeHorizontal! * 100,
+                    decoration: BoxDecoration(
+                      gradient: gradationDecoration(color2: Colors.black),
+                      color: WHITE,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                    ),
+                    child: Row(children: [
+                      SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
+                      Image.asset('lib/assets/map_images/location_pin.png'),
+                      Text(" " + location + '号館',
+                          style: TextStyle(
+                              fontSize: SizeConfig.blockSizeVertical! * 3,
+                              fontWeight: FontWeight.bold,
+                              color: WHITE))
+                    ])),
+                const Divider(
+                  height: 2,
+                  thickness: 2,
+                ),
+                Expanded(
+                    child: Stack(children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: buildingImages[location]!, fit: BoxFit.cover),
                     ),
                   ),
-                  child: Row(children: [
-                    SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
-                    Image.asset('lib/assets/map_images/location_pin.png'),
-                    Text(" " + location + '号館',
-                        style: TextStyle(
-                            fontSize: SizeConfig.blockSizeVertical! * 3,
-                            fontWeight: FontWeight.bold,
-                            color:WHITE
-                            ))
-                  ])),
-              const Divider(
-                height: 2,
-                thickness: 2,
-              ),
-              Expanded(
-                  child: Stack(children: [
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: buildingImages[location]!, fit: BoxFit.cover),
-                  ),
-                ),
-                Container(
+                  Container(
                     height: SizeConfig.blockSizeVertical! * 60,
                     color: WHITE.withOpacity(0.6),
-                    padding:const EdgeInsets.all(10),
-                    child: emptyClassRooms(location),
+                    padding: const EdgeInsets.all(10),
+                    // child: emptyClassRooms(location),
                   )
-              ]))
-            ]));
-      });
-  }
-
-  Widget emptyClassRooms(String location) {
-    DateTime now = DateTime.now();
-    int current_period = datetime2Period(now) ?? 0;
-
-    return FutureBuilder(
-        future: vacantRoomList(int.parse(location)),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: CircularProgressIndicator(color: MAIN_COLOR));
-          } else if (snapshot.hasData) {
-            String searchResult = "授業期間外です。";
-
-            Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
-
-            dynamic weekDayMap = quarterMap[now.weekday.toString()] ?? {};
-
-            dynamic periodList = weekDayMap[current_period.toString()] ?? [];
-
-            if (current_period == 0) {
-              searchResult = "授業時間外です。";
-            } else if (periodList.isEmpty) {
-              searchResult = "空き教室はありません。";
-            } else {
-              searchResult = periodList.join('\n');
-            }
-
-            return SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text("現在の空き教室",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: SizeConfig.blockSizeHorizontal! * 6,
-                          color: BLUEGREY)),
-                  Container(
-                      width: SizeConfig.blockSizeHorizontal! * 100,
-                      padding: const EdgeInsets.all(7.5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7.0),
-                          gradient: gradationDecoration()),
-                      child: Text(searchResult,
-                          style: TextStyle(
-                            color: WHITE,
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          )))
-                ]));
-          } else {
-            print("エラー：" + snapshot.error.toString());
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.red));
-          }
+                ]))
+              ]));
         });
   }
+
+  // Widget emptyClassRooms(String location) {
+  //   DateTime now = DateTime.now();
+  //   int current_period = datetime2Period(now) ?? 0;
+
+  //   return FutureBuilder(
+  //       future: IsarHandler().getVacantRoomList(building, quarter, weekday, period),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const Center(
+  //               child: CircularProgressIndicator(color: MAIN_COLOR));
+  //         } else if (snapshot.hasData) {
+  //           String searchResult = "授業期間外です。";
+
+  //           // Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
+
+  //           // dynamic weekDayMap = quarterMap[now.weekday.toString()] ?? {};
+
+  //           // dynamic periodList = weekDayMap[current_period.toString()] ?? [];
+
+  //           // if (current_period == 0) {
+  //           //   searchResult = "授業時間外です。";
+  //           // } else if (periodList.isEmpty) {
+  //           //   searchResult = "空き教室はありません。";
+  //           // } else {
+  //           //   searchResult = periodList.join('\n');
+  //           // }
+
+  //           return SingleChildScrollView(
+  //               child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                 Text("現在の空き教室",
+  //                     style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: SizeConfig.blockSizeHorizontal! * 6,
+  //                         color: BLUEGREY)),
+  //                 Container(
+  //                     width: SizeConfig.blockSizeHorizontal! * 100,
+  //                     padding: const EdgeInsets.all(7.5),
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(7.0),
+  //                         gradient: gradationDecoration()),
+  //                     child: Text(searchResult,
+  //                         style: TextStyle(
+  //                           color: WHITE,
+  //                           fontWeight: FontWeight.bold,
+  //                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
+  //                         )))
+  //               ]));
+  //         } else {
+  //           print("エラー：" + snapshot.error.toString());
+  //           return const Center(
+  //               child: CircularProgressIndicator(color: Colors.red));
+  //         }
+  //       });
+  // }
 
   void showLibraryButtomSheet(String location) {
     String buildingName = "";

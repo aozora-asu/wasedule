@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
 import 'package:flutter_calandar_app/backend/home_widget.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,7 +12,10 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import './converter.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
+import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
+import "./backend/DB/isar_collection/isar_handler.dart";
+import 'package:isar/isar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +25,12 @@ void main() async {
   await dotenv.load(fileName: '.env');
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
-  await Hive.initFlutter();
+  isar = await IsarHandler().initIsar();
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
+  WidgetsFlutterBinding.ensureInitialized();
+  await resisterVacantRoomList("54");
+  print(await IsarHandler().getVacantRoomList(isar!, "54", 1, 1));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
