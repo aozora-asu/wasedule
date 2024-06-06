@@ -55,7 +55,32 @@ class _AppPageState extends ConsumerState<AppPage> {
       _currentSubIndex = 0;
       _currentIndex = index;
     });
+    setPageConfig();
      pageController.jumpToPage(0);
+  }
+
+  void setPageConfig(){
+    if(_currentIndex == 0){
+      isExtendBody = false;
+      isExtendBottom = false;
+      physics = const ScrollPhysics();
+    }else if(_currentIndex == 1 || _currentIndex == 2){
+      isExtendBody = true;
+      isExtendBottom = true;
+      physics = const ScrollPhysics();
+    }else if(_currentIndex == 3){
+      isExtendBody = false;
+      isExtendBottom = true;
+      physics = const ScrollPhysics();
+    }else if(_currentIndex == 4){
+      isExtendBottom = false;
+      isExtendBody = false;
+      physics = const NeverScrollableScrollPhysics();
+    } else{
+      isExtendBody = false;
+      isExtendBottom = false;
+      physics = const ScrollPhysics();
+    }
   }
 
     void _onSlided(int index) {
@@ -107,27 +132,6 @@ class _AppPageState extends ConsumerState<AppPage> {
         controller: pageController,
         children: parentPages().elementAt(_currentIndex),
         onPageChanged: (value){
-            if(_currentIndex == 0){
-              isExtendBody = false;
-              isExtendBottom = false;
-              physics = const ScrollPhysics();
-            }else if(_currentIndex == 1 || _currentIndex == 2){
-              isExtendBody = true;
-              isExtendBottom = true;
-              physics = const ScrollPhysics();
-            }else if(_currentIndex == 3){
-              isExtendBody = false;
-              isExtendBottom = true;
-              physics = const ScrollPhysics();
-            }else if(_currentIndex == 4){
-              isExtendBottom = false;
-              isExtendBody = false;
-              physics = const NeverScrollableScrollPhysics();
-            } else{
-              isExtendBody = false;
-              isExtendBottom = true;
-              physics = const ScrollPhysics();
-            }
             setState((){
               _currentSubIndex = value;
             });
@@ -146,6 +150,8 @@ class _AppPageState extends ConsumerState<AppPage> {
         isExtendBody = false;
         isExtendBottom = false;
         physics = const ScrollPhysics();
+    }else{
+      setPageConfig();
     }
 
     return Scaffold(

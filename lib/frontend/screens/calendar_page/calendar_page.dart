@@ -778,7 +778,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                     color: cellColour(target),
                     border: Border.all(
                       color: BACKGROUND_COLOR,
-                      width: 1.5,
+                      width: 1,
                     ),
                   ),
                   child: Column(

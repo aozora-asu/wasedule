@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
-Widget buttonModel(Function() onTap, Color color, String text) {
+Widget buttonModel(Function() onTap, Color color, String text,
+  {double verticalpadding = 5,double horizontalPadding = 5}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-        padding: const EdgeInsets.all(5),
+        padding: EdgeInsets.symmetric(
+          vertical: verticalpadding,horizontal: horizontalPadding),
+        margin:const EdgeInsets.all(1),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: brighten(color, 0.6), width: 1),
+          //border: Border.all(color: brighten(color, 0.6), width: 1),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Row(
@@ -28,7 +31,7 @@ Widget buttonModelWithChild(Function() onTap, Color color, Widget child) {
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: brighten(color, 0.5), width: 2),
+          //border: Border.all(color: brighten(color, 0.5), width: 2),
           borderRadius: BorderRadius.circular(5),
         ),
         child: child),

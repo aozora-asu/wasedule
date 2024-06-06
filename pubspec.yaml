@@ -46,7 +46,7 @@ dependencies:
   nholiday_jp: ^1.0.2
   introduction_screen: ^3.1.12
   shared_preferences: ^2.2.3 #
-  toggle_switch: ^2.2.1
+  toggle_switch: ^2.3.0
   qr_flutter: ^4.1.0
   mobile_scanner: ^4.0.1
   flutter_datetime_picker_plus: ^2.2.0

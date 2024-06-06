@@ -703,7 +703,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             }
 
             Color lineColor = BACKGROUND_COLOR;
-            double lineWidth = 2;
+            double lineWidth = 1;
             DateTime now = DateTime.now();
             if (returnBeginningDateTime(index + 1).isBefore(now) &&
                 returnEndDateTime(index + 1).isAfter(now) &&

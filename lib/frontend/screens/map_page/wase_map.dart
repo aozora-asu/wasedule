@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 
@@ -46,9 +47,20 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     } else {
       initCampusNum = pref.getInt('initCampusNum')!;
     }
+
+    for(int i = 0; i < campusID2buildingsList().length; i++){
+      await initCampusMapPrefarences(i.toString(),pref);
+    }
+
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Future<void> initCampusMapPrefarences(String campusID, SharedPreferences pref) async{
+    if (pref.getBool('isMapDBEmpty_' + campusID) == null) {
+      await pref.setBool('isMapDBEmpty_' + campusID, true);
+    }
   }
 
   @override
@@ -58,18 +70,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     }
     SizeConfig().init(context);
     return Scaffold(
-        body: mapView(),
-        floatingActionButton: Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
-          child: FloatingActionButton(
-            heroTag: "map_1",
-            onPressed: () async {
-              //＠ここに地図データのダウンロード関数を登録！！
-            },
-            backgroundColor: MAIN_COLOR,
-            child: const Icon(Icons.refresh_outlined, color: WHITE),
-          ),
-        ));
+        body: mapView()
+    );
   }
 
   Map<String, LatLng> campusLocations = const {
@@ -160,6 +162,15 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         AssetImage('lib/assets/map_images/waseda_building_21.png'),
   };
 
+  Map<int,List<String>> campusID2buildingsList(){
+    return const {
+      0: ["3","6","7","8","10","11","14","15","16"],
+      1: ["31","32","33","34","36","38"],
+      2: ["52","53","54","56","57","60","61","63"],
+      3: ["100","101"]
+    };
+  }
+
   Map<String, String> webLinks = {
     "central_library": "https://www.waseda.jp/library/libraries/central/",
     "toyama_library": "https://www.waseda.jp/library/libraries/toyama/",
@@ -244,10 +255,11 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 fontWeight: FontWeight.bold),
           ),
           const Spacer(),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.bookmark,
-                  color: BLUEGREY, size: SizeConfig.blockSizeHorizontal! * 12))
+          //＠ブックマーク
+          // IconButton(
+          //     onPressed: () {},
+          //     icon: Icon(Icons.bookmark,
+          //         color: BLUEGREY, size: SizeConfig.blockSizeHorizontal! * 12))
         ]),
         Divider(
           color: Colors.blueGrey,
@@ -263,14 +275,16 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             await _animatedMapController.animateTo(
                 dest: campusLocations["waseda"]);
             await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
-          }, Colors.blue, "  早稲田  "),
+            setState((){});
+          }, buttonColor(0), "  早稲田  "),
           buttonModel(() async {
             final pref = await SharedPreferences.getInstance();
             pref.setInt("initCampusNum", 1);
             await _animatedMapController.animateTo(
                 dest: campusLocations["toyama"]);
             await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
-          }, Colors.blue, "   戸山   "),
+            setState((){});
+          }, buttonColor(1), "   戸山   "),
           buttonModel(() async {
             final pref = await SharedPreferences.getInstance();
             pref.setInt("initCampusNum", 2);
@@ -278,7 +292,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 dest: campusLocations["nishi_waseda"]);
             await _animatedMapController
                 .animatedZoomTo(initMapZoom["nishi_waseda"]!);
-          }, Colors.blue, " 西早稲田 "),
+            setState((){});
+          },  buttonColor(2), " 西早稲田 "),
           buttonModel(() async {
             final pref = await SharedPreferences.getInstance();
             pref.setInt("initCampusNum", 3);
@@ -286,10 +301,19 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 dest: campusLocations["tokorozawa"]);
             await _animatedMapController
                 .animatedZoomTo(initMapZoom["tokorozawa"]!);
-          }, Colors.blue, "   所沢   "),
+            setState((){});
+          },  buttonColor(3), "   所沢   "),
         ]),
       ]))
     ]);
+  }
+
+  Color buttonColor(int campusID){
+    if(campusID == initCampusNum){
+      return Colors.blue;
+    }else{
+      return Colors.blue;
+    }
   }
 
   Marker markerPin(String location) {
@@ -433,23 +457,62 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     height: SizeConfig.blockSizeVertical! * 60,
                     color: WHITE.withOpacity(0.6),
                     padding: const EdgeInsets.all(10),
-                    // child: emptyClassRooms(location),
+                    child: emptyClassRooms(location),
                   )
                 ]))
               ]));
         });
   }
 
+
+  Future<List<String>> initVacantRoomList(String location) async{
+    int campusID = 0;
+    for(int i = 0; i < campusID2buildingsList().length; i++){
+      if(campusID2buildingsList().values.elementAt(i).contains(location)){
+        campusID = campusID2buildingsList().keys.elementAt(i);
+      }
+    }
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    bool isDataEmpty = pref.getBool('isMapDBEmpty_' + campusID.toString())!;
+    if(isDataEmpty){
+      await downLoadCampusData(campusID);
+      await pref.setBool('isMapDBEmpty_' + campusID.toString(), false);
+    }
+
+    List<String> result = await IsarHandler().getNowVacantRoomList(isar!, location);
+    return result;
+  }
+
+  Future<void> downLoadCampusData(int campusID) async{
+    List targetList = campusID2buildingsList()[campusID]!;
+    for(int i = 0; i < targetList.length; i++){
+      print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
+      await resisterVacantRoomList(
+        targetList.elementAt(i)
+      ); 
+    }
+  }
+
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
     int current_period = datetime2Period(now) ?? 0;
+    int weekday = 1;
+    int period = 1;
 
     return FutureBuilder(
-        future: IsarHandler().getNowVacantRoomList(isar!, location),
+        future: initVacantRoomList(location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-                child: CircularProgressIndicator(color: MAIN_COLOR));
+              child: Column(
+                 mainAxisSize: MainAxisSize.min,
+                children:[CircularProgressIndicator(color: MAIN_COLOR),
+                Text(
+                  "空き教室データ取得中…",
+                  style:TextStyle(color:MAIN_COLOR,fontWeight:FontWeight.bold))
+              ])
+            );
           } else if (snapshot.hasData) {
             String searchResult = "授業期間外です。";
 
@@ -487,7 +550,26 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                             color: WHITE,
                             fontWeight: FontWeight.bold,
                             fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          )))
+                          ))),
+                const SizedBox(height:20),
+                SearchEmptyClassrooms(location:location),
+                const SizedBox(height:30),
+                buttonModel(
+                  () async{
+                    int campusID = 0;
+                    for(int i = 0; i < campusID2buildingsList().length; i++){
+                      if(campusID2buildingsList().values.elementAt(i).contains(location)){
+                        campusID = campusID2buildingsList().keys.elementAt(i);
+                      }
+                    }
+                    SharedPreferences pref = await SharedPreferences.getInstance();
+                    await pref.setBool('isMapDBEmpty_' + campusID.toString(),true);
+                    Navigator.pop(context);
+                    showDetailButtomSheet(location);
+                  },
+                  MAIN_COLOR,
+                  "空き教室データの再取得",
+                  verticalpadding: 10)
                 ]));
           } else {
             print("エラー：" + snapshot.error.toString());
@@ -496,6 +578,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           }
         });
   }
+
+
 
   void showLibraryButtomSheet(String location) {
     String buildingName = "";
@@ -787,3 +871,139 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         });
   }
 }
+
+
+class SearchEmptyClassrooms extends StatefulWidget {
+  final String location;
+
+  SearchEmptyClassrooms({
+    required this.location,
+  });
+
+  @override
+  _SearchEmptyClassroomsState createState() => _SearchEmptyClassroomsState();
+}
+
+class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
+  late int weekday;
+  late int period;
+  late Future<List<String>> futureVacantRooms;
+
+  @override
+  void initState() {
+    super.initState();
+    weekday = 0;
+    period = 0;
+    futureVacantRooms = fetchVacantRooms(widget.location, weekday, period);
+  }
+
+  Future<List<String>> fetchVacantRooms(String location, int weekday, int period) {
+    return IsarHandler().getVacantRoomList(isar!, location, weekday + 1, period + 1);
+  }
+
+  void updateVacantRooms() {
+    setState(() {
+      futureVacantRooms = fetchVacantRooms(widget.location, weekday, period);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "空き教室検索",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: SizeConfig.blockSizeHorizontal! * 6,
+            color: BLUEGREY,
+          ),
+        ),
+        ToggleSwitch(
+          animate: true,
+          animationDuration: 300,
+          initialLabelIndex: weekday,
+          totalSwitches: 6,
+          activeBgColor: [PALE_MAIN_COLOR],
+          inactiveFgColor: BLUEGREY,
+          inactiveBgColor: Colors.grey.withOpacity(0.7),
+          minHeight: 35,
+          labels: const ['月', '火', '水', '木', '金', '土'],
+          onToggle: (index) {
+            setState(() {
+              weekday = index!;
+              updateVacantRooms();
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        ToggleSwitch(
+          animate: true,
+          animationDuration: 300,
+          initialLabelIndex: period,
+          activeBgColor: const [PALE_MAIN_COLOR],
+          inactiveFgColor: BLUEGREY,
+          inactiveBgColor: Colors.grey.withOpacity(0.7),
+          totalSwitches: 6,
+          minHeight: 35,
+          labels: ['1限', '2限', '3限', '4限', '5限', '6限'],
+          onToggle: (index) {
+            setState(() {
+              period = index!;
+              updateVacantRooms();
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder<List<String>>(
+          future: futureVacantRooms,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(color: MAIN_COLOR),
+                    Text(
+                      "空き教室検索中…",
+                      style: TextStyle(color: MAIN_COLOR, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasData) {
+              String searchResult = "この時間帯の空き教室はありません。";
+              if (snapshot.data!.isNotEmpty) {
+                searchResult = snapshot.data!.join('\n');
+              }
+
+              return Container(
+                width: SizeConfig.blockSizeHorizontal! * 100,
+                padding: const EdgeInsets.all(7.5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7.0),
+                  gradient: gradationDecoration(),
+                ),
+                child: Text(
+                  searchResult,
+                  style: TextStyle(
+                    color: WHITE,
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  ),
+                ),
+              );
+            } else {
+              print("エラー：" + snapshot.error.toString());
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.red),
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
+}
+
