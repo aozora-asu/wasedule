@@ -375,11 +375,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     }
 
     return Row(children: [
-      Text(truncateTimeEnd(targetData),
+      SizedBox(
+        width: SizeConfig.blockSizeHorizontal! *12,
+        child:Text(truncateTimeEnd(targetData),
           style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w700,
-              color:BLUEGREY)),
+              color:BLUEGREY))),
       InkWell(
           onTap: () async{
             await bottomSheet(context,targetData,setState);
@@ -422,7 +424,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 64,
+                              width: SizeConfig.blockSizeHorizontal! * 62,
                               child: Text(targetData["summary"] ?? "(詳細なし)",
                                   style: TextStyle(
                                       fontSize:
@@ -431,7 +433,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                       color:BLACK
                                       ))),
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 64,
+                              width: SizeConfig.blockSizeHorizontal! * 62,
                               child: Text(targetData["title"] ?? "(タイトルなし)",
                                   style: TextStyle(
                                     fontSize:

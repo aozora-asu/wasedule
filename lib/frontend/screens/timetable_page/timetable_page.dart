@@ -499,7 +499,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * 2,
-                color: bgColor,
+                decoration:BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: bgColor),
                 child: Center(
                     child: Text(
                   days.elementAt(index),
@@ -516,7 +518,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget generatePrirodColumn() {
-    double fontSize = SizeConfig.blockSizeHorizontal! * 2.25;
+    double fontSize = SizeConfig.blockSizeHorizontal! * 2;
 
     return Column(children: [
       SizedBox(
@@ -537,6 +539,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
                 color: bgColor,
+                borderRadius: BorderRadius.circular(5)
               ),
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
