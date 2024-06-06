@@ -59,17 +59,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     return AppBar(
         backgroundColor:BACKGROUND_COLOR, //MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
-        // flexibleSpace: 
-        // Stack(
-        //   children:[
-        //     Container(
-        //       decoration: BoxDecoration(
-        //         image: DecorationImage(
-        //           image: backGroundImage(),
-        //           fit: BoxFit.cover)
-        //     )),
-        //     Container(color: WHITE.withOpacity(0.5),)
-        //   ]),
+        surfaceTintColor: Colors.transparent,
         title: Row(children: <Widget>[
             GestureDetector(
               onTap:(){

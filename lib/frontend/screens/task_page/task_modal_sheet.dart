@@ -82,7 +82,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     Widget dividerModel = const Divider(height: 1);
     int _height = (SizeConfig.blockSizeVertical! * 100).round();
 
-    double bottomMargin = 50;
+    double bottomMargin = 10;
     if(isEditing){
       bottomMargin = 50;
     }
@@ -247,7 +247,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 ),),
 
                                 textFieldModel(
-                                  "タスクの削除",3,
+                                  "タスクの削除",2,
                                   buttonModelWithChild(() async {
                                     TaskDatabaseHelper().unDisplay(id);
                                     setState(() {});
@@ -279,15 +279,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                         ],
                                       )),
                                 ),
-                                SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2,
-                                ),
-                                webView(pageID,_height),
-                                SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 2,
-                                ),
                                 textFieldModel(
-                                  "課題の下書き",0,
+                                  "課題の下書き",3,
                                   Column(children:[
                                     TextField(
                                       maxLines: null,
@@ -316,7 +309,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     Row(children: [
                                       Text("文字数：" + 
                                         countJapaneseAlphabetNumericCharacters(taskDraftController.text).toString(),
-                                        style: TextStyle(fontWeight: FontWeight.bold,color: BLUEGREY),
+                                        style:const TextStyle(fontWeight: FontWeight.bold,color: BLUEGREY),
                                       ),
                                       const Spacer(),
                                       GestureDetector(
@@ -345,6 +338,11 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                       ])),
                                     ])
                                   ])
+                                ),
+                                SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+                                webView(pageID,_height),
+                                SizedBox(
+                                  height: SizeConfig.blockSizeVertical! * 2,
                                 ),
                                 SizedBox(
                                   height: SizeConfig.blockSizeVertical! * bottomMargin,
@@ -383,15 +381,17 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                                  fontWeight: FontWeight.w700),
+                                color: BLUEGREY,
+                                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                                fontWeight: FontWeight.bold),
                             ),
                           ),
                           Text(
                             "  の詳細",
                             style: TextStyle(
+                                color:BLUEGREY,
                                 fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                                fontWeight: FontWeight.w700),
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       )),
