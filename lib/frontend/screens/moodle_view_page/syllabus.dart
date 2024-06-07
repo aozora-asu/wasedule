@@ -353,6 +353,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
               }
             }
           }
+          await Future.delayed(const Duration(seconds: 1));
         } else {
           continue;
         }
