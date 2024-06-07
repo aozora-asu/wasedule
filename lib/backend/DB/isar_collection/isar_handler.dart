@@ -41,9 +41,14 @@ class IsarHandler {
       final roomsHasClass = await isar.classRooms
           .filter()
           .buildingName((q) => q.buildingNameEqualTo(building))
-          .hasClass((q) => q.quarterEqualTo(quarter).weekdayEqualTo(weekday)
-            ..periodEqualTo(period))
+          .hasClass((q) => q
+              .quarterEqualTo(quarter)
+              .and()
+              .weekdayEqualTo(weekday)
+              .and()
+              .periodEqualTo(period))
           .findAll();
+
       return classRoomList
           .toSet()
           .difference(roomsHasClass.map((e) => e.classRoomName).toSet())
@@ -60,14 +65,19 @@ class IsarHandler {
     String? quarter = datetime2quarter(DateTime.now());
     int weekday = DateTime.now().weekday;
     int? period = datetime2Period(DateTime.now());
+
     List<String> classRoomList = classMap[building] ?? [];
 
     if (quarter != null && period != null) {
       final roomsHasClass = await isar.classRooms
           .filter()
           .buildingName((q) => q.buildingNameEqualTo(building))
-          .hasClass((q) => q.quarterEqualTo(quarter).weekdayEqualTo(weekday)
-            ..periodEqualTo(period))
+          .hasClass((q) => q
+              .quarterEqualTo(quarter)
+              .and()
+              .weekdayEqualTo(weekday)
+              .and()
+              .periodEqualTo(period))
           .findAll();
       //return roomsHasClass.map((e) => e.classRoomName).toList();
       return classRoomList
