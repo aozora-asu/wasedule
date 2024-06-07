@@ -197,8 +197,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
   Widget space(double width){
     Color underBarColor = Colors.transparent;
-    
-
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children:[
@@ -330,7 +328,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:0,
             title: "Moodle"
           ),
-          space(79.0),
+          space(1.0),
+          subMenuPanel(
+            ref,
+            icon:Icons.school,
+            subIndex:1,
+            title: "WyWaseda"
+          ),
+          space(68.0),
         ],
       };
     return subPageTabs;

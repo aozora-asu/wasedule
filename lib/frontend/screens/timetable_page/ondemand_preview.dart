@@ -258,7 +258,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           child: Column(children: [
             const Text("関連する課題",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            const Divider(thickness: 1, height: 10),
+            const SizedBox(height: 5),
             ListView.separated(
               itemBuilder: (context, index) {
                 return taskListChild(widget.taskList.elementAt(index));
