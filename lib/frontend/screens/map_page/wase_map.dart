@@ -406,7 +406,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        enableDrag: true,
+        enableDrag: false,
         barrierColor: Colors.black.withOpacity(0.5),
         builder: (context) {
           return Container(
@@ -461,12 +461,12 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 ]))
               ]));
         }).then((_) {
-      onModalBottomSheetClosed(); // コールバックを呼び出す
+      onModalBottomSheetClosed();
     });
   }
 
   void onModalBottomSheetClosed() {
-    if (!stopDownload) {
+    if (!stopDownload){
       showSnackBar(context);
     }
     stopDownload = true;
@@ -491,26 +491,33 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     SharedPreferences pref = await SharedPreferences.getInstance();
     bool isDataEmpty = pref.getBool('isMapDBEmpty_' + campusID.toString())!;
     if (isDataEmpty) {
-      await downLoadCampusData(campusID);
       await pref.setBool('isMapDBEmpty_' + campusID.toString(), false);
+      await downLoadCampusData(campusID);
+      stopDownload = true;
     }
 
     List<String> result =
         await IsarHandler().getNowVacantRoomList(isar!, location);
     return result;
   }
-
+  
+  int numOfDoneLoadings = 0;
   String currentLoadState = "";
   Future<void> downLoadCampusData(int campusID) async {
+    currentLoadState = "";
+    numOfDoneLoadings = 0;
     stopDownload = false;
     List targetList = campusID2buildingsList()[campusID]!;
     for (int i = 0; i < targetList.length; i++) {
       if (stopDownload) {
+        final pref =await  SharedPreferences.getInstance();
+        await pref.setBool('isMapDBEmpty_' + campusID.toString(), true);
         break;
       } else {
         print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
         currentLoadState = targetList.elementAt(i) + "号館  ダウンロード実行中...";
         await resisterVacantRoomList(targetList.elementAt(i));
+        numOfDoneLoadings += 1;
       }
     }
   }
@@ -519,16 +526,24 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     DateTime now = DateTime.now();
     int current_period = datetime2Period(now) ?? 0;
 
+    int campusID = 0;
+    for (int i = 0; i < campusID2buildingsList().length; i++) {
+      if (campusID2buildingsList().values.elementAt(i).contains(location)) {
+        campusID = campusID2buildingsList().keys.elementAt(i);
+      }
+    }
+
     return FutureBuilder(
         future: initVacantRoomList(location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
-              const CircularProgressIndicator(color: MAIN_COLOR),
+              showStreamLoader(context, renewProgressBar(campusID2buildingsList()[campusID]!.length)),
               const Text("空き教室データ取得中…",
                   style: TextStyle(
                       color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+              
               streamProgressText(context, renewText())
             ]));
           } else if (snapshot.hasData) {
@@ -632,6 +647,43 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     _stop = false;
     while (!_stop) {
       yield currentLoadState;
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
+  Widget showStreamLoader(BuildContext context, Stream<double> stream,
+      [void Function()? stop]) {
+      return StreamBuilder<double>(
+          stream: stream,
+          builder: (context, snapshot) {
+            double data = 0.0;
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                break;
+              case ConnectionState.waiting:
+                data = snapshot.data ?? data;
+                break;
+              case ConnectionState.active:
+                data = snapshot.data ?? data;
+                break;
+              case ConnectionState.done:
+                data = snapshot.data ?? data;
+                Navigator.pop(context);
+                break;
+            }
+            return LinearProgressIndicator(
+              color:MAIN_COLOR,
+              value: data,
+              minHeight: 5,
+            );
+          });
+  }
+
+  Stream<double> renewProgressBar(int numOfBuildings) async* {
+    _stop = false;
+    if(numOfBuildings == 0){numOfBuildings=1;}
+    while (!_stop) {
+      yield numOfDoneLoadings / numOfBuildings;
       await Future.delayed(const Duration(milliseconds: 10));
     }
   }
