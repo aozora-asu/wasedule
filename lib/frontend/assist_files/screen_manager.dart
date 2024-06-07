@@ -14,6 +14,7 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadc
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywaseda_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
@@ -121,7 +122,7 @@ class _AppPageState extends ConsumerState<AppPage> {
             [TimeTablePage()],
             calendarSubPages(),
             taskSubPages(),
-            [MoodleViewPage()],
+            moodleSubPages(),
             ];
   }
 
@@ -204,6 +205,12 @@ class _AppPageState extends ConsumerState<AppPage> {
            ];
   }
 
+
+  List<Widget> moodleSubPages(){
+    return [MoodleViewPage(),
+            MyWasedaViewPage()
+           ];
+  }
 
   void startTimer() {
     _timer?.cancel();

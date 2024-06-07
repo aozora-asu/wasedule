@@ -460,9 +460,26 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   )
                 ]))
               ]));
-        });
+        }).then((_) {
+      onModalBottomSheetClosed(); // コールバックを呼び出す
+    });
   }
 
+  void onModalBottomSheetClosed() {
+    if (!stopDownload) {
+      showSnackBar(context);
+    }
+    stopDownload = true;
+  }
+
+  void showSnackBar(BuildContext context) {
+    SnackBar snackBar = const SnackBar(
+      content: Text('データのダウンロードが中止されました。'),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  bool stopDownload = true;
   Future<List<String>> initVacantRoomList(String location) async {
     int campusID = 0;
     for (int i = 0; i < campusID2buildingsList().length; i++) {
@@ -494,21 +511,21 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
     int current_period = datetime2Period(now) ?? 0;
-    int weekday = 1;
-    int period = 1;
 
     return FutureBuilder(
         future: initVacantRoomList(location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
-              CircularProgressIndicator(color: MAIN_COLOR),
-              Text("空き教室データ取得中…",
-                  style:
-                      TextStyle(color: MAIN_COLOR, fontWeight: FontWeight.bold))
+              const CircularProgressIndicator(color: MAIN_COLOR),
+              const Text("空き教室データ取得中…",
+                  style: TextStyle(
+                      color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+              streamProgressText(context, renewText())
             ]));
           } else if (snapshot.hasData) {
+            countupLoaderStop();
             String searchResult = "授業期間外です。";
 
             // Map<String, Map<String, dynamic>> quarterMap = snapshot.data!;
@@ -573,6 +590,48 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 child: CircularProgressIndicator(color: Colors.red));
           }
         });
+  }
+
+  Widget streamProgressText(BuildContext context, Stream<String> stream,
+      [void Function()? stop]) {
+    return StreamBuilder<String>(
+        stream: stream,
+        builder: (context, snapshot) {
+          String data = "";
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              data = snapshot.data ?? data;
+              break;
+            case ConnectionState.active:
+              data = snapshot.data ?? data;
+              break;
+            case ConnectionState.done:
+              data = snapshot.data ?? data;
+              break;
+          }
+          return Text(data,
+              style: const TextStyle(
+                  color: MAIN_COLOR, fontWeight: FontWeight.bold));
+        });
+  }
+
+  //ロード処理を中止するフラグ
+  bool _stop = false;
+
+  //進捗状況を表示するためのロード処理部分
+  Stream<String> renewText() async* {
+    _stop = false;
+    while (!_stop) {
+      //yield currentLoadState;
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
+  //ロード処理を中止するための関数
+  void countupLoaderStop() {
+    _stop = true;
   }
 
   void showLibraryButtomSheet(String location) {

@@ -342,6 +342,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
                 const Spacer(),
               ]),
+              const SizedBox(height:10),
               FutureBuilder(
                   future: MyCourseDatabaseHandler().getMyCourse(),
                   builder: ((context, snapshot) {
