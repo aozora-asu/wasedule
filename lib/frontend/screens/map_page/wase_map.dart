@@ -491,8 +491,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     SharedPreferences pref = await SharedPreferences.getInstance();
     bool isDataEmpty = pref.getBool('isMapDBEmpty_' + campusID.toString())!;
     if (isDataEmpty) {
-      await pref.setBool('isMapDBEmpty_' + campusID.toString(), false);
       await downLoadCampusData(campusID);
+      await pref.setBool('isMapDBEmpty_' + campusID.toString(), false);
     }
 
     List<String> result =
@@ -500,11 +500,18 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     return result;
   }
 
+  String currentLoadState = "";
   Future<void> downLoadCampusData(int campusID) async {
+    stopDownload = false;
     List targetList = campusID2buildingsList()[campusID]!;
     for (int i = 0; i < targetList.length; i++) {
-      print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
-      await resisterVacantRoomList(targetList.elementAt(i));
+      if (stopDownload) {
+        break;
+      } else {
+        print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
+        currentLoadState = targetList.elementAt(i) + "号館  ダウンロード実行中...";
+        await resisterVacantRoomList(targetList.elementAt(i));
+      }
     }
   }
 
@@ -624,7 +631,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   Stream<String> renewText() async* {
     _stop = false;
     while (!_stop) {
-      //yield currentLoadState;
+      yield currentLoadState;
       await Future.delayed(const Duration(milliseconds: 10));
     }
   }
@@ -1001,7 +1008,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
           inactiveBgColor: Colors.grey.withOpacity(0.7),
           totalSwitches: 6,
           minHeight: 35,
-          labels: const ['1限', '2限', '3限', '4限', '5限', '6限'],
+          labels: ['1限', '2限', '3限', '4限', '5限', '6限'],
           onToggle: (index) {
             setState(() {
               period = index!;
