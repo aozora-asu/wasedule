@@ -41,14 +41,9 @@ class IsarHandler {
       final roomsHasClass = await isar.classRooms
           .filter()
           .buildingName((q) => q.buildingNameEqualTo(building))
-          .and()
-          .hasClass((q) => q.periodEqualTo(period))
-          .and()
-          .hasClass((q) => q.quarterEqualTo(quarter))
-          .and()
-          .hasClass((q) => q.weekdayEqualTo(weekday))
+          .hasClass((q) => q.quarterEqualTo(quarter).weekdayEqualTo(weekday)
+            ..periodEqualTo(period))
           .findAll();
-
       return classRoomList
           .toSet()
           .difference(roomsHasClass.map((e) => e.classRoomName).toSet())
@@ -71,13 +66,10 @@ class IsarHandler {
       final roomsHasClass = await isar.classRooms
           .filter()
           .buildingName((q) => q.buildingNameEqualTo(building))
-          .and()
-          .hasClass((q) => q.quarterEqualTo(quarter))
-          .and()
-          .hasClass((q) => q.weekdayEqualTo(weekday))
-          .and()
-          .hasClass((q) => q.periodEqualTo(period))
+          .hasClass((q) => q.quarterEqualTo(quarter).weekdayEqualTo(weekday)
+            ..periodEqualTo(period))
           .findAll();
+      //return roomsHasClass.map((e) => e.classRoomName).toList();
       return classRoomList
           .toSet()
           .difference(roomsHasClass.map((e) => e.classRoomName).toSet())
@@ -94,13 +86,10 @@ class IsarHandler {
     if (quarter != null && period != null) {
       final existClass = await isar.hasClass
           .filter()
-          .periodEqualTo(period)
-          .and()
-          .weekdayEqualTo(weekday)
-          .and()
-          .quarterEqualTo(quarter)
-          .and()
           .classRoomName((q) => q.classRoomNameEqualTo(classRoomName))
+          .periodEqualTo(period)
+          .weekdayEqualTo(weekday)
+          .quarterEqualTo(quarter)
           .findFirst();
       if (existClass != null) {
         return true;

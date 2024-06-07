@@ -254,48 +254,35 @@ String zenkaku2hankaku(String fullWidthString) {
 }
 
 List<Map<String, int?>> extractDayAndPeriod(String input) {
-  RegExp _pattern1 = RegExp(r'([月火水木金土日])\s*(\d+)時限');
-  RegExp _pattern2 = RegExp(r'([月火水木金土日])\s*(\d+)-(\d+)');
-  RegExp _pattern3 =
-      RegExp(r'\d+:\s*([月火水木金土日])\s*(\d+)時限\s*(\d+:\s*)?([月火水木金土日])\s*(\d+)時限');
+  // 「月3時限」タイプの抽出
+  RegExp _pattern1 = RegExp(r'([月火水木金土日])(\d)時限');
+  // 「月3-4」タイプの抽出
+  RegExp _pattern2 = RegExp(r'([月火水木金土日])(\d)-(\d)');
+
   List<Map<String, int?>> result = [];
-  // 時限
-  if (_pattern3.hasMatch(input)) {
-    Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
+
+  if (_pattern1.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = _pattern1.allMatches(input);
     for (var match in matches) {
-      Map<String, int?> entry = {};
-      entry['weekday'] = _weekdayToNumber(match.group(1)!);
-      entry['period'] =
-          match.group(2) != null ? int.tryParse(match.group(2)!) : null;
-      result.add(entry);
-      if (match.group(3) != null) {
-        Map<String, int?> entry = {};
-        entry['weekday'] = _weekdayToNumber(match.group(4)!);
-        entry['period'] =
-            match.group(5) != null ? int.tryParse(match.group(5)!) : null;
-        result.add(entry);
-      }
+      result.add({
+        'weekday': _weekdayToNumber(match.group(1)),
+        'period': int.tryParse(match.group(2)!)
+      });
     }
-  } else if (_pattern1.hasMatch(input)) {
-    Match match = _pattern1.firstMatch(input)!;
-    result.add({
-      'weekday': _weekdayToNumber(match.group(1)!),
-      'period': match.group(2) != null ? int.tryParse(match.group(2)!) : null
-    });
   } else if (_pattern2.hasMatch(input)) {
-    Match match = _pattern2.firstMatch(input)!;
-    result.add({
-      'weekday': _weekdayToNumber(match.group(1)!),
-      'period': match.group(2) != null ? int.tryParse(match.group(2)!) : null
-    });
-    result.add({
-      'weekday': _weekdayToNumber(match.group(1)!),
-      'period': match.group(3) != null ? int.tryParse(match.group(3)!) : null
-    });
+    Iterable<RegExpMatch> matches = _pattern2.allMatches(input);
+    for (var match in matches) {
+      result.add({
+        'weekday': _weekdayToNumber(match.group(1)),
+        'period': int.tryParse(match.group(2)!)
+      });
+      result.add({
+        'weekday': _weekdayToNumber(match.group(1)),
+        'period': int.tryParse(match.group(3)!)
+      });
+    }
   } else {
-    return [
-      {"weekday": null, "period": null}
-    ];
+    result.add({"weekday": null, "period": null});
   }
 
   return result;
