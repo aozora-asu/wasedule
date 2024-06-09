@@ -40,7 +40,7 @@ class IsarHandler {
     if (quarter != null) {
       final roomsHasClass = await isar.classRooms
           .filter()
-          .buildingName((q) => q.buildingNameEqualTo(building))
+          .buildingName((q) => q.idEqualTo(int.parse(building)))
           .hasClass((q) => q
               .quarterEqualTo(quarter)
               .and()
@@ -71,7 +71,7 @@ class IsarHandler {
     if (quarter != null && period != null) {
       final roomsHasClass = await isar.classRooms
           .filter()
-          .buildingName((q) => q.buildingNameEqualTo(building))
+          .buildingName((q) => q.idEqualTo(int.parse(building)))
           .hasClass((q) => q
               .quarterEqualTo(quarter)
               .and()

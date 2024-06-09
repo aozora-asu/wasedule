@@ -13,10 +13,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import './converter.dart';
 
-import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
-import "./backend/DB/isar_collection/isar_handler.dart";
-import 'package:isar/isar.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

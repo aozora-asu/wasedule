@@ -214,45 +214,6 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   return myCourseList;
 }
 
-int? _weekdayToNumber(String? weekday) {
-  switch (weekday) {
-    case '月':
-      return 1;
-    case '火':
-      return 2;
-    case '水':
-      return 3;
-    case '木':
-      return 4;
-    case '金':
-      return 5;
-    case '土':
-      return 6;
-    case '日':
-      return 7;
-    case null:
-      return null;
-    default:
-      return null; // 不明な曜日の場合
-  }
-}
-
-String zenkaku2hankaku(String fullWidthString) {
-  const fullWidthChars =
-      '０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ！＃＄％＆’（）＊＋，－．／：；＜＝＞？＠［￥］＾＿‘｛｜｝～';
-  const halfWidthChars =
-      '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#\$%&\'()*+,-./:;<=>?@[¥]^_`{|}~';
-  final map = Map.fromIterables(fullWidthChars.runes, halfWidthChars.runes);
-
-  final result = fullWidthString.runes.map((charCode) {
-    return map[charCode] != null
-        ? String.fromCharCode(map[charCode]!)
-        : String.fromCharCode(charCode);
-  }).join('');
-
-  return result;
-}
-
 List<Map<String, int?>> extractDayAndPeriod(String input) {
   // 「月3時限」タイプの抽出
   RegExp _pattern1 = RegExp(r'([月火水木金土日])(\d)時限');
@@ -265,7 +226,7 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
     Iterable<RegExpMatch> matches = _pattern1.allMatches(input);
     for (var match in matches) {
       result.add({
-        'weekday': _weekdayToNumber(match.group(1)),
+        'weekday': weekdayToNumber(match.group(1)),
         'period': int.tryParse(match.group(2)!)
       });
     }
@@ -273,11 +234,11 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
     Iterable<RegExpMatch> matches = _pattern2.allMatches(input);
     for (var match in matches) {
       result.add({
-        'weekday': _weekdayToNumber(match.group(1)),
+        'weekday': weekdayToNumber(match.group(1)),
         'period': int.tryParse(match.group(2)!)
       });
       result.add({
-        'weekday': _weekdayToNumber(match.group(1)),
+        'weekday': weekdayToNumber(match.group(1)),
         'period': int.tryParse(match.group(3)!)
       });
     }
@@ -375,7 +336,6 @@ Map<String, Map<String, Map<String, List<String>>>> _createQuarterClassRoomMap(
     "fall_quarter",
     "winter_quarter"
   ];
-
   // Iterate over quarters
   for (String quarter in quarters) {
     quarterClassRoomMap.putIfAbsent(quarter, () => {});

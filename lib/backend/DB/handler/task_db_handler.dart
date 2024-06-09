@@ -216,8 +216,7 @@ class TaskDatabaseHelper {
         {'pageID': pageIDAndCourseName["pageID"]}, // 更新後の値
         where: 'title = ?',
         whereArgs: [
-          pageIDAndCourseName["courseName"]!
-              .replaceAll(RegExp(r'[A-Za-z()\d]'), '')
+          pageIDAndCourseName["courseName"]!.replaceAll(RegExp(r'\(\d+\)'), '')
         ],
       );
     }
@@ -302,7 +301,14 @@ class TaskDatabaseHelper {
         await _database.insert('tasks', taskItem.toMap());
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
-        if (e.toString().contains("UNIQUE constraint failed")) {}
+        if (e.toString().contains("UNIQUE constraint failed")) {
+          await _database.update(
+            'tasks',
+            taskItem.toMap(), // 更新後の値
+            where: 'uid = ?',
+            whereArgs: [taskData["events"][i]["UID"]],
+          );
+        }
       }
     }
     await NotifyContent().setNotify();
@@ -369,7 +375,7 @@ class TaskDatabaseHelper {
       'tasks',
       where: 'title = ? AND isDone = ? AND  ? <= dtEnd',
       whereArgs: [
-        courseName.replaceAll(RegExp(r'[A-Za-z()\d]'), ''),
+        courseName.replaceAll(RegExp(r'\(\d+\)'), ''),
         0,
         DateTime.now().millisecondsSinceEpoch
       ],
