@@ -1,20 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
 import 'package:flutter_calandar_app/converter.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'dart:math';
+
 import "./classRoom.dart";
 import 'package:html/parser.dart' as html_parser;
-import 'package:html/dom.dart' as html;
+
 import 'package:uuid/uuid.dart';
 import "../../../backend/DB/handler/my_course_db.dart";
-import "../../../main.dart";
 
 class RequestQuery {
   String? p_number;
@@ -166,8 +160,8 @@ List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
     for (var periodAndDate in periodAndDateList) {
       SyllabusQueryResult syllabusResult = SyllabusQueryResult(
           courseName: tdElements[2].text,
-          classRoom:
-              zenkaku2hankaku(tdElements[7].innerHtml.replaceAll("<br>", "\n")),
+          classRoom: extractClassRoom(zenkaku2hankaku(
+              tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
           period: periodAndDate["period"],
           weekday: periodAndDate["weekday"],
           semester: convertSemester(tdElements[5].text),
@@ -220,17 +214,10 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
   // 「月3-4」タイプの抽出
   RegExp _pattern2 = RegExp(r'([月火水木金土日])(\d)-(\d)');
 
-  List<Map<String, int?>> result = [];
+  RegExp _pattern3 = RegExp(r'無その他');
 
-  if (_pattern1.hasMatch(input)) {
-    Iterable<RegExpMatch> matches = _pattern1.allMatches(input);
-    for (var match in matches) {
-      result.add({
-        'weekday': weekdayToNumber(match.group(1)),
-        'period': int.tryParse(match.group(2)!)
-      });
-    }
-  } else if (_pattern2.hasMatch(input)) {
+  List<Map<String, int?>> result = [];
+  if (_pattern2.hasMatch(input)) {
     Iterable<RegExpMatch> matches = _pattern2.allMatches(input);
     for (var match in matches) {
       result.add({
@@ -242,15 +229,29 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
         'period': int.tryParse(match.group(3)!)
       });
     }
-  } else {
-    result.add({"weekday": null, "period": null});
+  }
+
+  if (_pattern1.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = _pattern1.allMatches(input);
+    for (var match in matches) {
+      result.add({
+        'weekday': weekdayToNumber(match.group(1)),
+        'period': int.tryParse(match.group(2)!)
+      });
+    }
+  }
+  if (_pattern3.hasMatch(input)) {
+    result.add({'weekday': null, 'period': null});
+  }
+  if (result.isEmpty) {
+    result.add({'weekday': null, 'period': null});
   }
 
   return result;
 }
 
-List<String> extractClassRoom(String input) {
-  RegExp _pattern3 = RegExp(r'\d+:(.*)');
+String extractClassRoom(String input) {
+  RegExp _pattern3 = RegExp(r'\d+:(.*)\s');
   Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
   List<String> result = [];
   if (matches.isEmpty) {
@@ -261,7 +262,7 @@ List<String> extractClassRoom(String input) {
     }
   }
 
-  return result;
+  return result.join("\n").trimRight();
 }
 
 Future<void> resisterVacantRoomList(String buildingNum) async {
@@ -314,7 +315,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
               }
             }
           }
-          await Future.delayed(const Duration(seconds: 1));
+          await Future.delayed(const Duration(milliseconds: 500));
         } else {
           continue;
         }
