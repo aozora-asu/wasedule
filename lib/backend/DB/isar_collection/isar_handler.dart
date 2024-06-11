@@ -34,9 +34,10 @@ class IsarHandler {
   }
 
   Future<List<String>> getVacantRoomList(
-      Isar isar, String building, int period, int weekday) async {
+      Isar isar, String building, int weekday, int period) async {
     String? quarter = datetime2quarter(DateTime.now());
     List<String> classRoomList = classMap[building] ?? [];
+
     if (quarter != null) {
       final roomsHasClass = await isar.classRooms
           .filter()
@@ -98,7 +99,9 @@ class IsarHandler {
           .filter()
           .classRoomName((q) => q.classRoomNameEqualTo(classRoomName))
           .periodEqualTo(period)
+          .and()
           .weekdayEqualTo(weekday)
+          .and()
           .quarterEqualTo(quarter)
           .findFirst();
       if (existClass != null) {
