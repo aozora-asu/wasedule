@@ -69,7 +69,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 
       if (events["events"][i]["DESCRIPTION"] != null) {
         events["events"][i]["DESCRIPTION"] = events["events"][i]["DESCRIPTION"]
-            .replaceAll("\\n", "\n")
+            .replaceAll(RegExp(r'\n+'), "\n")
             .trimRight();
       }
     }

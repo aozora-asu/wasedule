@@ -304,7 +304,12 @@ class TaskDatabaseHelper {
         if (e.toString().contains("UNIQUE constraint failed")) {
           await _database.update(
             'tasks',
-            taskItem.toMap(), // 更新後の値
+            {
+              "summary": taskData["events"][i]["SUMMARY"],
+              "description": taskData["events"][i]["DESCRIPTION"],
+              "dtEnd": taskData["events"][i]["DTEND"],
+              "title": taskData["events"][i]["CATEGORIES"],
+            }, // 更新後の値
             where: 'uid = ?',
             whereArgs: [taskData["events"][i]["UID"]],
           );
