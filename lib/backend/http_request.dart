@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:http/http.dart' as http;
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {
@@ -22,10 +24,11 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
         currentEvent = null; // イベント終了後にcurrentEventを初期化
       }
     } else if (currentEvent != null) {
-      if (line.contains(':')) {
+      if (line.contains(RegExp(r"[A-Z-]+:"))) {
         // 行に':'が含まれる場合はキーと値を抽出
         List<String> parts = line.split(':');
         key = parts[0];
+
         String value = parts.sublist(1).join(':').trim();
         currentEvent[key] = value;
       } else if (key != null) {
