@@ -101,39 +101,38 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         backgroundColor: BACKGROUND_COLOR,
         body: Column(children: [
           Container(
-            color: BACKGROUND_COLOR,
-           child:Row(children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  height: SizeConfig.blockSizeVertical! * 4.5,
-                  child: Row(children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: foldStateSwitch(),
+              color: BACKGROUND_COLOR,
+              child: Row(children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      height: SizeConfig.blockSizeVertical! * 4.5,
+                      child: Row(children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: foldStateSwitch(),
+                        ),
+                        dividerModel,
+                        sortSwitch(),
+                        dividerModel,
+                        TextButton(
+                          child: const Text("お問い合わせ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              )),
+                          onPressed: () {
+                            showErrorReportDialogue(context);
+                          },
+                        ),
+                      ]),
                     ),
-                    dividerModel,
-                    sortSwitch(),
-                    dividerModel,
-                    TextButton(
-                      child: const Text("お問い合わせ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,)),
-                      onPressed: () {
-                        showErrorReportDialogue(context);
-                      },
-                    ),
-                  ]),
+                  ),
                 ),
-              ),
-            ),
-          ])
-          ),
+              ])),
           //const Divider(thickness: 1, height: 1, color: Colors.grey),
           Expanded(child: pages())
-        ])
-        ,
+        ]),
         floatingActionButton: Container(
             margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
             child: Row(
@@ -154,8 +153,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     }
                   },
                   backgroundColor: MAIN_COLOR,
-                  child:
-                      const Icon(Icons.refresh_outlined, color: WHITE),
+                  child: const Icon(Icons.refresh_outlined, color: WHITE),
                 ),
               ],
             )));
@@ -326,7 +324,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               });
             },
             child: const Text("カテゴリ別",
-                style: TextStyle(fontWeight: FontWeight.bold,)));
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                )));
     }
   }
 }
@@ -450,10 +450,7 @@ Widget listLengthView(int target, double fontSize) {
         child: Text(
           target.toString(),
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: WHITE,
-              fontSize: fontSize),
+              fontWeight: FontWeight.bold, color: WHITE, fontSize: fontSize),
         ));
   }
 }
-

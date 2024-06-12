@@ -37,70 +37,66 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scrollbar(
-      child:Stack(children:[
+        child: Stack(children: [
       Column(children: [
-
-      Expanded(
-        child: ListView.builder(
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int keyIndex) {
-          DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
-          String adjustedDtEnd =
-              ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
-          return Container(
-              padding: const EdgeInsets.only(
-                  left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ExpandablePanel(
-                        header: Row(children: [
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(children: [
-                                  // lengthBadge(
-                                  //   sortedData.values.elementAt(keyIndex).length,
-                                  //   SizeConfig.blockSizeHorizontal!*4.25,
-                                  //   false),
-                                  const SizedBox(width:5),
-                                  Text(
-                                    adjustedDtEnd,
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 7,
-                                        fontWeight: FontWeight.w800,
-                                        color:BLUEGREY
-                                        ),
-                                    ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int keyIndex) {
+              DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
+              String adjustedDtEnd =
+                  ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
+              return Container(
+                  padding: const EdgeInsets.only(
+                      left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ExpandablePanel(
+                            header: Row(children: [
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(children: [
+                                      // lengthBadge(
+                                      //   sortedData.values.elementAt(keyIndex).length,
+                                      //   SizeConfig.blockSizeHorizontal!*4.25,
+                                      //   false),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        adjustedDtEnd,
+                                        style: TextStyle(
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                7,
+                                            fontWeight: FontWeight.w800,
+                                            color: BLUEGREY),
+                                      ),
+                                    ]),
+                                    const SizedBox(height: 5),
+                                    remainingTime(dateEnd)
                                   ]),
-                                  const SizedBox(height:5),
-                                  remainingTime(dateEnd)
-                                ]),
-                          ]),
-                          collapsed: const SizedBox(),
-                          expanded: dtEndTaskGroup(
-                            keyIndex,
-                          ),
-                          controller: ExpandableController(
-                              initialExpanded:
-                                  isLimitOver(dateEnd, sortedData, dateEnd))),
-                      const Divider(
-                        thickness: 1,
-                        indent: 3,
-                        endIndent: 3,
-                        color:Colors.transparent
-                      )
-                    ]));
-          },
-
-          itemCount: sortedData.keys.length,
-        ),
-      )
-    ]),
-    executeDeleteButton()
-    ])
-    );
+                            ]),
+                            collapsed: const SizedBox(),
+                            expanded: dtEndTaskGroup(
+                              keyIndex,
+                            ),
+                            controller: ExpandableController(
+                                initialExpanded:
+                                    isLimitOver(dateEnd, sortedData, dateEnd))),
+                        const Divider(
+                            thickness: 1,
+                            indent: 3,
+                            endIndent: 3,
+                            color: Colors.transparent)
+                      ]));
+            },
+            itemCount: sortedData.keys.length,
+          ),
+        )
+      ]),
+      executeDeleteButton()
+    ]));
   }
 
   bool isLimitOver(
@@ -147,42 +143,41 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     ref.watch(taskDataProvider);
     if (ref.read(taskDataProvider).isButton) {
       return InkWell(
-        onTap: () {
-          setState(() {
-            for (int i = 0;
-                i < ref.watch(taskDataProvider).chosenTaskIdList.length;
-                i++) {
-              int targetId =
-                  ref.watch(taskDataProvider).chosenTaskIdList.elementAt(i);
-              TaskDatabaseHelper().unDisplay(targetId);
-            }
-          });
-          final list = ref.read(taskDataProvider).taskDataList;
-          final newList = [...list];
-          ref.read(taskDataProvider.notifier).state =
-              TaskData(taskDataList: newList);
-          ref.read(taskDataProvider).isRenewed = true;
-          ref.read(taskDataProvider).sortDataByDtEnd(list);
-          setState(() {});
-        },
-        child: Container(
-          width: SizeConfig.blockSizeHorizontal! * 100,
-          height: SizeConfig.blockSizeVertical! * 10,
-          color: Colors.redAccent,
-          child: Row(children: [
-            const Spacer(),
-            checkedListLength(15.0),
-            const SizedBox(width: 15),
-            const Icon(Icons.delete, color: WHITE),
-            const Text(
-              "   Done!!!   ",
-              style:
-                  TextStyle(color: WHITE, fontWeight: FontWeight.bold),
-            ),
-            const Icon(Icons.delete, color: WHITE),
-            const Spacer(),
-          ]),
-        ));
+          onTap: () {
+            setState(() {
+              for (int i = 0;
+                  i < ref.watch(taskDataProvider).chosenTaskIdList.length;
+                  i++) {
+                int targetId =
+                    ref.watch(taskDataProvider).chosenTaskIdList.elementAt(i);
+                TaskDatabaseHelper().unDisplay(targetId);
+              }
+            });
+            final list = ref.read(taskDataProvider).taskDataList;
+            final newList = [...list];
+            ref.read(taskDataProvider.notifier).state =
+                TaskData(taskDataList: newList);
+            ref.read(taskDataProvider).isRenewed = true;
+            ref.read(taskDataProvider).sortDataByDtEnd(list);
+            setState(() {});
+          },
+          child: Container(
+            width: SizeConfig.blockSizeHorizontal! * 100,
+            height: SizeConfig.blockSizeVertical! * 10,
+            color: Colors.redAccent,
+            child: Row(children: [
+              const Spacer(),
+              checkedListLength(15.0),
+              const SizedBox(width: 15),
+              const Icon(Icons.delete, color: WHITE),
+              const Text(
+                "   Done!!!   ",
+                style: TextStyle(color: WHITE, fontWeight: FontWeight.bold),
+              ),
+              const Icon(Icons.delete, color: WHITE),
+              const Spacer(),
+            ]),
+          ));
     } else {
       return Container(height: 0);
     }
@@ -321,9 +316,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         itemBuilder: (BuildContext context, int valueIndex) {
           return Container(child: dtEndTaskChild(keyIndex, valueIndex));
         },
-        separatorBuilder: (context, index){
-            return const SizedBox(height:2);
-          },
+        separatorBuilder: (context, index) {
+          return const SizedBox(height: 2);
+        },
         itemCount: widget
             .sortedData[widget.sortedData.keys.elementAt(keyIndex)]!.length,
       ),
@@ -341,63 +336,54 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
     EdgeInsets boxInset = const EdgeInsets.only(left: 8.0);
     Widget separator = Container(
-      height:2,
-      width:SizeConfig.blockSizeHorizontal! * 80,
-      color: BACKGROUND_COLOR
-    );
+        height: 2,
+        width: SizeConfig.blockSizeHorizontal! * 80,
+        color: BACKGROUND_COLOR);
 
-    if(valueIndex == 0 && valueIndex == childData.length - 1){
-
+    if (valueIndex == 0 && valueIndex == childData.length - 1) {
       radius = const BorderRadius.all(Radius.circular(20));
       separator = const SizedBox();
-      boxInset = const EdgeInsets.only(left: 8.0,top:12.0);
-
-    }else if(valueIndex == 0){
-      
+      boxInset = const EdgeInsets.only(left: 8.0, top: 12.0);
+    } else if (valueIndex == 0) {
       radius = const BorderRadius.only(
         topLeft: Radius.circular(20),
         topRight: Radius.circular(20),
         bottomLeft: Radius.circular(2),
         bottomRight: Radius.circular(2),
       );
-      boxInset = const EdgeInsets.only(left: 8.0,top:12.0);
-
-    }else if(valueIndex == childData.length - 1){
-      
-        radius = const BorderRadius.only(
-          topLeft:Radius.circular(2),
-          topRight: Radius.circular(2),
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+      boxInset = const EdgeInsets.only(left: 8.0, top: 12.0);
+    } else if (valueIndex == childData.length - 1) {
+      radius = const BorderRadius.only(
+        topLeft: Radius.circular(2),
+        topRight: Radius.circular(2),
+        bottomLeft: Radius.circular(20),
+        bottomRight: Radius.circular(20),
       );
       separator = const SizedBox();
-
     }
 
     return Row(children: [
       SizedBox(
-        width: SizeConfig.blockSizeHorizontal! *12,
-        child:Text(truncateTimeEnd(targetData),
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
-              fontWeight: FontWeight.w700,
-              color:BLUEGREY))),
+          width: SizeConfig.blockSizeHorizontal! * 12,
+          child: Text(truncateTimeEnd(targetData),
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                  fontWeight: FontWeight.w700,
+                  color: BLUEGREY))),
       InkWell(
-          onTap: () async{
-            await bottomSheet(context,targetData,setState);
+          onTap: () async {
+            await bottomSheet(context, targetData, setState);
           },
-          child: 
-              Container(
-                padding: boxInset,
-                child: Container(
-                  padding:const EdgeInsets.all(10),
-                  decoration:BoxDecoration(
-                      color: WHITE,
-                      borderRadius:  radius,
-                    ),
-                child:
-                  Column(children:[
-                   Row(children: [
+          child: Container(
+              padding: boxInset,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: WHITE,
+                  borderRadius: radius,
+                ),
+                child: Column(children: [
+                  Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
                         onChanged: (value) {
@@ -430,8 +416,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                       fontSize:
                                           SizeConfig.blockSizeHorizontal! * 4,
                                       fontWeight: FontWeight.w700,
-                                      color:BLACK
-                                      ))),
+                                      color: BLACK))),
                           SizedBox(
                               width: SizeConfig.blockSizeHorizontal! * 62,
                               child: Text(targetData["title"] ?? "(タイトルなし)",
@@ -439,17 +424,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                     fontSize:
                                         SizeConfig.blockSizeVertical! * 1.75,
                                     color: Colors.grey,
-                          )))
-                      ]),
+                                  )))
+                        ]),
                   ]),
-              ]),
-             )
-            )
-          )
-       ]);
+                ]),
+              )))
+    ]);
   }
-
-
 
   bool isEditingText(TextEditingController controller) {
     return controller.text.isNotEmpty;
@@ -469,7 +450,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     return formattedhour + ":" + formattedminute;
   }
 }
-
 
 String getDayOfWeek(int weekday) {
   switch (weekday) {

@@ -337,7 +337,17 @@ class TaskDatabaseHelper {
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
-          continue;
+          await _database.update(
+            'tasks',
+            {
+              "summary": task["SUMMARY"],
+              "description": task["DESCRIPTION"],
+              "dtEnd": task["DTEND"],
+              "title": task["CATEGORIES"],
+            }, // 更新後の値
+            where: 'uid = ?',
+            whereArgs: [task["UID"]],
+          );
         }
       }
     }

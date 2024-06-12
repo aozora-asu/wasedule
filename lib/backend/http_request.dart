@@ -69,8 +69,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 
       if (events["events"][i]["DESCRIPTION"] != null) {
         events["events"][i]["DESCRIPTION"] = events["events"][i]["DESCRIPTION"]
-            .replaceAll(RegExp(r'\n+'), "\n")
-            .trimRight();
+            .replaceAll(RegExp(r'\\n+'), "\n");
       }
     }
   }
@@ -81,9 +80,10 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 //リクエストurlを受け取って以下のようなMapとListのキメラを返す関数
 //@param String urlSttring
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
-  final taskString = await _getTask(urlString);
-  Map<String, dynamic> iCalInfo =
-      _parsedTaskData(taskString.replaceAll(RegExp(r'\s'), ''));
+  String taskString = await _getTask(urlString);
+  taskString = taskString.replaceAll(RegExp(r'[^\S\r\n]'), "");
+
+  Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
 
   final tasks = _pretterTask(iCalInfo);
   return tasks;
