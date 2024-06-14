@@ -67,7 +67,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
               .millisecondsSinceEpoch; //これはエポックミリ秒 int型
       if (events["events"][i]["CATEGORIES"] != null) {
         events["events"][i]["CATEGORIES"] = events["events"][i]["CATEGORIES"]
-            .replaceAll(RegExp(r'\(\d+\)'), '');
+            .replaceAll(RegExp(r'\([\dA-Z]+\)'), '');
       }
 
       if (events["events"][i]["DESCRIPTION"] != null) {
@@ -84,11 +84,13 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 //@param String urlSttring
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   String taskString = await _getTask(urlString);
+
   taskString = taskString.replaceAll(RegExp(r'[^\S\r\n]'), "");
 
   Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
 
   final tasks = _pretterTask(iCalInfo);
+
   return tasks;
 }
 

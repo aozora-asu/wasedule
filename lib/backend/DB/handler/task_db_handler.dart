@@ -340,10 +340,10 @@ class TaskDatabaseHelper {
           await _database.update(
             'tasks',
             {
-              "summary": task["SUMMARY"],
-              "description": task["DESCRIPTION"],
-              "dtEnd": task["DTEND"],
-              "title": task["CATEGORIES"],
+              "description": task["description"],
+              "summary": task["summary"],
+              "title": task["title"],
+              "dtEnd": task["dtEnd"],
             }, // 更新後の値
             where: 'uid = ?',
             whereArgs: [task["UID"]],
@@ -390,7 +390,7 @@ class TaskDatabaseHelper {
       'tasks',
       where: 'title = ? AND isDone = ? AND  ? <= dtEnd',
       whereArgs: [
-        courseName.replaceAll(RegExp(r'\(\d+\)'), ''),
+        courseName.replaceAll(RegExp(r'\([\dA-Z]+\)'), ''),
         0,
         DateTime.now().millisecondsSinceEpoch
       ],
