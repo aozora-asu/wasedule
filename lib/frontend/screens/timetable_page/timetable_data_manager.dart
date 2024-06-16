@@ -90,7 +90,8 @@ class TimeTableData {
          target["weekday"] != null &&
          target["period"] != null){
       if(target["semester"] == currentQuaterID(semesterNum) ||
-         target["semester"] == currentSemesterID(semesterNum)){
+         target["semester"] == currentSemesterID(semesterNum) ||
+         target["semester"] == "full_year"){
           //年度・学期が条件に沿うデータのみを抽出
           thisSemesterData.add(target);
           int targetWeekDay = target["weekday"];

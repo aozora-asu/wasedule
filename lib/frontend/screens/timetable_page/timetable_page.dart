@@ -665,21 +665,25 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                             tableData.currentSemesterClasses[weekDay],
                             index + 1))["year"] ==
                     thisYear) {
-              Color colorning = hexToColor(tableData
-                  .currentSemesterClasses[weekDay]
-                  .elementAt(returnIndexFromPeriod(
-                      tableData.currentSemesterClasses[weekDay],
-                      index + 1))["color"]);
+
               if (tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
                       currentQuaterID() ||
+
                   tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
-                      currentSemesterID()) {
+                      currentSemesterID() ||
+
+                  tableData.currentSemesterClasses[weekDay].elementAt(
+                          returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay],
+                              index + 1))["semester"] ==
+                      "full_year") {
+                
                 cellContents = FutureBuilder(
                     future: TaskDatabaseHelper().getTaskListByCourseName(
                         tableData.currentSemesterClasses[weekDay].elementAt(
@@ -776,6 +780,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Widget child = const SizedBox();
           if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
                   currentQuaterID() ||
+              tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                  "full_year" ||
               tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
                       currentSemesterID() &&
                   tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
@@ -906,6 +912,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
     String className = target["courseName"];
     int taskLength = taskList.length;
+    print(tableData.sortedDataByWeekDay[7]);
 
     Color colorning =
         hexToColor(tableData.sortedDataByWeekDay[7].elementAt(index)["color"]);

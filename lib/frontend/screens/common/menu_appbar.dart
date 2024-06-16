@@ -38,7 +38,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
     Color contentColor = WHITE;
     Color backgroundColor = Colors.transparent;
-    bool isLogoWhite = true;
+    bool isLogoWhite =true;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,10 +52,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         isLogoWhite = false;
     }
       SizeConfig().init(context);
-    Color itemColor = BLACK;
+    Color itemColor = Colors.white;
 
     return AppBar(
-        backgroundColor:Colors.white, //MAIN_COLOR.withOpacity(0.95),
+        backgroundColor: MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         surfaceTintColor: Colors.transparent,
         title: Row(children: <Widget>[
@@ -68,13 +68,13 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
               child:LogoAndTitle(
                 size: 7,
                 color:itemColor ,
-                isLogoWhite:false,
+                isLogoWhite:true,
                 subTitle: "早稲田から、落単をなくしたい。",
               )
             ),
             const Spacer(),
             InkWell(
-              child: const Icon(Icons.notifications_outlined, color:BLUEGREY),
+              child: const Icon(Icons.notifications_outlined, color:Colors.white),
               onTap: (){
                 Navigator.push(
                   context,
@@ -82,7 +82,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
                 );
               },
             ),
-            popupMenuButton(BLUEGREY)
+            popupMenuButton(Colors.white)
           ]),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -124,17 +124,17 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
      }
   ){
     BoxDecoration? decoration;
-    Color iconColor = BLUEGREY;
+    Color iconColor = Colors.grey;
     double iconSize = SizeConfig.blockSizeHorizontal! *4;
-    Color underBarColor = Colors.transparent;
+    Color underBarColor = PALE_MAIN_COLOR;
 
 
     if(subIndex == 0 && currentSubIndex == 0){
-      underBarColor = MAIN_COLOR;
-      iconColor = MAIN_COLOR;
+      underBarColor = WHITE;
+      iconColor = WHITE;
     }else if(subIndex == currentSubIndex){
-      underBarColor = MAIN_COLOR;
-      iconColor = MAIN_COLOR;
+      underBarColor = WHITE;
+      iconColor = WHITE;
     }
 
     Widget headerIcon = 
@@ -184,7 +184,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           width: SizeConfig.blockSizeHorizontal! *20,
           height: SizeConfig.blockSizeVertical! *0.5,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(0),
             color: underBarColor
           ),
         ),
@@ -194,7 +194,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
   }
 
   Widget space(double width){
-    Color underBarColor = Colors.transparent;
+    Color underBarColor = PALE_MAIN_COLOR;
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children:[
