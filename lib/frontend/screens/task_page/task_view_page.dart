@@ -139,10 +139,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 FloatingActionButton(
                   heroTag: "task_2",
                   onPressed: () async {
-                    if (isLoad == false) {
+                    if (!isLoad) {
                       isLoad = true;
                       await loadData();
                       isLoad = false;
+                      setState((){});
                     }
                   },
                   backgroundColor: MAIN_COLOR,

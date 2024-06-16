@@ -129,12 +129,9 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     Color underBarColor = PALE_MAIN_COLOR;
 
 
-    if(subIndex == 0 && currentSubIndex == 0){
-      underBarColor = WHITE;
-      iconColor = WHITE;
-    }else if(subIndex == currentSubIndex){
-      underBarColor = WHITE;
-      iconColor = WHITE;
+    if(subIndex == currentSubIndex){
+      underBarColor = brighten(PALE_MAIN_COLOR, 0.6);
+      iconColor = brighten(PALE_MAIN_COLOR, 0.7);
     }
 
     Widget headerIcon = 
