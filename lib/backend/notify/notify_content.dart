@@ -42,8 +42,8 @@ class NotifyContent {
   //return
   tz.TZDateTime _nextInstanceOfWeeklyTime(String timeString, int weekday) {
     tz.initializeTimeZones();
-    tz.Location _local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(_local);
+    tz.Location local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(local);
 
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat.Hm().parse(timeString);
@@ -53,7 +53,7 @@ class NotifyContent {
     int daysUntilNextWeekday = (weekday - currentWeekday + 7) % 7;
 
     // 次の週の指定された曜日の日付を計算
-    tz.TZDateTime nextWeekDay = tz.TZDateTime(_local, now.year, now.month,
+    tz.TZDateTime nextWeekDay = tz.TZDateTime(local, now.year, now.month,
         now.day + daysUntilNextWeekday, parsedTime.hour, parsedTime.minute);
 
     // 次の週が過去の場合は1週間後の同じ曜日の日付にする
@@ -66,12 +66,12 @@ class NotifyContent {
 
   tz.TZDateTime _nextInstanceOfDailyTime(String timeString) {
     tz.initializeTimeZones();
-    tz.Location _local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(_local);
+    tz.Location local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat.Hm().parse(timeString);
 
-    tz.TZDateTime scheduledDate = tz.TZDateTime(_local, now.year, now.month,
+    tz.TZDateTime scheduledDate = tz.TZDateTime(local, now.year, now.month,
         now.day, parsedTime.hour, parsedTime.minute);
 
     if (scheduledDate.isBefore(now)) {
@@ -300,8 +300,8 @@ class NotifyContent {
     String body;
 
     tz.initializeTimeZones();
-    tz.Location _local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(_local);
+    tz.Location local = tz.getLocation('Asia/Tokyo');
+    final tz.TZDateTime now = tz.TZDateTime.now(local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat.Hm().parse(notifyConfig.time);
     if (parsedTime.hour == 0) {
@@ -323,7 +323,7 @@ class NotifyContent {
 
     for (var task in notifyTaskList) {
       tz.TZDateTime scheduleDate =
-          tz.TZDateTime.fromMillisecondsSinceEpoch(_local, task["dtEnd"])
+          tz.TZDateTime.fromMillisecondsSinceEpoch(local, task["dtEnd"])
               .subtract(
                   Duration(hours: parsedTime.hour, minutes: parsedTime.minute));
       int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
@@ -370,7 +370,7 @@ class NotifyContent {
         startDatetime = schedule["startTime"];
       }
       tz.TZDateTime scheduleDatetime =
-          tz.TZDateTime.parse(_local, "${schedule["startDate"]} $startDatetime")
+          tz.TZDateTime.parse(local, "${schedule["startDate"]} $startDatetime")
               .subtract(
                   Duration(hours: parsedTime.hour, minutes: parsedTime.minute));
       if (now.isBefore(scheduleDatetime)) {
@@ -437,8 +437,8 @@ class NotifyContent {
         await NotifyDatabaseHandler().getNotifyFormat();
     String notifyTitle;
     tz.initializeTimeZones();
-    tz.Location _local = tz.getLocation('Asia/Tokyo');
-    tz.TZDateTime now = tz.TZDateTime.now(_local);
+    tz.Location local = tz.getLocation('Asia/Tokyo');
+    tz.TZDateTime now = tz.TZDateTime.now(local);
     if (notifyFormatMap != null) {
       NotifyFormat notifyFormat = NotifyFormat(
           isContainWeekday: notifyFormatMap["isContainWeekday"],
@@ -491,9 +491,9 @@ class NotifyContent {
   Future<void> cancelNotify() async {
     List<Map<String, dynamic>>? notifyConfigList =
         await NotifyDatabaseHandler().getNotifyConfigList();
-    int task_num = await TaskDatabaseHelper().getMaxId();
-    int schedule_num = await ScheduleDatabaseHelper().getMaxId();
-    if (notifyConfigList != null && (task_num != 0 || schedule_num != 0)) {
+    int taskNum = await TaskDatabaseHelper().getMaxId();
+    int scheduleNum = await ScheduleDatabaseHelper().getMaxId();
+    if (notifyConfigList != null && (taskNum != 0 || scheduleNum != 0)) {
       for (Map<String, dynamic> notifyConfigMap in notifyConfigList) {
         NotifyConfig notifyConfig = NotifyConfig(
             notifyType: notifyConfigMap["notifyType"],
@@ -508,11 +508,11 @@ class NotifyContent {
             case "weekly":
               await flutterLocalNotificationsPlugin.cancel(WEEKLYNOTIFYID);
             case "beforeHour":
-              for (int i = 0; i <= task_num; i++) {
+              for (int i = 0; i <= taskNum; i++) {
                 await flutterLocalNotificationsPlugin
                     .cancel(i * 10 + TASKBEFOREHOURNOTIFYID_DIGIT);
               }
-              for (int i = 0; i <= schedule_num; i++) {
+              for (int i = 0; i <= scheduleNum; i++) {
                 await flutterLocalNotificationsPlugin
                     .cancel(i * 10 + SCHEDULEBEFORHOURNOTIFYID_DIGIT);
               }

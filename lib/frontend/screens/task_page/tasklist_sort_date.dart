@@ -6,18 +6,13 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
-import 'package:intl/intl.dart';
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
   Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
-  TaskListByDtEnd({required this.sortedData});
+  TaskListByDtEnd({super.key, required this.sortedData});
   @override
   _TaskListByDtEndState createState() => _TaskListByDtEndState();
 }
@@ -334,16 +329,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     Map<String, dynamic> targetData = childData.elementAt(valueIndex);
     BorderRadius radius = const BorderRadius.all(Radius.circular(2));
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
-    EdgeInsets boxInset = const EdgeInsets.only(left: 8.0);
-    Widget separator = Container(
-        height: 2,
-        width: SizeConfig.blockSizeHorizontal! * 80,
-        color: BACKGROUND_COLOR);
+    EdgeInsets boxInset = const EdgeInsets.only(left: 8.0,right:8.0);
 
     if (valueIndex == 0 && valueIndex == childData.length - 1) {
       radius = const BorderRadius.all(Radius.circular(20));
-      separator = const SizedBox();
-      boxInset = const EdgeInsets.only(left: 8.0, top: 12.0);
+      boxInset = const EdgeInsets.only(left: 8.0,right:8.0, top: 12.0);
     } else if (valueIndex == 0) {
       radius = const BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -351,7 +341,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         bottomLeft: Radius.circular(2),
         bottomRight: Radius.circular(2),
       );
-      boxInset = const EdgeInsets.only(left: 8.0, top: 12.0);
+      boxInset = const EdgeInsets.only(left: 8.0,right:8.0, top: 12.0);
     } else if (valueIndex == childData.length - 1) {
       radius = const BorderRadius.only(
         topLeft: Radius.circular(2),
@@ -359,7 +349,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         bottomLeft: Radius.circular(20),
         bottomRight: Radius.circular(20),
       );
-      separator = const SizedBox();
     }
 
     return Row(children: [
@@ -367,10 +356,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           width: SizeConfig.blockSizeHorizontal! * 12,
           child: Text(truncateTimeEnd(targetData),
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                  fontSize: SizeConfig.blockSizeHorizontal! * 3.75,
                   fontWeight: FontWeight.w700,
                   color: BLUEGREY))),
-      InkWell(
+      Expanded(child:
+        InkWell(
           onTap: () async {
             await bottomSheet(context, targetData, setState);
           },
@@ -406,11 +396,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             ref.read(taskDataProvider).manageIsButton();
                           });
                         }),
-                    Column(
+                    Expanded(child:
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 62,
+                              //width: SizeConfig.blockSizeHorizontal! * 62,
                               child: Text(targetData["summary"] ?? "(詳細なし)",
                                   style: TextStyle(
                                       fontSize:
@@ -418,7 +409,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                       fontWeight: FontWeight.w700,
                                       color: BLACK))),
                           SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 62,
+                              //width: SizeConfig.blockSizeHorizontal! * 62,
                               child: Text(targetData["title"] ?? "(タイトルなし)",
                                   style: TextStyle(
                                     fontSize:
@@ -426,9 +417,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                     color: Colors.grey,
                                   )))
                         ]),
+                    )
                   ]),
                 ]),
-              )))
+              ))))
     ]);
   }
 
@@ -447,7 +439,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     String formattedhour = hour.padLeft(2, '0');
     String formattedminute = minute.padLeft(2, '0');
 
-    return formattedhour + ":" + formattedminute;
+    return "$formattedhour:$formattedminute";
   }
 }
 

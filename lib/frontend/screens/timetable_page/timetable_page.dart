@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
@@ -22,6 +16,8 @@ import 'package:share_plus/share_plus.dart';
 import "../../../backend/home_widget.dart";
 
 class TimeTablePage extends ConsumerStatefulWidget {
+  const TimeTablePage({super.key});
+
   @override
   _TimeTablePageState createState() => _TimeTablePageState();
 }
@@ -153,7 +149,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         semesterNum = 4;
       }
     }
-    targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+    targetSemester = "$thisYear-$semesterNum";
   }
 
   void increasePgNumber() {
@@ -164,7 +160,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       semesterNum = 3;
     }
     setState(() {
-      targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+      targetSemester = "$thisYear-$semesterNum";
     });
   }
 
@@ -176,7 +172,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       semesterNum = 1;
     }
     setState(() {
-      targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+      targetSemester = "$thisYear-$semesterNum";
     });
   }
 
@@ -853,7 +849,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       classRoomView = Container(
           decoration:const  BoxDecoration(
               color: WHITE,
-              borderRadius: const BorderRadius.all(Radius.circular(2))),
+              borderRadius: BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
             style: TextStyle(

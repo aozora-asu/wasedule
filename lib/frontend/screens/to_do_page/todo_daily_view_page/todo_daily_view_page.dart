@@ -21,7 +21,7 @@ class DaylyViewPage extends ConsumerStatefulWidget {
   //AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
-  DaylyViewPage({
+  DaylyViewPage({super.key, 
     //this.events,
     //required this.snapshot,
     required this.context
@@ -33,8 +33,8 @@ class DaylyViewPage extends ConsumerStatefulWidget {
 
 class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
   late String targetMonth = "";
-  String thisMonth = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0');
-  String today = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0') + "/" + DateTime.now().day.toString().padLeft(2, '0');
+  String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
+  String today = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
           onPressed: (){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => StatsPage()),
+              MaterialPageRoute(builder: (context) => const StatsPage()),
             );
           },
         ),
@@ -154,11 +154,7 @@ Column(
         Duration newDuration = targetMonthData.elementAt(index)["time"]!;
         timeSum += newDuration;
       }
-    return "計 " +
-    timeSum.inHours.toString() +
-    "時間" +
-    (timeSum.inMinutes % 60).toString() +
-    "分";
+    return "計 ${timeSum.inHours}時間${timeSum.inMinutes % 60}分";
     }
   }
 
@@ -185,11 +181,7 @@ Column(
     double persent = timeSumForPersent.inMinutes / timeSum.inMinutes *100;
     String fixedPersent = persent.round().toString();
 
-      return "/" +
-    timeSum.inHours.toString() +
-    "時間(月全体の" +
-    fixedPersent +
-    "%)";
+      return "/${timeSum.inHours}時間(月全体の$fixedPersent%)";
     }
   }
 
@@ -219,7 +211,7 @@ Column(
             ref.read(dataProvider).isRenewed = true;
           },
           
-          style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
           child:const Text("ページの作成",style: TextStyle(color:WHITE),),
         ),
         ])
@@ -379,7 +371,7 @@ Column(
 }
 
 String calendarData(index){
-  String targetDay = targetMonth.substring(0,4) + "-" +targetMonth.substring(5,7) +  "-" + (index + 1).toString().padLeft(2,"0");
+  String targetDay = "${targetMonth.substring(0,4)}-${targetMonth.substring(5,7)}-${(index + 1).toString().padLeft(2,"0")}";
   
   final calendarData = ref.read(calendarDataProvider);
 
@@ -415,8 +407,8 @@ bool isToday(String date){
 
 Widget timerButton(Map targetDayData){
   final data = ref.watch(dataProvider);
-  DateTime yesterDayDT = DateTime.now().subtract(Duration(days: 1));
-  String yesterDay = yesterDayDT.year.toString() + "/" + yesterDayDT.month.toString().padLeft(2, '0') + "/" + yesterDayDT.day.toString().padLeft(2, '0');
+  DateTime yesterDayDT = DateTime.now().subtract(const Duration(days: 1));
+  String yesterDay = "${yesterDayDT.year}/${yesterDayDT.month.toString().padLeft(2, '0')}/${yesterDayDT.day.toString().padLeft(2, '0')}";
 
   if(isToday(targetDayData["date"]) || targetDayData["date"] == yesterDay){
 
@@ -470,7 +462,7 @@ Color highLightTodayTile(String date,String formattedDuration){
 void AddNewPage(String targetMonth){
   setState((){
     for(int i = 0; i < LengthOfMonth(targetMonth); i++){
-     String targetDate = targetMonth + "/" + (i + 1).toString().padLeft(2, '0');
+     String targetDate = "$targetMonth/${(i + 1).toString().padLeft(2, '0')}";
      DataBaseHelper().insertNewData(
       targetDate, 
       const Duration(hours:0,minutes:0),
@@ -492,7 +484,7 @@ void AddNewPage(String targetMonth){
     if(targetMonth.substring(5,7) == "12"){
     int year = int.parse(targetMonth.substring(0,4));
     year += 1;
-      setState((){increasedMonth =  year.toString() + "/" + "01";});
+      setState((){increasedMonth =  "$year/01";});
     }else{
      int month = int.parse(targetMonth.substring(5,7));
      month += 1;
@@ -509,7 +501,7 @@ void AddNewPage(String targetMonth){
     if(targetMonth.substring(5,7) == "01"){
     int year = int.parse(targetMonth.substring(0,4));
     year -= 1;
-      setState((){decreasedMonth =  year.toString() + "/" + "12";});
+      setState((){decreasedMonth =  "$year/12";});
     }else{
      int month = int.parse(targetMonth.substring(5,7));
      month -= 1;
@@ -551,7 +543,7 @@ void AddNewPage(String targetMonth){
     final data = ref.watch(dataProvider);
     Map<String,dynamic> targetDayData = targetMonthData.elementAt(index);
     
-    return Container(
+    return SizedBox(
       width:40,
       height:15,
       child:ElevatedButton(
@@ -670,7 +662,7 @@ void AddNewPage(String targetMonth){
                         ),
                         onTap:()async{
                           List<String> newList = targetDayData["plan"];
-                            newList.add("【" + truncateString(taskCategory)+ "】"  +taskTitle);
+                            newList.add("【${truncateString(taskCategory)}】$taskTitle");
                                 await DataBaseHelper().upDateDB(
                                 targetDayData["date"],
                                 targetDayData["time"], 
@@ -719,8 +711,8 @@ void AddNewPage(String targetMonth){
               Navigator.pop(context);
             },
             style:const  ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
-              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+              backgroundColor: WidgetStatePropertyAll(Colors.greenAccent),
+              minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
             child: const Text("+ アイテムを追加…",style:TextStyle(color:WHITE)),
             )
@@ -753,7 +745,7 @@ void AddNewPage(String targetMonth){
     if (input.length <= maxLength) {
       return input;
     } else {
-      return input.substring(0, maxLength - 3) + '…';
+      return '${input.substring(0, maxLength - 3)}…';
     }
   }
 
@@ -958,8 +950,8 @@ void AddNewPage(String targetMonth){
                 Navigator.pop(context);
               },
             style:const  ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
-              minimumSize: MaterialStatePropertyAll(Size(1000, 35))
+              backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR),
+              minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
             child:const Text("とじる",style:TextStyle(color:WHITE)),
             )
@@ -974,7 +966,7 @@ void AddNewPage(String targetMonth){
   Future<void> showMyalog(BuildContext context,targetDayData) async {
     final data = ref.read(dataProvider);
     Map tempLateMap = data.templateDataList;
-    TextEditingController _controller = TextEditingController();
+    TextEditingController controller = TextEditingController();
 
     return showDialog(
       context: context,
@@ -984,10 +976,10 @@ void AddNewPage(String targetMonth){
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
+              SizedBox(
                 width: 300.0,
                 child: TextField(
-                  controller: _controller,
+                  controller: controller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0), // 角丸の半径を指定
@@ -1006,7 +998,7 @@ void AddNewPage(String targetMonth){
               onPressed: () {
                 Navigator.of(context).pop(); // ダイアログを閉じる
               },
-              style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.redAccent)),
+              style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.redAccent)),
               child: const Text('戻る',style:TextStyle(color:WHITE)),
             ),
             ElevatedButton(
@@ -1016,7 +1008,7 @@ void AddNewPage(String targetMonth){
                   nextIndex += int.parse(tempLateMap.keys.last.toString()) + 1;
                 }
 
-                String enteredText = _controller.text;
+                String enteredText = controller.text;
                 await TemplateDataBaseHelper().insertNewTemplateData(
                   nextIndex,
                   enteredText
@@ -1028,7 +1020,7 @@ void AddNewPage(String targetMonth){
 
 
                 List<String> newList = targetDayData["plan"];
-                  newList.add(_controller.text);
+                  newList.add(controller.text);
                       await DataBaseHelper().upDateDB(
                       targetDayData["date"],
                       targetDayData["time"], 
@@ -1042,7 +1034,7 @@ void AddNewPage(String targetMonth){
 
                        Navigator.of(context).pop();
               },
-              style:const  ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.greenAccent)),
+              style:const  ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.greenAccent)),
               child:const  Text('ＯＫ',style:TextStyle(color:WHITE)),
             ),
           ],
@@ -1060,7 +1052,7 @@ class TextFieldList extends ConsumerStatefulWidget {
   late String targetCategory;
   late Color backGroundColor;
 
- TextFieldList({
+ TextFieldList({super.key, 
     required this.onSubmitted,
     required this.targetDayData,
     required this.targetCategory,
@@ -1140,7 +1132,7 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
   } 
 
   List<String> modifyTextLsit(List<String> rawList){
-    rawList.forEach((element) {
+    for (var element in rawList) {
       String newElement = element;
       if(element.length > 1){
       int index = 0;
@@ -1150,7 +1142,6 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
       }
     }
   }
-  );
     return(rawList);
   }
 
@@ -1162,7 +1153,7 @@ class TextFieldObject extends ConsumerStatefulWidget {
   late Color backGroundColor;
   late Map<String,dynamic> targetDayData;
 
-  TextFieldObject({
+  TextFieldObject({super.key, 
     required this.textData,
     required this.index,
     required this.backGroundColor,
@@ -1231,7 +1222,8 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
     }
   } 
 
- Widget build(BuildContext context){
+ @override
+  Widget build(BuildContext context){
   _updateTextFieldWidth();
   if(widget.textData.trim() == ""){
    return const SizedBox();
@@ -1307,16 +1299,15 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
 
   List<String> modifyTextLsit(List<String> rawList){
     
-    rawList.forEach((element) {
-      if(element.length > 0){
+    for (var element in rawList) {
+      if(element.isNotEmpty){
       int index = 0;
       while(element[index] != " "){
-        element = element.substring(0, index) + "" + element.substring(index + 1);
+        element = "${element.substring(0, index)}${element.substring(index + 1)}";
         index++;
       }
     }
   }
-  );
     return(rawList);
   }
 

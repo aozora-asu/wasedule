@@ -7,7 +7,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_bu
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -20,7 +19,7 @@ import 'package:intl/intl.dart';
 class TemplateInputForm extends ConsumerStatefulWidget {
   StateSetter setosute;
 
-  TemplateInputForm({
+  TemplateInputForm({super.key, 
      required this.setosute
   });
 
@@ -43,7 +42,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
     scheduleForm.isAllDay = false;
     return Scaffold(
       appBar:CustomAppBar(backButton: true,),
-      drawer: burgerMenu(),
+      drawer: const burgerMenu(),
       body: 
       SingleChildScrollView(child:Padding(
         padding: const EdgeInsets.only(right:10,left:10),
@@ -119,7 +118,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               );
            },
            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              backgroundColor: WidgetStateProperty.all<Color?>(ACCENT_COLOR),
               ),
            child: const Text("+ 開始時刻",style:TextStyle(color:Colors.white))
           ),
@@ -144,7 +143,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               );
            },
            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+              backgroundColor: WidgetStateProperty.all<Color?>(ACCENT_COLOR),
               ),
            child: const Text("+ 終了時刻",style:TextStyle(color:Colors.white))
           ),
@@ -158,7 +157,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               showTagDialogue(ref, context, setState);
               },
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                  backgroundColor: WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                   ),
               child: const Text("+    タグ     ",style:TextStyle(color:Colors.white))
               ),
@@ -190,8 +189,8 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
              Navigator.pop(context);
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-              fixedSize: MaterialStateProperty.all<Size>(
+              backgroundColor: WidgetStateProperty.all<Color?>(ACCENT_COLOR),
+              fixedSize: WidgetStateProperty.all<Size>(
                 Size(SizeConfig.blockSizeHorizontal! * 45,
                     SizeConfig.blockSizeHorizontal! * 7.5),
               ),
@@ -247,8 +246,8 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
               }
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) {
+              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
                 // 条件によってボタンの色を選択
                 if (scheduleForm.scheduleController.text.isEmpty) {
                   return Colors.grey;
@@ -265,7 +264,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
                     }
                   }
               }),
-              fixedSize: MaterialStateProperty.all<Size>(Size(
+              fixedSize: WidgetStateProperty.all<Size>(Size(
                 SizeConfig.blockSizeHorizontal! * 45,
                 SizeConfig.blockSizeHorizontal! * 7.5,
               )),
@@ -327,7 +326,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
         
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
+        backgroundColor: WidgetStateProperty.all<Color?>(MAIN_COLOR),
       ),
       child: const Row(children:[
         Spacer(),
@@ -368,11 +367,11 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        TextEditingController _textEditingController = TextEditingController();
+        TextEditingController textEditingController = TextEditingController();
         return AlertDialog(
           title: const Text('タグを入力…'),
           content: TextField(
-            controller: _textEditingController,
+            controller: textEditingController,
             decoration: const InputDecoration(
               labelText: '新しいタグ',
               border: OutlineInputBorder()
@@ -387,7 +386,7 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
             ),
             TextButton(
               onPressed: () {
-                ref.read(scheduleFormProvider).tagController.text = _textEditingController.text;
+                ref.read(scheduleFormProvider).tagController.text = textEditingController.text;
                 ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
                 Navigator.of(context).pop();
               },

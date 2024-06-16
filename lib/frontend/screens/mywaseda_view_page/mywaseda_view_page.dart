@@ -5,6 +5,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 InAppWebView? webView;
 
 class MyWasedaViewPage extends ConsumerStatefulWidget {
+  const MyWasedaViewPage({super.key});
+
   @override
   _MyWasedaViewPageState createState() => _MyWasedaViewPageState();
 }

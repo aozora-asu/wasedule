@@ -1,7 +1,5 @@
 import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
@@ -35,6 +33,8 @@ String formattedDate = DateFormat('MM月dd日').format(now);
 int circularIndicatorState = 2;
 
 class StudyProgressIndicator extends StatefulWidget {
+  const StudyProgressIndicator({super.key});
+
   @override
   StudyProgressIndicatorState createState() => StudyProgressIndicatorState();
 }
@@ -154,7 +154,7 @@ Widget buildStudyProgressIndicator(
   //   }
   // }
 
-  return StudyProgressIndicator();
+  return const StudyProgressIndicator();
 }
 
 class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
@@ -240,7 +240,7 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       const SizedBox(width: 10),
       Text(
-        "$formattedDate" + getDayOfWeek(now.weekday - 1),
+        "$formattedDate${getDayOfWeek(now.weekday - 1)}",
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.w600),
@@ -284,11 +284,7 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
                 Row(children:[
                 const Text("今週    "),
                 const Icon(Icons.timer,color:Colors.grey,size:15),
-                Text("  "
-                  +weeklyTimeSum.inHours.toString()
-                  +" 時間"
-                  +weeklyTimeSum.inMinutes.remainder(60).toString()
-                  +" 分",
+                Text("  ${weeklyTimeSum.inHours} 時間${weeklyTimeSum.inMinutes.remainder(60)} 分",
                   style:const TextStyle(color:Colors.grey)
                 ),
               ]),
@@ -325,11 +321,7 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
                    Row(children:[
                     const Text("今月    "),
                     const Icon(Icons.timer,color:Colors.grey,size:15),
-                    Text("  "
-                      +monthlyTimeSum.inHours.toString()
-                      +" 時間"
-                      +monthlyTimeSum.inMinutes.remainder(60).toString()
-                      +" 分",
+                    Text("  ${monthlyTimeSum.inHours} 時間${monthlyTimeSum.inMinutes.remainder(60)} 分",
                       style:const TextStyle(color:Colors.grey)
                     ),
                   ]),
@@ -461,8 +453,7 @@ class HpGauge3Color extends StatelessWidget {
     required this.currentHp, 
     required this.maxHp,
     required this.isEmpty,
-     Key? key})
-      : super(key: key);
+     super.key});
 
 
 
@@ -491,7 +482,7 @@ class HpGauge3Color extends StatelessWidget {
             ),
           ),
         ),
-        Text(" " +statusText + "  ",
+        Text(" $statusText  ",
             style: TextStyle(fontSize: SizeConfig.blockSizeVertical! * 2)),
       ],
     );

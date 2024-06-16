@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/handler/user_info_db_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
@@ -22,7 +20,7 @@ class TaskDatabaseHelper {
     await deleteExpairedTask(_database, 30);
   }
 
-  Future<void> deleteExpairedTask(Database _database, int days) async {
+  Future<void> deleteExpairedTask(Database database, int days) async {
     // 現在の日付を取得
     DateTime currentDate = DateTime.now();
 
@@ -30,7 +28,7 @@ class TaskDatabaseHelper {
     DateTime thirtyDaysAgo = currentDate.subtract(Duration(days: days));
 
     // 30日前以前のタスクを削除するクエリを実行
-    await _database.delete(
+    await database.delete(
       'tasks',
       where: 'dtEnd <= ?',
       whereArgs: [thirtyDaysAgo.millisecondsSinceEpoch], // ミリ秒単位のエポック時間を使用

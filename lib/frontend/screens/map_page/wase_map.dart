@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -11,16 +10,16 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import "../../../backend/DB/isar_collection/isar_handler.dart";
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;
 
 class WasedaMapPage extends ConsumerStatefulWidget {
+  const WasedaMapPage({super.key});
+
   @override
   _WasedaMapPageState createState() => _WasedaMapPageState();
 }
@@ -59,8 +58,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   Future<void> initCampusMapPrefarences(
       String campusID, SharedPreferences pref) async {
-    if (pref.getBool('isMapDBEmpty_' + campusID) == null) {
-      await pref.setBool('isMapDBEmpty_' + campusID, true);
+    if (pref.getBool('isMapDBEmpty_$campusID') == null) {
+      await pref.setBool('isMapDBEmpty_$campusID', true);
     }
   }
 
@@ -489,9 +488,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     }
 
     SharedPreferences pref = await SharedPreferences.getInstance();
-    bool isDataEmpty = pref.getBool('isMapDBEmpty_' + campusID.toString())!;
+    bool isDataEmpty = pref.getBool('isMapDBEmpty_$campusID')!;
     if (isDataEmpty) {
-      await pref.setBool('isMapDBEmpty_' + campusID.toString(), false);
+      await pref.setBool('isMapDBEmpty_$campusID', false);
       await downLoadCampusData(campusID);
       stopDownload = true;
     }
@@ -511,7 +510,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     for (int i = 0; i < targetList.length; i++) {
       if (stopDownload) {
         final pref =await  SharedPreferences.getInstance();
-        await pref.setBool('isMapDBEmpty_' + campusID.toString(), true);
+        await pref.setBool('isMapDBEmpty_$campusID', true);
         break;
       } else {
         print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
@@ -524,7 +523,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
-    int current_period = datetime2Period(now) ?? 0;
+    int currentPeriod = datetime2Period(now) ?? 0;
 
     int campusID = 0;
     for (int i = 0; i < campusID2buildingsList().length; i++) {
@@ -556,7 +555,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
             // dynamic periodList = weekDayMap[current_period.toString()] ?? [];
 
-            if (current_period == 0) {
+            if (currentPeriod == 0) {
               searchResult = "授業時間外です。";
             } else if (snapshot.data!.isEmpty) {
               searchResult = "空き教室はありません。";
@@ -601,13 +600,13 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     SharedPreferences pref =
                         await SharedPreferences.getInstance();
                     await pref.setBool(
-                        'isMapDBEmpty_' + campusID.toString(), true);
+                        'isMapDBEmpty_$campusID', true);
                     Navigator.pop(context);
                     showDetailButtomSheet(location);
                   }, MAIN_COLOR, "空き教室データの再取得", verticalpadding: 10)
                 ]));
           } else {
-            print("エラー：" + snapshot.error.toString());
+            print("エラー：${snapshot.error}");
             return const Center(
                 child: CircularProgressIndicator(color: Colors.red));
           }
@@ -722,7 +721,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
         break;
     }
-    int _height = (SizeConfig.blockSizeVertical! * 100).round();
+    int height = (SizeConfig.blockSizeVertical! * 100).round();
     showModalBottomSheet<void>(
         context: context,
         backgroundColor: Colors.transparent,
@@ -756,7 +755,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     child: Row(children: [
                       SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
                       pinImage,
-                      Text(" " + buildingName,
+                      Text(" $buildingName",
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
@@ -789,9 +788,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                         height: SizeConfig.blockSizeVertical! * 75,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey)),
-                        child: Container(
+                        child: SizedBox(
                             width: SizeConfig.blockSizeHorizontal! * 100,
-                            height: SizeConfig.blockSizeVertical! * _height,
+                            height: SizeConfig.blockSizeVertical! * height,
                             child: InAppWebView(
                               key: mapWebViewKey,
                               initialUrlRequest:
@@ -800,8 +799,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                                 mapWebViewController = controller;
                               },
                               onLoadStop: (a, b) async {
-                                _height = await mapWebViewController
-                                        ?.getContentHeight() ??
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
                                     100;
                                 if (!isMenu) {
                                   String javascriptCode = """
@@ -816,8 +815,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                                 setState(() {});
                               },
                               onContentSizeChanged: (a, b, c) async {
-                                _height = await mapWebViewController
-                                        ?.getContentHeight() ??
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
                                     100;
                                 setState(() {});
                               },
@@ -871,7 +870,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         sectionChildNum = 0;
         break;
     }
-    int _height = (SizeConfig.blockSizeVertical! * 100).round();
+    int height = (SizeConfig.blockSizeVertical! * 100).round();
     showModalBottomSheet<void>(
         context: context,
         backgroundColor: Colors.transparent,
@@ -905,7 +904,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     child: Row(children: [
                       SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
                       pinImage,
-                      Text(" " + buildingName,
+                      Text(" $buildingName",
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
@@ -938,9 +937,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                         height: SizeConfig.blockSizeVertical! * 75,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey)),
-                        child: Container(
+                        child: SizedBox(
                             width: SizeConfig.blockSizeHorizontal! * 100,
-                            height: SizeConfig.blockSizeVertical! * _height,
+                            height: SizeConfig.blockSizeVertical! * height,
                             child: InAppWebView(
                               key: mapWebViewKey,
                               onConsoleMessage:
@@ -954,8 +953,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                                 mapWebViewController = controller;
                               },
                               onLoadStop: (a, b) async {
-                                _height = await mapWebViewController
-                                        ?.getContentHeight() ??
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
                                     100;
 
                                 if (!isMenu) {
@@ -971,8 +970,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                                 setState(() {});
                               },
                               onContentSizeChanged: (a, b, c) async {
-                                _height = await mapWebViewController
-                                        ?.getContentHeight() ??
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
                                     100;
                                 setState(() {});
                               },
@@ -987,7 +986,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 class SearchEmptyClassrooms extends StatefulWidget {
   final String location;
 
-  SearchEmptyClassrooms({
+  const SearchEmptyClassrooms({super.key, 
     required this.location,
   });
 
@@ -1038,7 +1037,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
           animationDuration: 300,
           initialLabelIndex: weekday,
           totalSwitches: 6,
-          activeBgColor: [PALE_MAIN_COLOR],
+          activeBgColor: const [PALE_MAIN_COLOR],
           inactiveFgColor: BLUEGREY,
           inactiveBgColor: Colors.grey.withOpacity(0.7),
           minHeight: 35,
@@ -1060,7 +1059,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
           inactiveBgColor: Colors.grey.withOpacity(0.7),
           totalSwitches: 6,
           minHeight: 35,
-          labels: ['1限', '2限', '3限', '4限', '5限', '6限'],
+          labels: const ['1限', '2限', '3限', '4限', '5限', '6限'],
           onToggle: (index) {
             setState(() {
               period = index!;
@@ -1109,7 +1108,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
                 ),
               );
             } else {
-              print("エラー：" + snapshot.error.toString());
+              print("エラー：${snapshot.error}");
               return const Center(
                 child: CircularProgressIndicator(color: Colors.red),
               );

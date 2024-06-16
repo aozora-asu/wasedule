@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +13,7 @@ class CoursePreview extends ConsumerStatefulWidget {
   late StateSetter setTimetableState;
   late List<Map<String, dynamic>> taskList;
   CoursePreview(
-      {required this.target,
+      {super.key, required this.target,
       required this.setTimetableState,
       required this.taskList});
   @override
@@ -189,18 +187,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Icon(Icons.access_time, color: MAIN_COLOR),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
         Text(
-            getJapaneseWeekday(target["weekday"]) +
-                " " +
-                target["period"].toString() +
-                "限",
+            "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
             style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 5,
                 fontWeight: FontWeight.bold)),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
         Text(
-            target["year"].toString() +
-                " " +
-                targetSemester(target["semester"]),
+            "${target["year"]} ${targetSemester(target["semester"])}",
             style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 color: Colors.grey)),
@@ -332,9 +325,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       int days = duration.inDays;
       int hours = duration.inHours % 24;
       if (days == 0) {
-        return 'あと${hours}時間';
+        return 'あと$hours時間';
       } else {
-        return 'あと${days}日${hours}時間';
+        return 'あと$days日$hours時間';
       }
     }
 

@@ -1,5 +1,4 @@
 import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -28,6 +27,8 @@ String formattedDate = DateFormat('MM月dd日').format(now);
 int circularIndicatorState = 2;
 
 class TaskProgressIndicator extends StatefulWidget {
+  const TaskProgressIndicator({super.key});
+
   @override
   TaskProgressIndicatorState createState() => TaskProgressIndicatorState();
 }
@@ -81,7 +82,7 @@ Widget buildTaskProgressIndicator(
   //   weeklyTasks["仮データ"] = DateTime.now();
   //   weeklyDoneTasks["仮データ"] = DateTime.now();
   // }
-  return TaskProgressIndicator();
+  return const TaskProgressIndicator();
 }
 
 class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
@@ -174,7 +175,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       const SizedBox(width: 10),
       Text(
-        "$formattedDate" + getDayOfWeek(now.weekday - 1),
+        "$formattedDate${getDayOfWeek(now.weekday - 1)}",
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.w600),
@@ -299,8 +300,7 @@ class HpGauge3Color extends StatelessWidget {
     required this.currentHp, 
     required this.maxHp,
     required this.isEmpty,
-     Key? key})
-      : super(key: key);
+     super.key});
 
 
 

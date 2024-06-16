@@ -4,6 +4,8 @@ import '../../../assist_files/colors.dart';
 import '../../../assist_files/size_config.dart';
 
 class ScheduleForecastPage extends ConsumerStatefulWidget {
+  const ScheduleForecastPage({super.key});
+
   @override
   _ScheduleForecastPageState createState() => _ScheduleForecastPageState();
 }

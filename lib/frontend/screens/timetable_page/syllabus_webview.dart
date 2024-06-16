@@ -6,7 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class SyllabusWebView extends StatefulWidget {
   String? pageID;
-  SyllabusWebView({required this.pageID});
+  SyllabusWebView({super.key, required this.pageID});
 
   @override
   _SyllabusWebViewState createState() => _SyllabusWebViewState();
@@ -16,7 +16,7 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    int _height = (SizeConfig.blockSizeVertical! * 100).round();
+    int height = (SizeConfig.blockSizeVertical! * 100).round();
     String? pageID = widget.pageID;
 
     if (pageID != null && pageID != "") {
@@ -26,9 +26,9 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
             height: SizeConfig.blockSizeVertical! * 75,
             decoration: BoxDecoration(border: Border.all()),
             child: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 100,
-                  height: SizeConfig.blockSizeVertical! * _height,
+                  height: SizeConfig.blockSizeVertical! * height,
                   child: InAppWebView(
                     key: webMoodleViewKey,
                     onConsoleMessage: (controller, consoleMessage) async {
@@ -36,8 +36,7 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                     },
                     initialUrlRequest: URLRequest(
                         url: WebUri(
-                            "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=" +
-                                pageID)),
+                            "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=$pageID")),
                     onWebViewCreated: (controller) async {
                       webMoodleViewController = controller;
                       String javascriptCode = await rootBundle.loadString(

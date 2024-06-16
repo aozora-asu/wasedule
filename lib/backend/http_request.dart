@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:http/http.dart' as http;
 
 Map<String, dynamic> _parsedTaskData(String iCalendarData) {

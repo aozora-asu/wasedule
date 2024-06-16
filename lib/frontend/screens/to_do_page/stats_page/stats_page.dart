@@ -3,17 +3,17 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
-import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/timer_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/data_receiver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:async';
 
 import 'package:intl/intl.dart';
 import 'package:expandable/expandable.dart';
 
 class StatsPage extends ConsumerStatefulWidget {
+  const StatsPage({super.key});
+
   @override
    _StatsPageState createState() =>  _StatsPageState();
 }
@@ -26,9 +26,9 @@ class  _StatsPageState extends ConsumerState<StatsPage> {
       height:SizeConfig.blockSizeVertical! *100,///calculateHeight(),
       child:Scaffold(
         appBar: CustomAppBar(backButton: true,),
-        body:StatsPageBody(),
+        body:const StatsPageBody(),
         floatingActionButton: backButton(),
-        drawer: burgerMenu(),
+        drawer: const burgerMenu(),
       )
     );
   }
@@ -43,6 +43,8 @@ class  _StatsPageState extends ConsumerState<StatsPage> {
 
 
 class StatsPageBody extends ConsumerStatefulWidget {
+  const StatsPageBody({super.key});
+
   @override
    _StatsPageBodyState createState() =>  _StatsPageBodyState();
 }
@@ -66,7 +68,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
     SizeConfig().init(context);
     final data = ref.read(dataProvider);
     Map<String, List<Map<String, dynamic>>> sortedData = data.sortDataByMonth();
-    String thisMonth = DateTime.now().year.toString() + "/" + DateTime.now().month.toString().padLeft(2, '0');
+    String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
 
     generateTimesumByMonth();
     generateTimeaverageByMonth();
@@ -102,7 +104,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
             List<Map<String, dynamic>> targetMonthData = sortedData.values.elementAt(index);
               return Card(child:
               ExpandablePanel(
-                header: Text(" " + sortedData.keys.elementAt(index),style:TextStyle(fontSize: 25,fontWeight:FontWeight.bold)),
+                header: Text(" ${sortedData.keys.elementAt(index)}",style:const TextStyle(fontSize: 25,fontWeight:FontWeight.bold)),
                 collapsed: summary(targetMonthData),
                 expanded:  stats(targetMonthData),
               ),
@@ -151,15 +153,15 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
               children:[     
               Row(children:[
                 const Text("  総合計：",style:TextStyle(color:Colors.grey)),
-                Text(totalTimeSum.inHours.toString() +"時間"+ (totalTimeSum.inMinutes%60).toString()+"分"),
+                Text("${totalTimeSum.inHours}時間${totalTimeSum.inMinutes%60}分"),
               ]),
               Row(children:[
                 const Text("  月平均：",style:TextStyle(color:Colors.grey)),
-                Text(totalTimeAverage.inHours.toString() +"時間"+ (totalTimeAverage.inMinutes%60).toString()+"分"),
+                Text("${totalTimeAverage.inHours}時間${totalTimeAverage.inMinutes%60}分"),
               ]),              
               Row(children:[
                 const Text("  記録日数：",style:TextStyle(color:Colors.grey)),
-                Text(totalDayWithRecord.toString() +"日/"+ totalDay.toString()+"日"),
+                Text("$totalDayWithRecord日/$totalDay日"),
               ]),
             ]),
  
@@ -169,11 +171,11 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
               children:[           
                 Row(children:[
                   const Text("  「計画」の総数：",style:TextStyle(color:Colors.grey)),
-                  Text(totalPlanSum.toString() + "個"),
+                  Text("$totalPlanSum個"),
                 ]),
                 Row(children:[
                   const Text("  「達成」の総数：",style:TextStyle(color:Colors.grey)),
-                  Text(totalDoneSum.toString() + "個 "),
+                  Text("$totalDoneSum個 "),
                 ]),
                 const Row(children:[
                   Text("  ",style:TextStyle(color:Colors.grey)),
@@ -182,7 +184,7 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
             ])
           ]),
           const Divider(height:8,indent:10,endIndent:10),
-          Container(
+          SizedBox(
           height:SizeConfig.blockSizeVertical! *43,
           child:GeneralLineChartView(monthlyTimeSum: timeSumByMonth)
           ),
@@ -201,102 +203,52 @@ class  _StatsPageBodyState extends ConsumerState<StatsPageBody> {
           ),
           Row(children:[
             const Text("  １位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(0) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(0).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(0).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(0)}    ${topThreeDays.values.elementAt(0).inHours}時間${topThreeDays.values.elementAt(0).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ２位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(1) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(1).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(1).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(1)}    ${topThreeDays.values.elementAt(1).inHours}時間${topThreeDays.values.elementAt(1).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ３位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(2) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(2).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(2).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(2)}    ${topThreeDays.values.elementAt(2).inHours}時間${topThreeDays.values.elementAt(2).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ４位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(3) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(3).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(3).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(3)}    ${topThreeDays.values.elementAt(3).inHours}時間${topThreeDays.values.elementAt(3).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ５位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(4) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(4).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(4).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(4)}    ${topThreeDays.values.elementAt(4).inHours}時間${topThreeDays.values.elementAt(4).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ６位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(5) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(5).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(5).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(5)}    ${topThreeDays.values.elementAt(5).inHours}時間${topThreeDays.values.elementAt(5).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ７位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(6) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(6).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(6).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(6)}    ${topThreeDays.values.elementAt(6).inHours}時間${topThreeDays.values.elementAt(6).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ８位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(7) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(7).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(7).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(7)}    ${topThreeDays.values.elementAt(7).inHours}時間${topThreeDays.values.elementAt(7).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text("  ９位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(8) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(8).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(8).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(8)}    ${topThreeDays.values.elementAt(8).inHours}時間${topThreeDays.values.elementAt(8).inMinutes%60}分"
                  ),
           ]),
           Row(children:[
             const Text(" 10位：",style:TextStyle(color:Colors.grey)),
-            Text(topThreeDays.keys.elementAt(9) +
-                 "    "+ 
-                 topThreeDays.values.elementAt(9).inHours.toString() +
-                 "時間"+
-                 (topThreeDays.values.elementAt(9).inMinutes%60).toString() +
-                 "分"
+            Text("${topThreeDays.keys.elementAt(9)}    ${topThreeDays.values.elementAt(9).inHours}時間${topThreeDays.values.elementAt(9).inMinutes%60}分"
                  ),
           ]),
 
@@ -323,44 +275,17 @@ Widget monthlyLanking(){
     ),
     Row(children:[
       const Text("  １位：",style:TextStyle(color:Colors.grey)),
-      Text(topThreeMonthes.keys.elementAt(0) +
-            "    "+ 
-            topThreeMonthes.values.elementAt(0).inHours.toString() +
-            "時間"+
-            (topThreeMonthes.values.elementAt(0).inMinutes%60).toString() +
-            "分    (平均"+
-            topThreeMonthesAvg.values.elementAt(0).inHours.toString() +
-            "時間"+
-            (topThreeMonthesAvg.values.elementAt(0).inMinutes%60).toString() +
-            "分/日)"
+      Text("${topThreeMonthes.keys.elementAt(0)}    ${topThreeMonthes.values.elementAt(0).inHours}時間${topThreeMonthes.values.elementAt(0).inMinutes%60}分    (平均${topThreeMonthesAvg.values.elementAt(0).inHours}時間${topThreeMonthesAvg.values.elementAt(0).inMinutes%60}分/日)"
             ),
     ]),
     Row(children:[
-      Text("  ２位：",style:TextStyle(color:Colors.grey)),
-      Text(topThreeMonthes.keys.elementAt(1)+
-            "    "+ 
-            topThreeMonthes.values.elementAt(1).inHours.toString() +
-            "時間"+
-            (topThreeMonthes.values.elementAt(1).inMinutes%60).toString()+
-            "分    (平均"+
-            topThreeMonthesAvg.values.elementAt(1).inHours.toString()+
-            "時間"+
-            (topThreeMonthesAvg.values.elementAt(1).inMinutes%60).toString() +
-            "分/日)"
+      const Text("  ２位：",style:TextStyle(color:Colors.grey)),
+      Text("${topThreeMonthes.keys.elementAt(1)}    ${topThreeMonthes.values.elementAt(1).inHours}時間${topThreeMonthes.values.elementAt(1).inMinutes%60}分    (平均${topThreeMonthesAvg.values.elementAt(1).inHours}時間${topThreeMonthesAvg.values.elementAt(1).inMinutes%60}分/日)"
             ),
     ]),
     Row(children:[
-      Text("  ３位：",style:TextStyle(color:Colors.grey)),
-      Text(topThreeMonthes.keys.elementAt(2) +
-            "    "+ 
-            topThreeMonthes.values.elementAt(2).inHours.toString()+
-            "時間"+
-            (topThreeMonthes.values.elementAt(2).inMinutes%60).toString()+
-            "分    (平均"+
-            topThreeMonthesAvg.values.elementAt(2).inHours.toString() +
-            "時間"+
-            (topThreeMonthesAvg.values.elementAt(2).inMinutes%60).toString()+
-            "分/日)"
+      const Text("  ３位：",style:TextStyle(color:Colors.grey)),
+      Text("${topThreeMonthes.keys.elementAt(2)}    ${topThreeMonthes.values.elementAt(2).inHours}時間${topThreeMonthes.values.elementAt(2).inMinutes%60}分    (平均${topThreeMonthesAvg.values.elementAt(2).inHours}時間${topThreeMonthesAvg.values.elementAt(2).inMinutes%60}分/日)"
             ),
      ]),
    ]);
@@ -551,7 +476,7 @@ Widget monthlyLanking(){
         ]),
         Row(children:[
           const Text("  日数：",style:TextStyle(color:Colors.grey)),
-          Text(countDaysWithRecord(targetMonthData).toString() + "日/" + targetMonthData.length.toString() + "日")
+          Text("${countDaysWithRecord(targetMonthData)}日/${targetMonthData.length}日")
         ]),
         ]),
 
@@ -577,11 +502,11 @@ Widget monthlyLanking(){
    const Divider(height:8,indent:8,endIndent:8),
     Row(children:[
       const Text("  立てた計画の総数：",style:TextStyle(color:Colors.grey)),
-      Text(numOfPlanSum(targetMonthData).toString() + "個"),
+      Text("${numOfPlanSum(targetMonthData)}個"),
     ]),
     Row(children:[
       const Text("  うち達成した総数：",style:TextStyle(color:Colors.grey)),
-      Text(numOfDoneSum(targetMonthData).toString() + "個 " + donePercentage(targetMonthData)),
+      Text("${numOfDoneSum(targetMonthData)}個 ${donePercentage(targetMonthData)}"),
     ]),
    LineChartView(targetMonthData:targetMonthData)
   ]);
@@ -606,10 +531,7 @@ Widget monthlyLanking(){
         timeSum += newDuration;
       }
     return 
-    timeSum.inHours.toString() +
-    "時間" +
-    (timeSum.inMinutes % 60).toString() +
-    "分";
+    "${timeSum.inHours}時間${timeSum.inMinutes % 60}分";
   }
 
 
@@ -637,8 +559,8 @@ Widget monthlyLanking(){
     int maxNumber = timeList.reduce((value, element) => value > element ? value : element);
     int maxDate = sonomama.indexOf(maxNumber);
     Duration maxTime = Duration(minutes:maxNumber);
-    String adjustedMaximumTime = maxTime.inHours.toString()+ "時間" + (maxTime.inMinutes % 60).toString() + "分";
-    String adjustedMaximunDate = (maxDate+1).toString() + "日...";
+    String adjustedMaximumTime = "${maxTime.inHours}時間${maxTime.inMinutes % 60}分";
+    String adjustedMaximunDate = "${maxDate+1}日...";
 
     return adjustedMaximunDate + adjustedMaximumTime;
   }
@@ -695,8 +617,8 @@ class LineChartView extends StatefulWidget {
 
   LineChartView({
   required this.targetMonthData,
-  Key? key,
-  }) : super(key: key);
+  super.key,
+  });
 
   @override
   State<LineChartView> createState() => _LineChartViewState();
@@ -847,8 +769,8 @@ class GeneralLineChartView extends StatefulWidget {
 
   GeneralLineChartView({
   required this.monthlyTimeSum,
-  Key? key,
-  }) : super(key: key);
+  super.key,
+  });
 
   @override
   State<GeneralLineChartView> createState() => _GeneralLineChartViewState();

@@ -197,18 +197,18 @@ class ArbeitCalculator{
     Duration result = Duration.zero;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
 
     for (int i = 0; i < targetKeys.length; i++) {
@@ -226,18 +226,18 @@ class ArbeitCalculator{
     int result = 0;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
     for (int i = 0; i < tagData.length; i++) {
       if (tagData.elementAt(i)["isBeit"] == 1) {
@@ -257,18 +257,18 @@ class ArbeitCalculator{
     int result = 0;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
 
     for (int i = 0; i < targetKeys.length; i++) {
@@ -287,18 +287,18 @@ class ArbeitCalculator{
     int result = 0;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
     for (int i = 0; i < tagData.length; i++) {
       if (tagData.elementAt(i)["isBeit"] == 1) {
@@ -334,18 +334,18 @@ class ArbeitCalculator{
     int result = 0;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
 
     for (int i = 0; i < targetKeys.length; i++) {
@@ -366,18 +366,18 @@ class ArbeitCalculator{
     int result = 0;
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
 
     for (int i = 0; i < targetKeys.length; i++) {
@@ -416,7 +416,7 @@ class ArbeitStatsPage extends ConsumerStatefulWidget {
   String targetMonth;
   bool? isAppbar;
 
-  ArbeitStatsPage({
+  ArbeitStatsPage({super.key, 
     required this.targetMonth,
     this.isAppbar});
 
@@ -442,23 +442,22 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
     String year = widget.targetMonth.substring(0, 4);
     String month = widget.targetMonth.substring(5, 7);
-    String targetKey = year + "-" + month;
+    String targetKey = "$year-$month";
     Widget estimatedMonthlyIncome = Container();
     bool isAppBar = widget.isAppbar ?? false;
 
     if (includeFee == 1) {
       estimatedMonthlyIncome = Text(
-          ArbeitCalculator().formatNumberWithComma(
+          "${ArbeitCalculator().formatNumberWithComma(
             ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref) +
-                  ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref)) +
-              " 円",
+                  ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref))} 円",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeHorizontal! * 15));
     } else if (includeFee == 0) {
       estimatedMonthlyIncome = Text(
-          ArbeitCalculator().formatNumberWithComma(
-            ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref)) + " 円",
+          "${ArbeitCalculator().formatNumberWithComma(
+            ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref))} 円",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeHorizontal! * 15));
@@ -563,7 +562,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                   child: Column(
                                       //crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(year + "年 年収見込み  ",
+                                        Text("$year年 年収見込み  ",
                                             style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: SizeConfig
@@ -571,16 +570,15 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                     7)),
                                         correctIndicator(),
                                         Text(
-                                            ArbeitCalculator().formatNumberWithComma(
+                                            "${ArbeitCalculator().formatNumberWithComma(
                                               ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
-                                                widget.targetMonth,ref)) +
-                                                " 円",
+                                                widget.targetMonth,ref))} 円",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: SizeConfig
                                                         .blockSizeHorizontal! *
                                                     15)),
-                                        Text(month + "月 月収見込み  ",
+                                        Text("$month月 月収見込み  ",
                                             style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: SizeConfig
@@ -599,7 +597,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                       context),
                                               style: const ButtonStyle(
                                                   padding:
-                                                      MaterialStatePropertyAll(
+                                                      WidgetStatePropertyAll(
                                                           EdgeInsets.zero)),
                                               child: const Text("値の計算方法について")),
                                         ]),
@@ -631,15 +629,14 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                             5)),
                                                 const SizedBox(width: 15),
                                                 Text(
-                                                    ArbeitCalculator().formatNumberWithComma(
+                                                    "${ArbeitCalculator().formatNumberWithComma(
                                                       (ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
                                                                         widget
                                                                             .targetMonth,ref) /
                                                         ArbeitCalculator().numberOfValidMonthNullsafe(
                                                                         widget
                                                                             .targetMonth,ref))
-                                                                .round()) +
-                                                        " 円",
+                                                                .round())} 円",
                                                     style: TextStyle(
                                                         color: BLACK,
                                                         fontWeight:
@@ -674,10 +671,9 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               "あなたの扶養者(親など)にかかる所得税が増加するラインです。"))
                                     ]),
                                     Text(
-                                        ArbeitCalculator().formatNumberWithComma(1030000 -
+                                        "${ArbeitCalculator().formatNumberWithComma(1030000 -
                                           ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
-                                            widget.targetMonth,ref)) +
-                                            " 円",
+                                            widget.targetMonth,ref))} 円",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: SizeConfig
@@ -730,12 +726,11 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               "あなたに社会保険料が科されるようになるラインです。"))
                                     ]),
                                     Text(
-                                        ArbeitCalculator().formatNumberWithComma(1300000 -
+                                        "${ArbeitCalculator().formatNumberWithComma(1300000 -
                                           ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
                                                     widget.targetMonth,ref) -
                                             ArbeitCalculator().yearlyFeeSumOfAllTags(
-                                                    widget.targetMonth,ref)) +
-                                            " 円",
+                                                    widget.targetMonth,ref))} 円",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: SizeConfig
@@ -821,7 +816,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       int year = int.parse(widget.targetMonth.substring(0, 4));
       year += 1;
       setState(() {
-        increasedMonth = year.toString() + "/" + "01";
+        increasedMonth = "$year/01";
       });
     } else {
       int month = int.parse(widget.targetMonth.substring(5, 7));
@@ -842,7 +837,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       int year = int.parse(widget.targetMonth.substring(0, 4));
       year -= 1;
       setState(() {
-        decreasedMonth = year.toString() + "/" + "12";
+        decreasedMonth = "$year/12";
       });
     } else {
       int month = int.parse(widget.targetMonth.substring(5, 7));
@@ -875,7 +870,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     return TextButton(
         onPressed: onPress,
         style: const ButtonStyle(
-            padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+            padding: WidgetStatePropertyAll(EdgeInsets.zero)),
         child: Text(buttonText));
   }
 
@@ -884,7 +879,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     List sortedData = tagData.tagData;
     String year = widget.targetMonth.substring(0, 4);
     String month = widget.targetMonth.substring(5, 7);
-    String targetKey = year + "-" + month;
+    String targetKey = "$year-$month";
 
     if (ref.watch(calendarDataProvider).sortedDataByMonth[targetKey] == null) {
       return Container(
@@ -902,18 +897,14 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           Widget dateTimeData =
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              "時給：" +
-                  ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"]) +
-                  "円",
+              "時給：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"])}円",
               style: const TextStyle(
                   color:  WHITE,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
             Text(
-              "片道交通費：" +
-                  ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"]) +
-                  "円",
+              "片道交通費：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"])}円",
               style: const TextStyle(
                   color:  WHITE,
                   fontSize: 15,
@@ -965,9 +956,9 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     Map sortedDataByMonth = ref.watch(calendarDataProvider).sortedDataByMonth;
     String year = widget.targetMonth.substring(0, 4);
     String month = widget.targetMonth.substring(5, 7);
-    String targetKey = year + "-" + month;
-    String targetMonthForDisplay = month + "月";
-    String targetYearForDisplay = year + "年";
+    String targetKey = "$year-$month";
+    String targetMonthForDisplay = "$month月";
+    String targetYearForDisplay = "$year年";
 
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
@@ -976,61 +967,49 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             padding: const EdgeInsets.all(8),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(targetMonthForDisplay + "のデータ",
+              Text("$targetMonthForDisplayのデータ",
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("労働時間　  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inHours.toString() +
-                    " 時間" +
-                    (ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60)
-                        .toString() +
-                    " 分"),
+                Text("${ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inHours} 時間${ArbeitCalculator().monthlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60} 分"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("給料見込み  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().formatNumberWithComma(
+                Text("${ArbeitCalculator().formatNumberWithComma(
                   ArbeitCalculator().culculateWage(
                     ArbeitCalculator().monthlyWorkTimeSumWithAdditionalWorkTime(
                             tagData, targetKey,ref),
-                        tagData["wage"])) +
-                    " 円"),
+                        tagData["wage"]))} 円"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("交通費総額  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().formatNumberWithComma(
-                  ArbeitCalculator().monthlyFeeSum(tagData, targetKey,ref)) +
-                    " 円"),
+                Text("${ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().monthlyFeeSum(tagData, targetKey,ref))} 円"),
               ]),
               const SizedBox(height: 7),
-              Text(targetYearForDisplay + " 通年のデータ",
+              Text("$targetYearForDisplay 通年のデータ",
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("労働時間　  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inHours.toString() +
-                    " 時間" +
-                    (ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60)
-                        .toString() +
-                    " 分"),
+                Text("${ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inHours} 時間${ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref).inMinutes % 60} 分"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("給料見込み  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().formatNumberWithComma(
+                Text("${ArbeitCalculator().formatNumberWithComma(
                   ArbeitCalculator().culculateWage(
                     ArbeitCalculator().yearlyWorkTimeSum(tagData, targetKey,ref),
-                        tagData["wage"])) +
-                    " 円"),
+                        tagData["wage"]))} 円"),
               ]),
               const SizedBox(height: 2),
               Row(children: [
                 const Text("交通費総額  ", style: TextStyle(color: Colors.grey)),
-                Text(ArbeitCalculator().formatNumberWithComma(
-                  ArbeitCalculator().yearlyFeeSum(tagData, targetKey,ref)) +
-                    " 円"),
+                Text("${ArbeitCalculator().formatNumberWithComma(
+                  ArbeitCalculator().yearlyFeeSum(tagData, targetKey,ref))} 円"),
               ]),
               const SizedBox(height: 15),
               collectingEntryList(tagData, targetKey)
@@ -1038,13 +1017,13 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
   }
 
   KeyboardActionsConfig _buildConfig(tagData, targetKey,
-      TextEditingController controller, List<FocusNode> _nodeList) {
+      TextEditingController controller, List<FocusNode> nodeList) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       keyboardBarColor:  WHITE,
       nextFocus: false,
       actions: [
-        for (var _node in _nodeList) ...{
+        for (var _node in nodeList) ...{
           KeyboardActionsItem(
             focusNode: _node,
             toolbarAlignment: MainAxisAlignment.start,
@@ -1063,7 +1042,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                             GestureDetector(
                               onTap: () {
                                 upDateConfigInfo(tagData, targetKey,
-                                    controller.text, _nodeList.indexOf(_node));
+                                    controller.text, nodeList.indexOf(_node));
                                 node.unfocus();
                               },
                               child: const Text(
@@ -1089,18 +1068,18 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
   Widget collectingEntryList(tagData, targetKey) {
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
 
     return Column(children: [
@@ -1124,31 +1103,31 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               //入力文字のカーソルの位置を管理
               TextPosition(offset: controller.text.length),
             ); //入力されている文字数を取得し、その位置にカーソルを移動することで末尾にカーソルを当てる
-            final FocusNode _nodeText1 = FocusNode();
-            final FocusNode _nodeText2 = FocusNode();
-            final FocusNode _nodeText3 = FocusNode();
-            final FocusNode _nodeText4 = FocusNode();
-            final FocusNode _nodeText5 = FocusNode();
-            final FocusNode _nodeText6 = FocusNode();
-            final FocusNode _nodeText7 = FocusNode();
-            final FocusNode _nodeText8 = FocusNode();
-            final FocusNode _nodeText9 = FocusNode();
-            final FocusNode _nodeText10 = FocusNode();
-            final FocusNode _nodeText11 = FocusNode();
-            final FocusNode _nodeText12 = FocusNode();
-            final List<FocusNode> _nodeList = [
-              _nodeText1,
-              _nodeText2,
-              _nodeText3,
-              _nodeText4,
-              _nodeText5,
-              _nodeText6,
-              _nodeText7,
-              _nodeText8,
-              _nodeText9,
-              _nodeText10,
-              _nodeText11,
-              _nodeText12,
+            final FocusNode nodeText1 = FocusNode();
+            final FocusNode nodeText2 = FocusNode();
+            final FocusNode nodeText3 = FocusNode();
+            final FocusNode nodeText4 = FocusNode();
+            final FocusNode nodeText5 = FocusNode();
+            final FocusNode nodeText6 = FocusNode();
+            final FocusNode nodeText7 = FocusNode();
+            final FocusNode nodeText8 = FocusNode();
+            final FocusNode nodeText9 = FocusNode();
+            final FocusNode nodeText10 = FocusNode();
+            final FocusNode nodeText11 = FocusNode();
+            final FocusNode nodeText12 = FocusNode();
+            final List<FocusNode> nodeList = [
+              nodeText1,
+              nodeText2,
+              nodeText3,
+              nodeText4,
+              nodeText5,
+              nodeText6,
+              nodeText7,
+              nodeText8,
+              nodeText9,
+              nodeText10,
+              nodeText11,
+              nodeText12,
             ];
 
             controller.text =
@@ -1159,23 +1138,22 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               Text(targetKeys.elementAt(index)),
               const Spacer(),
               SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-              Text(ArbeitCalculator().formatNumberWithComma(
+              Text("${ArbeitCalculator().formatNumberWithComma(
                 ArbeitCalculator().culculateWage(
                   ArbeitCalculator().monthlyWorkTimeSumWithAdditionalWorkTime(
                               tagData, targetKeys.elementAt(index),ref),
                           tagData["wage"]) +
-                    ArbeitCalculator().monthlyFeeSum(tagData, targetKeys.elementAt(index),ref)) +
-                  " 円"),
+                    ArbeitCalculator().monthlyFeeSum(tagData, targetKeys.elementAt(index),ref))} 円"),
               SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
               SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 30,
                   height: SizeConfig.blockSizeVertical! * 3,
                   child: KeyboardActions(
                       config: _buildConfig(
-                          tagData, targetKey, controller, _nodeList),
+                          tagData, targetKey, controller, nodeList),
                       child: CupertinoTextField(
                         controller: controller,
-                        focusNode: _nodeList[index],
+                        focusNode: nodeList[index],
                         textInputAction: TextInputAction.done,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: false),
@@ -1206,18 +1184,18 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       tagData, targetKey, String value, int index) async {
     String year = targetKey.substring(0, 4);
     List<String> targetKeys = [
-      year + "-01",
-      year + "-02",
-      year + "-03",
-      year + "-04",
-      year + "-05",
-      year + "-06",
-      year + "-07",
-      year + "-08",
-      year + "-09",
-      year + "-10",
-      year + "-11",
-      year + "-12",
+      "$year-01",
+      "$year-02",
+      "$year-03",
+      "$year-04",
+      "$year-05",
+      "$year-06",
+      "$year-07",
+      "$year-08",
+      "$year-09",
+      "$year-10",
+      "$year-11",
+      "$year-12",
     ];
     int targetTagId = tagData["id"];
     String targetMonth = targetKeys.elementAt(index);
@@ -1270,8 +1248,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             content: const Column(mainAxisSize: MainAxisSize.min, children: [
               SizedBox(height: 5),
               Text(
-                  "※2024年2月現在の情報に基づきます。最新の情報はご自身でお確かめください。\n" +
-                      "※一般的な大学生の所得モデルにおける例を示しています。個人の状況により適用制度に若干の差異がございますので、詳細はご自身でお確かめください。",
+                  "※2024年2月現在の情報に基づきます。最新の情報はご自身でお確かめください。\n" "※一般的な大学生の所得モデルにおける例を示しています。個人の状況により適用制度に若干の差異がございますので、詳細はご自身でお確かめください。",
                   style: TextStyle(color: Colors.grey))
             ]));
       },

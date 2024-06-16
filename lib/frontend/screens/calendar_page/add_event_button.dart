@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/time_input_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -125,6 +123,8 @@ class ScheduleForm {
 }
 
 class AddEventButton extends ConsumerStatefulWidget {
+  const AddEventButton({super.key});
+
   @override
   _AddEventButtonState createState() => _AddEventButtonState();
 }
@@ -160,7 +160,7 @@ class CalendarInputForm extends ConsumerStatefulWidget {
   DateTime target;
   StateSetter setosute;
 
-  CalendarInputForm({required this.target, required this.setosute});
+  CalendarInputForm({super.key, required this.target, required this.setosute});
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
   // bool get didNotificationLaunchApp =>
   //     notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
@@ -188,7 +188,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
         appBar: CustomAppBar(
           backButton: true,
         ),
-        drawer: burgerMenu(),
+        drawer: const burgerMenu(),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10),
@@ -217,7 +217,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             SizedBox(
                 height: SizeConfig.blockSizeVertical! * 1,
                 width: SizeConfig.blockSizeHorizontal! * 80),
-            Container(
+            SizedBox(
               height: SizeConfig.blockSizeVertical! * 10,
               child: TextFormField(
                 controller: scheduleForm.scheduleController,
@@ -242,7 +242,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                        WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                   ),
                   child: const Text(" + 日付       ",
                       style: TextStyle(color: Colors.white))),
@@ -265,7 +265,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                         },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                        WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                   ),
                   child: const Text("+ 開始時刻",
                       style: TextStyle(color: Colors.white))),
@@ -295,7 +295,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                         },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                        WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                   ),
                   child: const Text("+ 終了時刻",
                       style: TextStyle(color: Colors.white))),
@@ -317,7 +317,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                          WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                     ),
                     child: const Text("+    タグ     ",
                         style: TextStyle(color: Colors.white))),
@@ -338,7 +338,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
+                        WidgetStateProperty.all<Color?>(ACCENT_COLOR),
                   ),
                   child: const Text("共有時表示",
                       style: TextStyle(color: Colors.white))),
@@ -371,8 +371,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                   },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-                    fixedSize: MaterialStateProperty.all<Size>(
+                        WidgetStateProperty.all<Color?>(ACCENT_COLOR),
+                    fixedSize: WidgetStateProperty.all<Size>(
                       Size(SizeConfig.blockSizeHorizontal! * 45,
                           SizeConfig.blockSizeHorizontal! * 7.5),
                     ),
@@ -462,8 +462,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     }
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (Set<WidgetState> states) {
                       // 条件によってボタンの色を選択
                       if (scheduleForm.dtStartList.isEmpty ||
                           scheduleForm.scheduleController.text.isEmpty) {
@@ -489,7 +489,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                         }
                       }
                     }),
-                    fixedSize: MaterialStateProperty.all<Size>(Size(
+                    fixedSize: WidgetStateProperty.all<Size>(Size(
                       SizeConfig.blockSizeHorizontal! * 45,
                       SizeConfig.blockSizeHorizontal! * 7.5,
                     )),
@@ -559,7 +559,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
         showTemplateDialogue();
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color?>(MAIN_COLOR),
+        backgroundColor: WidgetStateProperty.all<Color?>(MAIN_COLOR),
       ),
       child: const Row(children: [
         Spacer(),
@@ -597,11 +597,11 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        TextEditingController _textEditingController = TextEditingController();
+        TextEditingController textEditingController = TextEditingController();
         return AlertDialog(
           title: const Text('タグを入力…'),
           content: TextField(
-            controller: _textEditingController,
+            controller: textEditingController,
             decoration: const InputDecoration(
                 labelText: '新しいタグ', border: OutlineInputBorder()),
           ),
@@ -615,7 +615,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             TextButton(
               onPressed: () {
                 ref.read(scheduleFormProvider).tagController.text =
-                    _textEditingController.text;
+                    textEditingController.text;
                 ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
                 Navigator.of(context).pop();
               },
@@ -789,7 +789,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                     child: ElevatedButton(
                       style: const ButtonStyle(
                           backgroundColor:
-                              MaterialStatePropertyAll(Colors.blueAccent)),
+                              WidgetStatePropertyAll(Colors.blueAccent)),
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.of(context).push(
@@ -827,12 +827,11 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             "") {
       return "      終日";
     } else {
-      return "      " +
+      return "${"      " +
           ref
               .read(calendarDataProvider)
               .templateData
-              .elementAt(index)["startTime"] +
-          " ～ " +
+              .elementAt(index)["startTime"]} ～ " +
           ref
               .read(calendarDataProvider)
               .templateData

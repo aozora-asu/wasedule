@@ -32,8 +32,8 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     required this.setosute,
     required this.isChildmenuExpand,
     required this.changeChildmenuState,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
 
     Color contentColor = WHITE;
@@ -44,20 +44,18 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
   Widget build(BuildContext context, WidgetRef ref) {
     int pageNum = currentIndex;
     
-    if(pageNum != null){
-      if(pageNum == 0 ||
-         pageNum == 3 ||
-         pageNum == 4){
-          contentColor = BLACK;
-          backgroundColor = Colors.transparent;
-          isLogoWhite = false;
-      }
+    if(pageNum == 0 ||
+       pageNum == 3 ||
+       pageNum == 4){
+        contentColor = BLACK;
+        backgroundColor = Colors.transparent;
+        isLogoWhite = false;
     }
-    SizeConfig().init(context);
+      SizeConfig().init(context);
     Color itemColor = BLACK;
 
     return AppBar(
-        backgroundColor:BACKGROUND_COLOR, //MAIN_COLOR.withOpacity(0.95),
+        backgroundColor:Colors.white, //MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         surfaceTintColor: Colors.transparent,
         title: Row(children: <Widget>[
@@ -76,7 +74,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             ),
             const Spacer(),
             InkWell(
-              child: Icon(Icons.notifications_outlined, color:BLUEGREY),
+              child: const Icon(Icons.notifications_outlined, color:BLUEGREY),
               onTap: (){
                 Navigator.push(
                   context,
@@ -93,7 +91,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         ),
         bottom: PreferredSize(
           preferredSize:const Size.fromHeight(5),
-          child: Container(
+          child: SizedBox(
             height: SizeConfig.blockSizeVertical! *5,
             child: subMenuList(ref),
           ),
@@ -346,7 +344,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 }
 
   void showFeedBackDialog(BuildContext context) {
-    final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
+    final urlLaunchWithStringButton = UrlLaunchWithStringButton();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -357,7 +355,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           actions: <Widget>[
             buttonModel(
               (){
-                  _urlLaunchWithStringButton.launchUriWithString(
+                  urlLaunchWithStringButton.launchUriWithString(
                   context,
                   "https://apps.apple.com/jp/app/%E3%82%8F%E3%81%9B%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/id6479050214",
                 );
@@ -385,7 +383,7 @@ Widget popupMenuButton(color){
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SnsLinkPage()));
+              MaterialPageRoute(builder: (context) => const SnsLinkPage()));
           }
         )
       ),

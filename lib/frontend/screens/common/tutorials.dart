@@ -10,7 +10,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IntroPage extends StatefulWidget {
-  const IntroPage({Key? key}) : super(key: key);
+  const IntroPage({super.key});
 
   @override
   State<IntroPage> createState() => _IntroPageState();
@@ -108,7 +108,7 @@ class _IntroPageState extends State<IntroPage> {
                 onPressed:(){
                   showUrlRegisterGuide(context);
                 },
-                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
                 child: const Text("はい",style:TextStyle(color:Colors.white),),
               ),
             ),
@@ -123,7 +123,7 @@ class _IntroPageState extends State<IntroPage> {
                     ),
                   );
                 },
-                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+                style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR)),
                 child: const Text("いいえ",style:TextStyle(color:Colors.white),),
               ),
             ),
@@ -194,12 +194,12 @@ class _IntroPageState extends State<IntroPage> {
                     MaterialPageRoute(
                       builder: (_) => Scaffold(
                         appBar:CustomAppBar(backButton: true),
-                        body:MoodleViewPage()
+                        body:const MoodleViewPage()
                       ),
                     ),
                   );
                 },
-                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
                 child: const Text("登録画面へ",style:TextStyle(color:Colors.white),),
               ),
             ),
@@ -213,7 +213,7 @@ class _IntroPageState extends State<IntroPage> {
 
 
 class IntroLastPage extends StatefulWidget {
-  const IntroLastPage({Key? key}) : super(key: key);
+  const IntroLastPage({super.key});
   @override
   State<IntroLastPage> createState() => _IntroLastPageState();
 }
@@ -233,7 +233,7 @@ class _IntroLastPageState extends State<IntroLastPage> {
               onTap:(){
                 Navigator.push(context, 
                   MaterialPageRoute(builder: 
-                    (_) => DataDownloadPage(),
+                    (_) => const DataDownloadPage(),
                   )
                 );
               },
@@ -350,7 +350,7 @@ Future<void> showTagAndTemplateGuide(context) {
                 showArbeitGuide(context);
               },
               style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+                backgroundColor: WidgetStatePropertyAll(MAIN_COLOR),
                 visualDensity: VisualDensity.standard
               ),
               child:const SizedBox(

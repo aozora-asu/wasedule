@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -15,17 +13,13 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:timezone/timezone.dart';
 
-import '../../../backend/DB/models/task.dart';
-import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 
@@ -73,7 +67,7 @@ class InputForm {
 class DailyViewPage extends ConsumerStatefulWidget {
   DateTime target;
 
-  DailyViewPage({required this.target});
+  DailyViewPage({super.key, required this.target});
 
   @override
   DailyViewPageState createState() => DailyViewPageState();
@@ -137,10 +131,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          " " +
-                              widget.target.year.toString() +
-                              "/" +
-                              widget.target.month.toString(),
+                          " ${widget.target.year}/${widget.target.month}",
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeHorizontal! * 6,
                               fontWeight: FontWeight.w700,
@@ -154,9 +145,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        " " +
-                            widget.target.day
-                                .toString(), //+ weekDayEng(widget.target.weekday),
+                        " ${widget.target.day}", //+ weekDayEng(widget.target.weekday),
                         style: TextStyle(
                             fontSize: SizeConfig.blockSizeHorizontal! * 15,
                             fontWeight: FontWeight.w700,
@@ -223,11 +212,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final tableData = ref.read(timeTableProvider);
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
-    String targetKey = widget.target.year.toString() +
-        "-" +
-        widget.target.month.toString().padLeft(2, "0") +
-        "-" +
-        widget.target.day.toString().padLeft(2, "0");
+    String targetKey = "${widget.target.year}-${widget.target.month.toString().padLeft(2, "0")}-${widget.target.day.toString().padLeft(2, "0")}";
 
     if (data.sortedDataByDay[targetKey] == null &&
         tableData.currentSemesterClasses[widget.target.weekday] == null) {
@@ -447,12 +432,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           onTap: () {
             showDeleteDialogue(
                 context,
-                "タグ「" +
-                    returnTagTitle(
+                "タグ「${returnTagTitle(
                         data.sortedDataByDay[targetKey]
                             .elementAt(index)["tagID"],
-                        ref) +
-                    "」が紐づいているすべての予定", () async {
+                        ref)}」が紐づいているすべての予定", () async {
               await deleteAllScheduleWithTag(
                   targetDayData.elementAt(index)["tagID"], ref, setState);
               isEdited = false;
@@ -484,7 +467,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     }
 
     if (timeStartController != "" && timeEndController != "") {
-      dateStartAndEnd = timeStartController + "～" + timeEndController;
+      dateStartAndEnd = "$timeStartController～$timeEndController";
     } else if (timeStartController != "") {
       dateStartAndEnd = timeStartController;
     }
@@ -693,7 +676,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(startTime + "~" + endTime,
+                      Text("$startTime~$endTime",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
@@ -705,7 +688,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text(data.intToWeekday(classData["weekday"]) + "の授業",
+                      Text("${data.intToWeekday(classData["weekday"])}の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
@@ -1148,9 +1131,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             Row(children: [
               const Spacer(),
               Text(
-                dtEnd.hour.toString().padLeft(2, "0") +
-                    ":" +
-                    dtEnd.minute.toString().padLeft(2, "0"),
+                "${dtEnd.hour.toString().padLeft(2, "0")}:${dtEnd.minute.toString().padLeft(2, "0")}",
                 style:
                     const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -1456,12 +1437,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             "") {
       return "      終日";
     } else {
-      return "      " +
+      return "${"      " +
           ref
               .read(calendarDataProvider)
               .templateData
-              .elementAt(index)["startTime"] +
-          " ～ " +
+              .elementAt(index)["startTime"]} ～ " +
           ref
               .read(calendarDataProvider)
               .templateData

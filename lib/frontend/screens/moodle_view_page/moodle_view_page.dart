@@ -1,31 +1,28 @@
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
-import 'package:html/dom.dart' as html;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:http/http.dart';
 
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
-import 'dart:io';
 import '../../../backend/home_widget.dart';
-import '../common/loading.dart';
 import "./request_calendar_url.dart";
 import "../../../backend/DB/handler/user_info_db_handler.dart";
 
 void printWrapped(String text) {
-  final pattern = new RegExp('.{1,500}'); // 800 is the size of each chunk
+  final pattern = RegExp('.{1,500}'); // 800 is the size of each chunk
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
 InAppWebView? webView; // InAppWebViewを保持する変数
 
 class MoodleViewPage extends ConsumerStatefulWidget {
+  const MoodleViewPage({super.key});
+
   @override
   _MoodleViewPageState createState() => _MoodleViewPageState();
 }

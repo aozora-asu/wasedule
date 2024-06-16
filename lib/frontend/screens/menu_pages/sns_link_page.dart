@@ -6,6 +6,8 @@ import '../../assist_files/size_config.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SnsLinkPage extends StatefulWidget {
+  const SnsLinkPage({super.key});
+
   @override
   _SnsLinkPageState createState() => _SnsLinkPageState();
 }
@@ -54,7 +56,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:5),
          PrivacyPolicyLauncher(),
          const SizedBox(height:5),
-         ErrorReportButton(),
+         const ErrorReportButton(),
          const SizedBox(height:20),
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
@@ -69,7 +71,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
 }
 
 class HomePageUrlLauncher extends StatelessWidget {
-  HomePageUrlLauncher({Key? key}) : super(key: key);
+  HomePageUrlLauncher({super.key});
 
   final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
 
@@ -90,7 +92,7 @@ class HomePageUrlLauncher extends StatelessWidget {
 
 
 class ErrorReportButton extends StatelessWidget {
-  ErrorReportButton({Key? key}) : super(key: key);
+  const ErrorReportButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,7 @@ class ErrorReportButton extends StatelessWidget {
   }
 }
 class InstaUrlLauncher extends StatelessWidget {
-  InstaUrlLauncher({Key? key}) : super(key: key);
+  InstaUrlLauncher({super.key});
 
   final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
 
@@ -124,7 +126,7 @@ class InstaUrlLauncher extends StatelessWidget {
 }
 
 class XUrlLauncher extends StatelessWidget {
-  XUrlLauncher({Key? key}) : super(key: key);
+  XUrlLauncher({super.key});
 
   final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
 
@@ -146,8 +148,8 @@ class XUrlLauncher extends StatelessWidget {
 
 class PrivacyPolicyLauncher extends StatelessWidget {
   PrivacyPolicyLauncher({
-    Key? key,
-    }) : super(key: key);
+    super.key,
+    });
 
   final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
 

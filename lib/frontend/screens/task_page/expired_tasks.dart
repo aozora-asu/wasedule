@@ -4,15 +4,13 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:intl/intl.dart';
 
-import '../common/app_bar.dart';
-import '../common/burger_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 
 class ExpiredTaskPage extends ConsumerStatefulWidget {
   List<Map<String, dynamic>> expiredData = [];
   StateSetter setosute;
-  ExpiredTaskPage ({
+  ExpiredTaskPage ({super.key, 
      required this.setosute
   });
   
@@ -57,7 +55,7 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
             itemBuilder: (BuildContext context, int i) {
               DateTime dateEnd = DateTime.fromMillisecondsSinceEpoch(
                   expiredData.elementAt(i)["dtEnd"]);
-              String adjustedDtEnd = ("期限：" + DateFormat("yyyy年MM月dd日 HH:mm").format(dateEnd));
+              String adjustedDtEnd = ("期限：${DateFormat("yyyy年MM月dd日 HH:mm").format(dateEnd)}");
               return Container(
                   width: SizeConfig.blockSizeHorizontal! * 100,
                   padding: const EdgeInsets.only(

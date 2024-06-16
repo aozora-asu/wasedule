@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
@@ -11,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TimeInputPage extends ConsumerStatefulWidget{
   late Map<String,dynamic> targetDayData;
 
-  TimeInputPage({
+  TimeInputPage({super.key, 
     required this.targetDayData,
   });
 
@@ -37,7 +36,7 @@ class  TimeInputPageState extends ConsumerState<TimeInputPage> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children:[
     Text(
-      " " + widget.targetDayData["date"] + "の勉強時間",
+      "${" " + widget.targetDayData["date"]}の勉強時間",
       style: const TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color:Colors.white),
     ),
     const SizedBox(height: 15),
@@ -222,12 +221,7 @@ Widget submitButton(){
             ),
             child:
               Text(
-                userImput["hourDigit10"].toString() +
-                userImput["hourDigit1"].toString() + 
-                "時間" +
-                userImput["minuteDigit10"].toString() +
-                userImput["minuteDigit1"].toString() +
-                "分で登録",
+                "${userImput["hourDigit10"]}${userImput["hourDigit1"]}時間${userImput["minuteDigit10"]}${userImput["minuteDigit1"]}分で登録",
                 style: const TextStyle(color:Colors.white)
                 ),
           );

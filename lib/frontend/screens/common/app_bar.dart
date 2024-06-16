@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
-import 'package:flutter_calandar_app/test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -26,8 +22,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
   CustomAppBar({
     required this.backButton,
     this.pageNum,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
 
     Color contentColor = Colors.white;
@@ -113,7 +109,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
 
   void showFeedBackDialog(BuildContext context) {
-    final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
+    final urlLaunchWithStringButton = UrlLaunchWithStringButton();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -123,7 +119,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
           actions: <Widget>[
             buttonModel(
               (){
-                  _urlLaunchWithStringButton.launchUriWithString(
+                  urlLaunchWithStringButton.launchUriWithString(
                   context,
                   "https://apps.apple.com/jp/app/%E3%82%8F%E3%81%9B%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/id6479050214",
                 );
@@ -150,7 +146,7 @@ Widget popupMenuButton(color){
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SnsLinkPage()));
+              MaterialPageRoute(builder: (context) => const SnsLinkPage()));
           }
         )
       ),
@@ -172,7 +168,7 @@ Widget popupMenuButton(color){
 }
 
 class AppBarThumbNail extends ConsumerStatefulWidget {
-  const AppBarThumbNail({Key? key}) : super(key: key);
+  const AppBarThumbNail({super.key});
 
   @override
   _AppBarThumbNailState createState() => _AppBarThumbNailState();
@@ -318,7 +314,7 @@ Widget taskPreview(){
           fontSize: SizeConfig.blockSizeVertical! *1.5
           )
       ),
-      Text(taskLength.toString() + "件",
+      Text("$taskLength件",
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: SizeConfig.blockSizeVertical! *2
@@ -360,7 +356,7 @@ Widget taskPreview(){
           fontSize: SizeConfig.blockSizeVertical! *1.25
           )
       ),
-      Text(hour +"h "+minute +"m",
+      Text("${hour}h ${minute}m",
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: SizeConfig.blockSizeVertical! *2

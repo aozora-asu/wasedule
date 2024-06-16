@@ -20,6 +20,8 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manage
 import 'package:intl/intl.dart';
 
 class TagAndTemplatePage extends ConsumerStatefulWidget {
+  const TagAndTemplatePage({super.key});
+
   @override
   _TagAndTemplatePageState createState() => _TagAndTemplatePageState();
 }
@@ -185,9 +187,8 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
         if (targetData.elementAt(index)["startTime"].trim() != "" &&
             targetData.elementAt(index)["endTime"].trim() != "") {
           dateTimeData = Text(
-            " " +
-                targetData.elementAt(index)["startTime"] +
-                "～" +
+            "${" " +
+                targetData.elementAt(index)["startTime"]}～" +
                 targetData.elementAt(index)["endTime"],
             style: const TextStyle(
                 color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
@@ -301,14 +302,14 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
             const SizedBox(width: 15),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
-                "時給：" + sortedData.elementAt(index)["wage"].toString() + "円",
+                "時給：${sortedData.elementAt(index)["wage"]}円",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                "交通費：" + sortedData.elementAt(index)["fee"].toString() + "円",
+                "交通費：${sortedData.elementAt(index)["fee"]}円",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -364,8 +365,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
 
                       showDeleteDialogue(
                         context,
-                        "タグ「" + returnTagTitle(sortedData.elementAt(index)["tagID"],ref)
-                        + "」が紐づいているすべての予定",
+                        "タグ「${returnTagTitle(sortedData.elementAt(index)["tagID"],ref)}」が紐づいているすべての予定",
                         () async {
                           await deleteAllScheduleWithTag(sortedData.elementAt(index)["tagID"],ref,setState);
                         }
@@ -549,7 +549,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
 class TagDialog extends ConsumerStatefulWidget {
   StateSetter setosute;
 
-  TagDialog({required this.setosute});
+  TagDialog({super.key, required this.setosute});
 
   @override
   _TagDialogState createState() => _TagDialogState();
@@ -593,7 +593,7 @@ class _TagDialogState extends ConsumerState<TagDialog> {
             Row(children: [
               ElevatedButton(
                 style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+                    backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR)),
                 onPressed: () {
                   colorPickerDialogue();
                 },
@@ -632,7 +632,7 @@ class _TagDialogState extends ConsumerState<TagDialog> {
               width: 500,
               child: ElevatedButton(
                 style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(MAIN_COLOR)),
+                    backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
                 onPressed: () async {
                   if (wageController.text == "") {
                     wageController.text = "0";
@@ -750,7 +750,7 @@ class EditTagDialog extends ConsumerStatefulWidget {
   Map<String, dynamic> tagData;
   StateSetter setosute;
 
-  EditTagDialog({required this.tagData, required this.setosute});
+  EditTagDialog({super.key, required this.tagData, required this.setosute});
   @override
   _EditTagDialogState createState() => _EditTagDialogState();
 }
@@ -870,9 +870,7 @@ class _EditTagDialogState extends ConsumerState<EditTagDialog> {
 
   // Color型からint型への変換関数
   int colorToInt(Color? color) {
-    if (color == null) {
-      color = MAIN_COLOR;
-    }
+    color ??= MAIN_COLOR;
     // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
     return (color.alpha << 24) |
         (color.red << 16) |
@@ -1001,22 +999,16 @@ Future<String> showTagDialogue(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "時給：" +
-                                        data.tagData
-                                            .elementAt(index)["wage"]
-                                            .toString() +
-                                        "円",
+                                    "時給：${data.tagData
+                                            .elementAt(index)["wage"]}円",
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    "交通費：" +
-                                        data.tagData
-                                            .elementAt(index)["fee"]
-                                            .toString() +
-                                        "円",
+                                    "交通費：${data.tagData
+                                            .elementAt(index)["fee"]}円",
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
@@ -1052,9 +1044,9 @@ Future<String> showTagDialogue(
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                          child: dateTimeData,
                                           padding: const EdgeInsets.only(
-                                              left: 15, top: 3)),
+                                              left: 15, top: 3),
+                                          child: dateTimeData),
                                       Text(
                                         "  " +
                                             data.tagData
@@ -1222,7 +1214,7 @@ Widget validTagChip(Map data) {
         ),
       ),
       Text(
-        "  " + truncateString(data["title"]),
+        "  ${truncateString(data["title"])}",
         style: const TextStyle(
             color: Colors.white, fontSize: 15, overflow: TextOverflow.ellipsis),
       ),
@@ -1272,7 +1264,7 @@ String truncateString(String input) {
   if (input.length <= 8) {
     return input;
   } else {
-    return input.substring(0, 8) + "…";
+    return "${input.substring(0, 8)}…";
   }
 }
 

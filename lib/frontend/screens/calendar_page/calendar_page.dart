@@ -3,13 +3,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_contents_page/sns_contents_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/study_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
@@ -46,8 +40,8 @@ var randomNumber = random.nextInt(10); // 0から10までの整数を生成
 
 class Calendar extends ConsumerStatefulWidget {
   const Calendar({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
   // bool get didNotificationLaunchApp =>
   //     notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
@@ -60,14 +54,8 @@ class _CalendarState extends ConsumerState<Calendar> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isScreenShotBeingTaken;
   late String targetMonth = "";
-  String thisMonth = DateTime.now().year.toString() +
-      "/" +
-      DateTime.now().month.toString().padLeft(2, '0');
-  String today = DateTime.now().year.toString() +
-      "/" +
-      DateTime.now().month.toString().padLeft(2, '0') +
-      "/" +
-      DateTime.now().day.toString().padLeft(2, '0');
+  String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
+  String today = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
   late int thisYear;
   late int semesterNum;
   late String targetSemester;
@@ -196,7 +184,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       }
     }
 
-    targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+    targetSemester = "$thisYear-$semesterNum";
   }
 
   Future<List<Map<String, dynamic>>> loadDataBases() async {
@@ -296,7 +284,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
             child: Row(children: [
               const Spacer(),
-              AddEventButton(),
+              const AddEventButton(),
               const SizedBox(width: 10),
               calendarShareButton(context),
             ])));
@@ -368,7 +356,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => TagAndTemplatePage()),
+                                    builder: (context) => const TagAndTemplatePage()),
                               );
                             },
                             icon: const Icon(Icons.tag,
@@ -380,7 +368,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                     fontWeight: FontWeight.bold)),
                             style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(BLUEGREY),
+                                  WidgetStatePropertyAll(BLUEGREY),
                             ),
                           ),
                         ),
@@ -454,7 +442,7 @@ class _CalendarState extends ConsumerState<Calendar> {
           menuListChild(Icons.info, "サポート", () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SnsLinkPage()),
+              MaterialPageRoute(builder: (context) => const SnsLinkPage()),
             );
           }),
         const SizedBox(height: 15),
@@ -501,7 +489,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       year += 1;
       setState(() {
         renewSemesterNum(year, 12);
-        increasedMonth = year.toString() + "/" + "01";
+        increasedMonth = "$year/01";
       });
     } else {
       int year = int.parse(targetMonth.substring(0, 4));
@@ -525,7 +513,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       year -= 1;
       setState(() {
         renewSemesterNum(year, 12);
-        decreasedMonth = year.toString() + "/" + "12";
+        decreasedMonth = "$year/12";
       });
     } else {
       int year = int.parse(targetMonth.substring(0, 4));
@@ -560,7 +548,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     } else {
       semesterNum == 5;
     }
-    targetSemester = thisYear.toString() + "-" + semesterNum.toString();
+    targetSemester = "$thisYear-$semesterNum";
   }
 
   Map<String, List<DateTime>> generateCalendarData() {
@@ -916,11 +904,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget calendarCellsChild(DateTime target) {
     final data = ref.read(calendarDataProvider);
-    String targetKey = target.year.toString() +
-        "-" +
-        target.month.toString().padLeft(2, "0") +
-        "-" +
-        target.day.toString().padLeft(2, "0");
+    String targetKey = "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
     DateTime targetDay = DateTime.parse(targetKey);
     DateTime now = DateTime.now();
@@ -960,9 +944,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       Map firstClass = targetDayList.first;
       Map lastClass = targetDayList.last;
       String universityClassData =
-        timeTable.returnBeginningTime(firstClass["period"])
-        + "~"
-        + timeTable.returnEndTime(lastClass["period"]);
+        "${timeTable.returnBeginningTime(firstClass["period"])}~${timeTable.returnEndTime(lastClass["period"])}";
       
       DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
       Widget value = switchWidget(
@@ -996,9 +978,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
           targetDayData.elementAt(index)["endTime"].trim() != "") {
         dateTimeData = Text(
-          " " +
-              targetDayData.elementAt(index)["startTime"] +
-              "～" +
+          "${" " +
+              targetDayData.elementAt(index)["startTime"]}～" +
               targetDayData.elementAt(index)["endTime"],
           style: const TextStyle(color: Colors.grey, fontSize: 7),
         );
@@ -1264,7 +1245,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 const SizedBox(width:15),
                 icon,
                 Text(
-                  " " + headerText,
+                  " $headerText",
                   style: TextStyle(
                       fontSize: SizeConfig.safeBlockVertical! * 1.7,
                       color: Colors.grey),
@@ -1313,7 +1294,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         case 3:
           content = "お問い合わせやほしい機能はわせジュール公式サイトまで \n＞＞『使い方ガイドとサポート』から";
         case 4:
-          content = "「このアプリいいね」と君が思うなら\n" + today + "は シェアだ記念日";
+          content = "「このアプリいいね」と君が思うなら\n$todayは シェアだ記念日";
         //"友達とシェアして便利！「SNS共有コンテンツ」をチェック  \n＞＞『SNS共有コンテンツ』から";
         case 5:
           content = "カレンダーテンプレート機能で、いつもの予定を楽々登録！ \n＞＞『# タグとテンプレート』から";
@@ -1339,7 +1320,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HowToUsePage()),
+                MaterialPageRoute(builder: (context) => const HowToUsePage()),
               );
             },
             child: Container(
@@ -1422,11 +1403,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<DateTime, dynamic>> mapList = [];
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
-    String targetKey = target.year.toString() +
-        "-" +
-        target.month.toString().padLeft(2, "0") +
-        "-" +
-        target.day.toString().padLeft(2, "0");
+    String targetKey = "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
     DateTime targetDay = DateTime.parse(targetKey);
     DateTime now = DateTime.now();
@@ -1495,7 +1472,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return Column(children: [
         menuList(
           Icons.calendar_month,
-          "きょうの予定" + DateFormat("   MM月dd日 (E)").format(DateTime.now()),
+          "きょうの予定${DateFormat("   MM月dd日 (E)").format(DateTime.now())}",
           true,
           [
           Container(height:2,color:BACKGROUND_COLOR),
@@ -1671,10 +1648,9 @@ class _CalendarState extends ConsumerState<Calendar> {
       tagThumbnailer = Row(children: [
         tagThumbnail(sortedMapList.elementAt(index).values.first["tagID"]),
         Text(
-          " " +
-              returnTagTitle(
+          " ${returnTagTitle(
                   sortedMapList.elementAt(index).values.first["tagID"] ?? "",
-                  ref),
+                  ref)}",
           style: TextStyle(
               color: Colors.grey,
               fontSize: SizeConfig.blockSizeHorizontal! * 3,
@@ -1729,7 +1705,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   tagThumbnailer,
-                  Container(
+                  SizedBox(
                     width: SizeConfig.blockSizeHorizontal! * 70,
                     child: Text(
                       " " +
@@ -1922,11 +1898,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        ref.read(timeTableProvider).intToWeekday(sortedMapList
+                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList
                                 .elementAt(index)
                                 .values
-                                .first["weekday"]) +
-                            "の授業、",
+                                .first["weekday"])}の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,
@@ -2399,7 +2374,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget arbeitStatsPreview(targetMonth) {
     String year = targetMonth.substring(0, 4);
     String month = targetMonth.substring(5, 7);
-    String targetKey = year + "-" + month;
+    String targetKey = "$year-$month";
     TextStyle titletyle = TextStyle(
         color: Colors.grey, fontSize: SizeConfig.blockSizeHorizontal! * 4);
     TextStyle previewStyle = TextStyle(
@@ -2412,13 +2387,12 @@ class _CalendarState extends ConsumerState<Calendar> {
       Padding(
           padding: const EdgeInsets.all(10),
           child: Column(children: [
-            Text(year + "年 推計年収", style: titletyle),
+            Text("$year年 推計年収", style: titletyle),
             const Divider(height: 1,color:Colors.transparent),
             Text(
-                ArbeitCalculator().formatNumberWithComma(ArbeitCalculator()
+                "${ArbeitCalculator().formatNumberWithComma(ArbeitCalculator()
                         .yearlyWageSumWithAdditionalWorkTime(
-                            targetMonth, ref)) +
-                    " 円",
+                            targetMonth, ref))} 円",
                 style: previewStyle),
           ])),
       Container(height:2,color:BACKGROUND_COLOR),
@@ -2428,15 +2402,14 @@ class _CalendarState extends ConsumerState<Calendar> {
             child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(children: [
-                  Text(month + "月 推計月収", style: titletyle),
+                  Text("$month月 推計月収", style: titletyle),
                   
                   Text(
-                      ArbeitCalculator().formatNumberWithComma(
+                      "${ArbeitCalculator().formatNumberWithComma(
                               ArbeitCalculator()
                                       .monthlyWageSum(targetMonth, ref) +
                                   ArbeitCalculator()
-                                      .monthlyFeeSumOfAllTags(targetKey, ref)) +
-                          " 円",
+                                      .monthlyFeeSumOfAllTags(targetKey, ref))} 円",
                       style: previewStyle),
                 ])),
           ),
@@ -2445,13 +2418,10 @@ class _CalendarState extends ConsumerState<Calendar> {
             child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(children: [
-                  Text(month + "月  労働時間合計", style: titletyle),
+                  Text("$month月  労働時間合計", style: titletyle),
                   
                   Text(
-                      workTimeSum.inHours.toString() +
-                          "時間" +
-                          (workTimeSum.inMinutes % 60).toString() +
-                          " 分",
+                      "${workTimeSum.inHours}時間${workTimeSum.inMinutes % 60} 分",
                       style: previewStyle),
                 ])),
           ),

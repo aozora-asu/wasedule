@@ -2,7 +2,6 @@ import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:home_widget/home_widget.dart';
 import 'dart:convert';
-import 'package:flutter/services.dart';
 
 const String appGroupID = "group.com.example.wasedule";
 const String iOSWidgetName = 'nextCourseWidget';

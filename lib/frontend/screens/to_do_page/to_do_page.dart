@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
+  const TaskPage({super.key});
+
   @override
   _TaskPageState createState() => _TaskPageState();
 }

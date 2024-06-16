@@ -12,6 +12,8 @@ import '../menu_pages/setting_page.dart';
 
 
 class burgerMenu extends ConsumerWidget {
+  const burgerMenu({super.key});
+
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
@@ -42,14 +44,14 @@ class burgerMenu extends ConsumerWidget {
           menuPanel(
             Icons.school,
             "使い方ガイド",
-            MaterialPageRoute(builder: (context) => HowToUsePage()),
+            MaterialPageRoute(builder: (context) => const HowToUsePage()),
             context
           ),
 
           scheduleEmptyFlag(ref,menuPanel(
             Icons.tag_rounded,
             "タグとテンプレート",
-            MaterialPageRoute(builder: (context) => TagAndTemplatePage()),
+            MaterialPageRoute(builder: (context) => const TagAndTemplatePage()),
             context
           ),),
 
@@ -71,7 +73,7 @@ class burgerMenu extends ConsumerWidget {
           menuPanel(
             Icons.info_rounded,
             "サポート",
-            MaterialPageRoute(builder: (context) => SnsLinkPage()),
+            MaterialPageRoute(builder: (context) => const SnsLinkPage()),
             context
           ),
 

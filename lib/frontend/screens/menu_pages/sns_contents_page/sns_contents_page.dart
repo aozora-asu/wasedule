@@ -4,12 +4,14 @@ import '../../../assist_files/colors.dart';
 import '../../../assist_files/size_config.dart';
 
 class SnsContentsPage extends StatefulWidget {
+  const SnsContentsPage({super.key});
+
   @override
   _SnsContentsPageState createState() => _SnsContentsPageState();
 }
 
 class _SnsContentsPageState extends State<SnsContentsPage> {
-  TextEditingController _urlController = TextEditingController();
+  final TextEditingController _urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
@@ -47,7 +49,7 @@ class _SnsContentsPageState extends State<SnsContentsPage> {
                 linkPanel(Icons.sunny,"#私の月間忙しさ予報", () {
                   Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ScheduleForecastPage()),
+                  MaterialPageRoute(builder: (context) => const ScheduleForecastPage()),
                   );
                  }, Colors.orange,"いつ課題で余裕がないのか知らせておこう！"),
                 SizedBox(height:SizeConfig.blockSizeVertical!*2),

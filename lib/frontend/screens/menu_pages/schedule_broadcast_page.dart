@@ -2,15 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_metaInfo_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/models/schedule_meta_data.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/code_share_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -21,6 +18,8 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:ulid/ulid.dart';
 
 class DataUploadPage extends ConsumerStatefulWidget {
+  const DataUploadPage({super.key});
+
   @override
   _DataUploadPageState createState() => _DataUploadPageState();
 }
@@ -174,7 +173,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       return const SizedBox();
     } else {
       return Row(children: [
-        Text("有効期限(~" + maxDay.toString() + "日)"),
+        Text("有効期限(~$maxDay日)"),
         const Spacer(),
         SizedBox(
             width: SizeConfig.blockSizeHorizontal! * 20,
@@ -205,7 +204,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           const Text("選択中："),
           tagChip(tagID, ref),
           const SizedBox(width: 10),
-          Text(shareScheduleList.length.toString() + "件",
+          Text("${shareScheduleList.length}件",
               style: const TextStyle(color: Colors.grey)),
         ]),
         const SizedBox(height: 5),
@@ -235,7 +234,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         if (targetDayData["startTime"].trim() != "" &&
             targetDayData["endTime"].trim() != "") {
           dateTimeData = Text(
-            " " + targetDayData["startTime"] + "～" + targetDayData["endTime"],
+            "${" " + targetDayData["startTime"]}～" + targetDayData["endTime"],
             style: const TextStyle(color: Colors.grey),
           );
         } else if (targetDayData["startTime"].trim() != "") {
@@ -381,8 +380,8 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     setosute(() {});
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
                         if (!isIDValid) {
                           return Colors.grey; //無効時の色
                         } else {
@@ -472,7 +471,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         return AlertDialog(
           title: const Text('アップロードデータが更新されました',
               style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           actions: <Widget>[
             const SizedBox(height: 10),
             okButton(context, 500.0)
@@ -581,18 +580,15 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                                   context, "アップロード中データ", scheduleList);
                             },
                             child: Text(
-                              "ほか" + (scheduleList.length - 1).toString() + "件",
+                              "ほか${scheduleList.length - 1}件",
                               style: const TextStyle(color: Colors.blue),
                               overflow: TextOverflow.ellipsis,
                             )),
                         const Spacer(),
                         Text(
-                          "あと" +
-                              dtEnd
+                          "あと${dtEnd
                                   .difference(DateTime.now())
-                                  .inDays
-                                  .toString() +
-                              "日",
+                                  .inDays}日",
                           style: const TextStyle(color: Colors.redAccent),
                           overflow: TextOverflow.ellipsis,
                         )
@@ -767,9 +763,8 @@ void showSchedulesDialogue(context, String text, List<dynamic> data) {
               if (targetDayData["startTime"].trim() != "" &&
                   targetDayData["endTime"].trim() != "") {
                 dateTimeData = Text(
-                  " " +
-                      targetDayData["startTime"] +
-                      "～" +
+                  "${" " +
+                      targetDayData["startTime"]}～" +
                       targetDayData["endTime"],
                   style: const TextStyle(color: Colors.grey),
                 );

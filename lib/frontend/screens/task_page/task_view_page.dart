@@ -1,20 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/none_task_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'tasklist_sort_date.dart';
 import 'dart:async';
@@ -32,6 +23,8 @@ import "../../../backend/DB/handler/user_info_db_handler.dart";
 import "../../../backend/email.dart";
 
 class TaskViewPage extends ConsumerStatefulWidget {
+  const TaskViewPage({super.key});
+
   @override
   TaskViewPageState createState() => TaskViewPageState();
 }
@@ -106,7 +99,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Container(
+                    child: SizedBox(
                       height: SizeConfig.blockSizeVertical! * 4.5,
                       child: Row(children: [
                         Align(
@@ -170,7 +163,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               if (ref.read(taskDataProvider).isInit) {
-                return LoadingScreen();
+                return const LoadingScreen();
               } else {
                 return TaskListByDtEnd(
                     sortedData:
@@ -200,7 +193,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               Map<DateTime, List<Map<String, dynamic>>> sortedTasks =
                   taskData.sortDataByDtEnd(taskData.taskDataList);
               if (sortedTasks.isEmpty) {
-                return NoTaskPage();
+                return const NoTaskPage();
               } else {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
@@ -215,7 +208,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).isRenewed = false;
               }
 
-              return NoTaskPage();
+              return const NoTaskPage();
             }
           },
         );
@@ -226,7 +219,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               if (ref.read(taskDataProvider).isInit) {
-                return LoadingScreen();
+                return const LoadingScreen();
               } else {
                 return TaskListByCategory(
                     sortedData:
@@ -266,7 +259,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         );
 
       default:
-        return LoadingScreen();
+        return const LoadingScreen();
     }
   }
 
@@ -332,8 +325,8 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 }
 
 void showErrorReportDialogue(context) {
-  String _text = "";
-  bool _isChecked = true;
+  String text = "";
+  bool isChecked = true;
   Message message;
   bool isSuccess;
   showDialog(
@@ -350,17 +343,17 @@ void showErrorReportDialogue(context) {
                 textInputAction: TextInputAction.done,
                 onChanged: (value) {
                   setState(() {
-                    _text = value;
+                    text = value;
                   });
                 },
                 placeholder: "概要\n(不具合報告の場合、できるだけ詳細にお願いいたします。)",
               ),
               Row(children: [
                 CupertinoCheckbox(
-                    value: _isChecked,
+                    value: isChecked,
                     onChanged: (value) {
                       setState(() {
-                        _isChecked = value!;
+                        isChecked = value!;
                       });
                     }),
                 const Expanded(
@@ -382,8 +375,8 @@ void showErrorReportDialogue(context) {
             TextButton(
               child: const Text('送信'),
               onPressed: () async {
-                message = Message(content: _text);
-                isSuccess = await message.sendEmail(_isChecked);
+                message = Message(content: text);
+                isSuccess = await message.sendEmail(isChecked);
 
                 Navigator.of(context).pop();
                 if (isSuccess) {

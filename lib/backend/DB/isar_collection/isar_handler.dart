@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/converter.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 
 import "./vacant_room.dart";
 import 'package:isar/isar.dart';

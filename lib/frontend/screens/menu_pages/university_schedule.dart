@@ -1,23 +1,20 @@
 import 'dart:math';
 
 import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 
 class UnivSchedulePage extends ConsumerStatefulWidget {
+  const UnivSchedulePage({super.key});
+
   @override
   _UnivSchedulePageState createState() => _UnivSchedulePageState();
 }
@@ -371,7 +368,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(depName + 'の年間行事予定をカレンダーに追加しますか？'),
+          title: Text('$depNameの年間行事予定をカレンダーに追加しますか？'),
           actions: <Widget>[
             const Align(
                 alignment: Alignment.centerLeft,
@@ -384,7 +381,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                   String nextYear = (returnFiscalYear(DateTime.now()) +1).toString();
 
                   bool isScheduleDownloadSuccess
-                    = await importAcademicCalendar(alphabet + "_" + currentYear + "_" + nextYear);
+                    = await importAcademicCalendar("${alphabet}_${currentYear}_$nextYear");
 
                   if (isScheduleDownloadSuccess) {
                     showDownloadDoneDialogue("データがダウンロードされました！");
@@ -452,8 +449,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/top/about/work/organizations/academic-affairs-division/academic-calendar",
             );
@@ -468,8 +465,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fpse/pse/students/calendar/",
             );
@@ -482,8 +479,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/folaw/law/students/schedule/",
             );
@@ -496,8 +493,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fcom/soc/students/calendar",
             );
@@ -510,8 +507,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fire/sils/students/calendar/",
             );
@@ -524,8 +521,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fsss/sss/students/schedule/",
             );
@@ -538,8 +535,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fedu/edu/students/schedule/",
             );
@@ -552,8 +549,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/flas/hss/students/calendar/",
             );
@@ -566,8 +563,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/flas/cms/students/calendar/",
             );
@@ -580,8 +577,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fsci/students/calendar/",
             );
@@ -594,8 +591,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fsci/students/calendar/",
             );
@@ -608,8 +605,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fsci/students/calendar/",
             );
@@ -622,8 +619,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
 
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fhum/hum/campus-life/schedule/",
             );
@@ -636,8 +633,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         
         SimpleDialogOption(
           onPressed: () {
-            final _urlLaunchWithStringButton = UrlLaunchWithStringButton();
-            _urlLaunchWithStringButton.launchUriWithString(
+            final urlLaunchWithStringButton = UrlLaunchWithStringButton();
+            urlLaunchWithStringButton.launchUriWithString(
               context,
               "https://www.waseda.jp/fsps/sps/students-2/registration/",
             );

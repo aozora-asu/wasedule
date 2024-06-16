@@ -194,9 +194,7 @@ class TagDatabaseHelper {
 
   // Color型からint型への変換関数
   int colorToInt(Color? color) {
-    if (color == null) {
-      color = MAIN_COLOR;
-    }
+    color ??= MAIN_COLOR;
     // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
     return (color.alpha << 24) |
         (color.red << 16) |

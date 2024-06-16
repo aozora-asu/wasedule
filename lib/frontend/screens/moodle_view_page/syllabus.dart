@@ -210,15 +210,15 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
 
 List<Map<String, int?>> extractDayAndPeriod(String input) {
   // 「月3時限」タイプの抽出
-  RegExp _pattern1 = RegExp(r'([月火水木金土日])(\d)時限');
+  RegExp pattern1 = RegExp(r'([月火水木金土日])(\d)時限');
   // 「月3-4」タイプの抽出
-  RegExp _pattern2 = RegExp(r'([月火水木金土日])(\d)-(\d)');
+  RegExp pattern2 = RegExp(r'([月火水木金土日])(\d)-(\d)');
 
-  RegExp _pattern3 = RegExp(r'無その他');
+  RegExp pattern3 = RegExp(r'無その他');
 
   List<Map<String, int?>> result = [];
-  if (_pattern2.hasMatch(input)) {
-    Iterable<RegExpMatch> matches = _pattern2.allMatches(input);
+  if (pattern2.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = pattern2.allMatches(input);
     for (var match in matches) {
       result.add({
         'weekday': weekdayToNumber(match.group(1)),
@@ -231,8 +231,8 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
     }
   }
 
-  if (_pattern1.hasMatch(input)) {
-    Iterable<RegExpMatch> matches = _pattern1.allMatches(input);
+  if (pattern1.hasMatch(input)) {
+    Iterable<RegExpMatch> matches = pattern1.allMatches(input);
     for (var match in matches) {
       result.add({
         'weekday': weekdayToNumber(match.group(1)),
@@ -240,7 +240,7 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
       });
     }
   }
-  if (_pattern3.hasMatch(input)) {
+  if (pattern3.hasMatch(input)) {
     result.add({'weekday': null, 'period': null});
   }
   if (result.isEmpty) {
@@ -251,8 +251,8 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
 }
 
 String extractClassRoom(String input) {
-  RegExp _pattern3 = RegExp(r'\d+:(.*)\s');
-  Iterable<RegExpMatch> matches = _pattern3.allMatches(input);
+  RegExp pattern3 = RegExp(r'\d+:(.*)\s');
+  Iterable<RegExpMatch> matches = pattern3.allMatches(input);
   List<String> result = [];
   if (matches.isEmpty) {
     result.add(input);
@@ -271,7 +271,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
       {};
   RequestQuery requestQuery;
   String htmlString;
-  List<Map<String, int?>> _periodAndDateList;
+  List<Map<String, int?>> periodAndDateList;
   DateTime now = DateTime.now();
 
   List<String> quarterList = [];
@@ -291,7 +291,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
 
       for (var trElement in trElements) {
         final tdElements = trElement.querySelectorAll("td");
-        _periodAndDateList =
+        periodAndDateList =
             extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
         String? semester = convertSemester(tdElements[5].text);
         if (semester != null) {
@@ -300,7 +300,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
           //クォーター制に分割して、合致するところにデータを挿入する
           for (var quarter in quarterList) {
             //時限-曜日が複数羅列している時の処理
-            for (var periodAndDate in _periodAndDateList) {
+            for (var periodAndDate in periodAndDateList) {
               if (periodAndDate["weekday"] != null &&
                   periodAndDate["period"] != null) {
                 int weekday = periodAndDate["weekday"]!;

@@ -1,7 +1,5 @@
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../../../frontend/screens/moodle_view_page/syllabus.dart';
 import "../../../converter.dart";
 
 class SyllabusQueryResult {

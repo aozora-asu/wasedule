@@ -1,10 +1,8 @@
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:intl/date_time_patterns.dart';
 
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import "./constant.dart";
 
 String? period2startTime(int period) {
   switch (period) {
@@ -116,9 +114,7 @@ String? weekday2string(int? weekday, String format) {
 
 // Color型からint型への変換関数
 int color2int(Color? color) {
-  if (color == null) {
-    color = MAIN_COLOR;
-  }
+  color ??= MAIN_COLOR;
   // 16進数の赤、緑、青、アルファの値を結合して1つの整数に変換する
   return (color.alpha << 24) |
       (color.red << 16) |

@@ -4,9 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +17,7 @@ import "../../../backend/notify/notify_content.dart";
 class SettingsPage extends StatelessWidget {
   int? initIndex;
   bool? isAppBar;
-  SettingsPage({
+  SettingsPage({super.key, 
     this.initIndex,
     this.isAppBar
     });
@@ -737,7 +735,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             notificationDescription = Column(children: [
               const Text(" 締切・予定の "),
               Row(children: [
-                Text(hour + "時間" + minute + "分 前",
+                Text("$hour時間$minute分 前",
                     style: const TextStyle(color: Colors.grey))
               ]),
             ]);
@@ -751,7 +749,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               ]),
               Row(children: [
                 const Text(" "),
-                Text(days.toString() + " 日分",
+                Text("$days 日分",
                     style: const TextStyle(color: Colors.grey)),
               ]),
             ]);

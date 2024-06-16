@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 
 class NoTaskPage extends StatefulWidget {
+  const NoTaskPage({super.key});
+
   @override
   _NoTaskPageState createState() => _NoTaskPageState();
 }
@@ -51,8 +52,8 @@ void noUrlDialogue(BuildContext context){
     builder: (BuildContext context) {
       // ダイアログの内容を定義
       return AlertDialog(
-        title: Text('Confirmation'),
-        content: Text('Are you sure you want to delete?'),
+        title: const Text('Confirmation'),
+        content: const Text('Are you sure you want to delete?'),
         actions: [
           // キャンセルボタン
           TextButton(
@@ -60,7 +61,7 @@ void noUrlDialogue(BuildContext context){
               // ダイアログを閉じる
               Navigator.of(context).pop();
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           // 削除ボタン
           TextButton(
@@ -71,7 +72,7 @@ void noUrlDialogue(BuildContext context){
               // ダイアログを閉じる
               Navigator.of(context).pop();
             },
-            child: Text(
+            child: const Text(
               'Delete',
               style: TextStyle(color: Colors.red),
             ),

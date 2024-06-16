@@ -34,7 +34,7 @@ class TimeTableData {
     int? taskPageIndex,
   }) {
     return TimeTableData(
-      timeTableDataList: timeTableDataList ?? this.timeTableDataList,
+      timeTableDataList: timeTableDataList ?? timeTableDataList,
     );
   }
 
@@ -105,7 +105,7 @@ class TimeTableData {
     if(weekDayData.isNotEmpty && thisSemesterData.isNotEmpty){
       startTime = returnBeginningTime(thisSemesterData.first["period"]);
       endTime = returnEndTime(thisSemesterData.last["period"]);
-      result = startTime +"~" + endTime;}
+      result = "$startTime~$endTime";}
     return result;
   }
 

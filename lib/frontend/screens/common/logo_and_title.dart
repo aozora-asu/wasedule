@@ -8,7 +8,7 @@ class LogoAndTitle extends StatelessWidget{
   late bool? isLogoWhite;
   late String? subTitle;
 
-  LogoAndTitle({
+  LogoAndTitle({super.key, 
     required this.size,
     this.isLogoWhite,
     this.color,

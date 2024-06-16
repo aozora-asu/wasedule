@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -209,16 +208,16 @@ Future<void> _configureLocalTimeZone() async {
     return;
   }
   tz.initializeTimeZones();
-  final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName!));
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 class PaddedElevatedButton extends StatelessWidget {
   const PaddedElevatedButton({
     required this.buttonText,
     required this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String buttonText;
   final VoidCallback onPressed;
@@ -236,8 +235,8 @@ class PaddedElevatedButton extends StatelessWidget {
 class HomePage extends StatefulWidget {
   const HomePage(
     this.notificationAppLaunchDetails, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   static const String routeName = '/';
 
@@ -2526,7 +2525,7 @@ class _HomePageState extends State<HomePage> {
     } else if (Platform.isIOS) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      final List<String> fullVersion = iosInfo.systemVersion!.split('.');
+      final List<String> fullVersion = iosInfo.systemVersion.split('.');
       if (fullVersion.isNotEmpty) {
         final int? version = int.tryParse(fullVersion[0]);
         if (version != null && version < 10) {
@@ -2538,7 +2537,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      final List<ActiveNotification>? activeNotifications =
+      final List<ActiveNotification> activeNotifications =
           await flutterLocalNotificationsPlugin.getActiveNotifications();
 
       return Column(
@@ -2550,7 +2549,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Divider(color: Colors.black),
-          if (activeNotifications!.isEmpty)
+          if (activeNotifications.isEmpty)
             const Text('No active notifications'),
           if (activeNotifications.isNotEmpty)
             for (ActiveNotification activeNotification in activeNotifications)
@@ -2714,7 +2713,7 @@ class _HomePageState extends State<HomePage> {
                   AndroidFlutterLocalNotificationsPlugin>()!
               .getNotificationChannels();
 
-      return Container(
+      return SizedBox(
         width: double.maxFinite,
         child: ListView(
           children: <Widget>[
@@ -2972,8 +2971,8 @@ Future<LinuxServerCapabilities> getLinuxCapabilities() =>
 class SecondPage extends StatefulWidget {
   const SecondPage(
     this.payload, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   static const String routeName = '/secondPage';
 
@@ -3018,8 +3017,7 @@ class _InfoValueString extends StatelessWidget {
   const _InfoValueString({
     required this.title,
     required this.value,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final String title;
   final Object? value;
@@ -3047,7 +3045,7 @@ class _InfoValueString extends StatelessWidget {
 
 Future<File> getFilePath() async {
   final directory = await getTemporaryDirectory();
-  return File(directory.path + '/test.txt');
+  return File('${directory.path}/test.txt');
 }
 
 Future<String> _getTask(String urlString) async {

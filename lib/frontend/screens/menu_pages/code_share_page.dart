@@ -16,7 +16,7 @@ class CodeSharePage extends ConsumerStatefulWidget {
   late List<dynamic> scheduleData;
 
   CodeSharePage(
-      {required this.id, required this.tagName, required this.scheduleData});
+      {super.key, required this.id, required this.tagName, required this.scheduleData});
 
   @override
   CodeSharePageState createState() => CodeSharePageState();
@@ -26,14 +26,8 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isPreview;
   late String targetMonth = "";
-  String thisMonth = DateTime.now().year.toString() +
-      "/" +
-      DateTime.now().month.toString().padLeft(2, '0');
-  String today = DateTime.now().year.toString() +
-      "/" +
-      DateTime.now().month.toString().padLeft(2, '0') +
-      "/" +
-      DateTime.now().day.toString().padLeft(2, '0');
+  String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
+  String today = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
   late Color colorTheme;
   late Color backgroundColorTheme;
   late TextEditingController textController;
@@ -184,7 +178,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
 
     return ElevatedButton(
         style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(MAIN_COLOR),
+          backgroundColor: WidgetStatePropertyAll(MAIN_COLOR),
         ),
         child: Row(children: [
           const Icon(Icons.ios_share, color: Colors.white),
@@ -227,7 +221,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
 
     return ElevatedButton(
         style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR),
+          backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR),
         ),
         child: Row(children: [
           Icon(icon, color: Colors.white),
@@ -253,7 +247,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
     return Row(children: [
       ElevatedButton(
         style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+            backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR)),
         onPressed: () {
           changeColorTheme();
         },
@@ -262,7 +256,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
       const SizedBox(width: 10),
       ElevatedButton(
         style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(ACCENT_COLOR)),
+            backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR)),
         onPressed: () {
           changeBackgroundColorTheme();
         },
@@ -373,7 +367,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
       int year = int.parse(targetMonth.substring(0, 4));
       year += 1;
       setState(() {
-        increasedMonth = year.toString() + "/" + "01";
+        increasedMonth = "$year/01";
       });
     } else {
       int month = int.parse(targetMonth.substring(5, 7));
@@ -395,7 +389,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
       int year = int.parse(targetMonth.substring(0, 4));
       year -= 1;
       setState(() {
-        decreasedMonth = year.toString() + "/" + "12";
+        decreasedMonth = "$year/12";
       });
     } else {
       int month = int.parse(targetMonth.substring(5, 7));
@@ -615,11 +609,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
   Widget calendarCellsChild(DateTime target) {
     Widget dateTimeData = Container();
     final data = ref.watch(calendarDataProvider);
-    String targetKey = target.year.toString() +
-        "-" +
-        target.month.toString().padLeft(2, "0") +
-        "-" +
-        target.day.toString().padLeft(2, "0");
+    String targetKey = "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     if (data.sortedDataByDayForShare.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDayForShare[targetKey];
       return SizedBox(
@@ -628,9 +618,8 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                 if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
                     targetDayData.elementAt(index)["endTime"].trim() != "") {
                   dateTimeData = Text(
-                    " " +
-                        targetDayData.elementAt(index)["startTime"] +
-                        "～" +
+                    "${" " +
+                        targetDayData.elementAt(index)["startTime"]}～" +
                         targetDayData.elementAt(index)["endTime"],
                     style: TextStyle(
                         color: Colors.grey,

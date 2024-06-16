@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/todo_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/study_progress_indicator.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/data_receiver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +15,7 @@ class TimerView extends ConsumerStatefulWidget {
   // AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
-  TimerView({
+  TimerView({super.key, 
     this.targetMonthData,
     this.thisMonthData,
     // this.events,
@@ -80,7 +79,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
           child: Column(children:[          
             Row(children:[
               const Icon(Icons.timer,color:Colors.grey,size:20),
-              Text(" " + date + "：タイマー作動中",style: const TextStyle(color:Colors.grey,fontSize:17,),)
+              Text(" $date：タイマー作動中",style: const TextStyle(color:Colors.grey,fontSize:17,),)
             ]),
             buildTimer(startTime,formattedDuration,targetDayData),
             ElevatedButton(
@@ -176,15 +175,15 @@ class  _TimerViewState extends ConsumerState<TimerView> {
       children:[
       SizedBox(height:SizeConfig.blockSizeVertical! *4),
       Text(
-      hours.toString() + "h " + fixedMinutes + "m " + fixedSeconds + "s",
+      "${hours}h ${fixedMinutes}m ${fixedSeconds}s",
       style:const TextStyle(fontSize: 60,fontWeight: FontWeight.bold),
      ),
      SizedBox(height:SizeConfig.blockSizeVertical! *4),
      Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children:[
-      Text("+ この日の勉強記録 " + formattedDuration + " = ",style:const TextStyle(color:Colors.grey,fontSize:17),),
-      Text(formattedEstSum + " ↓",style:const TextStyle(color:Colors.redAccent,fontSize:17,fontWeight: FontWeight.bold),),
+      Text("${"+ この日の勉強記録 " + formattedDuration} = ",style:const TextStyle(color:Colors.grey,fontSize:17),),
+      Text("$formattedEstSum ↓",style:const TextStyle(color:Colors.redAccent,fontSize:17,fontWeight: FontWeight.bold),),
       ])
      
     ]);
@@ -197,7 +196,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
     int minutes = (elapsedDuration.inMinutes % 60);
 
     String fixedMinutes = minutes.toString().padLeft(2,'0');
-    String toBeAddedDuration = hours.toString() + "h " + fixedMinutes + "m";
+    String toBeAddedDuration = "${hours}h ${fixedMinutes}m";
     
     showDialog(
       context: context,
@@ -210,12 +209,9 @@ class  _TimerViewState extends ConsumerState<TimerView> {
               const Icon(Icons.warning_amber_rounded,color: Colors.red,size:40),
               Expanded(child:
                Text(
-                "今回の記録 " + 
-                toBeAddedDuration + 
-                " は、今日の勉強時間 " +
-                formattedDuration +
-                " に加算されずに破棄されます。よろしいですか？",
-                style: TextStyle(fontWeight: FontWeight.bold,fontSize:17), 
+                "${"今回の記録 $toBeAddedDuration は、今日の勉強時間 " +
+                formattedDuration} に加算されずに破棄されます。よろしいですか？",
+                style: const TextStyle(fontWeight: FontWeight.bold,fontSize:17), 
                 )
             ),]),
           
@@ -238,7 +234,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
             },
             
             style:const  ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.redAccent),
+              backgroundColor: WidgetStatePropertyAll(Colors.redAccent),
               ),
             child:const  Row(children:[Spacer(),Text("はい",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),
@@ -248,7 +244,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
             },
             
             style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
+              backgroundColor: WidgetStatePropertyAll(Colors.greenAccent),
               ),
             child: const Row(children:[Spacer(),Text("もどる",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),
@@ -265,7 +261,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
     int minutes = (elapsedDuration.inMinutes % 60);
 
     String fixedMinutes = minutes.toString().padLeft(2,'0');
-    String toBeAddedDuration = hours.toString() + "h " + fixedMinutes + "m";
+    String toBeAddedDuration = "${hours}h ${fixedMinutes}m";
 
     Duration estimatedSum = DateTime.now().difference(startTime) + targetDayData["time"];
 
@@ -283,15 +279,10 @@ class  _TimerViewState extends ConsumerState<TimerView> {
               const Icon(Icons.edit_document,color: Colors.greenAccent,size:40),
               Expanded(child:
                Text(
-                "今日の勉強時間 " +
-                 formattedDuration +
-                " に " +
-                toBeAddedDuration + 
-                " が加算され,合計 " +
-                formattedEstSum +
-                " になりました！"
+                "${"今日の勉強時間 " +
+                 formattedDuration} に $toBeAddedDuration が加算され,合計 $formattedEstSum になりました！"
                 ,
-                style: TextStyle(fontWeight: FontWeight.bold,fontSize:17), 
+                style: const TextStyle(fontWeight: FontWeight.bold,fontSize:17), 
                 )
             ),]),
           
@@ -302,7 +293,7 @@ class  _TimerViewState extends ConsumerState<TimerView> {
             },
             
             style:const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.greenAccent),
+              backgroundColor: WidgetStatePropertyAll(Colors.greenAccent),
               ),
             child:const Row(children:[Spacer(),Text("OK",style:TextStyle(color:Colors.white)),Spacer(),]),
             ),

@@ -6,15 +6,14 @@ import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/scanner_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class DataDownloadPage extends ConsumerStatefulWidget {
+  const DataDownloadPage({super.key});
+
   @override
   _DataDownloadPageState createState() => _DataDownloadPageState();
 }
@@ -239,7 +238,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 25)),
               Text(
-                "あと" + dtEnd.difference(DateTime.now()).inDays.toString() + "日",
+                "あと${dtEnd.difference(DateTime.now()).inDays}日",
                 style: const TextStyle(color: Colors.redAccent),
                 overflow: TextOverflow.ellipsis,
               )

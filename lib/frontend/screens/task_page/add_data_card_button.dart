@@ -1,16 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 
-import '../common/app_bar.dart';
-import '../common/burger_menu.dart';
 import '../../../backend/DB/models/task.dart';
 import '../../../backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +69,7 @@ class InputForm {
 class AddDataCardButton extends ConsumerStatefulWidget {
   late StateSetter setosute;
 
-  AddDataCardButton({required this.setosute});
+  AddDataCardButton({super.key, required this.setosute});
 
   @override
   AddDataCardButtonState createState() => AddDataCardButtonState();
@@ -104,7 +100,7 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
 
 class TaskInputForm extends ConsumerStatefulWidget {
   late StateSetter setosute;
-  TaskInputForm({required this.setosute});
+  TaskInputForm({super.key, required this.setosute});
   @override
   TaskInputFormState createState() => TaskInputFormState();
 }
@@ -363,8 +359,8 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                     }
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (Set<WidgetState> states) {
                       // 条件によってボタンの色を選択
                       if (inputForm.dtEndController.text.isEmpty ||
                           inputForm.titleController.text.isEmpty) {
@@ -374,7 +370,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                         return MAIN_COLOR; // ボタンが通常の場合の色
                       }
                     }),
-                    fixedSize: MaterialStateProperty.all<Size>(Size(
+                    fixedSize: WidgetStateProperty.all<Size>(Size(
                       SizeConfig.blockSizeHorizontal! * 85,
                       SizeConfig.blockSizeHorizontal! * 7.5,
                     )),
@@ -697,7 +693,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                           });
                     },
                     style: const ButtonStyle(
-                        padding: MaterialStatePropertyAll(EdgeInsets.all(1)),
+                        padding: WidgetStatePropertyAll(EdgeInsets.all(1)),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                     child: Text(
                       "カテゴリの追加",
@@ -719,7 +715,7 @@ class DateTimePickerFormField extends ConsumerWidget {
   final Color? labelColor;
 
   DateTimePickerFormField(
-      {required this.controller,
+      {super.key, required this.controller,
       required this.labelText,
       required this.labelColor});
 
@@ -771,19 +767,17 @@ class DateTimePickerFormField extends ConsumerWidget {
       //   },
       // );
 
-      if (pickedTime != null) {
-        _selectedDate = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        controller.text = DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
+      _selectedDate = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+      controller.text = DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
 
-        ref.read(inputFormProvider.notifier).updateDateTimeFields();
-      }
-    }
+      ref.read(inputFormProvider.notifier).updateDateTimeFields();
+        }
   }
 
   @override

@@ -10,7 +10,7 @@ class TimeInputPage extends ConsumerStatefulWidget {
   String inputCategory;
   StateSetter? setState;
 
-  TimeInputPage({
+  TimeInputPage({super.key, 
     required this.target,
     required this.inputCategory,
     this.setState
@@ -241,7 +241,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
             userImput["hourDigit1"].toString();
         minute = userImput["minuteDigit10"].toString() +
             userImput["minuteDigit1"].toString();
-        inputResult = hour + ":" + minute;
+        inputResult = "$hour:$minute";
 
         TextEditingController timeController = TextEditingController();
         final inputForm = ref.watch(scheduleFormProvider);
@@ -270,12 +270,7 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         backgroundColor: MAIN_COLOR, // ボタンの背景色
         textStyle: const TextStyle(color: Colors.white), // テキストの色
       ),
-      child: Text(userImput["hourDigit10"].toString() +
-          userImput["hourDigit1"].toString() +
-          "時" +
-          userImput["minuteDigit10"].toString() +
-          userImput["minuteDigit1"].toString() +
-          "分で登録",
+      child: Text("${userImput["hourDigit10"]}${userImput["hourDigit1"]}時${userImput["minuteDigit10"]}${userImput["minuteDigit1"]}分で登録",
           style:const TextStyle(color:Colors.white)
           ), // ボタンのテキスト
     );
@@ -287,8 +282,8 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         Navigator.pop(context);
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color?>(ACCENT_COLOR),
-        fixedSize: MaterialStateProperty.all<Size>(
+        backgroundColor: WidgetStateProperty.all<Color?>(ACCENT_COLOR),
+        fixedSize: WidgetStateProperty.all<Size>(
           Size(SizeConfig.blockSizeHorizontal! * 45,
               SizeConfig.blockSizeVertical! * 5),
         ),

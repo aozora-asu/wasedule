@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +12,7 @@ class CourseAddPage extends ConsumerStatefulWidget {
   String? semester;
   late StateSetter setTimetableState;
   CourseAddPage(
-      {this.weekDay,
+      {super.key, this.weekDay,
       this.period,
       this.year,
       this.semester,
@@ -95,13 +93,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       height: 2,
     );
 
-    String courseTimeText = year.toString() +
-        "年, " +
-        targetSemester(semester!) +
-        ", " +
-        getJapaneseWeekday(weekDay) +
-        ", " +
-        getPeriodString(period);
+    String courseTimeText = "$year年, ${targetSemester(semester!)}, ${getJapaneseWeekday(weekDay)}, ${getPeriodString(period)}";
 
     return GestureDetector(
         onTap: () {},
@@ -266,7 +258,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                     for (int year in yearList)
                       DropdownMenuItem(
                         value: year,
-                        child: Text(year.toString() + "年"),
+                        child: Text("$year年"),
                       ),
                   ],
                   onChanged: (value) {

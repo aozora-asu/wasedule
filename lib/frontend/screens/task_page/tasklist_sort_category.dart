@@ -2,10 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/sns_link_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
 
 import 'package:expandable/expandable.dart';
@@ -17,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListByCategory extends ConsumerStatefulWidget {
   Map<String, List<Map<String, dynamic>>> sortedData = {};
-  TaskListByCategory({required this.sortedData});
+  TaskListByCategory({super.key, required this.sortedData});
   @override
   _TaskListByCategoryState createState() => _TaskListByCategoryState();
 }
@@ -205,7 +202,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
   Widget categoryTaskGroup(keyIndex) {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    return Container(
+    return SizedBox(
       width: SizeConfig.blockSizeHorizontal! * 100,
       child: ListView.builder(
         shrinkWrap: true,
@@ -242,7 +239,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               child: Container(
                   decoration:const BoxDecoration(
                       color: WHITE,
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                       //border: Border.all(color:Colors.grey,width: 1)
                       ),
                   child: Row(children: [
@@ -313,7 +310,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     String formattedhour = hour.padLeft(2, '0');
     String formattedminute = minute.padLeft(2, '0');
 
-    return formattedhour + ":" + formattedminute;
+    return "$formattedhour:$formattedminute";
   }
 
   String truncateDtEnd(targetData) {

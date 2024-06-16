@@ -1,9 +1,6 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
@@ -24,7 +21,6 @@ import '../screens/to_do_page/to_do_page.dart';
 import '../screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../screens/common/app_bar.dart';
 import '../screens/task_page/task_data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
@@ -32,8 +28,8 @@ class AppPage extends ConsumerStatefulWidget {
   int ? initIndex;
   AppPage({
     this.initIndex,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   @override
   _AppPageState createState() => _AppPageState();
 }
@@ -118,8 +114,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
   
   List<List<Widget>> parentPages(){
-    return [[WasedaMapPage()],
-            [TimeTablePage()],
+    return [[const WasedaMapPage()],
+            [const TimeTablePage()],
             calendarSubPages(),
             taskSubPages(),
             moodleSubPages(),
@@ -183,32 +179,30 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
   List<Widget> calendarSubPages(){
-      String thisMonth = DateTime.now().year.toString() +
-      "/" +
-      DateTime.now().month.toString().padLeft(2, '0');
+      String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
     return [const Calendar(),
-            DataUploadPage(),
+            const DataUploadPage(),
             ArbeitStatsPage(targetMonth: thisMonth),
-            UnivSchedulePage(),
+            const UnivSchedulePage(),
             SettingsPage(isAppBar:false),
-            DataDownloadPage(),
+            const DataDownloadPage(),
            ];
   }
 
   List<Widget> taskSubPages(){
-    return [TaskViewPage(),
+    return [const TaskViewPage(),
             ExpiredTaskPage(setosute: setState),
             DeletedTaskPage(setosute: setState),
             SettingsPage(initIndex:1,isAppBar: false,),
-            TaskPage(),
-            TaskPage(),
+            const TaskPage(),
+            const TaskPage(),
            ];
   }
 
 
   List<Widget> moodleSubPages(){
-    return [MoodleViewPage(),
-            MyWasedaViewPage()
+    return [const MoodleViewPage(),
+            const MyWasedaViewPage()
            ];
   }
 

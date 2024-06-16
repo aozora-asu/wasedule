@@ -17,12 +17,12 @@ class UserDatabaseHelper {
     await _deleteExpairedBackupID(_database);
   }
 
-  Future<void> _deleteExpairedBackupID(Database _database) async {
+  Future<void> _deleteExpairedBackupID(Database database) async {
     // 現在の日付を取得
     DateTime currentDate = DateTime.now();
 
     // 30日前以前のタスクを削除するクエリを実行
-    await _database.update(
+    await database.update(
       'user',
       {
         'backupID': null,

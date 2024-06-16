@@ -32,7 +32,7 @@ class TaskModalSheet extends ConsumerStatefulWidget {
   StateSetter setosute;
   SharedPreferences prefs;
 
-  TaskModalSheet({
+  TaskModalSheet({super.key, 
     required this.targetData,
     required this.setosute,
     required this.prefs
@@ -80,7 +80,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     int id = targetData["id"];
     String? pageID = targetData["pageID"];
     Widget dividerModel = const Divider(height: 1);
-    int _height = (SizeConfig.blockSizeVertical! * 100).round();
+    int height = (SizeConfig.blockSizeVertical! * 100).round();
 
     double bottomMargin = 10;
     if(isEditing){
@@ -307,8 +307,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     ),
                                     const SizedBox(height:5),
                                     Row(children: [
-                                      Text("文字数：" + 
-                                        countJapaneseAlphabetNumericCharacters(taskDraftController.text).toString(),
+                                      Text("文字数：${countJapaneseAlphabetNumericCharacters(taskDraftController.text)}",
                                         style:const TextStyle(fontWeight: FontWeight.bold,color: BLUEGREY),
                                       ),
                                       const Spacer(),
@@ -340,7 +339,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   ])
                                 ),
                                 SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-                                webView(pageID,_height),
+                                webView(pageID,height),
                                 SizedBox(
                                   height: SizeConfig.blockSizeVertical! * 2,
                                 ),
@@ -405,7 +404,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   
    bool isEditing = false;
 
-  Widget webView(String? pageID , int _height) {
+  Widget webView(String? pageID , int height) {
     if (pageID != null) {
       return Column(children: [
           indexModel("■ Moodle ページビュー"),
@@ -417,9 +416,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
               height: SizeConfig.blockSizeVertical! * 75,
               decoration: BoxDecoration(border: Border.all()),
               child: SingleChildScrollView(
-                child: Container(
+                child: SizedBox(
                     width: SizeConfig.blockSizeHorizontal! * 100,
-                    height: SizeConfig.blockSizeVertical! * _height,
+                    height: SizeConfig.blockSizeVertical! * height,
                     child: InAppWebView(
                       key: webMoodleViewKey,
                       initialUrlRequest: URLRequest(
@@ -427,20 +426,19 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                           //ここに課題ページのURLを受け渡し！
 
                           url: WebUri(
-                              "https://wsdmoodle.waseda.jp/course/view.php?id=" +
-                                  pageID)),
+                              "https://wsdmoodle.waseda.jp/course/view.php?id=$pageID")),
                       onWebViewCreated: (controller) {
                         webMoodleViewController = controller;
                       },
                       onLoadStop: (a, b) async {
-                        _height =
-                            await webMoodleViewController?.getContentHeight() ??
+                        height =
+                            await webMoodleViewController.getContentHeight() ??
                                 100;
                         setState(() {});
                       },
                       onContentSizeChanged: (a, b, c) async {
-                        _height =
-                            await webMoodleViewController?.getContentHeight() ??
+                        height =
+                            await webMoodleViewController.getContentHeight() ??
                                 100;
                         setState(() {});
                       },
@@ -513,7 +511,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
         child: Row(children: [
           IconButton(
             onPressed: () {
-              webMoodleViewController?.goBack();
+              webMoodleViewController.goBack();
             },
             icon: Icon(
               Icons.arrow_back_ios,
@@ -524,7 +522,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
           IconButton(
             onPressed: () {
               final url = URLRequest(url: WebUri("https://wsdmoodle.waseda.jp/"));
-              webMoodleViewController?.loadUrl(urlRequest: url);
+              webMoodleViewController.loadUrl(urlRequest: url);
             },
             icon: Icon(
               Icons.home,
@@ -534,7 +532,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
           const Spacer(),
           IconButton(
             onPressed: () {
-              webMoodleViewController?.goForward();
+              webMoodleViewController.goForward();
             },
             icon: Icon(
               Icons.arrow_forward_ios,
