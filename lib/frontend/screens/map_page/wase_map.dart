@@ -245,6 +245,11 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
+          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 10,
+            height: SizeConfig.blockSizeHorizontal! * 10,
+            child:Image.asset("lib/assets/eye_catch/wase_map_logo_transparent.png")),
           Text(
             " わせまっぷ",
             style: TextStyle(
@@ -465,9 +470,10 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   }
 
   void onModalBottomSheetClosed() {
-    if (!stopDownload){
+    if (!stopDownload && !showDownloadButton){
       showSnackBar(context);
     }
+    showDownloadButton = true;
     stopDownload = true;
   }
 
@@ -478,7 +484,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  bool stopDownload = true;
+  bool stopDownload = false;
+  bool showDownloadButton = true;
   Future<List<String>> initVacantRoomList(String location) async {
     int campusID = 0;
     for (int i = 0; i < campusID2buildingsList().length; i++) {
@@ -489,10 +496,16 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
     SharedPreferences pref = await SharedPreferences.getInstance();
     bool isDataEmpty = pref.getBool('isMapDBEmpty_$campusID')!;
-    if (isDataEmpty) {
+    if (isDataEmpty && !isDownloadInit) {
+      isDownloadInit = true;
       await pref.setBool('isMapDBEmpty_$campusID', false);
       await downLoadCampusData(campusID);
+      showDownloadButton = false;
       stopDownload = true;
+    }else if(!isDataEmpty){
+      showDownloadButton = false;
+    }else{
+      showDownloadButton = true;
     }
 
     List<String> result =
@@ -509,8 +522,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     List targetList = campusID2buildingsList()[campusID]!;
     for (int i = 0; i < targetList.length; i++) {
       if (stopDownload) {
-        final pref =await  SharedPreferences.getInstance();
+        final pref = await  SharedPreferences.getInstance();
         await pref.setBool('isMapDBEmpty_$campusID', true);
+        showDownloadButton = true;
         break;
       } else {
         print(targetList.elementAt(i) + "号館  ダウンロード実行中...");
@@ -519,8 +533,10 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         numOfDoneLoadings += 1;
       }
     }
+    
   }
 
+  bool isDownloadInit = true;
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
     int currentPeriod = datetime2Period(now) ?? 0;
@@ -536,16 +552,18 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         future: initVacantRoomList(location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-              showStreamLoader(context, renewProgressBar(campusID2buildingsList()[campusID]!.length)),
-              const Text("空き教室データ取得中…",
-                  style: TextStyle(
-                      color: MAIN_COLOR, fontWeight: FontWeight.bold)),
-              
-              streamProgressText(context, renewText())
-            ]));
+
+              return Center(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                showStreamLoader(context, renewProgressBar(campusID2buildingsList()[campusID]!.length)),
+                const Text("空き教室データ取得中…",
+                    style: TextStyle(
+                        color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+                streamProgressText(context, renewText())
+              ]));
+
           } else if (snapshot.hasData) {
+            isDownloadInit = true;
             countupLoaderStop();
             String searchResult = "授業期間外です。";
 
@@ -562,8 +580,23 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             } else {
               searchResult = snapshot.data!.join('\n');
             }
-
-            return SingleChildScrollView(
+            if(showDownloadButton){
+              return Center(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const Text("キャンパスの空き教室データはありません",
+                  style: TextStyle(
+                      color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+                const SizedBox(height:10),
+                buttonModel((){
+                  setState((){
+                    isDownloadInit = false;
+                  });
+                  Navigator.pop(context);
+                  showDetailButtomSheet(location);
+                },MAIN_COLOR,"ダウンロード",verticalpadding:10)
+              ]));
+            }else{
+              return SingleChildScrollView(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -601,10 +634,12 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                         await SharedPreferences.getInstance();
                     await pref.setBool(
                         'isMapDBEmpty_$campusID', true);
+                    isDownloadInit = false;
                     Navigator.pop(context);
                     showDetailButtomSheet(location);
                   }, MAIN_COLOR, "空き教室データの再取得", verticalpadding: 10)
                 ]));
+            }
           } else {
             print("エラー：${snapshot.error}");
             return const Center(

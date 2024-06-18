@@ -14,7 +14,7 @@ class _NoTaskPageState extends State<NoTaskPage> {
   Widget build(BuildContext context) {
   SizeConfig().init(context);
     return Scaffold(
-      backgroundColor: WHITE,
+      backgroundColor: BACKGROUND_COLOR,
       body:Padding(
         padding:const EdgeInsets.all(20),
         child:Column(
