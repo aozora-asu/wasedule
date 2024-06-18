@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 Widget buttonModel(Function() onTap, Color color, String text,
-  {double verticalpadding = 5,double horizontalPadding = 5}) {
+  {double verticalpadding = 7.5,double horizontalPadding = 5}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
@@ -24,11 +24,14 @@ Widget buttonModel(Function() onTap, Color color, String text,
   );
 }
 
-Widget buttonModelWithChild(Function() onTap, Color color, Widget child) {
+Widget buttonModelWithChild(
+  Function() onTap, Color color, Widget child,
+  {double verticalpadding = 7.5,double horizontalPadding = 5}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-        padding: const EdgeInsets.all(5),
+        padding: EdgeInsets.symmetric(
+          vertical: verticalpadding,horizontal: horizontalPadding),
         decoration: BoxDecoration(
           color: color,
           //border: Border.all(color: brighten(color, 0.5), width: 2),

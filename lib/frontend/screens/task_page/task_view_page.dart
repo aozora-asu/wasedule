@@ -110,6 +110,16 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                         sortSwitch(),
                         dividerModel,
                         TextButton(
+                          child: const Text("注意事項",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              )),
+                          onPressed: () {
+                            showDisclaimerDialogue(context);
+                          },
+                        ),
+                        dividerModel,
+                        TextButton(
                           child: const Text("お問い合わせ",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -430,6 +440,32 @@ void showReportFailDialogue(String errorMessage, context) {
     },
   );
 }
+
+void showDisclaimerDialogue(context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(builder: (context, setState) {
+        return AlertDialog(
+          title: const Text('注意事項'),
+          content:const Text(
+            "課題の公開に条件がある場合\n\n(例：「次の条件に合致しない限り利用できません: 活動「〇〇動画」が完了マークされた場合」)\n\nは、条件を満たした課題のみが反映されます。適宜リロードをお願いします。\n\n・課題に添付されているファイルは取得されません。「課題の詳細」内のMoodleビューからご覧ください。\n\n・課題の〆切日時がMoodle側で更新された場合、反映するにはリロードを行なってください。",
+            overflow: TextOverflow.clip,
+                  ),
+          actions: <Widget>[
+            buttonModel(
+              () {
+                Navigator.of(context).pop();
+              },PALE_MAIN_COLOR,'閉じる',
+              verticalpadding: 10
+            ),
+          ],
+        );
+      });
+    },
+  );
+}
+
 
 Widget listLengthView(int target, double fontSize) {
   if (target == 0) {

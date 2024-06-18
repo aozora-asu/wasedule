@@ -156,7 +156,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         await showTagDialogue(ref, context, setState);
         setState(() {});
       },
-      ACCENT_COLOR,
+      PALE_MAIN_COLOR,
       const Row(
         children: [
           SizedBox(width: 20),
@@ -165,6 +165,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           Text("タグを選択", style: TextStyle(color: WHITE)),
         ],
       ),
+      verticalpadding: 8
     );
   }
 
@@ -703,7 +704,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           showDownloadFailDialogue("IDを入力してください。");
         }
       },
-      ACCENT_COLOR,
+      PALE_MAIN_COLOR,
       const Row(
         children: [
           SizedBox(width: 20),
@@ -712,6 +713,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           Text("予定を受信する", style: TextStyle(color: WHITE)),
         ],
       ),
+      verticalpadding: 8
     );
   }
 

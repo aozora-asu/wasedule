@@ -141,7 +141,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           style: TextStyle(color:WHITE),  
           ),
           Spacer()
-        ])
+        ]),
+        verticalpadding: 10
       )
     );
   }
@@ -153,7 +154,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         (){
           showChooseDepartmentDialogue();
         },
-        ACCENT_COLOR,
+        PALE_MAIN_COLOR,
         const Row(children:[
           Spacer(),
           Icon(Icons.downloading_outlined,color:WHITE),
@@ -163,7 +164,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           style: TextStyle(color:WHITE),  
           ),
           Spacer()
-        ])
+        ]),
+        verticalpadding: 10
       )
     );
   }
