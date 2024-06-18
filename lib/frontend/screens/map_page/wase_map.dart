@@ -265,7 +265,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           //         color: BLUEGREY, size: SizeConfig.blockSizeHorizontal! * 12))
         ]),
         Divider(
-          color: Colors.blueGrey,
+          color: BLUEGREY,
           endIndent: SizeConfig.blockSizeHorizontal! * 30,
           thickness: 3,
           height: 3,
@@ -583,7 +583,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             if(showDownloadButton){
               return Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                const Text("キャンパスの空き教室データはありません",
+                const Text("このキャンパスの空き教室データはありません",
                   style: TextStyle(
                       color: MAIN_COLOR, fontWeight: FontWeight.bold)),
                 const SizedBox(height:10),

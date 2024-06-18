@@ -36,7 +36,12 @@ class LogoAndTitle extends StatelessWidget{
         Text(subTitle ?? "早稲田生のための生活アプリ",
         style:TextStyle(fontSize:size,color:color ?? MAIN_COLOR,fontWeight:FontWeight.bold)),
         Text("わせジュール",
-        style:TextStyle(fontSize:size*2 ,color:color ?? Colors.black,fontWeight:FontWeight.w800))
+        style:TextStyle(
+          fontSize:size*2,
+          color:color ?? Colors.black,
+          fontWeight:FontWeight.w800,
+          fontFamily: "Roboto"
+          ))
         ])
       ]))
     ;

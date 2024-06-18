@@ -13,6 +13,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
@@ -646,8 +647,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     String endTime = data.returnEndTime(classData["period"]);
 
     return GestureDetector(
-        onTap: () {
-          showDialog(
+        onTap: () async{
+          await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return CoursePreview(
@@ -1139,28 +1140,42 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       color:BLUEGREY),
               ),
               const Spacer(),
-              Container(
-                width: SizeConfig.blockSizeHorizontal! * 80,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25)),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        sortedData[widget.target]!
-                                .elementAt(index)["summary"] ??
-                            "(詳細なし)",
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      dateTimeData,
-                    ]),
-              ),
+              GestureDetector(
+                onTap:()async{
+                  // await bottomSheet(context,sortedData[widget.target]!.elementAt(index),setState);
+                  // ref.read(taskDataProvider).isRenewed = true;
+                  // ref
+                  //     .read(calendarDataProvider.notifier)
+                  //     .state = CalendarData();
+                  // while (
+                  //     ref.read(taskDataProvider).isRenewed !=
+                  //         false) {
+                  //   await Future.delayed(
+                  //       const Duration(microseconds: 1));
+                  // }
+                },
+                child:Container(
+                  width: SizeConfig.blockSizeHorizontal! * 80,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25)),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sortedData[widget.target]!
+                                  .elementAt(index)["summary"] ??
+                              "(詳細なし)",
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        dateTimeData,
+                      ]),
+                )),
               const Spacer(),
             ]),
             const SizedBox(height: 15)

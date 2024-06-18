@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -351,6 +352,36 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       );
     }
 
+    Widget draftIndicator = FutureBuilder(
+      future: SharedPreferences.getInstance(),
+      builder: (context,snapshot){
+        if(snapshot.hasData){
+          String? memoData = snapshot.data!.getString(targetData["id"].toString());
+          if(memoData != null && memoData != ""){
+            return Row(
+              children:[
+                const Spacer(),
+                Text("💬下書きあり",
+                  style:TextStyle(
+                    color: BLUEGREY,
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConfig.blockSizeHorizontal! *3
+                )),
+                // Text("/ " + memoData.length.toString() + "字",
+                //   style:TextStyle(
+                //     color: Colors.grey,
+                //     fontSize: SizeConfig.blockSizeHorizontal! *3
+                // )),
+              ]
+            );
+          }else{
+            return const SizedBox();
+          }
+        }else{
+          return const SizedBox();
+        }
+      });
+      
     return Row(children: [
       SizedBox(
           width: SizeConfig.blockSizeHorizontal! * 12,
@@ -415,10 +446,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                     fontSize:
                                         SizeConfig.blockSizeVertical! * 1.75,
                                     color: Colors.grey,
-                                  )))
+                                  ))),
+                          draftIndicator
                         ]),
                     )
                   ]),
+                  
                 ]),
               ))))
     ]);

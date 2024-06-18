@@ -3,6 +3,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
@@ -1846,96 +1848,109 @@ class _CalendarState extends ConsumerState<Calendar> {
       dividerIndent = 8;
     }
 
-    return taskListChild(
-      Column(children: [
-        IntrinsicHeight(
-            child: Row(children: [
-          Container(
-            width: SizeConfig.blockSizeHorizontal! * 15,
-            padding: EdgeInsets.only(
-              left: SizeConfig.blockSizeHorizontal! * 2,
-            ),
-            child: Center(
-              child: dateTimeData,
-            ),
-          ),
-          SizedBox(
-            width: 6,
-            child: Column(children: [
-              Expanded(
-                child: VerticalDivider(
-                  width: 2,
-                  thickness: 2,
-                  color: upperDividerColor,
-                ),
+    return GestureDetector(
+      // onTap:()async{
+      //   await showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return CoursePreview(
+      //         target: sortedMapList.elementAt(index).values.first,
+      //         setTimetableState: setState,
+      //         taskList: const [],
+      //     );
+      //   });
+      // },
+      child:taskListChild(
+        Column(children: [
+          IntrinsicHeight(
+              child: Row(children: [
+            Container(
+              width: SizeConfig.blockSizeHorizontal! * 15,
+              padding: EdgeInsets.only(
+                left: SizeConfig.blockSizeHorizontal! * 2,
               ),
-              Container(
-                height: 6,
-                width: 6,
-                decoration:
-                    BoxDecoration(color: dotColor, shape: BoxShape.circle),
+              child: Center(
+                child: dateTimeData,
               ),
-              Expanded(
-                child: VerticalDivider(
-                  width: 2,
-                  thickness: 2,
-                  color: underDividerColor,
-                  endIndent: dividerIndent,
+            ),
+            SizedBox(
+              width: 6,
+              child: Column(children: [
+                Expanded(
+                  child: VerticalDivider(
+                    width: 2,
+                    thickness: 2,
+                    color: upperDividerColor,
+                  ),
                 ),
-              )
-            ]),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.5),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(children: [
-                    Icon(
-                      Icons.school,
-                      color: MAIN_COLOR,
-                      size: SizeConfig.blockSizeHorizontal! * 3,
-                    ),
-                    Text(
-                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList
-                                .elementAt(index)
-                                .values
-                                .first["weekday"])}の授業、",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                            fontWeight: FontWeight.bold)),
-                    Text(
-                        sortedMapList
-                            .elementAt(index)
-                            .values
-                            .first["classRoom"],
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+                Container(
+                  height: 6,
+                  width: 6,
+                  decoration:
+                      BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                ),
+                Expanded(
+                  child: VerticalDivider(
+                    width: 2,
+                    thickness: 2,
+                    color: underDividerColor,
+                    endIndent: dividerIndent,
+                  ),
+                )
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(children: [
+                      Icon(
+                        Icons.school,
+                        color: MAIN_COLOR,
+                        size: SizeConfig.blockSizeHorizontal! * 3,
+                      ),
+                      Text(
+                          "${ref.read(timeTableProvider).intToWeekday(sortedMapList
+                                  .elementAt(index)
+                                  .values
+                                  .first["weekday"])}の授業、",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                              fontWeight: FontWeight.bold)),
+                      Text(
+                          sortedMapList
+                              .elementAt(index)
+                              .values
+                              .first["classRoom"],
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+                    ]),
+                    SizedBox(
+                        width: SizeConfig.blockSizeHorizontal! * 65,
+                        child: Text(
+                          " " +
+                              sortedMapList
+                                  .elementAt(index)
+                                  .values
+                                  .first["courseName"],
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              color: BLACK,
+                              fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
+                              fontWeight: FontWeight.bold),
+                        ))
                   ]),
-                  SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 65,
-                      child: Text(
-                        " " +
-                            sortedMapList
-                                .elementAt(index)
-                                .values
-                                .first["courseName"],
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                            color: BLACK,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 4.5,
-                            fontWeight: FontWeight.bold),
-                      ))
-                ]),
-          )
-        ]))
-      ]),
-      () {},
-      true,
-      isLast,
+            )
+          ]))
+        ]),
+        () {},
+        true,
+        isLast,
+      )
     );
   }
 
@@ -2132,9 +2147,22 @@ class _CalendarState extends ConsumerState<Calendar> {
                           ]),
                     ),
                   )
-                ])), () {
-              bottomSheet(sortedData[target]!.elementAt(index));
-            }, isLast, isLast);
+              ])), 
+              () async{
+              // await bottomSheet(context,sortedData[target]!.elementAt(index),setState).then(
+              //   (value) async{
+              //     ref.read(taskDataProvider).isRenewed = true;
+              //     ref.read(calendarDataProvider.notifier)
+              //       .state = CalendarData();
+              //     while (
+              //         ref.read(taskDataProvider).isRenewed !=
+              //             false) {
+              //     await Future.delayed(
+              //           const Duration(microseconds: 1));
+              //     }
+              // });
+              },
+             isLast, isLast);
           },
           itemCount: sortedData[target]!.length,
           shrinkWrap: true,
@@ -2164,195 +2192,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     return result;
   }
 
-  void bottomSheet(targetData) {
-    TextEditingController summaryController =
-        TextEditingController(text: targetData["summary"] ?? "");
-    TextEditingController titleController =
-        TextEditingController(text: targetData["title"] ?? "");
-    TextEditingController descriptionController =
-        TextEditingController(text: targetData["description"] ?? "");
-    int id = targetData["id"];
-    showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-            height: SizeConfig.blockSizeVertical! * 60,
-            margin: const EdgeInsets.only(top: 0),
-            decoration: const BoxDecoration(
-              color: WHITE,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: SingleChildScrollView(
-                child: Scrollbar(
-              child: Column(
-                children: [
-                  Container(
-                      decoration:const BoxDecoration(
-                        color: WHITE,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      height: SizeConfig.blockSizeHorizontal! * 13,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          SizedBox(
-                              width: SizeConfig.blockSizeHorizontal! * 92,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                73.5),
-                                    child: Text(
-                                      targetData["summary"] ?? "(詳細なし)",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  5,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  Text(
-                                    "  の概要",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! * 5,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                        ],
-                      )),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1),
-                  const Divider(height:1),
-                  SizedBox(height: SizeConfig.blockSizeHorizontal! * 1),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      child: Column(children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスク名",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: BLACK),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            enabled: false,
-                            controller: summaryController,
-                            maxLines: 1,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "タスク名なし",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "カテゴリ",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: BLACK),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextField(
-                            enabled: false,
-                            controller: titleController,
-                            maxLines: 1,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: "カテゴリなし",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 2,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "タスクの詳細",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                                fontWeight: FontWeight.normal,
-                                color: BLACK),
-                          ),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeHorizontal! * 0.5,
-                        ),
-                        TextField(
-                          enabled: false,
-                          maxLines: 7,
-                          controller: descriptionController,
-                          style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 4,
-                          ),
-                          decoration: const InputDecoration(
-                            hintText: "詳細なし",
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.only(top: 0, left: 0, right: 4),
-                            hintStyle: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 7.5),
-                      ]))
-                ],
-              ),
-            )));
-      },
-    );
-  }
 
   Widget loadArbeitStatsPreview(targetMonth) {
     return FutureBuilder(

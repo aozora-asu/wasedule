@@ -88,9 +88,6 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     }
 
   final prefs = widget.prefs;
-
-
-
         return Stack(children: [
           Stack(alignment: Alignment.bottomCenter, children: [
             Container(
@@ -446,7 +443,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
               )),
         ]);
       } else {
-        return const SizedBox();
+        return SizedBox(
+          height: SizeConfig.blockSizeVertical! * 50,
+        );
       }
     }
 

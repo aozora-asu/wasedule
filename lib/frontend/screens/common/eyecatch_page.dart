@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        fontFamily: "Noto_Sans_JP",
         canvasColor: WHITE,
       ),
       debugShowCheckedModeBanner: false,
@@ -132,7 +133,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
               width: 200,
               height: 5,
               child: LinearProgressIndicator(
-                color: ACCENT_COLOR,
+                color: PALE_MAIN_COLOR,
                 backgroundColor: Colors.pink[50],
               ),
             ),
