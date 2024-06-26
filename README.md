@@ -1,4 +1,4 @@
-# flutter_calandar_app
+# わせジュール 早稲田大学生のための課題管理アプリ
 
 A new Flutter project.
 
