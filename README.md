@@ -1,16 +1,28 @@
-# わせジュール 早稲田大学生のための課題管理アプリ
+# わせジュール
 
-A new Flutter project.
+## 概要
+わせジュールは、早稲田大学生のための課題管理アプリです。学生生活をより効率的に、そして充実したものにするためのツールとして開発されました。
 
-## Getting Started
+## 特徴
+- 授業ごとの課題管理
+- 提出期限のリマインダー機能
+- 時間割表示機能
+- ウィジェット対応（次の授業をホーム画面に表示）
+- 早稲田大学の学事暦との連携
 
-This project is a starting point for a Flutter application.
+## 使用技術
+- Flutter
+- Dart
+- iOS (SwiftUI for widgets)
+- Android
 
-A few resources to get you started if this is your first Flutter project:
+## インストール方法
+App StoreまたはGoogle Play Storeで「わせジュール」を検索し、インストールしてください。
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+[App Store](https://apps.apple.com/us/app/わせジュール/id6479050214)
+[Google Play Store] 現在テスター段階 近日公開 2024-06-27時点
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 使い方
+1. アプリを起動します。
+2. アプリ内のmoodleページにて、時間割と課題取得の設定を行います。
+3. 以上です
