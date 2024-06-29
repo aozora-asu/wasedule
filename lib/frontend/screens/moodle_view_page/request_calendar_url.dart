@@ -30,3 +30,8 @@ Future<void> acceptAutoLogin(bool isAllowAutoLogin) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool('isAllowAutoLogin', isAllowAutoLogin);
 }
+
+Future<String> getSessKey() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('sessionKey') ?? "";
+}

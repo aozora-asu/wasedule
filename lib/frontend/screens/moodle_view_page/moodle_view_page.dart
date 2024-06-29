@@ -80,6 +80,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
           try {
             messageData = jsonDecode(consoleMessage.message);
             switch (messageData.keys.first) {
+              case "completedTask":
               case "isAllowAutoLogin":
                 isAllowAutoLogin = messageData["isAllowAutoLogin"];
                 await acceptAutoLogin(isAllowAutoLogin);

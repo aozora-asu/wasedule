@@ -45,5 +45,3 @@ app.*.map.json
 ./lib/backend/temp_file.dart
 /firebase_options.dart
 /.env
-ios/
-lib/ios
