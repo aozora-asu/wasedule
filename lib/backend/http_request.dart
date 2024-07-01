@@ -22,7 +22,7 @@ Map<String, dynamic> _parsedTaskData(String iCalendarData) {
         currentEvent = null; // イベント終了後にcurrentEventを初期化
       }
     } else if (currentEvent != null) {
-      if (line.contains(RegExp(r"[A-Z-]+:"))) {
+      if (line.contains(RegExp(r"^[A-Z-]+:"))) {
         // 行に':'が含まれる場合はキーと値を抽出
         List<String> parts = line.split(':');
         key = parts[0];
