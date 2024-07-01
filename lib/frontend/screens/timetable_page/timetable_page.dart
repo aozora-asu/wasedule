@@ -775,43 +775,48 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: listLength,
+        itemCount: listLength + 1,
         itemBuilder: (context, index) {
           Widget child = const SizedBox();
-          if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                  currentQuaterID() ||
-              tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                  "full_year" ||
-              tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                      currentSemesterID() &&
-                  tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
-                      thisYear) {
-            child = Container(
-                height: SizeConfig.blockSizeVertical! * cellHeight,
-                width: SizeConfig.blockSizeHorizontal! * cellWidth,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: BACKGROUND_COLOR,
-                    width: 2,
+          if(index == listLength ){
+            child = ondemandAddSell();
+            return child;
+          }else{
+            if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                    currentQuaterID() ||
+                tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                    "full_year" ||
+                tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                        currentSemesterID() &&
+                    tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
+                        thisYear) {
+              child = Container(
+                  height: SizeConfig.blockSizeVertical! * cellHeight,
+                  width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: BACKGROUND_COLOR,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(4)
                   ),
-                  borderRadius: BorderRadius.circular(4)
-                ),
-                child: FutureBuilder(
-                    future: TaskDatabaseHelper().getTaskListByCourseName(
-                        tableData.sortedDataByWeekDay[7]
-                            .elementAt(index)["courseName"]),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ondemandSellsChild(index, []);
-                      } else if (snapshot.hasData) {
-                        return ondemandSellsChild(index, snapshot.data!);
-                      } else {
-                        return ondemandSellsChild(index, []);
-                      }
-                    }));
+                  child: FutureBuilder(
+                      future: TaskDatabaseHelper().getTaskListByCourseName(
+                          tableData.sortedDataByWeekDay[7]
+                              .elementAt(index)["courseName"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return ondemandSellsChild(index, []);
+                        } else if (snapshot.hasData) {
+                          return ondemandSellsChild(index, snapshot.data!);
+                        } else {
+                          return ondemandSellsChild(index, []);
+                        }
+                      }));
+            }
+            return child;
           }
-          return child;
-        });
+      });
   }
 
   List<int> returnExistingPeriod(List<Map> target) {
@@ -912,7 +917,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
     String className = target["courseName"];
     int taskLength = taskList.length;
-    print(tableData.sortedDataByWeekDay[7]);
 
     Color colorning =
         hexToColor(tableData.sortedDataByWeekDay[7].elementAt(index)["color"]);
@@ -954,6 +958,38 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               alignment: const Alignment(-1, -1),
               child: lengthBadge(taskLength, fontSize, true)))
         ]));
+  }
+
+
+  Widget ondemandAddSell() {
+    Color bgColor = WHITE;
+    return GestureDetector(
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CourseAddPage(
+                  setTimetableState: setState,
+            );
+          });
+        },
+        child:
+          Container(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            width: SizeConfig.blockSizeHorizontal! * cellWidth,
+            decoration:BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(2)
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child:const Center(
+              child:Icon(
+                Icons.add_rounded,
+                size:30,
+                color:Colors.grey
+              ))
+          ),
+        );
   }
 
   AssetImage tableBackGroundImage() {
