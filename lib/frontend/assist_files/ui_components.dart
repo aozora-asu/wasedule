@@ -18,8 +18,7 @@ Widget buttonModel(Function() onTap, Color color, String text,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
           Text(text,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.white)),
+              style: const TextStyle(color: Colors.white)),
         ])),
   );
 }
