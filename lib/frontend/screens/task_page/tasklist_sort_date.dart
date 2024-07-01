@@ -40,6 +40,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int keyIndex) {
               DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
+              dateEnd = DateTime.fromMillisecondsSinceEpoch(sortedData.values.elementAt(keyIndex).first["dtEnd"]);
               String adjustedDtEnd =
                   ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
               return Container(
@@ -54,19 +55,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(children: [
-                                      // lengthBadge(
-                                      //   sortedData.values.elementAt(keyIndex).length,
-                                      //   SizeConfig.blockSizeHorizontal!*4.25,
-                                      //   false),
                                       const SizedBox(width: 5),
                                       Text(
                                         adjustedDtEnd,
                                         style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                7,
-                                            fontWeight: FontWeight.w800,
-                                            color: BLUEGREY),
+                                          fontSize: SizeConfig
+                                                  .blockSizeHorizontal! *
+                                              7,
+                                          fontWeight: FontWeight.w800,
+                                          color: BLUEGREY),
                                       ),
                                     ]),
                                     const SizedBox(height: 5),
@@ -79,7 +76,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             ),
                             controller: ExpandableController(
                                 initialExpanded:
-                                    isLimitOver(dateEnd, sortedData, dateEnd))),
+                                    true)),
                         const Divider(
                             thickness: 1,
                             indent: 3,
