@@ -1993,7 +1993,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   children: [taskDataList(targetDay, index)]);
             },
             separatorBuilder: (context, index) {
-              return Container(height:2,color:BACKGROUND_COLOR);
+              return Container(height:0,color:BACKGROUND_COLOR);
             },
             itemCount: fromNow,
             shrinkWrap: true,
@@ -2024,7 +2024,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         taskListHeader(indexText, fromNow),
         ListView.separated(
           separatorBuilder: (context, index) {
-            return Container(height:2,color:BACKGROUND_COLOR);
+            return Container(height:0,color:BACKGROUND_COLOR);
           },
           itemBuilder: (BuildContext context, int index) {
             String timeEnd = DateFormat("HH:mm").format(
@@ -2091,7 +2091,8 @@ class _CalendarState extends ConsumerState<Calendar> {
               underDividerColor = Colors.grey;
             }
 
-            return taskListChild(
+            return Column(children:[
+              taskListChild(
                 IntrinsicHeight(
                     child: Row(children: [
                   Container(
@@ -2163,7 +2164,9 @@ class _CalendarState extends ConsumerState<Calendar> {
               //     }
               // });
               },
-             isLast, isLast);
+             isLast, isLast),
+             Container(height:2,color:BACKGROUND_COLOR)
+            ]);
           },
           itemCount: sortedData[target]!.length,
           shrinkWrap: true,

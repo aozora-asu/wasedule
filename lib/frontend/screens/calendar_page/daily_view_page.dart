@@ -334,7 +334,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       Container(
           width: SizeConfig.blockSizeHorizontal! * 95,
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(12.0),
           ),
           child:
@@ -483,7 +482,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Column(
@@ -611,7 +609,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       width: SizeConfig.blockSizeHorizontal! * 95,
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 235, 235, 235),
+                        color: BACKGROUND_COLOR,
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: SizedBox(
@@ -666,7 +664,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Column(
