@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
@@ -44,6 +45,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     super.initState();
     _currentIndex = widget.initIndex ?? 2;
     pageController = PageController(initialPage: 0);//widget.initIndex ?? 2);
+    initRateMyApp(context);
   }
 
   void _onItemTapped(int index) {
