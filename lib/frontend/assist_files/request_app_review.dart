@@ -3,8 +3,8 @@ import 'package:rate_my_app/rate_my_app.dart';
 
 final RateMyApp _rateMyApp = RateMyApp(
     preferencesPrefix: 'rateMyApp_',
-    minDays: 0, 
-    minLaunches: 1,
+    minDays: 7, 
+    minLaunches: 10,
     remindDays: 7,
     remindLaunches: 10,
     appStoreIdentifier: "6479050214",
