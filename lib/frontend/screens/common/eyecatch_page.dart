@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import '../../assist_files/screen_manager.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp>{ 
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +37,8 @@ class MyApp extends StatelessWidget {
       home: const FadingImage());
   }
 }
+
+
 
 class FadingImage extends ConsumerStatefulWidget {
   const FadingImage({super.key});
@@ -107,13 +115,31 @@ class _FadingImageState extends ConsumerState<FadingImage>
     await Future.delayed(const Duration(seconds: 0));
   }
 
+  Future<void> initThemeSettings() async{
+    String data = await initThemeSettingsData();
+    switchThemeColor(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scaffold(
       backgroundColor: MAIN_COLOR,
-      body: Center(
+      body: FutureBuilder(
+      future: initThemeSettings(),
+      builder:(context,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return eyeCatch();
+        }else{
+      return eyeCatch();
+    }
+  })
+    );
+  }
+
+  Widget eyeCatch(){
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -148,7 +174,6 @@ class _FadingImageState extends ConsumerState<FadingImage>
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

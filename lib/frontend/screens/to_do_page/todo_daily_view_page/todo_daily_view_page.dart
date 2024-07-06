@@ -58,9 +58,9 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
     }else{
       return Container(
         child:FloatingActionButton.extended(
-          label: const Text("統計",style: TextStyle(color:WHITE),),
+          label: Text("統計",style: TextStyle(color:WHITE),),
           backgroundColor: ACCENT_COLOR,
-          icon: const Icon(Icons.insert_chart_outlined_rounded,color:WHITE,size: 20,),
+          icon:  Icon(Icons.insert_chart_outlined_rounded,color:WHITE,size: 20,),
           onPressed: (){
             Navigator.push(
               context,
@@ -212,7 +212,7 @@ Column(
           },
           
           style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
-          child:const Text("ページの作成",style: TextStyle(color:WHITE),),
+          child: Text("ページの作成",style: TextStyle(color:WHITE),),
         ),
         ])
        )
@@ -573,7 +573,7 @@ void AddNewPage(String targetMonth){
       ),
       child: Text(
          buttonText(color),
-        style:const  TextStyle(
+        style:  TextStyle(
           fontSize: 10.0,
           fontWeight: FontWeight.bold,
           color: WHITE,
@@ -641,9 +641,9 @@ void AddNewPage(String targetMonth){
                       child:
                         Container(
                           padding: const EdgeInsets.all(7.5),
-                          decoration:const  BoxDecoration(
+                          decoration:  BoxDecoration(
                             color:WHITE,
-                            borderRadius: BorderRadius.all(Radius.circular(20))
+                            borderRadius:const BorderRadius.all(Radius.circular(20))
                           ),
                           child:SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -714,7 +714,7 @@ void AddNewPage(String targetMonth){
               backgroundColor: WidgetStatePropertyAll(Colors.greenAccent),
               minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
-            child: const Text("+ アイテムを追加…",style:TextStyle(color:WHITE)),
+            child:  Text("+ アイテムを追加…",style:TextStyle(color:WHITE)),
             )
           ]),
         ],
@@ -790,7 +790,7 @@ void AddNewPage(String targetMonth){
                         scrollDirection: Axis.horizontal,
                         child:Text(
                           targetDayData["plan"].elementAt(index).trim(),
-                          style:const  TextStyle(
+                          style: TextStyle(
                             color:WHITE,
                             fontSize:20
                       ),
@@ -900,7 +900,7 @@ void AddNewPage(String targetMonth){
                       child:
                         Container(
                           padding: const EdgeInsets.all(7.5),
-                          decoration:const  BoxDecoration(
+                          decoration: BoxDecoration(
                             color:WHITE,
                             borderRadius: BorderRadius.all(Radius.circular(20))
                           ),
@@ -953,7 +953,7 @@ void AddNewPage(String targetMonth){
               backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR),
               minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
-            child:const Text("とじる",style:TextStyle(color:WHITE)),
+            child: Text("とじる",style:TextStyle(color:WHITE)),
             )
           ]),
         ],
@@ -988,7 +988,7 @@ void AddNewPage(String targetMonth){
                    filled: true,
                    fillColor: Colors.greenAccent,
                   ),
-                  style:const TextStyle(color:WHITE,fontSize:20),
+                  style:TextStyle(color:WHITE,fontSize:20),
                 ),
               ),
             ],
@@ -999,7 +999,7 @@ void AddNewPage(String targetMonth){
                 Navigator.of(context).pop(); // ダイアログを閉じる
               },
               style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.redAccent)),
-              child: const Text('戻る',style:TextStyle(color:WHITE)),
+              child: Text('戻る',style:TextStyle(color:WHITE)),
             ),
             ElevatedButton(
               onPressed: () async{
@@ -1035,7 +1035,7 @@ void AddNewPage(String targetMonth){
                        Navigator.of(context).pop();
               },
               style:const  ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.greenAccent)),
-              child:const  Text('ＯＫ',style:TextStyle(color:WHITE)),
+              child: Text('ＯＫ',style:TextStyle(color:WHITE)),
             ),
           ],
         );
@@ -1267,7 +1267,7 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
         }
 
       },
-      style: const TextStyle(
+      style: TextStyle(
        fontSize: 10, // フォントサイズ
        color: WHITE, // 文字色,
        fontWeight:FontWeight.bold

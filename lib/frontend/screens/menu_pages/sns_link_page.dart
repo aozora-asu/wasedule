@@ -18,7 +18,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
   SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(color:WHITE),
+        leading:  BackButton(color:WHITE),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: Column(

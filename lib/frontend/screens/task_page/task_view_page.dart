@@ -157,7 +157,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     }
                   },
                   backgroundColor: MAIN_COLOR,
-                  child: const Icon(Icons.refresh_outlined, color: WHITE),
+                  child:  Icon(Icons.refresh_outlined, color: WHITE),
                 ),
               ],
             )));

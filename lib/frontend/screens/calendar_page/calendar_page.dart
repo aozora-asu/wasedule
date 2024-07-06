@@ -1,11 +1,8 @@
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
 import 'package:screenshot/screenshot.dart';
@@ -221,7 +218,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     ScrollController controller = ScrollController();
     return Scaffold(
         body: Container(
-          decoration:const BoxDecoration(
+          decoration: BoxDecoration(
             //   image: DecorationImage(
             // image: calendarBackGroundImage(),
             // fit: BoxFit.cover)
@@ -362,9 +359,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                                     builder: (context) => const TagAndTemplatePage()),
                               );
                             },
-                            icon: const Icon(Icons.tag,
+                            icon: Icon(Icons.tag,
                                 size: 15, color: WHITE),
-                            label: const Text('タグとテンプレート',
+                            label:  Text('タグとテンプレート',
                                 style: TextStyle(
                                     fontSize: 10,
                                     color: WHITE,
@@ -458,7 +455,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return FloatingActionButton(
         heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
-        child: const Icon(Icons.ios_share, color: WHITE),
+        child:  Icon(Icons.ios_share, color: WHITE),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -1210,7 +1207,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                     fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
-      const Divider(height: 2,thickness:2, indent: 10, endIndent: 10, color:BACKGROUND_COLOR)
+       Divider(height: 2,thickness:2, indent: 10, endIndent: 10, color:BACKGROUND_COLOR)
     ]);
   }
 
@@ -1340,15 +1337,15 @@ class _CalendarState extends ConsumerState<Calendar> {
                       children: [
                         Text(
                           category,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: WHITE,
                               fontWeight: FontWeight.bold,
                               fontSize: 10),
                         ),
-                        const Divider(color: WHITE, height: 2),
+                         Divider(color: WHITE, height: 2),
                         Text(
                           content,
-                          style: const TextStyle(
+                          style:  TextStyle(
                               color: WHITE, fontSize: 12.5),
                           overflow: TextOverflow.clip,
                         )
@@ -1391,9 +1388,9 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: BACKGROUND_COLOR);
+      return  BoxDecoration(color: BACKGROUND_COLOR);
     } else {
-      return const BoxDecoration(
+      return  BoxDecoration(
         color: BACKGROUND_COLOR,
         //borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
       );
@@ -2256,7 +2253,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       style: previewStyle),
                 ])),
           ),
-          const VerticalDivider(width: 2,thickness:2,color:BACKGROUND_COLOR),
+           VerticalDivider(width: 2,thickness:2,color:BACKGROUND_COLOR),
           Expanded(
             child: Padding(
                 padding: const EdgeInsets.all(10),

@@ -6,10 +6,13 @@ const MAIN_COLOR = Color.fromARGB(255, 142, 23, 40);
 const ACCENT_COLOR = Colors.orangeAccent;//Color.fromARGB(255,144,115,85);
 const WIDGET_COLOR = Color.fromARGB(255, 255, 255, 255);
 const WIDGET_OUTLINE_COLOR = Color.fromARGB(255, 227, 227, 227);
-const BACKGROUND_COLOR = Color.fromRGBO(255, 255, 255, 1);
 const PALE_MAIN_COLOR = Color.fromARGB(255, 184, 113, 113);
 
-const WHITE = Color.fromRGBO(238, 238, 238, 1); //(244, 245, 247, 1);
+
+Color BACKGROUND_COLOR = Color.fromRGBO(255, 255, 255, 1);
+Color WHITE = Color.fromRGBO(238, 238, 238, 1); //(244, 245, 247, 1);
+
+
 const BLACK = Color.fromRGBO(17,17,17,1); //(51,51,51,1);
 const BLUEGREY = Color.fromRGBO(53,82,96,1);
 
@@ -40,4 +43,11 @@ Color darken(Color color, [double amount = 0.1]) {
   final hsl = HSLColor.fromColor(color);
   final hslDarkened = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
   return hslDarkened.toColor();
+}
+
+void switchThemeColor(String theme){
+  if(theme == "grey"){
+    BACKGROUND_COLOR = Color.fromRGBO(238, 238, 238, 1);
+    WHITE = Color.fromRGBO(255, 255, 255, 1);
+  }
 }
