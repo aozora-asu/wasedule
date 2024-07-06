@@ -150,10 +150,10 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           setState(() {});
         },
         MAIN_COLOR,
-        const Row(children: [
-          SizedBox(width: 20),
+         Row(children: [
+          const SizedBox(width: 20),
           Icon(Icons.backup, color: WHITE),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text("データをバックアップ", style: TextStyle(color: WHITE))
         ]));
   }
@@ -268,10 +268,10 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           showDownloadConfirmDialogue();
         },
         ACCENT_COLOR,
-        const Row(children: [
-          SizedBox(width: 20),
+         Row(children: [
+          const SizedBox(width: 20),
           Icon(Icons.downloading_outlined, color: WHITE),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text("バックアップを復元", style: TextStyle(color: WHITE))
         ]));
   }
@@ -317,10 +317,10 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                   }
                 },
                 MAIN_COLOR,
-                const Row(children: [
-                  SizedBox(width: 20),
+                Row(children: [
+                  const SizedBox(width: 20),
                   Icon(Icons.downloading_outlined, color: WHITE),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Text("ダウンロード実行", style: TextStyle(color: WHITE))
                 ]))
           ],

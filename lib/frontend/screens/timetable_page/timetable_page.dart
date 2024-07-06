@@ -43,7 +43,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ScrollController controller = ScrollController();
     return Scaffold(
       body: Container(
-          decoration:const BoxDecoration(
+          decoration: BoxDecoration(
               color:BACKGROUND_COLOR
           ),
           child: Scrollbar(
@@ -82,7 +82,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       });
                 },
                 backgroundColor: PALE_MAIN_COLOR,
-                child: const Icon(Icons.add, color: WHITE)),
+                child:  Icon(Icons.add, color: WHITE)),
             const SizedBox(width: 10),
             timetableShareButton(context),
           ])),
@@ -93,7 +93,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return FloatingActionButton(
         heroTag: "timetable_2",
         backgroundColor: MAIN_COLOR,
-        child: const Icon(Icons.ios_share, color: WHITE),
+        child:  Icon(Icons.ios_share, color: WHITE),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -371,9 +371,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return const BoxDecoration(color: BACKGROUND_COLOR);
+      return  BoxDecoration(color: BACKGROUND_COLOR);
     } else {
-      return const BoxDecoration(
+      return  BoxDecoration(
         color:BACKGROUND_COLOR,
       );
     }
@@ -858,9 +858,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     Widget classRoomView = const SizedBox();
     if (classRoom != null && classRoom != "" && classRoom != "-") {
       classRoomView = Container(
-          decoration:const  BoxDecoration(
+          decoration:  BoxDecoration(
               color: WHITE,
-              borderRadius: BorderRadius.all(Radius.circular(2))),
+              borderRadius:const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
             style: TextStyle(

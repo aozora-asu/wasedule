@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
@@ -125,18 +127,20 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
 
+
   Widget pageView(){
     return PageView(
-        physics: physics,
-        controller: pageController,
-        children: parentPages().elementAt(_currentIndex),
-        onPageChanged: (value){
-            setState((){
-              _currentSubIndex = value;
-            });
-        },
-    );
-  }
+            physics: physics,
+            controller: pageController,
+            children: parentPages().elementAt(_currentIndex),
+            onPageChanged: (value){
+              setState((){
+                _currentSubIndex = value;
+              });
+            },
+          );
+    }
+      
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +164,8 @@ class _AppPageState extends ConsumerState<AppPage> {
         preferredSize: Size(
           SizeConfig.blockSizeHorizontal! *100,
           height),
-        child:MenuAppBar(
+        child: 
+          MenuAppBar(
             currentIndex: _currentIndex,
             onItemTapped: _onItemTapped,
             currentSubIndex: _currentSubIndex,
@@ -170,7 +175,8 @@ class _AppPageState extends ConsumerState<AppPage> {
             changeChildmenuState: _switchChildMenu,
           )
         ),
-      bottomNavigationBar:customBottomBar(
+      bottomNavigationBar:
+        customBottomBar(
           context,
           _currentIndex,
           _onItemTapped,

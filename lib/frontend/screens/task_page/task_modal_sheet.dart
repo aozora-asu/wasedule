@@ -93,9 +93,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
             Container(
                 height: SizeConfig.blockSizeVertical! * 85,
                 margin: const EdgeInsets.only(top: 0),
-                decoration: const BoxDecoration(
+                decoration:  BoxDecoration(
                   color:BACKGROUND_COLOR,
-                  borderRadius: BorderRadius.only(
+                  borderRadius:const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
@@ -261,18 +261,18 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     Navigator.pop(context);
                                   },
                                       Colors.red,
-                                      const Row(
+                                      Row(
                                         children: [
-                                          Spacer(),
+                                         const Spacer(),
                                           Icon(Icons.delete, color: WHITE),
-                                          SizedBox(width: 10),
+                                         const SizedBox(width: 10),
                                           Text(
                                             "削除",
                                             style: TextStyle(
                                                 color: WHITE,
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          Spacer()
+                                         const Spacer()
                                         ],
                                       )),
                                 ),
@@ -314,9 +314,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                           showDialog(
                                             context:context,
                                             builder: (context)=>
-                                              const AlertDialog(
+                                              AlertDialog(
                                                 backgroundColor: WHITE,
-                                                content:Text(
+                                                content:const Text(
                                                   "テキストがクリップボードにコピーされました。",
                                                   style: TextStyle(
                                                     color: BLUEGREY,
@@ -350,9 +350,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
             menuBar(),
           ]),
           Container(
-              decoration:const BoxDecoration(
+              decoration: BoxDecoration(
                 color: BACKGROUND_COLOR,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
@@ -504,9 +504,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
 
   Widget menuBar() {
     return Container(
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
             color: WHITE,
-            border: Border(top: BorderSide(color: Colors.grey))),
+            border:const Border(top: BorderSide(color: Colors.grey))),
         child: Row(children: [
           IconButton(
             onPressed: () {

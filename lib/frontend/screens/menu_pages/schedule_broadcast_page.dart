@@ -75,7 +75,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           thumbnailImage(),
           Container(
               width: SizeConfig.blockSizeHorizontal! * 100,
-              decoration:const BoxDecoration(
+              decoration: BoxDecoration(
                 color:BACKGROUND_COLOR,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
@@ -157,11 +157,11 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         setState(() {});
       },
       PALE_MAIN_COLOR,
-      const Row(
+       Row(
         children: [
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Icon(Icons.more_vert_rounded, color: WHITE),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text("タグを選択", style: TextStyle(color: WHITE)),
         ],
       ),
@@ -297,10 +297,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
             }
           },
           MAIN_COLOR,
-          const Row(children: [
-            SizedBox(width: 20),
+           Row(children: [
+            const SizedBox(width: 20),
             Icon(Icons.backup, color: WHITE),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Text("予定をアップロード", style: TextStyle(color: WHITE))
           ]));
     } else {
@@ -391,10 +391,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                       },
                     ),
                   ),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.upload_file, color: WHITE),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Text("アップロード", style: TextStyle(color: WHITE)),
                     ],
                   ),
@@ -615,12 +615,12 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     );
                   },
                   MAIN_COLOR,
-                  const Row(children: [
+                   Row(children: [
                     Icon(
                       Icons.qr_code_2_outlined,
                       color: WHITE,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text("共有",
                         style: TextStyle(
                           color: WHITE,
@@ -705,11 +705,11 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         }
       },
       PALE_MAIN_COLOR,
-      const Row(
+       Row(
         children: [
-          SizedBox(width: 20),
+         const  SizedBox(width: 20),
           Icon(Icons.install_mobile, color: WHITE),
-          SizedBox(width: 20),
+         const SizedBox(width: 20),
           Text("予定を受信する", style: TextStyle(color: WHITE)),
         ],
       ),

@@ -349,7 +349,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   )
@@ -365,7 +365,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   )
@@ -415,9 +415,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 color: WHITE,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -766,9 +766,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 70,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 color: WHITE,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -915,9 +915,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 75,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 color: WHITE,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),

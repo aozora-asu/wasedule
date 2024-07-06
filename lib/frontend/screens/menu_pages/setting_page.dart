@@ -9,6 +9,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import "../../../backend/notify/notify_db.dart";
@@ -29,13 +30,13 @@ class SettingsPage extends StatelessWidget {
     PreferredSizeWidget? appBar;
     if(showAppBar){
       appBar = AppBar(
-        leading: const BackButton(color: WHITE),
+        leading:  BackButton(color: WHITE),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
-        title: const Column(
+        title:  Column(
           children: <Widget>[
             Row(children: [
-              Icon(
+              const Icon(
                 Icons.settings,
                 color: WIDGET_COLOR,
               ),
@@ -100,6 +101,10 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
               NavigationRailDestination(
                 icon: Icon(Icons.notifications_active),
                 label: Text('通知'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.color_lens),
+                label: Text('テーマ'),
               ),
             ],
             selectedIndex: _selectedIndex,
@@ -183,22 +188,31 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child: calendarBody(),
         ));
 
-      default:
+      case 1:
         return Expanded(
             child: SingleChildScrollView(
                 child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: notificationBody(),
         )));
+
+      default:
+        return Expanded(
+            child: SingleChildScrollView(
+                child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: themeSettingsBody(),
+      )));
+
     }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Widget calendarBody() {
-    Widget borderModel = const Column(children: [
-      SizedBox(height: 2.5),
+    Widget borderModel =  Column(children: [
+      const SizedBox(height: 2.5),
       Divider(height: 2,thickness:2,color:BACKGROUND_COLOR),
-      SizedBox(height: 2.5),
+      const SizedBox(height: 2.5),
     ]);
 
     return KeyboardActions(
@@ -289,7 +303,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const Spacer(),
       CupertinoSwitch(
           value: searchConfigData(widgetName),
-          activeColor: ACCENT_COLOR,
+          activeColor: PALE_MAIN_COLOR,
           onChanged: (value) {
             updateConfigData(widgetName, value);
           }),
@@ -617,18 +631,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
               await NotifyContent().setNotify();
             },
             child: Container(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   color: BLUEGREY,
-                  border: Border.all(
-                      color: Colors.grey,
-                      width: 1),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: const Row(children: [
+                child:  Row(children: [
                   Text("   追加   ",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: WHITE)),
+                          color: WHITE)),
                 ])),
           ),
           const SizedBox(width: 5)
@@ -756,7 +767,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           }
 
           return Card(
-            color: WHITE,
+            color: BACKGROUND_COLOR,
             elevation: 1.5,
               child: Padding(
                   padding: const EdgeInsets.all(5),
@@ -910,4 +921,96 @@ class _MainContentsState extends ConsumerState<MainContents> {
         return "毎日";
     }
   }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  String bgColorTheme = ""; 
+
+  Widget themeSettingsBody() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    
+    children: [
+      Text(
+        'テーマ設定…',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 5),
+      Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.symmetric(vertical:7.5,horizontal:15),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              '背景カラーテーマの設定',
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
+              fontWeight: FontWeight.bold,
+              color:BLUEGREY),
+            ),
+            const Divider(
+              height: 2,
+              thickness: 2,
+              color: BLUEGREY,
+            ),
+            const SizedBox(height: 2),
+             buildThemeSettingList(),
+            const SizedBox(height: 2),
+            const Text("設定は次回起動時から適用されます。",
+              style: TextStyle(color: Colors.grey),)
+          ])),
+    ]);
+  }
+
+  Future<void> setThemeSettingsData(String value) async{
+    final prefs = await SharedPreferences.getInstance();  
+    prefs.setString("bgColorTheme",value);
+  }
+
+  Widget buildThemeSettingList() {
+    return FutureBuilder(
+        future: initThemeSettingsData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return loadingSettingWidget();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return backgroundThemeSettings(snapshot.data);
+          }
+        });
+  }
+
+  Widget backgroundThemeSettings(String data){
+    bgColorTheme = data; 
+    return SizedBox(
+      width: SizeConfig.blockSizeHorizontal! * 32,
+      child: DropdownButtonFormField(
+        value: bgColorTheme,
+        decoration: const InputDecoration.collapsed(
+            hintText: "背景テーマ色", border: OutlineInputBorder()),
+        items: const [
+          DropdownMenuItem(value: "white", child: Text("ホワイト")),
+          DropdownMenuItem(value: "grey", child: Text("グレー")),
+        ],
+        onChanged: (value) async{
+          setThemeSettingsData(value!);
+          switchThemeColor(data);
+          setState(() {
+            bgColorTheme = value;
+          });
+        },
+      ),
+    );
+  }
+
 }
+
+  Future<String> initThemeSettingsData() async{
+    final prefs = await SharedPreferences.getInstance();
+    String? data = prefs.getString("bgColorTheme");
+    if(data == null){
+      prefs.setString("bgColorTheme","white");
+      data = "white";
+    }
+    return data;
+  }

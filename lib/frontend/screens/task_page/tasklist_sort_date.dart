@@ -162,12 +162,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               const Spacer(),
               checkedListLength(15.0),
               const SizedBox(width: 15),
-              const Icon(Icons.delete, color: WHITE),
-              const Text(
+              Icon(Icons.delete, color: WHITE),
+              Text(
                 "   Done!!!   ",
                 style: TextStyle(color: WHITE, fontWeight: FontWeight.bold),
               ),
-              const Icon(Icons.delete, color: WHITE),
+              Icon(Icons.delete, color: WHITE),
               const Spacer(),
             ]),
           ));
@@ -180,7 +180,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     final taskData = ref.watch(taskDataProvider);
 
     return Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: WHITE,
           shape: BoxShape.circle,
         ),

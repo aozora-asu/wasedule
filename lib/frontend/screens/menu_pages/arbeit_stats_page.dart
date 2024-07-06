@@ -465,7 +465,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     PreferredSizeWidget? appbar;
     if(isAppBar){
         appbar =  AppBar(
-      leading: const BackButton(color: WHITE),
+      leading:  BackButton(color: WHITE),
       backgroundColor: MAIN_COLOR,
       elevation: 10,
       title: Column(
@@ -529,7 +529,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           const Divider(height: 1),
           Expanded(
             child: Container(
-              decoration: const BoxDecoration(color:BACKGROUND_COLOR),
+              decoration:  BoxDecoration(color:BACKGROUND_COLOR),
               child: SingleChildScrollView(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -898,14 +898,14 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               "時給：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"])}円",
-              style: const TextStyle(
+              style:  TextStyle(
                   color:  WHITE,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
             Text(
               "片道交通費：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"])}円",
-              style: const TextStyle(
+              style:  TextStyle(
                   color:  WHITE,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
@@ -928,7 +928,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                         Expanded(child:
                         Text(
                           sortedData.elementAt(index)["title"] ?? "(詳細なし)",
-                          style: const TextStyle(
+                          style:  TextStyle(
                               color:  WHITE,
                               fontSize: 25,
                               fontWeight: FontWeight.bold,

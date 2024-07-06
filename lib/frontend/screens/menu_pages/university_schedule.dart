@@ -132,15 +132,15 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           showDownloadConfirmDialogue("大学全体","all_depertment");
         },
         MAIN_COLOR,
-        const Row(children:[
-          Spacer(),
+         Row(children:[
+         const Spacer(),
           Icon(Icons.downloading_outlined,color:WHITE),
-          SizedBox(width:30),
+         const SizedBox(width:30),
           Text(
           "大学年間行事予定",
           style: TextStyle(color:WHITE),  
           ),
-          Spacer()
+         const Spacer()
         ]),
         verticalpadding: 10
       )
@@ -155,15 +155,15 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           showChooseDepartmentDialogue();
         },
         PALE_MAIN_COLOR,
-        const Row(children:[
-          Spacer(),
+         Row(children:[
+         const Spacer(),
           Icon(Icons.downloading_outlined,color:WHITE),
-          SizedBox(width:30),
+         const SizedBox(width:30),
           Text(
           "各学部年間行事予定",
           style: TextStyle(color:WHITE),  
           ),
-          Spacer()
+         const Spacer()
         ]),
         verticalpadding: 10
       )
@@ -399,10 +399,10 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                   }
                 },
                 MAIN_COLOR,
-                const Row(children: [
-                  SizedBox(width: 20),
+                 Row(children: [
+                  const SizedBox(width: 20),
                   Icon(Icons.downloading_outlined, color: WHITE),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Text("ダウンロード実行", style: TextStyle(color: WHITE))
                 ]))
           ],
