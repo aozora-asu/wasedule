@@ -991,6 +991,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
         items: const [
           DropdownMenuItem(value: "white", child: Text("ホワイト")),
           DropdownMenuItem(value: "grey", child: Text("グレー")),
+          DropdownMenuItem(value: "yellow", child: Text("イエロー")),
+          DropdownMenuItem(value: "blue", child: Text("ブルー")),
         ],
         onChanged: (value) async{
           setThemeSettingsData(value!);

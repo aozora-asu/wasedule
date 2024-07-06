@@ -49,5 +49,11 @@ void switchThemeColor(String theme){
   if(theme == "grey"){
     BACKGROUND_COLOR = Color.fromRGBO(238, 238, 238, 1);
     WHITE = Color.fromRGBO(255, 255, 255, 1);
+  } else if (theme == "yellow"){
+    BACKGROUND_COLOR = Color.fromRGBO(238, 239, 151, 1);
+    WHITE = Color.fromRGBO(253, 255, 230, 1);
+  } else if (theme == "blue"){
+    BACKGROUND_COLOR = Color.fromRGBO(200, 212, 255, 1);
+    WHITE = Color.fromRGBO(222, 232, 255, 1);
   }
 }

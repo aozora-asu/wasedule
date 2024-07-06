@@ -817,7 +817,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return const Color.fromARGB(255, 225, 225, 225);
     } else if (isHoliday.elementAt(target.day) &&
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
-      return const Color.fromARGB(255, 255, 200, 200);
+      return const Color.fromARGB(255, 255, 215, 215);
     } else if (target.weekday == 6 &&
         ConfigDataLoader().searchConfigData("holidayPaint", ref) == 1) {
       return const Color.fromARGB(255, 225, 225, 255);
