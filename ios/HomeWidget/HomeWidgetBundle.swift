@@ -1,10 +1,10 @@
+////
+////  HomeWidgetBundle.swift
+////  HomeWidget
+////
+////  Created by 矢澤駿 on 2024/07/06.
+////
 //
-//  HomeWidgetBundle.swift
-//  HomeWidget
-//
-//  Created by Ryotaro Takatsu on 2024/06/29.
-//
-
 //import WidgetKit
 //import SwiftUI
 //
