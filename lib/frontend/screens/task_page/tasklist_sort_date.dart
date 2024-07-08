@@ -198,7 +198,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     while (dtEnd.isAfter(DateTime.now())) {
       Duration remainingTime = dtEnd.difference(DateTime.now());
 
-      int days = remainingTime.inDays + 1;
+      int days = remainingTime.inDays;
       int hours = (remainingTime.inHours % 24);
       int minutes = (remainingTime.inMinutes % 60);
       int seconds = (remainingTime.inSeconds % 60);
