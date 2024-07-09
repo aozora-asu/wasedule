@@ -1147,7 +1147,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   //     ref.read(taskDataProvider).isRenewed !=
                   //         false) {
                   //   await Future.delayed(
-                  //       const Duration(microseconds: 1));
+                 ///       const Duration(microseconds: 1));
                   // }
                 },
                 child:Container(
