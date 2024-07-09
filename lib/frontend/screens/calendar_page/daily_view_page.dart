@@ -1155,7 +1155,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: WHITE,
                       borderRadius: BorderRadius.circular(25)),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
