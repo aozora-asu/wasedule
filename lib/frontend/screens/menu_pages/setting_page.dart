@@ -529,7 +529,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
             width: SizeConfig.blockSizeHorizontal! * 32,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
-                  hintText: "通知する日", border: OutlineInputBorder()),
+                filled:true,
+                fillColor: Colors.white,  
+                hintText: "通知する日", border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: null, child: Text(" 毎日")),
                 DropdownMenuItem(value: 1, child: Text(" 毎週月曜日")),
@@ -564,6 +566,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
                 decoration: BoxDecoration(
+                  color:Colors.white,
                   border: Border.all(
                       color: const Color.fromARGB(255, 100, 100, 100),
                       width: 1),
@@ -588,6 +591,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
               isDense: true,
               padding: EdgeInsets.zero,
               decoration: InputDecoration.collapsed(
+                  filled:true,
+                  fillColor: Colors.white,  
                   hintText: "",
                   border:const OutlineInputBorder(),
                   hintStyle: TextStyle(
@@ -667,6 +672,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
                 decoration: BoxDecoration(
+                  color:Colors.white,
                   border: Border.all(
                       color: const Color.fromARGB(255, 100, 100, 100),
                       width: 1),
@@ -716,6 +722,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget notificationSettingList(List<Map> map) {
+    print(map);
     return ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -744,10 +751,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
             String minute = time.substring(3, 5);
 
             notificationDescription = Column(children: [
-              const Text(" 締切・予定の "),
+              const Text(" 締切・予定の ",style: TextStyle(color: Colors.grey)),
               Row(children: [
-                Text("$hour時間$minute分 前",
-                    style: const TextStyle(color: Colors.grey))
+                Text("$hour時間$minute分 前")
               ]),
             ]);
           } else {
@@ -848,7 +854,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
             width: SizeConfig.blockSizeHorizontal! * 45,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
-                  hintText: "日付の形式", border: OutlineInputBorder()),
+                filled:true,
+                fillColor: Colors.white,  
+                hintText: "日付の形式", border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: "M月d日", child: Text(" M月d日")),
                 DropdownMenuItem(value: "M/d", child: Text(" M/d")),
@@ -987,7 +995,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
       child: DropdownButtonFormField(
         value: bgColorTheme,
         decoration: const InputDecoration.collapsed(
-            hintText: "背景テーマ色", border: OutlineInputBorder()),
+          filled:true,
+          fillColor: Colors.white,  
+          hintText: "背景テーマ色", border: OutlineInputBorder()),
         items: const [
           DropdownMenuItem(value: "white", child: Text("ホワイト")),
           DropdownMenuItem(value: "grey", child: Text("グレー")),
