@@ -524,9 +524,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
             width: SizeConfig.blockSizeHorizontal! * 32,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
-                filled:true,
-                fillColor: Colors.white,  
-                hintText: "通知する日", border: OutlineInputBorder()),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "通知する日",
+                  border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: null, child: Text(" 毎日")),
                 DropdownMenuItem(value: 1, child: Text(" 毎週月曜日")),
@@ -561,7 +562,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
                 decoration: BoxDecoration(
-                  color:Colors.white,
+                  color: Colors.white,
                   border: Border.all(
                       color: const Color.fromARGB(255, 100, 100, 100),
                       width: 1),
@@ -586,8 +587,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
               isDense: true,
               padding: EdgeInsets.zero,
               decoration: InputDecoration.collapsed(
-                  filled:true,
-                  fillColor: Colors.white,  
+                  filled: true,
+                  fillColor: Colors.white,
                   hintText: "",
                   border: const OutlineInputBorder(),
                   hintStyle: TextStyle(
@@ -664,7 +665,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
                 decoration: BoxDecoration(
-                  color:Colors.white,
+                  color: Colors.white,
                   border: Border.all(
                       color: const Color.fromARGB(255, 100, 100, 100),
                       width: 1),
@@ -740,12 +741,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
           Widget notificationDescription = const SizedBox();
           if (notifyType == "beforeHour") {
             notificationDescription = Column(children: [
-              const Text(" 締切・予定の ",style: TextStyle(color: Colors.grey)),
-              Row(children: [
-
-                Text(DateFormat("H時間mm分前").format(time)
-                    )
-              ]),
+              const Text(" 締切・予定の ", style: TextStyle(color: Colors.grey)),
+              Row(children: [Text(DateFormat("H時間mm分前").format(time))]),
             ]);
           } else {
             notificationDescription = Column(children: [
@@ -844,9 +841,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
             width: SizeConfig.blockSizeHorizontal! * 45,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
-                filled:true,
-                fillColor: Colors.white,  
-                hintText: "日付の形式", border: OutlineInputBorder()),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "日付の形式",
+                  border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: "M月d日", child: Text(" M月d日")),
                 DropdownMenuItem(value: "M/d", child: Text(" M/d")),
@@ -986,9 +984,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
       child: DropdownButtonFormField(
         value: bgColorTheme,
         decoration: const InputDecoration.collapsed(
-          filled:true,
-          fillColor: Colors.white,  
-          hintText: "背景テーマ色", border: OutlineInputBorder()),
+            filled: true,
+            fillColor: Colors.white,
+            hintText: "背景テーマ色",
+            border: OutlineInputBorder()),
         items: const [
           DropdownMenuItem(value: "white", child: Text("ホワイト")),
           DropdownMenuItem(value: "grey", child: Text("グレー")),
