@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_h
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_progress_indicator.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -18,22 +19,18 @@ import "../../../backend/notify/notify_content.dart";
 class SettingsPage extends StatelessWidget {
   int? initIndex;
   bool? isAppBar;
-  SettingsPage({super.key, 
-    this.initIndex,
-    this.isAppBar
-    });
-
+  SettingsPage({super.key, this.initIndex, this.isAppBar});
 
   @override
   Widget build(BuildContext context) {
     bool showAppBar = isAppBar ?? true;
     PreferredSizeWidget? appBar;
-    if(showAppBar){
+    if (showAppBar) {
       appBar = AppBar(
-        leading:  BackButton(color: WHITE),
+        leading: BackButton(color: WHITE),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
-        title:  Column(
+        title: Column(
           children: <Widget>[
             Row(children: [
               const Icon(
@@ -43,16 +40,13 @@ class SettingsPage extends StatelessWidget {
               Text(
                 '  設定',
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: WHITE),
+                    fontSize: 24, fontWeight: FontWeight.w800, color: WHITE),
               ),
             ])
           ],
         ),
       );
     }
-
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -202,16 +196,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: themeSettingsBody(),
-      )));
-
+        )));
     }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Widget calendarBody() {
-    Widget borderModel =  Column(children: [
+    Widget borderModel = Column(children: [
       const SizedBox(height: 2.5),
-      Divider(height: 2,thickness:2,color:BACKGROUND_COLOR),
+      Divider(height: 2, thickness: 2, color: BACKGROUND_COLOR),
       const SizedBox(height: 2.5),
     ]);
 
@@ -236,7 +229,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                       style: TextStyle(
                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.bold,
-                          color:BLUEGREY),
+                          color: BLUEGREY),
                     ),
                     const Divider(
                       height: 2,
@@ -247,7 +240,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     configSwitch("Tipsとお知らせ", "tips"),
                     borderModel,
                     configSwitch("きょうの予定", "todaysSchedule"),
-                    configSwitch("きょうの予定枠内に\n時間割データを表示", "timetableInTodaysSchedule"),
+                    configSwitch(
+                        "きょうの予定枠内に\n時間割データを表示", "timetableInTodaysSchedule"),
                     borderModel,
                     configSwitch("近日締切のタスク", "taskList"),
                     const SizedBox(height: 5),
@@ -268,8 +262,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                       style: TextStyle(
                           fontSize: SizeConfig.blockSizeHorizontal! * 5,
                           fontWeight: FontWeight.bold,
-                          color:BLUEGREY
-                          ),
+                          color: BLUEGREY),
                     ),
                     const Divider(
                       height: 2,
@@ -283,9 +276,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     configSwitch("カレンダーの大学授業表示", "timetableInCalendarcell"),
                     configSwitch("日付画面の大学授業表示", "timetableInDailyView"),
                     const Padding(
-                     padding:EdgeInsets.all(7.5),
-                     child:Text("※これらは、登録されている時間割をもとに該当月の各曜日に授業データを機械的に表示するものです。ご利用にあたっては大学暦や授業の状況を併せてご確認ください。",
-                      style: TextStyle(color:Colors.red))),
+                        padding: EdgeInsets.all(7.5),
+                        child: Text(
+                            "※これらは、登録されている時間割をもとに該当月の各曜日に授業データを機械的に表示するものです。ご利用にあたっては大学暦や授業の状況を併せてご確認ください。",
+                            style: TextStyle(color: Colors.red))),
                     borderModel,
                   ]))
         ]));
@@ -449,9 +443,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '通知頻度の設定',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
-              fontWeight: FontWeight.bold,
-              color:BLUEGREY),
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold,
+                  color: BLUEGREY),
             ),
             const Divider(
               height: 2,
@@ -476,9 +471,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '通知フォーマットの設定',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
-              fontWeight: FontWeight.bold,
-              color:BLUEGREY),
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold,
+                  color: BLUEGREY),
             ),
             const Divider(
               height: 2,
@@ -508,12 +504,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
   late String notifyType;
   int? weekday;
-  String timeFrequency = "08:00";
-  String timeFrequencyForPreview = "08時間00分";
+  String timeFrequency = "8:00";
+  String timeFrequencyForPreview = "8時間00分";
   int days = 1;
-  String timeBeforeDtEnd = "08:00";
-  String timeBeforeDtEndForPreview = "08時間00分";
-
+  String timeBeforeDtEnd = "8:00";
+  String timeBeforeDtEndForPreview = "8時間00分";
 
   Widget notificationFrequencySetting() {
     Widget borderModel = const Column(children: [
@@ -555,7 +550,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showTitleActions: true,
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
-                  timeFrequency = DateFormat("HH:mm").format(date);
+                  timeFrequency = DateFormat("H:mm").format(date);
                 });
               },
                   currentTime: DateTime(now.year, now.month, now.day, 12, 00),
@@ -589,20 +584,19 @@ class _MainContentsState extends ConsumerState<MainContents> {
               padding: EdgeInsets.zero,
               decoration: InputDecoration.collapsed(
                   hintText: "",
-                  border:const OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   hintStyle: TextStyle(
-                    fontSize:SizeConfig.blockSizeHorizontal! * 4,
-                  )
-                  ),
+                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                  )),
               items: const [
-                DropdownMenuItem(value: 1, child: Text(" １")),
-                DropdownMenuItem(value: 2, child: Text(" ２")),
-                DropdownMenuItem(value: 3, child: Text(" ３")),
-                DropdownMenuItem(value: 4, child: Text(" ４")),
-                DropdownMenuItem(value: 5, child: Text(" ５")),
-                DropdownMenuItem(value: 6, child: Text(" ６")),
-                DropdownMenuItem(value: 7, child: Text(" ７")),
-                DropdownMenuItem(value: 8, child: Text(" ８")),
+                DropdownMenuItem(value: 1, child: Text(" 1")),
+                DropdownMenuItem(value: 2, child: Text(" 2")),
+                DropdownMenuItem(value: 3, child: Text(" 3")),
+                DropdownMenuItem(value: 4, child: Text(" 4")),
+                DropdownMenuItem(value: 5, child: Text(" 5")),
+                DropdownMenuItem(value: 6, child: Text(" 6")),
+                DropdownMenuItem(value: 7, child: Text(" 7")),
+                DropdownMenuItem(value: 8, child: Text(" 8")),
               ],
               onChanged: (value) {
                 setState(() {
@@ -636,10 +630,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   color: BLUEGREY,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child:  Row(children: [
-                  Text("   追加   ",
-                      style: TextStyle(
-                          color: WHITE)),
+                child: Row(children: [
+                  Text("   追加   ", style: TextStyle(color: WHITE)),
                 ])),
           ),
           const SizedBox(width: 5)
@@ -657,8 +649,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showTitleActions: true,
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
-                  timeBeforeDtEndForPreview= DateFormat("HH時間mm分").format(date);
-                  timeBeforeDtEnd = DateFormat("HH:mm").format(date);
+                  timeBeforeDtEndForPreview = DateFormat("H時間mm分").format(date);
+                  timeBeforeDtEnd = DateFormat("H:mm").format(date);
                 });
               },
                   currentTime: DateTime(now.year, now.month, now.day, 12, 00),
@@ -724,7 +716,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           int id = target["id"];
           String notifyType = target["notifyType"];
           int? weekday = target["weekday"];
-          String time = target["time"];
+          DateTime time = DateFormat("H:mm").parse(target["time"]);
           int? days = target["days"];
           int isValidNotify = target["isValidNotify"];
           Color buttonColor;
@@ -740,13 +732,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
           Widget notificationDescription = const SizedBox();
           if (notifyType == "beforeHour") {
-            String hour = time.substring(0, 2);
-            String minute = time.substring(3, 5);
-
             notificationDescription = Column(children: [
               const Text(" 締切・予定の "),
               Row(children: [
-                Text("$hour時間$minute分 前",
+                Text(DateFormat("H時間mm分前").format(time),
                     style: const TextStyle(color: Colors.grey))
               ]),
             ]);
@@ -756,19 +745,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
                 const Text(" "),
                 Text(getDayOfWeek(weekday)),
                 const Text(" "),
-                Text(time)
+                Text(DateFormat("H:mm").format(time))
               ]),
               Row(children: [
                 const Text(" "),
-                Text("$days 日分",
-                    style: const TextStyle(color: Colors.grey)),
+                Text("$days 日分", style: const TextStyle(color: Colors.grey)),
               ]),
             ]);
           }
 
           return Card(
-            color: BACKGROUND_COLOR,
-            elevation: 1.5,
+              color: BACKGROUND_COLOR,
+              elevation: 1.5,
               child: Padding(
                   padding: const EdgeInsets.all(5),
                   child: Row(children: [
@@ -777,7 +765,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                           //＠ここに通知設定削除の処理
 
                           await NotifyDatabaseHandler().disableNotify(id);
-                          await NotifyContent().cancelNotify();
+                          await NotifyContent().cancelAllNotify();
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
 
                           setState(() {});
@@ -795,7 +783,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                       } else {
                         await NotifyDatabaseHandler().disableNotify(id);
                       }
-                      await NotifyContent().cancelNotify();
+                      await NotifyContent().cancelAllNotify();
 
                       await NotifyContent().setNotify();
                       setState(() {});
@@ -868,7 +856,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
         child: Row(children: [
           const Text("曜日を含む："),
           CupertinoCheckbox(
-              activeColor:BLUEGREY,
+              activeColor: BLUEGREY,
               value: isContainWeekday,
               onChanged: (value) {
                 setState(() {
@@ -922,14 +910,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
     }
   }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  String bgColorTheme = ""; 
+  String bgColorTheme = "";
 
   Widget themeSettingsBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
-    
-    children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         'テーマ設定…',
         style: TextStyle(
@@ -939,13 +924,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const SizedBox(height: 5),
       Container(
           decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.symmetric(vertical:7.5,horizontal:15),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '背景カラーテーマの設定',
-              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal! * 5,
-              fontWeight: FontWeight.bold,
-              color:BLUEGREY),
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold,
+                  color: BLUEGREY),
             ),
             const Divider(
               height: 2,
@@ -953,17 +940,19 @@ class _MainContentsState extends ConsumerState<MainContents> {
               color: BLUEGREY,
             ),
             const SizedBox(height: 2),
-             buildThemeSettingList(),
+            buildThemeSettingList(),
             const SizedBox(height: 2),
-            const Text("設定は次回起動時から適用されます。",
-              style: TextStyle(color: Colors.grey),)
+            const Text(
+              "設定は次回起動時から適用されます。",
+              style: TextStyle(color: Colors.grey),
+            )
           ])),
     ]);
   }
 
-  Future<void> setThemeSettingsData(String value) async{
-    final prefs = await SharedPreferences.getInstance();  
-    prefs.setString("bgColorTheme",value);
+  Future<void> setThemeSettingsData(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("bgColorTheme", value);
   }
 
   Widget buildThemeSettingList() {
@@ -980,8 +969,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
         });
   }
 
-  Widget backgroundThemeSettings(String data){
-    bgColorTheme = data; 
+  Widget backgroundThemeSettings(String data) {
+    bgColorTheme = data;
     return SizedBox(
       width: SizeConfig.blockSizeHorizontal! * 32,
       child: DropdownButtonFormField(
@@ -994,7 +983,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           DropdownMenuItem(value: "yellow", child: Text("イエロー")),
           DropdownMenuItem(value: "blue", child: Text("ブルー")),
         ],
-        onChanged: (value) async{
+        onChanged: (value) async {
           setThemeSettingsData(value!);
           switchThemeColor(data);
           setState(() {
@@ -1004,15 +993,14 @@ class _MainContentsState extends ConsumerState<MainContents> {
       ),
     );
   }
-
 }
 
-  Future<String> initThemeSettingsData() async{
-    final prefs = await SharedPreferences.getInstance();
-    String? data = prefs.getString("bgColorTheme");
-    if(data == null){
-      prefs.setString("bgColorTheme","white");
-      data = "white";
-    }
-    return data;
+Future<String> initThemeSettingsData() async {
+  final prefs = await SharedPreferences.getInstance();
+  String? data = prefs.getString("bgColorTheme");
+  if (data == null) {
+    prefs.setString("bgColorTheme", "white");
+    data = "white";
   }
+  return data;
+}

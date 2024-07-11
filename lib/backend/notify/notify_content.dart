@@ -9,18 +9,14 @@ import 'package:intl/intl.dart';
 import "notify_db.dart";
 import "../../converter.dart";
 
+int notifyID = 0;
+
 class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   late NotificationDetails notificationDetails;
-  static const int SAMPLENOTIFYID = 0;
-  static const int DAILYNOTIFYID = 1;
-  static const int WEEKLYNOTIFYID = 2;
-
-  int TASKBEFOREHOURNOTIFYID_DIGIT = 0;
-  int SCHEDULEBEFORHOURNOTIFYID_DIGIT = 1;
   NotificationDetails _setNotificationDetail(
-      int id, String title, String body) {
+      int id, String title, String body, String notifyGroupID) {
     notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
           'notification channel $id',
@@ -30,14 +26,15 @@ class NotifyContent {
           priority: Priority.high,
           ticker: 'ticker',
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           sound: 'slow_spring_board.aiff',
+          threadIdentifier: notifyGroupID,
         ));
     return notificationDetails;
   }
 
   //@params 通知をしたい毎週何曜日に何時に通知するのかを決める
-  //timeString: 03:59 H:m型の文字列
+  //timeString: 3:59 H:mm型の文字列
   //weekday 月~日まで1~7
   //return
   tz.TZDateTime _nextInstanceOfWeeklyTime(String timeString, int weekday) {
@@ -46,7 +43,7 @@ class NotifyContent {
     final tz.TZDateTime now = tz.TZDateTime.now(local);
 
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
-    DateTime parsedTime = DateFormat.Hm().parse(timeString);
+    DateTime parsedTime = DateFormat("H:mm").parse(timeString);
 
     // 現在の曜日を取得し、指定された曜日までの日数を計算
     int currentWeekday = now.weekday;
@@ -69,7 +66,7 @@ class NotifyContent {
     tz.Location local = tz.getLocation('Asia/Tokyo');
     final tz.TZDateTime now = tz.TZDateTime.now(local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
-    DateTime parsedTime = DateFormat.Hm().parse(timeString);
+    DateTime parsedTime = DateFormat("H:mm").parse(timeString);
 
     tz.TZDateTime scheduledDate = tz.TZDateTime(local, now.year, now.month,
         now.day, parsedTime.hour, parsedTime.minute);
@@ -114,18 +111,18 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   hh:mm")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(dailyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    hh:mm")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(dailyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 hh:mm")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -173,9 +170,9 @@ class NotifyContent {
       }
     }
     notificationDetails =
-        _setNotificationDetail(DAILYNOTIFYID, notifyTitle, body);
+        _setNotificationDetail(notifyID++, notifyTitle, body, "dailyNotify");
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      DAILYNOTIFYID,
+      notifyID++,
       notifyTitle,
       body,
       dailyScheduleDate,
@@ -209,18 +206,18 @@ class NotifyContent {
         if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   hh:mm")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    hh:mm")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
               .difference(weeklyScheduleDate)
               .inDays;
-          due = DateFormat("$n日後 hh:mm")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -282,9 +279,9 @@ class NotifyContent {
       }
     }
     notificationDetails =
-        _setNotificationDetail(WEEKLYNOTIFYID, notifyTitle, body);
+        _setNotificationDetail(notifyID++, notifyTitle, body, "weeklyNotify");
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      WEEKLYNOTIFYID,
+      notifyID++,
       notifyTitle,
       body,
       weeklyScheduleDate,
@@ -333,15 +330,15 @@ class NotifyContent {
         if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   hh:mm")
+          due = DateFormat("今日   H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <=
             _cinderellaTimeAfterNdayLater(scheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    hh:mm")
+          due = DateFormat("翌    H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
-          due = DateFormat("$n日後 hh:mm")
+          due = DateFormat("$n日後 H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         }
 
@@ -350,9 +347,9 @@ class NotifyContent {
         body = "$dueまで $title   $summary";
 
         notificationDetails = _setNotificationDetail(
-            task["id"] * 10 + TASKBEFOREHOURNOTIFYID_DIGIT, notifyTitle, body);
+            notifyID++, notifyTitle, body, "beforHourNotify_task");
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          task["id"] * 10 + TASKBEFOREHOURNOTIFYID_DIGIT,
+          notifyID++,
           notifyTitle,
           body,
           scheduleDate,
@@ -385,11 +382,9 @@ class NotifyContent {
         }
 
         notificationDetails = _setNotificationDetail(
-            SCHEDULEBEFORHOURNOTIFYID_DIGIT + schedule["id"] * 10 as int,
-            notifyTitle,
-            body);
+            notifyID++, notifyTitle, body, "beforHourNotify_schedule");
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          SCHEDULEBEFORHOURNOTIFYID_DIGIT + schedule["id"] * 10 as int,
+          notifyID++,
           notifyTitle,
           body,
           scheduleDatetime,
@@ -458,19 +453,19 @@ class NotifyContent {
               "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
         }
       }
-      notificationDetails =
-          _setNotificationDetail(DAILYNOTIFYID, notifyTitle, "このように通知されます");
+      notificationDetails = _setNotificationDetail(
+          notifyID++, notifyTitle, "このように通知されます", "notifyConfig");
       await flutterLocalNotificationsPlugin.show(
-        SAMPLENOTIFYID,
+        notifyID++,
         notifyTitle,
         "このように通知されます",
         notificationDetails,
       );
     } else {
-      notificationDetails =
-          _setNotificationDetail(DAILYNOTIFYID, "通知のフォーマットを設定してください", "");
+      notificationDetails = _setNotificationDetail(
+          notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig");
       await flutterLocalNotificationsPlugin.show(
-        SAMPLENOTIFYID,
+        notifyID++,
         "通知のフォーマットを設定してください",
         "",
         notificationDetails,
@@ -485,42 +480,6 @@ class NotifyContent {
     for (var pendingNotificationRequest in pendingNotificationRequests) {
       print(
           "通知id:${pendingNotificationRequest.id}\nタイトル:${pendingNotificationRequest.title}\n内容:${pendingNotificationRequest.body}\n------------------------------------------\n");
-    }
-  }
-
-  Future<void> cancelNotify() async {
-    List<Map<String, dynamic>>? notifyConfigList =
-        await NotifyDatabaseHandler().getNotifyConfigList();
-    int taskNum = await TaskDatabaseHelper().getMaxId();
-    int scheduleNum = await ScheduleDatabaseHelper().getMaxId();
-    if (notifyConfigList != null && (taskNum != 0 || scheduleNum != 0)) {
-      for (Map<String, dynamic> notifyConfigMap in notifyConfigList) {
-        NotifyConfig notifyConfig = NotifyConfig(
-            notifyType: notifyConfigMap["notifyType"],
-            time: notifyConfigMap["time"],
-            isValidNotify: notifyConfigMap["isValidNotify"],
-            days: notifyConfigMap["days"],
-            weekday: notifyConfigMap["weekday"]);
-        if (notifyConfigMap["isValidNotify"] == 0) {
-          switch (notifyConfig.notifyType) {
-            case "daily":
-              await flutterLocalNotificationsPlugin.cancel(DAILYNOTIFYID);
-            case "weekly":
-              await flutterLocalNotificationsPlugin.cancel(WEEKLYNOTIFYID);
-            case "beforeHour":
-              for (int i = 0; i <= taskNum; i++) {
-                await flutterLocalNotificationsPlugin
-                    .cancel(i * 10 + TASKBEFOREHOURNOTIFYID_DIGIT);
-              }
-              for (int i = 0; i <= scheduleNum; i++) {
-                await flutterLocalNotificationsPlugin
-                    .cancel(i * 10 + SCHEDULEBEFORHOURNOTIFYID_DIGIT);
-              }
-
-            //await _bookBeforeHourNotify(notifyConfig, notifyFormat);
-          }
-        }
-      }
     }
   }
 

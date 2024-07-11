@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:intl/intl.dart';
 
 class NotifyConfig {
   String notifyType;
@@ -41,6 +42,7 @@ class NotifyDatabaseHandler {
   static const String databaseName = "notify";
   static const String formatTable = "notify_format";
   static const String configTable = "notify_config";
+  static const String configTableNew = "notify_config_new";
   // データベースの初期化
   NotifyDatabaseHandler() {
     _initNotifyDatabase();
@@ -49,7 +51,7 @@ class NotifyDatabaseHandler {
     String path = join(await getDatabasesPath(), '$databaseName.db');
     _database = await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createNotifyDatabase,
       onUpgrade: _updateNotifyDatabase,
     );
@@ -67,7 +69,7 @@ class NotifyDatabaseHandler {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS $configTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        notifyType TEXT UNIQUE,
+        notifyType TEXT ,
         weekday INT,
         time TEXT,
         days INTEGER,
@@ -93,6 +95,34 @@ class NotifyDatabaseHandler {
         await _addDefaultFormatData(db);
       }
     }
+    if (oldVersion == 2) {
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS $configTableNew(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        notifyType TEXT,
+        weekday INT,
+        time TEXT,
+        days INTEGER,
+        isValidNotify INTEGER
+      )
+    ''');
+      // 既存のデータを新しいテーブルに移行
+      var configs = await db.query(configTable);
+
+      for (var config in configs) {
+        await db.insert(configTableNew, {
+          'notifyType': config["notifyType"],
+          'weekday': config["weekday"],
+          'time': config["time"],
+          'days': config["days"],
+          'isValidNotify': config["isValidNotify"],
+        });
+      }
+      // 既存のテーブルを削除
+      await db.execute('DROP TABLE $configTable');
+      // 新しいテーブルの名前を既存のテーブルの名前に変更
+      await db.execute('ALTER TABLE $configTableNew RENAME TO $configTable');
+    }
   }
 
   // デフォルトのデータを挿入するメソッド
@@ -102,7 +132,7 @@ class NotifyDatabaseHandler {
         configTable,
         NotifyConfig(
                 notifyType: "daily",
-                time: "08:00",
+                time: "8:00",
                 isValidNotify: 1,
                 days: 1,
                 weekday: null)
@@ -151,15 +181,6 @@ class NotifyDatabaseHandler {
     );
   }
 
-  Future<void> _updateNotifyConfig(NotifyConfig newNotifyConfig) async {
-    await _database.update(
-      configTable,
-      newNotifyConfig.toMap(), // 更新後の値
-      where: 'notifyType = ?',
-      whereArgs: [newNotifyConfig.toMap()["notifyType"]],
-    );
-  }
-
   Future<void> activateNotify(int id) async {
     await _initNotifyDatabase();
     await _database.update(
@@ -200,14 +221,7 @@ class NotifyDatabaseHandler {
 
   Future<void> setNotifyConfig(NotifyConfig notifyConfig) async {
     await _initNotifyDatabase();
-    try {
-      await _insertNotifyConfig(notifyConfig);
-    } catch (e) {
-      // エラーが UNIQUE constraint failed の場合のみ無視する
-      if (e.toString().contains("UNIQUE constraint failed")) {
-        await _updateNotifyConfig(notifyConfig);
-      }
-    }
+    await _insertNotifyConfig(notifyConfig);
   }
 
   Future<bool> hasNotifyFormat() async {
@@ -233,8 +247,8 @@ class NotifyDatabaseHandler {
 
   Future<List<Map<String, dynamic>>?> getNotifyConfigList() async {
     await _initNotifyDatabase();
-    List<Map<String, dynamic>> notifyConfigList =
-        await _database.rawQuery('SELECT * FROM $configTable');
+    List<Map<String, dynamic>> notifyConfigList = await _database
+        .rawQuery('SELECT * FROM $configTable ORDER BY notifyType ASC');
     if (notifyConfigList.isEmpty) {
       return null;
     } else {
