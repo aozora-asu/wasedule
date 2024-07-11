@@ -223,7 +223,7 @@ class NotifyContent {
 
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        taskBody += "$dueまで $title   $summary\n";
+        taskBody += "$dueまで $title\n  $summary\n";
       }
     }
     if (taskBody == "") {
@@ -300,7 +300,7 @@ class NotifyContent {
     tz.Location local = tz.getLocation('Asia/Tokyo');
     final tz.TZDateTime now = tz.TZDateTime.now(local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
-    DateTime parsedTime = DateFormat.Hm().parse(notifyConfig.time);
+    DateTime parsedTime = DateFormat("H:mm").parse(notifyConfig.time);
     if (parsedTime.hour == 0) {
       notifyTitle = "${parsedTime.minute}分前のお知らせです";
     } else {
