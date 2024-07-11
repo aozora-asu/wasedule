@@ -397,6 +397,7 @@ class NotifyContent {
   }
 
   Future<void> setNotify() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
     Map<String, dynamic>? notifyFormatMap =
         await NotifyDatabaseHandler().getNotifyFormat();
     List<Map<String, dynamic>>? notifyConfigList =

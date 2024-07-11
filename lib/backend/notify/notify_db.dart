@@ -113,7 +113,8 @@ class NotifyDatabaseHandler {
         await db.insert(configTableNew, {
           'notifyType': config["notifyType"],
           'weekday': config["weekday"],
-          'time': config["time"],
+          'time': DateFormat("H:mm")
+              .format(DateTime.parse(config["time"] as String)),
           'days': config["days"],
           'isValidNotify': config["isValidNotify"],
         });
