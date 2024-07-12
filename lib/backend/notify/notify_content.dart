@@ -87,70 +87,15 @@ class NotifyContent {
         0);
   }
 
-  Future<void> _bookDailyNotify(
+  Future<void> _bookDailyTaskNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
     tz.TZDateTime dailyScheduleDate =
         _nextInstanceOfDailyTime(notifyConfig.time);
-    List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
-        .getDuringTaskList(
-            dailyScheduleDate.millisecondsSinceEpoch,
-            dailyScheduleDate
-                .add(Duration(days: notifyConfig.days!))
-                .millisecondsSinceEpoch);
-    String body = "";
-    String title;
-    String summary;
-    String due = "";
-    String notifyTitle;
 
-    body += "課題\n";
-    String taskBody = "";
+    String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
 
-    for (var task in notifyTaskList) {
-      if (task["isDone"] == 0) {
-        if (task["dtEnd"] <=
-            _cinderellaTimeAfterNdayLater(dailyScheduleDate, 0)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else if (task["dtEnd"] <=
-            _cinderellaTimeAfterNdayLater(dailyScheduleDate, 1)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else {
-          int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
-              .difference(dailyScheduleDate)
-              .inDays;
-          due = DateFormat("$n日後 H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        }
+    String body = await makeTaskNotifyBody(notifyConfig, dailyScheduleDate);
 
-        title = task["title"] ?? "";
-        summary = task["summary"] ?? "";
-        taskBody += "$dueまで $title   $summary\n";
-      }
-    }
-    if (taskBody == "") {
-      taskBody = "直近の課題はありません\n";
-    }
-    body += taskBody;
-
-    if (notifyFormat.isContainWeekday == 0) {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "今日のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(dailyScheduleDate)}のお知らせ";
-      }
-    } else {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "今日(${'月火水木金土日'[dailyScheduleDate.weekday - 1]})のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(dailyScheduleDate)}(${'月火水木金土日'[dailyScheduleDate.weekday - 1]})のお知らせ";
-      }
-    }
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, body, "dailyNotify_task");
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -162,12 +107,18 @@ class NotifyContent {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
+  }
+
+  Future<void> _bookDailyScheduleNotify(
+      NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
+    tz.TZDateTime dailyScheduleDate =
+        _nextInstanceOfDailyTime(notifyConfig.time);
+
+    String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
 
     List<Map<String, dynamic>> notifyScheduleList =
         await ScheduleDatabaseHelper().getSchedule(dailyScheduleDate);
     String scheduleNotifyBody = "";
-    scheduleNotifyBody = "予定\n";
-
     if (notifyScheduleList.isEmpty) {
       scheduleNotifyBody += "本日の予定はありません";
     } else {
@@ -196,88 +147,28 @@ class NotifyContent {
     );
   }
 
-  Future<void> _bookWeeklyNotify(
-      NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
-    tz.TZDateTime weeklyScheduleDate =
-        _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
-    List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
-        .getDuringTaskList(
-            weeklyScheduleDate.millisecondsSinceEpoch,
-            weeklyScheduleDate
-                .add(Duration(days: notifyConfig.days!))
-                .millisecondsSinceEpoch);
-    String body = "";
-    String title;
-    String summary;
-    String? due;
-    String notifyTitle;
-
-    body += "";
-    String taskBody = "";
-
-    for (var task in notifyTaskList) {
-      if (task["isDone"] == 0) {
-        if (task["dtEnd"] <
-            _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 0)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else if (task["dtEnd"] <
-            _cinderellaTimeAfterNdayLater(weeklyScheduleDate, 1)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else {
-          int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
-              .difference(weeklyScheduleDate)
-              .inDays;
-          due = DateFormat("$n日後 H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        }
-
-        title = task["title"] ?? "";
-        summary = task["summary"] ?? "";
-        taskBody += "$dueまで $title\n  $summary\n";
-      }
-    }
-    if (taskBody == "") {
-      taskBody = "近日中の課題はありません\n";
-    }
-    body += taskBody;
+  String makeNotifyTitle(
+      NotifyFormat notifyFormat, tz.TZDateTime scheduleDate) {
+    String notifyTitle = "";
     if (notifyFormat.isContainWeekday == 0) {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "近日のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}のお知らせ";
-      }
+      notifyTitle =
+          "${DateFormat(notifyFormat.notifyFormat).format(scheduleDate)}のお知らせ";
     } else {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "${'月火水木金土日'[weeklyScheduleDate.weekday - 1]}曜日のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}(${'月火水木金土日'[weeklyScheduleDate.weekday - 1]})のお知らせ";
-      }
+      notifyTitle =
+          "${DateFormat(notifyFormat.notifyFormat).format(scheduleDate)}(${'月火水木金土日'[scheduleDate.weekday - 1]})のお知らせ";
     }
-    notificationDetails = _setNotificationDetail(
-        notifyID++, notifyTitle, body, "weeklyNotify_task");
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      notifyID++,
-      notifyTitle,
-      body,
-      weeklyScheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+    return notifyTitle;
+  }
 
+  Future<String> makeScheduleNotifyBody(
+      NotifyConfig notifyConfig, tz.TZDateTime scheduleDate) async {
     List<Map<String, dynamic>> notifyScheduleList;
     String prefix;
     String scheduleNotifyBody = "";
     String planString = "";
     for (int day = 0; day <= notifyConfig.days!; day++) {
       notifyScheduleList = await ScheduleDatabaseHelper()
-          .getSchedule(weeklyScheduleDate.add(Duration(days: day)));
+          .getSchedule(scheduleDate.add(Duration(days: day)));
 
       for (var schedule in notifyScheduleList) {
         String startTime = schedule["startTime"] ?? "";
@@ -303,7 +194,80 @@ class NotifyContent {
     }
     scheduleNotifyBody += planString;
     scheduleNotifyBody = scheduleNotifyBody.trimRight();
+    return scheduleNotifyBody;
+  }
 
+  Future<String> makeTaskNotifyBody(
+      NotifyConfig notifyConfig, tz.TZDateTime scheduleDate) async {
+    String body = "";
+    String taskBody = "";
+    String due = "";
+    String title;
+    String summary;
+    List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
+        .getDuringTaskList(
+            scheduleDate.millisecondsSinceEpoch,
+            scheduleDate
+                .add(Duration(days: notifyConfig.days!))
+                .millisecondsSinceEpoch);
+    for (var task in notifyTaskList) {
+      if (task["isDone"] == 0) {
+        if (task["dtEnd"] <
+            _cinderellaTimeAfterNdayLater(scheduleDate, 0)
+                .millisecondsSinceEpoch) {
+          due = DateFormat("今日   H:mm")
+              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
+        } else if (task["dtEnd"] <
+            _cinderellaTimeAfterNdayLater(scheduleDate, 1)
+                .millisecondsSinceEpoch) {
+          due = DateFormat("翌    H:mm")
+              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
+        } else {
+          int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
+              .difference(scheduleDate)
+              .inDays;
+          due = DateFormat("$n日後 H:mm")
+              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
+        }
+
+        title = task["title"] ?? "";
+        summary = task["summary"] ?? "";
+        taskBody += "$dueまで $title\n  $summary\n";
+      }
+    }
+    if (taskBody == "") {
+      taskBody = "近日中の課題はありません\n";
+    }
+    body += taskBody;
+    return body;
+  }
+
+  Future<void> _bookWeeklyTaskNotify(
+      NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
+    tz.TZDateTime weeklyScheduleDate =
+        _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
+    String body = await makeTaskNotifyBody(notifyConfig, weeklyScheduleDate);
+    String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, body, "weeklyNotify_task");
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      notifyID++,
+      notifyTitle,
+      body,
+      weeklyScheduleDate,
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  Future<void> _bookWeeklySheduleNotify(
+      NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
+    tz.TZDateTime weeklyScheduleDate =
+        _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
+    String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
+    String scheduleNotifyBody =
+        await makeScheduleNotifyBody(notifyConfig, weeklyScheduleDate);
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, scheduleNotifyBody, "weeklyNotify_schedule");
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -442,16 +406,17 @@ class NotifyContent {
         if (notifyConfigMap["isValidNotify"] == 1) {
           switch (notifyConfig.notifyType) {
             case "daily":
-              await _bookDailyNotify(notifyConfig, notifyFormat);
+              await _bookDailyTaskNotify(notifyConfig, notifyFormat);
+              await _bookDailyScheduleNotify(notifyConfig, notifyFormat);
             case "weekly":
-              await _bookWeeklyNotify(notifyConfig, notifyFormat);
+              await _bookWeeklyTaskNotify(notifyConfig, notifyFormat);
+              await _bookWeeklySheduleNotify(notifyConfig, notifyFormat);
             case "beforeHour":
               await _bookBeforeHourNotify(notifyConfig, notifyFormat);
           }
         }
       }
     }
-    //await getScheduledNotify();
   }
 
   Future<void> sampleNotify() async {
@@ -512,7 +477,7 @@ class NotifyContent {
   }
 
   static const String classNotifyTitle = "授業のお知らせ";
-  Future<void> attendNotify() async {
+  Future<void> attendanceNotify() async {
     List<Map<String, dynamic>>? myCourseList =
         await MyCourseDatabaseHandler().getPresentTermCourseList();
     if (myCourseList.isNotEmpty) {
