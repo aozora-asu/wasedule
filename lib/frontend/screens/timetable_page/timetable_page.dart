@@ -43,9 +43,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ScrollController controller = ScrollController();
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-              color:BACKGROUND_COLOR
-          ),
+          decoration: BoxDecoration(color: BACKGROUND_COLOR),
           child: Scrollbar(
             controller: controller,
             interactive: true,
@@ -53,7 +51,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             thumbVisibility: true,
             child: Padding(
               padding: EdgeInsets.only(
-                left: SizeConfig.blockSizeHorizontal! * 0,//2.5
+                left: SizeConfig.blockSizeHorizontal! * 0, //2.5
                 right: SizeConfig.blockSizeHorizontal! * 0,
               ),
               child: ListView(
@@ -82,7 +80,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       });
                 },
                 backgroundColor: PALE_MAIN_COLOR,
-                child:  Icon(Icons.add, color: WHITE)),
+                child: Icon(Icons.add, color: WHITE)),
             const SizedBox(width: 10),
             timetableShareButton(context),
           ])),
@@ -93,7 +91,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return FloatingActionButton(
         heroTag: "timetable_2",
         backgroundColor: MAIN_COLOR,
-        child:  Icon(Icons.ios_share, color: WHITE),
+        child: Icon(Icons.ios_share, color: WHITE),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -314,14 +312,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     },
                     icon: const Icon(Icons.arrow_back_ios),
                     iconSize: 20,
-                    color:BLUEGREY),
+                    color: BLUEGREY),
                 Text(
                   semesterText(),
                   style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color:BLUEGREY
-                  ),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: BLUEGREY),
                 ),
                 IconButton(
                     onPressed: () {
@@ -331,16 +328,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     },
                     icon: const Icon(Icons.arrow_forward_ios),
                     iconSize: 20,
-                    color:BLUEGREY),
+                    color: BLUEGREY),
                 const Spacer(),
                 doNotContainScreenShot(changeQuaterbutton(1)),
                 doNotContainScreenShot(changeQuaterbutton(2)),
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
                 const Spacer(),
               ]),
-              const SizedBox(height:10),
+              const SizedBox(height: 10),
               FutureBuilder(
-                  future: MyCourseDatabaseHandler().getMyCourse(),
+                  future: MyCourseDatabaseHandler().getAllMyCourse(),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return timeTableBody();
@@ -371,10 +368,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   BoxDecoration switchDecoration() {
     if (isScreenShotBeingTaken) {
-      return  BoxDecoration(color: BACKGROUND_COLOR);
+      return BoxDecoration(color: BACKGROUND_COLOR);
     } else {
-      return  BoxDecoration(
-        color:BACKGROUND_COLOR,
+      return BoxDecoration(
+        color: BACKGROUND_COLOR,
       );
     }
   }
@@ -406,9 +403,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               height: 200, width: 200),
           const SizedBox(height: 20),
           Text("時間割データはまだありません。",
-            style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 5,
-              fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
           const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -463,10 +460,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           child: Text(
             "   オンデマンド・その他",
             style: TextStyle(
-              fontSize: 17.5,
-              fontWeight: FontWeight.w700,
-              color:BLUEGREY
-            ),
+                fontSize: 17.5, fontWeight: FontWeight.w700, color: BLUEGREY),
           )),
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
@@ -499,12 +493,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 decoration:BoxDecoration(
                   borderRadius: BorderRadius.circular(2.5),
                   color: bgColor),
+
                 child: Center(
                     child: Text(
                   days.elementAt(index),
-                  style: TextStyle(
-                    color: fontColor,
-                    fontWeight:FontWeight.bold),
+                  style:
+                      TextStyle(color: fontColor, fontWeight: FontWeight.bold),
                 )));
           },
           itemCount: 6,
@@ -538,6 +532,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 color: bgColor,
                 borderRadius: BorderRadius.circular(2.5)
               ),
+
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: Column(
@@ -545,11 +540,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       children: [
                         Text(
                           returnBeginningTime(index + 1),
-                          style:
-                              TextStyle(
-                                color: fontColor,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: fontColor,
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold),
                         ),
                         Text((index + 1).toString(),
                             style: TextStyle(
@@ -558,11 +552,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                                 fontWeight: FontWeight.bold)),
                         Text(
                           returnEndTime(index + 1),
-                          style:
-                              TextStyle(
-                                color: fontColor,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: fontColor,
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold),
                         ),
                       ])));
         },
@@ -665,25 +658,21 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                             tableData.currentSemesterClasses[weekDay],
                             index + 1))["year"] ==
                     thisYear) {
-
               if (tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
                       currentQuaterID() ||
-
                   tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
                       currentSemesterID() ||
-
                   tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
                       "full_year") {
-                
                 cellContents = FutureBuilder(
                     future: TaskDatabaseHelper().getTaskListByCourseName(
                         tableData.currentSemesterClasses[weekDay].elementAt(
@@ -718,13 +707,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * cellHeight,
                 decoration: BoxDecoration(
-                  color: bgColor,
-                  border: Border.all(
-                    color: lineColor,
-                    width: lineWidth,
-                  ),
-                  borderRadius: BorderRadius.circular(4)
-                ),
+                    color: bgColor,
+                    border: Border.all(
+                      color: lineColor,
+                      width: lineWidth,
+                    ),
+                    borderRadius: BorderRadius.circular(4)),
                 child: cellContents);
           }),
           separatorBuilder: (context, index) {
@@ -759,6 +747,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         color: fontColor,
                         fontSize: SizeConfig.blockSizeHorizontal! * 3,
                         fontWeight:FontWeight.bold),),
+
                     const Spacer(),
                   ]));
             }
@@ -780,10 +769,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         itemCount: listLength + 1,
         itemBuilder: (context, index) {
           Widget child = const SizedBox();
-          if(index == listLength ){
+          if (index == listLength) {
             child = ondemandAddSell();
             return child;
-          }else{
+          } else {
             if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
                     currentQuaterID() ||
                 tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
@@ -796,18 +785,18 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   height: SizeConfig.blockSizeVertical! * cellHeight,
                   width: SizeConfig.blockSizeHorizontal! * cellWidth,
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: BACKGROUND_COLOR,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(4)
-                  ),
+                      border: Border.all(
+                        color: BACKGROUND_COLOR,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(4)),
                   child: FutureBuilder(
                       future: TaskDatabaseHelper().getTaskListByCourseName(
                           tableData.sortedDataByWeekDay[7]
                               .elementAt(index)["courseName"]),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return ondemandSellsChild(index, []);
                         } else if (snapshot.hasData) {
                           return ondemandSellsChild(index, snapshot.data!);
@@ -818,7 +807,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             }
             return child;
           }
-      });
+        });
   }
 
   List<int> returnExistingPeriod(List<Map> target) {
@@ -860,9 +849,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     Widget classRoomView = const SizedBox();
     if (classRoom != null && classRoom != "" && classRoom != "-") {
       classRoomView = Container(
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
               color: WHITE,
-              borderRadius:const BorderRadius.all(Radius.circular(2))),
+              borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
             style: TextStyle(
@@ -876,10 +865,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return Stack(children: [
       Container(
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
-          decoration:BoxDecoration(
-            color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
-            borderRadius: BorderRadius.circular(2)
-            ),
+          decoration: BoxDecoration(
+              color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
+              borderRadius: BorderRadius.circular(2)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           child: InkWell(
               onTap: () {
@@ -938,10 +926,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         },
         child: Stack(children: [
           Container(
-            decoration:BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(2)
-            ),
+            decoration: BoxDecoration(
+                color: bgColor, borderRadius: BorderRadius.circular(2)),
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -962,36 +948,27 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         ]));
   }
 
-
   Widget ondemandAddSell() {
     Color bgColor = WHITE;
     return GestureDetector(
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CourseAddPage(
-                  setTimetableState: setState,
-            );
-          });
-        },
-        child:
-          Container(
-            height: SizeConfig.blockSizeVertical! * cellHeight,
-            width: SizeConfig.blockSizeHorizontal! * cellWidth,
-            decoration:BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(2)
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child:const Center(
-              child:Icon(
-                Icons.add_rounded,
-                size:30,
-                color:Colors.grey
-              ))
-          ),
-        );
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CourseAddPage(
+                setTimetableState: setState,
+              );
+            });
+      },
+      child: Container(
+          height: SizeConfig.blockSizeVertical! * cellHeight,
+          width: SizeConfig.blockSizeHorizontal! * cellWidth,
+          decoration: BoxDecoration(
+              color: bgColor, borderRadius: BorderRadius.circular(2)),
+          padding: const EdgeInsets.symmetric(horizontal: 3),
+          child: const Center(
+              child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
+    );
   }
 
   AssetImage tableBackGroundImage() {

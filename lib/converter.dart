@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 String? period2startTime(int period) {
   switch (period) {
+    case 0:
+      return "7:00";
     case 1:
       return "8:50";
     case 2:
@@ -27,6 +29,8 @@ String? period2startTime(int period) {
 
 String? period2endTime(int period) {
   switch (period) {
+    case 0:
+      return "8:40";
     case 1:
       return "10:30";
     case 2:

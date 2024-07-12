@@ -54,7 +54,7 @@ class NotifyContent {
         now.day + daysUntilNextWeekday, parsedTime.hour, parsedTime.minute);
 
     // 次の週が過去の場合は1週間後の同じ曜日の日付にする
-    if (nextWeekDay.isBefore(now)) {
+    while (nextWeekDay.isBefore(now)) {
       nextWeekDay = nextWeekDay.add(const Duration(days: 7));
     }
 
@@ -71,7 +71,7 @@ class NotifyContent {
     tz.TZDateTime scheduledDate = tz.TZDateTime(local, now.year, now.month,
         now.day, parsedTime.hour, parsedTime.minute);
 
-    if (scheduledDate.isBefore(now)) {
+    while (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
@@ -136,24 +136,6 @@ class NotifyContent {
     }
     body += taskBody;
 
-    List<Map<String, dynamic>> notifyScheduleList =
-        await ScheduleDatabaseHelper().getSchedule(dailyScheduleDate);
-    body += "予定\n";
-    if (notifyScheduleList.isEmpty) {
-      body += "本日の予定はありません";
-    } else {
-      for (var schedule in notifyScheduleList) {
-        String startTime = schedule["startTime"] ?? "";
-        String endTime = schedule["endTime"] ?? "";
-        String subject = schedule["subject"] ?? "";
-        if (endTime == "" && startTime == "") {
-          body += "終日    $subject\n";
-        } else {
-          body += "$startTime~$endTime  $subject\n";
-        }
-      }
-      body = body.trimRight();
-    }
     if (notifyFormat.isContainWeekday == 0) {
       if (notifyFormat.notifyFormat == null) {
         notifyTitle = "今日のお知らせ";
@@ -169,12 +151,44 @@ class NotifyContent {
             "${DateFormat(notifyFormat.notifyFormat).format(dailyScheduleDate)}(${'月火水木金土日'[dailyScheduleDate.weekday - 1]})のお知らせ";
       }
     }
-    notificationDetails =
-        _setNotificationDetail(notifyID++, notifyTitle, body, "dailyNotify");
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, body, "dailyNotify_task");
     await flutterLocalNotificationsPlugin.zonedSchedule(
       notifyID++,
       notifyTitle,
       body,
+      dailyScheduleDate,
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+
+    List<Map<String, dynamic>> notifyScheduleList =
+        await ScheduleDatabaseHelper().getSchedule(dailyScheduleDate);
+    String scheduleNotifyBody = "";
+    scheduleNotifyBody = "予定\n";
+
+    if (notifyScheduleList.isEmpty) {
+      scheduleNotifyBody += "本日の予定はありません";
+    } else {
+      for (var schedule in notifyScheduleList) {
+        String startTime = schedule["startTime"] ?? "";
+        String endTime = schedule["endTime"] ?? "";
+        String subject = schedule["subject"] ?? "";
+        if (endTime == "" && startTime == "") {
+          scheduleNotifyBody += "終日    $subject\n";
+        } else {
+          scheduleNotifyBody += "$startTime~$endTime  $subject\n";
+        }
+      }
+      scheduleNotifyBody = scheduleNotifyBody.trimRight();
+    }
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, scheduleNotifyBody, "dailyNotify_schedule");
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      notifyID++,
+      notifyTitle,
+      scheduleNotifyBody,
       dailyScheduleDate,
       notificationDetails,
       uiLocalNotificationDateInterpretation:
@@ -198,7 +212,7 @@ class NotifyContent {
     String? due;
     String notifyTitle;
 
-    body += "課題\n";
+    body += "";
     String taskBody = "";
 
     for (var task in notifyTaskList) {
@@ -230,10 +244,36 @@ class NotifyContent {
       taskBody = "近日中の課題はありません\n";
     }
     body += taskBody;
+    if (notifyFormat.isContainWeekday == 0) {
+      if (notifyFormat.notifyFormat == null) {
+        notifyTitle = "近日のお知らせ";
+      } else {
+        notifyTitle =
+            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}のお知らせ";
+      }
+    } else {
+      if (notifyFormat.notifyFormat == null) {
+        notifyTitle = "${'月火水木金土日'[weeklyScheduleDate.weekday - 1]}曜日のお知らせ";
+      } else {
+        notifyTitle =
+            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}(${'月火水木金土日'[weeklyScheduleDate.weekday - 1]})のお知らせ";
+      }
+    }
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, body, "weeklyNotify_task");
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      notifyID++,
+      notifyTitle,
+      body,
+      weeklyScheduleDate,
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
 
     List<Map<String, dynamic>> notifyScheduleList;
     String prefix;
-    body += "予定\n";
+    String scheduleNotifyBody = "";
     String planString = "";
     for (int day = 0; day <= notifyConfig.days!; day++) {
       notifyScheduleList = await ScheduleDatabaseHelper()
@@ -261,29 +301,15 @@ class NotifyContent {
     if (planString == "") {
       planString = "近日の予定はありません";
     }
-    body += planString;
-    body = body.trimRight();
-    if (notifyFormat.isContainWeekday == 0) {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "近日のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}のお知らせ";
-      }
-    } else {
-      if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "${'月火水木金土日'[weeklyScheduleDate.weekday - 1]}曜日のお知らせ";
-      } else {
-        notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(weeklyScheduleDate)}(${'月火水木金土日'[weeklyScheduleDate.weekday - 1]})のお知らせ";
-      }
-    }
-    notificationDetails =
-        _setNotificationDetail(notifyID++, notifyTitle, body, "weeklyNotify");
+    scheduleNotifyBody += planString;
+    scheduleNotifyBody = scheduleNotifyBody.trimRight();
+
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, scheduleNotifyBody, "weeklyNotify_schedule");
     await flutterLocalNotificationsPlugin.zonedSchedule(
       notifyID++,
       notifyTitle,
-      body,
+      scheduleNotifyBody,
       weeklyScheduleDate,
       notificationDetails,
       uiLocalNotificationDateInterpretation:
@@ -457,11 +483,8 @@ class NotifyContent {
       notificationDetails = _setNotificationDetail(
           notifyID++, notifyTitle, "このように通知されます", "notifyConfig");
       await flutterLocalNotificationsPlugin.show(
-        notifyID++,
-        notifyTitle,
-        "このように通知されます",
-        notificationDetails,
-      );
+          notifyID++, notifyTitle, "このように通知されます", notificationDetails,
+          payload: "サンプルpayload");
     } else {
       notificationDetails = _setNotificationDetail(
           notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig");
@@ -488,14 +511,31 @@ class NotifyContent {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  static const String classNotifyTitle = "授業のお知らせ";
   Future<void> attendNotify() async {
     List<Map<String, dynamic>>? myCourseList =
-        await MyCourseDatabaseHandler().getMyCourse();
-    if (myCourseList != null) {
+        await MyCourseDatabaseHandler().getPresentTermCourseList();
+    if (myCourseList.isNotEmpty) {
+      tz.TZDateTime weeklyScheduleDate;
+      String body;
+
       for (var myCourse in myCourseList) {
-        if (myCourse["period"] != null && myCourse["weekday"]) {
-          tz.TZDateTime weeklyScheduleDate = _nextInstanceOfWeeklyTime(
-              period2startTime(myCourse["period"])!, myCourse["weekday"]);
+        if (myCourse["period"] != null && myCourse["weekday"] != null) {
+          weeklyScheduleDate = _nextInstanceOfWeeklyTime(
+              period2endTime(myCourse["period"] - 1)!, myCourse["weekday"]);
+          body =
+              "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
+          notificationDetails = _setNotificationDetail(
+              notifyID++, classNotifyTitle, body, "classNotify");
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            notifyID++,
+            classNotifyTitle,
+            body,
+            weeklyScheduleDate,
+            notificationDetails,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+          );
         }
       }
     }

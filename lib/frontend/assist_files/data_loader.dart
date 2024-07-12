@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TimeTableDataLoader {
   Future<List<Map<String, dynamic>>> getTimeTableDataSource() async {
     List<Map<String, dynamic>> timeTableList =
-        await MyCourseDatabaseHandler().getMyCourse() ?? [];
+        await MyCourseDatabaseHandler().getAllMyCourse() ?? [];
     return timeTableList;
   }
 }
