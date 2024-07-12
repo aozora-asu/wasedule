@@ -439,6 +439,15 @@ class MyCourseDatabaseHandler {
     return courses;
   }
 
+  Future<List<Map<String, dynamic>>> getAttendanceRecordFromDB() async {
+    await _initMyCourseDatabase();
+
+    final List<Map<String, dynamic>> data =
+        await _database.rawQuery('SELECT * FROM $attendanceRecordTable');
+
+    return data;
+  }
+
   Future<void> recordAttendStatus(AttendanceRecord attendanceRecord) async {
     await _initMyCourseDatabase();
     await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
