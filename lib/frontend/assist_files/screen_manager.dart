@@ -44,8 +44,6 @@ class _AppPageState extends ConsumerState<AppPage> {
   int _currentSubIndex = 0;
   PageController pageController =  PageController();
 
-
-
   @override
   void initState() {
     super.initState();
@@ -54,7 +52,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     initRateMyApp(context);
     initNotificationTypeSetting();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context);
+      showAttendanceDialog(context,DateTime(2024,07,10,14,23,13),ref);
     });
   }
 
