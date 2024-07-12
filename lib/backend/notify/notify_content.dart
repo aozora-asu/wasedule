@@ -54,7 +54,7 @@ class NotifyContent {
         now.day + daysUntilNextWeekday, parsedTime.hour, parsedTime.minute);
 
     // 次の週が過去の場合は1週間後の同じ曜日の日付にする
-    if (nextWeekDay.isBefore(now)) {
+    while (nextWeekDay.isBefore(now)) {
       nextWeekDay = nextWeekDay.add(const Duration(days: 7));
     }
 
@@ -71,7 +71,7 @@ class NotifyContent {
     tz.TZDateTime scheduledDate = tz.TZDateTime(local, now.year, now.month,
         now.day, parsedTime.hour, parsedTime.minute);
 
-    if (scheduledDate.isBefore(now)) {
+    while (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
@@ -457,11 +457,8 @@ class NotifyContent {
       notificationDetails = _setNotificationDetail(
           notifyID++, notifyTitle, "このように通知されます", "notifyConfig");
       await flutterLocalNotificationsPlugin.show(
-        notifyID++,
-        notifyTitle,
-        "このように通知されます",
-        notificationDetails,
-      );
+          notifyID++, notifyTitle, "このように通知されます", notificationDetails,
+          payload: "サンプルpayload");
     } else {
       notificationDetails = _setNotificationDetail(
           notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig");
@@ -488,14 +485,31 @@ class NotifyContent {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  static const String classNotifyTitle = "授業のお知らせ";
   Future<void> attendNotify() async {
     List<Map<String, dynamic>>? myCourseList =
-        await MyCourseDatabaseHandler().getMyCourse();
-    if (myCourseList != null) {
+        await MyCourseDatabaseHandler().getPresentTermCourseList();
+    if (myCourseList.isNotEmpty) {
+      tz.TZDateTime weeklyScheduleDate;
+      String body;
+
       for (var myCourse in myCourseList) {
-        if (myCourse["period"] != null && myCourse["weekday"]) {
-          tz.TZDateTime weeklyScheduleDate = _nextInstanceOfWeeklyTime(
-              period2startTime(myCourse["period"])!, myCourse["weekday"]);
+        if (myCourse["period"] != null && myCourse["weekday"] != null) {
+          weeklyScheduleDate = _nextInstanceOfWeeklyTime(
+              period2endTime(myCourse["period"] - 1)!, myCourse["weekday"]);
+          body =
+              "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
+          notificationDetails = _setNotificationDetail(
+              notifyID++, classNotifyTitle, body, "classNotify");
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            notifyID++,
+            classNotifyTitle,
+            body,
+            weeklyScheduleDate,
+            notificationDetails,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+          );
         }
       }
     }

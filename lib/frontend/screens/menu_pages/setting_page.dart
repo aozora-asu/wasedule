@@ -715,7 +715,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget notificationSettingList(List<Map> map) {
-    print(map);
     return ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

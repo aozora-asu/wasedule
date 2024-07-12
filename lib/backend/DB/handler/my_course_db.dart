@@ -246,7 +246,7 @@ class MyCourseDatabaseHandler {
     return count! > 0;
   }
 
-  Future<List<Map<String, dynamic>>?> getMyCourse() async {
+  Future<List<Map<String, dynamic>>?> getAllMyCourse() async {
     await _initMyCourseDatabase();
 
     List<Map<String, dynamic>> myCourseList = await _database.rawQuery('''
@@ -272,6 +272,34 @@ class MyCourseDatabaseHandler {
     } else {
       return myCourseList;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getPresentTermCourseList() async {
+    await _initMyCourseDatabase();
+    DateTime now = DateTime.now();
+    List<String> semesters = datetime2termList(now);
+
+    List<Map<String, dynamic>> courses = await _database.query(myCourseTable,
+        columns: [
+          'CASE WHEN weekday = -1 THEN NULL ELSE weekday END AS weekday',
+          'CASE WHEN period = -1 THEN NULL ELSE period END AS period',
+          'id',
+          'courseName',
+          'semester',
+          'classRoom',
+          'memo',
+          'color',
+          'attendCount',
+          'year',
+          'pageID',
+          'syllabusID',
+          'criteria'
+        ],
+        where:
+            'year = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
+        whereArgs: [datetime2schoolYear(now), ...semesters]);
+
+    return courses;
   }
 
   Future<List<Map<String, dynamic>>> getNextCourse() async {
