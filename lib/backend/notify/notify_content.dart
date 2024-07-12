@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import "notify_db.dart";
 import "../../converter.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 
 int notifyID = 0;
 
@@ -261,7 +262,7 @@ class NotifyContent {
     );
   }
 
-  Future<void> _bookWeeklySheduleNotify(
+  Future<void> _bookWeeklyScheduleNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
     tz.TZDateTime weeklyScheduleDate =
         _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
@@ -392,6 +393,9 @@ class NotifyContent {
         await NotifyDatabaseHandler().getNotifyFormat();
     List<Map<String, dynamic>>? notifyConfigList =
         await NotifyDatabaseHandler().getNotifyConfigList();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isCalendarNotify = prefs.getBool('isCalendarNotify') ?? true;
+    bool isTaskNotify = prefs.getBool('isTaskNotify') ?? true;
     if (notifyConfigList != null && notifyFormatMap != null) {
       NotifyFormat notifyFormat = NotifyFormat(
           isContainWeekday: notifyFormatMap["isContainWeekday"],
@@ -406,11 +410,20 @@ class NotifyContent {
         if (notifyConfigMap["isValidNotify"] == 1) {
           switch (notifyConfig.notifyType) {
             case "daily":
-              await _bookDailyTaskNotify(notifyConfig, notifyFormat);
-              await _bookDailyScheduleNotify(notifyConfig, notifyFormat);
+              if (isCalendarNotify) {
+                await _bookDailyScheduleNotify(notifyConfig, notifyFormat);
+              }
+              if (isTaskNotify) {
+                await _bookDailyTaskNotify(notifyConfig, notifyFormat);
+              }
+
             case "weekly":
-              await _bookWeeklyTaskNotify(notifyConfig, notifyFormat);
-              await _bookWeeklySheduleNotify(notifyConfig, notifyFormat);
+              if (isCalendarNotify) {
+                await _bookWeeklyScheduleNotify(notifyConfig, notifyFormat);
+              }
+              if (isTaskNotify) {
+                await _bookWeeklyTaskNotify(notifyConfig, notifyFormat);
+              }
             case "beforeHour":
               await _bookBeforeHourNotify(notifyConfig, notifyFormat);
           }
