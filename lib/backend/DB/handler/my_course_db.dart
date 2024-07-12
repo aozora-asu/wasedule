@@ -458,13 +458,14 @@ class MyCourseDatabaseHandler {
     await _initMyCourseDatabase();
     await _database.update(
       attendanceRecordTable,
-      attendanceRecord.toMap(), // 新しいclassRoomの値を設定
+      attendanceRecord.toMap(),
       where: 'id = ?', // idによってレコードを特定
       whereArgs: [id], // idの値を指定
     );
   }
 
   Future<int> getAttendStatusCount(int myCourseID, String status) async {
+    await _initMyCourseDatabase();
     final List<Map<String, dynamic>> result = await _database.rawQuery('''
     SELECT COUNT(*) as attendCount
     FROM $attendanceRecordTable
