@@ -231,21 +231,21 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           space(79.0),
       ],
       2 : [
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.calendar_month,
             subIndex:0,
             title: "カレンダー"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.groups,
             subIndex:1,
             title: "予定シェア"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.currency_yen,
@@ -253,38 +253,38 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             title: "アルバイト"
           ),
 
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.school,
             subIndex:3,
             title: "大学暦取得"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.settings,
             subIndex:4,
             title: "設定"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.backup,
             subIndex:5,
             title: "バックアップ"
           ),
-          space(1.0),
+          space(0),
         ],
         3 : [
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.check,
             subIndex:0,
             title: "課題"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.close,
@@ -292,28 +292,28 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             title: "期限切れ",
             showExpiredTasks: true
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.delete,
             subIndex:2,
             title: "削除済み"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.notification_add,
             subIndex:3,
             title: "通知設定"
           ),
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.edit,
             subIndex:4,
             title: "学習記録"
           ),
-          space(1),
+          space(0),
         ],
         4 : [
           space(1.0),

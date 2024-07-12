@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywased
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/calendar_page/calendar_page.dart';
 import '../screens/to_do_page/to_do_page.dart';
@@ -42,12 +44,30 @@ class _AppPageState extends ConsumerState<AppPage> {
   int _currentSubIndex = 0;
   PageController pageController =  PageController();
 
+
+
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initIndex ?? 2;
     pageController = PageController(initialPage: 0);//widget.initIndex ?? 2);
     initRateMyApp(context);
+    initNotificationTypeSetting();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showAttendanceDialog(context);
+    });
+  }
+
+  Future<void> initNotificationTypeSetting()async{
+    final prefs = await SharedPreferences.getInstance();
+    bool? isCalendarNotify = prefs.getBool("isCalendarNotify");
+    bool? isTaskNotify = prefs.getBool("isTaskNotify");
+    if(isCalendarNotify == null){
+      prefs.setBool("isCalendarNotify",true);
+    }
+    if(isTaskNotify == null){
+      prefs.setBool("isTaskNotify",true);
+    }
   }
 
   void _onItemTapped(int index) {
@@ -202,7 +222,6 @@ class _AppPageState extends ConsumerState<AppPage> {
             ExpiredTaskPage(setosute: setState),
             DeletedTaskPage(setosute: setState),
             SettingsPage(initIndex:1,isAppBar: false,),
-            const TaskPage(),
             const TaskPage(),
            ];
   }

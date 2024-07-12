@@ -483,15 +483,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Color bgColor = BACKGROUND_COLOR;
             Color fontColor = BLUEGREY;
             if (index + 1 == DateTime.now().weekday && index != 6) {
-              bgColor = MAIN_COLOR;
+              bgColor = PALE_MAIN_COLOR;
               fontColor = WHITE;
             }
 
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * 2,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5), color: bgColor),
+                decoration:BoxDecoration(
+                  borderRadius: BorderRadius.circular(2.5),
+                  color: bgColor),
+
                 child: Center(
                     child: Text(
                   days.elementAt(index),
@@ -520,14 +522,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           DateTime now = DateTime.now();
           if (returnBeginningDateTime(index + 1).isBefore(now) &&
               returnEndDateTime(index + 1).isAfter(now)) {
-            bgColor = MAIN_COLOR;
+            bgColor = PALE_MAIN_COLOR;
             fontColor = WHITE;
           }
 
           return Container(
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
-                  color: bgColor, borderRadius: BorderRadius.circular(5)),
+                color: bgColor,
+                borderRadius: BorderRadius.circular(2.5)
+              ),
+
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: Column(
@@ -695,7 +700,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 now.weekday == weekDay &&
                 weekDay <= 6) {
               lineWidth = 4;
-              lineColor = MAIN_COLOR;
+              lineColor = PALE_MAIN_COLOR;
             }
 
             return Container(
@@ -714,9 +719,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Widget resultinging = const SizedBox();
             DateTime now = DateTime.now();
             Color bgColor = BACKGROUND_COLOR;
+            Color fontColor = BLUEGREY;
             if (returnEndDateTime(2).isBefore(now) &&
                 returnBeginningDateTime(3).isAfter(now)) {
-              bgColor = MAIN_COLOR;
+              bgColor = PALE_MAIN_COLOR;
+              fontColor = Colors.white;
             }
             String childText = "";
             if (weekDay == 2) {
@@ -735,13 +742,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   color: bgColor,
                   child: Column(children: [
                     const Spacer(),
-                    Text(
-                      childText,
+                    Text(childText,
                       style: TextStyle(
-                          color: BLUEGREY,
-                          fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                          fontWeight: FontWeight.bold),
-                    ),
+                        color: fontColor,
+                        fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                        fontWeight:FontWeight.bold),),
+
                     const Spacer(),
                   ]));
             }
