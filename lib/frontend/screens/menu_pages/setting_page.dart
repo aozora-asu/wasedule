@@ -442,7 +442,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              '通知頻度の設定',
+              '通知の設定',
               style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                   fontWeight: FontWeight.bold,
@@ -456,11 +456,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
             const SizedBox(height: 2),
             notificationFrequencySetting(),
             const SizedBox(height: 1),
+            notificationTypeSetting(),
+            const Divider(height: 1),
+            const SizedBox(height: 1),
             const Text(
               " ■ 設定済み通知",
               style: TextStyle(color: Colors.grey),
             ),
-            const Divider(height: 1),
             buildNotificationSettingList()
           ])),
       const SizedBox(height: 10),
@@ -706,6 +708,58 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
+  Future<Map<String,bool>> getNotificationTypeSetting() async{
+    final prefs = await SharedPreferences.getInstance();
+    bool isCalendarNotify = prefs.getBool("isCalendarNotify")!;
+    bool isTaskNotify = prefs.getBool("isTaskNotify")!;
+
+    return {
+      "isCalendarNotify" : isCalendarNotify,
+      "isTaskNotify" : isTaskNotify
+    };
+  }
+
+  Widget notificationTypeSetting(){
+    return FutureBuilder(
+      future: getNotificationTypeSetting(),
+      builder: (context,snapShot){
+        if(snapShot.connectionState == ConnectionState.done){
+          return   Column(children:[
+              Row(children:[
+                const Text("予定の通知"),
+                const Spacer(),
+                CupertinoSwitch(
+                  activeColor: PALE_MAIN_COLOR,
+                  value: snapShot.data!["isCalendarNotify"]!,
+                  onChanged: (value)async{
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("isCalendarNotify",value);
+                    setState(() {});
+                  },
+                )
+              ]),
+              Row(children:[
+                const Text("課題の通知"),
+                const Spacer(),
+                CupertinoSwitch(
+                  activeColor: PALE_MAIN_COLOR,
+                  value: snapShot.data!["isTaskNotify"]!,
+                  onChanged: (value)async{
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("isTaskNotify",value);
+                    setState(() {});
+                  },
+                )
+              ])
+            ]);
+        }else{
+          return loadingSettingWidget();
+        }
+
+      });
+     
+  }
+
   Widget showNotificationList(List<Map>? map) {
     if (map == null) {
       return noneSettingWidget();
@@ -715,7 +769,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget notificationSettingList(List<Map> map) {
-    print(map);
     return ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
