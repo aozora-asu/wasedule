@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import "../../../converter.dart";
@@ -65,6 +67,8 @@ class MyCourse {
   int? attendCount;
   String? syllabusID;
   String? criteria;
+  int? classNum;
+  int? remainAbsent;
 
   MyCourse(
       {this.attendCount,
@@ -78,8 +82,20 @@ class MyCourse {
       required this.syllabusID,
       required this.weekday,
       required this.year,
-      required this.criteria});
+      required this.criteria,
+      this.remainAbsent,
+      this.classNum});
   Map<String, dynamic> toMap() {
+    if (semester != null) {
+      if (semester!.contains("quarter")) {
+        classNum = 7;
+      } else if (semester!.contains("semester")) {
+        classNum = 14;
+      } else if (semester!.contains("full_year")) {
+        classNum = 28;
+      }
+    }
+
     return {
       "courseName": courseName,
       "weekday": weekday ?? -1,
@@ -88,7 +104,8 @@ class MyCourse {
       "classRoom": classRoom,
       "memo": memo,
       "color": color,
-      "attendCount": attendCount,
+      "remainAbsent": remainAbsent,
+      "classNum": classNum,
       "year": year,
       "pageID": pageID,
       "syllabusID": syllabusID ?? "",
@@ -97,10 +114,30 @@ class MyCourse {
   }
 }
 
+class AttendanceRecord {
+  int myCourseID;
+  String attendStatus;
+  String attendDate;
+
+  AttendanceRecord(
+      {required this.attendDate,
+      required this.attendStatus,
+      required this.myCourseID});
+  toMap() {
+    return {
+      "myCourseID": myCourseID,
+      "attendStatus": attendStatus,
+      "attendDate": attendDate
+    };
+  }
+}
+
 class MyCourseDatabaseHandler {
   late Database _database;
   static const String databaseName = "my_course";
   static const String myCourseTable = "my_course";
+  static const String myCourseTableNew = "my_course_new";
+  static const String attendanceRecordTable = "attendance_record";
 
   // データベースの初期化
   MyCourseDatabaseHandler() {
@@ -109,8 +146,10 @@ class MyCourseDatabaseHandler {
 
   Future<void> _initMyCourseDatabase() async {
     String path = join(await getDatabasesPath(), '$databaseName.db');
-    _database =
-        await openDatabase(path, version: 1, onCreate: _createMyCourseDatabase);
+    _database = await openDatabase(path,
+        version: 2,
+        onCreate: _createMyCourseDatabase,
+        onUpgrade: _upgradeMyCourseDatabase);
   }
 
   // データベースの作成
@@ -125,7 +164,8 @@ class MyCourseDatabaseHandler {
         classRoom TEXT,
         memo TEXT,
         color TEXT,
-        attendCount INTEGER,
+        classNum INTEGER,
+        remainAbsent INTEGER,
         year INTEGER,
         pageID TEXT,
         syllabusID TEXT,
@@ -133,6 +173,66 @@ class MyCourseDatabaseHandler {
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $attendanceRecordTable(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        myCourseID INTEGER,
+        attendStatus TEXT,
+        attendDate TEXT
+      )
+    ''');
+  }
+
+  Future<void> _upgradeMyCourseDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    if (oldVersion == 1) {
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS $myCourseTableNew(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        courseName TEXT,
+        weekday INTEGER,
+        period INTEGER,
+        semester TEXT,
+        classRoom TEXT,
+        memo TEXT,
+        color TEXT,
+        classNum INTEGER,
+        remainAbsent INTEGER,
+        year INTEGER,
+        pageID TEXT,
+        syllabusID TEXT,
+        criteria TEXT,
+        CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
+      )
+    ''');
+      // 既存のデータを新しいテーブルに移行
+      var myCourseList = await db.query(myCourseTable);
+      MyCourse myCourseClass;
+
+      for (var myCourse in myCourseList) {
+        myCourseClass = MyCourse(
+          classRoom: myCourse["classRoom"] as String,
+          color: myCourse["color"] as String,
+          courseName: myCourse["courseName"] as String,
+          pageID: myCourse["pageID"] as String,
+          period: myCourse["period"] as int,
+          semester: myCourse["semester"] as String,
+          syllabusID: myCourse["syllabusID"] as String,
+          weekday: myCourse["weekday"] as int,
+          year: myCourse["year"] as int,
+          criteria: myCourse["criteria"] as String,
+          memo: myCourse["memo"] as String,
+        );
+        await db.insert(myCourseTableNew, myCourseClass.toMap());
+      }
+
+      // 既存のテーブルを削除
+      await db.execute('DROP TABLE $myCourseTable');
+
+      // 新しいテーブルの名前を既存のテーブルの名前に変更
+      await db
+          .execute('ALTER TABLE $myCourseTableNew RENAME TO $myCourseTable');
+    }
   }
 
   Future<void> _insertMyCourse(MyCourse myCourse) async {
@@ -196,7 +296,8 @@ class MyCourseDatabaseHandler {
     Map<String, dynamic> courseMap = newMyCourse.toMap();
     // "memo"キーと"attendCount"キーを削除
     courseMap.remove("memo");
-    courseMap.remove("attendCount");
+    courseMap.remove("classNum");
+    courseMap.remove("remainAbsent");
 
     // データベースを更新
     await _database.update(
@@ -259,7 +360,8 @@ class MyCourseDatabaseHandler {
       classRoom,
       memo,
       color,
-      attendCount,
+      classNum,
+      remainAbsent,
       year,
       pageID,
       syllabusID,
@@ -289,7 +391,8 @@ class MyCourseDatabaseHandler {
           'classRoom',
           'memo',
           'color',
-          'attendCount',
+          "classNum",
+          "remainAbsent",
           'year',
           'pageID',
           'syllabusID',
@@ -317,7 +420,8 @@ class MyCourseDatabaseHandler {
           'classRoom',
           'memo',
           'color',
-          'attendCount',
+          "classNum",
+          "remainAbsent",
           'year',
           'pageID',
           'syllabusID',
@@ -333,5 +437,30 @@ class MyCourseDatabaseHandler {
         ]);
 
     return courses;
+  }
+
+  Future<void> recordAttendStatus(AttendanceRecord attendanceRecord) async {
+    await _initMyCourseDatabase();
+    await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
+  }
+
+  Future<void> updateAttendRecord(
+      int id, AttendanceRecord attendanceRecord) async {
+    await _initMyCourseDatabase();
+    await _database.update(
+      attendanceRecordTable,
+      attendanceRecord.toMap(), // 新しいclassRoomの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
+  Future<int> getAttendStatusCount(int myCourseID, String status) async {
+    final List<Map<String, dynamic>> result = await _database.rawQuery('''
+    SELECT COUNT(*) as attendCount
+    FROM $attendanceRecordTable
+    WHERE myCourseID = ? AND attendStatus = ?
+  ''', [myCourseID, status]);
+    return result.first['attendCount'] as int;
   }
 }

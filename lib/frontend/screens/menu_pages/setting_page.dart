@@ -708,56 +708,53 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
-  Future<Map<String,bool>> getNotificationTypeSetting() async{
+  Future<Map<String, bool>> getNotificationTypeSetting() async {
     final prefs = await SharedPreferences.getInstance();
     bool isCalendarNotify = prefs.getBool("isCalendarNotify")!;
     bool isTaskNotify = prefs.getBool("isTaskNotify")!;
 
-    return {
-      "isCalendarNotify" : isCalendarNotify,
-      "isTaskNotify" : isTaskNotify
-    };
+    return {"isCalendarNotify": isCalendarNotify, "isTaskNotify": isTaskNotify};
   }
 
-  Widget notificationTypeSetting(){
+  Widget notificationTypeSetting() {
     return FutureBuilder(
-      future: getNotificationTypeSetting(),
-      builder: (context,snapShot){
-        if(snapShot.connectionState == ConnectionState.done){
-          return   Column(children:[
-              Row(children:[
+        future: getNotificationTypeSetting(),
+        builder: (context, snapShot) {
+          if (snapShot.connectionState == ConnectionState.done) {
+            return Column(children: [
+              Row(children: [
                 const Text("予定の通知"),
                 const Spacer(),
                 CupertinoSwitch(
                   activeColor: PALE_MAIN_COLOR,
                   value: snapShot.data!["isCalendarNotify"]!,
-                  onChanged: (value)async{
+                  onChanged: (value) async {
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool("isCalendarNotify",value);
+                    await prefs.setBool("isCalendarNotify", value);
+                    await NotifyContent().setNotify();
                     setState(() {});
                   },
                 )
               ]),
-              Row(children:[
+              Row(children: [
                 const Text("課題の通知"),
                 const Spacer(),
                 CupertinoSwitch(
                   activeColor: PALE_MAIN_COLOR,
                   value: snapShot.data!["isTaskNotify"]!,
-                  onChanged: (value)async{
+                  onChanged: (value) async {
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool("isTaskNotify",value);
+                    await prefs.setBool("isTaskNotify", value);
+                    await NotifyContent().setNotify();
                     setState(() {});
                   },
                 )
               ])
             ]);
-        }else{
-          return loadingSettingWidget();
-        }
-
-      });
-     
+          } else {
+            return loadingSettingWidget();
+          }
+        });
   }
 
   Widget showNotificationList(List<Map>? map) {
@@ -823,9 +820,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
                           //＠ここに通知設定削除の処理
 
                           await NotifyDatabaseHandler().disableNotify(id);
-                          await NotifyContent().cancelAllNotify();
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
-
+                          await NotifyContent().setNotify();
                           setState(() {});
                         },
                         child: const Icon(Icons.delete)),
@@ -841,7 +837,6 @@ class _MainContentsState extends ConsumerState<MainContents> {
                       } else {
                         await NotifyDatabaseHandler().disableNotify(id);
                       }
-                      await NotifyContent().cancelAllNotify();
 
                       await NotifyContent().setNotify();
                       setState(() {});
