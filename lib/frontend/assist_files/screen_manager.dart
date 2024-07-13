@@ -51,9 +51,6 @@ class _AppPageState extends ConsumerState<AppPage> {
     pageController = PageController(initialPage: 0);//widget.initIndex ?? 2);
     initRateMyApp(context);
     initNotificationTypeSetting();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context,DateTime(2024,07,10,14,23,13),ref);
-    });
   }
 
   Future<void> initNotificationTypeSetting()async{
