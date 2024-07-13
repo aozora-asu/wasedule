@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import "../../../converter.dart";
