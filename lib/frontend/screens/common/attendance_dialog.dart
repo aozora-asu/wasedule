@@ -9,7 +9,8 @@ import 'package:intl/intl.dart';
 import "../../../constant.dart";
 
 Future<void> showAttendanceDialog(
-    BuildContext context, DateTime targetDate, WidgetRef ref) async {
+    BuildContext context, DateTime targetDate, WidgetRef ref,
+    [bool enforceShowing = true]) async {
   bool isShowDialog = true;
 
   await ref
@@ -22,6 +23,12 @@ Future<void> showAttendanceDialog(
 
   for (int i = 0; i < data.length; i++) {
     int myCourseId = data.elementAt(i)["id"];
+    String date = DateFormat("MM/dd").format(targetDate);
+    Map<String, dynamic>? attendStatusData
+      = await MyCourseDatabaseHandler().getAttendStatus(myCourseId, date);
+    if(attendStatusData != null){
+      numOfNotEmptyData += 1;
+    }
   }
 
   if (numOfNotEmptyData == data.length) {
@@ -30,6 +37,10 @@ Future<void> showAttendanceDialog(
 
   if (data.isEmpty) {
     isShowDialog = false;
+  }
+
+  if(enforceShowing){
+    isShowDialog = true;
   }
 
   if (isShowDialog) {
@@ -76,11 +87,13 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
       for(int i = 0; i < data.length; i++){
         int id = data[i]["id"];
-        String date = DateFormat("M/d").format(widget.targetDate);
+        String date = DateFormat("MM/dd").format(widget.targetDate);
         Map<String, dynamic>? attendStatusData
           = await MyCourseDatabaseHandler().getAttendStatus(id, date);
         
-        
+      List a = await MyCourseDatabaseHandler().getAttendanceRecordFromDB(id);
+      print(a);
+
         if(attendStatusData != null){
           enteredData[id] = attendStatusData["attendStatus"];
         }else{
@@ -89,7 +102,6 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
         remainingNumData[data.elementAt(i)["id"]]
           = data.elementAt(i)["remainAbsent"] ?? 0;
-
       }
       isInit = false;
 
@@ -153,7 +165,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         buttonModel(() async {
           for (int i = 0; i < enteredData.length; i++) {
             await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
-                attendDate: DateFormat("M/d").format(widget.targetDate),
+                attendDate: DateFormat("MM/dd").format(widget.targetDate),
                 attendStatus:
                     AttendStatus.values.byName(enteredData.values.elementAt(i)),
                 myCourseID: enteredData.keys.elementAt(i)));
