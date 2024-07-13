@@ -10,7 +10,7 @@ import "../../../constant.dart";
 
 Future<void> showAttendanceDialog(
     BuildContext context, DateTime targetDate, WidgetRef ref,
-    [bool enforceShowing = true]) async {
+    [bool enforceShowing = false]) async {
   bool isShowDialog = true;
 
   await ref
@@ -116,8 +116,14 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
   Widget buildMainBody() {
     List data =
         ref.read(timeTableProvider).targetDateClasses(widget.targetDate);
-
-    return FutureBuilder(
+    if(data.isEmpty){
+      return const SizedBox(
+        height:60,
+        child:Center(child:
+          Text("この日の授業はありません。",
+            style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20),)));
+    }else{
+      return FutureBuilder(
         future: initClassData(data),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.done) {
@@ -130,6 +136,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
             }
           }
       });
+    }
+    
 
   }
 
@@ -169,7 +177,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         const Spacer(),
         buttonModel(() async {
           for (int i = 0; i < enteredData.length; i++) {
-            await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
+            await MyCourseDatabaseHandler().recordAttendStatus(
+              AttendanceRecord(
                 attendDate: DateFormat("MM/dd").format(widget.targetDate),
                 attendStatus:
                     AttendStatus.values.byName(enteredData.values.elementAt(i)),

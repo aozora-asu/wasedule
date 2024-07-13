@@ -366,7 +366,15 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     } else {
                       return noDataScreen();
                     }
-                  }))
+                  })),
+              Padding(
+                padding:const EdgeInsets.symmetric(horizontal:15),
+                child: buttonModel((){
+                  showAttendanceDialog(context,DateTime.now(),ref,true);
+                },
+                Colors.blue,
+                "今日の出欠記録",
+                verticalpadding: 12.5))
             ])));
   }
 
