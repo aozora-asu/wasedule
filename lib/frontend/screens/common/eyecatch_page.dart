@@ -6,39 +6,39 @@ import '../task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import '../../assist_files/screen_manager.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp>{ 
-
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        fontFamily: "Noto_Sans_JP",
-        canvasColor: WHITE,
-      ),
-      debugShowCheckedModeBanner: false,
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: const TextScaler.linear(1)),
-          child: child!,
-        );
-      },
-      // localizationsDelegates: [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,],
-      // supportedLocales: [const Locale('en'),],
-      // locale: const Locale('en'),
-      home: const FadingImage());
+        navigatorKey: navigatorKey,
+        theme: ThemeData(
+          fontFamily: "Noto_Sans_JP",
+          canvasColor: WHITE,
+        ),
+        debugShowCheckedModeBanner: false,
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1)),
+            child: child!,
+          );
+        },
+        // localizationsDelegates: [
+        //   GlobalMaterialLocalizations.delegate,
+        //   GlobalWidgetsLocalizations.delegate,],
+        // supportedLocales: [const Locale('en'),],
+        // locale: const Locale('en'),
+        home: const FadingImage());
   }
 }
-
-
 
 class FadingImage extends ConsumerStatefulWidget {
   const FadingImage({super.key});
@@ -115,7 +115,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
     await Future.delayed(const Duration(seconds: 0));
   }
 
-  Future<void> initThemeSettings() async{
+  Future<void> initThemeSettings() async {
     String data = await initThemeSettingsData();
     switchThemeColor(data);
   }
@@ -125,55 +125,54 @@ class _FadingImageState extends ConsumerState<FadingImage>
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scaffold(
-      backgroundColor: MAIN_COLOR,
-      body: FutureBuilder(
-      future: initThemeSettings(),
-      builder:(context,snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return eyeCatch();
-        }else{
-      return eyeCatch();
-    }
-  })
-    );
+        backgroundColor: MAIN_COLOR,
+        body: FutureBuilder(
+            future: initThemeSettings(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return eyeCatch();
+              } else {
+                return eyeCatch();
+              }
+            }));
   }
 
-  Widget eyeCatch(){
+  Widget eyeCatch() {
     return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SlideTransition(
-              position: _imageAnimation,
-              child: FadeTransition(
-                opacity: _animation,
-                child: Image.asset(
-                  'lib/assets/eye_catch/eyecatch_white.png',
-                  height: 200,
-                  width: 200,
-                ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SlideTransition(
+            position: _imageAnimation,
+            child: FadeTransition(
+              opacity: _animation,
+              child: Image.asset(
+                'lib/assets/eye_catch/eyecatch_white.png',
+                height: 200,
+                width: 200,
               ),
             ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: 200,
-              height: 5,
-              child: LinearProgressIndicator(
-                color: PALE_MAIN_COLOR,
-                backgroundColor: Colors.pink[50],
-              ),
+          ),
+          const SizedBox(height: 30),
+          SizedBox(
+            width: 200,
+            height: 5,
+            child: LinearProgressIndicator(
+              color: PALE_MAIN_COLOR,
+              backgroundColor: Colors.pink[50],
             ),
-            const SizedBox(height: 20),
-            Text(
-              loadingText,
-              style: const TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            loadingText,
+            style: const TextStyle(
+              fontSize: 25,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }

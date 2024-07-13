@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import "notify_db.dart";
 import "../../converter.dart";
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 int notifyID = 0;
 
@@ -16,8 +17,8 @@ class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   late NotificationDetails notificationDetails;
-  NotificationDetails _setNotificationDetail(
-      int id, String title, String body, String notifyGroupID) {
+  NotificationDetails _setNotificationDetail(int id, String title, String body,
+      String notifyGroupID, String notifyActionCategory) {
     notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
           'notification channel $id',
@@ -28,9 +29,9 @@ class NotifyContent {
           ticker: 'ticker',
         ),
         iOS: DarwinNotificationDetails(
-          sound: 'slow_spring_board.aiff',
-          threadIdentifier: notifyGroupID,
-        ));
+            sound: 'slow_spring_board.aiff',
+            threadIdentifier: notifyGroupID,
+            categoryIdentifier: notifyActionCategory));
     return notificationDetails;
   }
 
@@ -96,14 +97,15 @@ class NotifyContent {
     String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
 
     String body = await makeTaskNotifyBody(notifyConfig, dailyScheduleDate);
+    String encodedPayload = jsonEncode({"route": "taskPage"});
 
     notificationDetails = _setNotificationDetail(
-        notifyID++, notifyTitle, body, "dailyNotify_task");
+        notifyID++, notifyTitle, body, "dailyNotify_task", "");
     await flutterLocalNotificationsPlugin.zonedSchedule(
         notifyID++, notifyTitle, body, dailyScheduleDate, notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        payload: "taskNotify");
+        payload: encodedPayload);
   }
 
   Future<void> _bookDailyScheduleNotify(
@@ -112,7 +114,7 @@ class NotifyContent {
         _nextInstanceOfDailyTime(notifyConfig.time);
 
     String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
-
+    String encodedPayload = jsonEncode({"route": "calendarPage"});
     List<Map<String, dynamic>> notifyScheduleList =
         await ScheduleDatabaseHelper().getSchedule(dailyScheduleDate);
     String scheduleNotifyBody = "";
@@ -131,13 +133,13 @@ class NotifyContent {
       }
       scheduleNotifyBody = scheduleNotifyBody.trimRight();
     }
-    notificationDetails = _setNotificationDetail(
-        notifyID++, notifyTitle, scheduleNotifyBody, "dailyNotify_schedule");
+    notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
+        scheduleNotifyBody, "dailyNotify_schedule", "");
     await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++, notifyTitle,
         scheduleNotifyBody, dailyScheduleDate, notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        payload: "scheduleNotify");
+        payload: encodedPayload);
   }
 
   String makeNotifyTitle(
@@ -238,17 +240,18 @@ class NotifyContent {
 
   Future<void> _bookWeeklyTaskNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
+    String encodedPayload = jsonEncode({"route": "taskPage"});
     tz.TZDateTime weeklyScheduleDate =
         _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
     String body = await makeTaskNotifyBody(notifyConfig, weeklyScheduleDate);
     String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
     notificationDetails = _setNotificationDetail(
-        notifyID++, notifyTitle, body, "weeklyNotify_task");
+        notifyID++, notifyTitle, body, "weeklyNotify_task", "");
     await flutterLocalNotificationsPlugin.zonedSchedule(
         notifyID++, notifyTitle, body, weeklyScheduleDate, notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        payload: "taskNotify");
+        payload: encodedPayload);
   }
 
   Future<void> _bookWeeklyScheduleNotify(
@@ -258,13 +261,14 @@ class NotifyContent {
     String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
     String scheduleNotifyBody =
         await makeScheduleNotifyBody(notifyConfig, weeklyScheduleDate);
-    notificationDetails = _setNotificationDetail(
-        notifyID++, notifyTitle, scheduleNotifyBody, "weeklyNotify_schedule");
+    String encodedPayload = jsonEncode({"route": "calendarPage"});
+    notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
+        scheduleNotifyBody, "weeklyNotify_schedule", "");
     await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++, notifyTitle,
         scheduleNotifyBody, weeklyScheduleDate, notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        payload: "scheduleNotify");
+        payload: encodedPayload);
   }
 
   Future<void> _bookBeforeHourNotify(
@@ -293,6 +297,7 @@ class NotifyContent {
     String title;
     String summary;
     String? due;
+    String encodedPayload;
 
     for (var task in notifyTaskList) {
       tz.TZDateTime scheduleDate =
@@ -321,14 +326,21 @@ class NotifyContent {
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
         body = "$dueまで $title   $summary";
+        encodedPayload =
+            jsonEncode({"route": "taskPage", "databaseID": task["id"]});
+        notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
+            body, "beforHourNotify_task", "markTaskStatus");
 
-        notificationDetails = _setNotificationDetail(
-            notifyID++, notifyTitle, body, "beforHourNotify_task");
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            notifyID++, notifyTitle, body, scheduleDate, notificationDetails,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            payload: "taskNotify");
+          notifyID++,
+          notifyTitle,
+          body,
+          scheduleDate,
+          notificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          payload: encodedPayload,
+        );
       }
     }
     for (var schedule in notifyScheduleList) {
@@ -352,14 +364,14 @@ class NotifyContent {
         } else {
           body = "$startTime~$endTime  $subject\n";
         }
-
+        encodedPayload = jsonEncode({"route": "calendarPage"});
         notificationDetails = _setNotificationDetail(
-            notifyID++, notifyTitle, body, "beforHourNotify_schedule");
+            notifyID++, notifyTitle, body, "beforHourNotify_schedule", "");
         await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
             notifyTitle, body, scheduleDatetime, notificationDetails,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
-            payload: "scheduleNotify");
+            payload: encodedPayload);
       }
     }
   }
@@ -436,13 +448,13 @@ class NotifyContent {
         }
       }
       notificationDetails = _setNotificationDetail(
-          notifyID++, notifyTitle, "このように通知されます", "notifyConfig");
+          notifyID++, notifyTitle, "このように通知されます", "notifyConfig", "");
       await flutterLocalNotificationsPlugin.show(
           notifyID++, notifyTitle, "このように通知されます", notificationDetails,
           payload: "サンプルpayload");
     } else {
       notificationDetails = _setNotificationDetail(
-          notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig");
+          notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig", "");
       await flutterLocalNotificationsPlugin.show(
         notifyID++,
         "通知のフォーマットを設定してください",
@@ -480,13 +492,18 @@ class NotifyContent {
               period2endTime(myCourse["period"] - 1)!, myCourse["weekday"]);
           body =
               "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
-          notificationDetails = _setNotificationDetail(
-              notifyID++, classNotifyTitle, body, "classNotify");
+          String encodedPayload = jsonEncode({
+            "route": "timeTablePage",
+            "attendDate": DateFormat("M/d").format(weeklyScheduleDate),
+            "myCourseID": myCourse["id"]
+          });
+          notificationDetails = _setNotificationDetail(notifyID++,
+              classNotifyTitle, body, "classNotify", "markAttendStatus");
           await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
               classNotifyTitle, body, weeklyScheduleDate, notificationDetails,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,
-              payload: "classNotify");
+              payload: encodedPayload);
         }
       }
     }

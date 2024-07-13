@@ -507,10 +507,11 @@ class _MainContentsState extends ConsumerState<MainContents> {
   late String notifyType;
   int? weekday;
   String timeFrequency = "8:00";
-  String timeFrequencyForPreview = "8時間00分";
+  DateTime datetimeFrequency = DateFormat("H:mm").parse("8:00");
   int days = 1;
   String timeBeforeDtEnd = "8:00";
   String timeBeforeDtEndForPreview = "8時間00分";
+  DateTime datetimeBeforeDtEnd = DateFormat("H:mm").parse("8:00");
 
   Widget notificationFrequencySetting() {
     Widget borderModel = const Column(children: [
@@ -556,9 +557,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
                   timeFrequency = DateFormat("H:mm").format(date);
+                  datetimeFrequency = date;
                 });
               },
-                  currentTime: DateTime(now.year, now.month, now.day, 12, 00),
+                  currentTime: DateTime(
+                      now.year,
+                      now.month,
+                      now.day,
+                      int.parse(DateFormat("HH").format(datetimeFrequency)),
+                      int.parse(DateFormat("mm").format(datetimeFrequency))),
                   locale: LocaleType.jp);
             },
             child: Container(
@@ -657,11 +664,17 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   showTitleActions: true,
                   showSecondsColumn: false, onConfirm: (date) {
                 setState(() {
-                  timeBeforeDtEndForPreview = DateFormat("H時間mm分").format(date);
+                  timeBeforeDtEndForPreview = DateFormat("H時間m分").format(date);
                   timeBeforeDtEnd = DateFormat("H:mm").format(date);
+                  datetimeBeforeDtEnd = date;
                 });
               },
-                  currentTime: DateTime(now.year, now.month, now.day, 12, 00),
+                  currentTime: DateTime(
+                      now.year,
+                      now.month,
+                      now.day,
+                      int.parse(DateFormat("HH").format(datetimeBeforeDtEnd)),
+                      int.parse(DateFormat("mm").format(datetimeBeforeDtEnd))),
                   locale: LocaleType.jp);
             },
             child: Container(
@@ -792,7 +805,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           if (notifyType == "beforeHour") {
             notificationDescription = Column(children: [
               const Text(" 締切・予定の ", style: TextStyle(color: Colors.grey)),
-              Row(children: [Text(DateFormat("H時間mm分前").format(time))]),
+              Row(children: [Text(DateFormat("H時間m分前").format(time))]),
             ]);
           } else {
             notificationDescription = Column(children: [
