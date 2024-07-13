@@ -75,17 +75,23 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       remainingNumData = {};
 
       for(int i = 0; i < data.length; i++){
-        enteredData[data.elementAt(i)["id"]] = "attend";
-        var unko = await MyCourseDatabaseHandler()
-            .getAttendanceRecordFromDB(data.elementAt(i)["id"]);
-        print(unko);
+        int id = data[i]["id"];
+        String date = DateFormat("MM/dd").format(widget.targetDate);
+        Map<String, dynamic>? attendStatusData
+          = await MyCourseDatabaseHandler().getAttendStatus(id, date);
+        print(attendStatusData);
         
-        print(data.elementAt(i));
-        // remainingNumData[data.elementAt(i)["id"]]
-        //  = data.elementAt(i)["remainAbsent"];
+        if(attendStatusData != null){
+          enteredData[id] = attendStatusData["attendStatus"];
+        }else{
+          enteredData[id] = "attend";
+        }
+
+        remainingNumData[data.elementAt(i)["id"]]
+         = data.elementAt(i)["remainAbsent"] ?? 0;
       }
       isInit = false;
-      print(remainingNumData);
+
     }
   }
 
@@ -105,7 +111,6 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               return const SizedBox();
             }
           }
-        }
       });
   }
 
@@ -133,7 +138,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               setState(() {
                 
               });
-            },3
+            },remainingNumData[data.elementAt(index)["id"]]!
             );
         },
         itemCount: data.length,
