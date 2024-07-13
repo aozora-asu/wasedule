@@ -450,8 +450,11 @@ class NotifyContent {
       notificationDetails = _setNotificationDetail(
           notifyID++, notifyTitle, "このように通知されます", "notifyConfig", "");
       await flutterLocalNotificationsPlugin.show(
-          notifyID++, notifyTitle, "このように通知されます", notificationDetails,
-          payload: "サンプルpayload");
+        notifyID++,
+        notifyTitle,
+        "このように通知されます",
+        notificationDetails,
+      );
     } else {
       notificationDetails = _setNotificationDetail(
           notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig", "");
