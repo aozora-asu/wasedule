@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import "../../../converter.dart";
@@ -473,7 +471,7 @@ class MyCourseDatabaseHandler {
         DateFormat("MM/dd").format(DateFormat("MM/dd").parse(attendDate));
     final List<Map<String, dynamic>> data = await _database.rawQuery("""
           SELECT * FROM $attendanceRecordTable
-          WHERE myCourseID = ? attendDate = ?
+          WHERE myCourseID = ? AND attendDate = ?
           """, [myCourseID, formatedAttendDate]);
     if (data.isEmpty) {
       return null;

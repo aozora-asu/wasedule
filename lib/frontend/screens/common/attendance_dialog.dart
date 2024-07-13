@@ -64,8 +64,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Map<int,String> enteredData = {};
-  Map<int,int> remainingNumData = {};
+  Map<int, String> enteredData = {};
+  Map<int, int> remainingNumData = {};
 
   bool isInit = true;
 
@@ -89,6 +89,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
         remainingNumData[data.elementAt(i)["id"]]
          = data.elementAt(i)["remainAbsent"] ?? 0;
+
       }
       isInit = false;
 
@@ -112,10 +113,11 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
             }
           }
       });
+
   }
 
-  Widget mainBody(data){
-    String dateText = DateFormat("M月d日(E)",'ja_JP').format(widget.targetDate);
+  Widget mainBody(data) {
+    String dateText = DateFormat("M月d日(E)", 'ja_JP').format(widget.targetDate);
 
     DateTime now = DateTime.now();
     if (widget.targetDate.year == now.year &&
@@ -140,6 +142,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               });
             },remainingNumData[data.elementAt(index)["id"]]!
             );
+
         },
         itemCount: data.length,
         shrinkWrap: true,
@@ -161,8 +164,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Widget classObject(
-    Map data,String selectedStatus,Function(String) onTap,int remainCount){
+  Widget classObject(Map data, String selectedStatus, Function(String) onTap,
+      int remainCount) {
     Color attendColor = Colors.grey;
     Color lateColor = Colors.grey;
     Color absentColor = Colors.grey;
@@ -175,41 +178,40 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     }
 
     return Container(
-      padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-      margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 0),
-      decoration: BoxDecoration(
-        color: BACKGROUND_COLOR,
-        borderRadius: BorderRadius.circular(5)
-      ),
-      child:Row(children:[
-        Expanded(
-          child:Text(data["courseName"],
-          style:const TextStyle(fontWeight:FontWeight.bold))),
-        const Text("残\n機 ",style: TextStyle(color:Colors.grey,fontSize: 12.5),),
-        const Icon(Icons.favorite,color: Colors.redAccent,size:20),
-        Text(remainCount.toString(),
-          style:const TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize: 20)),
-        const SizedBox(width:5),
-        buttonModel(
-          (){setState(() {
-            onTap("attend");}); },
-          attendColor,
-          "出",
-          horizontalPadding: 10),
-        buttonModel(
-          (){setState(() {
-            onTap("late");});},
-          lateColor,
-          "遅",
-          horizontalPadding: 10),
-        buttonModel(
-          (){setState((){
-            onTap("absent");});},
-          absentColor,
-          "欠",
-          horizontalPadding: 10),
-      ])
-    );
-
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+        decoration: BoxDecoration(
+            color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
+        child: Row(children: [
+          Expanded(
+              child: Text(data["courseName"],
+                  style: const TextStyle(fontWeight: FontWeight.bold))),
+          const Text(
+            "残\n機 ",
+            style: TextStyle(color: Colors.grey, fontSize: 12.5),
+          ),
+          const Icon(Icons.favorite, color: Colors.redAccent, size: 20),
+          Text(remainCount.toString(),
+              style: const TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20)),
+          const SizedBox(width: 5),
+          buttonModel(() {
+            setState(() {
+              onTap("attend");
+            });
+          }, attendColor, "出", horizontalPadding: 10),
+          buttonModel(() {
+            setState(() {
+              onTap("late");
+            });
+          }, lateColor, "遅", horizontalPadding: 10),
+          buttonModel(() {
+            setState(() {
+              onTap("absent");
+            });
+          }, absentColor, "欠", horizontalPadding: 10),
+        ]));
   }
 }
