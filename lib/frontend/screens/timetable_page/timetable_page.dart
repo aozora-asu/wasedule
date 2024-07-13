@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
@@ -35,6 +36,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     initTargetSem();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showAttendanceDialog(context,DateTime(2024,07,10,14,23,13),ref);
+    });
   }
 
   @override
