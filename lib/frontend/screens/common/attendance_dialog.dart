@@ -99,7 +99,12 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         if(snapShot.connectionState == ConnectionState.done){
           return mainBody(data);
         }else{
-          return mainBody(data);
+          if(!isInit){
+            return mainBody(data);
+          }else{
+            return const SizedBox();
+          }
+
         }
       });
   }
@@ -166,7 +171,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     if(selectedStatus == "attend"){
       attendColor = Colors.blueAccent;
     }else if(selectedStatus == "late"){
-      lateColor = Colors.green;
+      lateColor = const Color.fromARGB(255, 223, 200, 0);
     }else if(selectedStatus == "absent"){
       absentColor = Colors.redAccent;
     }
