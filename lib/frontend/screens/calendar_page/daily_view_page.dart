@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_button.dart';
@@ -136,7 +137,16 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               fontSize: SizeConfig.blockSizeHorizontal! * 6,
                               fontWeight: FontWeight.w700,
                               color: Colors.white),
-                        ))
+                        )),
+                    const Spacer(),
+                    buttonModel((){
+                        showAttendanceDialog(context,widget.target,ref,true);
+                      },
+                      MAIN_COLOR,
+                      "この日の出欠記録",
+                      verticalpadding: 5,
+                      horizontalPadding: 15),
+                    const SizedBox(width:5)
                   ],
                 ),
               ),
@@ -175,7 +185,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 height: SizeConfig.blockSizeHorizontal! * 2,
               ),
             ])),
-        const SizedBox(height: 50),
+
+        const SizedBox(height: 10),
+
+        const SizedBox(height: 10),
+
         Container(
             decoration:BoxDecoration(
               color:BACKGROUND_COLOR,
