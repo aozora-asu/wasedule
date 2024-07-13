@@ -74,18 +74,25 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       enteredData = {};
       remainingNumData = {};
 
-      for (int i = 0; i < data.length; i++) {
-        enteredData[data.elementAt(i)["id"]] = "attend";
-        var unko = await MyCourseDatabaseHandler()
-            .getAttendanceRecordFromDB(data.elementAt(i)["id"]);
-        print(unko);
+      for(int i = 0; i < data.length; i++){
+        int id = data[i]["id"];
+        String date = DateFormat("MM/dd").format(widget.targetDate);
+        Map<String, dynamic>? attendStatusData
+          = await MyCourseDatabaseHandler().getAttendStatus(id, date);
+        print(attendStatusData);
+        
+        if(attendStatusData != null){
+          enteredData[id] = attendStatusData["attendStatus"];
+        }else{
+          enteredData[id] = "attend";
+        }
 
-        print(data.elementAt(i));
-        // remainingNumData[data.elementAt(i)["id"]]
-        //  = data.elementAt(i)["remainAbsent"];
+        remainingNumData[data.elementAt(i)["id"]]
+         = data.elementAt(i)["remainAbsent"] ?? 0;
+
       }
       isInit = false;
-      print(remainingNumData);
+
     }
   }
 
@@ -105,7 +112,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               return const SizedBox();
             }
           }
-        });
+      });
+
   }
 
   Widget mainBody(data) {
@@ -125,11 +133,16 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       ListView.builder(
         itemBuilder: (context, index) {
           return classObject(
-              data.elementAt(index), enteredData[data.elementAt(index)["id"]]!,
-              (value) {
-            enteredData[data.elementAt(index)["id"]] = value;
-            setState(() {});
-          }, 3);
+            data.elementAt(index),
+            enteredData[data.elementAt(index)["id"]]!,
+            (value){
+              enteredData[data.elementAt(index)["id"]] = value;
+              setState(() {
+                
+              });
+            },remainingNumData[data.elementAt(index)["id"]]!
+            );
+
         },
         itemCount: data.length,
         shrinkWrap: true,
