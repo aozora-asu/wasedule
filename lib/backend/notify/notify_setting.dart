@@ -5,6 +5,10 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'package:flutter/material.dart';
+
+import '../../frontend/assist_files/screen_manager.dart';
+
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // ignore: avoid_print
@@ -55,7 +59,7 @@ class LocalNotificationSetting {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  Future<void> initializePlatformSpecifics() async {
+  Future<void> initializePlatformSpecifics(BuildContext context) async {
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('icon');
 
@@ -63,6 +67,31 @@ class LocalNotificationSetting {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: false,
+      notificationCategories: [
+        DarwinNotificationCategory(
+          'notifyActionCategory',
+          actions: <DarwinNotificationAction>[
+            DarwinNotificationAction.plain('id_1', 'Action 1'),
+            DarwinNotificationAction.plain(
+              'id_2',
+              'Action 2',
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.destructive,
+              },
+            ),
+            DarwinNotificationAction.plain(
+              'id_3',
+              'Action 3',
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.foreground,
+              },
+            ),
+          ],
+          options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+          },
+        )
+      ],
       onDidReceiveLocalNotification: (id, title, body, payload) async {
         // your call back to the UI
       },
@@ -71,9 +100,33 @@ class LocalNotificationSetting {
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse res) {
-      print('payload:${res.payload}');
-    });
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse res) async {
+        final String? payload = res.payload;
+        if (res.payload != null) {
+          print('notification payload: $payload');
+        } else if (res.payload == "taskNotify") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => AppPage(initIndex: 3),
+            ),
+          );
+        } else if (res.payload == "classNotify") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => AppPage(initIndex: 1),
+            ),
+          );
+        } else if (res.payload == "scheduleNotify") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => AppPage(initIndex: 2),
+            ),
+          );
+        }
+      },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+    );
   }
 }

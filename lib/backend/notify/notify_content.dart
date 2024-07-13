@@ -100,14 +100,10 @@ class NotifyContent {
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, body, "dailyNotify_task");
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      notifyID++,
-      notifyTitle,
-      body,
-      dailyScheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        notifyID++, notifyTitle, body, dailyScheduleDate, notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: "taskNotify");
   }
 
   Future<void> _bookDailyScheduleNotify(
@@ -137,15 +133,11 @@ class NotifyContent {
     }
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, scheduleNotifyBody, "dailyNotify_schedule");
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      notifyID++,
-      notifyTitle,
-      scheduleNotifyBody,
-      dailyScheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+    await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++, notifyTitle,
+        scheduleNotifyBody, dailyScheduleDate, notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: "scheduleNotify");
   }
 
   String makeNotifyTitle(
@@ -200,7 +192,7 @@ class NotifyContent {
 
   Future<String> makeTaskNotifyBody(
       NotifyConfig notifyConfig, tz.TZDateTime scheduleDate) async {
-    String body = "";
+    String body;
     String taskBody = "";
     String due = "";
     String title;
@@ -239,7 +231,8 @@ class NotifyContent {
     if (taskBody == "") {
       taskBody = "近日中の課題はありません\n";
     }
-    body += taskBody;
+    body = taskBody.trimRight();
+
     return body;
   }
 
@@ -252,14 +245,10 @@ class NotifyContent {
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, body, "weeklyNotify_task");
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      notifyID++,
-      notifyTitle,
-      body,
-      weeklyScheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        notifyID++, notifyTitle, body, weeklyScheduleDate, notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: "taskNotify");
   }
 
   Future<void> _bookWeeklyScheduleNotify(
@@ -271,15 +260,11 @@ class NotifyContent {
         await makeScheduleNotifyBody(notifyConfig, weeklyScheduleDate);
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, scheduleNotifyBody, "weeklyNotify_schedule");
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      notifyID++,
-      notifyTitle,
-      scheduleNotifyBody,
-      weeklyScheduleDate,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+    await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++, notifyTitle,
+        scheduleNotifyBody, weeklyScheduleDate, notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: "scheduleNotify");
   }
 
   Future<void> _bookBeforeHourNotify(
@@ -340,14 +325,10 @@ class NotifyContent {
         notificationDetails = _setNotificationDetail(
             notifyID++, notifyTitle, body, "beforHourNotify_task");
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          notifyID++,
-          notifyTitle,
-          body,
-          scheduleDate,
-          notificationDetails,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-        );
+            notifyID++, notifyTitle, body, scheduleDate, notificationDetails,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            payload: "taskNotify");
       }
     }
     for (var schedule in notifyScheduleList) {
@@ -374,15 +355,11 @@ class NotifyContent {
 
         notificationDetails = _setNotificationDetail(
             notifyID++, notifyTitle, body, "beforHourNotify_schedule");
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          notifyID++,
-          notifyTitle,
-          body,
-          scheduleDatetime,
-          notificationDetails,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-        );
+        await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
+            notifyTitle, body, scheduleDatetime, notificationDetails,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            payload: "scheduleNotify");
       }
     }
   }
@@ -490,7 +467,7 @@ class NotifyContent {
   }
 
   static const String classNotifyTitle = "授業のお知らせ";
-  Future<void> attendanceNotify() async {
+  Future<void> setClassNotify() async {
     List<Map<String, dynamic>>? myCourseList =
         await MyCourseDatabaseHandler().getPresentTermCourseList();
     if (myCourseList.isNotEmpty) {
@@ -505,15 +482,11 @@ class NotifyContent {
               "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
           notificationDetails = _setNotificationDetail(
               notifyID++, classNotifyTitle, body, "classNotify");
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            notifyID++,
-            classNotifyTitle,
-            body,
-            weeklyScheduleDate,
-            notificationDetails,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-          );
+          await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
+              classNotifyTitle, body, weeklyScheduleDate, notificationDetails,
+              uiLocalNotificationDateInterpretation:
+                  UILocalNotificationDateInterpretation.absoluteTime,
+              payload: "classNotify");
         }
       }
     }

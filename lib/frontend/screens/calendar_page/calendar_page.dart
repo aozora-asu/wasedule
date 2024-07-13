@@ -69,7 +69,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     initTargetSem();
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
-    LocalNotificationSetting().initializePlatformSpecifics();
+    LocalNotificationSetting().initializePlatformSpecifics(context);
     displayDB();
     targetMonth = thisMonth;
     generateCalendarData();

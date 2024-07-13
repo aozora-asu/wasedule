@@ -122,6 +122,14 @@ class NotifyDatabaseHandler {
       await db.execute('DROP TABLE $configTable');
       // 新しいテーブルの名前を既存のテーブルの名前に変更
       await db.execute('ALTER TABLE $configTableNew RENAME TO $configTable');
+      List<Map<String, dynamic>> config = await db.query(configTable);
+      if (config.isEmpty) {
+        await _addDefaultConfigData(db);
+      }
+      List<Map<String, dynamic>> format = await db.query(formatTable);
+      if (format.isEmpty) {
+        await _addDefaultFormatData(db);
+      }
     }
   }
 
