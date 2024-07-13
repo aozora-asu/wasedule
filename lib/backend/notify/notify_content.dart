@@ -385,6 +385,7 @@ class NotifyContent {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isCalendarNotify = prefs.getBool('isCalendarNotify') ?? true;
     bool isTaskNotify = prefs.getBool('isTaskNotify') ?? true;
+    bool isClassNotify = prefs.getBool('isClassNotify') ?? true;
     if (notifyConfigList != null && notifyFormatMap != null) {
       NotifyFormat notifyFormat = NotifyFormat(
           isContainWeekday: notifyFormatMap["isContainWeekday"],
@@ -419,7 +420,9 @@ class NotifyContent {
         }
       }
     }
-    await setClassNotify();
+    if (isClassNotify) {
+      await setClassNotify();
+    }
   }
 
   Future<void> sampleNotify() async {

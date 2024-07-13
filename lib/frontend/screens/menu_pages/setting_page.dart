@@ -725,8 +725,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
     final prefs = await SharedPreferences.getInstance();
     bool isCalendarNotify = prefs.getBool("isCalendarNotify")!;
     bool isTaskNotify = prefs.getBool("isTaskNotify")!;
+    bool isClassNotify = prefs.getBool("isClassNotify")!;
 
-    return {"isCalendarNotify": isCalendarNotify, "isTaskNotify": isTaskNotify};
+    return {
+      "isCalendarNotify": isCalendarNotify,
+      "isTaskNotify": isTaskNotify,
+      "isClassNotify": isClassNotify
+    };
   }
 
   Widget notificationTypeSetting() {
@@ -762,7 +767,21 @@ class _MainContentsState extends ConsumerState<MainContents> {
                     setState(() {});
                   },
                 )
-              ])
+              ]),
+              Row(children: [
+                const Text("教室・出席管理の通知"),
+                const Spacer(),
+                CupertinoSwitch(
+                  activeColor: PALE_MAIN_COLOR,
+                  value: snapShot.data!["isClassNotify"]!,
+                  onChanged: (value) async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool("isClassNotify", value);
+                    await NotifyContent().setNotify();
+                    setState(() {});
+                  },
+                )
+              ]),
             ]);
           } else {
             return loadingSettingWidget();
