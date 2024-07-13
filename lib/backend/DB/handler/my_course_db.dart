@@ -91,10 +91,13 @@ class MyCourse {
     if (semester != null) {
       if (semester!.contains("quarter")) {
         classNum = 7;
+        remainAbsent = 2;
       } else if (semester!.contains("semester")) {
         classNum = 14;
+        remainAbsent = 4;
       } else if (semester!.contains("full_year")) {
         classNum = 28;
+        remainAbsent = 8;
       }
     }
 
