@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -18,6 +19,18 @@ Future<void> showAttendanceDialog
     .read(timeTableProvider)
     .targetDateClasses(targetDate);
   
+  int numOfNotEmptyData = 0;
+
+  for(int i = 0; i < data.length; i++){
+    int myCourseId = data.elementAt(i)["id"];
+
+
+  }
+
+  if(numOfNotEmptyData == data.length){
+    isShowDialog = false;
+  }
+
   if(data.isEmpty){
     isShowDialog = false;
   }
@@ -52,7 +65,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         decoration: roundedBoxdecorationWithShadow(),
         margin:const EdgeInsets.symmetric(horizontal:10),
         padding:const EdgeInsets.symmetric(vertical:15,horizontal:20),
-        child: Material(child: mainBody())
+        child: Material(child: buildMainBody())
       ),
     const Spacer(),
     ]);
@@ -61,18 +74,43 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
   Map<int,String> enteredData = {};
   bool isInit = true;
 
-  Widget mainBody(){
-    List data = ref
-      .read(timeTableProvider)
-      .targetDateClasses(widget.targetDate);
-
+  Future<void> initClassData(List data)async{
     if(isInit){
       enteredData = {};
       for(int i = 0; i < data.length; i++){
         enteredData[data.elementAt(i)["id"]] = "attend";
+        var unko = await MyCourseDatabaseHandler()
+            .getAttendanceRecordFromDB(
+              data.elementAt(i)["id"]);
+        print(unko);
       }
       isInit = false;
     }
+  }
+
+  Widget buildMainBody(){
+    List data = ref
+      .read(timeTableProvider)
+      .targetDateClasses(widget.targetDate);
+    
+    return FutureBuilder(
+      future:initClassData(data),
+      builder:(context,snapShot){
+        if(snapShot.connectionState == ConnectionState.done){
+          return mainBody(data);
+        }else{
+          if(!isInit){
+            return mainBody(data);
+          }else{
+            return const SizedBox();
+          }
+
+        }
+      });
+  }
+
+  Widget mainBody(data){
+
 
     String dateText = DateFormat("M月d日(E)",'ja_JP').format(widget.targetDate);
     DateTime now = DateTime.now();
@@ -109,7 +147,13 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         const Spacer(),
         buttonModel(
           ()async{
-            print(enteredData);
+            for(int i = 0; i < enteredData.length; i++){
+              await MyCourseDatabaseHandler().recordAttendStatus(
+                AttendanceRecord(
+                  attendDate: DateFormat("M/d").format(widget.targetDate),
+                  attendStatus: enteredData.values.elementAt(i),
+                  myCourseID: enteredData.keys.elementAt(i)));
+            }
             Navigator.pop(context);
           },
           Colors.blue,
@@ -127,7 +171,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     if(selectedStatus == "attend"){
       attendColor = Colors.blueAccent;
     }else if(selectedStatus == "late"){
-      lateColor = Colors.green;
+      lateColor = const Color.fromARGB(255, 223, 200, 0);
     }else if(selectedStatus == "absent"){
       absentColor = Colors.redAccent;
     }
