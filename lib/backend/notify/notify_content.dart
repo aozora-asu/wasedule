@@ -419,6 +419,7 @@ class NotifyContent {
         }
       }
     }
+    await setClassNotify();
   }
 
   Future<void> sampleNotify() async {

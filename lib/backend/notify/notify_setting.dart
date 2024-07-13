@@ -13,6 +13,7 @@ import "./notify_content.dart";
 import "../DB/handler/my_course_db.dart";
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
+import "../../constant.dart";
 
 @pragma('vm:entry-point')
 void notificationTapBackground(
@@ -29,7 +30,9 @@ void notificationTapBackground(
   if (decodedPayload["route"] == "timeTablePage") {
     AttendanceRecord attendanceRecord = AttendanceRecord(
         attendDate: decodedPayload["attendDate"],
-        attendStatus: notificationResponse.actionId!,
+        attendStatus: AttendStatus.values.byName(
+          notificationResponse.actionId!,
+        ),
         myCourseID: decodedPayload["myCaurseID"]);
     await MyCourseDatabaseHandler().recordAttendStatus(attendanceRecord);
   }
@@ -92,9 +95,9 @@ class LocalNotificationSetting {
         DarwinNotificationCategory(
           'markAttendStatus',
           actions: <DarwinNotificationAction>[
-            DarwinNotificationAction.plain('attend', '出席'),
+            DarwinNotificationAction.plain(AttendStatus.attend.value, "出席"),
             DarwinNotificationAction.plain(
-              'late',
+              AttendStatus.late.value,
               '遅刻',
               //破壊的な設定
               // options: <DarwinNotificationActionOption>{
@@ -102,7 +105,7 @@ class LocalNotificationSetting {
               // },
             ),
             DarwinNotificationAction.plain(
-              'absent',
+              AttendStatus.absent.value,
               '欠席',
               //一緒にアプリを起動
               // options: <DarwinNotificationActionOption>{

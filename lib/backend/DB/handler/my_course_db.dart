@@ -3,6 +3,8 @@ import 'dart:ffi';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import "../../../converter.dart";
+import "../../../constant.dart";
+import 'package:intl/intl.dart';
 
 class SyllabusQueryResult {
   String courseName;
@@ -89,10 +91,13 @@ class MyCourse {
     if (semester != null) {
       if (semester!.contains("quarter")) {
         classNum = 7;
+        remainAbsent = 2;
       } else if (semester!.contains("semester")) {
         classNum = 14;
+        remainAbsent = 4;
       } else if (semester!.contains("full_year")) {
         classNum = 28;
+        remainAbsent = 8;
       }
     }
 
@@ -116,7 +121,7 @@ class MyCourse {
 
 class AttendanceRecord {
   int myCourseID;
-  String attendStatus;
+  AttendStatus attendStatus;
   String attendDate;
 
   AttendanceRecord(
@@ -126,7 +131,7 @@ class AttendanceRecord {
   toMap() {
     return {
       "myCourseID": myCourseID,
-      "attendStatus": attendStatus,
+      "attendStatus": attendStatus.value,
       "attendDate": attendDate
     };
   }
@@ -178,7 +183,8 @@ class MyCourseDatabaseHandler {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         myCourseID INTEGER,
         attendStatus TEXT,
-        attendDate TEXT
+        attendDate TEXT,
+        CONSTRAINT unique_attend_record UNIQUE (myCourseID, attendDate)
       )
     ''');
   }
@@ -237,7 +243,8 @@ class MyCourseDatabaseHandler {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         myCourseID INTEGER,
         attendStatus TEXT,
-        attendDate TEXT
+        attendDate TEXT,
+        CONSTRAINT unique_attend_record UNIQUE (myCourseID, attendDate)
       )
     ''');
     }
@@ -459,9 +466,30 @@ class MyCourseDatabaseHandler {
     return data;
   }
 
+  Future<Map<String, dynamic>?> getAttendStatus(
+      int myCourseID, String attendDate) async {
+    await _initMyCourseDatabase();
+    String formatedAttendDate =
+        DateFormat("MM/dd").format(DateFormat("MM/dd").parse(attendDate));
+    final List<Map<String, dynamic>> data = await _database.rawQuery("""
+          SELECT * FROM $attendanceRecordTable
+          WHERE myCourseID = ? attendDate = ?
+          """, [myCourseID, formatedAttendDate]);
+    if (data.isEmpty) {
+      return null;
+    } else {
+      return data.first;
+    }
+  }
+
   Future<void> recordAttendStatus(AttendanceRecord attendanceRecord) async {
     await _initMyCourseDatabase();
-    await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
+    try {
+      await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
+    } catch (e) {
+      // エラーが UNIQUE constraint failed の場合のみ無視する
+      if (e.toString().contains("UNIQUE constraint failed")) {}
+    }
   }
 
   Future<void> updateAttendRecord(
