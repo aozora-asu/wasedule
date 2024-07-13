@@ -72,19 +72,27 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
   }
 
   Map<int,String> enteredData = {};
+  Map<int,int> remainingNumData = {};
   bool isInit = true;
 
   Future<void> initClassData(List data)async{
     if(isInit){
       enteredData = {};
+      remainingNumData = {};
+
       for(int i = 0; i < data.length; i++){
         enteredData[data.elementAt(i)["id"]] = "attend";
         var unko = await MyCourseDatabaseHandler()
             .getAttendanceRecordFromDB(
               data.elementAt(i)["id"]);
         print(unko);
+        
+        print(data.elementAt(i));
+        // remainingNumData[data.elementAt(i)["id"]]
+        //  = data.elementAt(i)["remainAbsent"];
       }
       isInit = false;
+      print(remainingNumData);
     }
   }
 
@@ -104,14 +112,11 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
           }else{
             return const SizedBox();
           }
-
         }
       });
   }
 
   Widget mainBody(data){
-
-
     String dateText = DateFormat("M月d日(E)",'ja_JP').format(widget.targetDate);
     DateTime now = DateTime.now();
     if(widget.targetDate.year == now.year &&
@@ -137,7 +142,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               setState(() {
                 
               });
-            });
+            },3
+            );
         },
         itemCount: data.length,
         shrinkWrap: true,
@@ -164,7 +170,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Widget classObject(Map data,String selectedStatus,Function(String) onTap){
+  Widget classObject(
+    Map data,String selectedStatus,Function(String) onTap,int remainCount){
     Color attendColor = Colors.grey;
     Color lateColor = Colors.grey;
     Color absentColor = Colors.grey;
@@ -189,8 +196,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
           style:const TextStyle(fontWeight:FontWeight.bold))),
         const Text("残\n機 ",style: TextStyle(color:Colors.grey,fontSize: 12.5),),
         const Icon(Icons.favorite,color: Colors.redAccent,size:20),
-        const Text("3",
-          style:TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize: 20)),
+        Text(remainCount.toString(),
+          style:const TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize: 20)),
         const SizedBox(width:5),
         buttonModel(
           (){setState(() {
