@@ -150,7 +150,7 @@ class MyCourseDatabaseHandler {
   Future<void> _initMyCourseDatabase() async {
     String path = join(await getDatabasesPath(), '$databaseName.db');
     _database = await openDatabase(path,
-        version: 2,
+        version: 3,
         onCreate: _createMyCourseDatabase,
         onUpgrade: _upgradeMyCourseDatabase);
   }
@@ -189,7 +189,7 @@ class MyCourseDatabaseHandler {
 
   Future<void> _upgradeMyCourseDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion == 1) {
+    if (oldVersion == 2) {
       await db.execute('''
       CREATE TABLE IF NOT EXISTS $myCourseTableNew(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
