@@ -69,17 +69,17 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
   bool isInit = true;
 
-  Future<void> initClassData(List data) async {
+  Future<void> initClassData(List data) async{
     if (isInit) {
       enteredData = {};
       remainingNumData = {};
 
       for(int i = 0; i < data.length; i++){
         int id = data[i]["id"];
-        String date = DateFormat("MM/dd").format(widget.targetDate);
+        String date = DateFormat("M/d").format(widget.targetDate);
         Map<String, dynamic>? attendStatusData
           = await MyCourseDatabaseHandler().getAttendStatus(id, date);
-        print(attendStatusData);
+        
         
         if(attendStatusData != null){
           enteredData[id] = attendStatusData["attendStatus"];
@@ -88,7 +88,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         }
 
         remainingNumData[data.elementAt(i)["id"]]
-         = data.elementAt(i)["remainAbsent"] ?? 0;
+          = data.elementAt(i)["remainAbsent"] ?? 0;
 
       }
       isInit = false;
