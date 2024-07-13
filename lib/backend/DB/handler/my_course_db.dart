@@ -302,6 +302,26 @@ class MyCourseDatabaseHandler {
     );
   }
 
+  Future<void> updateClassNum(int id, int newClassNum) async {
+    await _initMyCourseDatabase();
+    await _database.update(
+      myCourseTable,
+      {'classNum': newClassNum}, // 新しいmemoの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
+  Future<void> updateRemainAbsent(int id, int newRemainAbsent) async {
+    await _initMyCourseDatabase();
+    await _database.update(
+      myCourseTable,
+      {'remainAbsent': newRemainAbsent}, // 新しいmemoの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
   Future<void> _updateMyCourseFromMoodle(MyCourse newMyCourse) async {
     await _initMyCourseDatabase();
 
@@ -486,7 +506,18 @@ class MyCourseDatabaseHandler {
       await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
-      if (e.toString().contains("UNIQUE constraint failed")) {}
+      if (e.toString().contains("UNIQUE constraint failed")) {
+        await _database.update(
+          attendanceRecordTable,
+          // 更新後の値
+          attendanceRecord.toMap(),
+          where: 'myCourseID = ? AND attendDate = ?', // idによってレコードを特定
+          whereArgs: [
+            attendanceRecord.toMap()["myCourseID"],
+            attendanceRecord.toMap()["attendDate"]
+          ],
+        );
+      }
     }
   }
 
@@ -501,13 +532,13 @@ class MyCourseDatabaseHandler {
     );
   }
 
-  Future<int> getAttendStatusCount(int myCourseID, String status) async {
+  Future<int> getAttendStatusCount(int myCourseID, AttendStatus status) async {
     await _initMyCourseDatabase();
     final List<Map<String, dynamic>> result = await _database.rawQuery('''
     SELECT COUNT(*) as attendCount
     FROM $attendanceRecordTable
     WHERE myCourseID = ? AND attendStatus = ?
-  ''', [myCourseID, status]);
+  ''', [myCourseID, status.value]);
     return result.first['attendCount'] as int;
   }
 }
