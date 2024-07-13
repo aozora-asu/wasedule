@@ -21,12 +21,12 @@ Future<void> showAttendanceDialog(
 
   int numOfNotEmptyData = 0;
 
-  for (int i = 0; i < data.length; i++) {
-    int myCourseId = data.elementAt(i)["id"];
+  for (var classMap in data) {
+    int myCourseId = classMap["id"];
     String date = DateFormat("MM/dd").format(targetDate);
-    Map<String, dynamic>? attendStatusData
-      = await MyCourseDatabaseHandler().getAttendStatus(myCourseId, date);
-    if(attendStatusData != null){
+    Map<String, dynamic>? attendStatusData =
+        await MyCourseDatabaseHandler().getAttendStatus(myCourseId, date);
+    if (attendStatusData != null) {
       numOfNotEmptyData += 1;
     }
   }
@@ -39,7 +39,7 @@ Future<void> showAttendanceDialog(
     isShowDialog = false;
   }
 
-  if(enforceShowing){
+  if (enforceShowing) {
     isShowDialog = true;
   }
 
@@ -80,36 +80,34 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
   bool isInit = true;
 
-  Future<void> initClassData(List data) async{
+  Future<void> initClassData(List data) async {
     if (isInit) {
       enteredData = {};
       remainingNumData = {};
 
-      for(int i = 0; i < data.length; i++){
+      for (int i = 0; i < data.length; i++) {
         int id = data[i]["id"];
         String date = DateFormat("MM/dd").format(widget.targetDate);
-        Map<String, dynamic>? attendStatusData
-          = await MyCourseDatabaseHandler().getAttendStatus(id, date);
+        Map<String, dynamic>? attendStatusData =
+            await MyCourseDatabaseHandler().getAttendStatus(id, date);
 
-        if(attendStatusData != null){
+        if (attendStatusData != null) {
           enteredData[id] = attendStatusData["attendStatus"];
-        }else{
+        } else {
           enteredData[id] = "attend";
         }
 
-        int currentAbsentNum =
-          await MyCourseDatabaseHandler().getAttendStatusCount(id,"absent");
-        int remainAbsent = data.elementAt(i)["remainAbsent"]  ?? 0;
+        int currentAbsentNum = await MyCourseDatabaseHandler()
+            .getAttendStatusCount(id, AttendStatus.absent);
+        int remainAbsent = data.elementAt(i)["remainAbsent"] ?? 0;
         int remainingNum = remainAbsent - currentAbsentNum;
-        if(remainingNum <= 0){
+        if (remainingNum <= 0) {
           remainingNum = 0;
         }
 
-        remainingNumData[data.elementAt(i)["id"]]
-          = remainingNum;
+        remainingNumData[data.elementAt(i)["id"]] = remainingNum;
       }
       isInit = false;
-
     }
   }
 
@@ -129,8 +127,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               return const SizedBox();
             }
           }
-      });
-
+        });
   }
 
   Widget mainBody(data) {
@@ -150,16 +147,11 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       ListView.builder(
         itemBuilder: (context, index) {
           return classObject(
-            data.elementAt(index),
-            enteredData[data.elementAt(index)["id"]]!,
-            (value){
-              enteredData[data.elementAt(index)["id"]] = value;
-              setState(() {
-                
-              });
-            },remainingNumData[data.elementAt(index)["id"]]!
-            );
-
+              data.elementAt(index), enteredData[data.elementAt(index)["id"]]!,
+              (value) {
+            enteredData[data.elementAt(index)["id"]] = value;
+            setState(() {});
+          }, remainingNumData[data.elementAt(index)["id"]]!);
         },
         itemCount: data.length,
         shrinkWrap: true,
