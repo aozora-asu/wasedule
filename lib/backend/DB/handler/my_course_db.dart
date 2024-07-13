@@ -232,6 +232,14 @@ class MyCourseDatabaseHandler {
       // 新しいテーブルの名前を既存のテーブルの名前に変更
       await db
           .execute('ALTER TABLE $myCourseTableNew RENAME TO $myCourseTable');
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS $attendanceRecordTable(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        myCourseID INTEGER,
+        attendStatus TEXT,
+        attendDate TEXT
+      )
+    ''');
     }
   }
 
