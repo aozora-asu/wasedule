@@ -150,7 +150,7 @@ class MyCourseDatabaseHandler {
   Future<void> _initMyCourseDatabase() async {
     String path = join(await getDatabasesPath(), '$databaseName.db');
     _database = await openDatabase(path,
-        version: 3,
+        version: 2,
         onCreate: _createMyCourseDatabase,
         onUpgrade: _upgradeMyCourseDatabase);
   }
@@ -189,7 +189,7 @@ class MyCourseDatabaseHandler {
 
   Future<void> _upgradeMyCourseDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion == 2) {
+    if (oldVersion == 1) {
       await db.execute('''
       CREATE TABLE IF NOT EXISTS $myCourseTableNew(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -486,7 +486,18 @@ class MyCourseDatabaseHandler {
       await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
-      if (e.toString().contains("UNIQUE constraint failed")) {}
+      if (e.toString().contains("UNIQUE constraint failed")) {
+        await _database.update(
+          attendanceRecordTable,
+          // 更新後の値
+          attendanceRecord.toMap(),
+          where: 'myCourseID = ? AND attendDate = ?', // idによってレコードを特定
+          whereArgs: [
+            attendanceRecord.toMap()["myCourseID"],
+            attendanceRecord.toMap()["attendDate"]
+          ],
+        );
+      }
     }
   }
 
