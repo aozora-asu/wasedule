@@ -447,11 +447,14 @@ class MyCourseDatabaseHandler {
     return courses;
   }
 
-  Future<List<Map<String, dynamic>>> getAttendanceRecordFromDB() async {
+  Future<List<Map<String, dynamic>>> getAttendanceRecordFromDB(
+      int myCourseID) async {
     await _initMyCourseDatabase();
 
-    final List<Map<String, dynamic>> data =
-        await _database.rawQuery('SELECT * FROM $attendanceRecordTable');
+    final List<Map<String, dynamic>> data = await _database.rawQuery("""
+          SELECT * FROM $attendanceRecordTable
+          WHERE myCourseID = ?
+          """, [myCourseID]);
 
     return data;
   }
