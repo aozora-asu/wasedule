@@ -325,7 +325,7 @@ class NotifyContent {
 
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        body = "$dueまで $title   $summary";
+        body = "$dueまで $title   $summary".trimRight();
         encodedPayload =
             jsonEncode({"route": "taskPage", "databaseID": task["id"]});
         notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
@@ -346,7 +346,7 @@ class NotifyContent {
     for (var schedule in notifyScheduleList) {
       String startDatetime;
       if (schedule["startTime"] == "") {
-        startDatetime = "0:00";
+        startDatetime = "00:00";
       } else {
         startDatetime = schedule["startTime"];
       }
