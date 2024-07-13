@@ -220,8 +220,8 @@ class MyCourseDatabaseHandler {
           syllabusID: myCourse["syllabusID"] as String,
           weekday: myCourse["weekday"] as int,
           year: myCourse["year"] as int,
-          criteria: myCourse["criteria"] as String,
-          memo: myCourse["memo"] as String,
+          criteria: myCourse["criteria"] as String?,
+          memo: myCourse["memo"] as String?,
         );
         await db.insert(myCourseTableNew, myCourseClass.toMap());
       }
