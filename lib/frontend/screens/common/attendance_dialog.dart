@@ -64,19 +64,28 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Map<int, String> enteredData = {};
+  Map<int,String> enteredData = {};
+  Map<int,int> remainingNumData = {};
+
   bool isInit = true;
 
   Future<void> initClassData(List data) async {
     if (isInit) {
       enteredData = {};
-      for (int i = 0; i < data.length; i++) {
+      remainingNumData = {};
+
+      for(int i = 0; i < data.length; i++){
         enteredData[data.elementAt(i)["id"]] = "attend";
         var unko = await MyCourseDatabaseHandler()
             .getAttendanceRecordFromDB(data.elementAt(i)["id"]);
         print(unko);
+        
+        print(data.elementAt(i));
+        // remainingNumData[data.elementAt(i)["id"]]
+        //  = data.elementAt(i)["remainAbsent"];
       }
       isInit = false;
+      print(remainingNumData);
     }
   }
 
@@ -96,11 +105,13 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
               return const SizedBox();
             }
           }
-        });
+        }
+      });
   }
 
-  Widget mainBody(data) {
-    String dateText = DateFormat("M月d日(E)", 'ja_JP').format(widget.targetDate);
+  Widget mainBody(data){
+    String dateText = DateFormat("M月d日(E)",'ja_JP').format(widget.targetDate);
+
     DateTime now = DateTime.now();
     if (widget.targetDate.year == now.year &&
         widget.targetDate.month == now.month &&
@@ -115,11 +126,15 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       ListView.builder(
         itemBuilder: (context, index) {
           return classObject(
-              data.elementAt(index), enteredData[data.elementAt(index)["id"]]!,
-              (value) {
-            enteredData[data.elementAt(index)["id"]] = value;
-            setState(() {});
-          });
+            data.elementAt(index),
+            enteredData[data.elementAt(index)["id"]]!,
+            (value){
+              enteredData[data.elementAt(index)["id"]] = value;
+              setState(() {
+                
+              });
+            },3
+            );
         },
         itemCount: data.length,
         shrinkWrap: true,
@@ -141,7 +156,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Widget classObject(Map data, String selectedStatus, Function(String) onTap) {
+  Widget classObject(
+    Map data,String selectedStatus,Function(String) onTap,int remainCount){
     Color attendColor = Colors.grey;
     Color lateColor = Colors.grey;
     Color absentColor = Colors.grey;
@@ -154,40 +170,41 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     }
 
     return Container(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-        decoration: BoxDecoration(
-            color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
-        child: Row(children: [
-          Expanded(
-              child: Text(data["courseName"],
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
-          const Text(
-            "残\n機 ",
-            style: TextStyle(color: Colors.grey, fontSize: 12.5),
-          ),
-          const Icon(Icons.favorite, color: Colors.redAccent, size: 20),
-          const Text("3",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20)),
-          const SizedBox(width: 5),
-          buttonModel(() {
-            setState(() {
-              onTap("attend");
-            });
-          }, attendColor, "出", horizontalPadding: 10),
-          buttonModel(() {
-            setState(() {
-              onTap("late");
-            });
-          }, lateColor, "遅", horizontalPadding: 10),
-          buttonModel(() {
-            setState(() {
-              onTap("absent");
-            });
-          }, absentColor, "欠", horizontalPadding: 10),
-        ]));
+      padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 0),
+      decoration: BoxDecoration(
+        color: BACKGROUND_COLOR,
+        borderRadius: BorderRadius.circular(5)
+      ),
+      child:Row(children:[
+        Expanded(
+          child:Text(data["courseName"],
+          style:const TextStyle(fontWeight:FontWeight.bold))),
+        const Text("残\n機 ",style: TextStyle(color:Colors.grey,fontSize: 12.5),),
+        const Icon(Icons.favorite,color: Colors.redAccent,size:20),
+        Text(remainCount.toString(),
+          style:const TextStyle(color:Colors.grey,fontWeight:FontWeight.bold,fontSize: 20)),
+        const SizedBox(width:5),
+        buttonModel(
+          (){setState(() {
+            onTap("attend");}); },
+          attendColor,
+          "出",
+          horizontalPadding: 10),
+        buttonModel(
+          (){setState(() {
+            onTap("late");});},
+          lateColor,
+          "遅",
+          horizontalPadding: 10),
+        buttonModel(
+          (){setState((){
+            onTap("absent");});},
+          absentColor,
+          "欠",
+          horizontalPadding: 10),
+      ])
+    );
+
   }
 }
