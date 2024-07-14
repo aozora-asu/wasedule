@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/sharepreference.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:toggle_switch/toggle_switch.dart';
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 
@@ -38,17 +39,11 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     initPrefarence();
   }
 
-  Future<void> initPrefarence() async {
-    final pref = await SharedPreferences.getInstance();
-    if (pref.getInt('initCampusNum') == null) {
-      initCampusNum = 0;
-      await pref.setInt('initCampusNum', 0);
-    } else {
-      initCampusNum = pref.getInt('initCampusNum')!;
-    }
-
+  void initPrefarence() {
+    initCampusNum =
+        SharepreferenceHandler().getValue(SharepreferenceKeys.initCampusNum);
     for (int i = 0; i < campusID2buildingsList().length; i++) {
-      await initCampusMapPrefarences(i.toString(), pref);
+      initCampusMapPrefarences(i);
     }
 
     setState(() {
@@ -56,10 +51,12 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     });
   }
 
-  Future<void> initCampusMapPrefarences(
-      String campusID, SharedPreferences pref) async {
-    if (pref.getBool('isMapDBEmpty_$campusID') == null) {
-      await pref.setBool('isMapDBEmpty_$campusID', true);
+  void initCampusMapPrefarences(int campusID) {
+    SharepreferenceKeys mapDBEmptyKey =
+        SharepreferenceKeys.isMapDBEmpty(campusID);
+    SharepreferenceHandler sharepreferenceHandler = SharepreferenceHandler();
+    if (sharepreferenceHandler.getValue(mapDBEmptyKey) == null) {
+      sharepreferenceHandler.setValue(mapDBEmptyKey, true);
     }
   }
 
@@ -183,6 +180,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   };
 
   Widget mapView() {
+    SharepreferenceHandler sharepreferenceHandler = SharepreferenceHandler();
     return Stack(children: [
       Container(
           height: SizeConfig.blockSizeVertical! * 80,
@@ -247,9 +245,10 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         Row(children: [
           SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
           SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 10,
-            height: SizeConfig.blockSizeHorizontal! * 10,
-            child:Image.asset("lib/assets/eye_catch/wase_map_logo_transparent.png")),
+              width: SizeConfig.blockSizeHorizontal! * 10,
+              height: SizeConfig.blockSizeHorizontal! * 10,
+              child: Image.asset(
+                  "lib/assets/eye_catch/wase_map_logo_transparent.png")),
           Text(
             " わせまっぷ",
             style: TextStyle(
@@ -273,24 +272,24 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         const SizedBox(height: 5),
         Row(children: [
           buttonModel(() async {
-            final pref = await SharedPreferences.getInstance();
-            pref.setInt("initCampusNum", 0);
+            sharepreferenceHandler.setValue(
+                SharepreferenceKeys.initCampusNum, 0);
             await _animatedMapController.animateTo(
                 dest: campusLocations["waseda"]);
             await _animatedMapController.animatedZoomTo(initMapZoom["waseda"]!);
             setState(() {});
           }, buttonColor(0), "  早稲田  "),
           buttonModel(() async {
-            final pref = await SharedPreferences.getInstance();
-            pref.setInt("initCampusNum", 1);
+            sharepreferenceHandler.setValue(
+                SharepreferenceKeys.initCampusNum, 1);
             await _animatedMapController.animateTo(
                 dest: campusLocations["toyama"]);
             await _animatedMapController.animatedZoomTo(initMapZoom["toyama"]!);
             setState(() {});
           }, buttonColor(1), "   戸山   "),
           buttonModel(() async {
-            final pref = await SharedPreferences.getInstance();
-            pref.setInt("initCampusNum", 2);
+            sharepreferenceHandler.setValue(
+                SharepreferenceKeys.initCampusNum, 2);
             await _animatedMapController.animateTo(
                 dest: campusLocations["nishi_waseda"]);
             await _animatedMapController
@@ -298,8 +297,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             setState(() {});
           }, buttonColor(2), " 西早稲田 "),
           buttonModel(() async {
-            final pref = await SharedPreferences.getInstance();
-            pref.setInt("initCampusNum", 3);
+            sharepreferenceHandler.setValue(
+                SharepreferenceKeys.initCampusNum, 3);
             await _animatedMapController.animateTo(
                 dest: campusLocations["tokorozawa"]);
             await _animatedMapController
@@ -349,8 +348,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style:  TextStyle(
-                          fontWeight: FontWeight.bold, color: WHITE),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   )
                 ]);
@@ -365,8 +364,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style:  TextStyle(
-                          fontWeight: FontWeight.bold, color: WHITE),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   )
                 ]);
@@ -415,9 +414,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: WHITE,
-                borderRadius:const BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -470,7 +469,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   }
 
   void onModalBottomSheetClosed() {
-    if (!stopDownload && !showDownloadButton){
+    if (!stopDownload && !showDownloadButton) {
       showSnackBar(context);
     }
     showDownloadButton = true;
@@ -494,17 +493,18 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
       }
     }
 
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    bool isDataEmpty = pref.getBool('isMapDBEmpty_$campusID')!;
+    SharepreferenceKeys mapDBEmptyKey =
+        SharepreferenceKeys.isMapDBEmpty(campusID);
+    bool isDataEmpty = SharepreferenceHandler().getValue(mapDBEmptyKey);
     if (isDataEmpty && !isDownloadInit) {
       isDownloadInit = true;
-      await pref.setBool('isMapDBEmpty_$campusID', false);
+      SharepreferenceHandler().setValue(mapDBEmptyKey, false);
       await downLoadCampusData(campusID);
       showDownloadButton = false;
       stopDownload = true;
-    }else if(!isDataEmpty){
+    } else if (!isDataEmpty) {
       showDownloadButton = false;
-    }else{
+    } else {
       showDownloadButton = true;
     }
 
@@ -512,18 +512,19 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         await IsarHandler().getNowVacantRoomList(isar!, location);
     return result;
   }
-  
+
   int numOfDoneLoadings = 0;
   String currentLoadState = "";
   Future<void> downLoadCampusData(int campusID) async {
+    SharepreferenceKeys mapDBEmptyKey =
+        SharepreferenceKeys.isMapDBEmpty(campusID);
     currentLoadState = "";
     numOfDoneLoadings = 0;
     stopDownload = false;
     List targetList = campusID2buildingsList()[campusID]!;
     for (int i = 0; i < targetList.length; i++) {
       if (stopDownload) {
-        final pref = await  SharedPreferences.getInstance();
-        await pref.setBool('isMapDBEmpty_$campusID', true);
+        SharepreferenceHandler().setValue(mapDBEmptyKey, true);
         showDownloadButton = true;
         break;
       } else {
@@ -533,14 +534,13 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         numOfDoneLoadings += 1;
       }
     }
-    
   }
 
   bool isDownloadInit = true;
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
     int currentPeriod = datetime2Period(now) ?? 0;
-
+    SharepreferenceKeys mapDBEmptyKey;
     int campusID = 0;
     for (int i = 0; i < campusID2buildingsList().length; i++) {
       if (campusID2buildingsList().values.elementAt(i).contains(location)) {
@@ -552,16 +552,15 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         future: initVacantRoomList(location),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-
-              return Center(
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                showStreamLoader(context, renewProgressBar(campusID2buildingsList()[campusID]!.length)),
-                const Text("空き教室データ取得中…",
-                    style: TextStyle(
-                        color: MAIN_COLOR, fontWeight: FontWeight.bold)),
-                streamProgressText(context, renewText())
-              ]));
-
+            return Center(
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+              showStreamLoader(context,
+                  renewProgressBar(campusID2buildingsList()[campusID]!.length)),
+              const Text("空き教室データ取得中…",
+                  style: TextStyle(
+                      color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+              streamProgressText(context, renewText())
+            ]));
           } else if (snapshot.hasData) {
             isDownloadInit = true;
             countupLoaderStop();
@@ -580,65 +579,67 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
             } else {
               searchResult = snapshot.data!.join('\n');
             }
-            if(showDownloadButton){
+            if (showDownloadButton) {
               return Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                 const Text("このキャンパスの空き教室データはありません",
-                  style: TextStyle(
-                      color: MAIN_COLOR, fontWeight: FontWeight.bold)),
-                const SizedBox(height:10),
-                buttonModel((){
-                  setState((){
+                    style: TextStyle(
+                        color: MAIN_COLOR, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                buttonModel(() {
+                  setState(() {
                     isDownloadInit = false;
                   });
                   Navigator.pop(context);
                   showDetailButtomSheet(location);
-                },MAIN_COLOR,"ダウンロード",verticalpadding:10)
+                }, MAIN_COLOR, "ダウンロード", verticalpadding: 10)
               ]));
-            }else{
+            } else {
               return SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text("現在の空き教室",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: SizeConfig.blockSizeHorizontal! * 6,
-                          color: BLUEGREY)),
-                  Container(
-                      width: SizeConfig.blockSizeHorizontal! * 100,
-                      padding: const EdgeInsets.all(7.5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7.0),
-                          gradient: gradationDecoration()),
-                      child: Text(searchResult,
-                          style: TextStyle(
-                            color: WHITE,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text("現在の空き教室",
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                          ))),
-                  const SizedBox(height: 20),
-                  SearchEmptyClassrooms(location: location),
-                  const SizedBox(height: 30),
-                  buttonModel(() async {
-                    int campusID = 0;
-                    for (int i = 0; i < campusID2buildingsList().length; i++) {
-                      if (campusID2buildingsList()
-                          .values
-                          .elementAt(i)
-                          .contains(location)) {
-                        campusID = campusID2buildingsList().keys.elementAt(i);
+                            fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                            color: BLUEGREY)),
+                    Container(
+                        width: SizeConfig.blockSizeHorizontal! * 100,
+                        padding: const EdgeInsets.all(7.5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7.0),
+                            gradient: gradationDecoration()),
+                        child: Text(searchResult,
+                            style: TextStyle(
+                              color: WHITE,
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                            ))),
+                    const SizedBox(height: 20),
+                    SearchEmptyClassrooms(location: location),
+                    const SizedBox(height: 30),
+                    buttonModel(() async {
+                      int campusID = 0;
+                      for (int i = 0;
+                          i < campusID2buildingsList().length;
+                          i++) {
+                        if (campusID2buildingsList()
+                            .values
+                            .elementAt(i)
+                            .contains(location)) {
+                          campusID = campusID2buildingsList().keys.elementAt(i);
+                        }
                       }
-                    }
-                    SharedPreferences pref =
-                        await SharedPreferences.getInstance();
-                    await pref.setBool(
-                        'isMapDBEmpty_$campusID', true);
-                    isDownloadInit = false;
-                    Navigator.pop(context);
-                    showDetailButtomSheet(location);
-                  }, MAIN_COLOR, "空き教室データの再取得", verticalpadding: 10)
-                ]));
+
+                      mapDBEmptyKey =
+                          SharepreferenceKeys.isMapDBEmpty(campusID);
+                      SharepreferenceHandler().setValue(mapDBEmptyKey, true);
+                      isDownloadInit = false;
+                      Navigator.pop(context);
+                      showDetailButtomSheet(location);
+                    }, MAIN_COLOR, "空き教室データの再取得", verticalpadding: 10)
+                  ]));
             }
           } else {
             print("エラー：${snapshot.error}");
@@ -687,35 +688,37 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   Widget showStreamLoader(BuildContext context, Stream<double> stream,
       [void Function()? stop]) {
-      return StreamBuilder<double>(
-          stream: stream,
-          builder: (context, snapshot) {
-            double data = 0.0;
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                break;
-              case ConnectionState.waiting:
-                data = snapshot.data ?? data;
-                break;
-              case ConnectionState.active:
-                data = snapshot.data ?? data;
-                break;
-              case ConnectionState.done:
-                data = snapshot.data ?? data;
-                Navigator.pop(context);
-                break;
-            }
-            return LinearProgressIndicator(
-              color:MAIN_COLOR,
-              value: data,
-              minHeight: 5,
-            );
-          });
+    return StreamBuilder<double>(
+        stream: stream,
+        builder: (context, snapshot) {
+          double data = 0.0;
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              data = snapshot.data ?? data;
+              break;
+            case ConnectionState.active:
+              data = snapshot.data ?? data;
+              break;
+            case ConnectionState.done:
+              data = snapshot.data ?? data;
+              Navigator.pop(context);
+              break;
+          }
+          return LinearProgressIndicator(
+            color: MAIN_COLOR,
+            value: data,
+            minHeight: 5,
+          );
+        });
   }
 
   Stream<double> renewProgressBar(int numOfBuildings) async* {
     _stop = false;
-    if(numOfBuildings == 0){numOfBuildings=1;}
+    if (numOfBuildings == 0) {
+      numOfBuildings = 1;
+    }
     while (!_stop) {
       yield numOfDoneLoadings / numOfBuildings;
       await Future.delayed(const Duration(milliseconds: 10));
@@ -766,7 +769,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 70,
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: WHITE,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
@@ -915,9 +918,9 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         builder: (context) {
           return Container(
               height: SizeConfig.blockSizeVertical! * 75,
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: WHITE,
-                borderRadius:const BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
                 ),
@@ -1021,7 +1024,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 class SearchEmptyClassrooms extends StatefulWidget {
   final String location;
 
-  const SearchEmptyClassrooms({super.key, 
+  const SearchEmptyClassrooms({
+    super.key,
     required this.location,
   });
 

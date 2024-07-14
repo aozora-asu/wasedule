@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/backend/sharepreference.dart';
 import 'package:flutter_calandar_app/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -25,7 +26,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_p
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../assist_files/size_config.dart';
 import 'add_event_button.dart';
 
@@ -135,8 +136,10 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   void _showTutorial(BuildContext context) async {
-    final pref = await SharedPreferences.getInstance();
-    if (pref.getBool('hasCompletedIntro') != true) {
+    SharepreferenceHandler sharepreferenceHandler = SharepreferenceHandler();
+    if (sharepreferenceHandler.getValue(SharepreferenceKeys.hasCompletedIntro)
+            as bool !=
+        true) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -145,9 +148,12 @@ class _CalendarState extends ConsumerState<Calendar> {
         ),
       );
       //pref.setBool('hasCompletedIntro', true);
-    } else if (pref.getBool('hasCompletedCalendarIntro') != true) {
+    } else if (sharepreferenceHandler
+            .getValue(SharepreferenceKeys.hasCompletedCalendarIntro) !=
+        true) {
       showScheduleGuide(context);
-      pref.setBool('hasCompletedCalendarIntro', true);
+      sharepreferenceHandler.setValue(
+          SharepreferenceKeys.hasCompletedCalendarIntro, true);
     }
   }
 

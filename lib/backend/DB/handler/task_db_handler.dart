@@ -6,6 +6,7 @@ import "../../http_request.dart";
 
 import '../../notify/notify_content.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import "../../sharepreference.dart";
 
 class TaskDatabaseHelper {
   late Database _database;
@@ -16,7 +17,7 @@ class TaskDatabaseHelper {
   Future<void> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'task.db');
     _database = await openDatabase(path,
-        version: 3, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 4, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
     await deleteExpairedTask(_database, 30);
   }
 
@@ -46,13 +47,15 @@ class TaskDatabaseHelper {
         summary TEXT,
         description TEXT,
         isDone INTEGER,
-        pageID TEXT
+        pageID TEXT,
+        memo TEXT
       )
     ''');
   }
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
+    //課題のdtEndの時間調整
     if (oldVersion == 1) {
       await db.execute('''
     CREATE TABLE IF NOT EXISTS tasks_new(
@@ -63,7 +66,7 @@ class TaskDatabaseHelper {
         summary TEXT,
         description TEXT,
         isDone INTEGER,
-        pageID TEXT
+        pageID TEXT,
     )
   ''');
       // 既存のデータを新しいテーブルに移行
@@ -95,6 +98,7 @@ class TaskDatabaseHelper {
       // 新しいテーブルの名前を既存のテーブルの名前に変更
       await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
     }
+    //pageIDカラムの増設
     if (oldVersion == 2) {
       await db.execute('''
     CREATE TABLE IF NOT EXISTS tasks_new(
@@ -118,6 +122,41 @@ class TaskDatabaseHelper {
           'summary': task["summary"],
           'description': task["description"],
           "isDone": task["isDone"],
+        });
+      }
+
+      // 既存のテーブルを削除
+      await db.execute('DROP TABLE tasks');
+
+      // 新しいテーブルの名前を既存のテーブルの名前に変更
+      await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
+    }
+    //課題memoの導入シェアプリファレンスのメモの移行
+    if (newVersion == 4) {
+      await db.execute('''
+    CREATE TABLE IF NOT EXISTS tasks_new(
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid TEXT UNIQUE, -- UNIQUE,
+        title TEXT,
+        dtEnd INTEGER,
+        summary TEXT,
+        description TEXT,
+        isDone INTEGER,
+        pageID TEXT,
+        memo TEXT
+    )
+  ''');
+      // 既存のデータを新しいテーブルに移行
+      var tasks = await db.query('tasks');
+      for (var task in tasks) {
+        await db.insert('tasks_new', {
+          'uid': task["uid"],
+          'title': task["title"],
+          'dtEnd': task["dtEnd"],
+          'summary': task["summary"],
+          'description': task["description"],
+          "isDone": task["isDone"],
+          "memo": pref!.getString(task["id"].toString())
         });
       }
 
@@ -177,6 +216,17 @@ class TaskDatabaseHelper {
       whereArgs: [id],
     );
     await NotifyContent().setNotify();
+  }
+
+  Future<void> updateMemo(int id, String newMemo) async {
+    // 'tasks' テーブル内の特定の行を更新
+    await _initDatabase();
+    await _database.update(
+      'tasks',
+      {'memo': newMemo}, // 更新後の値
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> updateSummary(int id, String newSummary) async {
