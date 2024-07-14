@@ -179,7 +179,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
                 myCourseID: enteredData.keys.elementAt(i)));
           }
           Navigator.pop(context);
-        }, Colors.blue, "記録", horizontalPadding: 50)
+        }, Colors.blue, "記録する", horizontalPadding: 50)
       ])
     ]);
   }
