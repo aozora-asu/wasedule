@@ -235,3 +235,160 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         ]));
   }
 }
+
+Future<bool> showIndividualCourseEditDialog(
+  context, Map myCourseData, Function onDone, {Map? initData}) async {
+  
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(children: [
+        const Spacer(),
+        IndividualCourseEditDialog(
+          initData: initData,
+          myCourseData: myCourseData,
+          onDone: onDone,
+        ),
+        const Spacer()
+      ]);
+    },
+  );
+  return true;
+}
+
+class IndividualCourseEditDialog extends StatefulWidget {
+  late Map myCourseData;
+  late Map? initData;
+  late Function onDone;
+  IndividualCourseEditDialog({
+    required this.initData,
+    required this.myCourseData,
+    required this.onDone,
+  });
+  @override
+  _IndividualCourseEditDialogState createState() => _IndividualCourseEditDialogState();
+}
+
+class _IndividualCourseEditDialogState extends State<IndividualCourseEditDialog> {
+  String dateString = DateFormat("MM/dd").format(DateTime.now());
+  String attendStatus = "attend";
+  String buttonText = "追加";
+  bool isInit = true;
+
+  void initDialogData() {
+    if (widget.initData != null && isInit) {
+      dateString = widget.initData!["attendDate"];
+      attendStatus = widget.initData!["attendStatus"];
+      buttonText = "変更";
+      isInit = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    initDialogData();
+
+    EdgeInsets containerPadding =
+        const EdgeInsets.symmetric(vertical: 2, horizontal: 5);
+    BoxDecoration containerDecoration = BoxDecoration(
+      color: BACKGROUND_COLOR,
+      border: Border.all(color: Colors.black),
+      borderRadius: BorderRadius.circular(5),
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: roundedBoxdecorationWithShadow(),
+      child: Column(children: [
+        Text(widget.myCourseData["courseName"] + " の出欠記録",
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.clip,
+                fontSize: 22.5)),
+        Row(children: [
+          const Text("日付",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              )),
+          const Spacer(),
+          GestureDetector(
+              onTap: () async {
+                await selectDate(context);
+              },
+              child: Container(
+                width: 150,
+                padding: containerPadding,
+                decoration: containerDecoration,
+                child: Text(
+                  dateString,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ))
+        ]),
+        Row(children: [
+          const Text("ステータス",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              )),
+          const Spacer(),
+          Material(
+            child: SizedBox(
+              width: 150,
+              child: DropdownButtonFormField(
+                value: attendStatus,
+                decoration: const InputDecoration.collapsed(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "ステータス",
+                    border: OutlineInputBorder()),
+                items: const [
+                  DropdownMenuItem(value: "attend", child: Text("  出席")),
+                  DropdownMenuItem(value: "late", child: Text("  遅刻")),
+                  DropdownMenuItem(value: "absent", child: Text("  欠席")),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    attendStatus = value!;
+                  });
+                },
+              ),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 5),
+        Row(children: [
+          const Spacer(),
+          buttonModel(() async {
+            await MyCourseDatabaseHandler().recordAttendStatus(
+                AttendanceRecord(
+                    attendDate: dateString,
+                    attendStatus: AttendStatus.values.byName(attendStatus),
+                    myCourseID: widget.myCourseData["id"]));
+            widget.onDone();
+            Navigator.pop(context);
+          }, Colors.blue, buttonText,
+              verticalpadding: 5, horizontalPadding: 40)
+        ])
+      ]),
+    );
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(
+          widget.myCourseData["year"],
+          int.parse(dateString.substring(0, 2)),
+          int.parse(dateString.substring(3, 5))),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        dateString = DateFormat("MM/dd").format(picked);
+      });
+    }
+  }
+}

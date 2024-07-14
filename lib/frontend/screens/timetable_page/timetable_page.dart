@@ -38,7 +38,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context,DateTime(2024,07,10,14,23,13),ref);
+      showAttendanceDialog(context,DateTime.now(),ref);
     });
   }
 
@@ -960,10 +960,14 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             color: Colors.white),),
       );
     }else{
+      Color backGroundColor = BLUEGREY;
+      if(absentNum >= remainAbsent){
+        backGroundColor = Colors.redAccent;
+      }
       return Container(
-        decoration:const BoxDecoration(
-          color: BLUEGREY,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: backGroundColor,
+          borderRadius:const BorderRadius.only(
             bottomLeft: Radius.circular(5)
           )
         ),
