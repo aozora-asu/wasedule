@@ -255,8 +255,8 @@ class NotifyDatabaseHandler {
 
   Future<List<Map<String, dynamic>>?> getNotifyConfigList() async {
     await _initNotifyDatabase();
-    List<Map<String, dynamic>> notifyConfigList = await _database
-        .rawQuery('SELECT * FROM $configTable ORDER BY notifyType ASC');
+    List<Map<String, dynamic>> notifyConfigList = await _database.rawQuery(
+        'SELECT * FROM $configTable ORDER BY notifyType ASC, weekday ASC, datetime(time) ASC');
     if (notifyConfigList.isEmpty) {
       return null;
     } else {
