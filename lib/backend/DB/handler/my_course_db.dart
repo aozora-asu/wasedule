@@ -176,15 +176,6 @@ class MyCourseDatabaseHandler {
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $attendanceRecordTable(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        myCourseID INTEGER,
-        attendStatus TEXT,
-        attendDate TEXT,
-        CONSTRAINT unique_attend_record UNIQUE (myCourseID, attendDate)
-      )
-    ''');
   }
 
   Future<void> _upgradeMyCourseDatabase(
@@ -236,6 +227,8 @@ class MyCourseDatabaseHandler {
       // 新しいテーブルの名前を既存のテーブルの名前に変更
       await db
           .execute('ALTER TABLE $myCourseTableNew RENAME TO $myCourseTable');
+    }
+    if (newVersion == 2) {
       await db.execute('''
       CREATE TABLE IF NOT EXISTS $attendanceRecordTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
