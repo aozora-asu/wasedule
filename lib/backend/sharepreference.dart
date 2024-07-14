@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import "../frontend/screens/map_page/const_map_info.dart";
 
 SharedPreferences? pref;
 
@@ -22,16 +23,25 @@ class SharepreferenceHandler {
         pref!.setDouble(sharepreference.key, value);
         break;
       case List<String> _:
-        pref!.setStringList(sharepreference.key, value as List<String>);
+        pref!.setStringList(sharepreference.key, value);
         break;
     }
   }
 
   Future<SharedPreferences> initSharepreference() async {
+    SharepreferenceKeys mapDBEmptyKey;
     pref = await SharedPreferences.getInstance();
-    for (var sharepreferenceValue in SharepreferenceKeys.values) {
-      if (getValue(sharepreferenceValue) == null) {
-        setValue(sharepreferenceValue, sharepreferenceValue.defaultValue);
+    for (var key in SharepreferenceKeys.keys) {
+      if (getValue(key) == null) {
+        setValue(key, key.defaultValue);
+      }
+    }
+    for (int campusID = 0;
+        campusID < campusID2buildingsList().length;
+        campusID++) {
+      mapDBEmptyKey = SharepreferenceKeys.isMapDBEmpty(campusID);
+      if (getValue(mapDBEmptyKey) == null) {
+        setValue(mapDBEmptyKey, mapDBEmptyKey.defaultValue);
       }
     }
     return pref!;
@@ -41,10 +51,8 @@ class SharepreferenceHandler {
 class SharepreferenceKeys {
   final String key;
   final dynamic defaultValue;
-  final String? suffix;
 
-  const SharepreferenceKeys._(
-      {required this.key, required this.defaultValue, this.suffix});
+  const SharepreferenceKeys._({required this.key, required this.defaultValue});
 
   static const isClassNotify =
       SharepreferenceKeys._(key: "isClassNotify", defaultValue: true);
@@ -62,16 +70,18 @@ class SharepreferenceKeys {
       SharepreferenceKeys._(key: "bgColorTheme", defaultValue: "white");
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
-    return SharepreferenceKeys._(
-        key: "isMapDBEmpty_$id", defaultValue: true, suffix: id.toString());
+    SharepreferenceKeys key =
+        SharepreferenceKeys._(key: "isMapDBEmpty_$id", defaultValue: true);
+    return key;
   }
 
-  static List<SharepreferenceKeys> get values => [
+  static List<SharepreferenceKeys> get keys => [
         isClassNotify,
         isCalendarNotify,
         isTaskNotify,
         hasCompletedIntro,
         hasCompletedCalendarIntro,
-        bgColorTheme
+        bgColorTheme,
+        initCampusNum
       ];
 }
