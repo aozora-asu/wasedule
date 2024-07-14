@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum Terms {
   spring_quarter,
   summer_quarter,

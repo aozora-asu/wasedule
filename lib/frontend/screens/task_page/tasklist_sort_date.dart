@@ -7,9 +7,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import "../../../backend/sharepreference.dart";
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
   Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
@@ -40,7 +41,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int keyIndex) {
               DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
-              dateEnd = DateTime.fromMillisecondsSinceEpoch(sortedData.values.elementAt(keyIndex).first["dtEnd"]);
+              dateEnd = DateTime.fromMillisecondsSinceEpoch(
+                  sortedData.values.elementAt(keyIndex).first["dtEnd"]);
               String adjustedDtEnd =
                   ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
               return Container(
@@ -59,11 +61,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                       Text(
                                         adjustedDtEnd,
                                         style: TextStyle(
-                                          fontSize: SizeConfig
-                                                  .blockSizeHorizontal! *
-                                              7,
-                                          fontWeight: FontWeight.w800,
-                                          color: BLUEGREY),
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                7,
+                                            fontWeight: FontWeight.w800,
+                                            color: BLUEGREY),
                                       ),
                                     ]),
                                     const SizedBox(height: 5),
@@ -74,9 +76,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                             expanded: dtEndTaskGroup(
                               keyIndex,
                             ),
-                            controller: ExpandableController(
-                                initialExpanded:
-                                    true)),
+                            controller:
+                                ExpandableController(initialExpanded: true)),
                         const Divider(
                             thickness: 1,
                             indent: 3,
@@ -327,11 +328,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     Map<String, dynamic> targetData = childData.elementAt(valueIndex);
     BorderRadius radius = const BorderRadius.all(Radius.circular(2));
     bool isChosen = taskData.chosenTaskIdList.contains(targetData["id"]);
-    EdgeInsets boxInset = const EdgeInsets.only(left: 8.0,right:8.0);
+    EdgeInsets boxInset = const EdgeInsets.only(left: 8.0, right: 8.0);
 
     if (valueIndex == 0 && valueIndex == childData.length - 1) {
       radius = const BorderRadius.all(Radius.circular(20));
-      boxInset = const EdgeInsets.only(left: 8.0,right:8.0, top: 12.0);
+      boxInset = const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0);
     } else if (valueIndex == 0) {
       radius = const BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -339,7 +340,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         bottomLeft: Radius.circular(2),
         bottomRight: Radius.circular(2),
       );
-      boxInset = const EdgeInsets.only(left: 8.0,right:8.0, top: 12.0);
+      boxInset = const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0);
     } else if (valueIndex == childData.length - 1) {
       radius = const BorderRadius.only(
         topLeft: Radius.circular(2),
@@ -349,36 +350,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       );
     }
 
-    Widget draftIndicator = FutureBuilder(
-      future: SharedPreferences.getInstance(),
-      builder: (context,snapshot){
-        if(snapshot.hasData){
-          String? memoData = snapshot.data!.getString(targetData["id"].toString());
-          if(memoData != null && memoData != ""){
-            return Row(
-              children:[
-                const Spacer(),
-                Text("💬下書きあり",
-                  style:TextStyle(
-                    color: BLUEGREY,
-                    fontWeight: FontWeight.bold,
-                    fontSize: SizeConfig.blockSizeHorizontal! *3
-                )),
-                // Text("/ " + memoData.length.toString() + "字",
-                //   style:TextStyle(
-                //     color: Colors.grey,
-                //     fontSize: SizeConfig.blockSizeHorizontal! *3
-                // )),
-              ]
-            );
-          }else{
-            return const SizedBox();
-          }
-        }else{
-          return const SizedBox();
-        }
-      });
-      
+    Widget draftIndicator = makeDraftIndicator(targetData);
+
     return Row(children: [
       SizedBox(
           width: SizeConfig.blockSizeHorizontal! * 12,
@@ -387,71 +360,98 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   fontSize: SizeConfig.blockSizeHorizontal! * 3.75,
                   fontWeight: FontWeight.w700,
                   color: BLUEGREY))),
-      Expanded(child:
-        InkWell(
-          onTap: () async {
-            await bottomSheet(context, targetData, setState);
-          },
-          child: Container(
-              padding: boxInset,
+      Expanded(
+          child: InkWell(
+              onTap: () async {
+                await bottomSheet(context, targetData, setState);
+              },
               child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: WHITE,
-                  borderRadius: radius,
-                ),
-                child: Column(children: [
-                  Row(children: [
-                    CupertinoCheckbox(
-                        value: isChosen,
-                        onChanged: (value) {
-                          var chosenTaskIdList =
-                              ref.watch(taskDataProvider).chosenTaskIdList;
-                          setState(() {
-                            isChosen = value ?? false;
-                            if (chosenTaskIdList.contains(targetData["id"])) {
-                              ref
-                                  .read(taskDataProvider)
-                                  .chosenTaskIdList
-                                  .remove(targetData["id"]);
-                            } else {
-                              ref
-                                  .read(taskDataProvider)
-                                  .chosenTaskIdList
-                                  .add(targetData["id"]);
-                            }
-                            //ref.read(taskDataProvider.notifier).state;
-                            ref.read(taskDataProvider).manageIsButton();
-                          });
-                        }),
-                    Expanded(child:
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                              //width: SizeConfig.blockSizeHorizontal! * 62,
-                              child: Text(targetData["summary"] ?? "(詳細なし)",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 4,
-                                      fontWeight: FontWeight.w700,
-                                      color: BLACK))),
-                          SizedBox(
-                              //width: SizeConfig.blockSizeHorizontal! * 62,
-                              child: Text(targetData["title"] ?? "(タイトルなし)",
-                                  style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeVertical! * 1.75,
-                                    color: Colors.grey,
-                                  ))),
-                          draftIndicator
-                        ]),
-                    )
-                  ]),
-                  
-                ]),
-              ))))
+                  padding: boxInset,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: WHITE,
+                      borderRadius: radius,
+                    ),
+                    child: Column(children: [
+                      Row(children: [
+                        CupertinoCheckbox(
+                            value: isChosen,
+                            onChanged: (value) {
+                              var chosenTaskIdList =
+                                  ref.watch(taskDataProvider).chosenTaskIdList;
+                              setState(() {
+                                isChosen = value ?? false;
+                                if (chosenTaskIdList
+                                    .contains(targetData["id"])) {
+                                  ref
+                                      .read(taskDataProvider)
+                                      .chosenTaskIdList
+                                      .remove(targetData["id"]);
+                                } else {
+                                  ref
+                                      .read(taskDataProvider)
+                                      .chosenTaskIdList
+                                      .add(targetData["id"]);
+                                }
+                                //ref.read(taskDataProvider.notifier).state;
+                                ref.read(taskDataProvider).manageIsButton();
+                              });
+                            }),
+                        Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                    //width: SizeConfig.blockSizeHorizontal! * 62,
+                                    child: Text(
+                                        targetData["summary"] ?? "(詳細なし)",
+                                        style: TextStyle(
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                4,
+                                            fontWeight: FontWeight.w700,
+                                            color: BLACK))),
+                                SizedBox(
+                                    //width: SizeConfig.blockSizeHorizontal! * 62,
+                                    child:
+                                        Text(targetData["title"] ?? "(タイトルなし)",
+                                            style: TextStyle(
+                                              fontSize: SizeConfig
+                                                      .blockSizeVertical! *
+                                                  1.75,
+                                              color: Colors.grey,
+                                            ))),
+                                draftIndicator
+                              ]),
+                        )
+                      ]),
+                    ]),
+                  ))))
     ]);
+  }
+
+  Widget makeDraftIndicator(Map<String, dynamic> targetData) {
+    // String? memoData = SharepreferenceHandler()
+    //     .getValue(targetData["id"].toString()) as String;
+    String? memoData = targetData["memo"];
+    if (memoData != null && memoData != "") {
+      return Row(children: [
+        const Spacer(),
+        Text("💬下書きあり",
+            style: TextStyle(
+                color: BLUEGREY,
+                fontWeight: FontWeight.bold,
+                fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+        // Text("/ " + memoData.length.toString() + "字",
+        //   style:TextStyle(
+        //     color: Colors.grey,
+        //     fontSize: SizeConfig.blockSizeHorizontal! *3
+        // )),
+      ]);
+    } else {
+      return const SizedBox();
+    }
   }
 
   bool isEditingText(TextEditingController controller) {

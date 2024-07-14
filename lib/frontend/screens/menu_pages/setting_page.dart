@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
+import 'package:flutter_calandar_app/backend/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import "../../../backend/notify/notify_db.dart";
@@ -721,72 +722,55 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
-  Future<Map<String, bool>> getNotificationTypeSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool isCalendarNotify = prefs.getBool("isCalendarNotify")!;
-    bool isTaskNotify = prefs.getBool("isTaskNotify")!;
-    bool isClassNotify = prefs.getBool("isClassNotify")!;
-
-    return {
-      "isCalendarNotify": isCalendarNotify,
-      "isTaskNotify": isTaskNotify,
-      "isClassNotify": isClassNotify
-    };
-  }
-
   Widget notificationTypeSetting() {
-    return FutureBuilder(
-        future: getNotificationTypeSetting(),
-        builder: (context, snapShot) {
-          if (snapShot.connectionState == ConnectionState.done) {
-            return Column(children: [
-              Row(children: [
-                const Text("予定の通知"),
-                const Spacer(),
-                CupertinoSwitch(
-                  activeColor: PALE_MAIN_COLOR,
-                  value: snapShot.data!["isCalendarNotify"]!,
-                  onChanged: (value) async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool("isCalendarNotify", value);
-                    await NotifyContent().setNotify();
-                    setState(() {});
-                  },
-                )
-              ]),
-              Row(children: [
-                const Text("課題の通知"),
-                const Spacer(),
-                CupertinoSwitch(
-                  activeColor: PALE_MAIN_COLOR,
-                  value: snapShot.data!["isTaskNotify"]!,
-                  onChanged: (value) async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool("isTaskNotify", value);
-                    await NotifyContent().setNotify();
-                    setState(() {});
-                  },
-                )
-              ]),
-              Row(children: [
-                const Text("教室・出席管理の通知"),
-                const Spacer(),
-                CupertinoSwitch(
-                  activeColor: PALE_MAIN_COLOR,
-                  value: snapShot.data!["isClassNotify"]!,
-                  onChanged: (value) async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool("isClassNotify", value);
-                    await NotifyContent().setNotify();
-                    setState(() {});
-                  },
-                )
-              ]),
-            ]);
-          } else {
-            return loadingSettingWidget();
-          }
-        });
+    SharepreferenceHandler sharepreferenceHandler = SharepreferenceHandler();
+    return Column(children: [
+      Row(children: [
+        const Text("予定の通知"),
+        const Spacer(),
+        CupertinoSwitch(
+          activeColor: PALE_MAIN_COLOR,
+          value: sharepreferenceHandler
+              .getValue(SharepreferenceKeys.isCalendarNotify),
+          onChanged: (value) async {
+            SharepreferenceHandler()
+                .setValue(SharepreferenceKeys.isCalendarNotify, value);
+            await NotifyContent().setNotify();
+            setState(() {});
+          },
+        )
+      ]),
+      Row(children: [
+        const Text("課題の通知"),
+        const Spacer(),
+        CupertinoSwitch(
+          activeColor: PALE_MAIN_COLOR,
+          value:
+              sharepreferenceHandler.getValue(SharepreferenceKeys.isTaskNotify),
+          onChanged: (value) async {
+            SharepreferenceHandler()
+                .setValue(SharepreferenceKeys.isTaskNotify, value);
+            await NotifyContent().setNotify();
+            setState(() {});
+          },
+        )
+      ]),
+      Row(children: [
+        const Text("教室・出席管理の通知"),
+        const Spacer(),
+        CupertinoSwitch(
+          activeColor: PALE_MAIN_COLOR,
+          value: sharepreferenceHandler
+              .getValue(SharepreferenceKeys.isClassNotify),
+          onChanged: (value) async {
+            SharepreferenceHandler()
+                .setValue(SharepreferenceKeys.isClassNotify, value);
+            await NotifyContent().setNotify();
+            setState(() {});
+          },
+        )
+      ]),
+    ]);
   }
 
   Widget showNotificationList(List<Map>? map) {
@@ -1038,23 +1022,21 @@ class _MainContentsState extends ConsumerState<MainContents> {
     ]);
   }
 
-  Future<void> setThemeSettingsData(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("bgColorTheme", value);
-  }
-
   Widget buildThemeSettingList() {
-    return FutureBuilder(
-        future: initThemeSettingsData(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return loadingSettingWidget();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return backgroundThemeSettings(snapshot.data);
-          }
-        });
+    String bgColorTheme = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.bgColorTheme) as String;
+    return backgroundThemeSettings(bgColorTheme);
+    // return FutureBuilder(
+    //     future: initThemeSettingsData(),
+    //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return loadingSettingWidget();
+    //       } else if (snapshot.hasError) {
+    //         return Text('Error: ${snapshot.error}');
+    //       } else {
+    //         return backgroundThemeSettings(snapshot.data);
+    //       }
+    //     });
   }
 
   Widget backgroundThemeSettings(String data) {
@@ -1075,7 +1057,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
           DropdownMenuItem(value: "blue", child: Text("ブルー")),
         ],
         onChanged: (value) async {
-          setThemeSettingsData(value!);
+          SharepreferenceHandler()
+              .setValue(SharepreferenceKeys.bgColorTheme, value!);
           switchThemeColor(data);
           setState(() {
             bgColorTheme = value;
@@ -1084,14 +1067,4 @@ class _MainContentsState extends ConsumerState<MainContents> {
       ),
     );
   }
-}
-
-Future<String> initThemeSettingsData() async {
-  final prefs = await SharedPreferences.getInstance();
-  String? data = prefs.getString("bgColorTheme");
-  if (data == null) {
-    prefs.setString("bgColorTheme", "white");
-    data = "white";
-  }
-  return data;
 }

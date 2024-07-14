@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
+import "./backend/sharepreference.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,7 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   isar = await IsarHandler().initIsar();
+  pref = await SharepreferenceHandler().initSharepreference();
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
   WidgetsFlutterBinding.ensureInitialized();

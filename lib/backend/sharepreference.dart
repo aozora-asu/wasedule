@@ -1,1 +1,77 @@
-enum SharepreferenceKeys { s }
+import 'package:shared_preferences/shared_preferences.dart';
+
+SharedPreferences? pref;
+
+class SharepreferenceHandler {
+  dynamic getValue(SharepreferenceKeys sharepreference) {
+    return pref!.get(sharepreference.key);
+  }
+
+  void setValue(SharepreferenceKeys sharepreference, dynamic value) {
+    switch (value.runtimeType) {
+      case String:
+        pref!.setString(sharepreference.key, value);
+        break;
+      case bool:
+        pref!.setBool(sharepreference.key, value);
+        break;
+      case int:
+        pref!.setInt(sharepreference.key, value);
+        break;
+      case double:
+        pref!.setDouble(sharepreference.key, value);
+        break;
+      case List<String> _:
+        pref!.setStringList(sharepreference.key, value as List<String>);
+        break;
+    }
+  }
+
+  Future<SharedPreferences> initSharepreference() async {
+    pref = await SharedPreferences.getInstance();
+    for (var sharepreferenceValue in SharepreferenceKeys.values) {
+      if (getValue(sharepreferenceValue) == null) {
+        setValue(sharepreferenceValue, sharepreferenceValue.defaultValue);
+      }
+    }
+    return pref!;
+  }
+}
+
+class SharepreferenceKeys {
+  final String key;
+  final dynamic defaultValue;
+  final String? suffix;
+
+  const SharepreferenceKeys._(
+      {required this.key, required this.defaultValue, this.suffix});
+
+  static const isClassNotify =
+      SharepreferenceKeys._(key: "isClassNotify", defaultValue: true);
+  static const isCalendarNotify =
+      SharepreferenceKeys._(key: "isCalendarNotify", defaultValue: true);
+  static const isTaskNotify =
+      SharepreferenceKeys._(key: "isTaskNotify", defaultValue: true);
+  static const hasCompletedIntro =
+      SharepreferenceKeys._(key: "hasCompletedIntro", defaultValue: false);
+  static const initCampusNum =
+      SharepreferenceKeys._(key: "initCampusNum", defaultValue: 0);
+  static const hasCompletedCalendarIntro = SharepreferenceKeys._(
+      key: "hasCompletedCalendarIntro", defaultValue: false);
+  static const bgColorTheme =
+      SharepreferenceKeys._(key: "bgColorTheme", defaultValue: "white");
+
+  static SharepreferenceKeys isMapDBEmpty(int id) {
+    return SharepreferenceKeys._(
+        key: "isMapDBEmpty_$id", defaultValue: true, suffix: id.toString());
+  }
+
+  static List<SharepreferenceKeys> get values => [
+        isClassNotify,
+        isCalendarNotify,
+        isTaskNotify,
+        hasCompletedIntro,
+        hasCompletedCalendarIntro,
+        bgColorTheme
+      ];
+}
