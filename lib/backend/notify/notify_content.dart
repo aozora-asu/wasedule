@@ -97,7 +97,10 @@ class NotifyContent {
     String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
 
     String body = await makeTaskNotifyBody(notifyConfig, dailyScheduleDate);
-    String encodedPayload = jsonEncode({"route": "taskPage"});
+    String encodedPayload = jsonEncode({
+      "route": "taskPage",
+      "notifyDate": dailyScheduleDate.toIso8601String()
+    });
 
     notificationDetails = _setNotificationDetail(
         notifyID++, notifyTitle, body, "dailyNotify_task", "");
@@ -114,7 +117,10 @@ class NotifyContent {
         _nextInstanceOfDailyTime(notifyConfig.time);
 
     String notifyTitle = makeNotifyTitle(notifyFormat, dailyScheduleDate);
-    String encodedPayload = jsonEncode({"route": "calendarPage"});
+    String encodedPayload = jsonEncode({
+      "route": "calendarPage",
+      "notifyDate": dailyScheduleDate.toIso8601String()
+    });
     List<Map<String, dynamic>> notifyScheduleList =
         await ScheduleDatabaseHelper().getSchedule(dailyScheduleDate);
     String scheduleNotifyBody = "";
@@ -240,9 +246,12 @@ class NotifyContent {
 
   Future<void> _bookWeeklyTaskNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
-    String encodedPayload = jsonEncode({"route": "taskPage"});
     tz.TZDateTime weeklyScheduleDate =
         _nextInstanceOfWeeklyTime(notifyConfig.time, notifyConfig.weekday!);
+    String encodedPayload = jsonEncode({
+      "route": "taskPage",
+      "notifyDate": weeklyScheduleDate.toIso8601String()
+    });
     String body = await makeTaskNotifyBody(notifyConfig, weeklyScheduleDate);
     String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
     notificationDetails = _setNotificationDetail(
@@ -261,7 +270,10 @@ class NotifyContent {
     String notifyTitle = makeNotifyTitle(notifyFormat, weeklyScheduleDate);
     String scheduleNotifyBody =
         await makeScheduleNotifyBody(notifyConfig, weeklyScheduleDate);
-    String encodedPayload = jsonEncode({"route": "calendarPage"});
+    String encodedPayload = jsonEncode({
+      "route": "calendarPage",
+      "notifyDate": weeklyScheduleDate.toIso8601String()
+    });
     notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
         scheduleNotifyBody, "weeklyNotify_schedule", "");
     await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++, notifyTitle,
@@ -326,8 +338,11 @@ class NotifyContent {
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
         body = "$dueまで $title   $summary".trimRight();
-        encodedPayload =
-            jsonEncode({"route": "taskPage", "databaseID": task["id"]});
+        encodedPayload = jsonEncode({
+          "route": "taskPage",
+          "databaseID": task["id"],
+          "notifyDate": scheduleDate.toIso8601String()
+        });
         notificationDetails = _setNotificationDetail(notifyID++, notifyTitle,
             body, "beforHourNotify_task", "markTaskStatus");
 
@@ -364,7 +379,10 @@ class NotifyContent {
         } else {
           body = "$startTime~$endTime  $subject\n";
         }
-        encodedPayload = jsonEncode({"route": "calendarPage"});
+        encodedPayload = jsonEncode({
+          "route": "calendarPage",
+          "notifyDate": scheduleDatetime.toIso8601String()
+        });
         notificationDetails = _setNotificationDetail(
             notifyID++, notifyTitle, body, "beforHourNotify_schedule", "");
         await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
@@ -377,7 +395,7 @@ class NotifyContent {
   }
 
   Future<void> setNotify() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+    await cancelFutureNotify();
     Map<String, dynamic>? notifyFormatMap =
         await NotifyDatabaseHandler().getNotifyFormat();
     List<Map<String, dynamic>>? notifyConfigList =
@@ -481,8 +499,29 @@ class NotifyContent {
     }
   }
 
-  Future<void> cancelAllNotify() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> cancelFutureNotify() async {
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    Map<String, dynamic> decodedPayload = {};
+    tz.Location local = tz.getLocation('Asia/Tokyo');
+    tz.TZDateTime now = tz.TZDateTime.now(local);
+    for (var pendingNotificationRequest in pendingNotificationRequests) {
+      if (pendingNotificationRequest.payload != null) {
+        decodedPayload = jsonDecode(pendingNotificationRequest.payload!);
+      }
+      if (decodedPayload.isEmpty) {
+        // 何もしない
+      } else {
+        if (!decodedPayload.containsKey("notifyDate")) {
+          await flutterLocalNotificationsPlugin
+              .cancel(pendingNotificationRequest.id);
+        } else if (now.isBefore(
+            tz.TZDateTime.parse(tz.local, decodedPayload["notifyDate"]))) {
+          await flutterLocalNotificationsPlugin
+              .cancel(pendingNotificationRequest.id);
+        }
+      }
+    }
   }
 
   static const String classNotifyTitle = "授業のお知らせ";
@@ -501,6 +540,7 @@ class NotifyContent {
               "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
+            "notifyDate": weeklyScheduleDate.toIso8601String(),
             "attendDate": DateFormat("M/d").format(weeklyScheduleDate),
             "myCourseID": myCourse["id"]
           });
