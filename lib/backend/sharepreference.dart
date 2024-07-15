@@ -68,6 +68,8 @@ class SharepreferenceKeys {
       key: "hasCompletedCalendarIntro", defaultValue: false);
   static const bgColorTheme =
       SharepreferenceKeys._(key: "bgColorTheme", defaultValue: "white");
+  static const showAttendDialogAutomatically =
+      SharepreferenceKeys._(key: "showAttendDialogAutomatically", defaultValue: true);
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =
@@ -82,6 +84,7 @@ class SharepreferenceKeys {
         hasCompletedIntro,
         hasCompletedCalendarIntro,
         bgColorTheme,
-        initCampusNum
+        initCampusNum,
+        showAttendDialogAutomatically,
       ];
 }

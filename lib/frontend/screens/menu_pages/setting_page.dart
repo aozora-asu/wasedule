@@ -98,6 +98,10 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 label: Text('通知'),
               ),
               NavigationRailDestination(
+                icon: Icon(Icons.grid_on),
+                label: Text('時間割'),
+              ),
+              NavigationRailDestination(
                 icon: Icon(Icons.color_lens),
                 label: Text('テーマ'),
               ),
@@ -191,13 +195,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child: notificationBody(),
         )));
 
+      case 2: return Expanded(child:
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+          child: timetableSettingsBody(),
+        ));
+
       default:
-        return Expanded(
-            child: SingleChildScrollView(
-                child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: themeSettingsBody(),
-        )));
+        return Expanded(child:
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+            child: themeSettingsBody(),
+        ));
     }
   }
 
@@ -981,14 +990,15 @@ class _MainContentsState extends ConsumerState<MainContents> {
         return "毎日";
     }
   }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  String bgColorTheme = "";
-
-  Widget themeSettingsBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+ Widget timetableSettingsBody() {
+    return 
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+     children: [
       Text(
-        'テーマ設定…',
+        '  時間割設定…',
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.bold),
@@ -997,6 +1007,66 @@ class _MainContentsState extends ConsumerState<MainContents> {
       Container(
           decoration: roundedBoxdecorationWithShadow(),
           padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+          margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              '出欠記録の設定',
+              style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontWeight: FontWeight.bold,
+                  color: BLUEGREY),
+            ),
+            const Divider(
+              height: 2,
+              thickness: 2,
+              color: BLUEGREY,
+            ),
+            const SizedBox(height: 2),
+            attendDialogSettingSwitch(),
+            const SizedBox(height: 2),
+          ])),
+    ]);
+  }
+
+  Widget attendDialogSettingSwitch(){
+      return Row(children: [
+        const Text("出欠記録画面の自動表示"),
+        const Spacer(),
+        CupertinoSwitch(
+          activeColor: PALE_MAIN_COLOR,
+          value: SharepreferenceHandler()
+              .getValue(SharepreferenceKeys.showAttendDialogAutomatically),
+          onChanged: (value) async {
+            SharepreferenceHandler()
+                .setValue(SharepreferenceKeys.showAttendDialogAutomatically, value);
+            setState(() {});
+          },
+        )
+      ]);
+  }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  String bgColorTheme = "";
+
+  Widget themeSettingsBody() {
+    return 
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+     children: [
+      Text(
+        '  テーマ設定…',
+        style: TextStyle(
+            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 5),
+      Container(
+          decoration: roundedBoxdecorationWithShadow(),
+          padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+          margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
