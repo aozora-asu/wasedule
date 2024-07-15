@@ -17,6 +17,7 @@ class NotifyContent {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   late NotificationDetails notificationDetails;
+  var styleInformation = const DefaultStyleInformation(true, true);
   NotificationDetails _setNotificationDetail(int id, String title, String body,
       String notifyGroupID, String notifyActionCategory) {
     notificationDetails = NotificationDetails(
@@ -27,6 +28,7 @@ class NotifyContent {
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker',
+          styleInformation: styleInformation,
         ),
         iOS: DarwinNotificationDetails(
             sound: 'slow_spring_board.aiff',
@@ -314,9 +316,9 @@ class NotifyContent {
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(notifyConfig.time);
     if (parsedTime.hour == 0) {
-      notifyTitle = "${parsedTime.minute}分前";
+      notifyTitle = "${parsedTime.minute}分前です";
     } else {
-      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前";
+      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前です";
     }
     //それぞれ2日先まで取得して、期限のn時間前予約を行う
     List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
@@ -341,7 +343,7 @@ class NotifyContent {
         due = "${makeDue(scheduleDate, task["dtEnd"])}まで";
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        body = summary;
+        body = "$due $summary";
         encodedPayload = jsonEncode({
           "route": "taskPage",
           "databaseID": task["id"],
@@ -352,7 +354,7 @@ class NotifyContent {
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           notifyID++,
-          "$title\n$due $notifyTitle",
+          "$titleの課題が$notifyTitle",
           body,
           scheduleDate,
           notificationDetails,
@@ -587,8 +589,15 @@ class NotifyContent {
             "attendDate": DateFormat("M/d").format(weeklyScheduleDate),
             "myCourseID": myCourse["id"]
           });
-          classNotifyTitle =
-              "授業のお知らせ\n${myCourse["period"]}限 ${myCourse["courseName"]}";
+          if (await MyCourseDatabaseHandler()
+              .hasClass(myCourse["weekday"], myCourse["period"] - 1)) {
+            classNotifyTitle =
+                "次の授業 ${myCourse["period"]}限 ${myCourse["courseName"]}";
+          } else {
+            classNotifyTitle =
+                "今日の授業 ${myCourse["period"]}限 ${myCourse["courseName"]}";
+          }
+
           notificationDetails = _setNotificationDetail(notifyID++,
               classNotifyTitle, body, "classNotify", "markAttendStatus");
           await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,
