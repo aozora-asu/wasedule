@@ -290,11 +290,11 @@ class NotifyContent {
     int n = DateTime.fromMillisecondsSinceEpoch(dtEndEpoch)
         .difference(scheduleDate)
         .inDays;
-    if (dtEndEpoch <=
+    if (dtEndEpoch <
         _cinderellaTimeAfterNdayLater(scheduleDate, 0).millisecondsSinceEpoch) {
       due = DateFormat("今日 H:mm")
           .format(DateTime.fromMillisecondsSinceEpoch(dtEndEpoch));
-    } else if (dtEndEpoch <=
+    } else if (dtEndEpoch <
         _cinderellaTimeAfterNdayLater(scheduleDate, 1).millisecondsSinceEpoch) {
       due = DateFormat("翌 H:mm")
           .format(DateTime.fromMillisecondsSinceEpoch(dtEndEpoch));

@@ -44,7 +44,7 @@ String? period2endTime(int period) {
     case 6:
       return "20:35";
     case 7:
-      return "21:35";
+      return "21:25";
     default:
       return null;
   }
@@ -65,7 +65,7 @@ String? period2duringTime(int period) {
     case 6:
       return "18:55~20:35";
     case 7:
-      return "20:45~21:35";
+      return "20:45~21:25";
     default:
       return null;
   }
