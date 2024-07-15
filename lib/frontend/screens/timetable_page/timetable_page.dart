@@ -578,7 +578,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Color bgColor = BACKGROUND_COLOR;
           if (returnEndDateTime(2).isBefore(now) &&
               returnBeginningDateTime(3).isAfter(now)) {
-            bgColor = MAIN_COLOR;
+            bgColor = PALE_MAIN_COLOR;
           }
           if (index == 1) {
             resultinging = Container(
@@ -906,14 +906,14 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 ),
                 const Spacer(),
                 classRoomView,
-                const Spacer()
+                const Spacer(),
               ]))),
-      doNotContainScreenShot(Align(
-          alignment: const Alignment(-1, -1),
-          child: lengthBadge(taskLength, fontSize, true))),
       doNotContainScreenShot(Align(
           alignment: const Alignment(1, -1),
           child: absentBadgeBuilder(targetData))),
+      doNotContainScreenShot(Align(
+          alignment: const Alignment(-1, -1),
+          child: lengthBadge(taskLength, fontSize, true))),
     ]);
   }
 

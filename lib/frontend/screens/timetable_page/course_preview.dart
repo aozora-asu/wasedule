@@ -1,5 +1,4 @@
 import 'package:expandable/expandable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -102,7 +101,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             textFieldModel("授業名を入力…", classNameController,
-                                FontWeight.bold, 30.0, (value) async {
+                                FontWeight.bold, 22.0, (value) async {
                               int id = target["id"];
                               //＠ここに授業名変更関数を登録！！！
                               await MyCourseDatabaseHandler()
@@ -184,7 +183,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.05,
-              fontWeight: FontWeight.bold),
+              ),
         ),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
@@ -198,22 +197,22 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       dividerModel,
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        const Icon(Icons.group, color: MAIN_COLOR),
+        const Icon(Icons.group, color: Colors.blue),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        textFieldModel("教室を入力…", classRoomController, FontWeight.normal, 20.0,
-            (value) async {
-          int id = target["id"];
-          //＠ここに教室のアップデート関数！！！
-          await MyCourseDatabaseHandler().updateClassRoom(id, value);
-          widget.setTimetableState(() {});
-        })
+        classRoomSelector(context, target)
       ]),
       dividerModel,
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
         const Icon(Icons.sticky_note_2, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        classRoomSelector(context, target)
+        textFieldModel("メモを入力…", memoController, FontWeight.normal, 20.0,
+          (value) async {
+          int id = target["id"];
+          //＠ここに教室のアップデート関数！！！
+          await MyCourseDatabaseHandler().updateMemo(id, value);
+          widget.setTimetableState(() {});
+        })
       ]),
       dividerModel,
     ]);
@@ -371,6 +370,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   int maxAbsentNum = 0;
   int totalClassNum = 0;
   bool isClassNumSettingInit = true;
+  bool isExpandSettingPanel = false;
 
   void initClassNumSetting() {
     Map myCourseData = widget.target;
@@ -408,11 +408,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget attendSettingsPanel() {
     return Material(
         child: ExpandablePanel(
-            controller: ExpandableController(initialExpanded: false),
-            header: const Text("設定",
-                style: TextStyle(fontSize: 20, color: Colors.grey)),
+            controller: ExpandableController(initialExpanded:isExpandSettingPanel),
+            header: GestureDetector(
+              child:const Text("設定",
+                style: TextStyle(fontSize: 20, color: Colors.grey))),
             collapsed: const SizedBox(),
-            expanded: remainingAbsentSetting()));
+            expanded: remainingAbsentSetting()
+            ));
   }
 
   Widget remainingAbesentViewBuilder() {
@@ -515,6 +517,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           size: 17,
         ),
         onTap: () async {
+          isExpandSettingPanel = true;
           if (numType == "classNum") {
             if (buttonType == "increase") {
               totalClassNum += 1;
@@ -577,8 +580,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               return attendRecordList(snapshot.data!);
             }
           } else {
-            return const Center(
-                child: CircularProgressIndicator(color: PALE_MAIN_COLOR));
+            return const Center();
           }
         });
   }
@@ -640,7 +642,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                       fontSize: 15,
                       color: Colors.white),
                 ),
-              )
+              ),
+              const SizedBox(width:10),
+              GestureDetector(
+                onTap:()async{
+                  await MyCourseDatabaseHandler().deleteAttendRecord(attendRecord["id"]);
+                  widget.setTimetableState((){});
+                  setState((){});
+                },
+                child:const Icon(Icons.delete,color:BLUEGREY)
+              ),
             ])));
   }
 
