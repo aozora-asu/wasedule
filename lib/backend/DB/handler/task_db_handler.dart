@@ -394,7 +394,7 @@ class TaskDatabaseHelper {
               "dtEnd": task["dtEnd"],
             }, // 更新後の値
             where: 'uid = ?',
-            whereArgs: [task["UID"]],
+            whereArgs: [task["uid"]],
           );
         }
       }
