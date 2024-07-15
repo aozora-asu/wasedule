@@ -111,10 +111,10 @@ flutter_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "lib/images/icon/icon.png"
+  image_path: "lib/assets/eye_catch/app_logo.png"
   min_sdk_android: 21
   adaptive_icon_background: "#FFF422"
-  adaptive_icon_foreground: "lib/images/icon/icon.png"
+  adaptive_icon_foreground: "lib/assets/eye_catch/app_logo.png"
 
 # The following section is specific to Flutter packages.
 flutter:
