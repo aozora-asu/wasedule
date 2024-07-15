@@ -176,6 +176,15 @@ class MyCourseDatabaseHandler {
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS $attendanceRecordTable(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        myCourseID INTEGER,
+        attendStatus TEXT,
+        attendDate TEXT,
+        CONSTRAINT unique_attend_record UNIQUE (myCourseID, attendDate)
+      )
+    ''');
   }
 
   Future<void> _upgradeMyCourseDatabase(
