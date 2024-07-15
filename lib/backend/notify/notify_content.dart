@@ -354,7 +354,7 @@ class NotifyContent {
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           notifyID++,
-          "$titleの課題が$notifyTitle",
+          "$title 課題締切の$notifyTitle",
           body,
           scheduleDate,
           notificationDetails,
