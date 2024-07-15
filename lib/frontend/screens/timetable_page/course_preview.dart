@@ -69,9 +69,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                     const SizedBox(height: 20),
                                     courseInfo(),
                                     const SizedBox(height: 15),
-                                    attendMenuPanel(),
-                                    const SizedBox(height: 15),
                                     relatedTasks(),
+                                    const SizedBox(height: 15),
+                                    attendMenuPanel(),
                                     const SizedBox(height: 20),
                                   ])))))));
     }));
