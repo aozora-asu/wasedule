@@ -314,9 +314,9 @@ class NotifyContent {
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(notifyConfig.time);
     if (parsedTime.hour == 0) {
-      notifyTitle = "${parsedTime.minute}分前です";
+      notifyTitle = "${parsedTime.minute}分前";
     } else {
-      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前です";
+      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前";
     }
     //それぞれ2日先まで取得して、期限のn時間前予約を行う
     List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
@@ -341,7 +341,7 @@ class NotifyContent {
         due = "${makeDue(scheduleDate, task["dtEnd"])}まで";
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        body = "$title\n$summary";
+        body = summary;
         encodedPayload = jsonEncode({
           "route": "taskPage",
           "databaseID": task["id"],
@@ -352,7 +352,7 @@ class NotifyContent {
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           notifyID++,
-          "$due $notifyTitle",
+          "$title\n$due $notifyTitle",
           body,
           scheduleDate,
           notificationDetails,
