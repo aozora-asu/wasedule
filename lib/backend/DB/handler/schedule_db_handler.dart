@@ -106,7 +106,7 @@ class ScheduleDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
   }
 
   Future<void> updateSchedule(Map<String, dynamic> newSchedule) async {
@@ -118,7 +118,7 @@ class ScheduleDatabaseHelper {
       where: 'id = ?',
       whereArgs: [newSchedule["id"]],
     );
-    NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
   }
 
   Future<void> resisterScheduleToDB(Map<String, dynamic> schedule) async {
@@ -153,7 +153,7 @@ class ScheduleDatabaseHelper {
             where: 'hash = ?', whereArgs: [scheduleItem.toMap()["hash"]]);
       }
     }
-    NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
   }
 
   Future<void> resisterScheduleListToDB(

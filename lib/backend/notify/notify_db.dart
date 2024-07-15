@@ -1,3 +1,5 @@
+import 'package:flutter_calandar_app/backend/notify/notify_content.dart';
+import 'package:flutter_calandar_app/backend/sharepreference.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
@@ -230,6 +232,7 @@ class NotifyDatabaseHandler {
   Future<void> setNotifyConfig(NotifyConfig notifyConfig) async {
     await _initNotifyDatabase();
     await _insertNotifyConfig(notifyConfig);
+    await NotifyContent().setNotify(notifyConfig);
   }
 
   Future<bool> hasNotifyFormat() async {
@@ -242,15 +245,12 @@ class NotifyDatabaseHandler {
     return count! > 0;
   }
 
-  Future<Map<String, dynamic>?> getNotifyFormat() async {
+  Future<Map<String, dynamic>> getNotifyFormat() async {
     await _initNotifyDatabase();
     List<Map<String, dynamic>> notifyFormatList =
         await _database.rawQuery('SELECT * FROM $formatTable');
-    if (notifyFormatList.isEmpty) {
-      return null;
-    } else {
-      return notifyFormatList[0];
-    }
+
+    return notifyFormatList[0];
   }
 
   Future<List<Map<String, dynamic>>?> getNotifyConfigList() async {

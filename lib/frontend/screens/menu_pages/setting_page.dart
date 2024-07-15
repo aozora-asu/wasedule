@@ -632,13 +632,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
               }
               setState(() {});
               //＠ここで毎日or毎週通知をDB登録！！
-              await NotifyDatabaseHandler().setNotifyConfig(NotifyConfig(
+              NotifyConfig notifyConfig = NotifyConfig(
                   notifyType: notifyType,
                   time: timeFrequency,
                   isValidNotify: 1,
                   days: days,
-                  weekday: weekday));
-              await NotifyContent().setNotify();
+                  weekday: weekday);
+              await NotifyDatabaseHandler().setNotifyConfig(notifyConfig);
             },
             child: Container(
                 padding: const EdgeInsets.all(7),
@@ -706,13 +706,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
             notifyType = "beforeHour";
             setState(() {});
             //＠ここで締め切り前通知をDB登録！！
-            await NotifyDatabaseHandler().setNotifyConfig(NotifyConfig(
+            NotifyConfig notifyConfig = NotifyConfig(
                 notifyType: notifyType,
                 time: timeBeforeDtEnd,
                 isValidNotify: 1,
                 days: days,
-                weekday: weekday));
-            await NotifyContent().setNotify();
+                weekday: weekday);
+            await NotifyDatabaseHandler().setNotifyConfig(notifyConfig);
           }, BLUEGREY, "   追加   "),
           const SizedBox(width: 5)
         ]),
@@ -735,7 +735,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           onChanged: (value) async {
             SharepreferenceHandler()
                 .setValue(SharepreferenceKeys.isCalendarNotify, value);
-            await NotifyContent().setNotify();
+            await NotifyContent().setAllNotify();
             setState(() {});
           },
         )
@@ -750,7 +750,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           onChanged: (value) async {
             SharepreferenceHandler()
                 .setValue(SharepreferenceKeys.isTaskNotify, value);
-            await NotifyContent().setNotify();
+            await NotifyContent().setAllNotify();
             setState(() {});
           },
         )
@@ -765,7 +765,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
           onChanged: (value) async {
             SharepreferenceHandler()
                 .setValue(SharepreferenceKeys.isClassNotify, value);
-            await NotifyContent().setNotify();
+            await NotifyContent().setAllNotify();
             setState(() {});
           },
         )
@@ -837,7 +837,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
                           await NotifyDatabaseHandler().disableNotify(id);
                           await NotifyDatabaseHandler().deleteNotifyConfig(id);
-                          await NotifyContent().setNotify();
+                          await NotifyContent().setAllNotify();
                           setState(() {});
                         },
                         child: const Icon(Icons.delete)),
@@ -854,7 +854,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                         await NotifyDatabaseHandler().disableNotify(id);
                       }
 
-                      await NotifyContent().setNotify();
+                      await NotifyContent().setAllNotify();
                       setState(() {});
                     }, buttonColor, buttonText),
                   ])));
@@ -942,7 +942,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             await NotifyDatabaseHandler().setNotifyFormat(NotifyFormat(
                 isContainWeekday: isContainWeekday ? 1 : 0,
                 notifyFormat: notifyFormat));
-            await NotifyContent().setNotify();
+            await NotifyContent().setAllNotify();
           }, BLUEGREY, "   変更   "),
           const SizedBox(width: 5)
         ]),

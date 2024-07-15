@@ -8,7 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import "notify_db.dart";
 import "../../converter.dart";
-import 'package:shared_preferences/shared_preferences.dart';
+import "../sharepreference.dart";
 import 'dart:convert';
 
 int notifyID = 0;
@@ -216,12 +216,12 @@ class NotifyContent {
         if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(scheduleDate, 0)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:mm")
+          due = DateFormat("今日  H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else if (task["dtEnd"] <
             _cinderellaTimeAfterNdayLater(scheduleDate, 1)
                 .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:mm")
+          due = DateFormat("翌  H:mm")
               .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
         } else {
           int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
@@ -233,7 +233,7 @@ class NotifyContent {
 
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        taskBody += "$dueまで $title\n  $summary\n";
+        taskBody += "$dueまで $title\n    $summary\n";
       }
     }
     if (taskBody == "") {
@@ -283,6 +283,26 @@ class NotifyContent {
         payload: encodedPayload);
   }
 
+  String makeDue(tz.TZDateTime scheduleDate, int dtEndEpoch) {
+    String due;
+    int n = DateTime.fromMillisecondsSinceEpoch(dtEndEpoch)
+        .difference(scheduleDate)
+        .inDays;
+    if (dtEndEpoch <=
+        _cinderellaTimeAfterNdayLater(scheduleDate, 0).millisecondsSinceEpoch) {
+      due = DateFormat("今日 H:mm")
+          .format(DateTime.fromMillisecondsSinceEpoch(dtEndEpoch));
+    } else if (dtEndEpoch <=
+        _cinderellaTimeAfterNdayLater(scheduleDate, 1).millisecondsSinceEpoch) {
+      due = DateFormat("翌 H:mm")
+          .format(DateTime.fromMillisecondsSinceEpoch(dtEndEpoch));
+    } else {
+      due = DateFormat("$n日後 H:mm")
+          .format(DateTime.fromMillisecondsSinceEpoch(dtEndEpoch));
+    }
+    return due;
+  }
+
   Future<void> _bookBeforeHourNotify(
       NotifyConfig notifyConfig, NotifyFormat notifyFormat) async {
     String notifyTitle;
@@ -294,9 +314,9 @@ class NotifyContent {
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(notifyConfig.time);
     if (parsedTime.hour == 0) {
-      notifyTitle = "${parsedTime.minute}分前のお知らせです";
+      notifyTitle = "${parsedTime.minute}分前です";
     } else {
-      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前のお知らせです";
+      notifyTitle = "${parsedTime.hour}時間${parsedTime.minute}分前です";
     }
     //それぞれ2日先まで取得して、期限のn時間前予約を行う
     List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
@@ -308,7 +328,7 @@ class NotifyContent {
 
     String title;
     String summary;
-    String? due;
+    String due;
     String encodedPayload;
 
     for (var task in notifyTaskList) {
@@ -316,28 +336,12 @@ class NotifyContent {
           tz.TZDateTime.fromMillisecondsSinceEpoch(local, task["dtEnd"])
               .subtract(
                   Duration(hours: parsedTime.hour, minutes: parsedTime.minute));
-      int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
-          .difference(scheduleDate)
-          .inDays;
-      if (task["isDone"] == 0 && now.isBefore(scheduleDate)) {
-        if (task["dtEnd"] <=
-            _cinderellaTimeAfterNdayLater(scheduleDate, 0)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("今日   H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else if (task["dtEnd"] <=
-            _cinderellaTimeAfterNdayLater(scheduleDate, 1)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("翌    H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else {
-          due = DateFormat("$n日後 H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        }
 
+      if (task["isDone"] == 0 && now.isBefore(scheduleDate)) {
+        due = "${makeDue(scheduleDate, task["dtEnd"])}まで";
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
-        body = "$dueまで $title   $summary".trimRight();
+        body = "$title\n$summary";
         encodedPayload = jsonEncode({
           "route": "taskPage",
           "databaseID": task["id"],
@@ -348,7 +352,7 @@ class NotifyContent {
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           notifyID++,
-          notifyTitle,
+          "$due $notifyTitle",
           body,
           scheduleDate,
           notificationDetails,
@@ -394,17 +398,57 @@ class NotifyContent {
     }
   }
 
-  Future<void> setNotify() async {
+  Future<void> setNotify(NotifyConfig notifyConfig) async {
+    await cancelFutureNotify();
+    Map<String, dynamic> notifyFormatMap =
+        await NotifyDatabaseHandler().getNotifyFormat();
+    SharepreferenceHandler prefs = SharepreferenceHandler();
+    bool isCalendarNotify =
+        prefs.getValue(SharepreferenceKeys.isCalendarNotify)!;
+    bool isTaskNotify = prefs.getValue(SharepreferenceKeys.isTaskNotify)!;
+    bool isClassNotify = prefs.getValue(SharepreferenceKeys.isClassNotify)!;
+
+    NotifyFormat notifyFormat = NotifyFormat(
+        isContainWeekday: notifyFormatMap["isContainWeekday"],
+        notifyFormat: notifyFormatMap["notifyFormat"]);
+    if (notifyConfig.isValidNotify == 1) {
+      switch (notifyConfig.notifyType) {
+        case "daily":
+          if (isCalendarNotify) {
+            await _bookDailyScheduleNotify(notifyConfig, notifyFormat);
+          }
+          if (isTaskNotify) {
+            await _bookDailyTaskNotify(notifyConfig, notifyFormat);
+          }
+
+        case "weekly":
+          if (isCalendarNotify) {
+            await _bookWeeklyScheduleNotify(notifyConfig, notifyFormat);
+          }
+          if (isTaskNotify) {
+            await _bookWeeklyTaskNotify(notifyConfig, notifyFormat);
+          }
+        case "beforeHour":
+          await _bookBeforeHourNotify(notifyConfig, notifyFormat);
+      }
+    }
+    if (isClassNotify) {
+      await setClassNotify();
+    }
+  }
+
+  Future<void> setAllNotify() async {
     await cancelFutureNotify();
     Map<String, dynamic>? notifyFormatMap =
         await NotifyDatabaseHandler().getNotifyFormat();
     List<Map<String, dynamic>>? notifyConfigList =
         await NotifyDatabaseHandler().getNotifyConfigList();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isCalendarNotify = prefs.getBool('isCalendarNotify') ?? true;
-    bool isTaskNotify = prefs.getBool('isTaskNotify') ?? true;
-    bool isClassNotify = prefs.getBool('isClassNotify') ?? true;
-    if (notifyConfigList != null && notifyFormatMap != null) {
+    SharepreferenceHandler prefs = SharepreferenceHandler();
+    bool isCalendarNotify =
+        prefs.getValue(SharepreferenceKeys.isCalendarNotify)!;
+    bool isTaskNotify = prefs.getValue(SharepreferenceKeys.isTaskNotify)!;
+    bool isClassNotify = prefs.getValue(SharepreferenceKeys.isClassNotify)!;
+    if (notifyConfigList != null) {
       NotifyFormat notifyFormat = NotifyFormat(
           isContainWeekday: notifyFormatMap["isContainWeekday"],
           notifyFormat: notifyFormatMap["notifyFormat"]);
@@ -524,26 +568,27 @@ class NotifyContent {
     }
   }
 
-  static const String classNotifyTitle = "授業のお知らせ";
   Future<void> setClassNotify() async {
     List<Map<String, dynamic>>? myCourseList =
         await MyCourseDatabaseHandler().getPresentTermCourseList();
     if (myCourseList.isNotEmpty) {
       tz.TZDateTime weeklyScheduleDate;
       String body;
-
+      String classNotifyTitle;
       for (var myCourse in myCourseList) {
         if (myCourse["period"] != null && myCourse["weekday"] != null) {
           weeklyScheduleDate = _nextInstanceOfWeeklyTime(
               period2endTime(myCourse["period"] - 1)!, myCourse["weekday"]);
           body =
-              "${myCourse["period"]}限 ${period2startTime(myCourse["period"])}~ ${myCourse["courseName"]}\n    ${myCourse["classRoom"]}";
+              "${period2startTime(myCourse["period"])}~ ${myCourse["classRoom"]}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),
             "attendDate": DateFormat("M/d").format(weeklyScheduleDate),
             "myCourseID": myCourse["id"]
           });
+          classNotifyTitle =
+              "授業のお知らせ\n${myCourse["period"]}限 ${myCourse["courseName"]}";
           notificationDetails = _setNotificationDetail(notifyID++,
               classNotifyTitle, body, "classNotify", "markAttendStatus");
           await flutterLocalNotificationsPlugin.zonedSchedule(notifyID++,

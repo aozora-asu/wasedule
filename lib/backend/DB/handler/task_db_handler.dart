@@ -184,7 +184,7 @@ class TaskDatabaseHelper {
       await _database.insert('tasks', task.toMap());
     } catch (e) {}
     await _orderByDateTime();
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
@@ -202,7 +202,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
@@ -215,7 +215,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
   }
 
   Future<void> updateMemo(int id, String newMemo) async {
@@ -238,7 +238,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
@@ -279,7 +279,7 @@ class TaskDatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
   }
 
@@ -364,7 +364,7 @@ class TaskDatabaseHelper {
         }
       }
     }
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
     FlutterAppBadger.updateBadgeCount(await getCountOfUndoneTasks());
     await setpageID();
   }

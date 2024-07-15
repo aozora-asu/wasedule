@@ -25,7 +25,7 @@ void notificationTapBackground(
   if (notificationResponse.actionId == "markAsComplete" &&
       decodedPayload["route"] == "taskPage") {
     await TaskDatabaseHelper().unDisplay(decodedPayload["databaseID"]);
-    await NotifyContent().setNotify();
+    await NotifyContent().setAllNotify();
   }
   if (decodedPayload["route"] == "timeTablePage") {
     AttendanceRecord attendanceRecord = AttendanceRecord(
