@@ -89,7 +89,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     // }
 
     return GestureDetector(
-
         onTap: () {},
         child: Container(
             decoration: roundedBoxdecorationWithShadow(),
@@ -182,7 +181,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Icon(Icons.access_time, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-
           "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.05,
@@ -209,20 +207,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           await MyCourseDatabaseHandler().updateClassRoom(id, value);
           widget.setTimetableState(() {});
         })
-
       ]),
       dividerModel,
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
         const Icon(Icons.sticky_note_2, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        textFieldModel("授業メモを入力…", memoController, FontWeight.normal, 20.0,
-            (value) async {
-          int id = target["id"];
-          //＠ここにメモのアップデート関数！！！
-          await MyCourseDatabaseHandler().updateMemo(id, value);
-          setState(() {});
-        }),
+        classRoomSelector(context, target)
       ]),
       dividerModel,
     ]);
@@ -266,7 +257,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                               value: selectedRooms[classRoom] ?? true,
                               onChanged: (bool? value) {
                                 setState(() {
-                                  selectedRooms[classRoom] = true;
                                   selectedRooms[classRoom] = value!;
                                 });
                               },
@@ -382,328 +372,294 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   int totalClassNum = 0;
   bool isClassNumSettingInit = true;
 
-  void initClassNumSetting(){
+  void initClassNumSetting() {
     Map myCourseData = widget.target;
-    if(isClassNumSettingInit){
-     maxAbsentNum = myCourseData["remainAbsent"];
-     totalClassNum = myCourseData["classNum"] ?? 0;
-     isClassNumSettingInit = false;
+    if (isClassNumSettingInit) {
+      maxAbsentNum = myCourseData["remainAbsent"];
+      totalClassNum = myCourseData["classNum"] ?? 0;
+      isClassNumSettingInit = false;
     }
   }
 
-  Widget attendMenuPanel(){
+  Widget attendMenuPanel() {
     initClassNumSetting();
     return GestureDetector(
-      onTap:(){},
-      child: Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.symmetric(vertical:10.0,horizontal:20),
-          width: SizeConfig.blockSizeHorizontal! * 95,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children:[
+        onTap: () {},
+        child: Container(
+            decoration: roundedBoxdecorationWithShadow(),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+            width: SizeConfig.blockSizeHorizontal! * 95,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
                 const Text("出席管理",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22.5)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22.5)),
                 const Spacer(),
                 remainingAbesentViewBuilder()
               ]),
-              const SizedBox(height:5),
+              const SizedBox(height: 5),
               attendRecordView(),
               const Divider(),
               attendSettingsPanel(),
-          ])
-       )
-      );
+            ])));
   }
 
-  Widget attendSettingsPanel(){
+  Widget attendSettingsPanel() {
     return Material(
-      child:ExpandablePanel(
-        controller: ExpandableController(initialExpanded: false),
-        header: const Text("設定",
-          style: TextStyle(
-            fontSize: 20,
-            color:Colors.grey)),
-        collapsed: const SizedBox(),
-        expanded:remainingAbsentSetting()));
+        child: ExpandablePanel(
+            controller: ExpandableController(initialExpanded: false),
+            header: const Text("設定",
+                style: TextStyle(fontSize: 20, color: Colors.grey)),
+            collapsed: const SizedBox(),
+            expanded: remainingAbsentSetting()));
   }
 
-
-  Widget remainingAbesentViewBuilder(){
+  Widget remainingAbesentViewBuilder() {
     return FutureBuilder(
-      future: MyCourseDatabaseHandler().getAttendStatusCount(widget.target["id"],AttendStatus.absent),
-      builder: (context,snapShot){
-        if(snapShot.connectionState == ConnectionState.done){
-          if(snapShot.data == null){
-            return remainingAbesentView(maxAbsentNum);
-          }else{
-            int  remainingLife = maxAbsentNum - snapShot.data!;
-            if(remainingLife <= 0){
-              remainingLife = 0;
+        future: MyCourseDatabaseHandler()
+            .getAttendStatusCount(widget.target["id"], AttendStatus.absent),
+        builder: (context, snapShot) {
+          if (snapShot.connectionState == ConnectionState.done) {
+            if (snapShot.data == null) {
+              return remainingAbesentView(maxAbsentNum);
+            } else {
+              int remainingLife = maxAbsentNum - snapShot.data!;
+              if (remainingLife <= 0) {
+                remainingLife = 0;
+              }
+              return remainingAbesentView(remainingLife);
             }
-            return remainingAbesentView(remainingLife);
+          } else {
+            return remainingAbesentView(maxAbsentNum);
           }
-        }else{
-          return remainingAbesentView(maxAbsentNum);
-        }
-      });
+        });
   }
 
-  Widget remainingAbesentView(int absentNum){
+  Widget remainingAbesentView(int absentNum) {
     return Container(
-      padding:const EdgeInsets.symmetric(
-        vertical: 3,horizontal: 10), 
-      margin:const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color:BACKGROUND_COLOR,
-        borderRadius: BorderRadius.circular(5)),
-      child: Row(children:[
+          color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
+      child: Row(children: [
         const Text("残機 ",
-          style:TextStyle(fontWeight:FontWeight.bold,fontSize: 20)),
-        const Icon(Icons.favorite,color:Colors.redAccent,size:20),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        const Icon(Icons.favorite, color: Colors.redAccent, size: 20),
         Text(" × " + absentNum.toString(),
-          style:const TextStyle(fontWeight:FontWeight.bold,fontSize: 20,color:Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey)),
       ]),
     );
   }
 
-  Widget remainingAbsentSetting(){
-
+  Widget remainingAbsentSetting() {
     EdgeInsets containerPadding = const EdgeInsets.all(10);
     BoxDecoration containerDecoration = BoxDecoration(
-      color:BACKGROUND_COLOR,
-      border: Border.all(color:Colors.grey),
+      color: BACKGROUND_COLOR,
+      border: Border.all(color: Colors.grey),
       borderRadius: BorderRadius.circular(15),
     );
 
-    return Row(children:[
+    return Row(children: [
       const Spacer(),
-      Column (children:[
+      Column(children: [
         Container(
           padding: containerPadding,
           decoration: containerDecoration,
-          child: Row(children:[
-              changeNumButton("remainAbsent","decrease"),
-              Text(maxAbsentNum.toString(),
-                style:const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20)),
-              changeNumButton("remainAbsent","increase")
+          child: Row(children: [
+            changeNumButton("remainAbsent", "decrease"),
+            Text(maxAbsentNum.toString(),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            changeNumButton("remainAbsent", "increase")
           ]),
         ),
         const Text("最大欠席可能数",
-        style: TextStyle(
-          fontSize: 15,
-          color:Colors.grey)),
+            style: TextStyle(fontSize: 15, color: Colors.grey)),
       ]),
       const Spacer(),
-      const Column(children:[
-        Text(" / ",
-          style: TextStyle(
-            fontSize: 40,
-            color:Colors.grey)),
-        Text("  ",
-          style: TextStyle(
-            fontSize: 15)),
+      const Column(children: [
+        Text(" / ", style: TextStyle(fontSize: 40, color: Colors.grey)),
+        Text("  ", style: TextStyle(fontSize: 15)),
       ]),
       const Spacer(),
-      Column (children:[
+      Column(children: [
         Container(
           padding: containerPadding,
           decoration: containerDecoration,
-          child: Row(children:[
-              changeNumButton("classNum","decrease"),
-              Text(totalClassNum.toString(),
-                style:const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20)),
-              changeNumButton("classNum","increase")
+          child: Row(children: [
+            changeNumButton("classNum", "decrease"),
+            Text(totalClassNum.toString(),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            changeNumButton("classNum", "increase")
           ]),
         ),
-        const Text("授業数",
-        style: TextStyle(
-          fontSize: 15,
-          color:Colors.grey)),
+        const Text("授業数", style: TextStyle(fontSize: 15, color: Colors.grey)),
       ]),
       const Spacer(),
     ]);
   }
 
-  Widget changeNumButton(String numType,String buttonType){
+  Widget changeNumButton(String numType, String buttonType) {
     IconData buttonIcon = Icons.arrow_forward_ios;
-    if(buttonType == "decrease"){
+    if (buttonType == "decrease") {
       buttonIcon = Icons.arrow_back_ios;
     }
 
     return GestureDetector(
-      child:Icon(buttonIcon,color:Colors.grey,size: 17,),
-      onTap: ()async{
-        if(numType == "classNum"){
-          if(buttonType == "increase"){
-            totalClassNum += 1;
-          }else{
-            totalClassNum -= 1;
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          if (numType == "classNum") {
+            if (buttonType == "increase") {
+              totalClassNum += 1;
+            } else {
+              totalClassNum -= 1;
+            }
+            if (totalClassNum <= 0) {
+              totalClassNum = 0;
+            }
+            if (totalClassNum <= maxAbsentNum) {
+              totalClassNum = maxAbsentNum;
+            }
+            await MyCourseDatabaseHandler()
+                .updateClassNum(widget.target["id"], totalClassNum);
+            setState(() {});
+            widget.setTimetableState(() {});
+          } else {
+            if (buttonType == "increase") {
+              maxAbsentNum += 1;
+            } else {
+              maxAbsentNum -= 1;
+            }
+            if (maxAbsentNum <= 0) {
+              maxAbsentNum = 0;
+            }
+            if (maxAbsentNum >= totalClassNum) {
+              maxAbsentNum = totalClassNum;
+            }
+            await MyCourseDatabaseHandler()
+                .updateRemainAbsent(widget.target["id"], maxAbsentNum);
+            setState(() {});
+            widget.setTimetableState(() {});
           }
-          if(totalClassNum <= 0){
-            totalClassNum = 0;
-          }
-          if(totalClassNum <= maxAbsentNum){
-            totalClassNum = maxAbsentNum;
-          }
-          await MyCourseDatabaseHandler().updateClassNum(
-            widget.target["id"],totalClassNum);
-          setState((){});
-          widget.setTimetableState((){});
-          
-        }else{
-          if(buttonType == "increase"){
-            maxAbsentNum += 1;
-          }else{
-            maxAbsentNum -= 1;
-          }
-          if(maxAbsentNum <= 0){
-            maxAbsentNum = 0;
-          }
-          if(maxAbsentNum >= totalClassNum ){
-            maxAbsentNum = totalClassNum;
-          }
-          await MyCourseDatabaseHandler().updateRemainAbsent(
-            widget.target["id"], maxAbsentNum);
-          setState((){});
-          widget.setTimetableState((){});
-        }
-
-      }
-    );
+        });
   }
 
-  Widget attendRecordView(){
+  Widget attendRecordView() {
     return Material(
-      child:ExpandablePanel(
-        controller: ExpandableController(initialExpanded: true),
-        header: const Text("出欠記録",
-          style: TextStyle(
-            fontSize: 20,
-            color:Colors.grey)),
-        collapsed: const SizedBox(),
-        expanded:Column(children:[
-          attendRecordListBuilder(),
-          addRecordButton()
-        ]) ));
+        child: ExpandablePanel(
+            controller: ExpandableController(initialExpanded: true),
+            header: const Text("出欠記録",
+                style: TextStyle(fontSize: 20, color: Colors.grey)),
+            collapsed: const SizedBox(),
+            expanded: Column(
+                children: [attendRecordListBuilder(), addRecordButton()])));
   }
 
-  Widget attendRecordListBuilder(){
+  Widget attendRecordListBuilder() {
     return FutureBuilder(
-      future:MyCourseDatabaseHandler().getAttendanceRecordFromDB(widget.target["id"]),
-      builder: (context,snapshot){
-        if(snapshot.connectionState == ConnectionState.done){
-          if(snapshot.data == null || snapshot.data!.isEmpty){
-            return const SizedBox();
-            const Center(
-              child:Text("データはありません。",
-                style: TextStyle(color:Colors.grey,fontSize: 20)));
-          }else{
-            return attendRecordList(snapshot.data!);
+        future: MyCourseDatabaseHandler()
+            .getAttendanceRecordFromDB(widget.target["id"]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data == null || snapshot.data!.isEmpty) {
+              return const SizedBox();
+              const Center(
+                  child: Text("データはありません。",
+                      style: TextStyle(color: Colors.grey, fontSize: 20)));
+            } else {
+              return attendRecordList(snapshot.data!);
+            }
+          } else {
+            return const Center(
+                child: CircularProgressIndicator(color: PALE_MAIN_COLOR));
           }
-        }else{
-          return const Center(
-              child:CircularProgressIndicator(color:PALE_MAIN_COLOR));
-        }
-      });
+        });
   }
 
-  
-  Widget attendRecordList(List attendRecordList){
+  Widget attendRecordList(List attendRecordList) {
     return ListView.builder(
-      itemCount: attendRecordList.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context,index){
-         return attendRecordListPanel(attendRecordList.elementAt(index));
-      });
+        itemCount: attendRecordList.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return attendRecordListPanel(attendRecordList.elementAt(index));
+        });
   }
 
-  Widget attendRecordListPanel(Map attendRecord){
+  Widget attendRecordListPanel(Map attendRecord) {
     String attendStatusText = "";
     Color attendStatusColor = Colors.white;
-    if(attendRecord["attendStatus"] == "attend"){
+    if (attendRecord["attendStatus"] == "attend") {
       attendStatusText = "出席";
       attendStatusColor = Colors.blue;
-    }else if(attendRecord["attendStatus"] =="late"){
+    } else if (attendRecord["attendStatus"] == "late") {
       attendStatusText = "遅刻";
       attendStatusColor = const Color.fromARGB(255, 223, 200, 0);
-    }else{
+    } else {
       attendStatusText = "欠席";
       attendStatusColor = Colors.redAccent;
     }
 
     return GestureDetector(
-      onTap:()async{
-        showIndividualCourseEditDialog(
-          context,widget.target,
-          initData: attendRecord,
-          (){
+        onTap: () async {
+          showIndividualCourseEditDialog(context, widget.target,
+              initData: attendRecord, () {
             setState(() {});
-            widget.setTimetableState((){});
+            widget.setTimetableState(() {});
           });
-      },
-    child:Container(
-      padding:const EdgeInsets.symmetric(
-        vertical: 5,horizontal: 15),
-      margin:const EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        color:BACKGROUND_COLOR,
-        borderRadius: BorderRadius.circular(10)
-      ),
-      child: Row(children:[
-        Text(attendRecord["attendDate"],
-          style:const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20)),
-        const Spacer(),
-        Container(
-          padding:const EdgeInsets.symmetric(
-            vertical: 5,horizontal: 15),
-          margin:const EdgeInsets.symmetric(vertical: 5),
-          decoration: BoxDecoration(
-            color:attendStatusColor,
-            borderRadius: BorderRadius.circular(10)
-          ),
-          child: Text(attendStatusText,
-            style:const TextStyle(
-              fontWeight:FontWeight.bold,
-              fontSize: 15,
-              color: Colors.white),),
-        )
-      ])
-    )
-    );
+        },
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
+                borderRadius: BorderRadius.circular(10)),
+            child: Row(children: [
+              Text(attendRecord["attendDate"],
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                    color: attendStatusColor,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(
+                  attendStatusText,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.white),
+                ),
+              )
+            ])));
   }
-  
-  Widget addRecordButton(){
-     return GestureDetector(
-      onTap:()async{
-        showIndividualCourseEditDialog(
-          context,widget.target,
-          (){
+
+  Widget addRecordButton() {
+    return GestureDetector(
+        onTap: () async {
+          showIndividualCourseEditDialog(context, widget.target, () {
             setState(() {});
-            widget.setTimetableState((){});
+            widget.setTimetableState(() {});
           });
-      },
-      child:Container(
-      padding:const EdgeInsets.symmetric(
-        vertical: 5,horizontal: 15),
-      margin:const EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        color:BACKGROUND_COLOR,
-        borderRadius: BorderRadius.circular(10)
-      ),
-      child:const Center(child:
-      Icon(Icons.add,color: Colors.grey,size:30))
-     ));
+        },
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
+                borderRadius: BorderRadius.circular(10)),
+            child: const Center(
+                child: Icon(Icons.add, color: Colors.grey, size: 30))));
   }
 
   Widget relatedTasks() {
@@ -713,17 +669,18 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           padding: const EdgeInsets.all(10.0),
           width: SizeConfig.blockSizeHorizontal! * 95,
           child: Column(children: [
-            Row(children: [
-              const SizedBox(width:10),
-              const Text("関連する課題",
-                  style: TextStyle(fontSize: 22.5, fontWeight: FontWeight.bold)),
-              const Spacer(),
-              lengthBadge(widget.taskList.length,17.5,false),
-              const SizedBox(width:10),
-            ],),
-
-            const SizedBox(height:5),
-
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                const Text("関連する課題",
+                    style:
+                        TextStyle(fontSize: 22.5, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                lengthBadge(widget.taskList.length, 17.5, false),
+                const SizedBox(width: 10),
+              ],
+            ),
+            const SizedBox(height: 5),
             ListView.separated(
               itemBuilder: (context, index) {
                 return taskListChild(widget.taskList.elementAt(index));

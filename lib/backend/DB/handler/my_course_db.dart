@@ -525,6 +525,15 @@ class MyCourseDatabaseHandler {
     );
   }
 
+  Future<void> deleteAttendRecord(int id) async {
+    await _initMyCourseDatabase();
+    await _database.delete(
+      attendanceRecordTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<int> getAttendStatusCount(int myCourseID, AttendStatus status) async {
     await _initMyCourseDatabase();
     final List<Map<String, dynamic>> result = await _database.rawQuery('''
