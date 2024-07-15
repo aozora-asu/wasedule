@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -8,10 +10,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "../../../constant.dart";
 
+ Widget showAttendDialogAutomaticallySwitch = const SizedBox();
+
 Future<void> showAttendanceDialog(
     BuildContext context, DateTime targetDate, WidgetRef ref,
     [bool enforceShowing = false]) async {
+
   bool isShowDialog = true;
+  bool showAttendDialogAutomatically = await SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.showAttendDialogAutomatically);
 
   await ref
       .read(timeTableProvider)
@@ -39,6 +46,11 @@ Future<void> showAttendanceDialog(
     isShowDialog = false;
   }
 
+ if(!showAttendDialogAutomatically){
+    isShowDialog = false;
+  }
+
+
   if (enforceShowing) {
     isShowDialog = true;
   }
@@ -47,7 +59,10 @@ Future<void> showAttendanceDialog(
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AttendanceDialog(targetDate: targetDate);
+        return AttendanceDialog(
+          targetDate: targetDate,
+          showAutomatically: showAttendDialogAutomatically,
+          enforceShowing: enforceShowing,);
       },
     );
   }
@@ -55,14 +70,54 @@ Future<void> showAttendanceDialog(
 
 class AttendanceDialog extends ConsumerStatefulWidget {
   DateTime targetDate;
-  AttendanceDialog({required this.targetDate});
+  bool enforceShowing;
+  bool showAutomatically;
+  AttendanceDialog({
+    required this.targetDate,
+    required this.enforceShowing,
+    required this.showAutomatically
+    });
   @override
   _AttendanceDialogState createState() => _AttendanceDialogState();
 }
 
 class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
+  late bool dontShowAutomatically;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.showAutomatically){
+      dontShowAutomatically = false;
+    }else{
+      dontShowAutomatically = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if(!widget.enforceShowing){
+      {
+    showAttendDialogAutomaticallySwitch = 
+      Row(children:[
+        const Text("以降自動的に表示しない：",
+          style:TextStyle(color:Colors.grey)),
+        CupertinoCheckbox(
+          value: dontShowAutomatically, 
+          onChanged:(value)async{
+            SharepreferenceHandler()
+              .setValue(SharepreferenceKeys.showAttendDialogAutomatically,dontShowAutomatically);
+            dontShowAutomatically = value!;
+            setState((){});
+            if(dontShowAutomatically){
+              showAutoshowTurnedOffDialog(context);
+            }
+          })
+      ]);
+  }
+ }else{
+  showAttendDialogAutomaticallySwitch = const SizedBox();
+ }
     return Column(children: [
       const Spacer(),
       Container(
@@ -73,6 +128,26 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
           child: Material(child: buildMainBody())),
       const Spacer(),
     ]);
+  }
+
+  void showAutoshowTurnedOffDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('出欠記録の自動表示がオフになりました。'),
+          content:const Text('設定ページ「時間割」の項目から再度オンにしていただくことができます。'),
+          actions: [
+            TextButton(
+              child: const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Map<int, String> enteredData = {};
@@ -166,6 +241,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         itemCount: data.length,
         shrinkWrap: true,
       ),
+      const SizedBox(height: 5),
+      showAttendDialogAutomaticallySwitch,
       const SizedBox(height: 10),
       Row(children: [
         const Spacer(),
