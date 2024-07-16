@@ -528,6 +528,14 @@ class NotifyContent {
     }
   }
 
+  Future<List<PendingNotificationRequest>> getScheduledNotifies() async {
+    return await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  }
+
+  void cancelNotify(int id) {
+    flutterLocalNotificationsPlugin.cancel(id);
+  }
+
   Future<void> cancelFutureNotify() async {
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();

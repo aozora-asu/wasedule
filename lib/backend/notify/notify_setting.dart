@@ -21,11 +21,19 @@ void notificationTapBackground(
   // ignore: avoid_print
   Map<String, dynamic> decodedPayload =
       jsonDecode(notificationResponse.payload!);
+  Map<String, dynamic> payload;
 
   if (notificationResponse.actionId == "markAsComplete" &&
       decodedPayload["route"] == "taskPage") {
     await TaskDatabaseHelper().unDisplay(decodedPayload["databaseID"]);
-    await NotifyContent().setAllNotify();
+    List<PendingNotificationRequest> scheduledNotifies =
+        await NotifyContent().getScheduledNotifies();
+    for (var scheduledNotify in scheduledNotifies) {
+      payload = jsonDecode(scheduledNotify.payload!);
+      if (payload["databaseID"] == decodedPayload["databaseID"]) {
+        NotifyContent().cancelNotify(scheduledNotify.id);
+      }
+    }
   }
   if (decodedPayload["route"] == "timeTablePage") {
     AttendanceRecord attendanceRecord = AttendanceRecord(

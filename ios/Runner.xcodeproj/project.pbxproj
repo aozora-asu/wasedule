@@ -16,8 +16,7 @@
 		1413124A2C3903510019E223 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 141312492C3903510019E223 /* AppIntent.swift */; };
 		1413124C2C3903540019E223 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1413124B2C3903540019E223 /* Assets.xcassets */; };
 		141312502C3903540019E223 /* HomeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1413123F2C3903510019E223 /* HomeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1478E6D02C465C380034D479 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; };
-		1478E6D12C465C380034D479 /* Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1478E6D32C4663AA0034D479 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1DD79CD6518CF3B5AA2B4456 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D252EBF8F6AAFE753708120 /* GoogleService-Info.plist */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
@@ -53,7 +52,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1478E6D12C465C380034D479 /* Flutter.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,7 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1478E6D02C465C380034D479 /* Flutter.xcframework in Frameworks */,
+				1478E6D32C4663AA0034D479 /* Flutter.xcframework in Frameworks */,
 				FD64A183EE262CBCC5228AB2 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
