@@ -549,8 +549,11 @@ class MyCourseDatabaseHandler {
 
   Future<void> recordAttendStatus(AttendanceRecord attendanceRecord) async {
     await _initMyCourseDatabase();
+    print("以下の内容を登録します");
+    print(attendanceRecord.toMap());
     try {
       await _database.insert(attendanceRecordTable, attendanceRecord.toMap());
+      print("登録成功");
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
@@ -558,13 +561,15 @@ class MyCourseDatabaseHandler {
           attendanceRecordTable,
           // 更新後の値
           attendanceRecord.toMap(),
-          where: 'myCourseID = ? AND attendDate = ?', // idによってレコードを特定
+          where: 'myCourseID = ? AND attendDate = ?',
           whereArgs: [
             attendanceRecord.toMap()["myCourseID"],
             attendanceRecord.toMap()["attendDate"]
           ],
         );
+        print("更新しました");
       }
+      print("登録に失敗しました");
     }
   }
 

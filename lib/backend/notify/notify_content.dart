@@ -569,7 +569,7 @@ class NotifyContent {
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),
-            "attendDate": DateFormat("M/d").format(weeklyScheduleDate),
+            "attendDate": DateFormat("MM/dd").format(weeklyScheduleDate),
             "myCourseID": myCourse["id"]
           });
           if (await MyCourseDatabaseHandler()

@@ -28,6 +28,7 @@ void notificationTapBackground(
     await NotifyContent().setAllNotify();
   }
   if (decodedPayload["route"] == "timeTablePage") {
+    print("バックグラウンド実行");
     AttendanceRecord attendanceRecord = AttendanceRecord(
         attendDate: decodedPayload["attendDate"],
         attendStatus: AttendStatus.values.byName(
