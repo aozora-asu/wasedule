@@ -28,13 +28,12 @@ void notificationTapBackground(
     await NotifyContent().setAllNotify();
   }
   if (decodedPayload["route"] == "timeTablePage") {
-    print("バックグラウンド実行");
     AttendanceRecord attendanceRecord = AttendanceRecord(
         attendDate: decodedPayload["attendDate"],
         attendStatus: AttendStatus.values.byName(
           notificationResponse.actionId!,
         ),
-        myCourseID: decodedPayload["myCaurseID"]);
+        myCourseID: decodedPayload["myCourseID"]);
     await MyCourseDatabaseHandler().recordAttendStatus(attendanceRecord);
   }
   // print('notification(${notificationResponse.id}) action tapped: '
