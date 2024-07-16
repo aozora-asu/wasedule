@@ -11,6 +11,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import "./backend/sharepreference.dart";
+import "./backend/notify/notify_content.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ void main() async {
   await initializeDateFormatting();
   NextCourseHomeWidget().updateNextCourse();
   WidgetsFlutterBinding.ensureInitialized();
-
+  await NotifyContent().getScheduledNotify();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

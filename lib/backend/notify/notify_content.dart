@@ -204,7 +204,7 @@ class NotifyContent {
       NotifyConfig notifyConfig, tz.TZDateTime scheduleDate) async {
     String body;
     String taskBody = "";
-    String due = "";
+    String due;
     String title;
     String summary;
     List<Map<String, dynamic>> notifyTaskList = await TaskDatabaseHelper()
@@ -215,31 +215,14 @@ class NotifyContent {
                 .millisecondsSinceEpoch);
     for (var task in notifyTaskList) {
       if (task["isDone"] == 0) {
-        if (task["dtEnd"] <
-            _cinderellaTimeAfterNdayLater(scheduleDate, 0)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("今日  H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else if (task["dtEnd"] <
-            _cinderellaTimeAfterNdayLater(scheduleDate, 1)
-                .millisecondsSinceEpoch) {
-          due = DateFormat("翌  H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        } else {
-          int n = DateTime.fromMillisecondsSinceEpoch(task["dtEnd"])
-              .difference(scheduleDate)
-              .inDays;
-          due = DateFormat("$n日後 H:mm")
-              .format(DateTime.fromMillisecondsSinceEpoch(task["dtEnd"]));
-        }
-
+        due = makeDue(scheduleDate, task["dtEnd"]);
         title = task["title"] ?? "";
         summary = task["summary"] ?? "";
         taskBody += "$dueまで $title\n    $summary\n";
       }
     }
     if (taskBody == "") {
-      taskBody = "近日中の課題はありません\n";
+      taskBody = "近日中の課題はありません";
     }
     body = taskBody.trimRight();
 
