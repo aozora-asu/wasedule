@@ -38,7 +38,7 @@ String? period2endTime(int period) {
     case 3:
       return "14:50";
     case 4:
-      return "16:50";
+      return "16:45";
     case 5:
       return "18:40";
     case 6:
