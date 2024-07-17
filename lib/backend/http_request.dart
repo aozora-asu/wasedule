@@ -83,7 +83,7 @@ Map<String, dynamic> _pretterTask(Map<String, dynamic> events) {
 Future<Map<String, dynamic>> getTaskFromHttp(String urlString) async {
   String taskString = await _getTask(urlString);
 
-  taskString = taskString.replaceAll(RegExp(r'[^\S\r\n]'), "");
+  //taskString = taskString.replaceAll(RegExp(r'[^\S\r\n]'), "");
 
   Map<String, dynamic> iCalInfo = _parsedTaskData(taskString);
 
