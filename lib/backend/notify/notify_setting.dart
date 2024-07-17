@@ -14,6 +14,9 @@ import "../DB/handler/my_course_db.dart";
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
 import "../../constant.dart";
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import "../../backend/sharepreference.dart";
 
 @pragma('vm:entry-point')
 void notificationTapBackground(
@@ -21,19 +24,13 @@ void notificationTapBackground(
   // ignore: avoid_print
   Map<String, dynamic> decodedPayload =
       jsonDecode(notificationResponse.payload!);
-  Map<String, dynamic> payload;
+  tz.initializeTimeZones();
+  pref = await SharepreferenceHandler().initSharepreference();
+  // tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
   if (notificationResponse.actionId == "markAsComplete" &&
       decodedPayload["route"] == "taskPage") {
     await TaskDatabaseHelper().unDisplay(decodedPayload["databaseID"]);
-    List<PendingNotificationRequest> scheduledNotifies =
-        await NotifyContent().getScheduledNotifies();
-    for (var scheduledNotify in scheduledNotifies) {
-      payload = jsonDecode(scheduledNotify.payload!);
-      if (payload["databaseID"] == decodedPayload["databaseID"]) {
-        NotifyContent().cancelNotify(scheduledNotify.id);
-      }
-    }
   }
   if (decodedPayload["route"] == "timeTablePage") {
     AttendanceRecord attendanceRecord = AttendanceRecord(

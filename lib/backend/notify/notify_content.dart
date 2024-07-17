@@ -42,9 +42,7 @@ class NotifyContent {
   //weekday 月~日まで1~7
   //return
   tz.TZDateTime _nextInstanceOfWeeklyTime(String timeString, int weekday) {
-    tz.initializeTimeZones();
-    tz.Location local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(local);
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
 
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(timeString);
@@ -54,7 +52,7 @@ class NotifyContent {
     int daysUntilNextWeekday = (weekday - currentWeekday + 7) % 7;
 
     // 次の週の指定された曜日の日付を計算
-    tz.TZDateTime nextWeekDay = tz.TZDateTime(local, now.year, now.month,
+    tz.TZDateTime nextWeekDay = tz.TZDateTime(tz.local, now.year, now.month,
         now.day + daysUntilNextWeekday, parsedTime.hour, parsedTime.minute);
 
     // 次の週が過去の場合は1週間後の同じ曜日の日付にする
@@ -66,13 +64,11 @@ class NotifyContent {
   }
 
   tz.TZDateTime _nextInstanceOfDailyTime(String timeString) {
-    tz.initializeTimeZones();
-    tz.Location local = tz.getLocation('Asia/Tokyo');
-    final tz.TZDateTime now = tz.TZDateTime.now(local);
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(timeString);
 
-    tz.TZDateTime scheduledDate = tz.TZDateTime(local, now.year, now.month,
+    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month,
         now.day, parsedTime.hour, parsedTime.minute);
 
     while (scheduledDate.isBefore(now)) {
@@ -540,8 +536,7 @@ class NotifyContent {
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     Map<String, dynamic> decodedPayload = {};
-    tz.Location local = tz.getLocation('Asia/Tokyo');
-    tz.TZDateTime now = tz.TZDateTime.now(local);
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     for (var pendingNotificationRequest in pendingNotificationRequests) {
       if (pendingNotificationRequest.payload != null) {
         decodedPayload = jsonDecode(pendingNotificationRequest.payload!);
