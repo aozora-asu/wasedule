@@ -330,18 +330,18 @@ class TaskDatabaseHelper {
   Future<void> resisterTaskToDB(String urlString) async {
     // データベースヘルパークラスのインスタンスを作成
     // データベースの初期化
-    Map<String, dynamic> taskData = await getTaskFromHttp(urlString);
+    List<Map<String, dynamic>> taskData = await getTaskFromHttp(urlString);
 
     TaskItem taskItem;
     await _initDatabase();
-    for (int i = 0; i < taskData["events"].length; i++) {
+    for (int i = 0; i < taskData.length; i++) {
       // 1. TaskItemオブジェクトを作成
       taskItem = TaskItem(
-          uid: taskData["events"][i]["UID"],
-          summary: taskData["events"][i]["SUMMARY"],
-          description: taskData["events"][i]["DESCRIPTION"],
-          dtEnd: taskData["events"][i]["DTEND"],
-          title: taskData["events"][i]["CATEGORIES"] ?? "",
+          uid: taskData[i]["UID"],
+          summary: taskData[i]["SUMMARY"],
+          description: taskData[i]["DESCRIPTION"],
+          dtEnd: taskData[i]["DTEND"],
+          title: taskData[i]["CATEGORIES"] ?? "",
           isDone: 0,
           pageID: null);
       // 2. データベースヘルパークラスを使用してデータベースに挿入
@@ -353,13 +353,13 @@ class TaskDatabaseHelper {
           await _database.update(
             'tasks',
             {
-              "summary": taskData["events"][i]["SUMMARY"],
-              "description": taskData["events"][i]["DESCRIPTION"],
-              "dtEnd": taskData["events"][i]["DTEND"],
-              "title": taskData["events"][i]["CATEGORIES"],
+              "summary": taskData[i]["SUMMARY"],
+              "description": taskData[i]["DESCRIPTION"],
+              "dtEnd": taskData[i]["DTEND"],
+              "title": taskData[i]["CATEGORIES"],
             }, // 更新後の値
             where: 'uid = ?',
-            whereArgs: [taskData["events"][i]["UID"]],
+            whereArgs: [taskData[i]["UID"]],
           );
         }
       }
