@@ -273,6 +273,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 3,
                                 Column(children: [
                                   TextField(
+                                    keyboardType: TextInputType.multiline,
                                     maxLines: null,
                                     textInputAction: TextInputAction.done,
                                     onChanged: (value) async {
