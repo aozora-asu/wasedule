@@ -275,7 +275,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   TextField(
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
-                                    textInputAction: TextInputAction.done,
+                                    //textInputAction: TextInputAction.done,
                                     onChanged: (value) async {
                                       await TaskDatabaseHelper().updateMemo(
                                           id, taskDraftController.text);
