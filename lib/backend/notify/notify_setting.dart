@@ -18,6 +18,8 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import "../../backend/sharepreference.dart";
 
+import 'package:intl/date_symbol_data_local.dart';
+
 @pragma('vm:entry-point')
 void notificationTapBackground(
     NotificationResponse notificationResponse) async {
@@ -25,6 +27,8 @@ void notificationTapBackground(
   Map<String, dynamic> decodedPayload =
       jsonDecode(notificationResponse.payload!);
   tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+  await initializeDateFormatting();
   pref = await SharepreferenceHandler().initSharepreference();
   // tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
