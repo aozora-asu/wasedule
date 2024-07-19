@@ -217,7 +217,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
             filled: true,
-            fillColor: WHITE,
+            fillColor: FORGROUND_COLOR,
             border: InputBorder.none, hintText: hintText),
             style: TextStyle(
               color: Colors.black, fontWeight: weight, fontSize: fontSize),
@@ -309,7 +309,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10)),
                   padding:

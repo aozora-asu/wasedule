@@ -18,7 +18,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
   SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        leading:  BackButton(color:WHITE),
+        leading:  BackButton(color:FORGROUND_COLOR),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: Column(
@@ -34,7 +34,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! *5,
                 fontWeight: FontWeight.w800,
-                color:WHITE
+                color:FORGROUND_COLOR
               ),
             ),
             ]

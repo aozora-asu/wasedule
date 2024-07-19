@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -26,25 +29,28 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
     ref.watch(taskDataProvider);
 
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
         body: SizedBox(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Padding(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              "削除済みタスク",
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
-            ),
+          Padding(
+            padding:const EdgeInsets.all(8),
+            child: Row(children:[
+             const Text(
+                "削除済みタスク",
+                style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20,color:BLUEGREY),
+              ),
+            const SizedBox(width:10),
+            GestureDetector(
+              onTap:()=> showPageDescriptionDialog(context),
+              child:const Icon(Icons.info,color:Colors.grey),
+             ),
+            const Spacer(),
+            ])
           ),
-          const Text(
-              "！ 削除済みタスクは、期限から30日後に自動削除されます。",
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15,color:Colors.grey),
-            ),
           const Divider(
-            thickness: 2.5,
+            thickness: 1,
             height:2.5,
-            indent: 7,
-            endIndent: 7,
           ),
           Expanded(child:
           ListView.builder(
@@ -54,15 +60,13 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                   deletedData.elementAt(i)["dtEnd"]);
               String adjustedDtEnd = ("期限：${dateEnd.month}月${dateEnd.day}日");
               return Container(
-                  width: SizeConfig.blockSizeHorizontal! * 100,
-                  padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
+                margin:const EdgeInsets.symmetric(horizontal: 15,vertical:7.5),
+                padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, bottom: 10.0, top: 10.0),
+                decoration: roundedBoxdecorationWithShadow(),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Text(
                                 "${deletedData.elementAt(i)["summary"]}",
                                 style: const TextStyle(
@@ -99,12 +103,6 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                                     ])
                                 )
                               ])
-                            ]),
-                        const Divider(
-                          thickness: 2.5,
-                          indent: 7,
-                          endIndent: 7,
-                        )
                       ]));
             },
             itemCount: deletedData.length,
@@ -126,6 +124,19 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
       }
     }
     return result;
+  }
+
+  void showPageDescriptionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const CupertinoAlertDialog(
+          title: Text('「削除済みタスク」ページ'),
+          content: Text('削除された課題は、期限から30日後に自動削除されます。',
+            style:TextStyle(color:Colors.grey)),
+        );
+      },
+    );
   }
 
 }

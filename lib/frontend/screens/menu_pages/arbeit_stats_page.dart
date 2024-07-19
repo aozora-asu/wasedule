@@ -465,7 +465,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     PreferredSizeWidget? appbar;
     if(isAppBar){
         appbar =  AppBar(
-      leading:  BackButton(color: WHITE),
+      leading:  BackButton(color: FORGROUND_COLOR),
       backgroundColor: MAIN_COLOR,
       elevation: 10,
       title: Column(
@@ -483,7 +483,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 5,
                   fontWeight: FontWeight.w800,
-                  color:  WHITE),
+                  color:  FORGROUND_COLOR),
             ),
           ])
         ],
@@ -899,14 +899,14 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
             Text(
               "時給：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["wage"])}円",
               style:  TextStyle(
-                  color:  WHITE,
+                  color:  FORGROUND_COLOR,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
             Text(
               "片道交通費：${ArbeitCalculator().formatNumberWithComma(sortedData.elementAt(index)["fee"])}円",
               style:  TextStyle(
-                  color:  WHITE,
+                  color:  FORGROUND_COLOR,
                   fontSize: 15,
                   fontWeight: FontWeight.bold),
             )
@@ -929,7 +929,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                         Text(
                           sortedData.elementAt(index)["title"] ?? "(詳細なし)",
                           style:  TextStyle(
-                              color:  WHITE,
+                              color:  FORGROUND_COLOR,
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               overflow: TextOverflow.clip
@@ -962,7 +962,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
 
     return Container(
         width: SizeConfig.blockSizeHorizontal! * 95,
-        color:  WHITE,
+        color:  FORGROUND_COLOR,
         child: Padding(
             padding: const EdgeInsets.all(8),
             child:
@@ -1020,7 +1020,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
       TextEditingController controller, List<FocusNode> nodeList) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor:  WHITE,
+      keyboardBarColor:  FORGROUND_COLOR,
       nextFocus: false,
       actions: [
         for (var _node in nodeList) ...{

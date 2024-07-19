@@ -167,13 +167,13 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               const Spacer(),
               checkedListLength(15.0),
               const SizedBox(width: 15),
-              Icon(Icons.delete, color: WHITE),
+              Icon(Icons.delete, color: FORGROUND_COLOR),
               Text(
                 "   Done!!!   ",
                 style:
-                    TextStyle(color: WHITE, fontWeight: FontWeight.bold),
+                    TextStyle(color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
               ),
-              Icon(Icons.delete, color: WHITE),
+              Icon(Icons.delete, color: FORGROUND_COLOR),
               const Spacer(),
             ]),
           ));
@@ -186,7 +186,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     final taskData = ref.watch(taskDataProvider);
     return Container(
         decoration: BoxDecoration(
-          color: WHITE,
+          color: FORGROUND_COLOR,
           shape: BoxShape.circle,
         ),
         padding: EdgeInsets.all(fontSize / 3),
@@ -238,7 +238,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       borderRadius:const BorderRadius.all(Radius.circular(15)),
                       //border: Border.all(color:Colors.grey,width: 1)
                       ),

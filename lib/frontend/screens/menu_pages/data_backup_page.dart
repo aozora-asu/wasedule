@@ -56,7 +56,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         //         ),
         //       ])
         //     ],
-        backgroundColor: WHITE,
+        backgroundColor: FORGROUND_COLOR,
         //   ),
         // ),
         body: SingleChildScrollView(
@@ -152,9 +152,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         MAIN_COLOR,
          Row(children: [
           const SizedBox(width: 20),
-          Icon(Icons.backup, color: WHITE),
+          Icon(Icons.backup, color: FORGROUND_COLOR),
           const SizedBox(width: 20),
-          Text("データをバックアップ", style: TextStyle(color: WHITE))
+          Text("データをバックアップ", style: TextStyle(color: FORGROUND_COLOR))
         ]));
   }
 
@@ -270,9 +270,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         ACCENT_COLOR,
          Row(children: [
           const SizedBox(width: 20),
-          Icon(Icons.downloading_outlined, color: WHITE),
+          Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
           const SizedBox(width: 20),
-          Text("バックアップを復元", style: TextStyle(color: WHITE))
+          Text("バックアップを復元", style: TextStyle(color: FORGROUND_COLOR))
         ]));
   }
 
@@ -319,9 +319,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 MAIN_COLOR,
                 Row(children: [
                   const SizedBox(width: 20),
-                  Icon(Icons.downloading_outlined, color: WHITE),
+                  Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
                   const SizedBox(width: 20),
-                  Text("ダウンロード実行", style: TextStyle(color: WHITE))
+                  Text("ダウンロード実行", style: TextStyle(color: FORGROUND_COLOR))
                 ]))
           ],
         );

@@ -36,7 +36,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
   });
 
 
-    Color contentColor = WHITE;
+    Color contentColor = FORGROUND_COLOR;
     Color backgroundColor = Colors.transparent;
     bool isLogoWhite =true;
 
@@ -348,7 +348,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         return AlertDialog(
           title:const Text("アプリをご利用いただきありがとうございます！"),
           content: const Text("感想や評価など、ぜひアプリストアまでお寄せください！"),
-          backgroundColor: WHITE,
+          backgroundColor: FORGROUND_COLOR,
           actions: <Widget>[
             buttonModel(
               (){
@@ -368,12 +368,12 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
 Widget popupMenuButton(color){
   return PopupMenuButton(
-    color: WHITE,
+    color: FORGROUND_COLOR,
     icon:Icon(Icons.more_vert,color:color),
     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
       PopupMenuItem(
         child: ListTile(
-          tileColor: WHITE,
+          tileColor: FORGROUND_COLOR,
           leading:const Icon(Icons.info_rounded,color:MAIN_COLOR),
           title :const Text('サポート'),
           onTap:(){
@@ -387,7 +387,7 @@ Widget popupMenuButton(color){
       const PopupMenuDivider(),
       PopupMenuItem(
         child: ListTile(
-          tileColor: WHITE,
+          tileColor: FORGROUND_COLOR,
           leading:const Icon(Icons.settings,color:MAIN_COLOR),
           title :const Text('設定'),
           onTap:(){

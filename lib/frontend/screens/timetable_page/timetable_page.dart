@@ -85,7 +85,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       });
                 },
                 backgroundColor: PALE_MAIN_COLOR,
-                child: Icon(Icons.add, color: WHITE)),
+                child: Icon(Icons.add, color: FORGROUND_COLOR)),
             const SizedBox(width: 10),
             timetableShareButton(context),
           ])),
@@ -96,7 +96,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     return FloatingActionButton(
         heroTag: "timetable_2",
         backgroundColor: MAIN_COLOR,
-        child: Icon(Icons.ios_share, color: WHITE),
+        child: Icon(Icons.ios_share, color: FORGROUND_COLOR),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -199,7 +199,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         quaterName = "   冬   ";
     }
 
-    Color quaterColor = WHITE;
+    Color quaterColor = FORGROUND_COLOR;
     switch (buttonSemester) {
       case 1:
         quaterColor = const Color.fromARGB(255, 255, 159, 191);
@@ -497,7 +497,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Color fontColor = BLUEGREY;
             if (index + 1 == DateTime.now().weekday && index != 6) {
               bgColor = PALE_MAIN_COLOR;
-              fontColor = WHITE;
+              fontColor = FORGROUND_COLOR;
             }
 
             return Container(
@@ -536,7 +536,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           if (returnBeginningDateTime(index + 1).isBefore(now) &&
               returnEndDateTime(index + 1).isAfter(now)) {
             bgColor = PALE_MAIN_COLOR;
-            fontColor = WHITE;
+            fontColor = FORGROUND_COLOR;
           }
 
           return Container(
@@ -600,7 +600,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Color cellBackGroundColor(int length, Color color) {
-    Color bgColor = WHITE;
+    Color bgColor = FORGROUND_COLOR;
     switch (length) {
       case 0:
         bgColor = increaseRed(color, amount: 0);
@@ -648,7 +648,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: ((context, index) {
-            Color bgColor = WHITE;
+            Color bgColor = FORGROUND_COLOR;
             Widget cellContents = GestureDetector(onTap: () {
               showDialog(
                   context: context,
@@ -863,7 +863,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     if (classRoom != null && classRoom != "" && classRoom != "-") {
       classRoomView = Container(
           decoration: BoxDecoration(
-              color: WHITE,
+              color: FORGROUND_COLOR,
               borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
@@ -1030,7 +1030,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget ondemandAddSell() {
-    Color bgColor = WHITE;
+    Color bgColor = FORGROUND_COLOR;
     return GestureDetector(
       onTap: () {
         showDialog(

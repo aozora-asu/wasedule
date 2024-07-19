@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
     PreferredSizeWidget? appBar;
     if (showAppBar) {
       appBar = AppBar(
-        leading: BackButton(color: WHITE),
+        leading: BackButton(color: FORGROUND_COLOR),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
         title: Column(
@@ -41,7 +41,7 @@ class SettingsPage extends StatelessWidget {
               Text(
                 '  設定',
                 style: TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.w800, color: WHITE),
+                    fontSize: 24, fontWeight: FontWeight.w800, color: FORGROUND_COLOR),
               ),
             ])
           ],
@@ -84,7 +84,7 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
       body: Row(
         children: [
           NavigationRail(
-            backgroundColor: WHITE,
+            backgroundColor: FORGROUND_COLOR,
             labelType: NavigationRailLabelType.selected,
             selectedIconTheme: const IconThemeData(color: MAIN_COLOR),
             selectedLabelTextStyle: const TextStyle(color: MAIN_COLOR),
@@ -134,7 +134,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   KeyboardActionsConfig _buildConfig(TextEditingController controller) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: WHITE,
+      keyboardBarColor: FORGROUND_COLOR,
       nextFocus: false,
       actions: [
         KeyboardActionsItem(
@@ -656,7 +656,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Row(children: [
-                  Text("   追加   ", style: TextStyle(color: WHITE)),
+                  Text("   追加   ", style: TextStyle(color: FORGROUND_COLOR)),
                 ])),
           ),
           const SizedBox(width: 5)

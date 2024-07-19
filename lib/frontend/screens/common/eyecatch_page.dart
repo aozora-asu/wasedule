@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         theme: ThemeData(
           fontFamily: "Noto_Sans_JP",
-          canvasColor: WHITE,
+          canvasColor: FORGROUND_COLOR,
         ),
         debugShowCheckedModeBanner: false,
         builder: (BuildContext context, Widget? child) {

@@ -256,12 +256,12 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   Row(
                                     children: [
                                       const Spacer(),
-                                      Icon(Icons.delete, color: WHITE),
+                                      Icon(Icons.delete, color: FORGROUND_COLOR),
                                       const SizedBox(width: 10),
                                       Text(
                                         "削除",
                                         style: TextStyle(
-                                            color: WHITE,
+                                            color: FORGROUND_COLOR,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const Spacer()
@@ -313,7 +313,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                           showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
-                                              backgroundColor: WHITE,
+                                              backgroundColor: FORGROUND_COLOR,
                                               content: const Text(
                                                 "テキストがクリップボードにコピーされました。",
                                                 style: TextStyle(
@@ -499,7 +499,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   Widget menuBar() {
     return Container(
         decoration: BoxDecoration(
-            color: WHITE,
+            color: FORGROUND_COLOR,
             border: const Border(top: BorderSide(color: Colors.grey))),
         child: Row(children: [
           IconButton(

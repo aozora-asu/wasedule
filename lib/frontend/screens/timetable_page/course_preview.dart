@@ -318,7 +318,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           maxLines: null,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
-              fillColor: WHITE,
+              fillColor: FORGROUND_COLOR,
               filled: true,
               border: InputBorder.none,
               hintText: hintText),
@@ -748,7 +748,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(10)),
                   padding:

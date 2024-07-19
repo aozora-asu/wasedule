@@ -58,9 +58,9 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
     }else{
       return Container(
         child:FloatingActionButton.extended(
-          label: Text("統計",style: TextStyle(color:WHITE),),
+          label: Text("統計",style: TextStyle(color:FORGROUND_COLOR),),
           backgroundColor: ACCENT_COLOR,
-          icon:  Icon(Icons.insert_chart_outlined_rounded,color:WHITE,size: 20,),
+          icon:  Icon(Icons.insert_chart_outlined_rounded,color:FORGROUND_COLOR,size: 20,),
           onPressed: (){
             Navigator.push(
               context,
@@ -212,7 +212,7 @@ Column(
           },
           
           style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
-          child: Text("ページの作成",style: TextStyle(color:WHITE),),
+          child: Text("ページの作成",style: TextStyle(color:FORGROUND_COLOR),),
         ),
         ])
        )
@@ -451,7 +451,7 @@ Color highLightTodayTile(String date,String formattedDuration){
    return const Color.fromARGB(255, 255, 220, 220);
  }else{
   if(formattedDuration == "0h00m"){
-   return WHITE;
+   return FORGROUND_COLOR;
   }else{
    return const Color.fromARGB(255, 255, 255, 212);
   }
@@ -576,7 +576,7 @@ void AddNewPage(String targetMonth){
         style:  TextStyle(
           fontSize: 10.0,
           fontWeight: FontWeight.bold,
-          color: WHITE,
+          color: FORGROUND_COLOR,
         ),
       ),
     )
@@ -642,7 +642,7 @@ void AddNewPage(String targetMonth){
                         Container(
                           padding: const EdgeInsets.all(7.5),
                           decoration:  BoxDecoration(
-                            color:WHITE,
+                            color:FORGROUND_COLOR,
                             borderRadius:const BorderRadius.all(Radius.circular(20))
                           ),
                           child:SingleChildScrollView(
@@ -714,7 +714,7 @@ void AddNewPage(String targetMonth){
               backgroundColor: WidgetStatePropertyAll(Colors.greenAccent),
               minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
-            child:  Text("+ アイテムを追加…",style:TextStyle(color:WHITE)),
+            child:  Text("+ アイテムを追加…",style:TextStyle(color:FORGROUND_COLOR)),
             )
           ]),
         ],
@@ -791,7 +791,7 @@ void AddNewPage(String targetMonth){
                         child:Text(
                           targetDayData["plan"].elementAt(index).trim(),
                           style: TextStyle(
-                            color:WHITE,
+                            color:FORGROUND_COLOR,
                             fontSize:20
                       ),
                   )) 
@@ -901,7 +901,7 @@ void AddNewPage(String targetMonth){
                         Container(
                           padding: const EdgeInsets.all(7.5),
                           decoration: BoxDecoration(
-                            color:WHITE,
+                            color:FORGROUND_COLOR,
                             borderRadius: BorderRadius.all(Radius.circular(20))
                           ),
                           child:SingleChildScrollView(
@@ -953,7 +953,7 @@ void AddNewPage(String targetMonth){
               backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR),
               minimumSize: WidgetStatePropertyAll(Size(1000, 35))
               ),
-            child: Text("とじる",style:TextStyle(color:WHITE)),
+            child: Text("とじる",style:TextStyle(color:FORGROUND_COLOR)),
             )
           ]),
         ],
@@ -988,7 +988,7 @@ void AddNewPage(String targetMonth){
                    filled: true,
                    fillColor: Colors.greenAccent,
                   ),
-                  style:TextStyle(color:WHITE,fontSize:20),
+                  style:TextStyle(color:FORGROUND_COLOR,fontSize:20),
                 ),
               ),
             ],
@@ -999,7 +999,7 @@ void AddNewPage(String targetMonth){
                 Navigator.of(context).pop(); // ダイアログを閉じる
               },
               style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.redAccent)),
-              child: Text('戻る',style:TextStyle(color:WHITE)),
+              child: Text('戻る',style:TextStyle(color:FORGROUND_COLOR)),
             ),
             ElevatedButton(
               onPressed: () async{
@@ -1035,7 +1035,7 @@ void AddNewPage(String targetMonth){
                        Navigator.of(context).pop();
               },
               style:const  ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.greenAccent)),
-              child: Text('ＯＫ',style:TextStyle(color:WHITE)),
+              child: Text('ＯＫ',style:TextStyle(color:FORGROUND_COLOR)),
             ),
           ],
         );
@@ -1069,7 +1069,7 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
     return  Container(
        height: switchHeight(ref.read(dataProvider).isVertical),
        width:SizeConfig.blockSizeHorizontal! *67,
-       color: WHITE,
+       color: FORGROUND_COLOR,
        child:SizedBox(
         child:ListView.separated(
           separatorBuilder: (context, index) {
@@ -1269,7 +1269,7 @@ class  _TextFieldObjectState extends ConsumerState<TextFieldObject> {
       },
       style: TextStyle(
        fontSize: 10, // フォントサイズ
-       color: WHITE, // 文字色,
+       color: FORGROUND_COLOR, // 文字色,
        fontWeight:FontWeight.bold
       ),
       scrollPhysics:  switchPhysics(ref.read(dataProvider).isVertical),

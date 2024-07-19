@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:intl/intl.dart';
 
@@ -29,6 +32,7 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
     ref.watch(taskDataProvider);
 
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
         body: SizedBox(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -37,17 +41,22 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
             child:Row(children:[
             const Text(
               "未達成の期限切れタスク",
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 25),
+              style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 20,color:BLUEGREY),
              ),
-             const SizedBox(width:10),
-             listLengthView(expiredData.length, 15.0)
+             const SizedBox(width:5),
+             listLengthView(expiredData.length, 15.0),
+             const SizedBox(width:5),
+             GestureDetector(
+              onTap:()=> showPageDescriptionDialog(context),
+              child:const Icon(Icons.info,color:Colors.grey),
+             ),
+             const Spacer(),
            ]) 
           ),
           const Divider(
-            thickness: 2.5,
+            thickness: 1,
             height:2.5,
-            indent: 7,
-            endIndent: 7,
           ),
           Expanded(child:
           ListView.builder(
@@ -57,25 +66,32 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
                   expiredData.elementAt(i)["dtEnd"]);
               String adjustedDtEnd = ("期限：${DateFormat("yyyy年MM月dd日 HH:mm").format(dateEnd)}");
               return Container(
-                  width: SizeConfig.blockSizeHorizontal! * 100,
-                  padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
+                margin:const EdgeInsets.symmetric(horizontal: 15,vertical:7.5),
+                padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, bottom: 10.0, top: 10.0),
+                decoration: roundedBoxdecorationWithShadow(),
+                child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "${expiredData.elementAt(i)["summary"]}",
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w800),
+                                  fontWeight: FontWeight.w800),
                               ),
-                              Text("${expiredData.elementAt(i)["title"]}"),
+                              Text("${expiredData.elementAt(i)["title"]}",
+                                style:const TextStyle(
+                                  color: Colors.grey,
+                                )
+                              ),
+                              const SizedBox(height:7.5),
                               Text(
                                   "${expiredData.elementAt(i)["description"]}"),
                               Row(children:[
-                                Text(adjustedDtEnd),
+                                Text(adjustedDtEnd,
+                                  style:const TextStyle(
+                                    color: Colors.grey,
+                                  )
+                                ),
                                 const SizedBox(width:10),
                                 InkWell(
                                   onTap: () async {
@@ -93,13 +109,7 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
                                     Icons.delete,color:Colors.grey)),
                                 
                               ])
-                            ]),
-                        const Divider(
-                          thickness: 2.5,
-                          indent: 7,
-                          endIndent: 7,
-                        )
-                      ]));
+                            ]));
             },
             itemCount: expiredData.length,
           ),
@@ -122,4 +132,16 @@ class _ExpiredTaskPageState extends ConsumerState<ExpiredTaskPage> {
     return result;
   }
 
+  void showPageDescriptionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const CupertinoAlertDialog(
+          title: Text('「未達成の期限切れタスク」ページ'),
+          content: Text('このページには、アプリ内で「完了」操作がされないまま期限を超過した課題が表示されます。完了した課題は、課題ページ内のチェックボックスまたは通知アクションから「完了」状態にしましょう。',
+            style:TextStyle(color:Colors.grey)),
+        );
+      },
+    );
+  }
 }

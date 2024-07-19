@@ -43,7 +43,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         ref.watch(scheduleFormProvider).tagController.text);
     SizeConfig().init(context);
     return Scaffold(
-        backgroundColor: WHITE,
+        backgroundColor: FORGROUND_COLOR,
         // appBar: AppBar(
         //   leading: const BackButton(color: WHITE),
         //   backgroundColor: MAIN_COLOR,
@@ -160,9 +160,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
        Row(
         children: [
           const SizedBox(width: 20),
-          Icon(Icons.more_vert_rounded, color: WHITE),
+          Icon(Icons.more_vert_rounded, color: FORGROUND_COLOR),
           const SizedBox(width: 20),
-          Text("タグを選択", style: TextStyle(color: WHITE)),
+          Text("タグを選択", style: TextStyle(color: FORGROUND_COLOR)),
         ],
       ),
       verticalpadding: 8
@@ -299,9 +299,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           MAIN_COLOR,
            Row(children: [
             const SizedBox(width: 20),
-            Icon(Icons.backup, color: WHITE),
+            Icon(Icons.backup, color: FORGROUND_COLOR),
             const SizedBox(width: 20),
-            Text("予定をアップロード", style: TextStyle(color: WHITE))
+            Text("予定をアップロード", style: TextStyle(color: FORGROUND_COLOR))
           ]));
     } else {
       return const SizedBox();
@@ -393,9 +393,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   ),
                   child:  Row(
                     children: [
-                      Icon(Icons.upload_file, color: WHITE),
+                      Icon(Icons.upload_file, color: FORGROUND_COLOR),
                       const SizedBox(width: 20),
-                      Text("アップロード", style: TextStyle(color: WHITE)),
+                      Text("アップロード", style: TextStyle(color: FORGROUND_COLOR)),
                     ],
                   ),
                 ),
@@ -618,12 +618,12 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                    Row(children: [
                     Icon(
                       Icons.qr_code_2_outlined,
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                     ),
                     const SizedBox(width: 5),
                     Text("共有",
                         style: TextStyle(
-                          color: WHITE,
+                          color: FORGROUND_COLOR,
                           fontWeight: FontWeight.bold,
                         )),
                   ])),
@@ -708,9 +708,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
        Row(
         children: [
          const  SizedBox(width: 20),
-          Icon(Icons.install_mobile, color: WHITE),
+          Icon(Icons.install_mobile, color: FORGROUND_COLOR),
          const SizedBox(width: 20),
-          Text("予定を受信する", style: TextStyle(color: WHITE)),
+          Text("予定を受信する", style: TextStyle(color: FORGROUND_COLOR)),
         ],
       ),
       verticalpadding: 8

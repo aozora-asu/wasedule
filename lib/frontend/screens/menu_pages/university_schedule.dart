@@ -134,11 +134,11 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         MAIN_COLOR,
          Row(children:[
          const Spacer(),
-          Icon(Icons.downloading_outlined,color:WHITE),
+          Icon(Icons.downloading_outlined,color:FORGROUND_COLOR),
          const SizedBox(width:30),
           Text(
           "大学年間行事予定",
-          style: TextStyle(color:WHITE),  
+          style: TextStyle(color:FORGROUND_COLOR),  
           ),
          const Spacer()
         ]),
@@ -157,11 +157,11 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
         PALE_MAIN_COLOR,
          Row(children:[
          const Spacer(),
-          Icon(Icons.downloading_outlined,color:WHITE),
+          Icon(Icons.downloading_outlined,color:FORGROUND_COLOR),
          const SizedBox(width:30),
           Text(
           "各学部年間行事予定",
-          style: TextStyle(color:WHITE),  
+          style: TextStyle(color:FORGROUND_COLOR),  
           ),
          const Spacer()
         ]),
@@ -351,7 +351,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                   alphabet,
                   style: TextStyle(
                     fontSize:SizeConfig.blockSizeHorizontal! *2.75,
-                    color:WHITE,
+                    color:FORGROUND_COLOR,
                     fontWeight: FontWeight.bold
                   ),
               ),
@@ -401,9 +401,9 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                 MAIN_COLOR,
                  Row(children: [
                   const SizedBox(width: 20),
-                  Icon(Icons.downloading_outlined, color: WHITE),
+                  Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
                   const SizedBox(width: 20),
-                  Text("ダウンロード実行", style: TextStyle(color: WHITE))
+                  Text("ダウンロード実行", style: TextStyle(color: FORGROUND_COLOR))
                 ]))
           ],
         );

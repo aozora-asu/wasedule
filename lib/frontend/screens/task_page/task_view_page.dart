@@ -157,7 +157,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     }
                   },
                   backgroundColor: MAIN_COLOR,
-                  child:  Icon(Icons.refresh_outlined, color: WHITE),
+                  child:  Icon(Icons.refresh_outlined, color: FORGROUND_COLOR),
                 ),
               ],
             )));
@@ -480,7 +480,7 @@ Widget listLengthView(int target, double fontSize) {
         child: Text(
           target.toString(),
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: WHITE, fontSize: fontSize),
+              fontWeight: FontWeight.bold, color: FORGROUND_COLOR, fontSize: fontSize),
         ));
   }
 }

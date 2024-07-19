@@ -184,7 +184,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
       Container(
           height: SizeConfig.blockSizeVertical! * 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1.5), color: WHITE),
+              border: Border.all(color: Colors.grey, width: 1.5), color: FORGROUND_COLOR),
           child: FlutterMap(
             mapController: _animatedMapController.mapController,
             options: MapOptions(
@@ -348,7 +348,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     child: Text(
                       location,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                          TextStyle(fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
                     ),
                   )
                 ]);
@@ -364,7 +364,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     child: Text(
                       location,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                          TextStyle(fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
                     ),
                   )
                 ]);
@@ -414,7 +414,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           return Container(
               height: SizeConfig.blockSizeVertical! * 60,
               decoration: BoxDecoration(
-                color: WHITE,
+                color: FORGROUND_COLOR,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -427,7 +427,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     width: SizeConfig.blockSizeHorizontal! * 100,
                     decoration: BoxDecoration(
                       gradient: gradationDecoration(color2: Colors.black),
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
@@ -440,7 +440,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color: WHITE))
+                              color: FORGROUND_COLOR))
                     ])),
                 const Divider(
                   height: 2,
@@ -456,7 +456,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   ),
                   Container(
                     height: SizeConfig.blockSizeVertical! * 60,
-                    color: WHITE.withOpacity(0.6),
+                    color: FORGROUND_COLOR.withOpacity(0.6),
                     padding: const EdgeInsets.all(10),
                     child: emptyClassRooms(location),
                   )
@@ -611,7 +611,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                             gradient: gradationDecoration()),
                         child: Text(searchResult,
                             style: TextStyle(
-                              color: WHITE,
+                              color: FORGROUND_COLOR,
                               fontWeight: FontWeight.bold,
                               fontSize: SizeConfig.blockSizeHorizontal! * 5,
                             ))),
@@ -769,7 +769,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           return Container(
               height: SizeConfig.blockSizeVertical! * 70,
               decoration: BoxDecoration(
-                color: WHITE,
+                color: FORGROUND_COLOR,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -781,7 +781,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     height: SizeConfig.blockSizeVertical! * 6,
                     width: SizeConfig.blockSizeHorizontal! * 100,
                     decoration: BoxDecoration(
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       gradient: gradationDecoration(
                           color1: Colors.orange, color2: Colors.brown),
                       borderRadius: const BorderRadius.only(
@@ -796,7 +796,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color: WHITE))
+                              color: FORGROUND_COLOR))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 Row(children: [
@@ -819,7 +819,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 Expanded(
                     child: Stack(children: [
                   Container(
-                      color: WHITE.withOpacity(0.6),
+                      color: FORGROUND_COLOR.withOpacity(0.6),
                       child: Container(
                         width: SizeConfig.blockSizeHorizontal! * 100,
                         height: SizeConfig.blockSizeVertical! * 75,
@@ -918,7 +918,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           return Container(
               height: SizeConfig.blockSizeVertical! * 75,
               decoration: BoxDecoration(
-                color: WHITE,
+                color: FORGROUND_COLOR,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -932,7 +932,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     decoration: BoxDecoration(
                       gradient: gradationDecoration(
                           color1: Colors.red, color2: Colors.brown),
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
@@ -945,7 +945,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                           style: TextStyle(
                               fontSize: SizeConfig.blockSizeVertical! * 3,
                               fontWeight: FontWeight.bold,
-                              color: WHITE))
+                              color: FORGROUND_COLOR))
                     ])),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 1),
                 //const Divider(height: 2,thickness: 2,),
@@ -968,7 +968,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 Expanded(
                     child: Stack(children: [
                   Container(
-                      color: WHITE.withOpacity(0.6),
+                      color: FORGROUND_COLOR.withOpacity(0.6),
                       child: Container(
                         width: SizeConfig.blockSizeHorizontal! * 100,
                         height: SizeConfig.blockSizeVertical! * 75,
@@ -1139,7 +1139,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
                 child: Text(
                   searchResult,
                   style: TextStyle(
-                    color: WHITE,
+                    color: FORGROUND_COLOR,
                     fontWeight: FontWeight.bold,
                     fontSize: SizeConfig.blockSizeHorizontal! * 5,
                   ),

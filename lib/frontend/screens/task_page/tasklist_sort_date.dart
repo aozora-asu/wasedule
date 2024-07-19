@@ -163,12 +163,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               const Spacer(),
               checkedListLength(15.0),
               const SizedBox(width: 15),
-              Icon(Icons.delete, color: WHITE),
+              Icon(Icons.delete, color: FORGROUND_COLOR),
               Text(
                 "   Done!!!   ",
-                style: TextStyle(color: WHITE, fontWeight: FontWeight.bold),
+                style: TextStyle(color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
               ),
-              Icon(Icons.delete, color: WHITE),
+              Icon(Icons.delete, color: FORGROUND_COLOR),
               const Spacer(),
             ]),
           ));
@@ -182,7 +182,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
     return Container(
         decoration: BoxDecoration(
-          color: WHITE,
+          color: FORGROUND_COLOR,
           shape: BoxShape.circle,
         ),
         padding: EdgeInsets.all(fontSize / 3),
@@ -220,7 +220,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w700,
-              color: WHITE,
+              color: FORGROUND_COLOR,
             ),
           );
         } else {
@@ -256,7 +256,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               style: TextStyle(
                 fontSize: SizeConfig.blockSizeHorizontal! * 4,
                 fontWeight: FontWeight.w700,
-                color: WHITE,
+                color: FORGROUND_COLOR,
               ),
             )); // 日数の差を出力
       } else {
@@ -280,7 +280,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w700,
-              color: WHITE,
+              color: FORGROUND_COLOR,
             ),
           )); // 日数の差を出力
     } else {
@@ -294,7 +294,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             style: TextStyle(
               fontSize: SizeConfig.blockSizeHorizontal! * 4,
               fontWeight: FontWeight.w700,
-              color: WHITE,
+              color: FORGROUND_COLOR,
             ),
           ));
     }
@@ -370,7 +370,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: WHITE,
+                      color: FORGROUND_COLOR,
                       borderRadius: radius,
                     ),
                     child: Column(children: [
