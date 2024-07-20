@@ -16,7 +16,7 @@ import "../../frontend/screens/common/eyecatch_page.dart";
 import "../../static/constant.dart";
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import "../../backend/sharepreference.dart";
+import "../DB/sharepreference.dart";
 
 import 'package:intl/date_symbol_data_local.dart';
 

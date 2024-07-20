@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
-import 'package:flutter_calandar_app/backend/sharepreference.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
@@ -41,7 +41,9 @@ class SettingsPage extends StatelessWidget {
               Text(
                 '  設定',
                 style: TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.w800, color: FORGROUND_COLOR),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: FORGROUND_COLOR),
               ),
             ])
           ],
@@ -195,17 +197,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
           child: notificationBody(),
         )));
 
-      case 2: return Expanded(child:
-        Padding(
+      case 2:
+        return Expanded(
+            child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
           child: timetableSettingsBody(),
         ));
 
       default:
-        return Expanded(child:
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-            child: themeSettingsBody(),
+        return Expanded(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+          child: themeSettingsBody(),
         ));
     }
   }
@@ -990,106 +993,108 @@ class _MainContentsState extends ConsumerState<MainContents> {
         return "毎日";
     }
   }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- Widget timetableSettingsBody() {
-    return 
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-     children: [
-      Text(
-        '  時間割設定…',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
-            fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 5),
-      Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-          margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '出欠記録の設定',
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                  fontWeight: FontWeight.bold,
-                  color: BLUEGREY),
-            ),
-            const Divider(
-              height: 2,
-              thickness: 2,
-              color: BLUEGREY,
-            ),
-            const SizedBox(height: 2),
-            attendDialogSettingSwitch(),
-            const SizedBox(height: 2),
-          ])),
+  Widget timetableSettingsBody() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            '  時間割設定…',
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 5),
+          Container(
+              decoration: roundedBoxdecorationWithShadow(),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '出欠記録の設定',
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold,
+                          color: BLUEGREY),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BLUEGREY,
+                    ),
+                    const SizedBox(height: 2),
+                    attendDialogSettingSwitch(),
+                    const SizedBox(height: 2),
+                  ])),
+        ]);
+  }
+
+  Widget attendDialogSettingSwitch() {
+    return Row(children: [
+      const Text("出欠記録画面の自動表示"),
+      const Spacer(),
+      CupertinoSwitch(
+        activeColor: PALE_MAIN_COLOR,
+        value: SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.showAttendDialogAutomatically),
+        onChanged: (value) async {
+          SharepreferenceHandler().setValue(
+              SharepreferenceKeys.showAttendDialogAutomatically, value);
+          setState(() {});
+        },
+      )
     ]);
   }
-
-  Widget attendDialogSettingSwitch(){
-      return Row(children: [
-        const Text("出欠記録画面の自動表示"),
-        const Spacer(),
-        CupertinoSwitch(
-          activeColor: PALE_MAIN_COLOR,
-          value: SharepreferenceHandler()
-              .getValue(SharepreferenceKeys.showAttendDialogAutomatically),
-          onChanged: (value) async {
-            SharepreferenceHandler()
-                .setValue(SharepreferenceKeys.showAttendDialogAutomatically, value);
-            setState(() {});
-          },
-        )
-      ]);
-  }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   String bgColorTheme = "";
 
   Widget themeSettingsBody() {
-    return 
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-     children: [
-      Text(
-        '  テーマ設定…',
-        style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
-            fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 5),
-      Container(
-          decoration: roundedBoxdecorationWithShadow(),
-          padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-          margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '背景カラーテーマの設定',
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                  fontWeight: FontWeight.bold,
-                  color: BLUEGREY),
-            ),
-            const Divider(
-              height: 2,
-              thickness: 2,
-              color: BLUEGREY,
-            ),
-            const SizedBox(height: 2),
-            buildThemeSettingList(),
-            const SizedBox(height: 2),
-            const Text(
-              "設定は次回起動時から適用されます。",
-              style: TextStyle(color: Colors.grey),
-            )
-          ])),
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            '  テーマ設定…',
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 5),
+          Container(
+              decoration: roundedBoxdecorationWithShadow(),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '背景カラーテーマの設定',
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontWeight: FontWeight.bold,
+                          color: BLUEGREY),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BLUEGREY,
+                    ),
+                    const SizedBox(height: 2),
+                    buildThemeSettingList(),
+                    const SizedBox(height: 2),
+                    const Text(
+                      "設定は次回起動時から適用されます。",
+                      style: TextStyle(color: Colors.grey),
+                    )
+                  ])),
+        ]);
   }
 
   Widget buildThemeSettingList() {

@@ -20,7 +20,7 @@ import '../../assist_files/colors.dart';
 
 import "../../../backend/DB/handler/user_info_db_handler.dart";
 
-import "../../../backend/email.dart";
+import "../../../backend/service/email.dart";
 
 class TaskViewPage extends ConsumerStatefulWidget {
   const TaskViewPage({super.key});
@@ -153,11 +153,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                       isLoad = true;
                       await loadData();
                       isLoad = false;
-                      setState((){});
+                      setState(() {});
                     }
                   },
                   backgroundColor: MAIN_COLOR,
-                  child:  Icon(Icons.refresh_outlined, color: FORGROUND_COLOR),
+                  child: Icon(Icons.refresh_outlined, color: FORGROUND_COLOR),
                 ),
               ],
             )));
@@ -448,24 +448,20 @@ void showDisclaimerDialogue(context) {
       return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
           title: const Text('注意事項'),
-          content:const Text(
+          content: const Text(
             "・課題の公開に条件がある場合\n（例：次の条件に合致しない限り利用できません: 活動「〇〇動画」が完了マークされた場合）\nは、条件を満たした課題のみが反映されます。適宜リロードをお願いします。\n\n・課題に添付されているファイルは取得されません。「課題の詳細」内のMoodleビューからご覧ください。\n\n・課題の〆切日時がMoodle側で更新された場合、反映するにはリロードを行なってください。",
             overflow: TextOverflow.clip,
-                  ),
+          ),
           actions: <Widget>[
-            buttonModel(
-              () {
-                Navigator.of(context).pop();
-              },PALE_MAIN_COLOR,'閉じる',
-              verticalpadding: 10
-            ),
+            buttonModel(() {
+              Navigator.of(context).pop();
+            }, PALE_MAIN_COLOR, '閉じる', verticalpadding: 10),
           ],
         );
       });
     },
   );
 }
-
 
 Widget listLengthView(int target, double fontSize) {
   if (target == 0) {
@@ -480,7 +476,9 @@ Widget listLengthView(int target, double fontSize) {
         child: Text(
           target.toString(),
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: FORGROUND_COLOR, fontSize: fontSize),
+              fontWeight: FontWeight.bold,
+              color: FORGROUND_COLOR,
+              fontSize: fontSize),
         ));
   }
 }

@@ -15,7 +15,7 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import "../../../backend/home_widget.dart";
+import "../../../backend/service/home_widget.dart";
 
 class TimeTablePage extends ConsumerStatefulWidget {
   const TimeTablePage({super.key});

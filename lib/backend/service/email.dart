@@ -1,7 +1,7 @@
 import "package:emailjs/emailjs.dart";
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import "./DB/handler/user_info_db_handler.dart";
+import "../DB/handler/user_info_db_handler.dart";
 
 class Message {
   Message({required this.content, this.url});

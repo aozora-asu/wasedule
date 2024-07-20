@@ -3,13 +3,13 @@ import "package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart";
 import "package:intl/intl.dart";
 import 'package:ulid/ulid.dart';
 
-import "DB/handler/schedule_metaInfo_db_handler.dart";
-import "DB/handler/arbeit_db_handler.dart";
-import "DB/handler/schedule_template_db_handler.dart";
+import "../DB/handler/schedule_metaInfo_db_handler.dart";
+import "../DB/handler/arbeit_db_handler.dart";
+import "../DB/handler/schedule_template_db_handler.dart";
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
-import "./DB/handler/schedule_db_handler.dart";
-import "DB/handler/todo_db_handler.dart";
-import "DB/handler/user_info_db_handler.dart";
+import "../DB/handler/schedule_db_handler.dart";
+import "../DB/handler/todo_db_handler.dart";
+import "../DB/handler/user_info_db_handler.dart";
 
 String insertHyphens(String input) {
   const chunkSize = 4;

@@ -1,3 +1,5 @@
+import "./status_code.dart";
+
 /// サーバーに関するエラーコード
 enum ServerCommonErrorCode implements StatusCode {
   systemError(
@@ -59,27 +61,5 @@ class ServerCommonError extends CustomException {
       throw const ServerCommonError(ServerCommonErrorCode.systemError);
     }
     return ServerCommonError(errorInfo);
-  }
-}
-
-abstract class StatusCode {
-  const StatusCode();
-  String get statusCode;
-  String get statusTitle;
-  String get statusMessage;
-}
-
-abstract class CustomException implements Exception {
-  const CustomException(
-    this.statusCode, {
-    this.info,
-  });
-
-  final StatusCode statusCode;
-  final dynamic info;
-
-  @override
-  String toString() {
-    return 'CustomException{statusCode: ${statusCode.statusCode}, title: ${statusCode.statusTitle}, message: ${statusCode.statusMessage}, info: $info}';
   }
 }

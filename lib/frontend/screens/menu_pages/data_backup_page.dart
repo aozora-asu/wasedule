@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_calandar_app/backend/firebase_handler.dart';
+import 'package:flutter_calandar_app/backend/firebase/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -64,11 +64,11 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 child: Column(children: [
           thumbnailImage(),
           Container(
-              
               width: SizeConfig.blockSizeHorizontal! * 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: BACKGROUND_COLOR,),
+                color: BACKGROUND_COLOR,
+              ),
               child: Column(children: [
                 const SizedBox(height: 15),
                 toggleSwitch(),
@@ -116,7 +116,6 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     }
   }
 
-
   Widget backupDownloadPage() {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -137,20 +136,19 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget backUpUploadButton() {
-    return buttonModelWithChild(
-        () async {
-          String? id = await backup();
+    return buttonModelWithChild(() async {
+      String? id = await backup();
 
-          if (id == null) {
-            showBackupFailDialogue("バックアップが失敗しました。");
-          } else {
-            showBackUpDoneDialogue(id);
-          }
+      if (id == null) {
+        showBackupFailDialogue("バックアップが失敗しました。");
+      } else {
+        showBackUpDoneDialogue(id);
+      }
 
-          setState(() {});
-        },
+      setState(() {});
+    },
         MAIN_COLOR,
-         Row(children: [
+        Row(children: [
           const SizedBox(width: 20),
           Icon(Icons.backup, color: FORGROUND_COLOR),
           const SizedBox(width: 20),
@@ -247,7 +245,6 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     }
   }
 
-
   Widget backupUploadPage() {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -263,12 +260,11 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget backUpDownloadButton() {
-    return buttonModelWithChild(
-        () {
-          showDownloadConfirmDialogue();
-        },
+    return buttonModelWithChild(() {
+      showDownloadConfirmDialogue();
+    },
         ACCENT_COLOR,
-         Row(children: [
+        Row(children: [
           const SizedBox(width: 20),
           Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
           const SizedBox(width: 20),
@@ -300,22 +296,21 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
               },
             ),
             const SizedBox(height: 10),
-            buttonModelWithChild(
-                () async {
-                  String id = idController.text;
-                  if (id.isNotEmpty) {
-                    //ここにバックアップの実行処理を書き込む（ダウンロード）
-                    bool isBackupSuccess = await recoveryBackup(id);
-                    Navigator.pop(context);
-                    if (isBackupSuccess) {
-                      showDownloadDoneDialogue("データが復元されました！");
-                    } else {
-                      showDownloadFailDialogue("データの復元に失敗しました");
-                    }
-                  } else {
-                    showDownloadFailDialogue("IDを入力してください。");
-                  }
-                },
+            buttonModelWithChild(() async {
+              String id = idController.text;
+              if (id.isNotEmpty) {
+                //ここにバックアップの実行処理を書き込む（ダウンロード）
+                bool isBackupSuccess = await recoveryBackup(id);
+                Navigator.pop(context);
+                if (isBackupSuccess) {
+                  showDownloadDoneDialogue("データが復元されました！");
+                } else {
+                  showDownloadFailDialogue("データの復元に失敗しました");
+                }
+              } else {
+                showDownloadFailDialogue("IDを入力してください。");
+              }
+            },
                 MAIN_COLOR,
                 Row(children: [
                   const SizedBox(width: 20),

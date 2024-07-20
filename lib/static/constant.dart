@@ -1,22 +1,23 @@
+import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
-import "error_exception/error.dart";
 import 'package:timezone/timezone.dart' as tz;
 
 enum Term {
-  springQuarter(value: "spring_quarter", jp: "春クォーター", short: "春"),
-  summerQuarter(value: "summer_quarter", jp: "夏クォーター", short: "夏"),
-  springSemester(value: "spring_semester", jp: "春学期", short: "春"),
-  fallQuarter(value: "fall_quarter", jp: "秋クォーター", short: "秋"),
-  winterQuarter(value: "winter_quarter", jp: "冬クォーター", short: "冬"),
-  fallSemester(value: "fall_semester", jp: "秋学期", short: "秋"),
-  fullYear(value: "full_year", jp: "通年", short: null),
+  springQuarter(value: "spring_quarter", text: "春クォーター", shortText: "春"),
+  summerQuarter(value: "summer_quarter", text: "夏クォーター", shortText: "夏"),
+  springSemester(value: "spring_semester", text: "春学期", shortText: "春"),
+  fallQuarter(value: "fall_quarter", text: "秋クォーター", shortText: "秋"),
+  winterQuarter(value: "winter_quarter", text: "冬クォーター", shortText: "冬"),
+  fallSemester(value: "fall_semester", text: "秋学期", shortText: "秋"),
+  fullYear(value: "full_year", text: "通年", shortText: null),
   ;
 
-  const Term({required this.value, required this.jp, required this.short});
-  final String jp;
+  const Term(
+      {required this.value, required this.text, required this.shortText});
+  final String text;
   final String value;
-  final String? short;
+  final String? shortText;
 }
 
 class Class {
@@ -73,7 +74,7 @@ class Class {
     try {
       return keys[period];
     } catch (e) {
-      const ServerCommonError(ServerCommonErrorCode.forbiddenError);
+      const CommonException(CommonExceptionCode.indexException);
     }
   }
 

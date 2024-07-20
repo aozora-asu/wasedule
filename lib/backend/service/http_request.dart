@@ -88,7 +88,7 @@ Future<List<Map<String, dynamic>>> getTaskFromHttp(String urlString) async {
 
 
 
-//@return {"events":[{
+//@return [{
 // 						"SUMMARY":"#1 アンケート (アンケート開始)",
 // 						"DESCRIPTION":"#1 アンケート",
 // 						"DTEND":20231022035900000Z,

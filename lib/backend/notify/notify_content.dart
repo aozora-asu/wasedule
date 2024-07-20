@@ -8,7 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import "notify_db.dart";
 import "../../static/converter.dart";
-import "../sharepreference.dart";
+import "../DB/sharepreference.dart";
 import 'dart:convert';
 
 int notifyID = 0;

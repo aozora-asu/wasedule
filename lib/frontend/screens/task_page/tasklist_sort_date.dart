@@ -10,7 +10,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet
 
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import "../../../backend/sharepreference.dart";
+import "../../../backend/DB/sharepreference.dart";
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
   Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
@@ -166,7 +166,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               Icon(Icons.delete, color: FORGROUND_COLOR),
               Text(
                 "   Done!!!   ",
-                style: TextStyle(color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
               ),
               Icon(Icons.delete, color: FORGROUND_COLOR),
               const Spacer(),

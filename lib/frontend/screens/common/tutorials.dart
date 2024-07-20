@@ -7,7 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import "../../../backend/sharepreference.dart";
+import "../../../backend/DB/sharepreference.dart";
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});

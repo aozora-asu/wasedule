@@ -2,11 +2,11 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/task.dart';
 import "my_course_db.dart";
-import "../../http_request.dart";
+import "../../service/http_request.dart";
 
 import '../../notify/notify_content.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import "../../sharepreference.dart";
+import "../sharepreference.dart";
 
 class TaskDatabaseHelper {
   late Database _database;

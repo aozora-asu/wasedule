@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import "../frontend/screens/map_page/const_map_info.dart";
+import "../../frontend/screens/map_page/const_map_info.dart";
 
 SharedPreferences? pref;
 
@@ -70,6 +70,12 @@ class SharepreferenceKeys {
       SharepreferenceKeys._(key: "bgColorTheme", defaultValue: "white");
   static const showAttendDialogAutomatically = SharepreferenceKeys._(
       key: "showAttendDialogAutomatically", defaultValue: true);
+  static const calendarURL =
+      SharepreferenceKeys._(key: "calendarURL", defaultValue: null);
+  static const backupID =
+      SharepreferenceKeys._(key: "backupID", defaultValue: null);
+  static const expireDayBackupID =
+      SharepreferenceKeys._(key: "expireDayBackupID", defaultValue: true);
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =

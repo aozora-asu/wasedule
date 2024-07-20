@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_metaInfo_db_handler.dart';
-import 'package:flutter_calandar_app/backend/firebase_handler.dart';
+import 'package:flutter_calandar_app/backend/firebase/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
@@ -76,11 +76,10 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 100,
               decoration: BoxDecoration(
-                color:BACKGROUND_COLOR,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30))
-              ),
+                  color: BACKGROUND_COLOR,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30))),
               child: Column(children: [
                 const SizedBox(height: 15),
                 toggleSwitch(),
@@ -151,22 +150,20 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget chooseTagButton() {
-    return buttonModelWithChild(
-      () async {
-        await showTagDialogue(ref, context, setState);
-        setState(() {});
-      },
-      PALE_MAIN_COLOR,
-       Row(
-        children: [
-          const SizedBox(width: 20),
-          Icon(Icons.more_vert_rounded, color: FORGROUND_COLOR),
-          const SizedBox(width: 20),
-          Text("タグを選択", style: TextStyle(color: FORGROUND_COLOR)),
-        ],
-      ),
-      verticalpadding: 8
-    );
+    return buttonModelWithChild(() async {
+      await showTagDialogue(ref, context, setState);
+      setState(() {});
+    },
+        PALE_MAIN_COLOR,
+        Row(
+          children: [
+            const SizedBox(width: 20),
+            Icon(Icons.more_vert_rounded, color: FORGROUND_COLOR),
+            const SizedBox(width: 20),
+            Text("タグを選択", style: TextStyle(color: FORGROUND_COLOR)),
+          ],
+        ),
+        verticalpadding: 8);
   }
 
   Widget dtEndField(int maxDay) {
@@ -275,29 +272,27 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
 
   Widget broadcastUploadButton() {
     if (shareScheduleList.isNotEmpty) {
-      return buttonModelWithChild(
-          () async {
-            int dtEnd = int.parse(dtEndController.text);
+      return buttonModelWithChild(() async {
+        int dtEnd = int.parse(dtEndController.text);
 
-            if (dtEnd > 60 || 0 >= dtEnd) {
-              showBackupFailDialogue("有効期限は1日以上60日以下に設定してください。");
-            } else {
-              String tagID = returnTagId(
-                      ref.watch(scheduleFormProvider).tagController.text,
-                      ref) ??
-                  "";
-              String? scheduleID = await ScheduleMetaDatabaseHelper()
-                  .getScheduleIDByTagID(tagID);
+        if (dtEnd > 60 || 0 >= dtEnd) {
+          showBackupFailDialogue("有効期限は1日以上60日以下に設定してください。");
+        } else {
+          String tagID = returnTagId(
+                  ref.watch(scheduleFormProvider).tagController.text, ref) ??
+              "";
+          String? scheduleID =
+              await ScheduleMetaDatabaseHelper().getScheduleIDByTagID(tagID);
 
-              if (scheduleID != null) {
-                confirmDataReplaceDialogue(scheduleID, tagID, dtEnd);
-              } else {
-                inputScheduleIDDialogue(context, tagID, dtEnd, setState);
-              }
-            }
-          },
+          if (scheduleID != null) {
+            confirmDataReplaceDialogue(scheduleID, tagID, dtEnd);
+          } else {
+            inputScheduleIDDialogue(context, tagID, dtEnd, setState);
+          }
+        }
+      },
           MAIN_COLOR,
-           Row(children: [
+          Row(children: [
             const SizedBox(width: 20),
             Icon(Icons.backup, color: FORGROUND_COLOR),
             const SizedBox(width: 20),
@@ -391,7 +386,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                       },
                     ),
                   ),
-                  child:  Row(
+                  child: Row(
                     children: [
                       Icon(Icons.upload_file, color: FORGROUND_COLOR),
                       const SizedBox(width: 20),
@@ -434,14 +429,14 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                   }
                 },
                 MAIN_COLOR,
-                  '  はい  ',
+                '  はい  ',
               ),
-              const SizedBox(height:5),
+              const SizedBox(height: 5),
               buttonModel(
                 () {
                   Navigator.of(context).pop();
                 },
-                ACCENT_COLOR,       
+                ACCENT_COLOR,
                 '  いいえ  ',
               ),
             ],
@@ -471,8 +466,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('アップロードデータが更新されました',
-              style:
-                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           actions: <Widget>[
             const SizedBox(height: 10),
             okButton(context, 500.0)
@@ -563,7 +557,9 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
           Widget listChild = Column(children: [
             const SizedBox(height: 4),
             Row(children: [validTagChip(tag)]),
-            Row(children: [Text(id),]),
+            Row(children: [
+              Text(id),
+            ]),
             Row(children: [
               Expanded(
                 child: Column(
@@ -587,9 +583,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                             )),
                         const Spacer(),
                         Text(
-                          "あと${dtEnd
-                                  .difference(DateTime.now())
-                                  .inDays}日",
+                          "あと${dtEnd.difference(DateTime.now()).inDays}日",
                           style: const TextStyle(color: Colors.redAccent),
                           overflow: TextOverflow.ellipsis,
                         )
@@ -602,20 +596,19 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
                     await Clipboard.setData(data);
                   },
                   icon: const Icon(Icons.copy, color: Colors.grey)),
-              buttonModelWithChild(
-                  () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CodeSharePage(
-                                id: id,
-                                tagName: tag["title"],
-                                scheduleData: scheduleList,
-                              )),
-                    );
-                  },
+              buttonModelWithChild(() async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CodeSharePage(
+                            id: id,
+                            tagName: tag["title"],
+                            scheduleData: scheduleList,
+                          )),
+                );
+              },
                   MAIN_COLOR,
-                   Row(children: [
+                  Row(children: [
                     Icon(
                       Icons.qr_code_2_outlined,
                       color: FORGROUND_COLOR,
@@ -641,7 +634,6 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       itemCount: data.length,
     );
   }
-
 
   TextEditingController idController = TextEditingController();
   Widget broadcastDownloadPage() {
@@ -682,39 +674,34 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
   }
 
   Widget scheduleReceiveButton(TextEditingController idController) {
-    return buttonModelWithChild(
-      () async {
-        String id = idController.text;
-        if (id.isNotEmpty) {
-          
-          bool isScheduleDownloadSuccess = await receiveSchedule(id);
-          if (isScheduleDownloadSuccess) {
-            showDownloadDoneDialogue("データがダウンロードされました！");
-              ref.read(taskDataProvider).isRenewed = true;
-              ref.read(calendarDataProvider.notifier).state = CalendarData();
-              while (
-                  ref.read(taskDataProvider).isRenewed !=
-                      false) {
-              await Future.delayed(
-                  const Duration(microseconds: 1));}
-          } else {
-            showDownloadFailDialogue("ダウンロードに失敗しました");
+    return buttonModelWithChild(() async {
+      String id = idController.text;
+      if (id.isNotEmpty) {
+        bool isScheduleDownloadSuccess = await receiveSchedule(id);
+        if (isScheduleDownloadSuccess) {
+          showDownloadDoneDialogue("データがダウンロードされました！");
+          ref.read(taskDataProvider).isRenewed = true;
+          ref.read(calendarDataProvider.notifier).state = CalendarData();
+          while (ref.read(taskDataProvider).isRenewed != false) {
+            await Future.delayed(const Duration(microseconds: 1));
           }
         } else {
-          showDownloadFailDialogue("IDを入力してください。");
+          showDownloadFailDialogue("ダウンロードに失敗しました");
         }
-      },
-      PALE_MAIN_COLOR,
-       Row(
-        children: [
-         const  SizedBox(width: 20),
-          Icon(Icons.install_mobile, color: FORGROUND_COLOR),
-         const SizedBox(width: 20),
-          Text("予定を受信する", style: TextStyle(color: FORGROUND_COLOR)),
-        ],
-      ),
-      verticalpadding: 8
-    );
+      } else {
+        showDownloadFailDialogue("IDを入力してください。");
+      }
+    },
+        PALE_MAIN_COLOR,
+        Row(
+          children: [
+            const SizedBox(width: 20),
+            Icon(Icons.install_mobile, color: FORGROUND_COLOR),
+            const SizedBox(width: 20),
+            Text("予定を受信する", style: TextStyle(color: FORGROUND_COLOR)),
+          ],
+        ),
+        verticalpadding: 8);
   }
 
   void showDownloadDoneDialogue(String text) {
@@ -748,7 +735,6 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       },
     );
   }
-
 }
 
 void showSchedulesDialogue(context, String text, List<dynamic> data) {
@@ -765,8 +751,7 @@ void showSchedulesDialogue(context, String text, List<dynamic> data) {
               if (targetDayData["startTime"].trim() != "" &&
                   targetDayData["endTime"].trim() != "") {
                 dateTimeData = Text(
-                  "${" " +
-                      targetDayData["startTime"]}～" +
+                  "${" " + targetDayData["startTime"]}～" +
                       targetDayData["endTime"],
                   style: const TextStyle(color: Colors.grey),
                 );
@@ -810,6 +795,4 @@ void showSchedulesDialogue(context, String text, List<dynamic> data) {
       );
     },
   );
-
-  
 }

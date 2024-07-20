@@ -9,7 +9,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'dart:convert';
-import '../../../backend/home_widget.dart';
+import '../../../backend/service/home_widget.dart';
 import "./request_calendar_url.dart";
 import "../../../backend/DB/handler/user_info_db_handler.dart";
 
