@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
-import 'package:flutter_calandar_app/constant.dart';
-import 'package:flutter_calandar_app/converter.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
+import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
@@ -38,7 +38,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context,DateTime.now(),ref);
+      showAttendanceDialog(context, DateTime.now(), ref);
     });
   }
 
@@ -369,13 +369,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     }
                   })),
               Padding(
-                padding:const EdgeInsets.symmetric(horizontal:15),
-                child: buttonModel((){
-                  showAttendanceDialog(context,DateTime.now(),ref,true);
-                },
-                Colors.blue,
-                "今日の出欠記録",
-                verticalpadding: 12.5))
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: buttonModel(() {
+                    showAttendanceDialog(context, DateTime.now(), ref, true);
+                  }, Colors.blue, "今日の出欠記録", verticalpadding: 12.5))
             ])));
   }
 
@@ -503,10 +500,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * 2,
-                decoration:BoxDecoration(
-                  borderRadius: BorderRadius.circular(2.5),
-                  color: bgColor),
-
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(2.5), color: bgColor),
                 child: Center(
                     child: Text(
                   days.elementAt(index),
@@ -542,10 +537,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           return Container(
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(2.5)
-              ),
-
+                  color: bgColor, borderRadius: BorderRadius.circular(2.5)),
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: Column(
@@ -755,12 +747,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   color: bgColor,
                   child: Column(children: [
                     const Spacer(),
-                    Text(childText,
+                    Text(
+                      childText,
                       style: TextStyle(
-                        color: fontColor,
-                        fontSize: SizeConfig.blockSizeHorizontal! * 3,
-                        fontWeight:FontWeight.bold),),
-
+                          color: fontColor,
+                          fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                          fontWeight: FontWeight.bold),
+                    ),
                     const Spacer(),
                   ]));
             }
@@ -883,16 +876,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               borderRadius: BorderRadius.circular(2)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           child: InkWell(
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CoursePreview(
-                      target: targetData,
-                      setTimetableState: setState,
-                      taskList: taskList,
-                    );
-                  });
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CoursePreview(
+                        target: targetData,
+                        setTimetableState: setState,
+                        taskList: taskList,
+                      );
+                    });
               },
               child:
                   Column(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -917,69 +910,60 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  Widget absentBadgeBuilder(Map targetData){
-    int  myCourseID = targetData["id"];
+  Widget absentBadgeBuilder(Map targetData) {
+    int myCourseID = targetData["id"];
     int remainAbsent = targetData["remainAbsent"] ?? 0;
     return FutureBuilder(
-      future: MyCourseDatabaseHandler().getAttendanceRecordFromDB(myCourseID),
-      builder:(context,snapShot){
-        if(snapShot.connectionState == ConnectionState.done){
-          if(snapShot.hasData && snapShot.data!.isNotEmpty){
-            int count = 0;
-            
-            for(int i = 0; i < snapShot.data!.length; i++){
-              if(snapShot.data!.elementAt(i)["attendStatus"] == "absent"){
-                count += 1;
-              }
-            }
-            return absentBadge(count,remainAbsent);
-          }else{
-           return const SizedBox();
-          }
-          
-        }else{
-          return const SizedBox();
-        }
-      });
+        future: MyCourseDatabaseHandler().getAttendanceRecordFromDB(myCourseID),
+        builder: (context, snapShot) {
+          if (snapShot.connectionState == ConnectionState.done) {
+            if (snapShot.hasData && snapShot.data!.isNotEmpty) {
+              int count = 0;
 
+              for (int i = 0; i < snapShot.data!.length; i++) {
+                if (snapShot.data!.elementAt(i)["attendStatus"] == "absent") {
+                  count += 1;
+                }
+              }
+              return absentBadge(count, remainAbsent);
+            } else {
+              return const SizedBox();
+            }
+          } else {
+            return const SizedBox();
+          }
+        });
   }
 
-  Widget absentBadge(int absentNum, int remainAbsent){
-    if(absentNum == 0){
+  Widget absentBadge(int absentNum, int remainAbsent) {
+    if (absentNum == 0) {
       return Container(
-        decoration:const BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(5)
-          )
-        ),
-        child:const Text(" 無欠席 ",
+        decoration: const BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5))),
+        child: const Text(
+          " 無欠席 ",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 10,
-            color: Colors.white),),
+              fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
+        ),
       );
-    }else{
+    } else {
       Color backGroundColor = BLUEGREY;
-      if(absentNum >= remainAbsent){
+      if (absentNum >= remainAbsent) {
         backGroundColor = Colors.redAccent;
       }
       return Container(
         decoration: BoxDecoration(
-          color: backGroundColor,
-          borderRadius:const BorderRadius.only(
-            bottomLeft: Radius.circular(5)
-          )
-        ),
-        child: Text(" 欠席 " + absentNum.toString()+"/"+remainAbsent.toString(),
+            color: backGroundColor,
+            borderRadius:
+                const BorderRadius.only(bottomLeft: Radius.circular(5))),
+        child: Text(
+          " 欠席 " + absentNum.toString() + "/" + remainAbsent.toString(),
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 10,
-            color: Colors.white),),
+              fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
+        ),
       );
     }
-    
-
   }
 
   Widget ondemandSellsChild(int index, List<Map<String, dynamic>> taskList) {

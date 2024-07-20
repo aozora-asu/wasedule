@@ -1,4 +1,4 @@
-import 'package:flutter_calandar_app/converter.dart';
+import 'package:flutter_calandar_app/static/converter.dart';
 
 import "./vacant_room.dart";
 import 'package:isar/isar.dart';

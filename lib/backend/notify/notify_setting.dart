@@ -13,7 +13,7 @@ import "./notify_content.dart";
 import "../DB/handler/my_course_db.dart";
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
-import "../../constant.dart";
+import "../../static/constant.dart";
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import "../../backend/sharepreference.dart";

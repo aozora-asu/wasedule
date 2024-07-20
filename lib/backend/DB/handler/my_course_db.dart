@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import "../../../converter.dart";
-import "../../../constant.dart";
+import "../../../static/converter.dart";
+import "../../../static/constant.dart";
 import 'package:intl/intl.dart';
 
 class SyllabusQueryResult {

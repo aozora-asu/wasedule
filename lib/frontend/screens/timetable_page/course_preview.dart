@@ -1,6 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/constant.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -182,8 +182,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         Text(
           "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
           style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.05,
-              ),
+            fontSize: MediaQuery.of(context).size.width * 0.05,
+          ),
         ),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
@@ -207,7 +207,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Icon(Icons.sticky_note_2, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         textFieldModel("メモを入力…", memoController, FontWeight.normal, 20.0,
-          (value) async {
+            (value) async {
           int id = target["id"];
           //＠ここに教室のアップデート関数！！！
           await MyCourseDatabaseHandler().updateMemo(id, value);
@@ -408,13 +408,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget attendSettingsPanel() {
     return Material(
         child: ExpandablePanel(
-            controller: ExpandableController(initialExpanded:isExpandSettingPanel),
+            controller:
+                ExpandableController(initialExpanded: isExpandSettingPanel),
             header: GestureDetector(
-              child:const Text("設定",
-                style: TextStyle(fontSize: 20, color: Colors.grey))),
+                child: const Text("設定",
+                    style: TextStyle(fontSize: 20, color: Colors.grey))),
             collapsed: const SizedBox(),
-            expanded: remainingAbsentSetting()
-            ));
+            expanded: remainingAbsentSetting()));
   }
 
   Widget remainingAbesentViewBuilder() {
@@ -643,15 +643,15 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                       color: Colors.white),
                 ),
               ),
-              const SizedBox(width:10),
+              const SizedBox(width: 10),
               GestureDetector(
-                onTap:()async{
-                  await MyCourseDatabaseHandler().deleteAttendRecord(attendRecord["id"]);
-                  widget.setTimetableState((){});
-                  setState((){});
-                },
-                child:const Icon(Icons.delete,color:BLUEGREY)
-              ),
+                  onTap: () async {
+                    await MyCourseDatabaseHandler()
+                        .deleteAttendRecord(attendRecord["id"]);
+                    widget.setTimetableState(() {});
+                    setState(() {});
+                  },
+                  child: const Icon(Icons.delete, color: BLUEGREY)),
             ])));
   }
 

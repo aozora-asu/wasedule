@@ -1,6 +1,6 @@
 import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
-import 'package:flutter_calandar_app/converter.dart';
+import 'package:flutter_calandar_app/static/converter.dart';
 
 import 'package:http/http.dart' as http;
 

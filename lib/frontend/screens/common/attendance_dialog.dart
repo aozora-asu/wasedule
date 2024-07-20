@@ -8,17 +8,16 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import "../../../constant.dart";
+import "../../../static/constant.dart";
 
- Widget showAttendDialogAutomaticallySwitch = const SizedBox();
+Widget showAttendDialogAutomaticallySwitch = const SizedBox();
 
 Future<void> showAttendanceDialog(
     BuildContext context, DateTime targetDate, WidgetRef ref,
     [bool enforceShowing = false]) async {
-
   bool isShowDialog = true;
   bool showAttendDialogAutomatically = await SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.showAttendDialogAutomatically);
+      .getValue(SharepreferenceKeys.showAttendDialogAutomatically);
 
   await ref
       .read(timeTableProvider)
@@ -46,10 +45,9 @@ Future<void> showAttendanceDialog(
     isShowDialog = false;
   }
 
- if(!showAttendDialogAutomatically){
+  if (!showAttendDialogAutomatically) {
     isShowDialog = false;
   }
-
 
   if (enforceShowing) {
     isShowDialog = true;
@@ -62,7 +60,8 @@ Future<void> showAttendanceDialog(
         return AttendanceDialog(
           targetDate: targetDate,
           showAutomatically: showAttendDialogAutomatically,
-          enforceShowing: enforceShowing,);
+          enforceShowing: enforceShowing,
+        );
       },
     );
   }
@@ -72,11 +71,10 @@ class AttendanceDialog extends ConsumerStatefulWidget {
   DateTime targetDate;
   bool enforceShowing;
   bool showAutomatically;
-  AttendanceDialog({
-    required this.targetDate,
-    required this.enforceShowing,
-    required this.showAutomatically
-    });
+  AttendanceDialog(
+      {required this.targetDate,
+      required this.enforceShowing,
+      required this.showAutomatically});
   @override
   _AttendanceDialogState createState() => _AttendanceDialogState();
 }
@@ -87,37 +85,36 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
   @override
   void initState() {
     super.initState();
-    if(widget.showAutomatically){
+    if (widget.showAutomatically) {
       dontShowAutomatically = false;
-    }else{
+    } else {
       dontShowAutomatically = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if(!widget.enforceShowing){
+    if (!widget.enforceShowing) {
       {
-    showAttendDialogAutomaticallySwitch = 
-      Row(children:[
-        const Text("以降自動的に表示しない：",
-          style:TextStyle(color:Colors.grey)),
-        CupertinoCheckbox(
-          value: dontShowAutomatically, 
-          onChanged:(value)async{
-            SharepreferenceHandler()
-              .setValue(SharepreferenceKeys.showAttendDialogAutomatically,dontShowAutomatically);
-            dontShowAutomatically = value!;
-            setState((){});
-            if(dontShowAutomatically){
-              showAutoshowTurnedOffDialog(context);
-            }
-          })
-      ]);
-  }
- }else{
-  showAttendDialogAutomaticallySwitch = const SizedBox();
- }
+        showAttendDialogAutomaticallySwitch = Row(children: [
+          const Text("以降自動的に表示しない：", style: TextStyle(color: Colors.grey)),
+          CupertinoCheckbox(
+              value: dontShowAutomatically,
+              onChanged: (value) async {
+                SharepreferenceHandler().setValue(
+                    SharepreferenceKeys.showAttendDialogAutomatically,
+                    dontShowAutomatically);
+                dontShowAutomatically = value!;
+                setState(() {});
+                if (dontShowAutomatically) {
+                  showAutoshowTurnedOffDialog(context);
+                }
+              })
+        ]);
+      }
+    } else {
+      showAttendDialogAutomaticallySwitch = const SizedBox();
+    }
     return Column(children: [
       const Spacer(),
       Container(
@@ -136,7 +133,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('出欠記録の自動表示がオフになりました。'),
-          content:const Text('設定ページ「時間割」の項目から再度オンにしていただくことができます。'),
+          content: const Text('設定ページ「時間割」の項目から再度オンにしていただくことができます。'),
           actions: [
             TextButton(
               child: const Text('閉じる'),
@@ -189,30 +186,29 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
   Widget buildMainBody() {
     List data =
         ref.read(timeTableProvider).targetDateClasses(widget.targetDate);
-    if(data.isEmpty){
+    if (data.isEmpty) {
       return const SizedBox(
-        height:60,
-        child:Center(child:
-          Text("この日の授業はありません。",
-            style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20),)));
-    }else{
+          height: 60,
+          child: Center(
+              child: Text(
+            "この日の授業はありません。",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          )));
+    } else {
       return FutureBuilder(
-        future: initClassData(data),
-        builder: (context, snapShot) {
-          if (snapShot.connectionState == ConnectionState.done) {
-            return mainBody(data);
-          } else {
-            if (!isInit) {
+          future: initClassData(data),
+          builder: (context, snapShot) {
+            if (snapShot.connectionState == ConnectionState.done) {
               return mainBody(data);
             } else {
-              return const SizedBox();
+              if (!isInit) {
+                return mainBody(data);
+              } else {
+                return const SizedBox();
+              }
             }
-          }
-      });
+          });
     }
-    
-
-
   }
 
   Widget mainBody(data) {
@@ -248,8 +244,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         const Spacer(),
         buttonModel(() async {
           for (int i = 0; i < enteredData.length; i++) {
-            await MyCourseDatabaseHandler().recordAttendStatus(
-              AttendanceRecord(
+            await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
                 attendDate: DateFormat("MM/dd").format(widget.targetDate),
                 attendStatus:
                     AttendStatus.values.byName(enteredData.values.elementAt(i)),
@@ -314,8 +309,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 }
 
 Future<bool> showIndividualCourseEditDialog(
-  context, Map myCourseData, Function onDone, {Map? initData}) async {
-  
+    context, Map myCourseData, Function onDone,
+    {Map? initData}) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -343,10 +338,12 @@ class IndividualCourseEditDialog extends StatefulWidget {
     required this.onDone,
   });
   @override
-  _IndividualCourseEditDialogState createState() => _IndividualCourseEditDialogState();
+  _IndividualCourseEditDialogState createState() =>
+      _IndividualCourseEditDialogState();
 }
 
-class _IndividualCourseEditDialogState extends State<IndividualCourseEditDialog> {
+class _IndividualCourseEditDialogState
+    extends State<IndividualCourseEditDialog> {
   String dateString = DateFormat("MM/dd").format(DateTime.now());
   String attendStatus = "attend";
   String buttonText = "追加";
@@ -438,15 +435,13 @@ class _IndividualCourseEditDialogState extends State<IndividualCourseEditDialog>
         Row(children: [
           const Spacer(),
           buttonModel(() async {
-            await MyCourseDatabaseHandler().recordAttendStatus(
-                AttendanceRecord(
-                    attendDate: dateString,
-                    attendStatus: AttendStatus.values.byName(attendStatus),
-                    myCourseID: widget.myCourseData["id"]));
+            await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
+                attendDate: dateString,
+                attendStatus: AttendStatus.values.byName(attendStatus),
+                myCourseID: widget.myCourseData["id"]));
             widget.onDone();
             Navigator.pop(context);
-          }, Colors.blue, buttonText,
-              verticalpadding: 5, horizontalPadding: 40)
+          }, Colors.blue, buttonText, verticalpadding: 5, horizontalPadding: 40)
         ])
       ]),
     );

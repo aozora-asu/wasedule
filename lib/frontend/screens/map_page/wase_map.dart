@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/sharepreference.dart';
-import 'package:flutter_calandar_app/converter.dart';
+import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -184,7 +184,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
       Container(
           height: SizeConfig.blockSizeVertical! * 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1.5), color: FORGROUND_COLOR),
+              border: Border.all(color: Colors.grey, width: 1.5),
+              color: FORGROUND_COLOR),
           child: FlutterMap(
             mapController: _animatedMapController.mapController,
             options: MapOptions(
@@ -347,8 +348,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
                     ),
                   )
                 ]);
@@ -363,8 +364,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                     ),
                     child: Text(
                       location,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: FORGROUND_COLOR),
                     ),
                   )
                 ]);

@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
-import "error_and_exception.dart";
+import "error_exception/error.dart";
 import 'package:timezone/timezone.dart' as tz;
 
 enum Term {
