@@ -543,6 +543,8 @@ class NotifyContent {
         decodedPayload = jsonDecode(pendingNotificationRequest.payload!);
         if (decodedPayload.isEmpty) {
           // 何もしない
+          await flutterLocalNotificationsPlugin
+              .cancel(pendingNotificationRequest.id);
         } else {
           if (!decodedPayload.containsKey("notifyDate")) {
             await flutterLocalNotificationsPlugin
