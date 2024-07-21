@@ -30,7 +30,6 @@ void notificationTapBackground(
   tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   await initializeDateFormatting();
   pref = await SharepreferenceHandler().initSharepreference();
-  // tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
   if (notificationResponse.actionId == "markAsComplete" &&
       decodedPayload["route"] == "taskPage") {
@@ -86,10 +85,6 @@ class LocalNotificationSetting {
               ?.areNotificationsEnabled() ??
           false;
     }
-  }
-
-  Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   Future<void> initializePlatformSpecifics(BuildContext context) async {
