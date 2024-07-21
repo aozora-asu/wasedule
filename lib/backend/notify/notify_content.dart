@@ -541,21 +541,21 @@ class NotifyContent {
     for (var pendingNotificationRequest in pendingNotificationRequests) {
       if (pendingNotificationRequest.payload != null) {
         decodedPayload = jsonDecode(pendingNotificationRequest.payload!);
+        if (decodedPayload.isEmpty) {
+          // 何もしない
+        } else {
+          if (!decodedPayload.containsKey("notifyDate")) {
+            await flutterLocalNotificationsPlugin
+                .cancel(pendingNotificationRequest.id);
+          } else if (now.isBefore(
+              tz.TZDateTime.parse(tz.local, decodedPayload["notifyDate"]))) {
+            await flutterLocalNotificationsPlugin
+                .cancel(pendingNotificationRequest.id);
+          }
+        }
       } else {
         await flutterLocalNotificationsPlugin
             .cancel(pendingNotificationRequest.id);
-      }
-      if (decodedPayload.isEmpty) {
-        // 何もしない
-      } else {
-        if (!decodedPayload.containsKey("notifyDate")) {
-          await flutterLocalNotificationsPlugin
-              .cancel(pendingNotificationRequest.id);
-        } else if (now.isBefore(
-            tz.TZDateTime.parse(tz.local, decodedPayload["notifyDate"]))) {
-          await flutterLocalNotificationsPlugin
-              .cancel(pendingNotificationRequest.id);
-        }
       }
     }
   }
