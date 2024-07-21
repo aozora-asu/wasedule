@@ -176,15 +176,60 @@ List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
   }
 }
 
+List<SyllabusQueryResult>? _getMatchedCourse(
+    String htmlString, String courseName) {
+  final document = html_parser.parse(htmlString);
+  final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
+  List<SyllabusQueryResult> syllabusQueryResultList = [];
+  if (trElements.isNotEmpty) {
+    for (var trElement in trElements) {
+      final tdElements = trElement.querySelectorAll("td");
+      if (tdElements[2].text == courseName) {
+        final anchor = tdElements[2].querySelector("a");
+        var match = RegExp(r"post_submit\('JAA104DtlSubCon', '(.*)'\)")
+            .firstMatch(anchor!.attributes['onclick']!);
+        var extractedString = match?.group(1);
+
+        List<Map<String, int?>> periodAndDateList =
+            extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
+
+        for (var periodAndDate in periodAndDateList) {
+          SyllabusQueryResult syllabusResult = SyllabusQueryResult(
+              courseName: tdElements[2].text,
+              classRoom: extractClassRoom(zenkaku2hankaku(
+                  tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
+              period: periodAndDate["period"],
+              weekday: periodAndDate["weekday"],
+              semester: convertSemester(tdElements[5].text),
+              year: int.parse(tdElements[0].text),
+              syllabusID: extractedString);
+          syllabusQueryResultList.add(syllabusResult);
+        }
+      } else {
+        continue;
+      }
+    }
+
+    return syllabusQueryResultList;
+  } else {
+    return null;
+  }
+}
+
 Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   List<MyCourse>? myCourseList = [];
   List<SyllabusQueryResult>? syllabusQueryResultList;
+
   RequestQuery requestQuery = RequestQuery(
       kamoku: moodleCourse.courseName.replaceAll("・", " "),
       keyword: moodleCourse.department);
-
-  syllabusQueryResultList =
-      _getFirstCourse(await fetchSyllabusResults(requestQuery));
+  if (moodleCourse.courseName == "確率・統計") {
+    syllabusQueryResultList =
+        _getMatchedCourse(await fetchSyllabusResults(requestQuery), "確率・統計");
+  } else {
+    syllabusQueryResultList =
+        _getFirstCourse(await fetchSyllabusResults(requestQuery));
+  }
 
   if (syllabusQueryResultList != null) {
     for (var syllabusQueryResult in syllabusQueryResultList) {
