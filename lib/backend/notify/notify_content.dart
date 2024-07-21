@@ -43,8 +43,9 @@ class NotifyContent {
   //weekday 月~日まで1~7
   //return
   tz.TZDateTime _nextInstanceOfWeeklyTime(String timeString, int weekday) {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(timeString);
 
@@ -65,6 +66,8 @@ class NotifyContent {
   }
 
   tz.TZDateTime _nextInstanceOfDailyTime(String timeString) {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     // 時刻文字列をパースして、DateTimeオブジェクトに変換
     DateTime parsedTime = DateFormat("H:mm").parse(timeString);
