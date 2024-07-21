@@ -34,7 +34,7 @@ class IsarHandler {
 
   Future<List<String>> getVacantRoomList(
       Isar isar, String building, int weekday, int period) async {
-    String? quarter = datetime2quarter(DateTime.now());
+    String? quarter = Term.whenQuarter(DateTime.now());
     List<String> classRoomList = classMap[building] ?? [];
 
     if (quarter != null) {
@@ -62,9 +62,9 @@ class IsarHandler {
     Isar isar,
     String building,
   ) async {
-    String? quarter = datetime2quarter(DateTime.now());
+    String? quarter = Term.whenQuarter(DateTime.now());
     int weekday = DateTime.now().weekday;
-    int? period = Class.wherePeriod(DateTime.now());
+    int? period = Class.whenPeriod(DateTime.now());
 
     List<String> classRoomList = classMap[building] ?? [];
 
@@ -90,9 +90,9 @@ class IsarHandler {
   }
 
   Future<bool> isNowVacant(Isar isar, String classRoomName) async {
-    String? quarter = datetime2quarter(DateTime.now());
+    String? quarter = Term.whenQuarter(DateTime.now());
     int weekday = DateTime.now().weekday;
-    int? period = Class.wherePeriod(DateTime.now());
+    int? period = Class.whenPeriod(DateTime.now());
     if (quarter != null && period != null) {
       final existClass = await isar.hasClass
           .filter()

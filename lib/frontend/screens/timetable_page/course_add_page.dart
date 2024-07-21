@@ -98,10 +98,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
 
     if (weekDay != null && period != null) {
       courseTimeText =
-          "$year年, ${Term.values.firstWhere((e) => e.value == semester!).text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
+          "$year年, ${Term.terms[semester]!.text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
     } else {
-      courseTimeText =
-          "$year年, ${Term.values.firstWhere((e) => e.value == semester!).text}, オンデマンド, 時限なし";
+      courseTimeText = "$year年, ${Term.terms[semester]!.text}, オンデマンド, 時限なし";
     }
     return GestureDetector(
         onTap: () {},

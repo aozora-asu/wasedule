@@ -125,21 +125,6 @@ List<String> datetime2termList(DateTime datetime) {
   return currentTerms;
 }
 
-String? datetime2quarter(DateTime datetime) {
-  List<String> currentTermList = datetime2termList(datetime);
-  if (currentTermList.contains("spring_quarter")) {
-    return "spring_quarter";
-  } else if (currentTermList.contains("summer_quarter")) {
-    return "summer_quarter";
-  } else if (currentTermList.contains("fall_quarter")) {
-    return "fall_quarter";
-  } else if (currentTermList.contains("winter_quarter")) {
-    return "winter_quarter";
-  } else {
-    return null;
-  }
-}
-
 List<String> semester2quarterList(String text) {
   switch (text) {
     case "spring_quarter":

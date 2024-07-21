@@ -188,26 +188,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
 
     String quaterName = "";
-    switch (buttonSemester) {
-      case 1:
-        quaterName = "   春   ";
-      case 2:
-        quaterName = "   夏   ";
-      case 3:
-        quaterName = "   秋   ";
-      case 4:
-        quaterName = "   冬   ";
-    }
-
     Color quaterColor = FORGROUND_COLOR;
     switch (buttonSemester) {
       case 1:
+        quaterName = "   春   ";
         quaterColor = const Color.fromARGB(255, 255, 159, 191);
       case 2:
+        quaterName = "   夏   ";
         quaterColor = Colors.blueAccent;
       case 3:
+        quaterName = "   秋   ";
         quaterColor = const Color.fromARGB(255, 231, 85, 0);
       case 4:
+        quaterName = "   冬   ";
         quaterColor = Colors.cyan;
     }
 

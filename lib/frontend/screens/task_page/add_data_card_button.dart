@@ -715,7 +715,8 @@ class DateTimePickerFormField extends ConsumerWidget {
   final Color? labelColor;
 
   DateTimePickerFormField(
-      {super.key, required this.controller,
+      {super.key,
+      required this.controller,
       required this.labelText,
       required this.labelColor});
 
@@ -777,7 +778,7 @@ class DateTimePickerFormField extends ConsumerWidget {
       controller.text = DateFormat('yyyy-MM-dd HH:mm').format(_selectedDate!);
 
       ref.read(inputFormProvider.notifier).updateDateTimeFields();
-        }
+    }
   }
 
   @override

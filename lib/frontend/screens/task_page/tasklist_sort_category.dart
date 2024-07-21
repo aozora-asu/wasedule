@@ -36,8 +36,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
     return Scrollbar(
-        child: 
-      Stack(children:[
+        child: Stack(children: [
       Column(children: [
         Expanded(
           child: ListView.builder(
@@ -45,64 +44,63 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
             itemBuilder: (BuildContext context, int keyIndex) {
               String categoryName = sortedData.keys.elementAt(keyIndex);
 
-            return Container(
-                width: SizeConfig.blockSizeHorizontal! * 100,
-                padding: const EdgeInsets.only(
-                    left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ExpandablePanel(
-                          header: Row(children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(children: [
-                                    SizedBox(
-                                      width:
-                                          SizeConfig.blockSizeHorizontal! * 73,
-                                      child: Text(
-                                        categoryName,
-                                        style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                6,
-                                            fontWeight: FontWeight.w800),
-                                        overflow: TextOverflow.visible,
+              return Container(
+                  width: SizeConfig.blockSizeHorizontal! * 100,
+                  padding: const EdgeInsets.only(
+                      left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ExpandablePanel(
+                            header: Row(children: [
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(children: [
+                                      SizedBox(
+                                        width: SizeConfig.blockSizeHorizontal! *
+                                            73,
+                                        child: Text(
+                                          categoryName,
+                                          style: TextStyle(
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal! *
+                                                  6,
+                                              fontWeight: FontWeight.w800),
+                                          overflow: TextOverflow.visible,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                        " ${sortedData.values.elementAt(keyIndex).length}件",
-                                        style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                4.25,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.grey))
+                                      Text(
+                                          " ${sortedData.values.elementAt(keyIndex).length}件",
+                                          style: TextStyle(
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal! *
+                                                  4.25,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey))
+                                    ]),
                                   ]),
-                                ]),
-                          ]),
-                          collapsed: const SizedBox(),
-                          expanded: categoryTaskGroup(
-                            keyIndex,
-                          ),
-                          controller: ExpandableController(
-                              initialExpanded:
-                                  isLimitOver(sortedData, categoryName))),
-                      const Divider(
-                        thickness: 2,
-                        indent: 0,
-                        endIndent: 0,
-                      )
-                    ]));
-          },
-          itemCount: sortedData.keys.length,
-        ),
-      )
-    ]),
-    executeDeleteButton()
-   ])
-  );
+                            ]),
+                            collapsed: const SizedBox(),
+                            expanded: categoryTaskGroup(
+                              keyIndex,
+                            ),
+                            controller: ExpandableController(
+                                initialExpanded:
+                                    isLimitOver(sortedData, categoryName))),
+                        const Divider(
+                          thickness: 2,
+                          indent: 0,
+                          endIndent: 0,
+                        )
+                      ]));
+            },
+            itemCount: sortedData.keys.length,
+          ),
+        )
+      ]),
+      executeDeleteButton()
+    ]));
   }
 
   bool isLimitOver(
@@ -157,7 +155,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
                 TaskData(taskDataList: newList);
             ref.read(taskDataProvider).isRenewed = true;
             ref.read(taskDataProvider).sortDataByDtEnd(list);
-            setState((){});
+            setState(() {});
           },
           child: Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
@@ -170,8 +168,8 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               Icon(Icons.delete, color: FORGROUND_COLOR),
               Text(
                 "   Done!!!   ",
-                style:
-                    TextStyle(color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: FORGROUND_COLOR, fontWeight: FontWeight.bold),
               ),
               Icon(Icons.delete, color: FORGROUND_COLOR),
               const Spacer(),
@@ -229,7 +227,7 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     return Row(children: [
       InkWell(
           onTap: () {
-            bottomSheet(context,targetData,setState);
+            bottomSheet(context, targetData, setState);
           },
           child: Container(
               constraints: BoxConstraints(
@@ -238,10 +236,10 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
               child: Container(
                   decoration: BoxDecoration(
-                      color: FORGROUND_COLOR,
-                      borderRadius:const BorderRadius.all(Radius.circular(15)),
-                      //border: Border.all(color:Colors.grey,width: 1)
-                      ),
+                    color: FORGROUND_COLOR,
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    //border: Border.all(color:Colors.grey,width: 1)
+                  ),
                   child: Row(children: [
                     CupertinoCheckbox(
                         value: isChosen,
@@ -282,7 +280,10 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
                                     fontWeight: FontWeight.normal,
                                     color: Colors.grey)),
                             const SizedBox(width: 10),
-                            Text(truncateTimeEnd(targetData),
+                            Text(
+                                DateFormat("HH:mm").format(
+                                    DateTime.fromMicrosecondsSinceEpoch(
+                                        targetData["dtEnd"])),
                                 style: TextStyle(
                                     fontSize:
                                         SizeConfig.blockSizeHorizontal! * 4,
@@ -294,23 +295,8 @@ class _TaskListByCategoryState extends ConsumerState<TaskListByCategory> {
     ]);
   }
 
-
   bool isEditingText(TextEditingController controller) {
     return controller.text.isNotEmpty;
-  }
-
-  String truncateTimeEnd(targetData) {
-    String hour = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .hour
-        .toString();
-    String minute = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .minute
-        .toString();
-
-    String formattedhour = hour.padLeft(2, '0');
-    String formattedminute = minute.padLeft(2, '0');
-
-    return "$formattedhour:$formattedminute";
   }
 
   String truncateDtEnd(targetData) {

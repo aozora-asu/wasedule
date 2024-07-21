@@ -158,8 +158,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
 
   Widget summaryContent(dividerModel, target) {
     String text = "";
-    text =
-        Term.values.firstWhere((e) => e.value == target["semester"]).fullText;
+    text = Term.terms[target["semester"]]!.fullText;
 
     return Column(children: [
       dividerModel,

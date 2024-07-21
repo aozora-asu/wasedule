@@ -5,8 +5,6 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
 
-
-
 import 'package:percent_indicator/percent_indicator.dart';
 
 Map<String, DateTime> allTasks = {};
@@ -102,49 +100,47 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
       numOfDoneTasks = monthlyDoneTasks.length;
       numOfAllTasks = monthlyTasks.length;
       centreText = "今月";
-      if(monthlyTasks.isEmpty){
+      if (monthlyTasks.isEmpty) {
         numOfAllTasks = 1;
       }
     } else if (circularIndicatorState == 2) {
       numOfDoneTasks = weeklyDoneTasks.length;
       numOfAllTasks = weeklyTasks.length;
       centreText = "今週";
-      if(weeklyTasks.isEmpty){
+      if (weeklyTasks.isEmpty) {
         numOfAllTasks = 1;
       }
     } else {
       numOfDoneTasks = allDoneTasks.length;
       numOfAllTasks = allTasks.length;
       centreText = "全期間";
-      if(allTasks.isEmpty){
+      if (allTasks.isEmpty) {
         numOfAllTasks = 1;
       }
     }
-     return CircularPercentIndicator(
-          radius: SizeConfig.blockSizeHorizontal! * 20,
-          lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
-          percent: numOfDoneTasks / numOfAllTasks,
-          animation: true,
-          animationDuration: 1500,
-          circularStrokeCap: CircularStrokeCap.round,
-          center:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(
-              centreText,
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                  fontWeight: FontWeight.w400),
-            ),
-            Text(
-              "${((numOfDoneTasks /numOfAllTasks) * 100).round()}%",
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 9,
-                  fontWeight: FontWeight.w700),
-            ),
-          ]),
-          progressColor:
-              getCurrentHpColor(numOfDoneTasks,numOfAllTasks),
-          backgroundColor: WIDGET_OUTLINE_COLOR);
+    return CircularPercentIndicator(
+        radius: SizeConfig.blockSizeHorizontal! * 20,
+        lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
+        percent: numOfDoneTasks / numOfAllTasks,
+        animation: true,
+        animationDuration: 1500,
+        circularStrokeCap: CircularStrokeCap.round,
+        center: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            centreText,
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                fontWeight: FontWeight.w400),
+          ),
+          Text(
+            "${((numOfDoneTasks / numOfAllTasks) * 100).round()}%",
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 9,
+                fontWeight: FontWeight.w700),
+          ),
+        ]),
+        progressColor: getCurrentHpColor(numOfDoneTasks, numOfAllTasks),
+        backgroundColor: WIDGET_OUTLINE_COLOR);
   }
 
   Color getCurrentHpColor(int hp, int max) {
@@ -175,7 +171,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       const SizedBox(width: 10),
       Text(
-        "$formattedDate${getDayOfWeek(now.weekday - 1)}",
+        "$formattedDate(${"日月火水木金土日"[now.weekday % 7]})",
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.w600),
@@ -184,8 +180,9 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
       Text(
         "タスクの進捗度",
         style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-            fontWeight: FontWeight.bold,),
+          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+          fontWeight: FontWeight.bold,
+        ),
       )
     ]));
   }
@@ -203,9 +200,7 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                 width: SizeConfig.blockSizeHorizontal! * 45,
                 height: SizeConfig.blockSizeHorizontal! * 45,
                 child: circularPercentIndicator()),
-            Column(
-            children: [
-
+            Column(children: [
               SizedBox(
                   height: SizeConfig.blockSizeVertical! * 4,
                   width: SizeConfig.blockSizeHorizontal! * 55,
@@ -218,19 +213,17 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                     child: Row(children: [
                       const Text("今週    "),
                       SizedBox(
-                        height: SizeConfig.blockSizeVertical! *1.75,
+                        height: SizeConfig.blockSizeVertical! * 1.75,
                         width: SizeConfig.blockSizeHorizontal! * 40,
                         child: HpGauge3Color(
                             currentHp: weeklyDoneTasks.length,
                             maxHp: weeklyTasks.length,
-                            isEmpty: weeklyTasks.isEmpty
-                            ),
+                            isEmpty: weeklyTasks.isEmpty),
                       )
                     ]),
                   )),
-
               SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 4,
+                height: SizeConfig.blockSizeVertical! * 4,
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -240,24 +233,19 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("今月    "),
-
-                   SizedBox(
-                        height: SizeConfig.blockSizeVertical! *1.75,
-
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical! * 1.75,
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: monthlyDoneTasks.length,
                           maxHp: monthlyTasks.length,
-                          isEmpty: monthlyTasks.isEmpty
-                          ),
+                          isEmpty: monthlyTasks.isEmpty),
                     )
                   ]),
                 ),
               ),
-
               SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 4,
-
+                height: SizeConfig.blockSizeVertical! * 4,
                 width: SizeConfig.blockSizeHorizontal! * 55,
                 child: InkWell(
                   onTap: () {
@@ -267,10 +255,8 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
                   },
                   child: Row(children: [
                     const Text("全て    "),
-
                     SizedBox(
-                        height: SizeConfig.blockSizeVertical! *1.75,
-
+                      height: SizeConfig.blockSizeVertical! * 1.75,
                       width: SizeConfig.blockSizeHorizontal! * 40,
                       child: HpGauge3Color(
                           currentHp: allDoneTasks.length,
@@ -287,33 +273,28 @@ class TaskProgressIndicatorState extends State<TaskProgressIndicator> {
       ),
     ]);
   }
-
 }
 
 class HpGauge3Color extends StatelessWidget {
-  
   final bool isEmpty;
   final int currentHp;
   late int maxHp;
 
-  HpGauge3Color({
-    required this.currentHp, 
-    required this.maxHp,
-    required this.isEmpty,
-     super.key});
-
-
+  HpGauge3Color(
+      {required this.currentHp,
+      required this.maxHp,
+      required this.isEmpty,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
-  String statusText = "0/0";
+    String statusText = "0/0";
 
-    if(!isEmpty){
+    if (!isEmpty) {
       statusText = '${currentHp.toString().padLeft(2, '  ')}/$maxHp';
-    } else{
+    } else {
       maxHp += 1;
     }
-
 
     return Row(
       children: [
@@ -345,4 +326,3 @@ class HpGauge3Color extends StatelessWidget {
     return const Color.fromARGB(255, 255, 159, 159);
   }
 }
-

@@ -6,21 +6,19 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_da
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-List<String> targetMonthTasks =[];
-List<String> targetMonthDoneTasks =[];
-List<Duration> targetMonthStudyTimes =[];
+List<String> targetMonthTasks = [];
+List<String> targetMonthDoneTasks = [];
+List<Duration> targetMonthStudyTimes = [];
 Duration targetMonthTimeSum = Duration.zero;
 
-List<String> monthlyTasks =[];
-List<String> monthlyDoneTasks =[];
-List<Duration> monthlyStudyTimes =[];
+List<String> monthlyTasks = [];
+List<String> monthlyDoneTasks = [];
+List<Duration> monthlyStudyTimes = [];
 Duration monthlyTimeSum = Duration.zero;
 
-List<String> weeklyTasks =[];
-List<String> weeklyDoneTasks =[];
+List<String> weeklyTasks = [];
+List<String> weeklyDoneTasks = [];
 Duration weeklyTimeSum = Duration.zero;
-
-
 
 DateTime now = DateTime.now();
 DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
@@ -40,85 +38,81 @@ class StudyProgressIndicator extends StatefulWidget {
 }
 
 Widget buildStudyProgressIndicator(
-    BuildContext context,
-    List<Map<String, dynamic>> targetMonthData,
-    List<Map<String, dynamic>> thisMonthData,) {
-  
-    targetMonthTasks =[];
-    targetMonthDoneTasks =[];
-    targetMonthTimeSum = Duration.zero;
-    targetMonthStudyTimes =[];
+  BuildContext context,
+  List<Map<String, dynamic>> targetMonthData,
+  List<Map<String, dynamic>> thisMonthData,
+) {
+  targetMonthTasks = [];
+  targetMonthDoneTasks = [];
+  targetMonthTimeSum = Duration.zero;
+  targetMonthStudyTimes = [];
 
-    monthlyTasks =[];
-    monthlyDoneTasks =[];
-    monthlyTimeSum = Duration.zero;
-    monthlyStudyTimes =[];
+  monthlyTasks = [];
+  monthlyDoneTasks = [];
+  monthlyTimeSum = Duration.zero;
+  monthlyStudyTimes = [];
 
-    weeklyTasks =[];
-    weeklyDoneTasks =[];
-    weeklyTimeSum = Duration.zero;
+  weeklyTasks = [];
+  weeklyDoneTasks = [];
+  weeklyTimeSum = Duration.zero;
 
   //今"月"の累計を出す処理
-  for(int i = 0; i < thisMonthData.length; i++){
+  for (int i = 0; i < thisMonthData.length; i++) {
     Map target = thisMonthData.elementAt(i);
 
     monthlyTimeSum += target["time"];
     monthlyStudyTimes.add(target["time"]);
 
-    for(int ind = 0; ind < target["plan"].length; ind++){
-      if(target["plan"].elementAt(ind).trim() != ""){
+    for (int ind = 0; ind < target["plan"].length; ind++) {
+      if (target["plan"].elementAt(ind).trim() != "") {
         monthlyTasks.add(target["date"]);
       }
     }
 
-    for(int ind = 0; ind < target["record"].length; ind++){
-      if(target["record"].elementAt(ind).trim() != ""
-        && monthlyDoneTasks.length < monthlyTasks.length){
+    for (int ind = 0; ind < target["record"].length; ind++) {
+      if (target["record"].elementAt(ind).trim() != "" &&
+          monthlyDoneTasks.length < monthlyTasks.length) {
         monthlyDoneTasks.add(target["date"]);
       }
     }
 
     //今"週"の累計を出す処理
     DateTime targetDay = DateTime(
-      int.parse(target["date"].substring(0,4)),
-      int.parse(target["date"].substring(5,7)),
-      int.parse(target["date"].substring(8,10)),
-    ); 
-    
-    if(targetDay.isAfter(firstDayOfWeek) && targetDay.isBefore(lastDayOfWeek)){
+      int.parse(target["date"].substring(0, 4)),
+      int.parse(target["date"].substring(5, 7)),
+      int.parse(target["date"].substring(8, 10)),
+    );
+
+    if (targetDay.isAfter(firstDayOfWeek) &&
+        targetDay.isBefore(lastDayOfWeek)) {
       weeklyTimeSum += target["time"];
 
-    for(int ind = 0; ind < target["plan"].length; ind++){
-      if(target["plan"].elementAt(ind).trim() != ""){
-       weeklyTasks.add(target["date"]);
+      for (int ind = 0; ind < target["plan"].length; ind++) {
+        if (target["plan"].elementAt(ind).trim() != "") {
+          weeklyTasks.add(target["date"]);
+        }
+      }
+
+      for (int ind = 0; ind < target["record"].length; ind++) {
+        if (target["record"].elementAt(ind).trim() != "" &&
+            weeklyDoneTasks.length < weeklyTasks.length) {
+          weeklyDoneTasks.add(target["date"]);
+        }
       }
     }
-
-    for(int ind = 0; ind < target["record"].length; ind++){
-      if(target["record"].elementAt(ind).trim() != ""
-      && weeklyDoneTasks.length < weeklyTasks.length){
-        weeklyDoneTasks.add(target["date"]);
-      }
-    }
-
-
-    }
-
   }
 
-  for(int i = 0; i < targetMonthData.length; i++){
+  for (int i = 0; i < targetMonthData.length; i++) {
     Map target = targetMonthData.elementAt(i);
 
     targetMonthTimeSum += target["time"];
     targetMonthStudyTimes.add(target["time"]);
 
     DateTime targetDay = DateTime(
-      int.parse(target["date"].substring(0,4)),
-      int.parse(target["date"].substring(5,7)),
-      int.parse(target["date"].substring(8,10)),
-    ); 
-
-
+      int.parse(target["date"].substring(0, 4)),
+      int.parse(target["date"].substring(5, 7)),
+      int.parse(target["date"].substring(8, 10)),
+    );
   }
 
   // for (int i = 0; i < data.length; i++) {
@@ -174,42 +168,40 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
       numOfDoneTasks = monthlyDoneTasks.length;
       numOfAllTasks = monthlyTasks.length;
       centreText = "今月";
-      if(monthlyTasks.isEmpty){
+      if (monthlyTasks.isEmpty) {
         numOfAllTasks = 1;
       }
     } else if (circularIndicatorState == 2) {
       numOfDoneTasks = weeklyDoneTasks.length;
       numOfAllTasks = weeklyTasks.length;
       centreText = "今週";
-      if(weeklyTasks.isEmpty){
+      if (weeklyTasks.isEmpty) {
         numOfAllTasks = 1;
       }
     }
-     return CircularPercentIndicator(
-          radius: SizeConfig.blockSizeHorizontal! * 20,
-          lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
-          percent: numOfDoneTasks / numOfAllTasks,
-          animation: true,
-          animationDuration: 1500,
-          circularStrokeCap: CircularStrokeCap.round,
-          center:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(
-              centreText,
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                  fontWeight: FontWeight.w400),
-            ),
-            Text(
-              "${((numOfDoneTasks /numOfAllTasks) * 100).round()}%",
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 9,
-                  fontWeight: FontWeight.w700),
-            ),
-          ]),
-          progressColor:
-              getCurrentHpColor(numOfDoneTasks,numOfAllTasks),
-          backgroundColor: WIDGET_OUTLINE_COLOR);
+    return CircularPercentIndicator(
+        radius: SizeConfig.blockSizeHorizontal! * 20,
+        lineWidth: SizeConfig.blockSizeHorizontal! * 3.5,
+        percent: numOfDoneTasks / numOfAllTasks,
+        animation: true,
+        animationDuration: 1500,
+        circularStrokeCap: CircularStrokeCap.round,
+        center: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            centreText,
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                fontWeight: FontWeight.w400),
+          ),
+          Text(
+            "${((numOfDoneTasks / numOfAllTasks) * 100).round()}%",
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal! * 9,
+                fontWeight: FontWeight.w700),
+          ),
+        ]),
+        progressColor: getCurrentHpColor(numOfDoneTasks, numOfAllTasks),
+        backgroundColor: WIDGET_OUTLINE_COLOR);
   }
 
   Color getCurrentHpColor(int hp, int max) {
@@ -240,7 +232,7 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       const SizedBox(width: 10),
       Text(
-        "$formattedDate${getDayOfWeek(now.weekday - 1)}",
+        "$formattedDate(${"日月火水木金土"[now.weekday % 7]})",
         style: TextStyle(
             fontSize: SizeConfig.blockSizeHorizontal! * 7,
             fontWeight: FontWeight.w600),
@@ -249,8 +241,9 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
       Text(
         "計画の達成度",
         style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-            fontWeight: FontWeight.bold,),
+          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+          fontWeight: FontWeight.bold,
+        ),
       )
     ]));
   }
@@ -268,96 +261,74 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
                 width: SizeConfig.blockSizeHorizontal! * 45,
                 height: SizeConfig.blockSizeHorizontal! * 45,
                 child: circularPercentIndicator()),
-            Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               InkWell(
-                onTap: () {
-                  setState(() {
-                    circularIndicatorState = 2;
-                  });
-                },
-               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                Row(children:[
-                const Text("今週    "),
-                const Icon(Icons.timer,color:Colors.grey,size:15),
-                Text("  ${weeklyTimeSum.inHours} 時間${weeklyTimeSum.inMinutes.remainder(60)} 分",
-                  style:const TextStyle(color:Colors.grey)
-                ),
-              ]),
-
-              SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 2.5,
-                  width: SizeConfig.blockSizeHorizontal! * 55,
-                  child:SizedBox(
-                    height: SizeConfig.blockSizeVertical! *2,
-                    width: SizeConfig.blockSizeHorizontal! * 40,
-                    child: HpGauge3Color(
-                        currentHp: weeklyDoneTasks.length,
-                        maxHp: weeklyTasks.length,
-                        isEmpty: weeklyTasks.isEmpty
-                        ),
-                      )
-                    )]
-                  ) 
-                ),
-
-
-                 SizedBox(height:SizeConfig.blockSizeVertical! *1),
-
-
-                InkWell(
+                  onTap: () {
+                    setState(() {
+                      circularIndicatorState = 2;
+                    });
+                  },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          const Text("今週    "),
+                          const Icon(Icons.timer, color: Colors.grey, size: 15),
+                          Text(
+                              "  ${weeklyTimeSum.inHours} 時間${weeklyTimeSum.inMinutes.remainder(60)} 分",
+                              style: const TextStyle(color: Colors.grey)),
+                        ]),
+                        SizedBox(
+                            height: SizeConfig.blockSizeVertical! * 2.5,
+                            width: SizeConfig.blockSizeHorizontal! * 55,
+                            child: SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 2,
+                              width: SizeConfig.blockSizeHorizontal! * 40,
+                              child: HpGauge3Color(
+                                  currentHp: weeklyDoneTasks.length,
+                                  maxHp: weeklyTasks.length,
+                                  isEmpty: weeklyTasks.isEmpty),
+                            ))
+                      ])),
+              SizedBox(height: SizeConfig.blockSizeVertical! * 1),
+              InkWell(
                   onTap: () {
                     setState(() {
                       circularIndicatorState = 1;
                     });
                   },
                   child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children:[
-                   Row(children:[
-                    const Text("今月    "),
-                    const Icon(Icons.timer,color:Colors.grey,size:15),
-                    Text("  ${monthlyTimeSum.inHours} 時間${monthlyTimeSum.inMinutes.remainder(60)} 分",
-                      style:const TextStyle(color:Colors.grey)
-                    ),
-                  ]),
-
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          const Text("今月    "),
+                          const Icon(Icons.timer, color: Colors.grey, size: 15),
+                          Text(
+                              "  ${monthlyTimeSum.inHours} 時間${monthlyTimeSum.inMinutes.remainder(60)} 分",
+                              style: const TextStyle(color: Colors.grey)),
+                        ]),
+                        SizedBox(
+                            height: SizeConfig.blockSizeVertical! * 2.5,
+                            width: SizeConfig.blockSizeHorizontal! * 55,
+                            child: SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 2,
+                              width: SizeConfig.blockSizeHorizontal! * 40,
+                              child: HpGauge3Color(
+                                  currentHp: monthlyDoneTasks.length,
+                                  maxHp: monthlyTasks.length,
+                                  isEmpty: monthlyTasks.isEmpty),
+                            )),
+                      ])),
+              const SizedBox(height: 10),
+              nullGuard(
+                  targetMonthStudyTimes,
                   SizedBox(
-                    height: SizeConfig.blockSizeVertical! * 2.5,
+                    height: SizeConfig.blockSizeVertical! * 10,
                     width: SizeConfig.blockSizeHorizontal! * 55,
-
-                      child:
-                      SizedBox(
-                          height: SizeConfig.blockSizeVertical! *2,
-                          width: SizeConfig.blockSizeHorizontal! * 40,
-                          child: HpGauge3Color(
-                              currentHp: monthlyDoneTasks.length,
-                              maxHp: monthlyTasks.length,
-                              isEmpty: monthlyTasks.isEmpty
-                            ),
-                          )
-                        ),
-                        
-                      ])       
-                    ),
-
-                  const SizedBox(height:10),
-
-                  nullGuard(targetMonthStudyTimes,
-                    SizedBox(
-                      height: SizeConfig.blockSizeVertical! *10,
-                      width: SizeConfig.blockSizeHorizontal! * 55,
-                      child: targetMonthStudyTimeChart(
-                        SizeConfig.blockSizeVertical! *10,
+                    child: targetMonthStudyTimeChart(
+                        SizeConfig.blockSizeVertical! * 10,
                         SizeConfig.blockSizeHorizontal! * 50),
-                    )
-                  )
-
-
+                  ))
             ])
           ]),
       const Divider(
@@ -366,107 +337,101 @@ class StudyProgressIndicatorState extends State<StudyProgressIndicator> {
     ]);
   }
 
-  Widget targetMonthStudyTimeChart(double maxHeight,double maxWidth){
+  Widget targetMonthStudyTimeChart(double maxHeight, double maxWidth) {
     Duration maxDuration = Duration.zero;
 
-    if(targetMonthStudyTimes.isNotEmpty){
-      maxDuration = targetMonthStudyTimes.reduce((a, b) => a.compareTo(b) > 0 ? a : b);
+    if (targetMonthStudyTimes.isNotEmpty) {
+      maxDuration =
+          targetMonthStudyTimes.reduce((a, b) => a.compareTo(b) > 0 ? a : b);
     }
 
     int maxMinute = 1440;
-    if(maxDuration.inHours < 8){
-      maxMinute  = 480;
-    }else if(maxDuration.inHours < 16){
+    if (maxDuration.inHours < 8) {
+      maxMinute = 480;
+    } else if (maxDuration.inHours < 16) {
       maxMinute = 960;
     }
     double oneMinHeight = maxHeight / maxMinute;
     double oneDayWidth = maxWidth / targetMonthStudyTimes.length;
 
     Widget gauge = const SizedBox();
-    if(targetMonthStudyTimes.isNotEmpty && maxDuration.inMinutes != 0){gauge = 
-      SizedBox(
-        height:maxHeight,
-        child:
-        Row(children:[
-          const VerticalDivider(width: 1,),
-          Column(children:[
-            Text((maxMinute/60).round().toString(),style:const TextStyle(fontSize:10)),
-            const Spacer(),
-            Text((maxMinute/120).round().toString(),style:const TextStyle(fontSize:10)),
-            const Spacer(),
-            const Text("0h",style:TextStyle(fontSize:10)),
-          ])
-        ])
-         
-      );
+    if (targetMonthStudyTimes.isNotEmpty && maxDuration.inMinutes != 0) {
+      gauge = SizedBox(
+          height: maxHeight,
+          child: Row(children: [
+            const VerticalDivider(
+              width: 1,
+            ),
+            Column(children: [
+              Text((maxMinute / 60).round().toString(),
+                  style: const TextStyle(fontSize: 10)),
+              const Spacer(),
+              Text((maxMinute / 120).round().toString(),
+                  style: const TextStyle(fontSize: 10)),
+              const Spacer(),
+              const Text("0h", style: TextStyle(fontSize: 10)),
+            ])
+          ]));
     }
 
-    return Row(children:[
-     ListView.builder(
-      itemBuilder:(context,index){
-      int oneDayHeight = targetMonthStudyTimes.elementAt(index).inMinutes;
-        return 
-        Column(children:[
-          SizedBox(
-            width:oneDayWidth,
-            height: oneMinHeight *(maxMinute - oneDayHeight),
-          ),
-          Container(
-            width:oneDayWidth,
-            height: oneMinHeight *oneDayHeight,
-            decoration: const BoxDecoration(
-              color:Colors.greenAccent,
-              borderRadius: BorderRadius.only(topLeft:Radius.circular(2.0),topRight:Radius.circular(2.0))
-              ),
-            
-          )
-        ]);
-    },
-    itemCount:targetMonthStudyTimes.length,
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    scrollDirection: Axis.horizontal,
-    ),
-
-    gauge
-
+    return Row(children: [
+      ListView.builder(
+        itemBuilder: (context, index) {
+          int oneDayHeight = targetMonthStudyTimes.elementAt(index).inMinutes;
+          return Column(children: [
+            SizedBox(
+              width: oneDayWidth,
+              height: oneMinHeight * (maxMinute - oneDayHeight),
+            ),
+            Container(
+              width: oneDayWidth,
+              height: oneMinHeight * oneDayHeight,
+              decoration: const BoxDecoration(
+                  color: Colors.greenAccent,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(2.0),
+                      topRight: Radius.circular(2.0))),
+            )
+          ]);
+        },
+        itemCount: targetMonthStudyTimes.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+      ),
+      gauge
     ]);
   }
 
-  Widget nullGuard(targetData,widget){
-    if(targetData.isEmpty){
+  Widget nullGuard(targetData, widget) {
+    if (targetData.isEmpty) {
       return const SizedBox();
-    }else{
+    } else {
       return widget;
     }
   }
-
 }
 
 class HpGauge3Color extends StatelessWidget {
-  
   final bool isEmpty;
   final int currentHp;
   late int maxHp;
 
-  HpGauge3Color({
-    required this.currentHp, 
-    required this.maxHp,
-    required this.isEmpty,
-     super.key});
-
-
+  HpGauge3Color(
+      {required this.currentHp,
+      required this.maxHp,
+      required this.isEmpty,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
-  String statusText = "0/0";
+    String statusText = "0/0";
 
-    if(!isEmpty){
+    if (!isEmpty) {
       statusText = '${currentHp.toString().padLeft(2, '  ')}/$maxHp';
-    } else{
+    } else {
       maxHp += 1;
     }
-
 
     return Row(
       children: [
@@ -498,4 +463,3 @@ class HpGauge3Color extends StatelessWidget {
     return const Color.fromARGB(255, 255, 159, 159);
   }
 }
-

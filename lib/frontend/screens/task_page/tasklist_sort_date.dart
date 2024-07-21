@@ -11,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import "../../../backend/DB/sharepreference.dart";
+import 'package:intl/intl.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
   Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
@@ -44,7 +45,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               dateEnd = DateTime.fromMillisecondsSinceEpoch(
                   sortedData.values.elementAt(keyIndex).first["dtEnd"]);
               String adjustedDtEnd =
-                  ("${dateEnd.month}月${dateEnd.day}日 ${getDayOfWeek(dateEnd.weekday - 1)} ");
+                  ("${dateEnd.month}月${dateEnd.day}日 (${"日月火水木金土日"[dateEnd.weekday % 7]}) ");
               return Container(
                   padding: const EdgeInsets.only(
                       left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
@@ -356,7 +357,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     return Row(children: [
       SizedBox(
           width: SizeConfig.blockSizeHorizontal! * 12,
-          child: Text(truncateTimeEnd(targetData),
+          child: Text(
+              DateFormat("HH:mm").format(
+                  DateTime.fromMicrosecondsSinceEpoch(targetData["dtEnd"])),
               style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 3.75,
                   fontWeight: FontWeight.w700,
@@ -457,40 +460,5 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
   bool isEditingText(TextEditingController controller) {
     return controller.text.isNotEmpty;
-  }
-
-  String truncateTimeEnd(targetData) {
-    String hour = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .hour
-        .toString();
-    String minute = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])
-        .minute
-        .toString();
-
-    String formattedhour = hour.padLeft(2, '0');
-    String formattedminute = minute.padLeft(2, '0');
-
-    return "$formattedhour:$formattedminute";
-  }
-}
-
-String getDayOfWeek(int weekday) {
-  switch (weekday) {
-    case 0:
-      return '(月)';
-    case 1:
-      return '(火)';
-    case 2:
-      return '(水)';
-    case 3:
-      return '(木)';
-    case 4:
-      return '(金)';
-    case 5:
-      return '(土)';
-    case 6:
-      return '(日)';
-    default:
-      return '(不明な曜日)';
   }
 }
