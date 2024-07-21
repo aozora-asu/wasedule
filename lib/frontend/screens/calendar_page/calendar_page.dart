@@ -1396,10 +1396,9 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<DateTime, dynamic>> mapList = [];
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
-    String targetKey =
-        "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
+    String targetKey = DateFormat("yyyy-MM-dd").format(target);
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
-    DateTime targetDay = DateTime.parse(targetKey);
+
     DateTime now = DateTime.now();
     List<Map<DateTime, Widget>> mixedDataByTime = [];
 
@@ -1582,21 +1581,13 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (formerDateTimeData == "終日") {
       upperDividerColor = Colors.redAccent;
     } else {
-      DateTime formerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(formerDateTimeData.substring(0, 2)),
-        int.parse(formerDateTimeData.substring(3, 5)),
-      );
+      DateTime d = DateFormat("HH:mm").parse(formerDateTimeData);
+      DateTime formerDateTime =
+          DateTime(now.year, now.month, now.day, d.hour, d.minute);
       if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime nextDateTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          int.parse(nextDateTimeData.substring(0, 2)),
-          int.parse(nextDateTimeData.substring(3, 5)),
-        );
+        DateTime d = DateFormat("HH:mm").parse(nextDateTimeData);
+        DateTime nextDateTime =
+            DateTime(now.year, now.month, now.day, d.hour, d.minute);
         upperDividerColor = Colors.red;
         if (nextDateTime.isBefore(now)) {
           underDividerColor = Colors.red;
