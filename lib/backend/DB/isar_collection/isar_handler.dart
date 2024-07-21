@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import "../../../frontend/screens/moodle_view_page/classRoom.dart";
+import "../../../static/constant.dart";
 
 Isar? isar;
 
@@ -63,7 +64,7 @@ class IsarHandler {
   ) async {
     String? quarter = datetime2quarter(DateTime.now());
     int weekday = DateTime.now().weekday;
-    int? period = datetime2Period(DateTime.now());
+    int? period = Class.wherePeriod(DateTime.now());
 
     List<String> classRoomList = classMap[building] ?? [];
 
@@ -91,7 +92,7 @@ class IsarHandler {
   Future<bool> isNowVacant(Isar isar, String classRoomName) async {
     String? quarter = datetime2quarter(DateTime.now());
     int weekday = DateTime.now().weekday;
-    int? period = datetime2Period(DateTime.now());
+    int? period = Class.wherePeriod(DateTime.now());
     if (quarter != null && period != null) {
       final existClass = await isar.hasClass
           .filter()

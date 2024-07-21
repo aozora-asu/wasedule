@@ -2,6 +2,8 @@ import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:home_widget/home_widget.dart';
 import 'dart:convert';
+import "../../static/constant.dart";
+import 'package:intl/intl.dart';
 
 const String appGroupID = "group.com.example.wasedule";
 const String iOSWidgetName = 'nextCourseWidget';
@@ -26,11 +28,11 @@ class NextCourseHomeWidget {
     } else {
       var course = nextCourseList.last;
       nextCourse = NextCourse(
-        classRoom: course["classRoom"] ?? "",
-        className: course["courseName"] ?? "",
-        period: course["period"]?.toString() ?? "",
-        startTime: period2startTime(course["period"]) ?? "",
-      );
+          classRoom: course["classRoom"] ?? "",
+          className: course["courseName"] ?? "",
+          period: course["period"]?.toString() ?? "",
+          startTime:
+              DateFormat("H:mm").format(Class.periods[course["period"]].start));
     }
     // nextCourse = NextCourse(
     //     classRoom: DateTime.fromMicrosecondsSinceEpoch(34567876543).toString(),

@@ -1,23 +1,44 @@
 import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 enum Term {
-  springQuarter(value: "spring_quarter", text: "春クォーター", shortText: "春"),
-  summerQuarter(value: "summer_quarter", text: "夏クォーター", shortText: "夏"),
-  springSemester(value: "spring_semester", text: "春学期", shortText: "春"),
-  fallQuarter(value: "fall_quarter", text: "秋クォーター", shortText: "秋"),
-  winterQuarter(value: "winter_quarter", text: "冬クォーター", shortText: "冬"),
-  fallSemester(value: "fall_semester", text: "秋学期", shortText: "秋"),
-  fullYear(value: "full_year", text: "通年", shortText: null),
+  springQuarter(
+      value: "spring_quarter",
+      text: "春クォーター",
+      fullText: "春学期 -春クォーター",
+      shortText: "春"),
+  summerQuarter(
+      value: "summer_quarter",
+      text: "夏クォーター",
+      fullText: "春学期 -夏クォーター",
+      shortText: "夏"),
+  springSemester(
+      value: "spring_semester", text: "春学期", fullText: "", shortText: "春"),
+  fallQuarter(
+      value: "fall_quarter",
+      text: "秋クォーター",
+      fullText: "秋学期 -秋クォーター",
+      shortText: "秋"),
+  winterQuarter(
+      value: "winter_quarter",
+      text: "冬クォーター",
+      fullText: "秋学期 -冬クォーター",
+      shortText: "冬"),
+  fallSemester(
+      value: "fall_semester", text: "秋学期", fullText: "", shortText: "秋"),
+  fullYear(value: "full_year", text: "通年", fullText: "通年科目", shortText: null),
   ;
 
   const Term(
-      {required this.value, required this.text, required this.shortText});
+      {required this.value,
+      required this.text,
+      required this.shortText,
+      required this.fullText});
   final String text;
   final String value;
   final String? shortText;
+  final String fullText;
 }
 
 class Class {
@@ -60,7 +81,7 @@ class Class {
       period: 7,
       start: tz.TZDateTime.from(DateFormat("H:mm").parse("20:45"), tz.local),
       end: tz.TZDateTime.from(DateFormat("H:mm").parse("21:25"), tz.local));
-  static List<Class> get keys => [
+  static List<Class> get periods => [
         zeroth,
         first,
         second,
@@ -70,19 +91,12 @@ class Class {
         sixth,
         seventh,
       ];
-  static time(int period) {
-    try {
-      return keys[period];
-    } catch (e) {
-      const CommonException(CommonExceptionCode.indexException);
-    }
-  }
 
   static wherePeriod(DateTime dateTime) {
-    TZDateTime tzDateTime = tz.TZDateTime.from(
+    tz.TZDateTime tzDateTime = tz.TZDateTime.from(
         DateFormat("H:mm").parse("${dateTime.hour}:${dateTime.minute}"),
         tz.local);
-    for (var key in keys) {
+    for (var key in periods) {
       if ((tzDateTime.isAfter(key.start) && tzDateTime.isBefore(key.end)) ||
           tzDateTime.isAtSameMomentAs(key.start) ||
           tzDateTime.isAtSameMomentAs(key.end)) {

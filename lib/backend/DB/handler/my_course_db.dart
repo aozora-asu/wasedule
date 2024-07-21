@@ -511,7 +511,7 @@ class MyCourseDatabaseHandler {
             'year = ? AND period = ? AND weekday = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
         whereArgs: [
           datetime2schoolYear(now),
-          datetime2Period(now.add(const Duration(minutes: 70))),
+          Class.wherePeriod(now.add(const Duration(minutes: 70))),
           now.weekday,
           ...semesters
         ]);

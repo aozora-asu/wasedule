@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseAddPage extends ConsumerStatefulWidget {
@@ -12,7 +13,8 @@ class CourseAddPage extends ConsumerStatefulWidget {
   String? semester;
   late StateSetter setTimetableState;
   CourseAddPage(
-      {super.key, this.weekDay,
+      {super.key,
+      this.weekDay,
       this.period,
       this.year,
       this.semester,
@@ -92,9 +94,15 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     Widget dividerModel = const Divider(
       height: 2,
     );
+    String courseTimeText;
 
-    String courseTimeText = "$year年, ${targetSemester(semester!)}, ${getJapaneseWeekday(weekDay)}, ${getPeriodString(period)}";
-
+    if (weekDay != null && period != null) {
+      courseTimeText =
+          "$year年, ${Term.values.firstWhere((e) => e.value == semester!).text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
+    } else {
+      courseTimeText =
+          "$year年, ${Term.values.firstWhere((e) => e.value == semester!).text}, オンデマンド, 時限なし";
+    }
     return GestureDetector(
         onTap: () {},
         child: Container(
@@ -406,65 +414,5 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       },
     );
     return "a";
-  }
-
-  String getJapaneseWeekday(int? weekday) {
-    switch (weekday) {
-      case 1:
-        return '月曜日';
-      case 2:
-        return '火曜日';
-      case 3:
-        return '水曜日';
-      case 4:
-        return '木曜日';
-      case 5:
-        return '金曜日';
-      case 6:
-        return '土曜日';
-      case 7:
-        return '日曜日';
-      default:
-        return 'オンデマンド';
-    }
-  }
-
-  String getPeriodString(int? period) {
-    switch (period) {
-      case 1:
-        return '１限';
-      case 2:
-        return '２限';
-      case 3:
-        return '３限';
-      case 4:
-        return '４限';
-      case 5:
-        return '５限';
-      case 6:
-        return '６限';
-      case 7:
-        return '７限';
-      default:
-        return '時限なし';
-    }
-  }
-
-  String targetSemester(String semesterID) {
-    String result = "通年";
-    if (semesterID == "spring_quarter") {
-      result = "春クォーター";
-    } else if (semesterID == "summer_quarter") {
-      result = "夏クォーター";
-    } else if (semesterID == "spring_semester") {
-      result = "春学期";
-    } else if (semesterID == "fall_quarter") {
-      result = "秋クォーター";
-    } else if (semesterID == "winter_quarter") {
-      result = "冬クォーター";
-    } else if (semesterID == "fall_semester") {
-      result = "秋学期";
-    }
-    return result;
   }
 }

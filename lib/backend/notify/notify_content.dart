@@ -10,6 +10,7 @@ import "notify_db.dart";
 import "../../static/converter.dart";
 import "../DB/sharepreference.dart";
 import 'dart:convert';
+import "../../static/constant.dart";
 
 int notifyID = 0;
 
@@ -563,12 +564,15 @@ class NotifyContent {
       tz.TZDateTime weeklyScheduleDate;
       String body;
       String classNotifyTitle;
+
       for (var myCourse in myCourseList) {
         if (myCourse["period"] != null && myCourse["weekday"] != null) {
           weeklyScheduleDate = _nextInstanceOfWeeklyTime(
-              period2endTime(myCourse["period"] - 1)!, myCourse["weekday"]);
+              DateFormat("H:mm")
+                  .format(Class.periods[myCourse["period"] - 1].end),
+              myCourse["weekday"]);
           body =
-              "${period2startTime(myCourse["period"])}~ ${myCourse["classRoom"]}";
+              "${DateFormat("H:mm").format(Class.periods[myCourse["period"]].start)}~ ${myCourse["classRoom"]}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),

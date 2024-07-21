@@ -36,6 +36,7 @@ import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
 import "../../../backend/notify/notify_content.dart";
+import "../../../static/constant.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -948,10 +949,11 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (targetDayList.isNotEmpty) {
       Map firstClass = targetDayList.first;
       Map lastClass = targetDayList.last;
-      String universityClassData =
-          "${timeTable.returnBeginningTime(firstClass["period"])}~${timeTable.returnEndTime(lastClass["period"])}";
 
-      DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
+      String universityClassData =
+          "${DateFormat("H:mm").format(Class.periods[firstClass["period"]].start)}~${DateFormat("H:mm").format(Class.periods[lastClass["period"]].end)}";
+
+      DateTime key = Class.periods[firstClass["period"]].start;
       Widget value = switchWidget(classListChild(universityClassData, target),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
       mixedDataByTime.add({key: value});
@@ -1422,14 +1424,16 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
-      String startTime = timeTable.returnBeginningTime(targetClass["period"]);
-      String endTime = timeTable.returnEndTime(targetClass["period"]);
+      String startTime = DateFormat("HH:mm")
+          .format(Class.periods[targetClass["period"]].start);
+      String endTime =
+          DateFormat("HH:mm").format(Class.periods[targetClass["period"]].end);
       final newTargetClass = {
         ...targetClass,
         "startTime": startTime,
         "endTime": endTime
       };
-      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
+      DateTime key = Class.periods[targetClass["period"]].start;
       mapList.add({key: newTargetClass});
     }
 
@@ -1898,7 +1902,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekday"])}の授業、",
+                        "${"日月火水木金土"[(sortedMapList.elementAt(index).values.first["weekday"]) % 7]}の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,

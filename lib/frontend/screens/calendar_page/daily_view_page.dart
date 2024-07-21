@@ -23,6 +23,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import "../../../static/constant.dart";
 
 final inputFormProvider = StateNotifierProvider<InputFormNotifier, InputForm>(
   (ref) => InputFormNotifier(),
@@ -139,14 +140,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               color: Colors.white),
                         )),
                     const Spacer(),
-                    buttonModel((){
-                        showAttendanceDialog(context,widget.target,ref,true);
-                      },
-                      MAIN_COLOR,
-                      "この日の出欠記録",
-                      verticalpadding: 5,
-                      horizontalPadding: 15),
-                    const SizedBox(width:5)
+                    buttonModel(() {
+                      showAttendanceDialog(context, widget.target, ref, true);
+                    }, MAIN_COLOR, "この日の出欠記録",
+                        verticalpadding: 5, horizontalPadding: 15),
+                    const SizedBox(width: 5)
                   ],
                 ),
               ),
@@ -185,16 +183,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 height: SizeConfig.blockSizeHorizontal! * 2,
               ),
             ])),
-
         const SizedBox(height: 10),
-
         const SizedBox(height: 10),
-
         Container(
-            decoration:BoxDecoration(
-              color:BACKGROUND_COLOR,
-              borderRadius: BorderRadius.circular(30)
-            ),
+            decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
+                borderRadius: BorderRadius.circular(30)),
             child: Column(children: [
               Align(
                 alignment: Alignment.centerLeft,
@@ -226,7 +220,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final tableData = ref.read(timeTableProvider);
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
-    String targetKey = "${widget.target.year}-${widget.target.month.toString().padLeft(2, "0")}-${widget.target.day.toString().padLeft(2, "0")}";
+    String targetKey =
+        "${widget.target.year}-${widget.target.month.toString().padLeft(2, "0")}-${widget.target.day.toString().padLeft(2, "0")}";
 
     if (data.sortedDataByDay[targetKey] == null &&
         tableData.currentSemesterClasses[widget.target.weekday] == null) {
@@ -305,11 +300,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    List<Map<String, dynamic>> targetDayList =timeTable.targetDateClasses(widget.target);
+    List<Map<String, dynamic>> targetDayList =
+        timeTable.targetDateClasses(widget.target);
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map targetClass = targetDayList.elementAt(i);
-      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
+      DateTime key = Class.periods[targetClass["period"]].start;
+
       Widget value = switchWidget(timeTableListChild(targetClass),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
       mixedDataByTime.add({key: value});
@@ -443,12 +440,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         targetDayData.elementAt(index)["tagID"] != null) {
       multipleDeleteButton = GestureDetector(
           onTap: () {
-            showDeleteDialogue(
-                context,
-                "タグ「${returnTagTitle(
-                        data.sortedDataByDay[targetKey]
-                            .elementAt(index)["tagID"],
-                        ref)}」が紐づいているすべての予定", () async {
+            showDeleteDialogue(context,
+                "タグ「${returnTagTitle(data.sortedDataByDay[targetKey].elementAt(index)["tagID"], ref)}」が紐づいているすべての予定",
+                () async {
               await deleteAllScheduleWithTag(
                   targetDayData.elementAt(index)["tagID"], ref, setState);
               isEdited = false;
@@ -654,11 +648,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget timeTableListChild(Map classData) {
     final data = ref.read(timeTableProvider);
-    String startTime = data.returnBeginningTime(classData["period"]);
-    String endTime = data.returnEndTime(classData["period"]);
+    String startTime =
+        DateFormat("HH:mm").format(Class.periods[classData["period"]].start);
+    String endTime =
+        DateFormat("HH:mm").format(Class.periods[classData["period"]].end);
 
     return GestureDetector(
-        onTap: () async{
+        onTap: () async {
           await showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -699,7 +695,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${data.intToWeekday(classData["weekday"])}の授業",
+                      Text("${"日月火水木金土"[classData["weekday"] % 7]}の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
@@ -1133,7 +1129,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           dateTimeData = Text(
             sortedData[widget.target]!.elementAt(index)["title"],
             style: const TextStyle(
-                color: Colors.grey, fontSize: 12.5, fontWeight: FontWeight.bold),
+                color: Colors.grey,
+                fontSize: 12.5,
+                fontWeight: FontWeight.bold),
           );
           DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(
               sortedData[widget.target]!.elementAt(index)["dtEnd"]);
@@ -1143,49 +1141,46 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               const Spacer(),
               Text(
                 "${dtEnd.hour.toString().padLeft(2, "0")}:${dtEnd.minute.toString().padLeft(2, "0")}",
-                style:
-                    const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color:BLUEGREY),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 15, color: BLUEGREY),
               ),
               const Spacer(),
               GestureDetector(
-                onTap:()async{
-                  // await bottomSheet(context,sortedData[widget.target]!.elementAt(index),setState);
-                  // ref.read(taskDataProvider).isRenewed = true;
-                  // ref
-                  //     .read(calendarDataProvider.notifier)
-                  //     .state = CalendarData();
-                  // while (
-                  //     ref.read(taskDataProvider).isRenewed !=
-                  //         false) {
-                  //   await Future.delayed(
-                 ///       const Duration(microseconds: 1));
-                  // }
-                },
-                child:Container(
-                  width: SizeConfig.blockSizeHorizontal! * 80,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  decoration: BoxDecoration(
-                      color: FORGROUND_COLOR,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          sortedData[widget.target]!
-                                  .elementAt(index)["summary"] ??
-                              "(詳細なし)",
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        dateTimeData,
-                      ]),
-                )),
+                  onTap: () async {
+                    // await bottomSheet(context,sortedData[widget.target]!.elementAt(index),setState);
+                    // ref.read(taskDataProvider).isRenewed = true;
+                    // ref
+                    //     .read(calendarDataProvider.notifier)
+                    //     .state = CalendarData();
+                    // while (
+                    //     ref.read(taskDataProvider).isRenewed !=
+                    //         false) {
+                    //   await Future.delayed(
+                    ///       const Duration(microseconds: 1));
+                    // }
+                  },
+                  child: Container(
+                    width: SizeConfig.blockSizeHorizontal! * 80,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
+                    decoration: BoxDecoration(
+                        color: FORGROUND_COLOR,
+                        borderRadius: BorderRadius.circular(25)),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            sortedData[widget.target]!
+                                    .elementAt(index)["summary"] ??
+                                "(詳細なし)",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          dateTimeData,
+                        ]),
+                  )),
               const Spacer(),
             ]),
             const SizedBox(height: 15)
@@ -1462,11 +1457,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             "") {
       return "      終日";
     } else {
-      return "${"      " +
-          ref
-              .read(calendarDataProvider)
-              .templateData
-              .elementAt(index)["startTime"]} ～ " +
+      return "${"      " + ref.read(calendarDataProvider).templateData.elementAt(index)["startTime"]} ～ " +
           ref
               .read(calendarDataProvider)
               .templateData
