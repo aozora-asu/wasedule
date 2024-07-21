@@ -182,6 +182,7 @@ List<SyllabusQueryResult>? _getMatchedCourse(
   final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
   List<SyllabusQueryResult> syllabusQueryResultList = [];
   if (trElements.isNotEmpty) {
+    trElements.removeAt(0);
     for (var trElement in trElements) {
       final tdElements = trElement.querySelectorAll("td");
       if (tdElements[2].text == courseName) {

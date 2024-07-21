@@ -111,7 +111,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     .resisterUserInfo(messageData["calendarUrl"]);
             }
           } catch (e) {
-            print(consoleMessage.message);
+            print(e);
             //printWrapped(consoleMessage.message);
           }
         },
