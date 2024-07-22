@@ -23,7 +23,6 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
-import "../../../static/constant.dart";
 
 final inputFormProvider = StateNotifierProvider<InputFormNotifier, InputForm>(
   (ref) => InputFormNotifier(),
@@ -305,8 +304,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map targetClass = targetDayList.elementAt(i);
-      DateTime key = Class.periods[targetClass["period"]].start;
-
+      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
       Widget value = switchWidget(timeTableListChild(targetClass),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
       mixedDataByTime.add({key: value});
@@ -648,10 +646,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget timeTableListChild(Map classData) {
     final data = ref.read(timeTableProvider);
-    String startTime =
-        DateFormat("HH:mm").format(Class.periods[classData["period"]].start);
-    String endTime =
-        DateFormat("HH:mm").format(Class.periods[classData["period"]].end);
+    String startTime = data.returnBeginningTime(classData["period"]);
+    String endTime = data.returnEndTime(classData["period"]);
 
     return GestureDetector(
         onTap: () async {
@@ -695,7 +691,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${"日月火水木金土"[classData["weekday"] % 7]}の授業",
+                      Text("${data.intToWeekday(classData["weekday"])}の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,

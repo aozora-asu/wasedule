@@ -64,7 +64,7 @@ class Term {
   final String value;
   final String? shortText;
   final String fullText;
-  static whenTerms(DateTime dateTime) {
+  static List<String> whenTerms(DateTime dateTime) {
     List<String> currentTerms = [];
     List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
 
@@ -98,7 +98,7 @@ class Term {
     return currentTerms;
   }
 
-  static whenQuarter(DateTime dateTime) {
+  static String? whenQuarter(DateTime dateTime) {
     List<String> currentTerms = whenTerms(dateTime);
     for (var term in Term.terms.keys) {
       if (currentTerms.contains(term)) {
@@ -108,7 +108,7 @@ class Term {
     return null;
   }
 
-  static whenSchoolYear(DateTime dateTime) {
+  static int whenSchoolYear(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month - 4, dateTime.day).year;
   }
 }

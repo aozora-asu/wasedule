@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 final calendarDataProvider =
     StateNotifierProvider<CalendarDataNotifier, CalendarData>(
@@ -161,8 +160,12 @@ class CalendarData {
       // "startTime"でソート
       validEvents.sort((a, b) {
         // "startTime"を時間型に変換して比較
-        DateTime timeA = DateFormat("H:mm").parse(a['startTime']);
-        DateTime timeB = DateFormat("H:mm").parse(b['startTime']);
+        Duration timeA = Duration(
+            hours: int.parse(a['startTime'].substring(0, 2)),
+            minutes: int.parse(a['startTime'].substring(3, 5)));
+        Duration timeB = Duration(
+            hours: int.parse(b['startTime'].substring(0, 2)),
+            minutes: int.parse(b['startTime'].substring(3, 5)));
         return timeA.compareTo(timeB);
       });
 

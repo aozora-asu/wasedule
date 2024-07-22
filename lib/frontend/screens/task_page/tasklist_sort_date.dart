@@ -359,7 +359,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           width: SizeConfig.blockSizeHorizontal! * 12,
           child: Text(
               DateFormat("HH:mm").format(
-                  DateTime.fromMicrosecondsSinceEpoch(targetData["dtEnd"])),
+                  DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])),
               style: TextStyle(
                   fontSize: SizeConfig.blockSizeHorizontal! * 3.75,
                   fontWeight: FontWeight.w700,

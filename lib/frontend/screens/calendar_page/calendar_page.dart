@@ -1,5 +1,6 @@
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
@@ -36,7 +37,6 @@ import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
 import "../../../backend/notify/notify_content.dart";
-import "../../../static/constant.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -160,7 +160,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   void initTargetSem() {
     DateTime now = DateTime.now();
-    thisYear = datetime2schoolYear(now);
+    thisYear = Term.whenSchoolYear(now);
     List semesterList = datetime2termList(now);
 
     if (now.month <= 3) {
@@ -949,11 +949,10 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (targetDayList.isNotEmpty) {
       Map firstClass = targetDayList.first;
       Map lastClass = targetDayList.last;
-
       String universityClassData =
-          "${DateFormat("H:mm").format(Class.periods[firstClass["period"]].start)}~${DateFormat("H:mm").format(Class.periods[lastClass["period"]].end)}";
+          "${timeTable.returnBeginningTime(firstClass["period"])}~${timeTable.returnEndTime(lastClass["period"])}";
 
-      DateTime key = Class.periods[firstClass["period"]].start;
+      DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
       Widget value = switchWidget(classListChild(universityClassData, target),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
       mixedDataByTime.add({key: value});
@@ -1396,9 +1395,10 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<DateTime, dynamic>> mapList = [];
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
-    String targetKey = DateFormat("yyyy-MM-dd").format(target);
+    String targetKey =
+        "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
-
+    DateTime targetDay = DateTime.parse(targetKey);
     DateTime now = DateTime.now();
     List<Map<DateTime, Widget>> mixedDataByTime = [];
 
@@ -1423,16 +1423,14 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
-      String startTime = DateFormat("HH:mm")
-          .format(Class.periods[targetClass["period"]].start);
-      String endTime =
-          DateFormat("HH:mm").format(Class.periods[targetClass["period"]].end);
+      String startTime = timeTable.returnBeginningTime(targetClass["period"]);
+      String endTime = timeTable.returnEndTime(targetClass["period"]);
       final newTargetClass = {
         ...targetClass,
         "startTime": startTime,
         "endTime": endTime
       };
-      DateTime key = Class.periods[targetClass["period"]].start;
+      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
       mapList.add({key: newTargetClass});
     }
 
@@ -1581,13 +1579,21 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (formerDateTimeData == "終日") {
       upperDividerColor = Colors.redAccent;
     } else {
-      DateTime d = DateFormat("HH:mm").parse(formerDateTimeData);
-      DateTime formerDateTime =
-          DateTime(now.year, now.month, now.day, d.hour, d.minute);
+      DateTime formerDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(formerDateTimeData.substring(0, 2)),
+        int.parse(formerDateTimeData.substring(3, 5)),
+      );
       if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime d = DateFormat("HH:mm").parse(nextDateTimeData);
-        DateTime nextDateTime =
-            DateTime(now.year, now.month, now.day, d.hour, d.minute);
+        DateTime nextDateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          int.parse(nextDateTimeData.substring(0, 2)),
+          int.parse(nextDateTimeData.substring(3, 5)),
+        );
         upperDividerColor = Colors.red;
         if (nextDateTime.isBefore(now)) {
           underDividerColor = Colors.red;
@@ -1893,7 +1899,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        "${"日月火水木金土"[(sortedMapList.elementAt(index).values.first["weekday"]) % 7]}の授業、",
+                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekday"])}の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,
