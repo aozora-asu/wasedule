@@ -582,18 +582,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget attendRecordListPanel(Map attendRecord) {
-    String attendStatusText = "";
-    Color attendStatusColor = Colors.white;
-    if (attendRecord["attendStatus"] == "attend") {
-      attendStatusText = "出席";
-      attendStatusColor = Colors.blue;
-    } else if (attendRecord["attendStatus"] == "late") {
-      attendStatusText = "遅刻";
-      attendStatusColor = const Color.fromARGB(255, 223, 200, 0);
-    } else {
-      attendStatusText = "欠席";
-      attendStatusColor = Colors.redAccent;
-    }
+    String attendStatusText =
+        AttendStatus.values[attendRecord["attendStatus"]]!.text;
+    Color attendStatusColor =
+        AttendStatus.values[attendRecord["attendStatus"]]!.color;
 
     return GestureDetector(
         onTap: () async {

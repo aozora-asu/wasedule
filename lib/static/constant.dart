@@ -2,6 +2,7 @@ import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/material.dart';
 
 final Map<String, DateTime> wasedaCalendar2024 = {
   "春学期開始": DateTime(2024, 4, 1),
@@ -227,14 +228,20 @@ class Lesson {
   }
 }
 
-enum AttendStatus {
-  attend('attend'),
-  late('late'),
-  absent('absent'),
-  ;
-
-  const AttendStatus(this.value);
+class AttendStatus {
+  static AttendStatus attend = const AttendStatus._internal(
+      value: "attend", text: "出席", color: Colors.blue);
+  static AttendStatus late = const AttendStatus._internal(
+      value: "late", text: "遅刻", color: Color.fromARGB(255, 223, 200, 0));
+  static AttendStatus absent = const AttendStatus._internal(
+      value: "absent", text: "欠席", color: Colors.redAccent);
+  static Map<String, AttendStatus> get values =>
+      {attend.value: attend, late.value: late, absent.value: absent};
+  const AttendStatus._internal(
+      {required this.value, required this.text, required this.color});
   final String value;
+  final String text;
+  final Color color;
 }
 
 enum NotifyType {

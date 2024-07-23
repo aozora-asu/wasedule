@@ -38,9 +38,7 @@ void notificationTapBackground(
   if (decodedPayload["route"] == "timeTablePage") {
     AttendanceRecord attendanceRecord = AttendanceRecord(
         attendDate: decodedPayload["attendDate"],
-        attendStatus: AttendStatus.values.byName(
-          notificationResponse.actionId!,
-        ),
+        attendStatus: AttendStatus.values[notificationResponse.actionId!]!,
         myCourseID: decodedPayload["myCourseID"]);
     await MyCourseDatabaseHandler().recordAttendStatus(attendanceRecord);
   }
