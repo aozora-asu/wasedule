@@ -340,6 +340,7 @@ void showErrorReportDialogue(context) {
   bool isChecked = true;
   Message message;
   bool isSuccess;
+  String validText = "";
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -354,10 +355,15 @@ void showErrorReportDialogue(context) {
                 textInputAction: TextInputAction.done,
                 onChanged: (value) {
                   setState(() {
-                    text = value;
+                    text = value.replaceAll(RegExp(r'[\s]'), "");
+                    validText = "＊内容を入力してください";
                   });
                 },
                 placeholder: "概要\n(不具合報告の場合、できるだけ詳細にお願いいたします。)",
+              ),
+              Text(
+                text != "" ? "" : validText,
+                style: const TextStyle(color: Colors.red),
               ),
               Row(children: [
                 CupertinoCheckbox(
@@ -371,6 +377,8 @@ void showErrorReportDialogue(context) {
                   child: Text(
                     "アプリ改善に必要な情報を提供する",
                     overflow: TextOverflow.clip,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 11.5),
                   ),
                 )
               ]),

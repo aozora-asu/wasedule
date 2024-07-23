@@ -1,4 +1,4 @@
-Map<String, List<String>> classMap = {
+Map<String, List<String>> classMap = const {
   "3": [
     "3-1103実習室",
     "3-1104実習室",
