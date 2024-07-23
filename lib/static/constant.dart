@@ -83,16 +83,16 @@ class Term {
         fallSemester,
         fullYear
       ];
-  static Map<String, Term> get semesters => {
-        springSemester.value: springSemester,
-        fallSemester.value: fallSemester,
-      };
-  static Map<String, Term> get quarters => {
-        springQuarter.value: springQuarter,
-        summerQuarter.value: summerQuarter,
-        fallQuarter.value: fallQuarter,
-        winterQuarter.value: winterQuarter,
-      };
+  static List<Term> get _semesters => [
+        springSemester,
+        fallSemester,
+      ];
+  static List<Term> get _quarters => [
+        springQuarter,
+        summerQuarter,
+        fallQuarter,
+        winterQuarter,
+      ];
   final String text;
   final String value;
   final String? shortText;
@@ -119,7 +119,7 @@ class Term {
 
   static Term? whenQuarter(DateTime dateTime) {
     List<Term> currentTerms = whenTerms(dateTime);
-    for (var term in Term.quarters.values) {
+    for (var term in Term._quarters) {
       if (currentTerms.contains(term)) {
         return term;
       }
@@ -129,7 +129,7 @@ class Term {
 
   static Term? whenSemester(DateTime dateTime) {
     List<Term> currentTerms = whenTerms(dateTime);
-    for (var term in Term.semesters.values) {
+    for (var term in Term._semesters) {
       if (currentTerms.contains(term)) {
         return term;
       }
