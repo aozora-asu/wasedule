@@ -530,31 +530,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  Color cellBackGroundColor(int length, Color color) {
-    Color bgColor = FORGROUND_COLOR;
-    switch (length) {
-      case 0:
-        bgColor = increaseRed(color, amount: 0);
-      case 1:
-        bgColor = increaseRed(color, amount: 30);
-      case 2:
-        bgColor = increaseRed(color, amount: 60);
-      case 3:
-        bgColor = increaseRed(color, amount: 90);
-      case 4:
-        bgColor = increaseRed(color, amount: 120);
-      case 5:
-        bgColor = increaseRed(color, amount: 150);
-      case 6:
-        bgColor = increaseRed(color, amount: 180);
-      case 7:
-        bgColor = increaseRed(color, amount: 210);
-      case 8:
-        bgColor = increaseRed(color, amount: 240);
-      case 9:
-        bgColor = increaseRed(color, amount: 255);
-      default:
-        bgColor = increaseRed(color, amount: 255);
+  Color cellBackGroundColor(int taskCount, Color color) {
+    Color bgColor;
+    if (taskCount <= 8) {
+      bgColor = increaseRed(color, amount: 30 * taskCount);
+    } else {
+      bgColor = increaseRed(color, amount: 255);
     }
     return bgColor;
   }
@@ -974,18 +955,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           child: const Center(
               child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
     );
-  }
-
-  AssetImage tableBackGroundImage() {
-    if (DateTime.now().hour >= 5 && DateTime.now().hour <= 9) {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_morning.png');
-    } else if (DateTime.now().hour >= 9 && DateTime.now().hour <= 17) {
-      return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
-    } else {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_night.png');
-    }
   }
 
   Color hexToColor(String hexColor) {

@@ -411,8 +411,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       child: Row(children: [
         const Text("残機 ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-        const Icon(Icons.favorite, color: Colors.redAccent, size: 20),
-        Text(" × " + absentNum.toString(),
+        const Icon(Icons.favorite, color: Colors.redAccent, size: 22),
+        Text("×${absentNum.toString()}",
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey)),
       ]),
@@ -434,11 +434,11 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           padding: containerPadding,
           decoration: containerDecoration,
           child: Row(children: [
-            changeNumButton("remainAbsent", "decrease"),
+            decreseRemainAbsent(),
             Text(maxAbsentNum.toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            changeNumButton("remainAbsent", "increase")
+            increaceRemainAbsent()
           ]),
         ),
         const Text("最大欠席可能数",
@@ -455,11 +455,11 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           padding: containerPadding,
           decoration: containerDecoration,
           child: Row(children: [
-            changeNumButton("classNum", "decrease"),
+            decreseClassNum(),
             Text(totalClassNum.toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            changeNumButton("classNum", "increase")
+            increaceClassNum()
           ]),
         ),
         const Text("授業数", style: TextStyle(fontSize: 15, color: Colors.grey)),
@@ -468,12 +468,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     ]);
   }
 
-  Widget changeNumButton(String numType, String buttonType) {
+  Widget increaceClassNum() {
     IconData buttonIcon = Icons.arrow_forward_ios;
-    if (buttonType == "decrease") {
-      buttonIcon = Icons.arrow_back_ios;
-    }
-
     return GestureDetector(
         child: Icon(
           buttonIcon,
@@ -482,39 +478,65 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ),
         onTap: () async {
           isExpandSettingPanel = true;
-          if (numType == "classNum") {
-            if (buttonType == "increase") {
-              totalClassNum += 1;
-            } else {
-              totalClassNum -= 1;
-            }
-            if (totalClassNum <= 0) {
-              totalClassNum = 0;
-            }
-            if (totalClassNum <= maxAbsentNum) {
-              totalClassNum = maxAbsentNum;
-            }
-            await MyCourseDatabaseHandler()
-                .updateClassNum(widget.target["id"], totalClassNum);
-            setState(() {});
-            widget.setTimetableState(() {});
-          } else {
-            if (buttonType == "increase") {
-              maxAbsentNum += 1;
-            } else {
-              maxAbsentNum -= 1;
-            }
-            if (maxAbsentNum <= 0) {
-              maxAbsentNum = 0;
-            }
-            if (maxAbsentNum >= totalClassNum) {
-              maxAbsentNum = totalClassNum;
-            }
-            await MyCourseDatabaseHandler()
-                .updateRemainAbsent(widget.target["id"], maxAbsentNum);
-            setState(() {});
-            widget.setTimetableState(() {});
-          }
+          totalClassNum = totalClassNum + 1;
+          await MyCourseDatabaseHandler()
+              .updateClassNum(widget.target["id"], totalClassNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget decreseClassNum() {
+    IconData buttonIcon = Icons.arrow_back_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          isExpandSettingPanel = true;
+          totalClassNum =
+              totalClassNum <= maxAbsentNum ? maxAbsentNum : totalClassNum - 1;
+          await MyCourseDatabaseHandler()
+              .updateClassNum(widget.target["id"], totalClassNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget increaceRemainAbsent() {
+    IconData buttonIcon = Icons.arrow_forward_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          maxAbsentNum =
+              maxAbsentNum >= totalClassNum ? totalClassNum : maxAbsentNum + 1;
+          await MyCourseDatabaseHandler()
+              .updateRemainAbsent(widget.target["id"], maxAbsentNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget decreseRemainAbsent() {
+    IconData buttonIcon = Icons.arrow_back_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          maxAbsentNum = maxAbsentNum <= 0 ? 0 : maxAbsentNum - 1;
+          await MyCourseDatabaseHandler()
+              .updateRemainAbsent(widget.target["id"], maxAbsentNum);
+          setState(() {});
+          widget.setTimetableState(() {});
         });
   }
 
