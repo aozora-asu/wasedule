@@ -62,8 +62,9 @@ class _CalendarState extends ConsumerState<Calendar> {
   String today =
       "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
   late int thisYear;
-  late int semesterNum;
-  late String targetSemester;
+  late int semestNum;
+  late Term? currentSemester;
+  late Term? currentQuarter;
 
   @override
   void initState() {
@@ -161,40 +162,28 @@ class _CalendarState extends ConsumerState<Calendar> {
   void initTargetSem() {
     DateTime now = DateTime.now();
     thisYear = Term.whenSchoolYear(now);
-    List semesterList = datetime2termList(now);
+
+    currentQuarter = Term.whenQuarter(now);
+    currentSemester = Term.whenSemester(now);
+    if (currentQuarter == null) {
+      if (now.month == 1) {
+        currentQuarter = Term.winterQuarter;
+      } else if (now.month == 4 || now.month == 5) {
+        currentQuarter = Term.springQuarter;
+      } else if (now.month == 6 || now.month == 7) {
+        currentQuarter = Term.summerQuarter;
+      } else if (now.month == 10 || now.month == 11) {
+        currentQuarter = Term.fallQuarter;
+      } else if (now.month == 12) {
+        currentQuarter = Term.winterQuarter;
+      } else {
+        currentQuarter == null;
+      }
+    }
 
     if (now.month <= 3) {
       thisYear -= 1;
     }
-    semesterNum = 5;
-    if (now.month == 1) {
-      semesterNum = 4;
-    } else if (now.month == 4 || now.month == 5) {
-      semesterNum = 1;
-    } else if (now.month == 6 || now.month == 7) {
-      semesterNum = 2;
-    } else if (now.month == 10 || now.month == 11) {
-      semesterNum = 3;
-    } else if (now.month == 12) {
-      semesterNum = 4;
-    } else {
-      semesterNum == 5;
-    }
-
-    if (semesterList.isNotEmpty) {
-      String quarter = semesterList[1];
-      if (quarter == "spring_quarter") {
-        semesterNum = 1;
-      } else if (quarter == "summer_quarter") {
-        semesterNum = 2;
-      } else if (quarter == "fall_quarter") {
-        semesterNum = 3;
-      } else if (quarter == "winter_quarter") {
-        semesterNum = 4;
-      }
-    }
-
-    targetSemester = "$thisYear-$semesterNum";
   }
 
   Future<List<Map<String, dynamic>>> loadDataBases() async {
@@ -279,7 +268,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                             ref.read(timeTableProvider).timeTableDataList);
                         ref
                             .read(timeTableProvider)
-                            .initUniversityScheduleByDay(thisYear, semesterNum);
+                            .initUniversityScheduleByDay(thisYear, [
+                          if (currentQuarter != null) currentQuarter!,
+                          if (currentSemester != null) currentSemester!,
+                          Term.fullYear,
+                        ]);
                         return calendarBody();
                       }
                     },
@@ -545,21 +538,21 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (month <= 3) {
       thisYear -= 1;
     }
-    semesterNum = 5;
-    if (month == 1) {
-      semesterNum = 4;
-    } else if (month == 4 || month == 5) {
-      semesterNum = 1;
-    } else if (month == 6 || month == 7) {
-      semesterNum = 2;
-    } else if (month == 10 || month == 11) {
-      semesterNum = 3;
-    } else if (month == 12) {
-      semesterNum = 4;
-    } else {
-      semesterNum == 5;
+    if (currentQuarter == null) {
+      if (month == 1) {
+        currentQuarter = Term.winterQuarter;
+      } else if (month == 4 || month == 5) {
+        currentQuarter = Term.springQuarter;
+      } else if (month == 6 || month == 7) {
+        currentQuarter = Term.summerQuarter;
+      } else if (month == 10 || month == 11) {
+        currentQuarter = Term.fallQuarter;
+      } else if (month == 12) {
+        currentQuarter = Term.winterQuarter;
+      } else {
+        currentQuarter == null;
+      }
     }
-    targetSemester = "$thisYear-$semesterNum";
   }
 
   Map<String, List<DateTime>> generateCalendarData() {

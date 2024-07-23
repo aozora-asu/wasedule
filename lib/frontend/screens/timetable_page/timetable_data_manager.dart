@@ -75,7 +75,7 @@ class TimeTableData {
     return sortedData;
   }
 
-  String returnStringClassTime(int thisYear, int semesterNum, int weekDay) {
+  String returnStringClassTime(int thisYear, List<Term> terms, int weekDay) {
     List<Map<String, dynamic>> weekDayData = sortedDataByWeekDay[weekDay] ?? [];
     String startTime = "";
     String endTime = "";
@@ -86,9 +86,7 @@ class TimeTableData {
       if (target["year"] == thisYear &&
           target["weekday"] != null &&
           target["period"] != null) {
-        if (target["semester"] == currentQuaterID(semesterNum) ||
-            target["semester"] == currentSemesterID(semesterNum) ||
-            target["semester"] == "full_year") {
+        if (terms.map((e) => e.value).toList().contains(target["semester"])) {
           //年度・学期が条件に沿うデータのみを抽出
           thisSemesterData.add(target);
           int targetWeekDay = target["weekday"];
@@ -108,21 +106,15 @@ class TimeTableData {
     return result;
   }
 
-  void initUniversityScheduleByDay(int thisYear, int semesterNum) {
+  void initUniversityScheduleByDay(int thisYear, List<Term> terms) {
     universityScheduleByWeekDay = {};
     currentSemesterClasses = {};
-    universityScheduleByWeekDay[1] =
-        returnStringClassTime(thisYear, semesterNum, 1);
-    universityScheduleByWeekDay[2] =
-        returnStringClassTime(thisYear, semesterNum, 2);
-    universityScheduleByWeekDay[3] =
-        returnStringClassTime(thisYear, semesterNum, 3);
-    universityScheduleByWeekDay[4] =
-        returnStringClassTime(thisYear, semesterNum, 4);
-    universityScheduleByWeekDay[5] =
-        returnStringClassTime(thisYear, semesterNum, 5);
-    universityScheduleByWeekDay[6] =
-        returnStringClassTime(thisYear, semesterNum, 6);
+    universityScheduleByWeekDay[1] = returnStringClassTime(thisYear, terms, 1);
+    universityScheduleByWeekDay[2] = returnStringClassTime(thisYear, terms, 2);
+    universityScheduleByWeekDay[3] = returnStringClassTime(thisYear, terms, 3);
+    universityScheduleByWeekDay[4] = returnStringClassTime(thisYear, terms, 4);
+    universityScheduleByWeekDay[5] = returnStringClassTime(thisYear, terms, 5);
+    universityScheduleByWeekDay[6] = returnStringClassTime(thisYear, terms, 6);
   }
 
   List<Map<String, dynamic>> targetDateClasses(DateTime target) {
@@ -133,9 +125,9 @@ class TimeTableData {
     String fullYear = "";
     int weekDay = target.weekday;
     if (Term.whenTerms(target).isNotEmpty) {
-      semester = Term.whenTerms(target)[0];
-      quarter = Term.whenTerms(target)[1];
-      fullYear = Term.whenTerms(target)[2];
+      semester = Term.whenSemester(target)!.value;
+      quarter = Term.whenQuarter(target)!.value;
+      fullYear = Term.fullYear.value;
     }
 
     for (var item in timeTableDataList) {

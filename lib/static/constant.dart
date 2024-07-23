@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -60,47 +61,52 @@ class Term {
         fallSemester.value: fallSemester,
         fullYear.value: fullYear
       };
+  static Map<String, Term> get semesters => {
+        springSemester.value: springSemester,
+        fallSemester.value: fallSemester,
+      };
+  static Map<String, Term> get quarters => {
+        springQuarter.value: springQuarter,
+        summerQuarter.value: summerQuarter,
+        fallQuarter.value: fallQuarter,
+        winterQuarter.value: winterQuarter,
+      };
   final String text;
   final String value;
   final String? shortText;
   final String fullText;
-  static List<String> whenTerms(DateTime dateTime) {
-    List<String> currentTerms = [];
+  static List<Term> whenTerms(DateTime dateTime) {
+    List<Term> currentTerms = [];
     List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
+    if (isBetween(dateTime, datetimeList[1], datetimeList[2])) {
+      currentTerms.addAll([springSemester, springQuarter]);
+    } else if (isBetween(dateTime, datetimeList[3], datetimeList[4])) {
+      currentTerms.addAll([springSemester, summerQuarter]);
+    } else if (isBetween(dateTime, datetimeList[7], datetimeList[8])) {
+      currentTerms.addAll([fallSemester, fallQuarter]);
+    } else if (isBetween(dateTime, datetimeList[9], datetimeList[11])) {
+      currentTerms.addAll([fallSemester, winterQuarter]);
+    }
 
-    if ((dateTime.isAfter(datetimeList[1]) &&
-            dateTime.isBefore(datetimeList[2])) ||
-        dateTime.isAtSameMomentAs(datetimeList[2]) ||
-        dateTime.isAtSameMomentAs(datetimeList[1])) {
-      currentTerms.addAll(["spring_semester", "spring_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[3]) &&
-            dateTime.isBefore(datetimeList[4])) ||
-        dateTime.isAtSameMomentAs(datetimeList[3]) ||
-        dateTime.isAtSameMomentAs(datetimeList[4])) {
-      currentTerms.addAll(["spring_semester", "summer_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[7]) &&
-            dateTime.isBefore(datetimeList[8])) ||
-        dateTime.isAtSameMomentAs(datetimeList[7]) ||
-        dateTime.isAtSameMomentAs(datetimeList[8])) {
-      currentTerms.addAll(["fall_semester", "fall_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[9]) &&
-            dateTime.isBefore(datetimeList[11])) ||
-        dateTime.isAtSameMomentAs(datetimeList[9]) ||
-        dateTime.isAtSameMomentAs(datetimeList[11])) {
-      currentTerms.addAll(["fall_semester", "winter_quarter"]);
-    }
     if (currentTerms.isNotEmpty) {
-      currentTerms.add("full_year");
+      currentTerms.add(fullYear);
     }
     return currentTerms;
   }
 
-  static String? whenQuarter(DateTime dateTime) {
-    List<String> currentTerms = whenTerms(dateTime);
-    for (var term in Term.terms.keys) {
+  static Term? whenQuarter(DateTime dateTime) {
+    List<Term> currentTerms = whenTerms(dateTime);
+    for (var term in Term.quarters.values) {
+      if (currentTerms.contains(term)) {
+        return term;
+      }
+    }
+    return null;
+  }
+
+  static Term? whenSemester(DateTime dateTime) {
+    List<Term> currentTerms = whenTerms(dateTime);
+    for (var term in Term.semesters.values) {
       if (currentTerms.contains(term)) {
         return term;
       }

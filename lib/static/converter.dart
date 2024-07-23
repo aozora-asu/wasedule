@@ -9,6 +9,12 @@ int datetime2schoolYear(DateTime datetime) {
   return DateTime(datetime.year, datetime.month - 4, datetime.day).year;
 }
 
+bool isBetween(DateTime dateTime, DateTime startTime, DateTime endTime) {
+  return (dateTime.isAfter(startTime) && dateTime.isBefore(endTime)) ||
+      dateTime.isAtSameMomentAs(startTime) ||
+      dateTime.isAtSameMomentAs(endTime);
+}
+
 String? weekday2string(int? weekday, String format) {
   if (weekday != null) {
     switch (format) {
