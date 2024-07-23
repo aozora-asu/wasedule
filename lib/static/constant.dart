@@ -193,7 +193,7 @@ class Lesson {
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
   );
-  static List<Lesson> get periods => [
+  static List<Lesson> get _periods => [
         zeroth,
         first,
         second,
@@ -208,7 +208,7 @@ class Lesson {
     tz.TZDateTime tzDateTime = tz.TZDateTime.from(
         DateFormat("HH:mm").parse("${dateTime.hour}:${dateTime.minute}"),
         tz.local);
-    for (var lesson in periods) {
+    for (var lesson in _periods) {
       if (isBetween(tzDateTime, lesson.start, lesson.end)) {
         return lesson;
       } else {
@@ -219,8 +219,8 @@ class Lesson {
   }
 
   static Lesson? atPeriod(int period) {
-    if (period < periods.length) {
-      return periods[period];
+    if (period < _periods.length) {
+      return _periods[period];
     } else {
       return null;
     }

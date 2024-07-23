@@ -32,7 +32,7 @@ class NextCourseHomeWidget {
           className: course["courseName"] ?? "",
           period: course["period"]?.toString() ?? "",
           startTime: DateFormat("H:mm")
-              .format(Lesson.periods[course["period"]].start));
+              .format(Lesson.atPeriod(course["period"])!.start));
     }
     // nextCourse = NextCourse(
     //     classRoom: DateTime.fromMicrosecondsSinceEpoch(34567876543).toString(),
