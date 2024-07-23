@@ -205,9 +205,10 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                               "タスクの詳細",
                               2,
                               TextField(
+                                keyboardType: TextInputType.multiline,
                                 maxLines: null,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (value) {
+                                //textInputAction: TextInputAction.done,
+                                onChanged: (value) {
                                   TaskDatabaseHelper()
                                       .updateDescription(id, value);
 
@@ -256,7 +257,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   Row(
                                     children: [
                                       const Spacer(),
-                                      Icon(Icons.delete, color: FORGROUND_COLOR),
+                                      Icon(Icons.delete,
+                                          color: FORGROUND_COLOR),
                                       const SizedBox(width: 10),
                                       Text(
                                         "削除",

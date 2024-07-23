@@ -313,13 +313,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double fontSize, Function(String) onSubmitted) {
+      FontWeight weight, double fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
       child: TextField(
           controller: controller,
           maxLines: null,
-          textInputAction: TextInputAction.done,
+          keyboardType: TextInputType.multiline,
+          //textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
               fillColor: FORGROUND_COLOR,
               filled: true,
@@ -327,7 +328,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               hintText: hintText),
           style: TextStyle(
               fontSize: fontSize, color: Colors.black, fontWeight: weight),
-          onSubmitted: onSubmitted),
+          onChanged: onChanged),
     ));
   }
 
