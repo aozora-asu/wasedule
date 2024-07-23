@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import "../../../backend/service/home_widget.dart";
+import 'package:intl/intl.dart';
 
 class TimeTablePage extends ConsumerStatefulWidget {
   const TimeTablePage({super.key});
@@ -475,8 +476,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Color bgColor = BACKGROUND_COLOR;
           Color fontColor = BLUEGREY;
           DateTime now = DateTime.now();
-          if (returnBeginningDateTime(index + 1).isBefore(now) &&
-              returnEndDateTime(index + 1).isAfter(now)) {
+          if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+              Lesson.atPeriod(index + 1)!.end)) {
             bgColor = PALE_MAIN_COLOR;
             fontColor = FORGROUND_COLOR;
           }
@@ -491,7 +492,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          returnBeginningTime(index + 1),
+                          DateFormat("HH:mm")
+                              .format(Lesson.atPeriod(index + 1)!.start),
                           style: TextStyle(
                               color: fontColor,
                               fontSize: fontSize,
@@ -503,7 +505,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                                 fontSize: fontSize * 2.2,
                                 fontWeight: FontWeight.bold)),
                         Text(
-                          returnEndTime(index + 1),
+                          DateFormat("HH:mm")
+                              .format(Lesson.atPeriod(index + 1)!.end),
                           style: TextStyle(
                               color: fontColor,
                               fontSize: fontSize,
@@ -515,8 +518,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Widget resultinging = const SizedBox();
           DateTime now = DateTime.now();
           Color bgColor = BACKGROUND_COLOR;
-          if (returnEndDateTime(2).isBefore(now) &&
-              returnBeginningDateTime(3).isAfter(now)) {
+
+          if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
             bgColor = PALE_MAIN_COLOR;
           }
           if (index == 1) {
@@ -647,8 +650,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Color lineColor = BACKGROUND_COLOR;
             double lineWidth = 1;
             DateTime now = DateTime.now();
-            if (returnBeginningDateTime(index + 1).isBefore(now) &&
-                returnEndDateTime(index + 1).isAfter(now) &&
+
+            if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                    Lesson.atPeriod(index + 1)!.end) &&
                 now.weekday == weekDay &&
                 weekDay <= 6) {
               lineWidth = 4;
@@ -672,8 +676,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             DateTime now = DateTime.now();
             Color bgColor = BACKGROUND_COLOR;
             Color fontColor = BLUEGREY;
-            if (returnEndDateTime(2).isBefore(now) &&
-                returnBeginningDateTime(3).isAfter(now)) {
+
+            if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
               bgColor = PALE_MAIN_COLOR;
               fontColor = Colors.white;
             }
@@ -992,84 +996,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     } else {
       return const AssetImage(
           'lib/assets/calendar_background/ookuma_night.png');
-    }
-  }
-
-  String returnBeginningTime(int period) {
-    switch (period) {
-      case 1:
-        return "08:50";
-      case 2:
-        return "10:40";
-      case 3:
-        return "13:10";
-      case 4:
-        return "15:05";
-      case 5:
-        return "17:00";
-      case 6:
-        return "18:55";
-      default:
-        return "20:45";
-    }
-  }
-
-  DateTime returnBeginningDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 8, 50);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 10, 40);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 13, 10);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 15, 05);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 17, 00);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 18, 55);
-      default:
-        return DateTime(now.year, now.month, now.day, 20, 45);
-    }
-  }
-
-  String returnEndTime(int period) {
-    switch (period) {
-      case 1:
-        return "10:30";
-      case 2:
-        return "12:20";
-      case 3:
-        return "14:50";
-      case 4:
-        return "16:45";
-      case 5:
-        return "18:40";
-      case 6:
-        return "20:35";
-      default:
-        return "21:35";
-    }
-  }
-
-  DateTime returnEndDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 10, 30);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 12, 20);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 14, 50);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 16, 45);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 18, 40);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 20, 35);
-      default:
-        return DateTime(now.year, now.month, now.day, 21, 35);
     }
   }
 

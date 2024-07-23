@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 
 import "../../../static/constant.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 final timeTableProvider =
     StateNotifierProvider<TimeTableNotifier, TimeTableData>(
@@ -102,10 +103,15 @@ class TimeTableData {
       }
     }
     if (weekDayData.isNotEmpty && thisSemesterData.isNotEmpty) {
-      startTime =
-          Lesson.atPeriod(thisSemesterData.first["period"])?.startText ?? "";
+      startTime = Lesson.atPeriod(thisSemesterData.first["period"]) != null
+          ? DateFormat("HH:mm")
+              .format(Lesson.atPeriod(thisSemesterData.first["period"])!.start)
+          : "";
 
-      endTime = Lesson.atPeriod(thisSemesterData.last["period"])?.endText ?? "";
+      endTime = Lesson.atPeriod(thisSemesterData.last["period"]) != null
+          ? DateFormat("HH:mm")
+              .format(Lesson.atPeriod(thisSemesterData.last["period"])!.end)
+          : "";
       result = "$startTime~$endTime";
     }
     return result;
@@ -146,27 +152,6 @@ class TimeTableData {
     }
     result.sort((a, b) => a['period'].compareTo(b['period']));
     return result;
-  }
-
-  String intToWeekday(int weekday) {
-    switch (weekday) {
-      case 1:
-        return '月曜日';
-      case 2:
-        return '火曜日';
-      case 3:
-        return '水曜日';
-      case 4:
-        return '木曜日';
-      case 5:
-        return '金曜日';
-      case 6:
-        return '土曜日';
-      case 7:
-        return '日曜日';
-      default:
-        return '不明な曜日';
-    }
   }
 
   void clearContents() {

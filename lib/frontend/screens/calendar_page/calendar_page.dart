@@ -1895,7 +1895,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekday"])}の授業、",
+                        "${"日月火水木金土"[sortedMapList.elementAt(index).values.first["weekday"] % 7]}曜日の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,

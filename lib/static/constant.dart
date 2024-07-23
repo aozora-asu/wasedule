@@ -123,64 +123,53 @@ class Lesson {
   final DateTime start;
   final DateTime end;
   final int period;
-  final String startText;
-  final String endText;
 
-  const Lesson._internal(
-      {required this.start,
-      required this.end,
-      required this.period,
-      required this.startText,
-      required this.endText});
+  const Lesson._internal({
+    required this.start,
+    required this.end,
+    required this.period,
+  });
 
   static Lesson zeroth = Lesson._internal(
-      period: 0,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("7:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:40"), tz.local),
-      startText: "07:00",
-      endText: "08:40");
+    period: 0,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("7:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:40"), tz.local),
+  );
   static Lesson first = Lesson._internal(
-      period: 1,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:50"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:30"), tz.local),
-      startText: "08:50",
-      endText: "10:30");
+    period: 1,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:50"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:30"), tz.local),
+  );
   static Lesson second = Lesson._internal(
-      period: 2,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:40"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("12:20"), tz.local),
-      startText: "10:40",
-      endText: "12:20");
+    period: 2,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:40"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("12:20"), tz.local),
+  );
   static Lesson third = Lesson._internal(
-      period: 3,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("13:10"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("14:50"), tz.local),
-      startText: "13:10",
-      endText: "14:50");
+    period: 3,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("13:10"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("14:50"), tz.local),
+  );
   static Lesson fourth = Lesson._internal(
-      period: 4,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("15:05"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("16:45"), tz.local),
-      startText: "15:05",
-      endText: "16:45");
+    period: 4,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("15:05"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("16:45"), tz.local),
+  );
   static Lesson fifth = Lesson._internal(
-      period: 5,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("17:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:40"), tz.local),
-      startText: "17:00",
-      endText: "18:40");
+    period: 5,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("17:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:40"), tz.local),
+  );
   static Lesson sixth = Lesson._internal(
-      period: 6,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:55"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:35"), tz.local),
-      startText: "18:55",
-      endText: "20:35");
+    period: 6,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:55"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:35"), tz.local),
+  );
   static Lesson seventh = Lesson._internal(
-      period: 7,
-      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
-      startText: "20:45",
-      endText: "21:25");
+    period: 7,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
+  );
   static List<Lesson> get periods => [
         zeroth,
         first,

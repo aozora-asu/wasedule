@@ -648,8 +648,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget timeTableListChild(Map classData) {
     final data = ref.read(timeTableProvider);
-    String? startTime = Lesson.atPeriod(classData["period"])?.startText;
-    String? endTime = Lesson.atPeriod(classData["period"])?.endText;
+    Lesson? lesson = Lesson.atPeriod(classData["period"]);
+    String? startTime =
+        lesson != null ? DateFormat("HH:mm").format(lesson.start) : null;
+    String? endTime =
+        lesson != null ? DateFormat("HH:mm").format(lesson.end) : null;
 
     return GestureDetector(
         onTap: () async {
@@ -693,7 +696,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${data.intToWeekday(classData["weekday"])}の授業",
+                      Text("${"日月火水木金土"[classData["weekday"] % 7]}曜日の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
