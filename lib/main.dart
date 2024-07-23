@@ -11,7 +11,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import "backend/DB/sharepreference.dart";
-import "./static/constant.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +29,9 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
+
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight
   ]).then((_) {
     runApp(const ProviderScope(child: MyApp()));
   });

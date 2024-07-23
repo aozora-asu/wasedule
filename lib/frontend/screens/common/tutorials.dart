@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/app_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -84,7 +84,7 @@ class _IntroPageState extends State<IntroPage> {
           const Text("あなたは早稲田大学の学生ですか？", style: TextStyle(fontSize: 20)),
           const SizedBox(height: 20),
           SizedBox(
-            width: 1000,
+            width: 500,
             child: ElevatedButton(
               onPressed: () {
                 showUrlRegisterGuide(context);
@@ -99,7 +99,7 @@ class _IntroPageState extends State<IntroPage> {
           ),
           const SizedBox(height: 10),
           SizedBox(
-            width: 1000,
+            width: 500,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
@@ -166,11 +166,13 @@ class _IntroPageState extends State<IntroPage> {
         return AlertDialog(
           title: const Text("URLを登録してみましょう"),
           actions: <Widget>[
-            Column(children: [
+            Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
               const Text(
-                  "'Moodle'ページから、「Waseda Moodle」のURLをアプリに登録しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「カレンダーURLを自動登録する」\n\n登録すると、以降はアプリに課題が自動取得されます。"),
+                  "'Moodle'ページから、「Waseda Moodle」のURLをアプリに登録しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「カレンダーURLを自動登録する」\n\n登録すると、以降はアプリに課題が自動取得されます。\n"),
               SizedBox(
-                width: 1000,
+                width: 5000,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);

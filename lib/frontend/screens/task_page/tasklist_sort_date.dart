@@ -61,10 +61,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                       const SizedBox(width: 5),
                                       Text(
                                         adjustedDtEnd,
-                                        style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                7,
+                                        style:const TextStyle(
+                                            fontSize: 25,
                                             fontWeight: FontWeight.w800,
                                             color: BLUEGREY),
                                       ),
@@ -220,7 +218,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           return Text(
             snapshot.data!,
             style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
+              fontSize: 17,
               fontWeight: FontWeight.w700,
               color: FORGROUND_COLOR,
             ),
@@ -244,6 +242,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   Widget remainingTime(DateTime dtEnd) {
+    double fontSize = 17;
     DateTime timeLimit = dtEnd;
     Duration difference = dtEnd.difference(DateTime.now());
     if (timeLimit.isBefore(DateTime.now()) == false) {
@@ -256,7 +255,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             child: Text(
               ("  あと${difference.inDays + 1} 日  "),
               style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                fontSize: fontSize,
                 fontWeight: FontWeight.w700,
                 color: FORGROUND_COLOR,
               ),
@@ -280,7 +279,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           child: Text(
             ("  今日まで  "),
             style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
+              fontSize: fontSize,
               fontWeight: FontWeight.w700,
               color: FORGROUND_COLOR,
             ),
@@ -294,7 +293,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           child: Text(
             ' 期限切れ ',
             style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
+              fontSize: fontSize,
               fontWeight: FontWeight.w700,
               color: FORGROUND_COLOR,
             ),
@@ -356,12 +355,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
     return Row(children: [
       SizedBox(
-          width: SizeConfig.blockSizeHorizontal! * 12,
-          child: Text(
+          width: 50,
+          child: 
+            Text(
               DateFormat("HH:mm").format(
                   DateTime.fromMicrosecondsSinceEpoch(targetData["dtEnd"])),
-              style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 3.75,
+              textAlign: TextAlign.center,
+              style:const TextStyle(
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: BLUEGREY))),
       Expanded(
@@ -407,23 +408,17 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                    //width: SizeConfig.blockSizeHorizontal! * 62,
                                     child: Text(
                                         targetData["summary"] ?? "(詳細なし)",
-                                        style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                4,
+                                        style:const TextStyle(
+                                              fontSize: 17,
                                             fontWeight: FontWeight.w700,
                                             color: BLACK))),
                                 SizedBox(
-                                    //width: SizeConfig.blockSizeHorizontal! * 62,
                                     child:
                                         Text(targetData["title"] ?? "(タイトルなし)",
-                                            style: TextStyle(
-                                              fontSize: SizeConfig
-                                                      .blockSizeVertical! *
-                                                  1.75,
+                                            style:const TextStyle(
+                                              fontSize: 15,
                                               color: Colors.grey,
                                             ))),
                                 draftIndicator
@@ -440,13 +435,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     //     .getValue(targetData["id"].toString()) as String;
     String? memoData = targetData["memo"];
     if (memoData != null && memoData != "") {
-      return Row(children: [
+      return const Row(children: [
         const Spacer(),
-        Text("💬下書きあり",
+        const Text("💬下書きあり",
             style: TextStyle(
                 color: BLUEGREY,
                 fontWeight: FontWeight.bold,
-                fontSize: SizeConfig.blockSizeHorizontal! * 3)),
+                fontSize: 13)),
         // Text("/ " + memoData.length.toString() + "字",
         //   style:TextStyle(
         //     color: Colors.grey,

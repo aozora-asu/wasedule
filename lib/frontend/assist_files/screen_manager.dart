@@ -193,10 +193,6 @@ class _AppPageState extends ConsumerState<AppPage> {
       const TaskViewPage(),
       ExpiredTaskPage(setosute: setState),
       DeletedTaskPage(setosute: setState),
-      SettingsPage(
-        initIndex: 1,
-        isAppBar: false,
-      ),
       const TaskPage(),
     ];
   }

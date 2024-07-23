@@ -96,8 +96,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                 child: Scrollbar(
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: SizeConfig.blockSizeHorizontal! * 15,
+                      const SizedBox(
+                        height: 70,
                       ),
                       Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),
@@ -120,7 +120,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 ),
                                 style: TextStyle(
                                     fontSize:
-                                        SizeConfig.blockSizeHorizontal! * 4,
+                                        20,
                                     fontWeight: FontWeight.bold),
                                 onSubmitted: (value) {
                                   TaskDatabaseHelper().updateSummary(id, value);
@@ -152,7 +152,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 ),
                                 style: TextStyle(
                                     fontSize:
-                                        SizeConfig.blockSizeHorizontal! * 4,
+                                        20,
                                     fontWeight: FontWeight.bold),
                                 onSubmitted: (value) {
                                   TaskDatabaseHelper().updateTitle(id, value);
@@ -199,7 +199,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                       DateFormat("yyyy年MM月dd日  HH時mm分")
                                           .format(dtEnd),
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize:20)),
                                 )),
                             textFieldModel(
                               "タスクの詳細",
@@ -221,7 +222,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 },
                                 controller: descriptionController,
                                 style: TextStyle(
-                                  fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                                  fontSize: 20,
                                 ),
                                 decoration: const InputDecoration(
                                   hintText: "(タスクの詳細やメモを入力…)",
@@ -283,9 +284,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                       setState(() {});
                                     },
                                     controller: taskDraftController,
-                                    style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 4,
+                                    style:const TextStyle(
+                                      fontSize:20,
                                     ),
                                     decoration: const InputDecoration(
                                       hintText: "(課題の下書きをここに作成…)",
@@ -333,10 +333,10 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                         ])),
                                   ])
                                 ])),
-                            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+                            SizedBox(height: 20),
                             webView(pageID, height),
                             SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
+                              height: 20,
                             ),
                             SizedBox(
                               height:
@@ -348,7 +348,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                 ))),
         menuBar(),
       ]),
-      Container(
+        Container(
           decoration: BoxDecoration(
             color: BACKGROUND_COLOR,
             borderRadius: const BorderRadius.only(
@@ -356,45 +356,18 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
               topRight: Radius.circular(20),
             ),
           ),
+          padding:const EdgeInsets.symmetric(horizontal: 20),
           alignment: Alignment.center,
-          height: SizeConfig.blockSizeHorizontal! * 13,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 4,
+          height: 50,
+          child: Text(
+                (targetData["summary"] ?? "(詳細なし)") + " の詳細",
+                overflow: TextOverflow.ellipsis,
+                style:const TextStyle(
+                    color: BLUEGREY,
+                    fontSize:30,
+                    fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 92,
-                  child: Row(
-                    children: [
-                      Container(
-                        constraints: BoxConstraints(
-                            maxWidth: SizeConfig.blockSizeHorizontal! * 73.5),
-                        child: Text(
-                          targetData["summary"] ?? "(詳細なし)",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: BLUEGREY,
-                              fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Text(
-                        "  の詳細",
-                        style: TextStyle(
-                            color: BLUEGREY,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 4,
-              ),
-            ],
-          )),
+          ),
     ]);
   }
 
@@ -487,8 +460,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
         alignment: Alignment.centerLeft,
         child: Text(
           text,
-          style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 4,
+          style:const TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.normal,
               color: Colors.grey),
         ),
