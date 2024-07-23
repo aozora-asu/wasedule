@@ -119,47 +119,69 @@ class Term {
   }
 }
 
-class Class {
+class Lesson {
   final DateTime start;
   final DateTime end;
   final int period;
+  final String startText;
+  final String endText;
 
-  const Class._internal(
-      {required this.start, required this.end, required this.period});
+  const Lesson._internal(
+      {required this.start,
+      required this.end,
+      required this.period,
+      required this.startText,
+      required this.endText});
 
-  static Class zeroth = Class._internal(
+  static Lesson zeroth = Lesson._internal(
       period: 0,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("7:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("8:40"), tz.local));
-  static Class first = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("7:00"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:40"), tz.local),
+      startText: "07:00",
+      endText: "08:40");
+  static Lesson first = Lesson._internal(
       period: 1,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("8:50"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("10:30"), tz.local));
-  static Class second = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:50"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:30"), tz.local),
+      startText: "08:50",
+      endText: "10:30");
+  static Lesson second = Lesson._internal(
       period: 2,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("10:40"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("12:20"), tz.local));
-  static Class third = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:40"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("12:20"), tz.local),
+      startText: "10:40",
+      endText: "12:20");
+  static Lesson third = Lesson._internal(
       period: 3,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("13:10"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("14:50"), tz.local));
-  static Class fourth = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("13:10"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("14:50"), tz.local),
+      startText: "13:10",
+      endText: "14:50");
+  static Lesson fourth = Lesson._internal(
       period: 4,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("15:05"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("16:45"), tz.local));
-  static Class fifth = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("15:05"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("16:45"), tz.local),
+      startText: "15:05",
+      endText: "16:45");
+  static Lesson fifth = Lesson._internal(
       period: 5,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("17:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("18:40"), tz.local));
-  static Class sixth = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("17:00"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:40"), tz.local),
+      startText: "17:00",
+      endText: "18:40");
+  static Lesson sixth = Lesson._internal(
       period: 6,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("18:55"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("20:35"), tz.local));
-  static Class seventh = Class._internal(
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:55"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:35"), tz.local),
+      startText: "18:55",
+      endText: "20:35");
+  static Lesson seventh = Lesson._internal(
       period: 7,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("20:45"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("21:25"), tz.local));
-  static List<Class> get periods => [
+      start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
+      end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
+      startText: "20:45",
+      endText: "21:25");
+  static List<Lesson> get periods => [
         zeroth,
         first,
         second,
@@ -170,18 +192,26 @@ class Class {
         seventh,
       ];
 
-  static whenPeriod(DateTime dateTime) {
+  static Lesson? whenPeriod(DateTime dateTime) {
     tz.TZDateTime tzDateTime = tz.TZDateTime.from(
-        DateFormat("H:mm").parse("${dateTime.hour}:${dateTime.minute}"),
+        DateFormat("HH:mm").parse("${dateTime.hour}:${dateTime.minute}"),
         tz.local);
-    for (var key in periods) {
-      if ((tzDateTime.isAfter(key.start) && tzDateTime.isBefore(key.end)) ||
-          tzDateTime.isAtSameMomentAs(key.start) ||
-          tzDateTime.isAtSameMomentAs(key.end)) {
-        return key.period;
+    for (var lesson in periods) {
+      if (isBetween(tzDateTime, lesson.start, lesson.end)) {
+        return lesson;
+      } else {
+        continue;
       }
     }
     return null;
+  }
+
+  static Lesson? atPeriod(int period) {
+    if (period < periods.length) {
+      return periods[period];
+    } else {
+      return null;
+    }
   }
 }
 

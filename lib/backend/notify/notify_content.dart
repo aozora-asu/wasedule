@@ -577,10 +577,10 @@ class NotifyContent {
         if (myCourse["period"] != null && myCourse["weekday"] != null) {
           weeklyScheduleDate = _nextInstanceOfWeeklyTime(
               DateFormat("H:mm")
-                  .format(Class.periods[myCourse["period"] - 1].end),
+                  .format(Lesson.periods[myCourse["period"] - 1].end),
               myCourse["weekday"]);
           body =
-              "${DateFormat("H:mm").format(Class.periods[myCourse["period"]].start)}~ ${myCourse["classRoom"]}";
+              "${DateFormat("H:mm").format(Lesson.periods[myCourse["period"]].start)}~ ${myCourse["classRoom"]}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),

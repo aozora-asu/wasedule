@@ -23,6 +23,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
+import "../../../static/constant.dart";
 
 final inputFormProvider = StateNotifierProvider<InputFormNotifier, InputForm>(
   (ref) => InputFormNotifier(),
@@ -258,12 +259,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
 
       Widget value = const SizedBox();
@@ -304,10 +303,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map targetClass = targetDayList.elementAt(i);
-      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
+      DateTime? key = Lesson.atPeriod(targetClass["period"])?.start;
+
       Widget value = switchWidget(timeTableListChild(targetClass),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
-      mixedDataByTime.add({key: value});
+      if (key != null) {
+        mixedDataByTime.add({key: value});
+      }
     }
 
     //グチャグチャなデータをソートする
@@ -646,8 +648,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget timeTableListChild(Map classData) {
     final data = ref.read(timeTableProvider);
-    String startTime = data.returnBeginningTime(classData["period"]);
-    String endTime = data.returnEndTime(classData["period"]);
+    String? startTime = Lesson.atPeriod(classData["period"])?.startText;
+    String? endTime = Lesson.atPeriod(classData["period"])?.endText;
 
     return GestureDetector(
         onTap: () async {

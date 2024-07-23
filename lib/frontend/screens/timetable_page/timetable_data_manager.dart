@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 import "../../../static/constant.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -80,6 +82,7 @@ class TimeTableData {
     String startTime = "";
     String endTime = "";
     String result = "";
+
     List<Map<String, dynamic>> thisSemesterData = [];
     for (int i = 0; i < weekDayData.length; i++) {
       Map<String, dynamic> target = weekDayData.elementAt(i);
@@ -99,8 +102,10 @@ class TimeTableData {
       }
     }
     if (weekDayData.isNotEmpty && thisSemesterData.isNotEmpty) {
-      startTime = returnBeginningTime(thisSemesterData.first["period"]);
-      endTime = returnEndTime(thisSemesterData.last["period"]);
+      startTime =
+          Lesson.atPeriod(thisSemesterData.first["period"])?.startText ?? "";
+
+      endTime = Lesson.atPeriod(thisSemesterData.last["period"])?.endText ?? "";
       result = "$startTime~$endTime";
     }
     return result;
@@ -141,112 +146,6 @@ class TimeTableData {
     }
     result.sort((a, b) => a['period'].compareTo(b['period']));
     return result;
-  }
-
-  String currentQuaterID(int semesterNum) {
-    String result = "full_year";
-    if (semesterNum == 1) {
-      result = "spring_quarter";
-    } else if (semesterNum == 2) {
-      result = "summer_quarter";
-    } else if (semesterNum == 3) {
-      result = "fall_quarter";
-    } else if (semesterNum == 4) {
-      result = "winter_quarter";
-    } else if (semesterNum == 5) {
-      result = "holiday";
-    }
-    return result;
-  }
-
-  String currentSemesterID(int semesterNum) {
-    String result = "full_year";
-    if (semesterNum == 1 || semesterNum == 2) {
-      result = "spring_semester";
-    } else if (semesterNum == 3 || semesterNum == 4) {
-      result = "fall_semester";
-    } else if (semesterNum == 5) {
-      result = "holiday";
-    }
-    return result;
-  }
-
-  String returnBeginningTime(int period) {
-    switch (period) {
-      case 1:
-        return "08:50";
-      case 2:
-        return "10:40";
-      case 3:
-        return "13:10";
-      case 4:
-        return "15:05";
-      case 5:
-        return "17:00";
-      case 6:
-        return "18:55";
-      default:
-        return "20:45";
-    }
-  }
-
-  DateTime returnBeginningDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 8, 50);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 10, 40);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 13, 10);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 15, 05);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 17, 00);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 18, 55);
-      default:
-        return DateTime(now.year, now.month, now.day, 20, 45);
-    }
-  }
-
-  String returnEndTime(int period) {
-    switch (period) {
-      case 1:
-        return "10:30";
-      case 2:
-        return "12:20";
-      case 3:
-        return "14:50";
-      case 4:
-        return "16:45";
-      case 5:
-        return "18:40";
-      case 6:
-        return "20:35";
-      default:
-        return "21:35";
-    }
-  }
-
-  DateTime returnEndDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 10, 30);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 12, 20);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 14, 50);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 16, 45);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 18, 40);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 20, 35);
-      default:
-        return DateTime(now.year, now.month, now.day, 21, 35);
-    }
   }
 
   String intToWeekday(int weekday) {
