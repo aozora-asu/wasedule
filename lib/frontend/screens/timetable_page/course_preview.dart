@@ -10,6 +10,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 class CoursePreview extends ConsumerStatefulWidget {
   late Map target;
@@ -86,6 +87,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     // if (viewMode == 1) {
     //   padding = const EdgeInsets.symmetric(vertical: 12.5);
     // }
+    int id;
 
     return GestureDetector(
         onTap: () {},
@@ -102,7 +104,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           children: [
                             textFieldModel("授業名を入力…", classNameController,
                                 FontWeight.bold, 22.0, (value) async {
-                              int id = target["id"];
+                              id = target["id"];
                               //＠ここに授業名変更関数を登録！！！
                               await MyCourseDatabaseHandler()
                                   .updateCourseName(id, value);
@@ -118,7 +120,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
                             onTap: () async {
-                              int id = target["id"];
+                              id = target["id"];
                               //＠ここに削除実行関数！！！
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
@@ -180,14 +182,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Icon(Icons.access_time, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-          "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
+          "${"日月火水木金土"[target["weekday"] % 7]}曜日 ${target["period"]}限",
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.05,
           ),
         ),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-          "${target["year"]} ${targetSemester(target["semester"])}",
+          "${target["year"]} ${Term.terms.firstWhereOrNull((e) => e.value == target["semester"])?.fullText ?? Term.fullYear.fullText}",
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.04,
               color: Colors.grey),
@@ -221,6 +223,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget classRoomSelector(BuildContext context, Map<String, dynamic> target) {
     List<String> classRooms = target["classRoom"].toString().split("\n");
     Map<String, bool> selectedRooms = {};
+    int id;
     for (var classroom in classRooms) {
       selectedRooms[classroom] = true;
     }
@@ -228,7 +231,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (classRooms.length <= 2) {
       return textFieldModel(
           "教室を入力…", classRoomController, FontWeight.bold, 20.0, (value) async {
-        int id = target["id"];
+        id = target["id"];
         //＠ここに教室のアップデート関数！！！
         await MyCourseDatabaseHandler().updateClassRoom(id, value);
         widget.setTimetableState(() {});
@@ -273,13 +276,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   );
                 },
               ).whenComplete(() async {
-                int id = target["id"];
+                id = target["id"];
                 String selectedRoomValue = selectedRooms.entries
                     .where((entry) => entry.value)
                     .map((entry) => entry.key)
                     .join("\n")
                     .trimRight();
-                print(selectedRoomValue);
+
                 await MyCourseDatabaseHandler()
                     .updateClassRoom(id, selectedRoomValue);
                 setState(() {});
@@ -326,45 +329,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               fontSize: fontSize, color: Colors.black, fontWeight: weight),
           onSubmitted: onSubmitted),
     ));
-  }
-
-  String getJapaneseWeekday(int weekday) {
-    switch (weekday) {
-      case 1:
-        return '月曜日';
-      case 2:
-        return '火曜日';
-      case 3:
-        return '水曜日';
-      case 4:
-        return '木曜日';
-      case 5:
-        return '金曜日';
-      case 6:
-        return '土曜日';
-      case 7:
-        return '日曜日';
-      default:
-        return '無効な曜日';
-    }
-  }
-
-  String targetSemester(String semesterID) {
-    String result = "通年科目";
-    if (semesterID == "spring_quarter") {
-      result = "春学期 -春クォーター";
-    } else if (semesterID == "summer_quarter") {
-      result = "春学期 -夏クォーター";
-    } else if (semesterID == "spring_semester") {
-      result = "春学期";
-    } else if (semesterID == "fall_quarter") {
-      result = "秋学期 -秋クォーター";
-    } else if (semesterID == "winter_quarter") {
-      result = "秋学期 -冬クォーター";
-    } else if (semesterID == "fall_semester") {
-      result = "秋学期";
-    }
-    return result;
   }
 
   int maxAbsentNum = 0;

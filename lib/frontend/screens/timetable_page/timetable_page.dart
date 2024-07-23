@@ -31,21 +31,20 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late Term currentQuarter;
   late Term currentSemester;
+  late DateTime now;
 
   @override
   void initState() {
     super.initState();
     initTargetSem();
+    now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context, DateTime.now(), ref);
+      showAttendanceDialog(context, now, ref);
     });
-    currentQuarter = Term.whenQuarter(DateTime.now()) != null
-        ? Term.whenQuarter(DateTime.now())!
-        : Term.fullYear;
-    currentSemester = Term.whenSemester(DateTime.now()) != null
-        ? Term.whenSemester(DateTime.now())!
+    currentSemester = Term.whenSemester(now) != null
+        ? Term.whenSemester(now)!
         : Term.fullYear;
   }
 
@@ -155,8 +154,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         currentQuarter == Term.winterQuarter) {
       thisYear += 1;
       currentQuarter = Term.springQuarter;
+      currentSemester = Term.springSemester;
     } else {
       currentQuarter = Term.fallQuarter;
+      currentSemester = Term.fallSemester;
     }
     setState(() {});
   }
@@ -165,40 +166,51 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     if (currentQuarter == Term.springQuarter ||
         currentQuarter == Term.summerQuarter) {
       thisYear -= 1;
-      currentQuarter == Term.fallQuarter;
+      currentQuarter = Term.fallQuarter;
+      currentSemester = Term.fallSemester;
     } else {
-      currentQuarter == Term.springQuarter;
+      currentQuarter = Term.springQuarter;
+      currentSemester = Term.springSemester;
     }
     setState(() {});
   }
 
-  Widget changeQuaterbutton(int type) {
-    Term buttonSemester;
-    if (type == 1) {
-      buttonSemester = button1Semester();
-    } else {
-      buttonSemester = button2Semester();
-    }
-
-    String quaterName = "";
-    Color quaterColor = FORGROUND_COLOR;
-    if (buttonSemester == Term.springQuarter) {
+  Widget springFallQuarterButton() {
+    String quaterName;
+    Color quaterColor;
+    Term buttonQuarter;
+    if (currentQuarter == Term.springQuarter ||
+        currentQuarter == Term.summerQuarter) {
       quaterName = "   春   ";
       quaterColor = const Color.fromARGB(255, 255, 159, 191);
-    } else if (buttonSemester == Term.summerQuarter) {
-      quaterName = "   夏   ";
-      quaterColor = Colors.blueAccent;
-    } else if (buttonSemester == Term.fallQuarter) {
+      buttonQuarter = Term.springQuarter;
+    } else {
       quaterName = "   秋   ";
       quaterColor = const Color.fromARGB(255, 231, 85, 0);
-    } else if (buttonSemester == Term.winterQuarter) {
-      quaterName = "   冬   ";
-      quaterColor = Colors.cyan;
+      buttonQuarter = Term.fallQuarter;
     }
-
     return buttonModel(() {
       switchSemester();
-    }, buttonColor(buttonSemester, quaterColor), quaterName);
+    }, buttonColor(buttonQuarter, quaterColor), quaterName);
+  }
+
+  Widget summerWinterQuarterButton() {
+    String quaterName;
+    Color quaterColor;
+    Term buttonQuarter;
+    if (currentQuarter == Term.springQuarter ||
+        currentQuarter == Term.summerQuarter) {
+      quaterName = "   夏   ";
+      quaterColor = Colors.blueAccent;
+      buttonQuarter = Term.summerQuarter;
+    } else {
+      quaterName = "   冬   ";
+      quaterColor = Colors.cyan;
+      buttonQuarter = Term.winterQuarter;
+    }
+    return buttonModel(() {
+      switchSemester();
+    }, buttonColor(buttonQuarter, quaterColor), quaterName);
   }
 
   void switchSemester() {
@@ -221,30 +233,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     }
   }
 
-  Term button1Semester() {
-    if (currentQuarter == Term.springQuarter ||
-        currentQuarter == Term.summerQuarter) {
-      return Term.springQuarter;
-    } else if (currentQuarter == Term.fallQuarter) {
-      return Term.fallQuarter;
-    } else {
-      return Term.fallQuarter;
-    }
-  }
-
-  Term button2Semester() {
-    if (currentQuarter == Term.springQuarter ||
-        currentQuarter == Term.summerQuarter) {
-      return Term.summerQuarter;
-    } else if (currentQuarter == Term.fallQuarter) {
-      return Term.winterQuarter;
-    } else {
-      return Term.winterQuarter;
-    }
-  }
-
-  Color buttonColor(Term buttonSemester, Color color) {
-    if (currentQuarter == buttonSemester) {
+  Color buttonColor(Term buttonQuarter, Color color) {
+    if (currentQuarter == buttonQuarter) {
       return color;
     } else {
       return Colors.grey[350]!;
@@ -252,7 +242,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget timeTable() {
-    DateTime now = DateTime.now();
     return Screenshot(
         controller: _screenShotController,
         child: Container(
@@ -267,7 +256,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     iconSize: 20,
                     color: BLUEGREY),
                 Text(
-                  "${Term.whenSchoolYear(now)}年  ${Term.whenSemester(now) != null ? Term.whenSemester(now)!.text : "春学期"}",
+                  "$thisYear年  ${currentSemester.text}",
                   style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
@@ -283,8 +272,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     iconSize: 20,
                     color: BLUEGREY),
                 const Spacer(),
-                doNotContainScreenShot(changeQuaterbutton(1)),
-                doNotContainScreenShot(changeQuaterbutton(2)),
+                doNotContainScreenShot(springFallQuarterButton()),
+                doNotContainScreenShot(summerWinterQuarterButton()),
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
                 const Spacer(),
               ]),

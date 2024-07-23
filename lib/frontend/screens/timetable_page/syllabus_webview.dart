@@ -32,7 +32,7 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                   child: InAppWebView(
                     key: webMoodleViewKey,
                     onConsoleMessage: (controller, consoleMessage) async {
-                      print(consoleMessage.message);
+                      //print(consoleMessage.message);
                     },
                     initialUrlRequest: URLRequest(
                         url: WebUri(
