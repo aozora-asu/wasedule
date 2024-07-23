@@ -22,45 +22,67 @@ final Map<String, DateTime> wasedaCalendar2024 = {
 class Term {
   static Term springQuarter = const Term._internal(
       value: "spring_quarter",
+      quarterGroup: ["spring_quarter"],
       text: "春クォーター",
       fullText: "春学期 -春クォーター",
       shortText: "春");
   static Term summerQuarter = const Term._internal(
       value: "summer_quarter",
+      quarterGroup: ["summer_quarter"],
       text: "夏クォーター",
       fullText: "春学期 -夏クォーター",
       shortText: "夏");
   static Term springSemester = const Term._internal(
-      value: "spring_semester", text: "春学期", fullText: "", shortText: "春");
+      value: "spring_semester",
+      quarterGroup: ["spring_quarter", "summer_quarter"],
+      text: "春学期",
+      fullText: "",
+      shortText: "春");
   static Term fallQuarter = const Term._internal(
       value: "fall_quarter",
+      quarterGroup: ["fall_quarter"],
       text: "秋クォーター",
       fullText: "秋学期 -秋クォーター",
       shortText: "秋");
   static Term winterQuarter = const Term._internal(
       value: "winter_quarter",
+      quarterGroup: ["winter_quarter"],
       text: "冬クォーター",
       fullText: "秋学期 -冬クォーター",
       shortText: "冬");
   static Term fallSemester = const Term._internal(
-      value: "fall_semester", text: "秋学期", fullText: "", shortText: "秋");
+      value: "fall_semester",
+      quarterGroup: ["fall_quarter", "winter_quaretr"],
+      text: "秋学期",
+      fullText: "",
+      shortText: "秋");
   static Term fullYear = const Term._internal(
-      value: "full_year", text: "通年", fullText: "通年科目", shortText: null);
+      value: "full_year",
+      quarterGroup: [
+        "spring_quarter",
+        "summer_quarter",
+        "fall_quarter",
+        "winter_quaretr"
+      ],
+      text: "通年",
+      fullText: "通年科目",
+      shortText: null);
 
   const Term._internal(
       {required this.value,
+      required this.quarterGroup,
       required this.text,
       required this.shortText,
       required this.fullText});
-  static Map<String, Term> get terms => {
-        springQuarter.value: springQuarter,
-        summerQuarter.value: summerQuarter,
-        springSemester.value: springSemester,
-        fallQuarter.value: fallQuarter,
-        winterQuarter.value: winterQuarter,
-        fallSemester.value: fallSemester,
-        fullYear.value: fullYear
-      };
+  static List<Term> get terms => [
+        springQuarter,
+        summerQuarter,
+        springSemester,
+        fallQuarter,
+        winterQuarter,
+        fallSemester,
+        fullYear
+      ];
   static Map<String, Term> get semesters => {
         springSemester.value: springSemester,
         fallSemester.value: fallSemester,
@@ -75,6 +97,7 @@ class Term {
   final String value;
   final String? shortText;
   final String fullText;
+  final List<String> quarterGroup;
   static List<Term> whenTerms(DateTime dateTime) {
     List<Term> currentTerms = [];
     List<DateTime> datetimeList = wasedaCalendar2024.values.toList();

@@ -1,5 +1,6 @@
 import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 
 import 'package:http/http.dart' as http;
@@ -9,6 +10,7 @@ import 'package:html/parser.dart' as html_parser;
 
 import 'package:uuid/uuid.dart';
 import "../../../backend/DB/handler/my_course_db.dart";
+import 'package:collection/collection.dart';
 
 class RequestQuery {
   String? p_number;
@@ -164,7 +166,9 @@ List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
               tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
           period: periodAndDate["period"],
           weekday: periodAndDate["weekday"],
-          semester: convertSemester(tdElements[5].text),
+          semester: Term.terms
+              .firstWhereOrNull((e) => e.text == tdElements[5].text)
+              ?.text,
           year: int.parse(tdElements[0].text),
           syllabusID: extractedString);
       syllabusQueryResultList.add(syllabusResult);
@@ -201,7 +205,9 @@ List<SyllabusQueryResult>? _getMatchedCourse(
                   tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
               period: periodAndDate["period"],
               weekday: periodAndDate["weekday"],
-              semester: convertSemester(tdElements[5].text),
+              semester: Term.terms
+                  .firstWhereOrNull((e) => e.text == tdElements[5].text)
+                  ?.text,
               year: int.parse(tdElements[0].text),
               syllabusID: extractedString);
           syllabusQueryResultList.add(syllabusResult);
@@ -261,29 +267,31 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
   RegExp pattern2 = RegExp(r'([月火水木金土日])(\d)-(\d)');
 
   RegExp pattern3 = RegExp(r'無その他');
-
+  int? weekday;
   List<Map<String, int?>> result = [];
   if (pattern2.hasMatch(input)) {
     Iterable<RegExpMatch> matches = pattern2.allMatches(input);
+
     for (var match in matches) {
-      result.add({
-        'weekday': weekdayToNumber(match.group(1)),
-        'period': int.tryParse(match.group(2)!)
-      });
-      result.add({
-        'weekday': weekdayToNumber(match.group(1)),
-        'period': int.tryParse(match.group(3)!)
-      });
+      if ("日月火水木金土".contains(match.group(1)!)) {
+        weekday = "日月火水木金土".indexOf(match.group(1)!);
+      } else {
+        weekday = null;
+      }
+      result.add({'weekday': weekday, 'period': int.tryParse(match.group(2)!)});
+      result.add({'weekday': weekday, 'period': int.tryParse(match.group(3)!)});
     }
   }
 
   if (pattern1.hasMatch(input)) {
     Iterable<RegExpMatch> matches = pattern1.allMatches(input);
     for (var match in matches) {
-      result.add({
-        'weekday': weekdayToNumber(match.group(1)),
-        'period': int.tryParse(match.group(2)!)
-      });
+      if ("日月火水木金土".contains(match.group(1)!)) {
+        weekday = "日月火水木金土".indexOf(match.group(1)!);
+      } else {
+        weekday = null;
+      }
+      result.add({'weekday': weekday, 'period': int.tryParse(match.group(2)!)});
     }
   }
   if (pattern3.hasMatch(input)) {
@@ -339,9 +347,15 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
         final tdElements = trElement.querySelectorAll("td");
         periodAndDateList =
             extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
-        String? semester = convertSemester(tdElements[5].text);
+        String? semester = Term.terms
+            .firstWhereOrNull((e) => e.text == tdElements[5].text)
+            ?.text;
+
         if (semester != null) {
-          quarterList = semester2quarterList(semester);
+          quarterList = Term.terms
+                  .firstWhereOrNull((e) => e.value == semester)
+                  ?.quarterGroup ??
+              [];
 
           //クォーター制に分割して、合致するところにデータを挿入する
           for (var quarter in quarterList) {

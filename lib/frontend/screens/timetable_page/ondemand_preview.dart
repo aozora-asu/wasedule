@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_we
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "../../../static/constant.dart";
+import 'package:collection/collection.dart';
 
 class OndemandPreview extends ConsumerStatefulWidget {
   late Map target;
@@ -157,8 +158,10 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   }
 
   Widget summaryContent(dividerModel, target) {
-    String text = "";
-    text = Term.terms[target["semester"]]!.fullText;
+    String text = Term.terms
+            .firstWhereOrNull((e) => e.value == target["semester"])
+            ?.fullText ??
+        "";
 
     return Column(children: [
       dividerModel,
