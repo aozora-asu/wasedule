@@ -131,21 +131,15 @@ class TimeTableData {
   List<Map<String, dynamic>> targetDateClasses(DateTime target) {
     List<Map<String, dynamic>> result = [];
     int year = Term.whenSchoolYear(target);
-    String semester = "";
-    String quarter = "";
-    String fullYear = "";
+
     int weekDay = target.weekday;
-    if (Term.whenTerms(target).isNotEmpty) {
-      semester = Term.whenSemester(target)!.value;
-      quarter = Term.whenQuarter(target)!.value;
-      fullYear = Term.fullYear.value;
-    }
 
     for (var item in timeTableDataList) {
       if (item["year"] == year && item["weekday"] == weekDay) {
-        if (item["semester"] == semester ||
-            item["semester"] == quarter ||
-            item["semester"] == fullYear) {
+        if (Term.whenTerms(target)
+            .map((e) => e.value)
+            .toList()
+            .contains(item["semester"])) {
           result.add(item);
         }
       }
