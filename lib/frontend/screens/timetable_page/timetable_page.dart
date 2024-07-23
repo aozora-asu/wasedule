@@ -727,7 +727,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return child;
           } else {
             if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                    currentQuarter ||
+                    currentQuarter.value ||
                 tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
                     "full_year" ||
                 tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
