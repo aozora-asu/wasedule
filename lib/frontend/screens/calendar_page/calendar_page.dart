@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
 
@@ -920,13 +922,11 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
 
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
 
       Widget value = const SizedBox();
@@ -942,13 +942,16 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (targetDayList.isNotEmpty) {
       Map firstClass = targetDayList.first;
       Map lastClass = targetDayList.last;
-      String universityClassData =
-          "${timeTable.returnBeginningTime(firstClass["period"])}~${timeTable.returnEndTime(lastClass["period"])}";
+      DateTime? startTime = Lesson.atPeriod(firstClass["period"])?.start;
+      DateTime? endTime = Lesson.atPeriod(lastClass["period"])?.end;
+      if (startTime != null && endTime != null) {
+        String universityClassData =
+            "${DateFormat("HH:mm").format(startTime)}~${DateFormat("HH:mm").format(endTime)}";
+        Widget value = switchWidget(classListChild(universityClassData, target),
+            ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
 
-      DateTime key = timeTable.returnBeginningDateTime(firstClass["period"]);
-      Widget value = switchWidget(classListChild(universityClassData, target),
-          ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
-      mixedDataByTime.add({key: value});
+        mixedDataByTime.add({startTime: value});
+      }
     }
 
     //グチャグチャなデータをソートする
@@ -966,7 +969,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             itemBuilder: (context, index) {
               return sortedList.elementAt(index).values.first;
             },
-            itemCount: mixedDataByTime.length,
+            itemCount: sortedList.length,
             shrinkWrap: true,
             physics: const ClampingScrollPhysics()));
   }
@@ -1397,12 +1400,10 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
       mapList.add({key: targetDayData.elementAt(index)});
     }
@@ -1416,15 +1417,17 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
-      String startTime = timeTable.returnBeginningTime(targetClass["period"]);
-      String endTime = timeTable.returnEndTime(targetClass["period"]);
-      final newTargetClass = {
-        ...targetClass,
-        "startTime": startTime,
-        "endTime": endTime
-      };
-      DateTime key = timeTable.returnBeginningDateTime(targetClass["period"]);
-      mapList.add({key: newTargetClass});
+
+      Lesson? lesson = Lesson.atPeriod(targetClass["period"]);
+      if (lesson != null) {
+        final newTargetClass = {
+          ...targetClass,
+          "startTime": DateFormat("HH:mm").format(lesson.start),
+          "endTime": DateFormat("HH:mm").format(lesson.end)
+        };
+        DateTime key = lesson.start;
+        mapList.add({key: newTargetClass});
+      }
     }
 
     //グチャグチャなMapデータをソートする
@@ -1892,7 +1895,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        "${ref.read(timeTableProvider).intToWeekday(sortedMapList.elementAt(index).values.first["weekday"])}の授業、",
+                        "${"日月火水木金土"[sortedMapList.elementAt(index).values.first["weekday"] % 7]}曜日の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,

@@ -64,7 +64,7 @@ class IsarHandler {
   ) async {
     String? quarter = Term.whenQuarter(DateTime.now())?.value;
     int weekday = DateTime.now().weekday;
-    int? period = Class.whenPeriod(DateTime.now());
+    int? period = Lesson.whenPeriod(DateTime.now())?.period;
 
     List<String> classRoomList = classMap[building] ?? [];
 
@@ -93,7 +93,7 @@ class IsarHandler {
     String? quarter = Term.whenQuarter(DateTime.now())?.value;
 
     int weekday = DateTime.now().weekday;
-    int? period = Class.whenPeriod(DateTime.now());
+    int? period = Lesson.whenPeriod(DateTime.now())?.period;
     if (quarter != null && period != null) {
       final existClass = await isar.hasClass
           .filter()
