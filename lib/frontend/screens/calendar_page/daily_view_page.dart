@@ -134,8 +134,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           " ${widget.target.year}/${widget.target.month}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                          style:const TextStyle(
+                              fontSize: 23,
                               fontWeight: FontWeight.w700,
                               color: Colors.white),
                         )),
@@ -154,8 +154,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         " ${widget.target.day}", //+ weekDayEng(widget.target.weekday),
-                        style: TextStyle(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 15,
+                        style:const TextStyle(
+                            fontSize: 60,
                             fontWeight: FontWeight.w700,
                             color: Colors.black),
                       )),
@@ -174,8 +174,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       )),
                 ],
               ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
+              Container(
+                padding:const EdgeInsets.symmetric(horizontal:10),
+                //width: SizeConfig.blockSizeHorizontal! * 90,
                 child: listView(),
               ),
               SizedBox(
@@ -196,15 +197,15 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
                   taskIcon(Colors.grey, 25),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                  Text(
+                  const Text(
                     'この日が期限の課題',
                     style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                        fontSize: 25,
                         color: BLUEGREY,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
-                  taskListLength(24.0),
+                  taskListLength(23.0),
                 ]),
               ),
               SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),

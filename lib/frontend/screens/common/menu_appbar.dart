@@ -214,7 +214,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
     Map<int,List<Widget>> subPageTabs = {
       0 : [
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.location_on,
@@ -224,7 +224,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           space(79.0),
           ],
       1 : [
-          space(1.0),
+          space(0),
           subMenuPanel(
             ref,
             icon:Icons.grid_on,
@@ -239,21 +239,21 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             ref,
             icon:Icons.calendar_month,
             subIndex:0,
-            title: "カレンダー"
+            title: "予定"
           ),
           space(0),
           subMenuPanel(
             ref,
             icon:Icons.groups,
             subIndex:1,
-            title: "予定シェア"
+            title: "シェア"
           ),
           space(0),
           subMenuPanel(
             ref,
             icon:Icons.currency_yen,
             subIndex:2,
-            title: "アルバイト"
+            title: "バイト"
           ),
 
           space(0),
@@ -261,7 +261,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             ref,
             icon:Icons.school,
             subIndex:3,
-            title: "大学暦取得"
+            title: "大学暦"
           ),
           space(0),
           subMenuPanel(
