@@ -58,7 +58,9 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         backgroundColor: MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         surfaceTintColor: Colors.transparent,
-        title: Row(children: <Widget>[
+        title: SizedBox(
+          height:45,
+          child:Row(children: <Widget>[
             GestureDetector(
               onTap:(){
                 if(Platform.isIOS){
@@ -83,7 +85,8 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
               },
             ),
             popupMenuButton(Colors.white)
-          ]),
+           ])
+          ),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(0),
@@ -92,7 +95,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         bottom: PreferredSize(
           preferredSize:const Size.fromHeight(5),
           child: SizedBox(
-            height: SizeConfig.blockSizeVertical! *5,
+            height: 35,
             child: subMenuList(ref),
           ),
         )
@@ -125,7 +128,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
   ){
     BoxDecoration? decoration;
     Color iconColor = Colors.grey;
-    double iconSize = SizeConfig.blockSizeHorizontal! *4;
+    double iconSize = 20;
     Color underBarColor = PALE_MAIN_COLOR;
 
 
@@ -146,7 +149,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         ref.watch(taskDataProvider)
            .expiredTaskDataList
            .length,
-        SizeConfig.blockSizeVertical! * 1.205,
+        10,
       );
     }
     
@@ -158,10 +161,10 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children:[
-        Container(height: SizeConfig.blockSizeVertical! *0.5,),
+        Container(height: 0,),
         Container(
           width: SizeConfig.blockSizeHorizontal! *20,
-          height: SizeConfig.blockSizeVertical! *4,
+          height: 30,
           decoration: decoration,
           child:Row(children:[
             const Spacer(),
@@ -169,7 +172,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             SizedBox(width:SizeConfig.blockSizeHorizontal! *1),
             Text(title,
               style:TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! *2.25,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: iconColor
               ),  
@@ -179,7 +182,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         ),
         Container(
           width: SizeConfig.blockSizeHorizontal! *20,
-          height: SizeConfig.blockSizeVertical! *0.5,
+          height: 5,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(0),
             color: underBarColor
@@ -197,11 +200,11 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         children:[
         SizedBox(
           width: SizeConfig.blockSizeHorizontal! *width,
-          height: SizeConfig.blockSizeVertical! *4.5,
+          height: 30,
         ),
         Container(
           width: SizeConfig.blockSizeHorizontal! *width,
-          height: SizeConfig.blockSizeVertical! *0.5,
+          height: 5,
           color:underBarColor
         ),
       ]);
@@ -302,18 +305,11 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           space(0),
           subMenuPanel(
             ref,
-            icon:Icons.notification_add,
-            subIndex:3,
-            title: "通知設定"
-          ),
-          space(0),
-          subMenuPanel(
-            ref,
             icon:Icons.edit,
             subIndex:4,
             title: "学習記録"
           ),
-          space(0),
+          space(20.00),
         ],
         4 : [
           space(1.0),

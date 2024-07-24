@@ -765,7 +765,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             return InkWell(
               child: Container(
                   width: SizeConfig.blockSizeHorizontal! * 14.285,
-                  height: SizeConfig.blockSizeVertical! * 14,
+                  height: SizeConfig.blockSizeHorizontal! * 20,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3.5),
                     color: cellColour(target),
