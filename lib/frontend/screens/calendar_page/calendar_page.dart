@@ -1484,24 +1484,27 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget todaysScheduleChild(index, target) {
     Widget dateTimeData = Container();
+    String? startTime =
+        sortedMapList.elementAt(index).values.first["startTime"];
+    String? endTime = sortedMapList.elementAt(index).values.first["endTime"];
+    String? nextStartTime = index == sortedMapList.length - 1
+        ? "23:59"
+        : sortedMapList.elementAt(index + 1).values.first["startTime"];
+    // String? previousEndTime = index == 0
+    //     ? "0:00"
+    //     : sortedMapList.elementAt(index - 1).values.first["endTime"];
 
-    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != null) {
+    if (startTime != "" &&
+        startTime != null &&
+        endTime != "" &&
+        endTime != null) {
       dateTimeData = Text(
-        sortedMapList.elementAt(index).values.first["startTime"] +
-            "\n" +
-            sortedMapList.elementAt(index).values.first["endTime"],
+        "$startTime\n$endTime",
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
-    } else if (sortedMapList
-            .elementAt(index)
-            .values
-            .first["startTime"]
-            .trim() !=
-        "") {
+    } else if (startTime != "" && startTime != null) {
       dateTimeData = Text(
-        sortedMapList.elementAt(index).values.first["startTime"],
+        startTime,
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
     } else {
@@ -1513,110 +1516,38 @@ class _CalendarState extends ConsumerState<Calendar> {
       );
     }
 
-    String formerDateTimeData = "終日";
-    if (index != 0) {
-      if (sortedMapList.elementAt(index - 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != null) {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index - 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      }
-    }
-
-    String thisDateTimeData = "終日";
-    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != null) {
-      thisDateTimeData =
-          sortedMapList.elementAt(index).values.first["startTime"];
-    } else if (sortedMapList
-            .elementAt(index)
-            .values
-            .first["startTime"]
-            .trim() !=
-        "") {
-      thisDateTimeData =
-          sortedMapList.elementAt(index).values.first["startTime"];
-    }
-
-    String nextDateTimeData = "終日";
-    if (index + 1 < sortedMapList.length) {
-      if (sortedMapList.elementAt(index + 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != null) {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index + 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      }
-    }
-
     Color upperDividerColor = Colors.grey;
     Color dotColor = Colors.grey;
     Color underDividerColor = Colors.grey;
-    DateTime now = DateTime.now();
-
-    if (formerDateTimeData == "終日") {
-      upperDividerColor = Colors.redAccent;
-    } else {
-      DateTime formerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(formerDateTimeData.substring(0, 2)),
-        int.parse(formerDateTimeData.substring(3, 5)),
-      );
-      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime nextDateTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          int.parse(nextDateTimeData.substring(0, 2)),
-          int.parse(nextDateTimeData.substring(3, 5)),
-        );
-        upperDividerColor = Colors.red;
-        if (nextDateTime.isBefore(now)) {
-          underDividerColor = Colors.red;
-        }
-      }
+    DateTime now = DateFormat("HH:mm")
+        .parse("${DateTime.now().hour}:${DateTime.now().minute}");
+    if (endTime == null || endTime == "") {
+      endTime = "23:59";
+    }
+    if (startTime == null || startTime == "") {
+      startTime = "00:00";
+    }
+    // if (previousEndTime == null || previousEndTime == "") {
+    //   previousEndTime = "00:00";
+    // }
+    if (nextStartTime == null || nextStartTime == "") {
+      nextStartTime = "23:59";
     }
 
-    if (thisDateTimeData == "終日") {
+    DateTime startDateTime = DateFormat("HH:mm").parse(startTime);
+    DateTime endDateTime = DateFormat("HH:mm").parse(endTime);
+    DateTime nextStartDateTime = DateFormat("HH:mm").parse(nextStartTime);
+    // DateTime previousEndDateTime = DateFormat("HH:mm").parse(previousEndTime);
+    if (isBetween(now, startDateTime, endDateTime)) {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+    } else if (now.isAfter(endDateTime)) {
       upperDividerColor = Colors.red;
       dotColor = Colors.red;
       underDividerColor = Colors.red;
-    } else {
-      DateTime thisDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(thisDateTimeData.substring(0, 2)),
-        int.parse(thisDateTimeData.substring(3, 5)),
-      );
-      if (thisDateTime.isBefore(now)) {
-        upperDividerColor = Colors.red;
-        dotColor = Colors.red;
-        underDividerColor = Colors.red;
-      }
-      if (nextDateTimeData == "終日") {
-        underDividerColor = Colors.grey;
-      }
+    }
+    if (now.isAfter(nextStartDateTime)) {
+      underDividerColor = Colors.red;
     }
 
     bool isLast = false;
@@ -1728,99 +1659,50 @@ class _CalendarState extends ConsumerState<Calendar> {
       style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
     );
 
-    String formerDateTimeData = "終日";
-    if (index != 0) {
-      if (sortedMapList.elementAt(index - 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != null) {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index - 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      }
-    }
-
-    String thisDateTimeData =
+    String? startTime =
         sortedMapList.elementAt(index).values.first["startTime"];
-
-    String nextDateTimeData = "終日";
-    if (index + 1 < sortedMapList.length) {
-      if (sortedMapList.elementAt(index + 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != null) {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index + 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      }
-    }
+    String? endTime = sortedMapList.elementAt(index).values.first["endTime"];
+    String? nextStartTime = index == sortedMapList.length - 1
+        ? "23:59"
+        : sortedMapList.elementAt(index + 1).values.first["startTime"];
+    // String? previousEndTime = index == 0
+    //     ? "0:00"
+    //     : sortedMapList.elementAt(index - 1).values.first["endTime"];
 
     Color upperDividerColor = Colors.grey;
     Color dotColor = Colors.grey;
     Color underDividerColor = Colors.grey;
-    DateTime now = DateTime.now();
+    DateTime now = DateFormat("HH:mm")
+        .parse("${DateTime.now().hour}:${DateTime.now().minute}");
+    if (endTime == null || endTime == "") {
+      endTime = "23:59";
+    }
+    if (startTime == null || startTime == "") {
+      startTime = "0:00";
+    }
+    // if (previousEndTime == null || previousEndTime == "") {
+    //   previousEndTime = "00:00";
+    // }
 
-    if (formerDateTimeData == "終日") {
-      upperDividerColor = Colors.redAccent;
-    } else {
-      DateTime formerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(formerDateTimeData.substring(0, 2)),
-        int.parse(formerDateTimeData.substring(3, 5)),
-      );
-      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime nextDateTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          int.parse(nextDateTimeData.substring(0, 2)),
-          int.parse(nextDateTimeData.substring(3, 5)),
-        );
-        upperDividerColor = Colors.red;
-        if (nextDateTime.isBefore(now)) {
-          underDividerColor = Colors.red;
-        }
-      }
+    if (nextStartTime == null || nextStartTime == "") {
+      nextStartTime = "23:59";
     }
 
-    if (thisDateTimeData == "終日") {
+    DateTime startDateTime = DateFormat("HH:mm").parse(startTime);
+    DateTime endDateTime = DateFormat("HH:mm").parse(endTime);
+    DateTime nextStartDateTime = DateFormat("HH:mm").parse(nextStartTime);
+    // DateTime previousEndDateTime = DateFormat("HH:mm").parse(previousEndTime);
+    if (isBetween(now, startDateTime, endDateTime)) {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+    } else if (now.isAfter(endDateTime)) {
       upperDividerColor = Colors.red;
       dotColor = Colors.red;
       underDividerColor = Colors.red;
-    } else {
-      DateTime thisDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(thisDateTimeData.substring(0, 2)),
-        int.parse(thisDateTimeData.substring(3, 5)),
-      );
-      if (thisDateTime.isBefore(now)) {
-        upperDividerColor = Colors.red;
-        dotColor = Colors.red;
-        underDividerColor = Colors.red;
-      }
-      if (nextDateTimeData == "終日") {
-        underDividerColor = Colors.grey;
-      }
     }
-
+    if (now.isAfter(nextStartDateTime)) {
+      underDividerColor = Colors.red;
+    }
     bool isLast = false;
     if (sortedMapList.length == index + 1) {
       isLast = true;
