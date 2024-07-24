@@ -1,11 +1,14 @@
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
 
@@ -36,7 +39,6 @@ import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
 import "../../../backend/notify/notify_content.dart";
-import "../../../static/constant.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -62,8 +64,9 @@ class _CalendarState extends ConsumerState<Calendar> {
   String today =
       "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
   late int thisYear;
-  late int semesterNum;
-  late String targetSemester;
+  late int semestNum;
+  late Term? currentSemester;
+  late Term? currentQuarter;
 
   @override
   void initState() {
@@ -160,41 +163,29 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   void initTargetSem() {
     DateTime now = DateTime.now();
-    thisYear = datetime2schoolYear(now);
-    List semesterList = datetime2termList(now);
+    thisYear = Term.whenSchoolYear(now);
+
+    currentQuarter = Term.whenQuarter(now);
+    currentSemester = Term.whenSemester(now);
+    if (currentQuarter == null) {
+      if (now.month == 1) {
+        currentQuarter = Term.winterQuarter;
+      } else if (now.month == 4 || now.month == 5) {
+        currentQuarter = Term.springQuarter;
+      } else if (now.month == 6 || now.month == 7) {
+        currentQuarter = Term.summerQuarter;
+      } else if (now.month == 10 || now.month == 11) {
+        currentQuarter = Term.fallQuarter;
+      } else if (now.month == 12) {
+        currentQuarter = Term.winterQuarter;
+      } else {
+        currentQuarter == null;
+      }
+    }
 
     if (now.month <= 3) {
       thisYear -= 1;
     }
-    semesterNum = 5;
-    if (now.month == 1) {
-      semesterNum = 4;
-    } else if (now.month == 4 || now.month == 5) {
-      semesterNum = 1;
-    } else if (now.month == 6 || now.month == 7) {
-      semesterNum = 2;
-    } else if (now.month == 10 || now.month == 11) {
-      semesterNum = 3;
-    } else if (now.month == 12) {
-      semesterNum = 4;
-    } else {
-      semesterNum == 5;
-    }
-
-    if (semesterList.isNotEmpty) {
-      String quarter = semesterList[1];
-      if (quarter == "spring_quarter") {
-        semesterNum = 1;
-      } else if (quarter == "summer_quarter") {
-        semesterNum = 2;
-      } else if (quarter == "fall_quarter") {
-        semesterNum = 3;
-      } else if (quarter == "winter_quarter") {
-        semesterNum = 4;
-      }
-    }
-
-    targetSemester = "$thisYear-$semesterNum";
   }
 
   Future<List<Map<String, dynamic>>> loadDataBases() async {
@@ -279,7 +270,11 @@ class _CalendarState extends ConsumerState<Calendar> {
                             ref.read(timeTableProvider).timeTableDataList);
                         ref
                             .read(timeTableProvider)
-                            .initUniversityScheduleByDay(thisYear, semesterNum);
+                            .initUniversityScheduleByDay(thisYear, [
+                          if (currentQuarter != null) currentQuarter!,
+                          if (currentSemester != null) currentSemester!,
+                          Term.fullYear,
+                        ]);
                         return calendarBody();
                       }
                     },
@@ -545,21 +540,21 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (month <= 3) {
       thisYear -= 1;
     }
-    semesterNum = 5;
-    if (month == 1) {
-      semesterNum = 4;
-    } else if (month == 4 || month == 5) {
-      semesterNum = 1;
-    } else if (month == 6 || month == 7) {
-      semesterNum = 2;
-    } else if (month == 10 || month == 11) {
-      semesterNum = 3;
-    } else if (month == 12) {
-      semesterNum = 4;
-    } else {
-      semesterNum == 5;
+    if (currentQuarter == null) {
+      if (month == 1) {
+        currentQuarter = Term.winterQuarter;
+      } else if (month == 4 || month == 5) {
+        currentQuarter = Term.springQuarter;
+      } else if (month == 6 || month == 7) {
+        currentQuarter = Term.summerQuarter;
+      } else if (month == 10 || month == 11) {
+        currentQuarter = Term.fallQuarter;
+      } else if (month == 12) {
+        currentQuarter = Term.winterQuarter;
+      } else {
+        currentQuarter == null;
+      }
     }
-    targetSemester = "$thisYear-$semesterNum";
   }
 
   Map<String, List<DateTime>> generateCalendarData() {
@@ -927,13 +922,11 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
 
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
 
       Widget value = const SizedBox();
@@ -949,14 +942,16 @@ class _CalendarState extends ConsumerState<Calendar> {
     if (targetDayList.isNotEmpty) {
       Map firstClass = targetDayList.first;
       Map lastClass = targetDayList.last;
+      DateTime? startTime = Lesson.atPeriod(firstClass["period"])?.start;
+      DateTime? endTime = Lesson.atPeriod(lastClass["period"])?.end;
+      if (startTime != null && endTime != null) {
+        String universityClassData =
+            "${DateFormat("HH:mm").format(startTime)}~${DateFormat("HH:mm").format(endTime)}";
+        Widget value = switchWidget(classListChild(universityClassData, target),
+            ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
 
-      String universityClassData =
-          "${DateFormat("H:mm").format(Class.periods[firstClass["period"]].start)}~${DateFormat("H:mm").format(Class.periods[lastClass["period"]].end)}";
-
-      DateTime key = Class.periods[firstClass["period"]].start;
-      Widget value = switchWidget(classListChild(universityClassData, target),
-          ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
-      mixedDataByTime.add({key: value});
+        mixedDataByTime.add({startTime: value});
+      }
     }
 
     //グチャグチャなデータをソートする
@@ -974,7 +969,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             itemBuilder: (context, index) {
               return sortedList.elementAt(index).values.first;
             },
-            itemCount: mixedDataByTime.length,
+            itemCount: sortedList.length,
             shrinkWrap: true,
             physics: const ClampingScrollPhysics()));
   }
@@ -1396,20 +1391,19 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<DateTime, dynamic>> mapList = [];
     DateTime target = DateTime.now();
     final data = ref.read(calendarDataProvider);
-    String targetKey = DateFormat("yyyy-MM-dd").format(target);
+    String targetKey =
+        "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
-
+    DateTime targetDay = DateTime.parse(targetKey);
     DateTime now = DateTime.now();
     List<Map<DateTime, Widget>> mixedDataByTime = [];
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
       mapList.add({key: targetDayData.elementAt(index)});
     }
@@ -1423,17 +1417,17 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map<String, dynamic> targetClass = targetDayList.elementAt(i);
-      String startTime = DateFormat("HH:mm")
-          .format(Class.periods[targetClass["period"]].start);
-      String endTime =
-          DateFormat("HH:mm").format(Class.periods[targetClass["period"]].end);
-      final newTargetClass = {
-        ...targetClass,
-        "startTime": startTime,
-        "endTime": endTime
-      };
-      DateTime key = Class.periods[targetClass["period"]].start;
-      mapList.add({key: newTargetClass});
+
+      Lesson? lesson = Lesson.atPeriod(targetClass["period"]);
+      if (lesson != null) {
+        final newTargetClass = {
+          ...targetClass,
+          "startTime": DateFormat("HH:mm").format(lesson.start),
+          "endTime": DateFormat("HH:mm").format(lesson.end)
+        };
+        DateTime key = lesson.start;
+        mapList.add({key: newTargetClass});
+      }
     }
 
     //グチャグチャなMapデータをソートする
@@ -1490,24 +1484,27 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   Widget todaysScheduleChild(index, target) {
     Widget dateTimeData = Container();
+    String? startTime =
+        sortedMapList.elementAt(index).values.first["startTime"];
+    String? endTime = sortedMapList.elementAt(index).values.first["endTime"];
+    String? nextStartTime = index == sortedMapList.length - 1
+        ? "23:59"
+        : sortedMapList.elementAt(index + 1).values.first["startTime"];
+    // String? previousEndTime = index == 0
+    //     ? "0:00"
+    //     : sortedMapList.elementAt(index - 1).values.first["endTime"];
 
-    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != null) {
+    if (startTime != "" &&
+        startTime != null &&
+        endTime != "" &&
+        endTime != null) {
       dateTimeData = Text(
-        sortedMapList.elementAt(index).values.first["startTime"] +
-            "\n" +
-            sortedMapList.elementAt(index).values.first["endTime"],
+        "$startTime\n$endTime",
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
-    } else if (sortedMapList
-            .elementAt(index)
-            .values
-            .first["startTime"]
-            .trim() !=
-        "") {
+    } else if (startTime != "" && startTime != null) {
       dateTimeData = Text(
-        sortedMapList.elementAt(index).values.first["startTime"],
+        startTime,
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
     } else {
@@ -1519,102 +1516,38 @@ class _CalendarState extends ConsumerState<Calendar> {
       );
     }
 
-    String formerDateTimeData = "終日";
-    if (index != 0) {
-      if (sortedMapList.elementAt(index - 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != null) {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index - 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      }
-    }
-
-    String thisDateTimeData = "終日";
-    if (sortedMapList.elementAt(index).values.first["startTime"].trim() != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != "" &&
-        sortedMapList.elementAt(index).values.first["endTime"] != null) {
-      thisDateTimeData =
-          sortedMapList.elementAt(index).values.first["startTime"];
-    } else if (sortedMapList
-            .elementAt(index)
-            .values
-            .first["startTime"]
-            .trim() !=
-        "") {
-      thisDateTimeData =
-          sortedMapList.elementAt(index).values.first["startTime"];
-    }
-
-    String nextDateTimeData = "終日";
-    if (index + 1 < sortedMapList.length) {
-      if (sortedMapList.elementAt(index + 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != null) {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index + 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      }
-    }
-
     Color upperDividerColor = Colors.grey;
     Color dotColor = Colors.grey;
     Color underDividerColor = Colors.grey;
-    DateTime now = DateTime.now();
-
-    if (formerDateTimeData == "終日") {
-      upperDividerColor = Colors.redAccent;
-    } else {
-      DateTime d = DateFormat("HH:mm").parse(formerDateTimeData);
-      DateTime formerDateTime =
-          DateTime(now.year, now.month, now.day, d.hour, d.minute);
-      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime d = DateFormat("HH:mm").parse(nextDateTimeData);
-        DateTime nextDateTime =
-            DateTime(now.year, now.month, now.day, d.hour, d.minute);
-        upperDividerColor = Colors.red;
-        if (nextDateTime.isBefore(now)) {
-          underDividerColor = Colors.red;
-        }
-      }
+    DateTime now = DateFormat("HH:mm")
+        .parse("${DateTime.now().hour}:${DateTime.now().minute}");
+    if (endTime == null || endTime == "") {
+      endTime = "23:59";
+    }
+    if (startTime == null || startTime == "") {
+      startTime = "00:00";
+    }
+    // if (previousEndTime == null || previousEndTime == "") {
+    //   previousEndTime = "00:00";
+    // }
+    if (nextStartTime == null || nextStartTime == "") {
+      nextStartTime = "23:59";
     }
 
-    if (thisDateTimeData == "終日") {
+    DateTime startDateTime = DateFormat("HH:mm").parse(startTime);
+    DateTime endDateTime = DateFormat("HH:mm").parse(endTime);
+    DateTime nextStartDateTime = DateFormat("HH:mm").parse(nextStartTime);
+    // DateTime previousEndDateTime = DateFormat("HH:mm").parse(previousEndTime);
+    if (isBetween(now, startDateTime, endDateTime)) {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+    } else if (now.isAfter(endDateTime)) {
       upperDividerColor = Colors.red;
       dotColor = Colors.red;
       underDividerColor = Colors.red;
-    } else {
-      DateTime thisDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(thisDateTimeData.substring(0, 2)),
-        int.parse(thisDateTimeData.substring(3, 5)),
-      );
-      if (thisDateTime.isBefore(now)) {
-        upperDividerColor = Colors.red;
-        dotColor = Colors.red;
-        underDividerColor = Colors.red;
-      }
-      if (nextDateTimeData == "終日") {
-        underDividerColor = Colors.grey;
-      }
+    }
+    if (now.isAfter(nextStartDateTime)) {
+      underDividerColor = Colors.red;
     }
 
     bool isLast = false;
@@ -1726,99 +1659,50 @@ class _CalendarState extends ConsumerState<Calendar> {
       style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
     );
 
-    String formerDateTimeData = "終日";
-    if (index != 0) {
-      if (sortedMapList.elementAt(index - 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index - 1).values.first["endTime"] != null) {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index - 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        formerDateTimeData =
-            sortedMapList.elementAt(index - 1).values.first["startTime"];
-      }
-    }
-
-    String thisDateTimeData =
+    String? startTime =
         sortedMapList.elementAt(index).values.first["startTime"];
-
-    String nextDateTimeData = "終日";
-    if (index + 1 < sortedMapList.length) {
-      if (sortedMapList.elementAt(index + 1).values.first["startTime"].trim() !=
-              "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != "" &&
-          sortedMapList.elementAt(index + 1).values.first["endTime"] != null) {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      } else if (sortedMapList
-              .elementAt(index + 1)
-              .values
-              .first["startTime"]
-              .trim() !=
-          "") {
-        nextDateTimeData =
-            sortedMapList.elementAt(index + 1).values.first["startTime"];
-      }
-    }
+    String? endTime = sortedMapList.elementAt(index).values.first["endTime"];
+    String? nextStartTime = index == sortedMapList.length - 1
+        ? "23:59"
+        : sortedMapList.elementAt(index + 1).values.first["startTime"];
+    // String? previousEndTime = index == 0
+    //     ? "0:00"
+    //     : sortedMapList.elementAt(index - 1).values.first["endTime"];
 
     Color upperDividerColor = Colors.grey;
     Color dotColor = Colors.grey;
     Color underDividerColor = Colors.grey;
-    DateTime now = DateTime.now();
+    DateTime now = DateFormat("HH:mm")
+        .parse("${DateTime.now().hour}:${DateTime.now().minute}");
+    if (endTime == null || endTime == "") {
+      endTime = "23:59";
+    }
+    if (startTime == null || startTime == "") {
+      startTime = "0:00";
+    }
+    // if (previousEndTime == null || previousEndTime == "") {
+    //   previousEndTime = "00:00";
+    // }
 
-    if (formerDateTimeData == "終日") {
-      upperDividerColor = Colors.redAccent;
-    } else {
-      DateTime formerDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(formerDateTimeData.substring(0, 2)),
-        int.parse(formerDateTimeData.substring(3, 5)),
-      );
-      if (formerDateTime.isBefore(now) && nextDateTimeData != "終日") {
-        DateTime nextDateTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          int.parse(nextDateTimeData.substring(0, 2)),
-          int.parse(nextDateTimeData.substring(3, 5)),
-        );
-        upperDividerColor = Colors.red;
-        if (nextDateTime.isBefore(now)) {
-          underDividerColor = Colors.red;
-        }
-      }
+    if (nextStartTime == null || nextStartTime == "") {
+      nextStartTime = "23:59";
     }
 
-    if (thisDateTimeData == "終日") {
+    DateTime startDateTime = DateFormat("HH:mm").parse(startTime);
+    DateTime endDateTime = DateFormat("HH:mm").parse(endTime);
+    DateTime nextStartDateTime = DateFormat("HH:mm").parse(nextStartTime);
+    // DateTime previousEndDateTime = DateFormat("HH:mm").parse(previousEndTime);
+    if (isBetween(now, startDateTime, endDateTime)) {
+      upperDividerColor = Colors.red;
+      dotColor = Colors.red;
+    } else if (now.isAfter(endDateTime)) {
       upperDividerColor = Colors.red;
       dotColor = Colors.red;
       underDividerColor = Colors.red;
-    } else {
-      DateTime thisDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(thisDateTimeData.substring(0, 2)),
-        int.parse(thisDateTimeData.substring(3, 5)),
-      );
-      if (thisDateTime.isBefore(now)) {
-        upperDividerColor = Colors.red;
-        dotColor = Colors.red;
-        underDividerColor = Colors.red;
-      }
-      if (nextDateTimeData == "終日") {
-        underDividerColor = Colors.grey;
-      }
     }
-
+    if (now.isAfter(nextStartDateTime)) {
+      underDividerColor = Colors.red;
+    }
     bool isLast = false;
     if (sortedMapList.length == index + 1) {
       isLast = true;
@@ -1893,7 +1777,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                       size: SizeConfig.blockSizeHorizontal! * 3,
                     ),
                     Text(
-                        "${"日月火水木金土"[(sortedMapList.elementAt(index).values.first["weekday"]) % 7]}の授業、",
+                        "${"日月火水木金土"[sortedMapList.elementAt(index).values.first["weekday"] % 7]}曜日の授業、",
                         style: TextStyle(
                             color: Colors.grey,
                             fontSize: SizeConfig.blockSizeHorizontal! * 3,

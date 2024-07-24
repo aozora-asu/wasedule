@@ -28,10 +28,11 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
+      // throw UnsupportedError(
+      //   'DefaultFirebaseOptions have not been configured for macos - '
+      //   'you can reconfigure this by running the FlutterFire CLI again.',
+      // );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -54,7 +55,8 @@ class DefaultFirebaseOptions {
     appId: '1:342079600357:ios:a462571263b2860563460c',
     messagingSenderId: '342079600357',
     projectId: 'wasedule-f719a',
-    databaseURL: 'https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'wasedule-f719a.appspot.com',
     iosBundleId: 'com.example.wasedule',
   );
@@ -64,8 +66,8 @@ class DefaultFirebaseOptions {
     appId: '1:342079600357:android:1be5193116e48b5363460c',
     messagingSenderId: '342079600357',
     projectId: 'wasedule-f719a',
-    databaseURL: 'https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://wasedule-f719a-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'wasedule-f719a.appspot.com',
   );
-
 }

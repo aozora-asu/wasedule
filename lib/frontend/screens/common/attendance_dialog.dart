@@ -247,7 +247,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
             await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
                 attendDate: DateFormat("MM/dd").format(widget.targetDate),
                 attendStatus:
-                    AttendStatus.values.byName(enteredData.values.elementAt(i)),
+                    AttendStatus.values[enteredData.values.elementAt(i)]!,
                 myCourseID: enteredData.keys.elementAt(i)));
           }
           Navigator.pop(context);
@@ -258,16 +258,15 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
   Widget classObject(Map data, String selectedStatus, Function(String) onTap,
       int remainCount) {
-    Color attendColor = Colors.grey;
-    Color lateColor = Colors.grey;
-    Color absentColor = Colors.grey;
-    if (selectedStatus == "attend") {
-      attendColor = Colors.blueAccent;
-    } else if (selectedStatus == "late") {
-      lateColor = const Color.fromARGB(255, 223, 200, 0);
-    } else if (selectedStatus == "absent") {
-      absentColor = Colors.redAccent;
-    }
+    Color attendColor = selectedStatus == AttendStatus.attend.value
+        ? AttendStatus.values[selectedStatus]!.color
+        : Colors.grey;
+    Color lateColor = selectedStatus == AttendStatus.late.value
+        ? AttendStatus.values[selectedStatus]!.color
+        : Colors.grey;
+    Color absentColor = selectedStatus == AttendStatus.absent.value
+        ? AttendStatus.values[selectedStatus]!.color
+        : Colors.grey;
 
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -437,7 +436,7 @@ class _IndividualCourseEditDialogState
           buttonModel(() async {
             await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
                 attendDate: dateString,
-                attendStatus: AttendStatus.values.byName(attendStatus),
+                attendStatus: AttendStatus.values[attendStatus]!,
                 myCourseID: widget.myCourseData["id"]));
             widget.onDone();
             Navigator.pop(context);

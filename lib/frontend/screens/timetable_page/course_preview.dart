@@ -10,6 +10,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 class CoursePreview extends ConsumerStatefulWidget {
   late Map target;
@@ -86,6 +87,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     // if (viewMode == 1) {
     //   padding = const EdgeInsets.symmetric(vertical: 12.5);
     // }
+    int id;
 
     return GestureDetector(
         onTap: () {},
@@ -102,7 +104,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           children: [
                             textFieldModel("授業名を入力…", classNameController,
                                 FontWeight.bold, 22.0, (value) async {
-                              int id = target["id"];
+                              id = target["id"];
                               //＠ここに授業名変更関数を登録！！！
                               await MyCourseDatabaseHandler()
                                   .updateCourseName(id, value);
@@ -118,7 +120,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
                             onTap: () async {
-                              int id = target["id"];
+                              id = target["id"];
                               //＠ここに削除実行関数！！！
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
@@ -180,14 +182,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Icon(Icons.access_time, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-          "${getJapaneseWeekday(target["weekday"])} ${target["period"]}限",
+          "${"日月火水木金土"[target["weekday"] % 7]}曜日 ${target["period"]}限",
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.05,
           ),
         ),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-          "${target["year"]} ${targetSemester(target["semester"])}",
+          "${target["year"]} ${Term.terms.firstWhereOrNull((e) => e.value == target["semester"])?.fullText ?? Term.fullYear.fullText}",
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.04,
               color: Colors.grey),
@@ -221,6 +223,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget classRoomSelector(BuildContext context, Map<String, dynamic> target) {
     List<String> classRooms = target["classRoom"].toString().split("\n");
     Map<String, bool> selectedRooms = {};
+    int id;
     for (var classroom in classRooms) {
       selectedRooms[classroom] = true;
     }
@@ -228,7 +231,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (classRooms.length <= 2) {
       return textFieldModel(
           "教室を入力…", classRoomController, FontWeight.bold, 20.0, (value) async {
-        int id = target["id"];
+        id = target["id"];
         //＠ここに教室のアップデート関数！！！
         await MyCourseDatabaseHandler().updateClassRoom(id, value);
         widget.setTimetableState(() {});
@@ -273,13 +276,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   );
                 },
               ).whenComplete(() async {
-                int id = target["id"];
+                id = target["id"];
                 String selectedRoomValue = selectedRooms.entries
                     .where((entry) => entry.value)
                     .map((entry) => entry.key)
                     .join("\n")
                     .trimRight();
-                print(selectedRoomValue);
+
                 await MyCourseDatabaseHandler()
                     .updateClassRoom(id, selectedRoomValue);
                 setState(() {});
@@ -310,13 +313,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double fontSize, Function(String) onSubmitted) {
+      FontWeight weight, double fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
       child: TextField(
           controller: controller,
           maxLines: null,
-          textInputAction: TextInputAction.done,
+          keyboardType: TextInputType.multiline,
+          //textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
               fillColor: FORGROUND_COLOR,
               filled: true,
@@ -324,47 +328,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               hintText: hintText),
           style: TextStyle(
               fontSize: fontSize, color: Colors.black, fontWeight: weight),
-          onSubmitted: onSubmitted),
+          onChanged: onChanged),
     ));
-  }
-
-  String getJapaneseWeekday(int weekday) {
-    switch (weekday) {
-      case 1:
-        return '月曜日';
-      case 2:
-        return '火曜日';
-      case 3:
-        return '水曜日';
-      case 4:
-        return '木曜日';
-      case 5:
-        return '金曜日';
-      case 6:
-        return '土曜日';
-      case 7:
-        return '日曜日';
-      default:
-        return '無効な曜日';
-    }
-  }
-
-  String targetSemester(String semesterID) {
-    String result = "通年科目";
-    if (semesterID == "spring_quarter") {
-      result = "春学期 -春クォーター";
-    } else if (semesterID == "summer_quarter") {
-      result = "春学期 -夏クォーター";
-    } else if (semesterID == "spring_semester") {
-      result = "春学期";
-    } else if (semesterID == "fall_quarter") {
-      result = "秋学期 -秋クォーター";
-    } else if (semesterID == "winter_quarter") {
-      result = "秋学期 -冬クォーター";
-    } else if (semesterID == "fall_semester") {
-      result = "秋学期";
-    }
-    return result;
   }
 
   int maxAbsentNum = 0;
@@ -447,8 +412,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       child: Row(children: [
         const Text("残機 ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-        const Icon(Icons.favorite, color: Colors.redAccent, size: 20),
-        Text(" × " + absentNum.toString(),
+        const Icon(Icons.favorite, color: Colors.redAccent, size: 22),
+        Text("×${absentNum.toString()}",
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey)),
       ]),
@@ -470,11 +435,11 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           padding: containerPadding,
           decoration: containerDecoration,
           child: Row(children: [
-            changeNumButton("remainAbsent", "decrease"),
+            decreseRemainAbsent(),
             Text(maxAbsentNum.toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            changeNumButton("remainAbsent", "increase")
+            increaceRemainAbsent()
           ]),
         ),
         const Text("最大欠席可能数",
@@ -491,11 +456,11 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           padding: containerPadding,
           decoration: containerDecoration,
           child: Row(children: [
-            changeNumButton("classNum", "decrease"),
+            decreseClassNum(),
             Text(totalClassNum.toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            changeNumButton("classNum", "increase")
+            increaceClassNum()
           ]),
         ),
         const Text("授業数", style: TextStyle(fontSize: 15, color: Colors.grey)),
@@ -504,12 +469,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     ]);
   }
 
-  Widget changeNumButton(String numType, String buttonType) {
+  Widget increaceClassNum() {
     IconData buttonIcon = Icons.arrow_forward_ios;
-    if (buttonType == "decrease") {
-      buttonIcon = Icons.arrow_back_ios;
-    }
-
     return GestureDetector(
         child: Icon(
           buttonIcon,
@@ -518,39 +479,65 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ),
         onTap: () async {
           isExpandSettingPanel = true;
-          if (numType == "classNum") {
-            if (buttonType == "increase") {
-              totalClassNum += 1;
-            } else {
-              totalClassNum -= 1;
-            }
-            if (totalClassNum <= 0) {
-              totalClassNum = 0;
-            }
-            if (totalClassNum <= maxAbsentNum) {
-              totalClassNum = maxAbsentNum;
-            }
-            await MyCourseDatabaseHandler()
-                .updateClassNum(widget.target["id"], totalClassNum);
-            setState(() {});
-            widget.setTimetableState(() {});
-          } else {
-            if (buttonType == "increase") {
-              maxAbsentNum += 1;
-            } else {
-              maxAbsentNum -= 1;
-            }
-            if (maxAbsentNum <= 0) {
-              maxAbsentNum = 0;
-            }
-            if (maxAbsentNum >= totalClassNum) {
-              maxAbsentNum = totalClassNum;
-            }
-            await MyCourseDatabaseHandler()
-                .updateRemainAbsent(widget.target["id"], maxAbsentNum);
-            setState(() {});
-            widget.setTimetableState(() {});
-          }
+          totalClassNum = totalClassNum + 1;
+          await MyCourseDatabaseHandler()
+              .updateClassNum(widget.target["id"], totalClassNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget decreseClassNum() {
+    IconData buttonIcon = Icons.arrow_back_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          isExpandSettingPanel = true;
+          totalClassNum =
+              totalClassNum <= maxAbsentNum ? maxAbsentNum : totalClassNum - 1;
+          await MyCourseDatabaseHandler()
+              .updateClassNum(widget.target["id"], totalClassNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget increaceRemainAbsent() {
+    IconData buttonIcon = Icons.arrow_forward_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          maxAbsentNum =
+              maxAbsentNum >= totalClassNum ? totalClassNum : maxAbsentNum + 1;
+          await MyCourseDatabaseHandler()
+              .updateRemainAbsent(widget.target["id"], maxAbsentNum);
+          setState(() {});
+          widget.setTimetableState(() {});
+        });
+  }
+
+  Widget decreseRemainAbsent() {
+    IconData buttonIcon = Icons.arrow_back_ios;
+    return GestureDetector(
+        child: Icon(
+          buttonIcon,
+          color: Colors.grey,
+          size: 17,
+        ),
+        onTap: () async {
+          maxAbsentNum = maxAbsentNum <= 0 ? 0 : maxAbsentNum - 1;
+          await MyCourseDatabaseHandler()
+              .updateRemainAbsent(widget.target["id"], maxAbsentNum);
+          setState(() {});
+          widget.setTimetableState(() {});
         });
   }
 
@@ -596,18 +583,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget attendRecordListPanel(Map attendRecord) {
-    String attendStatusText = "";
-    Color attendStatusColor = Colors.white;
-    if (attendRecord["attendStatus"] == "attend") {
-      attendStatusText = "出席";
-      attendStatusColor = Colors.blue;
-    } else if (attendRecord["attendStatus"] == "late") {
-      attendStatusText = "遅刻";
-      attendStatusColor = const Color.fromARGB(255, 223, 200, 0);
-    } else {
-      attendStatusText = "欠席";
-      attendStatusColor = Colors.redAccent;
-    }
+    String attendStatusText =
+        AttendStatus.values[attendRecord["attendStatus"]]!.text;
+    Color attendStatusColor =
+        AttendStatus.values[attendRecord["attendStatus"]]!.color;
 
     return GestureDetector(
         onTap: () async {

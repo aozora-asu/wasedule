@@ -473,49 +473,39 @@ class NotifyContent {
   }
 
   Future<void> sampleNotify() async {
-    Map<String, dynamic>? notifyFormatMap =
+    Map<String, dynamic> notifyFormatMap =
         await NotifyDatabaseHandler().getNotifyFormat();
     String notifyTitle;
     tz.initializeTimeZones();
     tz.Location local = tz.getLocation('Asia/Tokyo');
     tz.TZDateTime now = tz.TZDateTime.now(local);
-    if (notifyFormatMap != null) {
-      NotifyFormat notifyFormat = NotifyFormat(
-          isContainWeekday: notifyFormatMap["isContainWeekday"],
-          notifyFormat: notifyFormatMap["notifyFormat"]);
-      if (notifyFormat.isContainWeekday == 0) {
-        if (notifyFormat.notifyFormat == null) {
-          notifyTitle = "今日のお知らせ";
-        } else {
-          notifyTitle =
-              "${DateFormat(notifyFormat.notifyFormat).format(now)}のお知らせ";
-        }
+
+    NotifyFormat notifyFormat = NotifyFormat(
+        isContainWeekday: notifyFormatMap["isContainWeekday"],
+        notifyFormat: notifyFormatMap["notifyFormat"]);
+    if (notifyFormat.isContainWeekday == 0) {
+      if (notifyFormat.notifyFormat == null) {
+        notifyTitle = "今日のお知らせ";
       } else {
-        if (notifyFormat.notifyFormat == null) {
-          notifyTitle = "今日(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
-        } else {
-          notifyTitle =
-              "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
-        }
+        notifyTitle =
+            "${DateFormat(notifyFormat.notifyFormat).format(now)}のお知らせ";
       }
-      notificationDetails = _setNotificationDetail(
-          notifyID++, notifyTitle, "このように通知されます", "notifyConfig", "");
-      await flutterLocalNotificationsPlugin.show(
-        notifyID++,
-        notifyTitle,
-        "このように通知されます",
-        notificationDetails,
-      );
     } else {
-      notificationDetails = _setNotificationDetail(
-          notifyID++, "通知のフォーマットを設定してください", "", "notifyConfig", "");
-      await flutterLocalNotificationsPlugin.show(
-        notifyID++,
-        "通知のフォーマットを設定してください",
-        "",
-        notificationDetails,
-      );
+      if (notifyFormat.notifyFormat == null) {
+        notifyTitle = "今日(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+      } else {
+        notifyTitle =
+            "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+      }
     }
+    notificationDetails = _setNotificationDetail(
+        notifyID++, notifyTitle, "このように通知されます", "notifyConfig", "");
+    await flutterLocalNotificationsPlugin.show(
+      notifyID++,
+      notifyTitle,
+      "このように通知されます",
+      notificationDetails,
+    );
   }
 
   getScheduledNotify() async {
@@ -577,10 +567,10 @@ class NotifyContent {
         if (myCourse["period"] != null && myCourse["weekday"] != null) {
           weeklyScheduleDate = _nextInstanceOfWeeklyTime(
               DateFormat("H:mm")
-                  .format(Class.periods[myCourse["period"] - 1].end),
+                  .format(Lesson.atPeriod(myCourse["period"] - 1)!.end),
               myCourse["weekday"]);
           body =
-              "${DateFormat("H:mm").format(Class.periods[myCourse["period"]].start)}~ ${myCourse["classRoom"]}";
+              "${DateFormat("H:mm").format(Lesson.atPeriod(myCourse["period"])!.start)}~ ${myCourse["classRoom"]}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),

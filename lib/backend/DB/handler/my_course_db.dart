@@ -414,7 +414,7 @@ class MyCourseDatabaseHandler {
   Future<List<Map<String, dynamic>>> getPresentTermCourseList() async {
     await _initMyCourseDatabase();
     DateTime now = DateTime.now();
-    List<String> semesters = datetime2termList(now);
+    List<Term> semesters = Term.whenTerms(now);
 
     List<Map<String, dynamic>> courses = await _database.query(myCourseTable,
         columns: [
@@ -435,7 +435,10 @@ class MyCourseDatabaseHandler {
         ],
         where:
             'year = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
-        whereArgs: [datetime2schoolYear(now), ...semesters]);
+        whereArgs: [
+          Term.whenSchoolYear(now),
+          ...semesters.map((e) => e.value)
+        ]);
 
     return courses;
   }
@@ -443,7 +446,7 @@ class MyCourseDatabaseHandler {
   Future<Map<String, dynamic>?> getPresentTermFirstCourse(int weekday) async {
     await _initMyCourseDatabase();
     DateTime now = DateTime.now();
-    List<String> semesters = datetime2termList(now);
+    List<Term> semesters = Term.whenTerms(now);
 
     List<Map<String, dynamic>> courses = await _database.query(myCourseTable,
         columns: [
@@ -464,7 +467,11 @@ class MyCourseDatabaseHandler {
         ],
         where:
             'weekday = ? AND year = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
-        whereArgs: [weekday, datetime2schoolYear(now), ...semesters],
+        whereArgs: [
+          weekday,
+          Term.whenSchoolYear(now),
+          ...semesters.map((e) => e.value)
+        ],
         orderBy: "period ASC");
 
     return courses.isEmpty ? null : courses.first;
@@ -473,13 +480,18 @@ class MyCourseDatabaseHandler {
   Future<bool> hasClass(int weekday, int period) async {
     await _initMyCourseDatabase();
     DateTime now = DateTime.now();
-    List<String> semesters = datetime2termList(now);
+    List<Term> semesters = Term.whenTerms(now);
 
     List<Map<String, dynamic>> courses = await _database.query(
       myCourseTable,
       where:
           'weekday = ? AND period= ? AND year = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
-      whereArgs: [weekday, period, datetime2schoolYear(now), ...semesters],
+      whereArgs: [
+        weekday,
+        period,
+        Term.whenSchoolYear(now),
+        ...semesters.map((e) => e.value)
+      ],
     );
 
     return courses.isEmpty ? false : true;
@@ -488,7 +500,7 @@ class MyCourseDatabaseHandler {
   Future<List<Map<String, dynamic>>> getNextCourse() async {
     await _initMyCourseDatabase();
     DateTime now = DateTime.now();
-    List<String> semesters = datetime2termList(now);
+    List<Term> semesters = Term.whenTerms(now);
 
     List<Map<String, dynamic>> courses = await _database.query(myCourseTable,
         columns: [
@@ -510,10 +522,10 @@ class MyCourseDatabaseHandler {
         where:
             'year = ? AND period = ? AND weekday = ? AND semester IN (${List.filled(semesters.length, '?').join(',')})',
         whereArgs: [
-          datetime2schoolYear(now),
-          Class.whenPeriod(now.add(const Duration(minutes: 70))),
+          Term.whenSchoolYear(now),
+          Lesson.whenPeriod(now.add(const Duration(minutes: 70)))?.period,
           now.weekday,
-          ...semesters
+          ...semesters.map((e) => e.value)
         ]);
 
     return courses;

@@ -259,12 +259,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //まずは予定データの生成
     for (int index = 0; index < targetDayData.length; index++) {
-      DateTime key = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+      DateTime key = DateFormat("HH:mm").parse("00:00");
       if (targetDayData.elementAt(index)["startTime"].trim() != "") {
-        DateFormat format = DateFormat.Hm();
-        DateTime time =
-            format.parse(targetDayData.elementAt(index)["startTime"]);
-        key = DateTime(now.year, now.month, now.day, time.hour, time.minute, 0);
+        key = DateFormat("HH:mm")
+            .parse(targetDayData.elementAt(index)["startTime"]);
       }
 
       Widget value = const SizedBox();
@@ -305,11 +303,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     for (int i = 0; i < targetDayList.length; i++) {
       Map targetClass = targetDayList.elementAt(i);
-      DateTime key = Class.periods[targetClass["period"]].start;
+      DateTime? key = Lesson.atPeriod(targetClass["period"])?.start;
 
       Widget value = switchWidget(timeTableListChild(targetClass),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
-      mixedDataByTime.add({key: value});
+      if (key != null) {
+        mixedDataByTime.add({key: value});
+      }
     }
 
     //グチャグチャなデータをソートする
@@ -420,7 +420,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       timeStartController = targetData["startTime"] ?? "";
       timeEndController = targetData["endTime"] ?? "";
     }
-    isPublic = izuPabu(targetData["isPublic"]);
+    isPublic = targetData["isPublic"] == 1;
   }
 
   Widget editModeListChild(targetKey, index) {
@@ -648,10 +648,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
   Widget timeTableListChild(Map classData) {
     final data = ref.read(timeTableProvider);
-    String startTime =
-        DateFormat("HH:mm").format(Class.periods[classData["period"]].start);
-    String endTime =
-        DateFormat("HH:mm").format(Class.periods[classData["period"]].end);
+    Lesson? lesson = Lesson.atPeriod(classData["period"]);
+    String? startTime =
+        lesson != null ? DateFormat("HH:mm").format(lesson.start) : null;
+    String? endTime =
+        lesson != null ? DateFormat("HH:mm").format(lesson.end) : null;
 
     return GestureDetector(
         onTap: () async {
@@ -695,7 +696,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${"日月火水木金土"[classData["weekday"] % 7]}の授業",
+                      Text("${"日月火水木金土"[classData["weekday"] % 7]}曜日の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
@@ -1042,62 +1043,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     });
   }
 
-  String weekDay(weekday) {
-    String dayOfWeek = '';
-    switch (weekday) {
-      case 1:
-        dayOfWeek = '(月)';
-        break;
-      case 2:
-        dayOfWeek = '(火)';
-        break;
-      case 3:
-        dayOfWeek = '(水)';
-        break;
-      case 4:
-        dayOfWeek = '(木)';
-        break;
-      case 5:
-        dayOfWeek = '(金)';
-        break;
-      case 6:
-        dayOfWeek = '(土)';
-        break;
-      case 7:
-        dayOfWeek = '(日)';
-        break;
-    }
-    return dayOfWeek;
-  }
-
-  String weekDayEng(weekday) {
-    String dayOfWeek = '';
-    switch (weekday) {
-      case 1:
-        dayOfWeek = 'Mon.';
-        break;
-      case 2:
-        dayOfWeek = 'Tue.';
-        break;
-      case 3:
-        dayOfWeek = 'Wed.';
-        break;
-      case 4:
-        dayOfWeek = 'Thu.';
-        break;
-      case 5:
-        dayOfWeek = 'Fri.';
-        break;
-      case 6:
-        dayOfWeek = 'Sat.';
-        break;
-      case 7:
-        dayOfWeek = 'Sun.';
-        break;
-    }
-    return dayOfWeek;
-  }
-
   Widget taskListLength(fontSize) {
     final taskData = ref.watch(taskDataProvider);
     Map<DateTime, List<Map<String, dynamic>>> sortedData =
@@ -1206,14 +1151,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     }
   }
 
-  bool izuPabu(int izuPab) {
-    if (izuPab == 0) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   String errorCause = "";
   bool isConflict(String start, String end) {
     errorCause = "";
@@ -1252,22 +1189,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     String previewText = "なし";
     if (text != "") {
       previewText = text;
-    }
-
-    return Expanded(
-        child: Center(
-            child: Text(
-      previewText,
-      style: const TextStyle(
-          color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-      overflow: TextOverflow.visible,
-    )));
-  }
-
-  Widget isPublicPreview(bool isPublic) {
-    String previewText = "表示しない";
-    if (isPublic) {
-      previewText = "表示する";
     }
 
     return Expanded(
@@ -1331,7 +1252,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Future<void> showTemplateDialogue(
       StateSetter setosute, TextEditingController titleController) async {
     final data = ref.read(calendarDataProvider);
-    List tempLateMap = data.templateData;
+    List<Map<String, dynamic>> tempLateList =
+        data.templateData as List<Map<String, dynamic>>;
 
     await showDialog(
       context: context,
@@ -1350,35 +1272,29 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   const SizedBox(height: 5),
                   SizedBox(
                     width: double.maxFinite,
-                    height: listViewHeight(50, tempLateMap.length),
+                    height: listViewHeight(50, tempLateList.length),
                     child: ListView.separated(
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 5),
-                      itemCount: tempLateMap.length,
+                      itemCount: tempLateList.length,
                       itemBuilder: (BuildContext context, index) => InkWell(
                         onTap: () async {
                           final inputform = ref.watch(scheduleFormProvider);
                           inputform.scheduleController.text =
-                              data.templateData.elementAt(index)["subject"];
-                          titleController.text =
-                              data.templateData.elementAt(index)["subject"];
+                              tempLateList[index]["subject"];
+                          titleController.text = tempLateList[index]["subject"];
                           inputform.timeStartController.text =
-                              data.templateData.elementAt(index)["startTime"];
+                              tempLateList[index]["startTime"];
                           inputform.timeEndController.text =
-                              data.templateData.elementAt(index)["endTime"];
+                              tempLateList[index]["endTime"];
                           inputform.tagController.text =
-                              data.templateData.elementAt(index)["tag"];
-
-                          titleController.text =
-                              data.templateData.elementAt(index)["subject"];
+                              tempLateList[index]["tag"];
+                          titleController.text = tempLateList[index]["subject"];
                           timeStartController =
-                              data.templateData.elementAt(index)["startTime"];
-                          timeEndController =
-                              data.templateData.elementAt(index)["endTime"];
-                          tagController.text =
-                              data.templateData.elementAt(index)["tag"];
-                          tagIDController =
-                              data.templateData.elementAt(index)["tagID"];
+                              tempLateList[index]["startTime"];
+                          timeEndController = tempLateList[index]["endTime"];
+                          tagController.text = tempLateList[index]["tag"];
+                          tagIDController = tempLateList[index]["tagID"];
                           setosute(() {});
 
                           Navigator.pop(context);
@@ -1399,11 +1315,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                     fontSize: 10, color: Colors.white),
                               ),
                               Text(
-                                "  " +
-                                    ref
-                                        .read(calendarDataProvider)
-                                        .templateData
-                                        .elementAt(index)["subject"],
+                                "    ${tempLateList[index]["subject"]}",
                                 style: const TextStyle(
                                     fontSize: 20, color: Colors.white),
                                 overflow: TextOverflow.ellipsis,
@@ -1445,23 +1357,14 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   }
 
   String timedata(index) {
-    if (ref
-                .read(calendarDataProvider)
-                .templateData
-                .elementAt(index)["startTime"] ==
-            "" &&
-        ref
-                .read(calendarDataProvider)
-                .templateData
-                .elementAt(index)["endTime"] ==
-            "") {
+    String templateStartTime =
+        ref.read(calendarDataProvider).templateData[index]["startTime"];
+    String templateEndTime =
+        ref.read(calendarDataProvider).templateData[index]["endTime"];
+    if (templateStartTime == "" && templateEndTime == "") {
       return "      終日";
     } else {
-      return "${"      " + ref.read(calendarDataProvider).templateData.elementAt(index)["startTime"]} ～ " +
-          ref
-              .read(calendarDataProvider)
-              .templateData
-              .elementAt(index)["endTime"];
+      return "      $templateStartTime ～ $templateEndTime";
     }
   }
 
@@ -1518,12 +1421,4 @@ Future<bool> showConfirmExitDialogue(BuildContext context) async {
         );
       });
   return result;
-}
-
-bool isPanelEnable(String? tagID) {
-  if (tagID == null || tagID == "") {
-    return false;
-  } else {
-    return true;
-  }
 }

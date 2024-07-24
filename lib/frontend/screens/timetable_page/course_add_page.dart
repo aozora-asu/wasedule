@@ -30,27 +30,17 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
   TextEditingController classRoomController = TextEditingController();
   int? weekDay;
   int? period;
-  int? year;
-  String? semester;
+  late int year;
+  late String semester;
   String errorText = "";
 
   @override
   void initState() {
     super.initState();
-    year = DateTime.now().year;
-    semester = "full_year";
-    if (widget.year != null) {
-      year = widget.year;
-    }
-    if (widget.semester != null) {
-      semester = widget.semester;
-    }
-    if (widget.period != null) {
-      period = widget.period;
-    }
-    if (widget.weekDay != null) {
-      weekDay = widget.weekDay;
-    }
+    year = widget.year ?? DateTime.now().year;
+    semester = widget.semester ?? "full_year";
+    period = widget.period;
+    weekDay = widget.weekDay;
   }
 
   @override
@@ -95,12 +85,16 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       height: 2,
     );
     String courseTimeText;
+    String className;
+    String classRoom;
+    String memo;
 
     if (weekDay != null && period != null) {
       courseTimeText =
-          "$year年, ${Term.terms[semester]!.text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
+          "$year年, ${Term.terms.firstWhere((e) => e.value == semester).text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
     } else {
-      courseTimeText = "$year年, ${Term.terms[semester]!.text}, オンデマンド, 時限なし";
+      courseTimeText =
+          "$year年, ${Term.terms.firstWhere((e) => e.value == semester).text}, オンデマンド, 時限なし";
     }
     return GestureDetector(
         onTap: () {},
@@ -160,13 +154,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                             style: const TextStyle(color: Colors.red)),
                         const Spacer(),
                         buttonModel(() {
-                          year;
-                          semester;
-                          weekDay;
-                          period;
-                          String className = classNameController.text;
-                          String classRoom = classRoomController.text;
-                          String memo = memoController.text;
+                          className = classNameController.text;
+                          classRoom = classRoomController.text;
+                          memo = memoController.text;
                           if (isValid()) {
                             //＠ここに時間割データの追加関数！！！
                             MyCourseDatabaseHandler()
@@ -179,8 +169,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                     semester: semester,
                                     syllabusID: null,
                                     weekday: weekDay,
-                                    year: year!,
-                                    criteria: null));
+                                    year: year,
+                                    criteria: null,
+                                    memo: memo));
                             widget.setTimetableState(() {});
                             Navigator.pop(context);
                           } else {}
@@ -216,12 +207,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       errorText = "*時限を設定してください。";
       return false;
     } else {
-      errorText = "";
       return true;
     }
   }
 
-  Future<String> showWeekdayAndPeriodDialogue() async {
+  Future<void> showWeekdayAndPeriodDialogue() async {
     int? tempweekDay = weekDay;
     int? tempPeriod = period;
     int now = DateTime.now().year;
@@ -412,6 +402,5 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
         );
       },
     );
-    return "a";
   }
 }

@@ -1,6 +1,8 @@
+import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/material.dart';
 
 final Map<String, DateTime> wasedaCalendar2024 = {
   "春学期開始": DateTime(2024, 4, 1),
@@ -21,86 +23,104 @@ final Map<String, DateTime> wasedaCalendar2024 = {
 class Term {
   static Term springQuarter = const Term._internal(
       value: "spring_quarter",
+      quarterGroup: ["spring_quarter"],
       text: "春クォーター",
       fullText: "春学期 -春クォーター",
       shortText: "春");
   static Term summerQuarter = const Term._internal(
       value: "summer_quarter",
+      quarterGroup: ["summer_quarter"],
       text: "夏クォーター",
       fullText: "春学期 -夏クォーター",
       shortText: "夏");
   static Term springSemester = const Term._internal(
-      value: "spring_semester", text: "春学期", fullText: "", shortText: "春");
+      value: "spring_semester",
+      quarterGroup: ["spring_quarter", "summer_quarter"],
+      text: "春学期",
+      fullText: "",
+      shortText: "春");
   static Term fallQuarter = const Term._internal(
       value: "fall_quarter",
+      quarterGroup: ["fall_quarter"],
       text: "秋クォーター",
       fullText: "秋学期 -秋クォーター",
       shortText: "秋");
   static Term winterQuarter = const Term._internal(
       value: "winter_quarter",
+      quarterGroup: ["winter_quarter"],
       text: "冬クォーター",
       fullText: "秋学期 -冬クォーター",
       shortText: "冬");
   static Term fallSemester = const Term._internal(
-      value: "fall_semester", text: "秋学期", fullText: "", shortText: "秋");
+      value: "fall_semester",
+      quarterGroup: ["fall_quarter", "winter_quaretr"],
+      text: "秋学期",
+      fullText: "",
+      shortText: "秋");
   static Term fullYear = const Term._internal(
-      value: "full_year", text: "通年", fullText: "通年科目", shortText: null);
+      value: "full_year",
+      quarterGroup: [
+        "spring_quarter",
+        "summer_quarter",
+        "fall_quarter",
+        "winter_quaretr"
+      ],
+      text: "通年",
+      fullText: "通年科目",
+      shortText: null);
 
   const Term._internal(
       {required this.value,
+      required this.quarterGroup,
       required this.text,
       required this.shortText,
       required this.fullText});
-  static Map<String, Term> get terms => {
-        springQuarter.value: springQuarter,
-        summerQuarter.value: summerQuarter,
-        springSemester.value: springSemester,
-        fallQuarter.value: fallQuarter,
-        winterQuarter.value: winterQuarter,
-        fallSemester.value: fallSemester,
-        fullYear.value: fullYear
-      };
+  static List<Term> get terms => [
+        springQuarter,
+        summerQuarter,
+        springSemester,
+        fallQuarter,
+        winterQuarter,
+        fallSemester,
+        fullYear
+      ];
+  static List<Term> get _semesters => [
+        springSemester,
+        fallSemester,
+      ];
+  static List<Term> get _quarters => [
+        springQuarter,
+        summerQuarter,
+        fallQuarter,
+        winterQuarter,
+      ];
   final String text;
   final String value;
   final String? shortText;
   final String fullText;
-  static whenTerms(DateTime dateTime) {
-    List<String> currentTerms = [];
+  final List<String> quarterGroup;
+  static List<Term> whenTerms(DateTime dateTime) {
+    List<Term> currentTerms = [];
     List<DateTime> datetimeList = wasedaCalendar2024.values.toList();
+    if (isBetween(dateTime, datetimeList[1], datetimeList[2])) {
+      currentTerms.addAll([springSemester, springQuarter]);
+    } else if (isBetween(dateTime, datetimeList[3], datetimeList[4])) {
+      currentTerms.addAll([springSemester, summerQuarter]);
+    } else if (isBetween(dateTime, datetimeList[7], datetimeList[8])) {
+      currentTerms.addAll([fallSemester, fallQuarter]);
+    } else if (isBetween(dateTime, datetimeList[9], datetimeList[11])) {
+      currentTerms.addAll([fallSemester, winterQuarter]);
+    }
 
-    if ((dateTime.isAfter(datetimeList[1]) &&
-            dateTime.isBefore(datetimeList[2])) ||
-        dateTime.isAtSameMomentAs(datetimeList[2]) ||
-        dateTime.isAtSameMomentAs(datetimeList[1])) {
-      currentTerms.addAll(["spring_semester", "spring_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[3]) &&
-            dateTime.isBefore(datetimeList[4])) ||
-        dateTime.isAtSameMomentAs(datetimeList[3]) ||
-        dateTime.isAtSameMomentAs(datetimeList[4])) {
-      currentTerms.addAll(["spring_semester", "summer_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[7]) &&
-            dateTime.isBefore(datetimeList[8])) ||
-        dateTime.isAtSameMomentAs(datetimeList[7]) ||
-        dateTime.isAtSameMomentAs(datetimeList[8])) {
-      currentTerms.addAll(["fall_semester", "fall_quarter"]);
-    }
-    if ((dateTime.isAfter(datetimeList[9]) &&
-            dateTime.isBefore(datetimeList[11])) ||
-        dateTime.isAtSameMomentAs(datetimeList[9]) ||
-        dateTime.isAtSameMomentAs(datetimeList[11])) {
-      currentTerms.addAll(["fall_semester", "winter_quarter"]);
-    }
     if (currentTerms.isNotEmpty) {
-      currentTerms.add("full_year");
+      currentTerms.add(fullYear);
     }
     return currentTerms;
   }
 
-  static whenQuarter(DateTime dateTime) {
-    List<String> currentTerms = whenTerms(dateTime);
-    for (var term in Term.terms.keys) {
+  static Term? whenQuarter(DateTime dateTime) {
+    List<Term> currentTerms = whenTerms(dateTime);
+    for (var term in Term._quarters) {
       if (currentTerms.contains(term)) {
         return term;
       }
@@ -108,52 +128,73 @@ class Term {
     return null;
   }
 
-  static whenSchoolYear(DateTime dateTime) {
+  static Term? whenSemester(DateTime dateTime) {
+    List<Term> currentTerms = whenTerms(dateTime);
+    for (var term in Term._semesters) {
+      if (currentTerms.contains(term)) {
+        return term;
+      }
+    }
+    return null;
+  }
+
+  static int whenSchoolYear(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month - 4, dateTime.day).year;
   }
 }
 
-class Class {
+class Lesson {
   final DateTime start;
   final DateTime end;
   final int period;
 
-  const Class._internal(
-      {required this.start, required this.end, required this.period});
+  const Lesson._internal({
+    required this.start,
+    required this.end,
+    required this.period,
+  });
 
-  static Class zeroth = Class._internal(
-      period: 0,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("7:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("8:40"), tz.local));
-  static Class first = Class._internal(
-      period: 1,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("8:50"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("10:30"), tz.local));
-  static Class second = Class._internal(
-      period: 2,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("10:40"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("12:20"), tz.local));
-  static Class third = Class._internal(
-      period: 3,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("13:10"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("14:50"), tz.local));
-  static Class fourth = Class._internal(
-      period: 4,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("15:05"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("16:45"), tz.local));
-  static Class fifth = Class._internal(
-      period: 5,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("17:00"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("18:40"), tz.local));
-  static Class sixth = Class._internal(
-      period: 6,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("18:55"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("20:35"), tz.local));
-  static Class seventh = Class._internal(
-      period: 7,
-      start: tz.TZDateTime.from(DateFormat("H:mm").parse("20:45"), tz.local),
-      end: tz.TZDateTime.from(DateFormat("H:mm").parse("21:25"), tz.local));
-  static List<Class> get periods => [
+  static Lesson zeroth = Lesson._internal(
+    period: 0,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("7:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:40"), tz.local),
+  );
+  static Lesson first = Lesson._internal(
+    period: 1,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:50"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:30"), tz.local),
+  );
+  static Lesson second = Lesson._internal(
+    period: 2,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:40"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("12:20"), tz.local),
+  );
+  static Lesson third = Lesson._internal(
+    period: 3,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("13:10"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("14:50"), tz.local),
+  );
+  static Lesson fourth = Lesson._internal(
+    period: 4,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("15:05"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("16:45"), tz.local),
+  );
+  static Lesson fifth = Lesson._internal(
+    period: 5,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("17:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:40"), tz.local),
+  );
+  static Lesson sixth = Lesson._internal(
+    period: 6,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:55"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:35"), tz.local),
+  );
+  static Lesson seventh = Lesson._internal(
+    period: 7,
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
+  );
+  static List<Lesson> get _periods => [
         zeroth,
         first,
         second,
@@ -164,29 +205,43 @@ class Class {
         seventh,
       ];
 
-  static whenPeriod(DateTime dateTime) {
+  static Lesson? whenPeriod(DateTime dateTime) {
     tz.TZDateTime tzDateTime = tz.TZDateTime.from(
-        DateFormat("H:mm").parse("${dateTime.hour}:${dateTime.minute}"),
+        DateFormat("HH:mm").parse("${dateTime.hour}:${dateTime.minute}"),
         tz.local);
-    for (var key in periods) {
-      if ((tzDateTime.isAfter(key.start) && tzDateTime.isBefore(key.end)) ||
-          tzDateTime.isAtSameMomentAs(key.start) ||
-          tzDateTime.isAtSameMomentAs(key.end)) {
-        return key.period;
+    for (var lesson in _periods) {
+      if (isBetween(tzDateTime, lesson.start, lesson.end)) {
+        return lesson;
+      } else {
+        continue;
       }
     }
     return null;
   }
+
+  static Lesson? atPeriod(int period) {
+    if (period < _periods.length) {
+      return _periods[period];
+    } else {
+      return null;
+    }
+  }
 }
 
-enum AttendStatus {
-  attend('attend'),
-  late('late'),
-  absent('absent'),
-  ;
-
-  const AttendStatus(this.value);
+class AttendStatus {
+  static AttendStatus attend = const AttendStatus._internal(
+      value: "attend", text: "出席", color: Colors.blue);
+  static AttendStatus late = const AttendStatus._internal(
+      value: "late", text: "遅刻", color: Color.fromARGB(255, 223, 200, 0));
+  static AttendStatus absent = const AttendStatus._internal(
+      value: "absent", text: "欠席", color: Colors.redAccent);
+  static Map<String, AttendStatus> get values =>
+      {attend.value: attend, late.value: late, absent.value: absent};
+  const AttendStatus._internal(
+      {required this.value, required this.text, required this.color});
   final String value;
+  final String text;
+  final Color color;
 }
 
 enum NotifyType {

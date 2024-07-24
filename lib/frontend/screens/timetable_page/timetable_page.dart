@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import "../../../backend/service/home_widget.dart";
+import 'package:intl/intl.dart';
 
 class TimeTablePage extends ConsumerStatefulWidget {
   const TimeTablePage({super.key});
@@ -26,20 +27,25 @@ class TimeTablePage extends ConsumerStatefulWidget {
 
 class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late int thisYear;
-  late int semesterNum;
-  late String targetSemester;
   late bool isScreenShotBeingTaken;
   final ScreenshotController _screenShotController = ScreenshotController();
+  late Term currentQuarter;
+  late Term currentSemester;
+  late DateTime now;
 
   @override
   void initState() {
     super.initState();
     initTargetSem();
+    now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context, DateTime.now(), ref);
+      showAttendanceDialog(context, now, ref);
     });
+    currentSemester = Term.whenSemester(now) != null
+        ? Term.whenSemester(now)!
+        : Term.fullYear;
   }
 
   @override
@@ -124,177 +130,115 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   void initTargetSem() {
     DateTime now = DateTime.now();
-    thisYear = datetime2schoolYear(now);
-    List semesterList = datetime2termList(now);
-
-    semesterNum = 0;
-    if (now.month <= 3) {
-      semesterNum = 4;
-    } else if (now.month <= 5) {
-      semesterNum = 1;
-    } else if (now.month <= 9) {
-      semesterNum = 2;
-    } else if (now.month <= 11) {
-      semesterNum = 3;
+    thisYear = Term.whenSchoolYear(now);
+    Term? nowQuarter = Term.whenQuarter(now);
+    if (nowQuarter != null) {
+      currentQuarter = nowQuarter;
     } else {
-      semesterNum = 4;
-    }
-
-    if (semesterList.isNotEmpty) {
-      String quarter = semesterList[1];
-      if (quarter == "spring_quarter") {
-        semesterNum = 1;
-      } else if (quarter == "summer_quarter") {
-        semesterNum = 2;
-      } else if (quarter == "fall_quarter") {
-        semesterNum = 3;
-      } else if (quarter == "winter_quarter") {
-        semesterNum = 4;
+      if (now.month <= 3) {
+        currentQuarter = Term.winterQuarter;
+      } else if (now.month <= 5) {
+        currentQuarter = Term.springQuarter;
+      } else if (now.month <= 9) {
+        currentQuarter = Term.summerQuarter;
+      } else if (now.month <= 11) {
+        currentQuarter = Term.fallQuarter;
+      } else {
+        currentQuarter = Term.winterQuarter;
       }
     }
-    targetSemester = "$thisYear-$semesterNum";
   }
 
   void increasePgNumber() {
-    if (semesterNum == 3 || semesterNum == 4) {
+    if (currentQuarter == Term.fallQuarter ||
+        currentQuarter == Term.winterQuarter) {
       thisYear += 1;
-      semesterNum = 1;
+      currentQuarter = Term.springQuarter;
+      currentSemester = Term.springSemester;
     } else {
-      semesterNum = 3;
+      currentQuarter = Term.fallQuarter;
+      currentSemester = Term.fallSemester;
     }
-    setState(() {
-      targetSemester = "$thisYear-$semesterNum";
-    });
+    setState(() {});
   }
 
   void decreasePgNumber() {
-    if (semesterNum == 1 || semesterNum == 2) {
+    if (currentQuarter == Term.springQuarter ||
+        currentQuarter == Term.summerQuarter) {
       thisYear -= 1;
-      semesterNum = 3;
+      currentQuarter = Term.fallQuarter;
+      currentSemester = Term.fallSemester;
     } else {
-      semesterNum = 1;
+      currentQuarter = Term.springQuarter;
+      currentSemester = Term.springSemester;
     }
-    setState(() {
-      targetSemester = "$thisYear-$semesterNum";
-    });
+    setState(() {});
   }
 
-  Widget changeQuaterbutton(int type) {
-    int buttonSemester = 0;
-    if (type == 1) {
-      buttonSemester = button1Semester();
+  Widget springFallQuarterButton() {
+    String quaterName;
+    Color quaterColor;
+    Term buttonQuarter;
+    if (currentQuarter == Term.springQuarter ||
+        currentQuarter == Term.summerQuarter) {
+      quaterName = "   春   ";
+      quaterColor = const Color.fromARGB(255, 255, 159, 191);
+      buttonQuarter = Term.springQuarter;
     } else {
-      buttonSemester = button2Semester();
+      quaterName = "   秋   ";
+      quaterColor = const Color.fromARGB(255, 231, 85, 0);
+      buttonQuarter = Term.fallQuarter;
     }
-
-    String quaterName = "";
-    Color quaterColor = FORGROUND_COLOR;
-    switch (buttonSemester) {
-      case 1:
-        quaterName = "   春   ";
-        quaterColor = const Color.fromARGB(255, 255, 159, 191);
-      case 2:
-        quaterName = "   夏   ";
-        quaterColor = Colors.blueAccent;
-      case 3:
-        quaterName = "   秋   ";
-        quaterColor = const Color.fromARGB(255, 231, 85, 0);
-      case 4:
-        quaterName = "   冬   ";
-        quaterColor = Colors.cyan;
-    }
-
     return buttonModel(() {
       switchSemester();
-    }, buttonColor(buttonSemester, quaterColor), quaterName);
+    }, buttonColor(buttonQuarter, quaterColor), quaterName);
+  }
+
+  Widget summerWinterQuarterButton() {
+    String quaterName;
+    Color quaterColor;
+    Term buttonQuarter;
+    if (currentQuarter == Term.springQuarter ||
+        currentQuarter == Term.summerQuarter) {
+      quaterName = "   夏   ";
+      quaterColor = Colors.blueAccent;
+      buttonQuarter = Term.summerQuarter;
+    } else {
+      quaterName = "   冬   ";
+      quaterColor = Colors.cyan;
+      buttonQuarter = Term.winterQuarter;
+    }
+    return buttonModel(() {
+      switchSemester();
+    }, buttonColor(buttonQuarter, quaterColor), quaterName);
   }
 
   void switchSemester() {
-    if (semesterNum == 1) {
+    if (currentQuarter == Term.springQuarter) {
       setState(() {
-        semesterNum = 2;
+        currentQuarter = Term.summerQuarter;
       });
-    } else if (semesterNum == 2) {
+    } else if (currentQuarter == Term.summerQuarter) {
       setState(() {
-        semesterNum = 1;
+        currentQuarter = Term.springQuarter;
       });
-    } else if (semesterNum == 3) {
+    } else if (currentQuarter == Term.fallQuarter) {
       setState(() {
-        semesterNum = 4;
+        currentQuarter = Term.winterQuarter;
       });
-    } else if (semesterNum == 4) {
+    } else if (currentQuarter == Term.winterQuarter) {
       setState(() {
-        semesterNum = 3;
+        currentQuarter = Term.fallQuarter;
       });
     }
   }
 
-  int button1Semester() {
-    if (semesterNum == 1) {
-      return 1;
-    } else if (semesterNum == 2) {
-      return 1;
-    } else if (semesterNum == 3) {
-      return 3;
-    } else {
-      return 3;
-    }
-  }
-
-  int button2Semester() {
-    if (semesterNum == 1) {
-      return 2;
-    } else if (semesterNum == 2) {
-      return 2;
-    } else if (semesterNum == 3) {
-      return 4;
-    } else {
-      return 4;
-    }
-  }
-
-  Color buttonColor(int buttonSemester, Color color) {
-    if (semesterNum == buttonSemester) {
+  Color buttonColor(Term buttonQuarter, Color color) {
+    if (currentQuarter == buttonQuarter) {
       return color;
     } else {
       return Colors.grey[350]!;
     }
-  }
-
-  String semesterText() {
-    String result = "年  春学期";
-    if (semesterNum == 2) {
-      result = "年  春学期";
-    } else if (semesterNum == 3) {
-      result = "年  秋学期";
-    } else if (semesterNum == 4) {
-      result = "年  秋学期";
-    }
-    return thisYear.toString() + result;
-  }
-
-  String currentQuaterID() {
-    String result = "full_year";
-    if (semesterNum == 1) {
-      result = "spring_quarter";
-    } else if (semesterNum == 2) {
-      result = "summer_quarter";
-    } else if (semesterNum == 3) {
-      result = "fall_quarter";
-    } else if (semesterNum == 4) {
-      result = "winter_quarter";
-    }
-    return result;
-  }
-
-  String currentSemesterID() {
-    String result = "full_year";
-    if (semesterNum == 1 || semesterNum == 2) {
-      result = "spring_semester";
-    } else if (semesterNum == 3 || semesterNum == 4) {
-      result = "fall_semester";
-    }
-    return result;
   }
 
   Widget timeTable() {
@@ -312,7 +256,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     iconSize: 20,
                     color: BLUEGREY),
                 Text(
-                  semesterText(),
+                  "$thisYear年  ${currentSemester.text}",
                   style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
@@ -328,8 +272,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     iconSize: 20,
                     color: BLUEGREY),
                 const Spacer(),
-                doNotContainScreenShot(changeQuaterbutton(1)),
-                doNotContainScreenShot(changeQuaterbutton(2)),
+                doNotContainScreenShot(springFallQuarterButton()),
+                doNotContainScreenShot(summerWinterQuarterButton()),
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
                 const Spacer(),
               ]),
@@ -345,9 +289,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       ref
                           .read(timeTableProvider)
                           .sortDataByWeekDay(snapshot.data!);
-                      ref
-                          .read(timeTableProvider)
-                          .initUniversityScheduleByDay(thisYear, semesterNum);
+                      ref.read(timeTableProvider).initUniversityScheduleByDay(
+                          thisYear,
+                          [currentQuarter, currentSemester, Term.fullYear]);
                       for (int i = 0; i < snapshot.data!.length; i++) {}
                       for (int i = 0;
                           i <
@@ -521,8 +465,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Color bgColor = BACKGROUND_COLOR;
           Color fontColor = BLUEGREY;
           DateTime now = DateTime.now();
-          if (returnBeginningDateTime(index + 1).isBefore(now) &&
-              returnEndDateTime(index + 1).isAfter(now)) {
+          if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+              Lesson.atPeriod(index + 1)!.end)) {
             bgColor = PALE_MAIN_COLOR;
             fontColor = FORGROUND_COLOR;
           }
@@ -537,7 +481,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          returnBeginningTime(index + 1),
+                          DateFormat("HH:mm")
+                              .format(Lesson.atPeriod(index + 1)!.start),
                           style: TextStyle(
                               color: fontColor,
                               fontSize: fontSize,
@@ -549,7 +494,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                                 fontSize: fontSize * 2.2,
                                 fontWeight: FontWeight.bold)),
                         Text(
-                          returnEndTime(index + 1),
+                          DateFormat("HH:mm")
+                              .format(Lesson.atPeriod(index + 1)!.end),
                           style: TextStyle(
                               color: fontColor,
                               fontSize: fontSize,
@@ -561,8 +507,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           Widget resultinging = const SizedBox();
           DateTime now = DateTime.now();
           Color bgColor = BACKGROUND_COLOR;
-          if (returnEndDateTime(2).isBefore(now) &&
-              returnBeginningDateTime(3).isAfter(now)) {
+
+          if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
             bgColor = PALE_MAIN_COLOR;
           }
           if (index == 1) {
@@ -584,31 +530,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  Color cellBackGroundColor(int length, Color color) {
-    Color bgColor = FORGROUND_COLOR;
-    switch (length) {
-      case 0:
-        bgColor = increaseRed(color, amount: 0);
-      case 1:
-        bgColor = increaseRed(color, amount: 30);
-      case 2:
-        bgColor = increaseRed(color, amount: 60);
-      case 3:
-        bgColor = increaseRed(color, amount: 90);
-      case 4:
-        bgColor = increaseRed(color, amount: 120);
-      case 5:
-        bgColor = increaseRed(color, amount: 150);
-      case 6:
-        bgColor = increaseRed(color, amount: 180);
-      case 7:
-        bgColor = increaseRed(color, amount: 210);
-      case 8:
-        bgColor = increaseRed(color, amount: 240);
-      case 9:
-        bgColor = increaseRed(color, amount: 255);
-      default:
-        bgColor = increaseRed(color, amount: 255);
+  Color cellBackGroundColor(int taskCount, Color color) {
+    Color bgColor;
+    if (taskCount <= 8) {
+      bgColor = increaseRed(color, amount: 30 * taskCount);
+    } else {
+      bgColor = increaseRed(color, amount: 255);
     }
     return bgColor;
   }
@@ -640,7 +567,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   builder: (BuildContext context) {
                     return CourseAddPage(
                       year: thisYear,
-                      semester: currentSemesterID(),
+                      semester: currentSemester.value,
                       weekDay: weekDay,
                       period: index + 1,
                       setTimetableState: setState,
@@ -660,12 +587,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
-                      currentQuaterID() ||
+                      currentQuarter.value ||
                   tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
                               index + 1))["semester"] ==
-                      currentSemesterID() ||
+                      currentSemester.value ||
                   tableData.currentSemesterClasses[weekDay].elementAt(
                           returnIndexFromPeriod(
                               tableData.currentSemesterClasses[weekDay],
@@ -693,8 +620,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Color lineColor = BACKGROUND_COLOR;
             double lineWidth = 1;
             DateTime now = DateTime.now();
-            if (returnBeginningDateTime(index + 1).isBefore(now) &&
-                returnEndDateTime(index + 1).isAfter(now) &&
+
+            if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                    Lesson.atPeriod(index + 1)!.end) &&
                 now.weekday == weekDay &&
                 weekDay <= 6) {
               lineWidth = 4;
@@ -718,8 +646,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             DateTime now = DateTime.now();
             Color bgColor = BACKGROUND_COLOR;
             Color fontColor = BLUEGREY;
-            if (returnEndDateTime(2).isBefore(now) &&
-                returnBeginningDateTime(3).isAfter(now)) {
+
+            if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
               bgColor = PALE_MAIN_COLOR;
               fontColor = Colors.white;
             }
@@ -773,11 +701,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return child;
           } else {
             if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                    currentQuaterID() ||
+                    currentQuarter.value ||
                 tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
                     "full_year" ||
                 tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
-                        currentSemesterID() &&
+                        currentSemester.value &&
                     tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
                         thisYear) {
               child = Container(
@@ -1027,96 +955,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           child: const Center(
               child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
     );
-  }
-
-  AssetImage tableBackGroundImage() {
-    if (DateTime.now().hour >= 5 && DateTime.now().hour <= 9) {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_morning.png');
-    } else if (DateTime.now().hour >= 9 && DateTime.now().hour <= 17) {
-      return const AssetImage('lib/assets/calendar_background/ookuma_day.png');
-    } else {
-      return const AssetImage(
-          'lib/assets/calendar_background/ookuma_night.png');
-    }
-  }
-
-  String returnBeginningTime(int period) {
-    switch (period) {
-      case 1:
-        return "08:50";
-      case 2:
-        return "10:40";
-      case 3:
-        return "13:10";
-      case 4:
-        return "15:05";
-      case 5:
-        return "17:00";
-      case 6:
-        return "18:55";
-      default:
-        return "20:45";
-    }
-  }
-
-  DateTime returnBeginningDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 8, 50);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 10, 40);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 13, 10);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 15, 05);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 17, 00);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 18, 55);
-      default:
-        return DateTime(now.year, now.month, now.day, 20, 45);
-    }
-  }
-
-  String returnEndTime(int period) {
-    switch (period) {
-      case 1:
-        return "10:30";
-      case 2:
-        return "12:20";
-      case 3:
-        return "14:50";
-      case 4:
-        return "16:45";
-      case 5:
-        return "18:40";
-      case 6:
-        return "20:35";
-      default:
-        return "21:35";
-    }
-  }
-
-  DateTime returnEndDateTime(int period) {
-    DateTime now = DateTime.now();
-    switch (period) {
-      case 1:
-        return DateTime(now.year, now.month, now.day, 10, 30);
-      case 2:
-        return DateTime(now.year, now.month, now.day, 12, 20);
-      case 3:
-        return DateTime(now.year, now.month, now.day, 14, 50);
-      case 4:
-        return DateTime(now.year, now.month, now.day, 16, 45);
-      case 5:
-        return DateTime(now.year, now.month, now.day, 18, 40);
-      case 6:
-        return DateTime(now.year, now.month, now.day, 20, 35);
-      default:
-        return DateTime(now.year, now.month, now.day, 21, 35);
-    }
   }
 
   Color hexToColor(String hexColor) {

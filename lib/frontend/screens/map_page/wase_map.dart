@@ -440,7 +440,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
   bool isDownloadInit = true;
   Widget emptyClassRooms(String location) {
     DateTime now = DateTime.now();
-    int currentPeriod = Class.whenPeriod(now) ?? 0;
+    int currentPeriod =
+        Lesson.whenPeriod(now) != null ? Lesson.whenPeriod(now)!.period : 0;
     SharepreferenceKeys mapDBEmptyKey;
     int campusID = 0;
     for (int i = 0; i < campusID2buildingsList().length; i++) {

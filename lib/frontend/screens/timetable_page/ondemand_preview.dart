@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_we
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "../../../static/constant.dart";
+import 'package:collection/collection.dart';
 
 class OndemandPreview extends ConsumerStatefulWidget {
   late Map target;
@@ -26,11 +27,12 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   late int viewMode;
+  late Map<String, dynamic> target;
 
   @override
   void initState() {
     super.initState();
-    Map target = widget.target;
+    target = widget.target as Map<String, dynamic>;
     memoController.text = target["memo"] ?? "";
     classNameController.text = target["courseName"] ?? "";
     viewMode = 0;
@@ -74,8 +76,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     Widget dividerModel = const Divider(
       height: 2,
     );
+    int id;
 
-    Widget switchViewMode(dividerModel, target) {
+    Widget _switchViewMode(dividerModel, target) {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
@@ -83,7 +86,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       }
     }
 
-    Widget viewModeSwitch() {
+    Widget _viewModeSwitch() {
       Map target = widget.target;
       if (target["syllabusID"] != null && target["syllabusID"] != "") {
         if (viewMode == 0) {
@@ -100,7 +103,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       }
     }
 
-    Widget descriptionModeSwitch() {
+    Widget _descriptionModeSwitch() {
       Map target = widget.target;
       if (target["syllabusID"] != null && target["syllabusID"] != "") {
         if (viewMode == 0) {
@@ -130,21 +133,21 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                       Row(children: [
                         textFieldModel("授業名を入力…", classNameController,
                             FontWeight.bold, 30.0, (value) async {
-                          int id = target["id"];
+                          id = target["id"];
                           //＠ここに授業名のアップデート関数！！！
                           await MyCourseDatabaseHandler()
                               .updateCourseName(id, value);
                         }),
-                        descriptionModeSwitch(),
+                        _descriptionModeSwitch(),
                       ]),
-                      switchViewMode(dividerModel, target),
+                      _switchViewMode(dividerModel, target),
                       Row(children: [
-                        viewModeSwitch(),
+                        _viewModeSwitch(),
                         const Spacer(),
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
                             onTap: () async {
-                              int id = target["id"];
+                              id = target["id"];
                               //＠ここに削除実行関数！！！
                               await MyCourseDatabaseHandler()
                                   .deleteMyCourse(id);
@@ -157,8 +160,10 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   }
 
   Widget summaryContent(dividerModel, target) {
-    String text = "";
-    text = Term.terms[target["semester"]]!.fullText;
+    String text = Term.terms
+            .firstWhereOrNull((e) => e.value == target["semester"])
+            ?.fullText ??
+        "";
 
     return Column(children: [
       dividerModel,

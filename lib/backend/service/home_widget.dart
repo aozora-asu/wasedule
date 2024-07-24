@@ -31,8 +31,8 @@ class NextCourseHomeWidget {
           classRoom: course["classRoom"] ?? "",
           className: course["courseName"] ?? "",
           period: course["period"]?.toString() ?? "",
-          startTime:
-              DateFormat("H:mm").format(Class.periods[course["period"]].start));
+          startTime: DateFormat("H:mm")
+              .format(Lesson.atPeriod(course["period"])!.start));
     }
     // nextCourse = NextCourse(
     //     classRoom: DateTime.fromMicrosecondsSinceEpoch(34567876543).toString(),

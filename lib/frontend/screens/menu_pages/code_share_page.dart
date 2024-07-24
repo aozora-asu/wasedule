@@ -16,7 +16,10 @@ class CodeSharePage extends ConsumerStatefulWidget {
   late List<dynamic> scheduleData;
 
   CodeSharePage(
-      {super.key, required this.id, required this.tagName, required this.scheduleData});
+      {super.key,
+      required this.id,
+      required this.tagName,
+      required this.scheduleData});
 
   @override
   CodeSharePageState createState() => CodeSharePageState();
@@ -26,8 +29,10 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
   final ScreenshotController _screenShotController = ScreenshotController();
   late bool isPreview;
   late String targetMonth = "";
-  String thisMonth = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
-  String today = "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
+  String thisMonth =
+      "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
+  String today =
+      "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}";
   late Color colorTheme;
   late Color backgroundColorTheme;
   late TextEditingController textController;
@@ -609,7 +614,8 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
   Widget calendarCellsChild(DateTime target) {
     Widget dateTimeData = Container();
     final data = ref.watch(calendarDataProvider);
-    String targetKey = "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
+    String targetKey =
+        "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
     if (data.sortedDataByDayForShare.keys.contains(targetKey)) {
       List<dynamic> targetDayData = data.sortedDataByDayForShare[targetKey];
       return SizedBox(
@@ -618,8 +624,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                 if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
                     targetDayData.elementAt(index)["endTime"].trim() != "") {
                   dateTimeData = Text(
-                    "${" " +
-                        targetDayData.elementAt(index)["startTime"]}～" +
+                    "${" " + targetDayData.elementAt(index)["startTime"]}～" +
                         targetDayData.elementAt(index)["endTime"],
                     style: TextStyle(
                         color: Colors.grey,

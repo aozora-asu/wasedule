@@ -250,19 +250,15 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             ]),
             Row(children: [
               ElevatedButton(
-                        onPressed: () async{
-                          await DatePicker.showTimePicker(context,
-                            showTitleActions: true,
-                            showSecondsColumn: false,
-                            onConfirm: (date) {
-                              scheduleForm.timeStartController.text
-                               = DateFormat("HH:mm").format(date);
-                                setState((){});
-                            },
-                            currentTime: DateTime.now(),
-                            locale: LocaleType.jp
-                          );
-                        },
+                  onPressed: () async {
+                    await DatePicker.showTimePicker(context,
+                        showTitleActions: true,
+                        showSecondsColumn: false, onConfirm: (date) {
+                      scheduleForm.timeStartController.text =
+                          DateFormat("HH:mm").format(date);
+                      setState(() {});
+                    }, currentTime: DateTime.now(), locale: LocaleType.jp);
+                  },
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all<Color?>(ACCENT_COLOR),
@@ -271,28 +267,24 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeStartController.text),
               IconButton(
-                onPressed:(){
-                  setState(() {
-                    scheduleForm.timeStartController.text = "";
-                  });
-                },
-              icon:const Icon(Icons.delete,color:Colors.grey))
+                  onPressed: () {
+                    setState(() {
+                      scheduleForm.timeStartController.text = "";
+                    });
+                  },
+                  icon: const Icon(Icons.delete, color: Colors.grey))
             ]),
             Row(children: [
               ElevatedButton(
-                        onPressed: () async{
-                          await DatePicker.showTimePicker(context,
-                            showTitleActions: true,
-                            showSecondsColumn: false,
-                            onConfirm: (date) {
-                              scheduleForm.timeEndController.text
-                               = DateFormat("HH:mm").format(date);
-                                setState((){});
-                            },
-                            currentTime: DateTime.now(),
-                            locale: LocaleType.jp
-                          );
-                        },
+                  onPressed: () async {
+                    await DatePicker.showTimePicker(context,
+                        showTitleActions: true,
+                        showSecondsColumn: false, onConfirm: (date) {
+                      scheduleForm.timeEndController.text =
+                          DateFormat("HH:mm").format(date);
+                      setState(() {});
+                    }, currentTime: DateTime.now(), locale: LocaleType.jp);
+                  },
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all<Color?>(ACCENT_COLOR),
@@ -301,12 +293,12 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                       style: TextStyle(color: Colors.white))),
               timeInputPreview(scheduleForm.timeEndController.text),
               IconButton(
-                onPressed:(){
-                  setState(() {
-                    scheduleForm.timeEndController.text = "";
-                  });
-                },
-              icon:const Icon(Icons.delete,color:Colors.grey))
+                  onPressed: () {
+                    setState(() {
+                      scheduleForm.timeEndController.text = "";
+                    });
+                  },
+                  icon: const Icon(Icons.delete, color: Colors.grey))
             ]),
             tagEmptyFlag(
               ref,
@@ -400,13 +392,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                               scheduleForm.timeEndController.text)) {
                             print("ボタン無効");
                           } else {
-                            int intIspublic;
-                            if (scheduleForm.isPublic) {
-                              intIspublic = 1;
-                            } else {
-                              intIspublic = 0;
-                            }
-
+                            int intIspublic = scheduleForm.isPublic ? 1 : 0;
                             //共有用予定が空だったら、個人用予定と揃える
                             if (scheduleForm
                                 .publicScheduleController.text.isEmpty) {
@@ -435,7 +421,8 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
                               };
                               await ScheduleDatabaseHelper()
                                   .resisterScheduleToDB(schedule);
-                              await Future.delayed(const Duration(milliseconds: 1));
+                              await Future.delayed(
+                                  const Duration(milliseconds: 1));
                             }
                             ref.read(scheduleFormProvider).clearContents();
 
@@ -629,7 +616,10 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
 
   bool isConflict(String start, String end) {
     if (returnTagIsBeit(
-                returnTagId(ref.watch(scheduleFormProvider).tagController.text,ref) ?? "", ref) ==
+                returnTagId(ref.watch(scheduleFormProvider).tagController.text,
+                        ref) ??
+                    "",
+                ref) ==
             1 &&
         (start == "" || end == "")) {
       return true;
@@ -827,11 +817,7 @@ class _CalendarInputFormState extends ConsumerState<CalendarInputForm> {
             "") {
       return "      終日";
     } else {
-      return "${"      " +
-          ref
-              .read(calendarDataProvider)
-              .templateData
-              .elementAt(index)["startTime"]} ～ " +
+      return "${"      " + ref.read(calendarDataProvider).templateData.elementAt(index)["startTime"]} ～ " +
           ref
               .read(calendarDataProvider)
               .templateData

@@ -10,12 +10,11 @@ class TimeInputPage extends ConsumerStatefulWidget {
   String inputCategory;
   StateSetter? setState;
 
-  TimeInputPage({super.key, 
-    required this.target,
-    required this.inputCategory,
-    this.setState
-    });
-
+  TimeInputPage(
+      {super.key,
+      required this.target,
+      required this.inputCategory,
+      this.setState});
 
   @override
   TimeInputPageState createState() => TimeInputPageState();
@@ -39,8 +38,9 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        appBar: CustomAppBar(backButton: true,),
-
+        appBar: CustomAppBar(
+          backButton: true,
+        ),
         body: Padding(
             padding: EdgeInsets.only(
                 left: SizeConfig.blockSizeHorizontal! * 3,
@@ -100,15 +100,12 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
               const Divider(indent: 7, endIndent: 7, thickness: 4),
               Row(children: [modoruButton(), const Spacer(), submitButton()])
             ])));
-
   }
 
   Widget numPanel(int num, String category) {
     return InkWell(
         child: Container(
-
           width: SizeConfig.blockSizeHorizontal! * 18.8,
-
           height: SizeConfig.blockSizeHorizontal! * 20,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
@@ -209,7 +206,8 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
       ),
       child: Row(children: [
         const Spacer(),
-        Text(preview(category) + category,style:const TextStyle(color:Colors.white)),
+        Text(preview(category) + category,
+            style: const TextStyle(color: Colors.white)),
         const SizedBox(width: 20),
         const Icon(
           Icons.delete,
@@ -218,7 +216,6 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         const Spacer(),
       ]), // ボタンのテキスト
     );
-
   }
 
   String preview(category) {
@@ -245,19 +242,19 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
 
         TextEditingController timeController = TextEditingController();
         final inputForm = ref.watch(scheduleFormProvider);
-        
+
         if (widget.inputCategory == "startTime") {
           timeController = inputForm.timeStartController;
           inputForm.clearTimeStart();
           timeController.text = inputResult;
-        } else if (widget.inputCategory == "endTime"){
+        } else if (widget.inputCategory == "endTime") {
           timeController = inputForm.timeEndController;
           inputForm.clearTimeEnd();
           timeController.text = inputResult;
         }
-        if(widget.setState != null){
-          widget.setState!((){});
-        }else{
+        if (widget.setState != null) {
+          widget.setState!(() {});
+        } else {
           ref.read(scheduleFormProvider.notifier).updateDateTimeFields();
         }
         Navigator.pop(context);
@@ -270,9 +267,9 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         backgroundColor: MAIN_COLOR, // ボタンの背景色
         textStyle: const TextStyle(color: Colors.white), // テキストの色
       ),
-      child: Text("${userImput["hourDigit10"]}${userImput["hourDigit1"]}時${userImput["minuteDigit10"]}${userImput["minuteDigit1"]}分で登録",
-          style:const TextStyle(color:Colors.white)
-          ), // ボタンのテキスト
+      child: Text(
+          "${userImput["hourDigit10"]}${userImput["hourDigit1"]}時${userImput["minuteDigit10"]}${userImput["minuteDigit1"]}分で登録",
+          style: const TextStyle(color: Colors.white)), // ボタンのテキスト
     );
   }
 
@@ -289,7 +286,6 @@ class TimeInputPageState extends ConsumerState<TimeInputPage> {
         ),
       ),
       child: const Text('戻る', style: TextStyle(color: Colors.white)),
-
     );
   }
 }

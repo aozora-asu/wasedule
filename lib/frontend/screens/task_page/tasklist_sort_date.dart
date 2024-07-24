@@ -359,10 +359,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           child: 
             Text(
               DateFormat("HH:mm").format(
-                  DateTime.fromMicrosecondsSinceEpoch(targetData["dtEnd"])),
+                  DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])),
               textAlign: TextAlign.center,
               style:const TextStyle(
                   fontSize: 15,
+
                   fontWeight: FontWeight.w700,
                   color: BLUEGREY))),
       Expanded(

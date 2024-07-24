@@ -83,6 +83,7 @@ dependencies:
   #workmanager: ^0.5.2
   isar: ^3.1.0
   isar_flutter_libs: ^3.0.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
@@ -125,13 +126,6 @@ flutter:
     - lib/assets/eye_catch/wase_map_logo.png
     - lib/assets/eye_catch/wase_map_logo_transparent.png
 
-    - lib/assets/calendar_background/ookuma_morning.png
-    - lib/assets/calendar_background/ookuma_day.png
-    - lib/assets/calendar_background/ookuma_night.png
-
-    - lib/assets/page_background/ookuma_statue.jpg
-    - lib/assets/page_background/sky_wallpaper.png
-
     - lib/assets/tutorial_images/tag_and_template_button.png
     - lib/assets/tutorial_images/tag_button.png
     - lib/assets/tutorial_images/arbeit_button.png
@@ -140,6 +134,7 @@ flutter:
     - lib/assets/tutorial_images/study_introduction.png
     - lib/assets/tutorial_images/task_add_button.png
     - lib/assets/tutorial_images/schedule_add_button.png
+    - lib/assets/tutorial_images/template_button.png
 
     - lib/assets/map_images/location_pin.png
     - lib/assets/map_images/location_pin_notempty.png

@@ -1,6 +1,7 @@
-import 'package:flutter_calandar_app/static/converter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+
 import "../../../static/constant.dart";
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final timeTableProvider =
@@ -77,20 +78,19 @@ class TimeTableData {
     return sortedData;
   }
 
-  String returnStringClassTime(int thisYear, int semesterNum, int weekDay) {
+  String returnStringClassTime(int thisYear, List<Term> terms, int weekDay) {
     List<Map<String, dynamic>> weekDayData = sortedDataByWeekDay[weekDay] ?? [];
     String startTime = "";
     String endTime = "";
     String result = "";
+
     List<Map<String, dynamic>> thisSemesterData = [];
     for (int i = 0; i < weekDayData.length; i++) {
       Map<String, dynamic> target = weekDayData.elementAt(i);
       if (target["year"] == thisYear &&
           target["weekday"] != null &&
           target["period"] != null) {
-        if (target["semester"] == currentQuaterID(semesterNum) ||
-            target["semester"] == currentSemesterID(semesterNum) ||
-            target["semester"] == "full_year") {
+        if (terms.map((e) => e.value).toList().contains(target["semester"])) {
           //年度・学期が条件に沿うデータのみを抽出
           thisSemesterData.add(target);
           int targetWeekDay = target["weekday"];
@@ -103,83 +103,48 @@ class TimeTableData {
       }
     }
     if (weekDayData.isNotEmpty && thisSemesterData.isNotEmpty) {
-      startTime = DateFormat("HH:mm")
-          .format(Class.periods[thisSemesterData.first["period"]].start);
-      endTime = DateFormat("HH:mm")
-          .format(Class.periods[thisSemesterData.last["period"]].end);
+      startTime = Lesson.atPeriod(thisSemesterData.first["period"]) != null
+          ? DateFormat("HH:mm")
+              .format(Lesson.atPeriod(thisSemesterData.first["period"])!.start)
+          : "";
+
+      endTime = Lesson.atPeriod(thisSemesterData.last["period"]) != null
+          ? DateFormat("HH:mm")
+              .format(Lesson.atPeriod(thisSemesterData.last["period"])!.end)
+          : "";
       result = "$startTime~$endTime";
     }
     return result;
   }
 
-  void initUniversityScheduleByDay(int thisYear, int semesterNum) {
+  void initUniversityScheduleByDay(int thisYear, List<Term> terms) {
     universityScheduleByWeekDay = {};
     currentSemesterClasses = {};
-    universityScheduleByWeekDay[1] =
-        returnStringClassTime(thisYear, semesterNum, 1);
-    universityScheduleByWeekDay[2] =
-        returnStringClassTime(thisYear, semesterNum, 2);
-    universityScheduleByWeekDay[3] =
-        returnStringClassTime(thisYear, semesterNum, 3);
-    universityScheduleByWeekDay[4] =
-        returnStringClassTime(thisYear, semesterNum, 4);
-    universityScheduleByWeekDay[5] =
-        returnStringClassTime(thisYear, semesterNum, 5);
-    universityScheduleByWeekDay[6] =
-        returnStringClassTime(thisYear, semesterNum, 6);
+    universityScheduleByWeekDay[1] = returnStringClassTime(thisYear, terms, 1);
+    universityScheduleByWeekDay[2] = returnStringClassTime(thisYear, terms, 2);
+    universityScheduleByWeekDay[3] = returnStringClassTime(thisYear, terms, 3);
+    universityScheduleByWeekDay[4] = returnStringClassTime(thisYear, terms, 4);
+    universityScheduleByWeekDay[5] = returnStringClassTime(thisYear, terms, 5);
+    universityScheduleByWeekDay[6] = returnStringClassTime(thisYear, terms, 6);
   }
 
   List<Map<String, dynamic>> targetDateClasses(DateTime target) {
     List<Map<String, dynamic>> result = [];
-    int year = datetime2schoolYear(target);
-    String semester = "";
-    String quarter = "";
-    String fullYear = "";
+    int year = Term.whenSchoolYear(target);
+
     int weekDay = target.weekday;
-    if (datetime2termList(target).isNotEmpty) {
-      semester = datetime2termList(target)[0];
-      quarter = datetime2termList(target)[1];
-      fullYear = datetime2termList(target)[2];
-    }
 
     for (var item in timeTableDataList) {
       if (item["year"] == year && item["weekday"] == weekDay) {
-        if (item["semester"] == semester ||
-            item["semester"] == quarter ||
-            item["semester"] == fullYear) {
+        if (Term.whenTerms(target)
+            .map((e) => e.value)
+            .toList()
+            .contains(item["semester"])) {
           result.add(item);
         }
       }
     }
     result.sort((a, b) => a['period'].compareTo(b['period']));
-    return result;
-  }
-
-  String currentQuaterID(int semesterNum) {
-    String result = "full_year";
-    if (semesterNum == 1) {
-      result = "spring_quarter";
-    } else if (semesterNum == 2) {
-      result = "summer_quarter";
-    } else if (semesterNum == 3) {
-      result = "fall_quarter";
-    } else if (semesterNum == 4) {
-      result = "winter_quarter";
-    } else if (semesterNum == 5) {
-      result = "holiday";
-    }
-    return result;
-  }
-
-  String currentSemesterID(int semesterNum) {
-    String result = "full_year";
-    if (semesterNum == 1 || semesterNum == 2) {
-      result = "spring_semester";
-    } else if (semesterNum == 3 || semesterNum == 4) {
-      result = "fall_semester";
-    } else if (semesterNum == 5) {
-      result = "holiday";
-    }
     return result;
   }
 
