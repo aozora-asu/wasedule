@@ -138,9 +138,10 @@ BorderRadius boxRadius({int type = 0}){
   
 }
 
-BoxDecoration roundedBoxdecorationWithShadow({int radiusType = 0}) {
+BoxDecoration roundedBoxdecorationWithShadow({int radiusType = 0,Color? backgroundColor}) {
+
   return BoxDecoration(
-      color:  FORGROUND_COLOR,
+      color: backgroundColor ?? FORGROUND_COLOR,
       borderRadius: boxRadius(type: radiusType)
     );
 }

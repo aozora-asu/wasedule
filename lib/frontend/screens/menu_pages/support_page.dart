@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -17,31 +18,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
   Widget build(BuildContext context) {
   SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(
-        leading:  BackButton(color:FORGROUND_COLOR),
-        backgroundColor: MAIN_COLOR,
-        elevation: 10,
-        title: Column(
-          children:<Widget>[
-            Row(children:[
-            const Icon(
-              Icons.question_mark_rounded,
-              color:WIDGET_COLOR,
-              ),
-              SizedBox(width: SizeConfig.blockSizeHorizontal! *4,),
-            Text(
-              'サポート',
-              style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! *5,
-                fontWeight: FontWeight.w800,
-                color:FORGROUND_COLOR
-              ),
-            ),
-            ]
-            )
-          ],
-        ),
-      ),
+      appBar: CustomAppBar(backButton: true),
       body:
       Container(
        width: SizeConfig.blockSizeHorizontal! *100,

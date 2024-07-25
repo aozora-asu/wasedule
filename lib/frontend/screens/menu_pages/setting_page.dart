@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_progress_indicator.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,28 +28,7 @@ class SettingsPage extends StatelessWidget {
     bool showAppBar = isAppBar ?? true;
     PreferredSizeWidget? appBar;
     if (showAppBar) {
-      appBar = AppBar(
-        leading: BackButton(color: FORGROUND_COLOR),
-        backgroundColor: MAIN_COLOR,
-        elevation: 10,
-        title: Column(
-          children: <Widget>[
-            Row(children: [
-              const Icon(
-                Icons.settings,
-                color: WIDGET_COLOR,
-              ),
-              Text(
-                '  設定',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: FORGROUND_COLOR),
-              ),
-            ])
-          ],
-        ),
-      );
+      appBar = CustomAppBar(backButton: true);
     }
 
     return Scaffold(
@@ -191,11 +171,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
 
       case 1:
         return Expanded(
-            child: SingleChildScrollView(
                 child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: notificationBody(),
-        )));
+        ));
 
       case 2:
         return Expanded(
@@ -224,10 +203,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
     return KeyboardActions(
         config: _buildConfig(controller),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
+          const Text(
             'カレンダー設定…',
             style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontSize:25,
                 fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
@@ -237,10 +216,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '画面表示のカスタマイズ',
+                    const Text(
+                      ' 画面表示のカスタマイズ',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: BLUEGREY),
                     ),
@@ -270,10 +249,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'カレンダーの設定',
+                    const Text(
+                      ' カレンダーの設定',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: BLUEGREY),
                     ),
@@ -303,8 +282,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const SizedBox(width: 5),
       Text(
         configText,
-        style: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+        style:const TextStyle(
+          fontSize: 16,
         ),
       ),
       const Spacer(),
@@ -328,8 +307,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
       const Spacer(),
       Text(
         configText,
-        style: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! * 4,
+        style:const TextStyle(
+          fontSize: 16,
         ),
       ),
       Expanded(
@@ -441,11 +420,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   Widget notificationBody() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
+    return KeyboardActions(
+        config: _buildConfig(controller),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text(
         '通知設定…',
         style: TextStyle(
-            fontSize: SizeConfig.blockSizeHorizontal! * 7,
+            fontSize: 25,
             fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 5),
@@ -454,10 +435,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           padding: const EdgeInsets.all(7.5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '通知の設定',
+            const Text(
+              ' 通知の設定',
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: BLUEGREY),
             ),
@@ -484,10 +465,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
           padding: const EdgeInsets.all(7.5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '通知フォーマットの設定',
+            const Text(
+              ' 通知フォーマットの設定',
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: BLUEGREY),
             ),
@@ -500,7 +481,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
             notificarionFormatSetting(),
           ])),
       const SizedBox(height: 20)
-    ]);
+    ]));
   }
 
   Widget buildNotificationSettingList() {
@@ -537,7 +518,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
       IntrinsicHeight(
         child: Row(children: [
           SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 32,
+            width: 125,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
                   filled: true,
@@ -561,7 +542,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
               },
             ),
           ),
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: () async {
               DateTime now = DateTime.now();
@@ -603,18 +584,18 @@ class _MainContentsState extends ConsumerState<MainContents> {
       IntrinsicHeight(
         child: Row(children: [
           SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 15,
+            width:50,
             child: DropdownButtonFormField(
               value: days,
               isDense: true,
               padding: EdgeInsets.zero,
-              decoration: InputDecoration.collapsed(
+              decoration:const  InputDecoration.collapsed(
                   filled: true,
                   fillColor: Colors.white,
                   hintText: "",
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                   hintStyle: TextStyle(
-                    fontSize: SizeConfig.blockSizeHorizontal! * 4,
+                    fontSize: 16,
                   )),
               items: const [
                 DropdownMenuItem(value: 1, child: Text(" 1")),
@@ -878,8 +859,8 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget noneSettingWidget() {
-    return SizedBox(
-      height: SizeConfig.blockSizeVertical! * 10,
+    return const SizedBox(
+      height: 75,
       child: const Center(
           child:
               Text("登録されている通知はありません。", style: TextStyle(color: Colors.grey))),
@@ -887,10 +868,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
   }
 
   Widget loadingSettingWidget() {
-    return SizedBox(
-      height: SizeConfig.blockSizeVertical! * 10,
-      child:
-          const Center(child: CircularProgressIndicator(color: ACCENT_COLOR)),
+    return const SizedBox(
+      height: 75,
+      child: Center(child: CircularProgressIndicator(color: ACCENT_COLOR)),
     );
   }
 
@@ -912,9 +892,9 @@ class _MainContentsState extends ConsumerState<MainContents> {
     return Column(children: [
       IntrinsicHeight(
         child: Row(children: [
-          const Text("日付の形式  "),
+          const Text("日付の形式：  "),
           SizedBox(
-            width: SizeConfig.blockSizeHorizontal! * 45,
+            width: 150,
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(
                   filled: true,
@@ -1000,10 +980,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '  時間割設定…',
             style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontSize: 25,
                 fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 5),
@@ -1015,10 +995,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '出欠記録の設定',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: BLUEGREY),
                     ),
@@ -1059,10 +1039,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '  テーマ設定…',
             style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                fontSize: 25,
                 fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 5),
@@ -1074,10 +1054,10 @@ class _MainContentsState extends ConsumerState<MainContents> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                   const Text(
                       '背景カラーテーマの設定',
                       style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: BLUEGREY),
                     ),
@@ -1117,7 +1097,7 @@ class _MainContentsState extends ConsumerState<MainContents> {
   Widget backgroundThemeSettings(String data) {
     bgColorTheme = data;
     return SizedBox(
-      width: SizeConfig.blockSizeHorizontal! * 32,
+      width: 150,
       child: DropdownButtonFormField(
         value: bgColorTheme,
         decoration: const InputDecoration.collapsed(

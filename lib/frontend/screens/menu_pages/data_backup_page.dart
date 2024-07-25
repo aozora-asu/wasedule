@@ -33,32 +33,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        // appBar: AppBar(
-        //   leading: const BackButton(color: WHITE),
-        //   backgroundColor: MAIN_COLOR,
-        //   elevation: 10,
-        //   title: Column(
-        //     children: <Widget>[
-        //       Row(children: [
-        //         const Icon(
-        //           Icons.backup,
-        //           color: WIDGET_COLOR,
-        //         ),
-        //         SizedBox(
-        //           width: SizeConfig.blockSizeHorizontal! * 4,
-        //         ),
-        //         Text(
-        //           'データバックアップ',
-        //           style: TextStyle(
-        //               fontSize: SizeConfig.blockSizeHorizontal! * 5,
-        //               fontWeight: FontWeight.w800,
-        //               color: WHITE),
-        //         ),
-        //       ])
-        //     ],
-        backgroundColor: FORGROUND_COLOR,
-        //   ),
-        // ),
+        backgroundColor: BACKGROUND_COLOR,
         body: SingleChildScrollView(
             child: Center(
                 child: Column(children: [
@@ -67,7 +42,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
               width: SizeConfig.blockSizeHorizontal! * 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: BACKGROUND_COLOR,
+                color: FORGROUND_COLOR,
               ),
               child: Column(children: [
                 const SizedBox(height: 15),
@@ -170,7 +145,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             Text(id,
                 style:
                     const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            okButton(context, 500.0)
+            okButton(context, 1500.0)
           ],
         );
       },
@@ -186,7 +161,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           actions: <Widget>[
             Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
             const SizedBox(height: 10),
-            okButton(context, 500.0)
+            okButton(context, 1500.0)
           ],
         );
       },
@@ -219,7 +194,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
       return Column(children: [
         const SizedBox(height: 20),
         Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecorationWithShadow(backgroundColor: BACKGROUND_COLOR),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -233,6 +208,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                     icon: const Icon(Icons.copy, color: Colors.grey))
               ]),
               Text(id,
+                textAlign: TextAlign.start,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 25)),
               Text(
@@ -333,7 +309,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           actions: <Widget>[
             Align(alignment: Alignment.centerLeft, child: Text(text)),
             const SizedBox(height: 10),
-            okButton(context, 500.0)
+            okButton(context, 1500.0)
           ],
         );
       },
@@ -349,7 +325,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
           actions: <Widget>[
             Align(alignment: Alignment.centerLeft, child: Text(errorMessage)),
             const SizedBox(height: 10),
-            okButton(context, 500.0)
+            okButton(context, 1500.0)
           ],
         );
       },

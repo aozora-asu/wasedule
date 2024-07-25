@@ -451,16 +451,16 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
           "${ArbeitCalculator().formatNumberWithComma(
             ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref) +
                   ArbeitCalculator().monthlyFeeSumOfAllTags(targetKey,ref))} 円",
-          style: TextStyle(
+          style:const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.blockSizeHorizontal! * 15));
+              fontSize: 60));
     } else if (includeFee == 0) {
       estimatedMonthlyIncome = Text(
           "${ArbeitCalculator().formatNumberWithComma(
             ArbeitCalculator().monthlyWageSum(widget.targetMonth,ref))} 円",
-          style: TextStyle(
+          style:const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.blockSizeHorizontal! * 15));
+              fontSize: 60));
     }
     PreferredSizeWidget? appbar;
     if(isAppBar){
@@ -475,13 +475,13 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
               Icons.data_exploration_outlined,
               color: WIDGET_COLOR,
             ),
-            SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 4,
+            const SizedBox(
+              width: 20,
             ),
             Text(
               'アルバイト',
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                  fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color:  FORGROUND_COLOR),
             ),
@@ -539,20 +539,19 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                        Text(
+                        const Text(
                           '連結データ',
                           style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                              fontSize: 27,
                               color: BLUEGREY,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                       ]),
                     ),
-                    SizedBox(height: SizeConfig.blockSizeVertical! * 1),
+                    const SizedBox(height: 10),
                     Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: SizeConfig.blockSizeHorizontal! * 5),
+                        padding:const EdgeInsets.symmetric(
+                            horizontal: 20),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -563,27 +562,21 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                       //crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text("$year年 年収見込み  ",
-                                            style: TextStyle(
+                                            style:const TextStyle(
                                                 color: Colors.grey,
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal! *
-                                                    7)),
+                                                fontSize: 27)),
                                         correctIndicator(),
                                         Text(
                                             "${ArbeitCalculator().formatNumberWithComma(
                                               ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
                                                 widget.targetMonth,ref))} 円",
-                                            style: TextStyle(
+                                            style:const TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal! *
-                                                    15)),
+                                                fontSize: 60)),
                                         Text("$month月 月収見込み  ",
-                                            style: TextStyle(
+                                            style:const TextStyle(
                                                 color: Colors.grey,
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal! *
-                                                    7)),
+                                                fontSize: 27)),
                                         estimatedMonthlyIncome,
                                         Row(children: [
                                           const Spacer(),
@@ -621,12 +614,10 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text("平均月収",
+                                               const Text("平均月収",
                                                     style: TextStyle(
                                                         color: Colors.grey,
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal! *
-                                                            5)),
+                                                        fontSize: 20)),
                                                 const SizedBox(width: 15),
                                                 Text(
                                                     "${ArbeitCalculator().formatNumberWithComma(
@@ -637,13 +628,11 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                                         widget
                                                                             .targetMonth,ref))
                                                                 .round())} 円",
-                                                    style: TextStyle(
+                                                    style:const TextStyle(
                                                         color: BLACK,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal! *
-                                                            10)),
+                                                        fontSize: 40)),
                                               ]),
                                         ),
                                       ])),
@@ -657,12 +646,10 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                           SizeConfig.blockSizeVertical! * 2),
                                   child: Column(children: [
                                     Row(children: [
-                                      Text("”103万円の壁”まで",
+                                      const Text("”103万円の壁”まで",
                                           style: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  5)),
+                                              fontSize: 20)),
                                       IconButton(
                                           icon: const Icon(Icons.info,
                                               color: Colors.grey),
@@ -674,11 +661,9 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                         "${ArbeitCalculator().formatNumberWithComma(1030000 -
                                           ArbeitCalculator().yearlyWageSumWithAdditionalWorkTime(
                                             widget.targetMonth,ref))} 円",
-                                        style: TextStyle(
+                                        style:const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                10)),
+                                            fontSize: 40)),
                                     //Row(children: [
                                     //   Text("超えないには？？",
                                     //       style: TextStyle(
@@ -712,12 +697,10 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                           SizeConfig.blockSizeVertical! * 2),
                                   child: Column(children: [
                                     Row(children: [
-                                      Text("”130万円の壁”まで",
+                                      const Text("”130万円の壁”まで",
                                           style: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal! *
-                                                  5)),
+                                              fontSize:20)),
                                       IconButton(
                                           icon: const Icon(Icons.info,
                                               color: Colors.grey),
@@ -731,11 +714,9 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                                                     widget.targetMonth,ref) -
                                             ArbeitCalculator().yearlyFeeSumOfAllTags(
                                                     widget.targetMonth,ref))} 円",
-                                        style: TextStyle(
+                                        style:const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                10)),
+                                            fontSize: 40)),
                                     // Row(children: [
                                     //   Text("超えないには？？",
                                     //       style: TextStyle(
@@ -766,16 +747,16 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-                        Text(
+                        const Text(
                           '個別データ',
                           style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                              fontSize: 30,
                               color: BLUEGREY,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                       ]),
                     ),
+                    const SizedBox(height:5),
                     tagDataList(),
                     SizedBox(height: SizeConfig.blockSizeVertical! * 10),
                   ])),
