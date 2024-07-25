@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -35,20 +36,18 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
         leading: const BackButton(color: Colors.white),
         backgroundColor: MAIN_COLOR,
         elevation: 10,
-        title: Column(
+        title:const Column(
           children: <Widget>[
             Row(children: [
-              const Icon(
+              Icon(
                 Icons.tag,
                 color: WIDGET_COLOR,
               ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 4,
-              ),
+              SizedBox(width: 20),
               Text(
                 'タグとテンプレート',
                 style: TextStyle(
-                    fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: Colors.white),
               ),
@@ -59,25 +58,22 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
       body: SingleChildScrollView(
           child: Column(children: [
         const SizedBox(height: 8),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
           child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+            SizedBox(width: 20),
             Text(
               ' 入力テンプレート',
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                  color: Colors.grey),
+                  fontSize: 25,
+                  fontWeight:FontWeight.bold,
+                  color: BLUEGREY),
             ),
           ]),
         ),
         SizedBox(
           width: SizeConfig.blockSizeHorizontal! * 100,
-          child: listView(),
-        ),
-        SizedBox(
-          width: SizeConfig.blockSizeHorizontal! * 90,
-          height: SizeConfig.blockSizeHorizontal! * 3,
+          child: templateListView(),
         ),
         Column(children: [
           InkWell(
@@ -119,19 +115,18 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
         Align(
           alignment: Alignment.centerLeft,
           child: Row(children: [
-            SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-            Text(
+            const SizedBox(width: 20),
+            const Text(
               'タグ',
               style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal! * 7,
-                  color: Colors.grey),
+                  fontSize: 25,
+                  fontWeight:FontWeight.bold,
+                  color: BLUEGREY),
             ),
             SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
           ]),
         ),
         tagDataList(),
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-        Column(children: [
           InkWell(
               child: Container(
                 width: SizeConfig.blockSizeHorizontal! * 95,
@@ -149,7 +144,6 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                   ],
                 ),
                 child: const Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "  +   タグの追加...",
@@ -163,25 +157,17 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
               onTap: () {
                 tagDialog();
               }),
-          const SizedBox(height: 15)
-        ]),
-        const Divider(
-          thickness: 3,
-          indent: 10,
-          endIndent: 10,
-        ),
-        SizedBox(height: SizeConfig.blockSizeVertical! * 10),
       ])),
     );
   }
 
-  Widget listView() {
+  Widget templateListView() {
     final taskData = ref.read(taskDataProvider);
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
 
     List targetData = data.templateData;
-    return ListView.builder(
+    return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
         Widget dateTimeData = Container();
         if (targetData.elementAt(index)["startTime"].trim() != "" &&
@@ -267,8 +253,10 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
                       ),
                     ])
                   ]))),
-          const SizedBox(height: 15)
         ]);
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(height: 15);
       },
       itemCount: data.templateData.length,
       shrinkWrap: true,
@@ -280,7 +268,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
     final tagData = ref.watch(calendarDataProvider);
     List sortedData = tagData.tagData;
 
-    return ListView.builder(
+    return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
         Widget dateTimeData = Container();
         dateTimeData = const Text(
@@ -384,8 +372,10 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
               ]),
             ),
           ),
-          const SizedBox(height: 15)
         ]);
+      },
+      separatorBuilder:(context,index){
+        return const SizedBox(height: 15);
       },
       itemCount: sortedData.length,
       shrinkWrap: true,
