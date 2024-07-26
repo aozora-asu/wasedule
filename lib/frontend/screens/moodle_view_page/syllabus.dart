@@ -42,6 +42,7 @@ class RequestQuery {
   String? pOcw;
   String? pType;
   String? pLng = "jp";
+
   String? p_open;
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
@@ -105,22 +106,24 @@ class RequestQuery {
       'level_hid': level_hid,
       'ControllerParameters': ControllerParameters,
       'pOcw': pOcw,
-      "p_open[]": p_open,
+      //"p_open[]": p_open,
       'pType': pType,
-      'pLng': pLng,
+      'pLng': pLng ?? "jp",
     };
   }
 
-  String makeBody() {
-    String body = "";
+  String _makeBody() {
     Map<String, String?> map = _toMap();
-    map.entries.map((e) => body +=
-        "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value ?? ""}\n");
+    String body = map.entries
+        .map((e) =>
+            "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value ?? ""}\n")
+        .join("");
     body += "--$boundary--";
+
     return body;
   }
 
-  Map<String, String> makeHeader() {
+  Map<String, String> _makeHeader() {
     // リクエストのヘッダーとボディを設定
     final headers = <String, String>{
       'Content-Type': 'multipart/form-data; boundary=$boundary',
@@ -132,8 +135,8 @@ class RequestQuery {
     // リクエストを送信
     final response = await http.post(
       Uri.parse('https://www.wsl.waseda.jp/syllabus/JAA101.php'),
-      headers: makeHeader(),
-      body: makeBody(),
+      headers: _makeHeader(),
+      body: _makeBody(),
     );
 
     // レスポンスを処理
@@ -168,8 +171,10 @@ class RequestQuery {
 
 List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
   final document = html_parser.parse(htmlString);
+
   final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
   List<SyllabusQueryResult> syllabusQueryResultList = [];
+
   if (trElements.isNotEmpty) {
     final tdElements = trElements[1].querySelectorAll("td");
     final anchor = tdElements[2].querySelector("a");
@@ -189,9 +194,10 @@ List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
           weekday: periodAndDate["weekday"],
           semester: Term.terms
               .firstWhereOrNull((e) => e.text == tdElements[5].text)
-              ?.text,
+              ?.value,
           year: int.parse(tdElements[0].text),
           syllabusID: extractedString);
+
       syllabusQueryResultList.add(syllabusResult);
     }
 
@@ -257,13 +263,12 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
       p_gengo: null,
       p_gakubu: null,
       p_open: null);
+  String htmlString = await requestQuery.fetchSyllabusResults();
 
   if (moodleCourse.courseName == "確率・統計") {
-    syllabusQueryResultList =
-        _getMatchedCourse(await requestQuery.fetchSyllabusResults(), "確率・統計");
+    syllabusQueryResultList = _getMatchedCourse(htmlString, "確率・統計");
   } else {
-    syllabusQueryResultList =
-        _getFirstCourse(await requestQuery.fetchSyllabusResults());
+    syllabusQueryResultList = _getFirstCourse(htmlString);
   }
 
   if (syllabusQueryResultList != null) {
