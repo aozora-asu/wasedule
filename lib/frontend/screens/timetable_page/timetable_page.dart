@@ -275,7 +275,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 doNotContainScreenShot(springFallQuarterButton()),
                 doNotContainScreenShot(summerWinterQuarterButton()),
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
-                const Spacer(),
+                const SizedBox(width:40),
               ]),
               const SizedBox(height: 10),
               FutureBuilder(
@@ -407,7 +407,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           child: Text(
             "   オンデマンド・その他",
             style: TextStyle(
-                fontSize: 17.5, fontWeight: FontWeight.w700, color: BLUEGREY),
+                fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY),
           )),
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
@@ -424,7 +424,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget generateWeekThumbnail() {
     List<String> days = ["月", "火", "水", "木", "金", "土"];
     return SizedBox(
-        height: SizeConfig.blockSizeVertical! * 2.5,
+        height: 20,
         child: ListView.builder(
           itemBuilder: (context, index) {
             Color bgColor = BACKGROUND_COLOR;
@@ -436,7 +436,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
-                height: SizeConfig.blockSizeVertical! * 2,
+
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2.5), color: bgColor),
                 child: Center(
@@ -454,7 +454,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   Widget generatePrirodColumn() {
-    double fontSize = SizeConfig.blockSizeHorizontal! * 2;
+    double fontSize = 8;
 
     return Column(children: [
       SizedBox(
@@ -664,7 +664,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
             if (index == 1) {
               resultinging = Container(
-                  height: SizeConfig.blockSizeVertical! * 2.5,
+                  height: 25,
                   color: bgColor,
                   child: Column(children: [
                     const Spacer(),
@@ -672,7 +672,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       childText,
                       style: TextStyle(
                           color: fontColor,
-                          fontSize: SizeConfig.blockSizeHorizontal! * 3,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
@@ -757,7 +757,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   Widget timeTableSellsChild(
       int weekDay, int period, List<Map<String, dynamic>> taskList) {
-    double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
+    double fontSize = 12;
     final timeTableData = ref.read(timeTableProvider);
     Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]
         .elementAt(returnIndexFromPeriod(
@@ -781,8 +781,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
-            style: TextStyle(
-              fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
+            style:const TextStyle(
+              fontSize: 10,
             ),
             overflow: TextOverflow.visible,
             maxLines: 2,
@@ -809,18 +809,21 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                     });
               },
               child:
-                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
-                const Spacer(),
-                Text(
-                  className,
-                  style: TextStyle(
-                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                  maxLines: 4,
+                Column(
+                children: [
+                  SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
+                  Expanded(
+                   child:Center(
+                    child:Text(
+                      className,
+                      style: TextStyle(
+                          fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                          maxLines:4 ,
+                    ))
                 ),
-                const Spacer(),
+
                 classRoomView,
-                const Spacer(),
+                const SizedBox(height:10),
               ]))),
       doNotContainScreenShot(Align(
           alignment: const Alignment(1, -1),
@@ -862,10 +865,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         decoration: const BoxDecoration(
             color: Colors.blue,
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5))),
-        child: const Text(
+        child: Text(
           " 無欠席 ",
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
+              fontWeight: FontWeight.bold, fontSize:SizeConfig.blockSizeVertical! *cellHeight /12 , color: Colors.white),
         ),
       );
     } else {
@@ -880,8 +883,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 const BorderRadius.only(bottomLeft: Radius.circular(5))),
         child: Text(
           " 欠席 " + absentNum.toString() + "/" + remainAbsent.toString(),
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize:SizeConfig.blockSizeVertical! *cellHeight /12, color: Colors.white),
         ),
       );
     }
@@ -890,7 +893,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   Widget ondemandSellsChild(int index, List<Map<String, dynamic>> taskList) {
     final tableData = ref.read(timeTableProvider);
     Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
-    double fontSize = SizeConfig.blockSizeHorizontal! * 2.75;
+    double fontSize = 11;
     String className = target["courseName"];
     int taskLength = taskList.length;
 
@@ -918,14 +921,14 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
-              const Spacer(),
-              Text(
-                className,
-                style: TextStyle(
-                    fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                maxLines: 4,
-              ),
-              const Spacer(),
+              Expanded(
+                child:Center(
+                  child:Text(
+                    className,
+                    style: TextStyle(
+                        fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                    maxLines: 4),
+              ))
             ]),
           ),
           doNotContainScreenShot(Align(

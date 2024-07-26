@@ -68,11 +68,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("時間割に新規追加：",
+                                    const Text("時間割に新規追加...",
                                         style: TextStyle(
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                7,
+                                            fontSize:30,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     courseInfo(),
@@ -91,10 +89,10 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
 
     if (weekDay != null && period != null) {
       courseTimeText =
-          "$year年, ${Term.terms.firstWhere((e) => e.value == semester).text}, ${"日月火水木金土"[weekDay! % 7]}曜日, $period限";
+          "$year年 / ${Term.terms.firstWhere((e) => e.value == semester).text} / ${"日月火水木金土"[weekDay! % 7]}曜日 / $period限";
     } else {
       courseTimeText =
-          "$year年, ${Term.terms.firstWhere((e) => e.value == semester).text}, オンデマンド, 時限なし";
+          "$year年 / ${Term.terms.firstWhere((e) => e.value == semester).text} / オンデマンド / 時限なし";
     }
     return GestureDetector(
         onTap: () {},
@@ -116,7 +114,8 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                         const Icon(Icons.access_time, color: MAIN_COLOR),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        GestureDetector(
+                        Expanded(child:  
+                          GestureDetector(
                             onTap: () async {
                               await showWeekdayAndPeriodDialogue();
                               setState(() {
@@ -124,11 +123,10 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                               });
                             },
                             child: Text(courseTimeText,
-                                style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal! * 4,
-                                    color: Colors.blueAccent))),
-                        const Spacer(),
+                                style:const TextStyle(
+                                    fontSize:20,
+                                    overflow: TextOverflow.clip,
+                                    color: Colors.blueAccent)))),
                       ]),
                       dividerModel,
                       Row(children: [
@@ -194,7 +192,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
           style: TextStyle(
               color: Colors.black,
               fontWeight: weight,
-              fontSize: SizeConfig.blockSizeHorizontal! * 6),
+              fontSize: 20),
           onSubmitted: onSubmitted),
     ));
   }

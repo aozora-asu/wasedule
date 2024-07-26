@@ -132,7 +132,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                     children: [
                       Row(children: [
                         textFieldModel("授業名を入力…", classNameController,
-                            FontWeight.bold, 30.0, (value) async {
+                            FontWeight.bold, 25.0, (value) async {
                           id = target["id"];
                           //＠ここに授業名のアップデート関数！！！
                           await MyCourseDatabaseHandler()
@@ -171,17 +171,17 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
         const Icon(Icons.info, color: MAIN_COLOR),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        Text("オンデマンド/その他",
+        const Text("オンデマンド/その他",
             style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 5,
-                fontWeight: FontWeight.bold)),
+                fontSize: 20,
+                fontWeight: FontWeight.normal)),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
       ]),
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
         Text("${target["year"]} $text",
-            style: TextStyle(
-                fontSize: SizeConfig.blockSizeHorizontal! * 4,
+            style:const TextStyle(
+                fontSize: 16,
                 color: Colors.grey)),
         const Spacer(),
       ]),

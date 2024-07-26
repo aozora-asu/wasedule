@@ -144,17 +144,17 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+          const SizedBox(width:10),
           SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * 10,
-              height: SizeConfig.blockSizeHorizontal! * 10,
+              width: 40,
+              height: 40,
               child: Image.asset(
                   "lib/assets/eye_catch/wase_map_logo_transparent.png")),
-          Text(
+          const Text(
             " わせまっぷ",
             style: TextStyle(
                 color: BLUEGREY,
-                fontSize: SizeConfig.blockSizeHorizontal! * 10,
+                fontSize: 40,
                 fontWeight: FontWeight.bold),
           ),
           const Spacer(),
@@ -458,7 +458,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               showStreamLoader(context,
                   renewProgressBar(campusID2buildingsList()[campusID]!.length)),
-              const Text("空き教室データ取得中…",
+              const Text("空き教室データ取得中(所要時間:1分程度)",
                   style: TextStyle(
                       color: MAIN_COLOR, fontWeight: FontWeight.bold)),
               streamProgressText(context, renewText())
@@ -501,10 +501,10 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    Text("現在の空き教室",
+                    const Text("現在の空き教室",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.blockSizeHorizontal! * 6,
+                            fontSize: 25,
                             color: BLUEGREY)),
                     Container(
                         width: SizeConfig.blockSizeHorizontal! * 100,
@@ -516,7 +516,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                             style: TextStyle(
                               color: FORGROUND_COLOR,
                               fontWeight: FontWeight.bold,
-                              fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                              fontSize: 20,
                             ))),
                     const SizedBox(height: 20),
                     SearchEmptyClassrooms(location: location),
@@ -965,11 +965,11 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "空き教室検索",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: SizeConfig.blockSizeHorizontal! * 6,
+            fontSize: 23,
             color: BLUEGREY,
           ),
         ),
@@ -1044,7 +1044,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
                   style: TextStyle(
                     color: FORGROUND_COLOR,
                     fontWeight: FontWeight.bold,
-                    fontSize: SizeConfig.blockSizeHorizontal! * 5,
+                    fontSize: 20,
                   ),
                 ),
               );

@@ -93,7 +93,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         onTap: () {},
         child: Container(
             decoration: roundedBoxdecorationWithShadow(),
-            width: SizeConfig.blockSizeHorizontal! * 100,
+            width: SizeConfig.blockSizeHorizontal! * 95,
             child: Padding(
                 padding: padding,
                 child: Column(
@@ -183,18 +183,19 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
           "${"日月火水木金土"[target["weekday"] % 7]}曜日 ${target["period"]}限",
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.05,
+          style:const TextStyle(
+            fontSize: 20,
           ),
         ),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        Text(
-          "${target["year"]} ${Term.terms.firstWhereOrNull((e) => e.value == target["semester"])?.fullText ?? Term.fullYear.fullText}",
-          style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.04,
-              color: Colors.grey),
-        ),
-        const Spacer(),
+        const SizedBox(width: 20),
+        Expanded(child:
+          Text(
+            "${target["year"]} ${Term.terms.firstWhereOrNull((e) => e.value == target["semester"])?.fullText ?? Term.fullYear.fullText}",
+            style:const TextStyle(
+                fontSize: 20,
+                color: Colors.grey),
+            overflow: TextOverflow.clip,
+          )),
       ]),
       dividerModel,
       Row(children: [
