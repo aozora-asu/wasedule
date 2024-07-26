@@ -298,7 +298,6 @@ class Department {
       color: WASEDA_SSS_COLOR,
       departmentID: "181966",
       subjectClassifications: null);
-
   static Department literature = const Department._internal(
       value: "literature",
       text: "文学部",
@@ -319,21 +318,21 @@ class Department {
       TLC: "ASE",
       color: WASEDA_ASE_COLOR,
       departmentID: "282006",
-      subjectClassifications: null);
+      subjectClassifications: __SubjectClassification.advancedSubClass);
   static Department creativeScience = const Department._internal(
       value: "creativeScience",
       text: "創造理工学部",
       TLC: "CSE",
       color: WASEDA_CSE_COLOR,
       departmentID: "272006",
-      subjectClassifications: null);
+      subjectClassifications: __SubjectClassification.creativeSubClass);
   static Department fundamentalScience = const Department._internal(
       value: "fundamentalScience",
       text: "基幹理工学部",
       TLC: "FSE",
       color: WASEDA_FSE_COLOR,
       departmentID: "262006",
-      subjectClassifications: null);
+      subjectClassifications: __SubjectClassification.fundamentalSubClass);
   static Department humanScience = const Department._internal(
       value: "humanScience",
       text: "人間科学部",
