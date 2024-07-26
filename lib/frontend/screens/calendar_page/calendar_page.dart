@@ -756,7 +756,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   double calendarCellWidth = SizeConfig.blockSizeHorizontal! * 14.285;
-  double calendarCellsHeight = SizeConfig.blockSizeHorizontal! * 30;
+  double calendarCellsHeight = SizeConfig.blockSizeVertical! * 14;
 
 
   Widget generateCalendarCells(String dayOfWeek) {
@@ -789,7 +789,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                   style: TextStyle(
                                       color: dateColour(target),
                                       fontWeight: FontWeight.bold,
-                                      fontSize:calendarCellWidth / 5))),
+                                      fontSize:15))),
                           const Spacer(),
                           doNotContainScreenShot(
                             taskListLength(target,calendarCellWidth / 8)),
@@ -972,7 +972,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   }
 
   Widget scheduleListChild(targetDayData, index, target) {
-    double fontSize = calendarCellWidth / 8;
+    double fontSize = calendarCellsHeight / 18;
     Widget dateTimeData = Container();
     if (targetDayData.elementAt(index)["startTime"].trim() != "" &&
         targetDayData.elementAt(index)["endTime"].trim() != "") {
@@ -1010,7 +1010,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 " " + targetDayData.elementAt(index)["subject"],
                 style: TextStyle(
                   color: BLACK,
-                  fontSize: calendarCellWidth / 7),
+                  fontSize: calendarCellsHeight / 16),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1041,10 +1041,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                       universityClassData,
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: calendarCellWidth/8)),
+                        fontSize: calendarCellsHeight/18)),
                     Row(children: [
-                      Icon(Icons.school, color: MAIN_COLOR, size: calendarCellWidth/7),
-                      Text(" 授業", style: TextStyle(color: BLACK, fontSize: calendarCellWidth/7)),
+                      Icon(Icons.school, color: MAIN_COLOR, size: calendarCellsHeight/16),
+                      Text(" 授業", style: TextStyle(color: BLACK, fontSize: calendarCellsHeight/16)),
                     ]),
                     Divider(
                       height: 2,
@@ -1069,8 +1069,8 @@ class _CalendarState extends ConsumerState<Calendar> {
         return Row(children: [
           const SizedBox(width: 1),
           Container(
-            width: calendarCellWidth / 15,
-            height: calendarCellWidth / 7, 
+            width: calendarCellsHeight / 30,
+            height: calendarCellsHeight / 14, 
             color: returnTagColor(id, ref))
         ]);
       }

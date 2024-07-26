@@ -181,7 +181,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               ),
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal! * 90,
-                height: SizeConfig.blockSizeHorizontal! * 2,
+                height: 10,
               ),
             ])),
         const SizedBox(height: 10),
@@ -621,7 +621,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 4,
+                        height:35,
                         child: Row(children: [
                           const Icon(Icons.arrow_left, color: Colors.grey),
                           Expanded(
