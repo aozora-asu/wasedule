@@ -259,8 +259,8 @@ class Department {
   static Department education = const Department._internal(
       value: "education",
       text: "教育学部",
-      TLC: "",
-      color: Colors.blue,
+      TLC: "EDU",
+      color: WASEDA_EDU_COLOR,
       departmentID: "151949",
       subjectClassifications: null);
   static Department politicalEconomy = const Department._internal(
