@@ -12,6 +12,8 @@ import 'package:uuid/uuid.dart';
 import "../../../backend/DB/handler/my_course_db.dart";
 import 'package:collection/collection.dart';
 
+import 'package:html/dom.dart';
+
 class RequestQuery {
   String? p_number;
   String? p_page;
@@ -40,26 +42,28 @@ class RequestQuery {
   String? pOcw;
   String? pType;
   String? pLng = "jp";
+  String? p_open;
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
 
   RequestQuery({
     this.p_number,
     this.p_page,
-    this.keyword,
+    required this.keyword,
+
     // this.s_bunya1_hid,
     // this.s_bunya2_hid,
     // this.s_bunya3_hid,
     this.area_type,
     this.area_value,
     this.s_level_hid,
-    this.kamoku,
+    required this.kamoku,
     this.kyoin,
-    this.p_gakki,
-    this.p_youbi,
-    this.p_jigen,
-    this.p_gengo,
-    this.p_gakubu,
+    required this.p_gakki,
+    required this.p_youbi,
+    required this.p_jigen,
+    required this.p_gengo,
+    required this.p_gakubu,
     this.hidreset,
     //this.pfrontPage,
     this.pchgFlg,
@@ -68,6 +72,7 @@ class RequestQuery {
     this.bunya3_hid,
     this.level_hid,
     // this.ControllerParameters,
+    required this.p_open,
     this.pOcw,
     this.pType,
     this.pLng,
@@ -100,6 +105,7 @@ class RequestQuery {
       'level_hid': level_hid,
       'ControllerParameters': ControllerParameters,
       'pOcw': pOcw,
+      "p_open[]": p_open,
       'pType': pType,
       'pLng': pLng,
     };
@@ -108,13 +114,8 @@ class RequestQuery {
   String makeBody() {
     String body = "";
     Map<String, String?> map = _toMap();
-    for (var entry in map.entries) {
-      var key = entry.key;
-      var value = entry.value ?? "";
-
-      body +=
-          "--$boundary\nContent-Disposition: form-data; name=\"$key\"\n\n$value\n";
-    }
+    map.entries.map((e) => body +=
+        "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value ?? ""}\n");
     body += "--$boundary--";
     return body;
   }
@@ -126,22 +127,42 @@ class RequestQuery {
     };
     return headers;
   }
-}
 
-Future<String> fetchSyllabusResults(RequestQuery requestQuery) async {
-  // リクエストを送信
-  final response = await http.post(
-    Uri.parse('https://www.wsl.waseda.jp/syllabus/JAA101.php'),
-    headers: requestQuery.makeHeader(),
-    body: requestQuery.makeBody(),
-  );
+  Future<String> fetchSyllabusResults() async {
+    // リクエストを送信
+    final response = await http.post(
+      Uri.parse('https://www.wsl.waseda.jp/syllabus/JAA101.php'),
+      headers: makeHeader(),
+      body: makeBody(),
+    );
 
-  // レスポンスを処理
-  if (response.statusCode == 200) {
-    return response.body;
-  } else {
-    print('Request failed with status: ${response.statusCode}');
-    return "";
+    // レスポンスを処理
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      return "";
+    }
+  }
+
+  List<String?> getSyllabusURLs(String htmlString) {
+    final document = html_parser.parse(htmlString);
+    final trElements = document.querySelectorAll('.ct-vh > tbody >tr');
+    trElements.removeAt(0);
+    List<String?> syllabusURLs =
+        trElements.map((e) => _getSyllabusURL(e)).toList();
+    print(trElements);
+    return syllabusURLs;
+  }
+
+  String? _getSyllabusURL(Element e) {
+    final anchor = e.querySelectorAll("td")[2].querySelector("a");
+    var match = RegExp(r"post_submit\('JAA104DtlSubCon', '(.*)'\)")
+        .firstMatch(anchor!.attributes['onclick']!);
+    String? syllabusURL = match?.group(1) != null
+        ? "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${match?.group(1)}"
+        : null;
+    return syllabusURL;
   }
 }
 
@@ -228,14 +249,21 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   List<SyllabusQueryResult>? syllabusQueryResultList;
 
   RequestQuery requestQuery = RequestQuery(
+      keyword: moodleCourse.department,
       kamoku: moodleCourse.courseName.replaceAll("・", " "),
-      keyword: moodleCourse.department);
+      p_gakki: null,
+      p_youbi: null,
+      p_jigen: null,
+      p_gengo: null,
+      p_gakubu: null,
+      p_open: null);
+
   if (moodleCourse.courseName == "確率・統計") {
     syllabusQueryResultList =
-        _getMatchedCourse(await fetchSyllabusResults(requestQuery), "確率・統計");
+        _getMatchedCourse(await requestQuery.fetchSyllabusResults(), "確率・統計");
   } else {
     syllabusQueryResultList =
-        _getFirstCourse(await fetchSyllabusResults(requestQuery));
+        _getFirstCourse(await requestQuery.fetchSyllabusResults());
   }
 
   if (syllabusQueryResultList != null) {
@@ -307,47 +335,50 @@ List<Map<String, int?>> extractDayAndPeriod(String input) {
 String extractClassRoom(String input) {
   RegExp pattern3 = RegExp(r'\d+:(.*)\s');
   Iterable<RegExpMatch> matches = pattern3.allMatches(input);
-  List<String> result = [];
   if (matches.isEmpty) {
-    result.add(input);
+    return input;
   } else {
-    for (var match in matches) {
-      result.add(match.group(1)!);
-    }
+    return matches.map((e) => e.group(1)).toList().join("\n").trimRight();
   }
-
-  return result.join("\n").trimRight();
 }
 
 Future<void> resisterVacantRoomList(String buildingNum) async {
   List<String> classRoomList = classMap[buildingNum] ?? [];
-  Map<String, Map<String, Map<String, List<String>>>> copyQuarterClassRoomList =
-      {};
+  Map<String, Map<String, Map<String, List<String>>>> copyQuarterClassRoomList;
   RequestQuery requestQuery;
   String htmlString;
   List<Map<String, int?>> periodAndDateList;
-  DateTime now = DateTime.now();
 
   List<String> quarterList = [];
+  String? semester;
   copyQuarterClassRoomList =
       _createQuarterClassRoomMap(buildingNum: buildingNum);
   for (var classRoom in classRoomList) {
     requestQuery = RequestQuery(
-      // p_gakki: "1",
       keyword: classRoom,
+      kamoku: null,
+      p_gakki: null,
+      p_youbi: null,
+      p_jigen: null,
+      p_gengo: null,
+      p_gakubu: null,
+      p_open: null,
       p_number: "100",
     );
-    htmlString = await fetchSyllabusResults(requestQuery);
+
+    htmlString = await requestQuery.fetchSyllabusResults();
     final document = html_parser.parse(htmlString);
     final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
     if (trElements.isNotEmpty) {
       trElements.removeAt(0);
+      int weekday;
+      int period;
 
       for (var trElement in trElements) {
         final tdElements = trElement.querySelectorAll("td");
         periodAndDateList =
             extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
-        String? semester = Term.terms
+        semester = Term.terms
             .firstWhereOrNull((e) => e.text == tdElements[5].text)
             ?.text;
 
@@ -363,8 +394,8 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
             for (var periodAndDate in periodAndDateList) {
               if (periodAndDate["weekday"] != null &&
                   periodAndDate["period"] != null) {
-                int weekday = periodAndDate["weekday"]!;
-                int period = periodAndDate["period"]!;
+                weekday = periodAndDate["weekday"]!;
+                period = periodAndDate["period"]!;
 
                 IsarHandler().resisterClassRoom(
                     isar!,
@@ -390,15 +421,13 @@ Map<String, Map<String, Map<String, List<String>>>> _createQuarterClassRoomMap(
     {required String buildingNum}) {
   Map<String, Map<String, Map<String, List<String>>>> quarterClassRoomMap = {};
 
-  // Define quarters
-  List<String> quarters = [
-    "spring_quarter",
-    "summer_quarter",
-    "fall_quarter",
-    "winter_quarter"
-  ];
   // Iterate over quarters
-  for (String quarter in quarters) {
+  for (String quarter in [
+    Term.springQuarter.value,
+    Term.summerQuarter.value,
+    Term.fallQuarter.value,
+    Term.winterQuarter.value
+  ]) {
     quarterClassRoomMap.putIfAbsent(quarter, () => {});
 
     // Iterate over days (Monday to Friday)
