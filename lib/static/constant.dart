@@ -312,27 +312,27 @@ class Department {
       color: WASEDA_CMS_COLOR,
       departmentID: "232006",
       subjectClassifications: null);
-  static Department advancedScience = const Department._internal(
+  static Department advancedScience = Department._internal(
       value: "advancedScience",
       text: "先進理工学部",
       TLC: "ASE",
       color: WASEDA_ASE_COLOR,
       departmentID: "282006",
-      subjectClassifications: __SubjectClassification.advancedSubClass);
-  static Department creativeScience = const Department._internal(
+      subjectClassifications: SubjectClassification.advancedSubClass);
+  static Department creativeScience = Department._internal(
       value: "creativeScience",
       text: "創造理工学部",
       TLC: "CSE",
       color: WASEDA_CSE_COLOR,
       departmentID: "272006",
-      subjectClassifications: __SubjectClassification.creativeSubClass);
-  static Department fundamentalScience = const Department._internal(
+      subjectClassifications: SubjectClassification.creativeSubClass);
+  static Department fundamentalScience = Department._internal(
       value: "fundamentalScience",
       text: "基幹理工学部",
       TLC: "FSE",
       color: WASEDA_FSE_COLOR,
       departmentID: "262006",
-      subjectClassifications: __SubjectClassification.fundamentalSubClass);
+      subjectClassifications: SubjectClassification.fundamentalSubClass);
   static Department humanScience = const Department._internal(
       value: "humanScience",
       text: "人間科学部",
@@ -367,184 +367,203 @@ class Department {
   final String departmentID;
   final String TLC;
   final Color color;
-  final List<__SubjectClassification>? subjectClassifications;
+  final List<SubjectClassification>? subjectClassifications;
 
-  static Map<String, Department> get departments => {};
+  static List<Department> get departments => [
+        education,
+        politicalEconomy,
+        law,
+        commerce,
+        internationalEducation,
+        socialScience,
+        literature,
+        cultureAndMediaStudie,
+        advancedScience,
+        creativeScience,
+        fundamentalScience,
+        humanScience,
+        sportsScience,
+        global
+      ];
 }
 
-class __SubjectClassification {
-  final String parentDepartment;
+class SubjectClassification {
+  final Department parentDepartment;
   final String p_keya;
   final String text;
-  const __SubjectClassification._internal(
+  const SubjectClassification._internal(
       {required this.p_keya,
       required this.parentDepartment,
       required this.text});
 
-  static const List<__SubjectClassification> advancedSubClass = [
-    __SubjectClassification._internal(
+  static List<SubjectClassification> advancedSubClass = [
+    SubjectClassification._internal(
         p_keya: "2801001",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "物理学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801002",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "応用物理学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801003",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "化学･生命科学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801004",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "応用科学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801005",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "生命医科学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801006",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "電気･情報生命工学科(専門科目)"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801010",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "A群:複合領域"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801012",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "A群:外国語-英語"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
         p_keya: "2801013",
-        parentDepartment: "advancedScience",
+        parentDepartment: Department.advancedScience,
         text: "A群:外国語-初修外国語"),
-    __SubjectClassification._internal(
-        p_keya: "2801014", parentDepartment: "advancedScience", text: "B群:数学"),
-    __SubjectClassification._internal(
-        p_keya: "2801015",
-        parentDepartment: "advancedScience",
-        text: "B群:自然科学"),
-    __SubjectClassification._internal(
-        p_keya: "2801016",
-        parentDepartment: "advancedScience",
-        text: "B群:実験･実習･制作"),
-    __SubjectClassification._internal(
-        p_keya: "2801017",
-        parentDepartment: "advancedScience",
-        text: "B群:情報関連科目"),
-  ];
-  static const List<__SubjectClassification> creativeSubClass = [
-    __SubjectClassification._internal(
-        p_keya: "2701001",
-        parentDepartment: "creativeScience",
-        text: "建築学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2701002",
-        parentDepartment: "creativeScience",
-        text: "総合機械工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2701003",
-        parentDepartment: "creativeScience",
-        text: "経営システム工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2701004",
-        parentDepartment: "creativeScience",
-        text: "社会環境工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2701005",
-        parentDepartment: "creativeScience",
-        text: "環境資源工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2701009",
-        parentDepartment: "creativeScience",
-        text: "C群:創造理工学部共通科目"),
-    __SubjectClassification._internal(
-        p_keya: "2701010",
-        parentDepartment: "creativeScience",
-        text: "A群:複合領域"),
-    __SubjectClassification._internal(
-        p_keya: "2701012",
-        parentDepartment: "creativeScience",
-        text: "A群:外国語-英語"),
-    __SubjectClassification._internal(
-        p_keya: "2701013",
-        parentDepartment: "creativeScience",
-        text: "A群:外国語-初修外国語"),
-    __SubjectClassification._internal(
-        p_keya: "2701014", parentDepartment: "creativeScience", text: "B群:数学"),
-    __SubjectClassification._internal(
-        p_keya: "2701015",
-        parentDepartment: "creativeScience",
-        text: "B群:自然科学"),
-    __SubjectClassification._internal(
-        p_keya: "2701016",
-        parentDepartment: "creativeScience",
-        text: "B群:実験･実習･制作"),
-    __SubjectClassification._internal(
-        p_keya: "2701017",
-        parentDepartment: "creativeScience",
-        text: "B群:情報関連科目"),
-  ];
-  static const List<__SubjectClassification> fundamentalSubClass = [
-    __SubjectClassification._internal(
-        p_keya: "2601002",
-        parentDepartment: "fundamentalScience",
-        text: "数学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601003",
-        parentDepartment: "fundamentalScience",
-        text: "応用数理学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601004",
-        parentDepartment: "fundamentalScience",
-        text: "情報理工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601005",
-        parentDepartment: "fundamentalScience",
-        text: "機械科学･航空学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601006",
-        parentDepartment: "fundamentalScience",
-        text: "電子物理システム学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601007",
-        parentDepartment: "fundamentalScience",
-        text: "表現工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601008",
-        parentDepartment: "fundamentalScience",
-        text: "表現工学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601009",
-        parentDepartment: "fundamentalScience",
-        text: "情報通信学科(専門科目)"),
-    __SubjectClassification._internal(
-        p_keya: "2601010",
-        parentDepartment: "fundamentalScience",
-        text: "A群:複合領域"),
-    __SubjectClassification._internal(
-        p_keya: "2601012",
-        parentDepartment: "fundamentalScience",
-        text: "A群:外国語-英語"),
-    __SubjectClassification._internal(
-        p_keya: "2601013",
-        parentDepartment: "fundamentalScience",
-        text: "A群:外国語-初修外国語"),
-    __SubjectClassification._internal(
-        p_keya: "2601014",
-        parentDepartment: "fundamentalScience",
+    SubjectClassification._internal(
+        p_keya: "2801014",
+        parentDepartment: Department.advancedScience,
         text: "B群:数学"),
-    __SubjectClassification._internal(
-        p_keya: "2601015",
-        parentDepartment: "fundamentalScience",
+    SubjectClassification._internal(
+        p_keya: "2801015",
+        parentDepartment: Department.advancedScience,
         text: "B群:自然科学"),
-    __SubjectClassification._internal(
-        p_keya: "2601016",
-        parentDepartment: "fundamentalScience",
+    SubjectClassification._internal(
+        p_keya: "2801016",
+        parentDepartment: Department.advancedScience,
         text: "B群:実験･実習･制作"),
-    __SubjectClassification._internal(
+    SubjectClassification._internal(
+        p_keya: "2801017",
+        parentDepartment: Department.advancedScience,
+        text: "B群:情報関連科目"),
+  ];
+  static List<SubjectClassification> creativeSubClass = [
+    SubjectClassification._internal(
+        p_keya: "2701001",
+        parentDepartment: Department.creativeScience,
+        text: "建築学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2701002",
+        parentDepartment: Department.creativeScience,
+        text: "総合機械工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2701003",
+        parentDepartment: Department.creativeScience,
+        text: "経営システム工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2701004",
+        parentDepartment: Department.creativeScience,
+        text: "社会環境工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2701005",
+        parentDepartment: Department.creativeScience,
+        text: "環境資源工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2701009",
+        parentDepartment: Department.creativeScience,
+        text: "C群:創造理工学部共通科目"),
+    SubjectClassification._internal(
+        p_keya: "2701010",
+        parentDepartment: Department.creativeScience,
+        text: "A群:複合領域"),
+    SubjectClassification._internal(
+        p_keya: "2701012",
+        parentDepartment: Department.creativeScience,
+        text: "A群:外国語-英語"),
+    SubjectClassification._internal(
+        p_keya: "2701013",
+        parentDepartment: Department.creativeScience,
+        text: "A群:外国語-初修外国語"),
+    SubjectClassification._internal(
+        p_keya: "2701014",
+        parentDepartment: Department.creativeScience,
+        text: "B群:数学"),
+    SubjectClassification._internal(
+        p_keya: "2701015",
+        parentDepartment: Department.creativeScience,
+        text: "B群:自然科学"),
+    SubjectClassification._internal(
+        p_keya: "2701016",
+        parentDepartment: Department.creativeScience,
+        text: "B群:実験･実習･制作"),
+    SubjectClassification._internal(
+        p_keya: "2701017",
+        parentDepartment: Department.creativeScience,
+        text: "B群:情報関連科目"),
+  ];
+  static List<SubjectClassification> fundamentalSubClass = [
+    SubjectClassification._internal(
+        p_keya: "2601002",
+        parentDepartment: Department.fundamentalScience,
+        text: "数学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601003",
+        parentDepartment: Department.fundamentalScience,
+        text: "応用数理学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601004",
+        parentDepartment: Department.fundamentalScience,
+        text: "情報理工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601005",
+        parentDepartment: Department.fundamentalScience,
+        text: "機械科学･航空学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601006",
+        parentDepartment: Department.fundamentalScience,
+        text: "電子物理システム学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601007",
+        parentDepartment: Department.fundamentalScience,
+        text: "表現工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601008",
+        parentDepartment: Department.fundamentalScience,
+        text: "表現工学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601009",
+        parentDepartment: Department.fundamentalScience,
+        text: "情報通信学科(専門科目)"),
+    SubjectClassification._internal(
+        p_keya: "2601010",
+        parentDepartment: Department.fundamentalScience,
+        text: "A群:複合領域"),
+    SubjectClassification._internal(
+        p_keya: "2601012",
+        parentDepartment: Department.fundamentalScience,
+        text: "A群:外国語-英語"),
+    SubjectClassification._internal(
+        p_keya: "2601013",
+        parentDepartment: Department.fundamentalScience,
+        text: "A群:外国語-初修外国語"),
+    SubjectClassification._internal(
+        p_keya: "2601014",
+        parentDepartment: Department.fundamentalScience,
+        text: "B群:数学"),
+    SubjectClassification._internal(
+        p_keya: "2601015",
+        parentDepartment: Department.fundamentalScience,
+        text: "B群:自然科学"),
+    SubjectClassification._internal(
+        p_keya: "2601016",
+        parentDepartment: Department.fundamentalScience,
+        text: "B群:実験･実習･制作"),
+    SubjectClassification._internal(
         p_keya: "2601017",
-        parentDepartment: "fundamentalScience",
+        parentDepartment: Department.fundamentalScience,
         text: "B群:情報関連科目"),
   ];
 }

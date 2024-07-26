@@ -26,11 +26,11 @@ class RequestQuery {
   String? s_level_hid;
   String? kamoku;
   String? kyoin;
-  String? p_gakki;
-  String? p_youbi;
-  String? p_jigen;
+  Term? p_gakki;
+  Lesson? p_youbi;
+  Lesson? p_jigen;
   String? p_gengo;
-  String? p_gakubu;
+  Department? p_gakubu;
   String? hidreset;
   String pfrontPage = "now";
   String? pchgFlg;
@@ -42,8 +42,13 @@ class RequestQuery {
   String? pOcw;
   String? pType;
   String? pLng = "jp";
-
-  String? p_open;
+//オープン科目の検索時0に設定
+  bool p_open;
+  //科目区分検索時学部IDを設定
+  SubjectClassification? p_keya;
+  String? p_keyb = "";
+  String? p_searcha = "a";
+  String? p_searchb = "b";
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
 
@@ -51,7 +56,6 @@ class RequestQuery {
     this.p_number,
     this.p_page,
     required this.keyword,
-
     // this.s_bunya1_hid,
     // this.s_bunya2_hid,
     // this.s_bunya3_hid,
@@ -74,13 +78,14 @@ class RequestQuery {
     this.level_hid,
     // this.ControllerParameters,
     required this.p_open,
+    required this.p_keya,
     this.pOcw,
     this.pType,
     this.pLng,
   });
 
-  Map<String, String?> _toMap() {
-    return {
+  Map<String, dynamic> _toMap() {
+    Map<String, dynamic> normalQuery = {
       "p_number": p_number,
       "p_page": p_page,
       'keyword': keyword,
@@ -110,13 +115,27 @@ class RequestQuery {
       'pType': pType,
       'pLng': pLng ?? "jp",
     };
+    if (p_open) {
+      normalQuery.addAll({"p_open[]": 0});
+    }
+    if (p_keya != null) {
+      normalQuery.addAll({
+        "p_keya": p_keya!.p_keya,
+        "p_keyb": "",
+        "p_searcha": "a",
+        "p_searchb": "b",
+        "p_gakubu": p_keya!.parentDepartment.departmentID
+      });
+    }
+
+    return normalQuery;
   }
 
   String _makeBody() {
-    Map<String, String?> map = _toMap();
+    Map<String, dynamic> map = _toMap();
     String body = map.entries
         .map((e) =>
-            "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value ?? ""}\n")
+            "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value != null ? e.value.toString() : ""}\n")
         .join("");
     body += "--$boundary--";
 
@@ -255,14 +274,16 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   List<SyllabusQueryResult>? syllabusQueryResultList;
 
   RequestQuery requestQuery = RequestQuery(
-      keyword: moodleCourse.department,
-      kamoku: moodleCourse.courseName.replaceAll("・", " "),
-      p_gakki: null,
-      p_youbi: null,
-      p_jigen: null,
-      p_gengo: null,
-      p_gakubu: null,
-      p_open: null);
+    keyword: moodleCourse.department,
+    kamoku: moodleCourse.courseName.replaceAll("・", " "),
+    p_gakki: null,
+    p_youbi: null,
+    p_jigen: null,
+    p_gengo: null,
+    p_gakubu: null,
+    p_open: false,
+    p_keya: null,
+  );
   String htmlString = await requestQuery.fetchSyllabusResults();
 
   if (moodleCourse.courseName == "確率・統計") {
@@ -367,7 +388,8 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
       p_jigen: null,
       p_gengo: null,
       p_gakubu: null,
-      p_open: null,
+      p_open: false,
+      p_keya: null,
       p_number: "100",
     );
 
