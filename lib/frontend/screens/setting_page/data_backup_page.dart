@@ -11,14 +11,14 @@ import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-class DataDownloadPage extends ConsumerStatefulWidget {
-  const DataDownloadPage({super.key});
+class DataBackupPage extends ConsumerStatefulWidget {
+  const DataBackupPage({super.key});
 
   @override
-  _DataDownloadPageState createState() => _DataDownloadPageState();
+  _DataBackupPageState createState() => _DataBackupPageState();
 }
 
-class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
+class _DataBackupPageState extends ConsumerState<DataBackupPage> {
   late int currentIndex;
   List<Map<String, dynamic>> shareScheduleList = [];
 
@@ -38,15 +38,15 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
             child: Center(
                 child: Column(children: [
           thumbnailImage(),
+          toggleSwitch(),
+          const SizedBox(height: 15),
           Container(
-              width: SizeConfig.blockSizeHorizontal! * 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color: FORGROUND_COLOR,
               ),
+              margin:const EdgeInsets.symmetric(horizontal: 10),
               child: Column(children: [
-                const SizedBox(height: 15),
-                toggleSwitch(),
                 pageBody()
               ]))
         ]))));
@@ -69,18 +69,20 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
   }
 
   Widget toggleSwitch() {
-    return ToggleSwitch(
-      initialLabelIndex: currentIndex,
-      totalSwitches: 2,
-      activeBgColor: const [MAIN_COLOR],
-      minWidth: SizeConfig.blockSizeHorizontal! * 45,
-      labels: const ['バックアップ', 'バックアップの復元'],
-      onToggle: (index) {
-        setState(() {
-          currentIndex = index ?? 0;
-        });
-      },
-    );
+    return Padding(
+      padding:const EdgeInsets.symmetric(horizontal: 10),
+      child:ToggleSwitch(
+        initialLabelIndex: currentIndex,
+        totalSwitches: 2,
+        activeBgColor: const [MAIN_COLOR],
+        minWidth: SizeConfig.blockSizeHorizontal! * 45,
+        labels: const ['バックアップ', '復元'],
+        onToggle: (index) {
+          setState(() {
+            currentIndex = index ?? 0;
+          });
+        },
+    ));
   }
 
   Widget pageBody() {
@@ -196,26 +198,31 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
         Container(
             decoration: roundedBoxdecorationWithShadow(backgroundColor: BACKGROUND_COLOR),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                const Text("あなたのバックアップID:", style: TextStyle(fontSize: 15)),
-                IconButton(
+            child:Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height:5),
+                const Text("あなたのバックアップID:",
+                  style: TextStyle(fontSize: 15),
+                  overflow: TextOverflow.clip),
+                Text(id,
+                  textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 25)),
+                Row(children:[
+                  Text(
+                    "あと${dtEnd.difference(DateTime.now()).inDays}日",
+                    style: const TextStyle(color: Colors.redAccent),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  IconButton(
                     onPressed: () async {
                       final data = ClipboardData(text: id);
                       await Clipboard.setData(data);
                     },
                     icon: const Icon(Icons.copy, color: Colors.grey))
-              ]),
-              Text(id,
-                textAlign: TextAlign.start,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 25)),
-              Text(
-                "あと${dtEnd.difference(DateTime.now()).inDays}日",
-                style: const TextStyle(color: Colors.redAccent),
-                overflow: TextOverflow.ellipsis,
-              )
+                ])
             ]))
       ]);
     }
@@ -239,7 +246,7 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
     return buttonModelWithChild(() {
       showDownloadConfirmDialogue();
     },
-        ACCENT_COLOR,
+        PALE_MAIN_COLOR,
         Row(children: [
           const SizedBox(width: 20),
           Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
@@ -261,8 +268,9 @@ class _DataDownloadPageState extends ConsumerState<DataDownloadPage> {
                 child: Text("ダウンロードを行うと、端末内にあるデータにバックアップしたデータが全て追加されます。",
                     style: TextStyle(color: Colors.red))),
             const Text(
-                """\n以下の点をご留意ください\n・この操作は取り消しできません\n・1つのIDに対してダウンロードは一回のみ有効です\n・一度復元するとサーバー上から削除され二度と復元できません""",
-                style: TextStyle(color: Colors.red)),
+                """\n以下の点をご留意ください\n・この操作は取り消しできません\n・1つのIDに対してダウンロードは一回のみ有効です\n・一度復元するとサーバー上から削除され、二度と復元できません""",
+                style: TextStyle(color: Colors.red),
+                textAlign: TextAlign.left,),
             const SizedBox(height: 10),
             CupertinoTextField(
               controller: idController,

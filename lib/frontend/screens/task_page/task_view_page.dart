@@ -118,16 +118,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                             showDisclaimerDialogue(context);
                           },
                         ),
-                        dividerModel,
-                        TextButton(
-                          child: const Text("お問い合わせ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          onPressed: () {
-                            showErrorReportDialogue(context);
-                          },
-                        ),
                       ]),
                     ),
                   ),

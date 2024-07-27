@@ -10,9 +10,9 @@ import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywaseda_view_page.dart';
@@ -184,7 +184,6 @@ class _AppPageState extends ConsumerState<AppPage> {
       ArbeitStatsPage(targetMonth: thisMonth),
       const UnivSchedulePage(),
       SettingsPage(isAppBar: false),
-      const DataDownloadPage(),
     ];
   }
 

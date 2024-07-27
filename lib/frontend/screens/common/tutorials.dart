@@ -4,7 +4,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/data_backup_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import "../../../backend/DB/sharepreference.dart";
@@ -228,7 +228,7 @@ class _IntroLastPageState extends State<IntroLastPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const DataDownloadPage(),
+                          builder: (_) => const DataBackupPage(),
                         ));
                   },
                   child: const Text("バックアップの復元",

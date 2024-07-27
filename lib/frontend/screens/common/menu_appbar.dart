@@ -5,8 +5,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/support_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -172,7 +172,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             SizedBox(width:SizeConfig.blockSizeHorizontal! *1),
             Text(title,
               style:TextStyle(
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.bold,
                 color: iconColor
               ),  
@@ -269,13 +269,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             icon:Icons.settings,
             subIndex:4,
             title: "設定"
-          ),
-          space(0),
-          subMenuPanel(
-            ref,
-            icon:Icons.backup,
-            subIndex:5,
-            title: "バックアップ"
           ),
           space(0),
         ],
@@ -376,7 +369,7 @@ Widget popupMenuButton(color){
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SnsLinkPage()));
+              MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true,)));
           }
         )
       ),
