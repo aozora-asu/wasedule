@@ -6,7 +6,7 @@ import 'package:flutter_calandar_app/backend/firebase/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/support_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';

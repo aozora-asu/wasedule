@@ -22,8 +22,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/setting_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/support_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
@@ -448,7 +448,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         menuListChild(Icons.info, "サポート", () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SnsLinkPage()),
+            MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true)),
           );
         }),
         const SizedBox(height: 15),

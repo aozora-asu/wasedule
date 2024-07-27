@@ -4,11 +4,11 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_pag
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/support_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../assist_files/size_config.dart';
-import '../menu_pages/setting_page.dart';
+import '../setting_page/setting_page.dart';
 
 
 class burgerMenu extends ConsumerWidget {
@@ -73,7 +73,7 @@ class burgerMenu extends ConsumerWidget {
           menuPanel(
             Icons.info_rounded,
             "サポート",
-            MaterialPageRoute(builder: (context) => const SnsLinkPage()),
+            MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true,)),
             context
           ),
 

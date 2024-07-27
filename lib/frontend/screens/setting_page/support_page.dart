@@ -7,19 +7,30 @@ import '../../assist_files/size_config.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SnsLinkPage extends StatefulWidget {
-  const SnsLinkPage({super.key});
+  bool showAppBar;
+  SnsLinkPage({
+    required this.showAppBar,
+    super.key});
 
   @override
   _SnsLinkPageState createState() => _SnsLinkPageState();
 }
 
 class _SnsLinkPageState extends State<SnsLinkPage> {
+
   @override
   Widget build(BuildContext context) {
   SizeConfig().init(context);
+  PreferredSizeWidget? appBar = CustomAppBar(backButton: true);
+  
+  if(!widget.showAppBar){
+    appBar = null; 
+  }
+
     return Scaffold(
-      appBar: CustomAppBar(backButton: true),
-      body:
+      backgroundColor: BACKGROUND_COLOR,
+      appBar: appBar,
+      body: 
       Container(
        width: SizeConfig.blockSizeHorizontal! *100,
        padding: EdgeInsets.symmetric(horizontal:SizeConfig.blockSizeHorizontal! *5,),
@@ -28,18 +39,24 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:50),
          Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
          const SizedBox(height:50),
-         const Text("使い方ガイドやお問い合わせはこちら"),
+         const Text("公式サイト"),
          HomePageUrlLauncher(),
          const SizedBox(height:5),
          PrivacyPolicyLauncher(),
-         const SizedBox(height:5),
-         const ErrorReportButton(),
          const SizedBox(height:20),
          const Text("運営からの新着情報をチェック！"),
          InstaUrlLauncher(),
          const SizedBox(height:5),
          XUrlLauncher(),
-         const SizedBox(height:30)
+         const SizedBox(height:15),
+         const Divider(),
+         const SizedBox(height:5),
+         const Text("不具合報告はこちらからお願いします。",
+          overflow: TextOverflow.clip,
+          style: TextStyle(color:Colors.red,fontSize:18),),
+         const SizedBox(height:5),
+         const ErrorReportButton(),
+         const SizedBox(height:30),
         ])
       ))
       
