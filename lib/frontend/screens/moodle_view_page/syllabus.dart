@@ -27,7 +27,7 @@ class RequestQuery {
   String? kamoku;
   String? kyoin;
   Term? p_gakki;
-  Lesson? p_youbi;
+  DayOfWeek? p_youbi;
   Lesson? p_jigen;
   String? p_gengo;
   Department? p_gakubu;
@@ -49,6 +49,9 @@ class RequestQuery {
   String? p_keyb = "";
   String? p_searcha = "a";
   String? p_searchb = "b";
+  bool? isOndemand;
+  bool? isOtherPeriod;
+  bool? isOtherSemester;
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
 
@@ -97,11 +100,12 @@ class RequestQuery {
       's_level_hid': s_level_hid,
       'kamoku': kamoku,
       'kyoin': kyoin,
-      'p_gakki': p_gakki,
-      'p_youbi': p_youbi,
-      'p_jigen': p_jigen,
+      'p_gakki': p_gakki?.indexForSyllabusQuery,
+      'p_youbi': p_youbi?.index,
+      'p_jigen': p_jigen?.period,
+      //フルオンデマンドを選択した時
       'p_gengo': p_gengo,
-      'p_gakubu': p_gakubu,
+      'p_gakubu': p_gakubu?.departmentID,
       'hidreset': hidreset,
       'pfrontPage': pfrontPage,
       'pchgFlg': pchgFlg,

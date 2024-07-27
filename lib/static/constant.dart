@@ -27,37 +27,43 @@ class Term {
       quarterGroup: ["spring_quarter"],
       text: "春クォーター",
       fullText: "春学期 -春クォーター",
-      shortText: "春");
+      shortText: "春",
+      indexForSyllabusQuery: 1);
   static Term summerQuarter = const Term._internal(
       value: "summer_quarter",
       quarterGroup: ["summer_quarter"],
       text: "夏クォーター",
       fullText: "春学期 -夏クォーター",
-      shortText: "夏");
+      shortText: "夏",
+      indexForSyllabusQuery: 1);
   static Term springSemester = const Term._internal(
       value: "spring_semester",
       quarterGroup: ["spring_quarter", "summer_quarter"],
       text: "春学期",
       fullText: "",
-      shortText: "春");
+      shortText: "春",
+      indexForSyllabusQuery: 1);
   static Term fallQuarter = const Term._internal(
       value: "fall_quarter",
       quarterGroup: ["fall_quarter"],
       text: "秋クォーター",
       fullText: "秋学期 -秋クォーター",
-      shortText: "秋");
+      shortText: "秋",
+      indexForSyllabusQuery: 2);
   static Term winterQuarter = const Term._internal(
       value: "winter_quarter",
       quarterGroup: ["winter_quarter"],
       text: "冬クォーター",
       fullText: "秋学期 -冬クォーター",
-      shortText: "冬");
+      shortText: "冬",
+      indexForSyllabusQuery: 2);
   static Term fallSemester = const Term._internal(
       value: "fall_semester",
       quarterGroup: ["fall_quarter", "winter_quaretr"],
       text: "秋学期",
       fullText: "",
-      shortText: "秋");
+      shortText: "秋",
+      indexForSyllabusQuery: 2);
   static Term fullYear = const Term._internal(
       value: "full_year",
       quarterGroup: [
@@ -68,14 +74,23 @@ class Term {
       ],
       text: "通年",
       fullText: "通年科目",
-      shortText: null);
+      shortText: null,
+      indexForSyllabusQuery: 0);
+  static Term others = const Term._internal(
+      value: "others",
+      quarterGroup: [],
+      text: "その他",
+      fullText: "",
+      shortText: null,
+      indexForSyllabusQuery: 9);
 
   const Term._internal(
       {required this.value,
       required this.quarterGroup,
       required this.text,
       required this.shortText,
-      required this.fullText});
+      required this.fullText,
+      required this.indexForSyllabusQuery});
   static List<Term> get terms => [
         springQuarter,
         summerQuarter,
@@ -83,7 +98,8 @@ class Term {
         fallQuarter,
         winterQuarter,
         fallSemester,
-        fullYear
+        fullYear,
+        others
       ];
   static List<Term> get _semesters => [
         springSemester,
@@ -99,6 +115,7 @@ class Term {
   final String value;
   final String? shortText;
   final String fullText;
+  final int? indexForSyllabusQuery;
   final List<String> quarterGroup;
   static List<Term> whenTerms(DateTime dateTime) {
     List<Term> currentTerms = [];
@@ -148,53 +165,75 @@ class Lesson {
   final DateTime start;
   final DateTime end;
   final int period;
+  final String text;
 
-  const Lesson._internal({
-    required this.start,
-    required this.end,
-    required this.period,
-  });
+  const Lesson._internal(
+      {required this.start,
+      required this.end,
+      required this.period,
+      required this.text});
 
   static Lesson zeroth = Lesson._internal(
     period: 0,
+    text: "0時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("7:00"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:40"), tz.local),
   );
   static Lesson first = Lesson._internal(
     period: 1,
+    text: "1時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("8:50"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:30"), tz.local),
   );
   static Lesson second = Lesson._internal(
     period: 2,
+    text: "2時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("10:40"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("12:20"), tz.local),
   );
   static Lesson third = Lesson._internal(
     period: 3,
+    text: "3時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("13:10"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("14:50"), tz.local),
   );
   static Lesson fourth = Lesson._internal(
     period: 4,
+    text: "4時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("15:05"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("16:45"), tz.local),
   );
   static Lesson fifth = Lesson._internal(
     period: 5,
+    text: "5時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("17:00"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:40"), tz.local),
   );
   static Lesson sixth = Lesson._internal(
     period: 6,
+    text: "6時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("18:55"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:35"), tz.local),
   );
   static Lesson seventh = Lesson._internal(
     period: 7,
+    text: "7時限",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("20:45"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
   );
+  static Lesson ondemand = Lesson._internal(
+    period: 88,
+    text: "フルオンデマンド",
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
+  );
+  static Lesson others = Lesson._internal(
+    period: 99,
+    text: "その他",
+    start: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
+    end: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
+  );
+
   static List<Lesson> get _periods => [
         zeroth,
         first,
@@ -204,6 +243,8 @@ class Lesson {
         fifth,
         sixth,
         seventh,
+        ondemand,
+        others
       ];
 
   static Lesson? whenPeriod(DateTime dateTime) {
@@ -253,6 +294,42 @@ enum NotifyType {
 
   const NotifyType(this.value);
   final String value;
+}
+
+class DayOfWeek {
+  final String value;
+  final String text;
+  final int index;
+  static DayOfWeek monday =
+      const DayOfWeek._internal(value: "monday", text: "月", index: 1);
+  static DayOfWeek tuesday =
+      const DayOfWeek._internal(value: "tuesday", text: "火", index: 2);
+  static DayOfWeek wednesday =
+      const DayOfWeek._internal(value: "wednesday", text: "水", index: 3);
+  static DayOfWeek thursday =
+      const DayOfWeek._internal(value: "thursday", text: "木", index: 4);
+  static DayOfWeek friday =
+      const DayOfWeek._internal(value: "friday", text: "金", index: 5);
+  static DayOfWeek saturday =
+      const DayOfWeek._internal(value: "saturday", text: "土", index: 6);
+  static DayOfWeek sunday =
+      const DayOfWeek._internal(value: "sunday", text: "日", index: 0);
+  static DayOfWeek anotherday =
+      const DayOfWeek._internal(value: "anotherday", text: "無", index: 9);
+
+  const DayOfWeek._internal(
+      {required this.value, required this.text, required this.index});
+
+  static List<DayOfWeek> get dayOfWeeks => [
+        sunday,
+        monday,
+        tuesday,
+        wednesday,
+        thursday,
+        friday,
+        saturday,
+        anotherday
+      ];
 }
 
 class Department {
