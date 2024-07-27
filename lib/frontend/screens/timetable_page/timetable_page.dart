@@ -57,6 +57,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     SizeConfig().init(context);
     ScrollController controller = ScrollController();
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       body: Container(
           decoration: BoxDecoration(color: BACKGROUND_COLOR),
           child: Scrollbar(
