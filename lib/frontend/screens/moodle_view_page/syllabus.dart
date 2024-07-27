@@ -14,7 +14,7 @@ import 'package:collection/collection.dart';
 
 import 'package:html/dom.dart';
 
-class RequestQuery {
+class SyllabusRequestQuery {
   String? p_number;
   String? p_page;
   String? keyword;
@@ -45,17 +45,14 @@ class RequestQuery {
 //オープン科目の検索時0に設定
   bool p_open;
   //科目区分検索時学部IDを設定
-  SubjectClassification? p_keya;
+  SubjectClassification? subjectClassification;
   String? p_keyb = "";
   String? p_searcha = "a";
   String? p_searchb = "b";
-  bool? isOndemand;
-  bool? isOtherPeriod;
-  bool? isOtherSemester;
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
 
-  RequestQuery({
+  SyllabusRequestQuery({
     this.p_number,
     this.p_page,
     required this.keyword,
@@ -81,7 +78,7 @@ class RequestQuery {
     this.level_hid,
     // this.ControllerParameters,
     required this.p_open,
-    required this.p_keya,
+    required this.subjectClassification,
     this.pOcw,
     this.pType,
     this.pLng,
@@ -122,13 +119,13 @@ class RequestQuery {
     if (p_open) {
       normalQuery.addAll({"p_open[]": 0});
     }
-    if (p_keya != null) {
+    if (subjectClassification != null) {
       normalQuery.addAll({
-        "p_keya": p_keya!.p_keya,
+        "p_keya": subjectClassification!.p_keya,
         "p_keyb": "",
         "p_searcha": "a",
         "p_searchb": "b",
-        "p_gakubu": p_keya!.parentDepartment.departmentID
+        "p_gakubu": subjectClassification!.parentDepartment.departmentID
       });
     }
 
@@ -277,7 +274,7 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
   List<MyCourse>? myCourseList = [];
   List<SyllabusQueryResult>? syllabusQueryResultList;
 
-  RequestQuery requestQuery = RequestQuery(
+  SyllabusRequestQuery syllabusrequestQuery = SyllabusRequestQuery(
     keyword: moodleCourse.department,
     kamoku: moodleCourse.courseName.replaceAll("・", " "),
     p_gakki: null,
@@ -286,9 +283,9 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
     p_gengo: null,
     p_gakubu: null,
     p_open: false,
-    p_keya: null,
+    subjectClassification: null,
   );
-  String htmlString = await requestQuery.fetchSyllabusResults();
+  String htmlString = await syllabusrequestQuery.fetchSyllabusResults();
 
   if (moodleCourse.courseName == "確率・統計") {
     syllabusQueryResultList = _getMatchedCourse(htmlString, "確率・統計");
@@ -375,7 +372,7 @@ String extractClassRoom(String input) {
 Future<void> resisterVacantRoomList(String buildingNum) async {
   List<String> classRoomList = classMap[buildingNum] ?? [];
   Map<String, Map<String, Map<String, List<String>>>> copyQuarterClassRoomList;
-  RequestQuery requestQuery;
+  SyllabusRequestQuery syllabusrequestQuery;
   String htmlString;
   List<Map<String, int?>> periodAndDateList;
 
@@ -384,7 +381,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
   copyQuarterClassRoomList =
       _createQuarterClassRoomMap(buildingNum: buildingNum);
   for (var classRoom in classRoomList) {
-    requestQuery = RequestQuery(
+    syllabusrequestQuery = SyllabusRequestQuery(
       keyword: classRoom,
       kamoku: null,
       p_gakki: null,
@@ -393,11 +390,11 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
       p_gengo: null,
       p_gakubu: null,
       p_open: false,
-      p_keya: null,
+      subjectClassification: null,
       p_number: "100",
     );
 
-    htmlString = await requestQuery.fetchSyllabusResults();
+    htmlString = await syllabusrequestQuery.fetchSyllabusResults();
     final document = html_parser.parse(htmlString);
     final trElements = document.querySelectorAll('.ct-vh > tbody > tr');
     if (trElements.isNotEmpty) {
