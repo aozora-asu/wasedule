@@ -69,7 +69,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           ),
           Container(
               width: SizeConfig.blockSizeHorizontal! * 100,
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecorationWithShadow(radiusType: 1),
               child: Column(children: [pageBody()]))
         ]))));
   }

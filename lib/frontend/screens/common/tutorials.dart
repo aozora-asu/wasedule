@@ -87,7 +87,7 @@ class _IntroPageState extends State<IntroPage> {
             width: 500,
             child: ElevatedButton(
               onPressed: () {
-                showUrlRegisterGuide(context);
+                showMoodleRegisterGuide(context,true,MoodleRegisterGuideType.task);
               },
               style: const ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
@@ -159,51 +159,74 @@ class _IntroPageState extends State<IntroPage> {
     );
   }
 
-  Future<void> showUrlRegisterGuide(context) {
+}
+
+  enum MoodleRegisterGuideType {
+    task,
+    timetable
+  }
+
+  Future<void> showMoodleRegisterGuide(
+   BuildContext context,bool istutorial,MoodleRegisterGuideType dialogType) {
+    String guideText = "";
+    String titleText = "";
+    Widget button = okButton(context,1500.0);
+
+    if(dialogType == MoodleRegisterGuideType.task){
+      titleText = "課題の自動取得を設定しましょう。";
+      guideText = "'Moodle'ページから、課題の自動取得を設定しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「課題の自動取得を設定する」\n\n登録すると、以降はアプリに課題が自動で取得されます。\n";
+    }else if(dialogType == MoodleRegisterGuideType.timetable){
+      titleText = "時間割をアプリに取得しましょう。";
+      guideText = "'Moodle'ページから、時間割をアプリに取得しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「時間割を自動登録する」\n\nこれだけで、あなたの授業がアプリに登録されます！\n";
+    }
+
+    if(istutorial){
+      button = SizedBox(
+        width: 5000,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => const IntroLastPage(),
+              ),
+            );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => Scaffold(
+                    appBar: CustomAppBar(backButton: true),
+                    body: const MoodleViewPage()),
+              ),
+            );
+          },
+          style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
+          child: const Text(
+            "登録画面へ",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+
+    }
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("URLを登録してみましょう"),
+          title: Text(titleText),
           actions: <Widget>[
             Column(
              crossAxisAlignment: CrossAxisAlignment.start,
              children: [
-              const Text(
-                  "'Moodle'ページから、「Waseda Moodle」のURLをアプリに登録しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「カレンダーURLを自動登録する」\n\n登録すると、以降はアプリに課題が自動取得されます。\n"),
-              SizedBox(
-                width: 5000,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (_) => const IntroLastPage(),
-                      ),
-                    );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => Scaffold(
-                            appBar: CustomAppBar(backButton: true),
-                            body: const MoodleViewPage()),
-                      ),
-                    );
-                  },
-                  style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(MAIN_COLOR)),
-                  child: const Text(
-                    "登録画面へ",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
+                Text(guideText),
+              button
             ]),
           ],
         );
       },
     );
   }
-}
 
 class IntroLastPage extends StatefulWidget {
   const IntroLastPage({super.key});

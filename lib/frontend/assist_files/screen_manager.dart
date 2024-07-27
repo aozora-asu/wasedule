@@ -85,13 +85,6 @@ class _AppPageState extends ConsumerState<AppPage> {
     }
   }
 
-  void _onSlided(int index) {
-    ref.read(taskDataProvider).isInit = true;
-    setState(() {
-      _currentSubIndex = index;
-    });
-    pageController.jumpToPage(index);
-  }
 
   void _onTabTapped(int subIndex) {
     ref.read(taskDataProvider).isInit = true;
@@ -121,7 +114,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   List<List<Widget>> parentPages() {
     return [
       [const WasedaMapPage()],
-      [const TimeTablePage()],
+      [TimeTablePage(moveToMoodlePage: _onItemTapped)],
       calendarSubPages(),
       taskSubPages(),
       moodleSubPages(),
@@ -189,7 +182,7 @@ class _AppPageState extends ConsumerState<AppPage> {
 
   List<Widget> taskSubPages() {
     return [
-      const TaskViewPage(),
+      TaskViewPage(moveToMoodlePage: _onItemTapped),
       ExpiredTaskPage(setosute: setState),
       DeletedTaskPage(setosute: setState),
       const TaskPage(),

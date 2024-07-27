@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 
 class NoTaskPage extends StatefulWidget {
-  const NoTaskPage({super.key});
+  void Function(int) moveToMoodlePage;
+  NoTaskPage({
+    required this.moveToMoodlePage,
+    super.key});
 
   @override
   _NoTaskPageState createState() => _NoTaskPageState();
@@ -19,9 +24,8 @@ class _NoTaskPageState extends State<NoTaskPage> {
         padding:const EdgeInsets.all(20),
         child:Column(
           children:[
-        const Spacer(),
         Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
-        const Spacer(),
+        const SizedBox(height:30),
         Text("現在課題はありません。",style:TextStyle(fontWeight: FontWeight.bold,fontSize: SizeConfig.blockSizeHorizontal! * 5,),),
         const SizedBox(height:20),
         const Align(
@@ -32,11 +36,14 @@ class _NoTaskPageState extends State<NoTaskPage> {
           alignment: Alignment.centerLeft,
           child: Text("■  MoodleページからWaseda MoodleのURLを取得して、自動で課題を取得できるようにしましょう！"),
           ),
-        const Icon(
-          Icons.keyboard_double_arrow_right,
-          color: MAIN_COLOR,
-          size: 150,
-        ),
+          const SizedBox(height:30),
+          buttonModel(
+            ()async{
+              await showMoodleRegisterGuide(context,false,MoodleRegisterGuideType.task);
+              widget.moveToMoodlePage(4);
+              },
+            PALE_MAIN_COLOR,"登録画面へ",
+            verticalpadding: 10),
         const Spacer(),
       ])
       )

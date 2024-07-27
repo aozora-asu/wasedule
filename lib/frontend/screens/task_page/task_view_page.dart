@@ -4,7 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/none_task_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/no_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 
 import 'tasklist_sort_date.dart';
@@ -23,7 +23,10 @@ import "../../../backend/DB/handler/user_info_db_handler.dart";
 import "../../../backend/service/email.dart";
 
 class TaskViewPage extends ConsumerStatefulWidget {
-  const TaskViewPage({super.key});
+  void Function(int) moveToMoodlePage;
+  TaskViewPage({
+    required this.moveToMoodlePage,
+    super.key});
 
   @override
   TaskViewPageState createState() => TaskViewPageState();
@@ -194,7 +197,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               Map<DateTime, List<Map<String, dynamic>>> sortedTasks =
                   taskData.sortDataByDtEnd(taskData.taskDataList);
               if (sortedTasks.isEmpty) {
-                return const NoTaskPage();
+                return NoTaskPage(moveToMoodlePage: widget.moveToMoodlePage,);
               } else {
                 return TaskListByDtEnd(sortedData: sortedTasks);
               }
@@ -209,7 +212,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 ref.read(taskDataProvider).isRenewed = false;
               }
 
-              return const NoTaskPage();
+              return NoTaskPage(moveToMoodlePage: widget.moveToMoodlePage);
             }
           },
         );

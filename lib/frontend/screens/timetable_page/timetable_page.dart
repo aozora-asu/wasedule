@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -19,7 +20,10 @@ import "../../../backend/service/home_widget.dart";
 import 'package:intl/intl.dart';
 
 class TimeTablePage extends ConsumerStatefulWidget {
-  const TimeTablePage({super.key});
+  void Function(int) moveToMoodlePage;
+  TimeTablePage({
+    required this. moveToMoodlePage,
+    super.key});
 
   @override
   _TimeTablePageState createState() => _TimeTablePageState();
@@ -305,11 +309,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       return noDataScreen();
                     }
                   })),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: buttonModel(() {
-                    showAttendanceDialog(context, DateTime.now(), ref, true);
-                  }, Colors.blue, "今日の出欠記録", verticalpadding: 12.5))
             ])));
   }
 
@@ -341,7 +340,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   Widget noDataScreen() {
     return SizedBox(
-        height: SizeConfig.blockSizeVertical! * 80,
+        //height: SizeConfig.blockSizeVertical! * 80,
         width: SizeConfig.blockSizeHorizontal! * 85,
         child: Center(
             child:
@@ -364,15 +363,17 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         color: MAIN_COLOR, fontWeight: FontWeight.bold)),
                 Expanded(
                     child: Text(
-                  " ページから、時間割データを自動作成しましょう！",
+                  " ページから、時間割データを取得しましょう！",
                   overflow: TextOverflow.clip,
                 ))
               ]),
-          const Icon(
-            Icons.keyboard_double_arrow_right,
-            color: MAIN_COLOR,
-            size: 150,
-          ),
+          const SizedBox(height:30),
+          buttonModel(
+            ()async{
+              await showMoodleRegisterGuide(context, false, MoodleRegisterGuideType.timetable);
+              widget.moveToMoodlePage(4);},
+            PALE_MAIN_COLOR,"登録画面へ",
+            verticalpadding: 10)
         ])));
   }
 
@@ -412,6 +413,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
           child: generateOndemandRow()),
+      const Divider(height:40),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: buttonModel(() {
+          showAttendanceDialog(context, DateTime.now(), ref, true);
+        }, Colors.blue, "今日の出欠記録", verticalpadding: 12.5)),
+      const Divider(height:40),
       SizedBox(
         height: SizeConfig.blockSizeVertical! * 3,
       )

@@ -127,6 +127,7 @@ BorderRadius boxRadius({int type = 0}){
         bottomLeft: Radius.circular(endRadius),
         bottomRight: Radius.circular(endRadius),
       );
+
     default: 
       return BorderRadius.only(
         topLeft: Radius.circular(endRadius),
