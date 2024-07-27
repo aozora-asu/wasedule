@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -8,9 +9,9 @@ import 'package:intl/intl.dart';
 class SyllabusQueryResult {
   String courseName;
   String classRoom;
-  int? period;
-  int? weekday;
-  String? semester;
+  Lesson? period;
+  DayOfWeek? weekday;
+  Term? semester;
   int year;
   String? syllabusID;
   SyllabusQueryResult(
@@ -25,11 +26,11 @@ class SyllabusQueryResult {
     return {
       "courseName": courseName,
       "classRoom": classRoom,
-      "semester": semester,
+      "semester": semester?.value,
       "year": year,
       "syllabusID": syllabusID,
-      "period": period,
-      "weekday": weekday
+      "period": period?.period,
+      "weekday": weekday?.index
     };
   }
 }
@@ -57,9 +58,9 @@ class MoodleCourse {
 
 class MyCourse {
   String courseName;
-  int? weekday;
-  int? period;
-  String? semester;
+  DayOfWeek? weekday;
+  Lesson? period;
+  Term? semester;
   String classRoom;
   String? memo;
   String color;
@@ -88,13 +89,13 @@ class MyCourse {
       this.classNum});
   Map<String, dynamic> toMap() {
     if (semester != null) {
-      if (semester!.contains("quarter")) {
+      if (semester!.value.contains("quarter")) {
         classNum = 7;
         remainAbsent = 2;
-      } else if (semester!.contains("semester")) {
+      } else if (semester!.value.contains("semester")) {
         classNum = 14;
         remainAbsent = 4;
-      } else if (semester!.contains("full_year")) {
+      } else if (semester!.value.contains("full_year")) {
         classNum = 28;
         remainAbsent = 8;
       }
@@ -220,10 +221,19 @@ class MyCourseDatabaseHandler {
           color: myCourse["color"] as String,
           courseName: myCourse["courseName"] as String,
           pageID: myCourse["pageID"] as String,
-          period: myCourse["period"] as int? ?? -1,
-          semester: myCourse["semester"] as String,
+          period: Lesson.atPeriod(myCourse["period"] as int),
+          semester: [
+            Term.springQuarter,
+            Term.summerQuarter,
+            Term.springSemester,
+            Term.fallQuarter,
+            Term.winterQuarter,
+            Term.fallSemester,
+            Term.fullYear,
+            Term.others
+          ].firstWhere((e) => e.value == myCourse["semester"]),
           syllabusID: myCourse["syllabusID"] as String,
-          weekday: myCourse["weekday"] as int? ?? -1,
+          weekday: DayOfWeek.weekAt(myCourse["weekday"] as int),
           year: myCourse["year"] as int,
           criteria: myCourse["criteria"] as String?,
           memo: myCourse["memo"] as String?,

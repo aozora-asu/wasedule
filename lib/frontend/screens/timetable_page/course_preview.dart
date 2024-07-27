@@ -183,19 +183,17 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
           "${"日月火水木金土"[target["weekday"] % 7]}曜日 ${target["period"]}限",
-          style:const TextStyle(
+          style: const TextStyle(
             fontSize: 20,
           ),
         ),
         const SizedBox(width: 20),
-        Expanded(child:
-          Text(
-            "${target["year"]} ${Term.terms.firstWhereOrNull((e) => e.value == target["semester"])?.fullText ?? Term.fullYear.fullText}",
-            style:const TextStyle(
-                fontSize: 20,
-                color: Colors.grey),
-            overflow: TextOverflow.clip,
-          )),
+        Expanded(
+            child: Text(
+          "${target["year"]} ${Term.byValue(target["semester"])?.fullText ?? Term.fullYear.fullText}",
+          style: const TextStyle(fontSize: 20, color: Colors.grey),
+          overflow: TextOverflow.clip,
+        )),
       ]),
       dividerModel,
       Row(children: [

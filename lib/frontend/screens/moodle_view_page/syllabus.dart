@@ -210,11 +210,13 @@ List<SyllabusQueryResult>? _getFirstCourse(String htmlString) {
           courseName: tdElements[2].text,
           classRoom: extractClassRoom(zenkaku2hankaku(
               tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
-          period: periodAndDate["period"],
-          weekday: periodAndDate["weekday"],
-          semester: Term.terms
-              .firstWhereOrNull((e) => e.text == tdElements[5].text)
-              ?.value,
+          period: periodAndDate["period"] != null
+              ? Lesson.atPeriod(periodAndDate["period"]!)
+              : null,
+          weekday: periodAndDate["weekday"] != null
+              ? DayOfWeek.weekAt(periodAndDate["weekday"]!)
+              : null,
+          semester: Term.byValue(tdElements[5].text),
           year: int.parse(tdElements[0].text),
           syllabusID: extractedString);
 
@@ -250,11 +252,13 @@ List<SyllabusQueryResult>? _getMatchedCourse(
               courseName: tdElements[2].text,
               classRoom: extractClassRoom(zenkaku2hankaku(
                   tdElements[7].innerHtml.replaceAll("<br>", "\n"))),
-              period: periodAndDate["period"],
-              weekday: periodAndDate["weekday"],
-              semester: Term.terms
-                  .firstWhereOrNull((e) => e.text == tdElements[5].text)
-                  ?.text,
+              period: periodAndDate["period"] != null
+                  ? Lesson.atPeriod(periodAndDate["period"]!)
+                  : null,
+              weekday: periodAndDate["weekday"] != null
+                  ? DayOfWeek.weekAt(periodAndDate["weekday"]!)
+                  : null,
+              semester: Term.byValue(tdElements[5].text),
               year: int.parse(tdElements[0].text),
               syllabusID: extractedString);
           syllabusQueryResultList.add(syllabusResult);
@@ -406,15 +410,10 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
         final tdElements = trElement.querySelectorAll("td");
         periodAndDateList =
             extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
-        semester = Term.terms
-            .firstWhereOrNull((e) => e.text == tdElements[5].text)
-            ?.text;
+        semester = Term.byValue(tdElements[5].text)?.text;
 
         if (semester != null) {
-          quarterList = Term.terms
-                  .firstWhereOrNull((e) => e.value == semester)
-                  ?.quarterGroup ??
-              [];
+          quarterList = Term.byValue(semester)?.quarterGroup ?? [];
 
           //クォーター制に分割して、合致するところにデータを挿入する
           for (var quarter in quarterList) {

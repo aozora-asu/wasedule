@@ -7,10 +7,10 @@ import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseAddPage extends ConsumerStatefulWidget {
-  int? weekDay;
-  int? period;
+  DayOfWeek? weekDay;
+  Lesson? period;
   int? year;
-  String? semester;
+  Term? semester;
   late StateSetter setTimetableState;
   CourseAddPage(
       {super.key,
@@ -28,17 +28,17 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   TextEditingController classRoomController = TextEditingController();
-  int? weekDay;
-  int? period;
+  DayOfWeek? weekDay;
+  Lesson? period;
   late int year;
-  late String semester;
+  late Term semester;
   String errorText = "";
 
   @override
   void initState() {
     super.initState();
     year = widget.year ?? DateTime.now().year;
-    semester = widget.semester ?? "full_year";
+    semester = widget.semester ?? Term.fullYear;
     period = widget.period;
     weekDay = widget.weekDay;
   }
@@ -70,7 +70,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                   children: [
                                     const Text("時間割に新規追加...",
                                         style: TextStyle(
-                                            fontSize:30,
+                                            fontSize: 30,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     courseInfo(),
@@ -89,10 +89,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
 
     if (weekDay != null && period != null) {
       courseTimeText =
-          "$year年 / ${Term.terms.firstWhere((e) => e.value == semester).text} / ${"日月火水木金土"[weekDay! % 7]}曜日 / $period限";
+          "$year年 / ${semester.text} / ${weekDay?.text}曜日 / $period限";
     } else {
-      courseTimeText =
-          "$year年 / ${Term.terms.firstWhere((e) => e.value == semester).text} / オンデマンド / 時限なし";
+      courseTimeText = "$year年 / ${semester.text} / オンデマンド / 時限なし";
     }
     return GestureDetector(
         onTap: () {},
@@ -114,19 +113,19 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                         const Icon(Icons.access_time, color: MAIN_COLOR),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        Expanded(child:  
-                          GestureDetector(
-                            onTap: () async {
-                              await showWeekdayAndPeriodDialogue();
-                              setState(() {
-                                isValid();
-                              });
-                            },
-                            child: Text(courseTimeText,
-                                style:const TextStyle(
-                                    fontSize:20,
-                                    overflow: TextOverflow.clip,
-                                    color: Colors.blueAccent)))),
+                        Expanded(
+                            child: GestureDetector(
+                                onTap: () async {
+                                  await showWeekdayAndPeriodDialogue();
+                                  setState(() {
+                                    isValid();
+                                  });
+                                },
+                                child: Text(courseTimeText,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        overflow: TextOverflow.clip,
+                                        color: Colors.blueAccent)))),
                       ]),
                       dividerModel,
                       Row(children: [
@@ -189,10 +188,8 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
               border: InputBorder.none, hintText: hintText),
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: weight,
-              fontSize: 20),
+          style:
+              TextStyle(color: Colors.black, fontWeight: weight, fontSize: 20),
           onSubmitted: onSubmitted),
     ));
   }
@@ -210,11 +207,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
   }
 
   Future<void> showWeekdayAndPeriodDialogue() async {
-    int? tempweekDay = weekDay;
-    int? tempPeriod = period;
+    DayOfWeek? tempweekDay = weekDay;
+    Lesson? tempPeriod = period;
     int now = DateTime.now().year;
     int tempYear = DateTime.now().year;
-    String tempSemester = "full_year";
+    Term tempSemester = Term.fullYear;
     List<int> yearList = [
       now - 10,
       now - 9,
@@ -264,34 +261,34 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                 ),
                 DropdownButtonFormField(
                   value: tempSemester,
-                  items: const [
+                  items: [
                     DropdownMenuItem(
-                      value: "full_year",
-                      child: Text("通年"),
+                      value: Term.fullYear,
+                      child: const Text("通年"),
                     ),
                     DropdownMenuItem(
-                      value: "spring_semester",
-                      child: Text("春学期"),
+                      value: Term.springSemester,
+                      child: const Text("春学期"),
                     ),
                     DropdownMenuItem(
-                      value: "spring_quarter",
-                      child: Text("春クォーター"),
+                      value: Term.springQuarter,
+                      child: const Text("春クォーター"),
                     ),
                     DropdownMenuItem(
-                      value: "summer_quarter",
-                      child: Text("夏クォーター"),
+                      value: Term.summerQuarter,
+                      child: const Text("夏クォーター"),
                     ),
                     DropdownMenuItem(
-                      value: "fall_semester",
-                      child: Text("秋学期"),
+                      value: Term.fallSemester,
+                      child: const Text("秋学期"),
                     ),
                     DropdownMenuItem(
-                      value: "full_quarter",
-                      child: Text("秋クォーター"),
+                      value: Term.fallQuarter,
+                      child: const Text("秋クォーター"),
                     ),
                     DropdownMenuItem(
-                      value: "winter_quarter",
-                      child: Text("冬クォーター"),
+                      value: Term.winterQuarter,
+                      child: const Text("冬クォーター"),
                     ),
                   ],
                   onChanged: (value) {
@@ -302,34 +299,34 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                 ),
                 DropdownButtonFormField(
                   value: tempweekDay,
-                  items: const [
-                    DropdownMenuItem(
+                  items: [
+                    const DropdownMenuItem(
                       value: null,
                       child: Text("オンデマンド"),
                     ),
                     DropdownMenuItem(
-                      value: 1,
-                      child: Text("月曜日"),
+                      value: DayOfWeek.monday,
+                      child: const Text("月曜日"),
                     ),
                     DropdownMenuItem(
-                      value: 2,
-                      child: Text("火曜日"),
+                      value: DayOfWeek.tuesday,
+                      child: const Text("火曜日"),
                     ),
                     DropdownMenuItem(
-                      value: 3,
-                      child: Text("水曜日"),
+                      value: DayOfWeek.wednesday,
+                      child: const Text("水曜日"),
                     ),
                     DropdownMenuItem(
-                      value: 4,
-                      child: Text("木曜日"),
+                      value: DayOfWeek.thursday,
+                      child: const Text("木曜日"),
                     ),
                     DropdownMenuItem(
-                      value: 5,
-                      child: Text("金曜日"),
+                      value: DayOfWeek.friday,
+                      child: const Text("金曜日"),
                     ),
                     DropdownMenuItem(
-                      value: 6,
-                      child: Text("土曜日"),
+                      value: DayOfWeek.saturday,
+                      child: const Text("土曜日"),
                     ),
                   ],
                   onChanged: (value) {
@@ -340,38 +337,38 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                 ),
                 DropdownButtonFormField(
                   value: tempPeriod,
-                  items: const [
-                    DropdownMenuItem(
+                  items: [
+                    const DropdownMenuItem(
                       value: null,
                       child: Text("なし"),
                     ),
                     DropdownMenuItem(
-                      value: 1,
-                      child: Text("1限"),
+                      value: Lesson.first,
+                      child: const Text("1限"),
                     ),
                     DropdownMenuItem(
-                      value: 2,
-                      child: Text("2限"),
+                      value: Lesson.second,
+                      child: const Text("2限"),
                     ),
                     DropdownMenuItem(
-                      value: 3,
-                      child: Text("3限"),
+                      value: Lesson.third,
+                      child: const Text("3限"),
                     ),
                     DropdownMenuItem(
-                      value: 4,
-                      child: Text("4限"),
+                      value: Lesson.fourth,
+                      child: const Text("4限"),
                     ),
                     DropdownMenuItem(
-                      value: 5,
-                      child: Text("5限"),
+                      value: Lesson.fifth,
+                      child: const Text("5限"),
                     ),
                     DropdownMenuItem(
-                      value: 6,
-                      child: Text("6限"),
+                      value: Lesson.sixth,
+                      child: const Text("6限"),
                     ),
                     DropdownMenuItem(
-                      value: 7,
-                      child: Text("7限"),
+                      value: Lesson.seventh,
+                      child: const Text("7限"),
                     ),
                   ],
                   onChanged: (value) {

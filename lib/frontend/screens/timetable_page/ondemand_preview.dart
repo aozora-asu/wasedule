@@ -160,10 +160,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   }
 
   Widget summaryContent(dividerModel, target) {
-    String text = Term.terms
-            .firstWhereOrNull((e) => e.value == target["semester"])
-            ?.fullText ??
-        "";
+    String text = Term.byValue(target["semester"])?.fullText ?? "";
 
     return Column(children: [
       dividerModel,
@@ -172,17 +169,13 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
         const Icon(Icons.info, color: MAIN_COLOR),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
         const Text("オンデマンド/その他",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.normal)),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
       ]),
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
         Text("${target["year"]} $text",
-            style:const TextStyle(
-                fontSize: 16,
-                color: Colors.grey)),
+            style: const TextStyle(fontSize: 16, color: Colors.grey)),
         const Spacer(),
       ]),
       dividerModel,

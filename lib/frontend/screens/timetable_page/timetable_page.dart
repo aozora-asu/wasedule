@@ -21,9 +21,7 @@ import 'package:intl/intl.dart';
 
 class TimeTablePage extends ConsumerStatefulWidget {
   void Function(int) moveToMoodlePage;
-  TimeTablePage({
-    required this. moveToMoodlePage,
-    super.key});
+  TimeTablePage({required this.moveToMoodlePage, super.key});
 
   @override
   _TimeTablePageState createState() => _TimeTablePageState();
@@ -280,7 +278,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 doNotContainScreenShot(springFallQuarterButton()),
                 doNotContainScreenShot(summerWinterQuarterButton()),
                 showOnlyScreenShot(LogoAndTitle(size: 5)),
-                const SizedBox(width:40),
+                const SizedBox(width: 40),
               ]),
               const SizedBox(height: 10),
               FutureBuilder(
@@ -368,13 +366,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   overflow: TextOverflow.clip,
                 ))
               ]),
-          const SizedBox(height:30),
-          buttonModel(
-            ()async{
-              await showMoodleRegisterGuide(context, false, MoodleRegisterGuideType.timetable);
-              widget.moveToMoodlePage(4);},
-            PALE_MAIN_COLOR,"登録画面へ",
-            verticalpadding: 10)
+          const SizedBox(height: 30),
+          buttonModel(() async {
+            await showMoodleRegisterGuide(
+                context, false, MoodleRegisterGuideType.timetable);
+            widget.moveToMoodlePage(4);
+          }, PALE_MAIN_COLOR, "登録画面へ", verticalpadding: 10)
         ])));
   }
 
@@ -414,13 +411,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
           child: generateOndemandRow()),
-      const Divider(height:40),
+      const Divider(height: 40),
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: buttonModel(() {
-          showAttendanceDialog(context, DateTime.now(), ref, true);
-        }, Colors.blue, "今日の出欠記録", verticalpadding: 12.5)),
-      const Divider(height:40),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: buttonModel(() {
+            showAttendanceDialog(context, DateTime.now(), ref, true);
+          }, Colors.blue, "今日の出欠記録", verticalpadding: 12.5)),
+      const Divider(height: 40),
       SizedBox(
         height: SizeConfig.blockSizeVertical! * 3,
       )
@@ -445,7 +442,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
-
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2.5), color: bgColor),
                 child: Center(
@@ -576,9 +572,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   builder: (BuildContext context) {
                     return CourseAddPage(
                       year: thisYear,
-                      semester: currentSemester.value,
-                      weekDay: weekDay,
-                      period: index + 1,
+                      semester: currentSemester,
+                      weekDay: DayOfWeek.weekAt(weekDay),
+                      period: Lesson.atPeriod(index),
                       setTimetableState: setState,
                     );
                   });
@@ -790,7 +786,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
-            style:const TextStyle(
+            style: const TextStyle(
               fontSize: 10,
             ),
             overflow: TextOverflow.visible,
@@ -817,22 +813,18 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       );
                     });
               },
-              child:
-                Column(
-                children: [
-                  SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
-                  Expanded(
-                   child:Center(
-                    child:Text(
-                      className,
-                      style: TextStyle(
-                          fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                          maxLines:4 ,
-                    ))
-                ),
-
+              child: Column(children: [
+                SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
+                Expanded(
+                    child: Center(
+                        child: Text(
+                  className,
+                  style: TextStyle(
+                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                  maxLines: 4,
+                ))),
                 classRoomView,
-                const SizedBox(height:10),
+                const SizedBox(height: 10),
               ]))),
       doNotContainScreenShot(Align(
           alignment: const Alignment(1, -1),
@@ -877,7 +869,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         child: Text(
           " 無欠席 ",
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize:SizeConfig.blockSizeVertical! *cellHeight /12 , color: Colors.white),
+              fontWeight: FontWeight.bold,
+              fontSize: SizeConfig.blockSizeVertical! * cellHeight / 12,
+              color: Colors.white),
         ),
       );
     } else {
@@ -893,7 +887,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         child: Text(
           " 欠席 " + absentNum.toString() + "/" + remainAbsent.toString(),
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize:SizeConfig.blockSizeVertical! *cellHeight /12, color: Colors.white),
+              fontWeight: FontWeight.bold,
+              fontSize: SizeConfig.blockSizeVertical! * cellHeight / 12,
+              color: Colors.white),
         ),
       );
     }
@@ -931,9 +927,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
               Expanded(
-                child:Center(
-                  child:Text(
-                    className,
+                  child: Center(
+                child: Text(className,
                     style: TextStyle(
                         fontSize: fontSize, overflow: TextOverflow.ellipsis),
                     maxLines: 4),

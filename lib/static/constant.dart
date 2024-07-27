@@ -91,7 +91,7 @@ class Term {
       required this.shortText,
       required this.fullText,
       required this.indexForSyllabusQuery});
-  static List<Term> get terms => [
+  static List<Term> get _terms => [
         springQuarter,
         summerQuarter,
         springSemester,
@@ -150,6 +150,15 @@ class Term {
     List<Term> currentTerms = whenTerms(dateTime);
     for (var term in Term._semesters) {
       if (currentTerms.contains(term)) {
+        return term;
+      }
+    }
+    return null;
+  }
+
+  static Term? byValue(String semester) {
+    for (var term in _terms) {
+      if (term.value == semester) {
         return term;
       }
     }
@@ -243,8 +252,6 @@ class Lesson {
         fifth,
         sixth,
         seventh,
-        ondemand,
-        others
       ];
 
   static Lesson? whenPeriod(DateTime dateTime) {
@@ -320,7 +327,7 @@ class DayOfWeek {
   const DayOfWeek._internal(
       {required this.value, required this.text, required this.index});
 
-  static List<DayOfWeek> get dayOfWeeks => [
+  static List<DayOfWeek> get _dayOfWeeks => [
         sunday,
         monday,
         tuesday,
@@ -328,8 +335,14 @@ class DayOfWeek {
         thursday,
         friday,
         saturday,
-        anotherday
       ];
+  static weekAt(int weekday) {
+    if (weekday < _dayOfWeeks.length) {
+      return _dayOfWeeks[weekday];
+    } else {
+      return null;
+    }
+  }
 }
 
 class Department {
