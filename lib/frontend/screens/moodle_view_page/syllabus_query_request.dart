@@ -128,7 +128,7 @@ class SyllabusRequestQuery {
         "p_keyb": "",
         "p_searcha": "a",
         "p_searchb": "b",
-        "p_gakubu": subjectClassification!.parentDepartment.departmentID
+        "p_gakubu": subjectClassification!.parentDepartmentID
       });
     }
 
@@ -274,6 +274,31 @@ class SyllabusRequestQuery {
     }
     List<Element> syllabusTrElements =
         syllabusInfo.querySelectorAll("table > tbody > tr");
+    String? _abstract;
+    String? _agenda;
+    String? _textBook;
+    String? _reference;
+    String? _criteria;
+    String? _remark;
+    for (var trElement in syllabusTrElements) {
+      List<Element> ths = trElement.querySelectorAll("th");
+      for (var th in ths) {
+        switch (th.text) {
+          case "授業概要":
+            _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "授業計画":
+            _agenda = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "教科書":
+            _textBook = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "参考文献":
+            _reference = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "成績評価方法":
+            _criteria = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "備考・関連URL":
+            _remark = zenkaku2hankaku(th.nextElementSibling!.text);
+        }
+      }
+    }
 
     return SyllabusQueryResult(
         courseName: _courseName,

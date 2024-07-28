@@ -28,17 +28,18 @@ class SyllabusQueryResult {
   final String? credit;
   final String? department;
 
-  SyllabusQueryResult(
-      {required this.courseName,
-      required this.classRoom,
-      required this.year,
-      required this.syllabusID,
-      required this.semesterAndWeekdayAndPeriod,
-      required this.teacher,
-      required this.credit,
-      required this.criteria,
-      required this.department,
-      required this.subjectClassification});
+  SyllabusQueryResult({
+    required this.courseName,
+    required this.classRoom,
+    required this.year,
+    required this.syllabusID,
+    required this.semesterAndWeekdayAndPeriod,
+    required this.teacher,
+    required this.credit,
+    required this.criteria,
+    required this.department,
+    required this.subjectClassification,
+  });
   Map<String, dynamic> toMap() {
     return {
       "courseName": courseName,
