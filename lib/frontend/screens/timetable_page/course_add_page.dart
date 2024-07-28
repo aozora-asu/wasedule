@@ -89,7 +89,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
 
     if (weekDay != null && period != null) {
       courseTimeText =
-          "$year年 / ${semester.text} / ${weekDay?.text}曜日 / $period限";
+          "$year年 / ${semester.text} / ${weekDay?.text}曜日 / ${period!.period}限";
     } else {
       courseTimeText = "$year年 / ${semester.text} / オンデマンド / 時限なし";
     }
