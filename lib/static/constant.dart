@@ -486,9 +486,9 @@ class Department {
         sportsScience,
         global
       ];
-  static Department? byText(String text) {
+  static Department? byValue(String value) {
     for (var department in _departments) {
-      if (department.text == text) {
+      if (department.value == value) {
         return department;
       }
     }
