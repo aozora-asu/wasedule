@@ -191,7 +191,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         Expanded(
             child: Text(
           "${target["year"]} ${Term.byValue(target["semester"])?.fullText ?? Term.fullYear.fullText}",
-          style: const TextStyle(fontSize: 20, color: Colors.grey),
+          style: const TextStyle(fontSize: 15, color: Colors.grey),
           overflow: TextOverflow.clip,
         )),
       ]),
