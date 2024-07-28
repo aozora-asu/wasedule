@@ -142,7 +142,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         currentQuarter = Term.winterQuarter;
       } else if (now.month <= 5) {
         currentQuarter = Term.springQuarter;
-      } else if (now.month <= 8) {
+      } else if (now.month <= 7) {
         currentQuarter = Term.summerQuarter;
       } else if (now.month <= 11) {
         currentQuarter = Term.fallQuarter;
