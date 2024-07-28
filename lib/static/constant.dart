@@ -40,7 +40,7 @@ class Term {
       value: "spring_semester",
       quarterGroup: ["spring_quarter", "summer_quarter"],
       text: "春学期",
-      fullText: "",
+      fullText: "春学期",
       shortText: "春",
       indexForSyllabusQuery: 1);
   static Term fallQuarter = const Term._internal(
@@ -61,7 +61,7 @@ class Term {
       value: "fall_semester",
       quarterGroup: ["fall_quarter", "winter_quaretr"],
       text: "秋学期",
-      fullText: "",
+      fullText: "秋学期",
       shortText: "秋",
       indexForSyllabusQuery: 2);
   static Term fullYear = const Term._internal(
@@ -160,6 +160,8 @@ class Term {
     for (var term in _terms) {
       if (term.value == semester) {
         return term;
+      } else {
+        continue;
       }
     }
     return null;
