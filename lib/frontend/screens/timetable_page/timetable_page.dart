@@ -45,9 +45,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showAttendanceDialog(context, now, ref);
     });
-    currentSemester = Term.whenSemester(now) != null
-        ? Term.whenSemester(now)!
-        : Term.fallSemester;
   }
 
   @override
@@ -135,6 +132,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     DateTime now = DateTime.now();
     thisYear = Term.whenSchoolYear(now);
     Term? nowQuarter = Term.whenQuarter(now);
+    Term? nowSemester = Term.whenSemester(now);
+
     if (nowQuarter != null) {
       currentQuarter = nowQuarter;
     } else {
@@ -148,6 +147,19 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         currentQuarter = Term.fallQuarter;
       } else {
         currentQuarter = Term.winterQuarter;
+      }
+    }
+    if (nowSemester != null) {
+      currentSemester = nowSemester;
+    } else {
+      if (now.month <= 3) {
+        currentSemester = Term.fallSemester;
+      } else if (now.month <= 7) {
+        currentSemester = Term.springSemester;
+      } else if (now.month <= 11) {
+        currentSemester = Term.fallSemester;
+      } else {
+        currentSemester = Term.fallSemester;
       }
     }
   }
@@ -343,9 +355,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         width: SizeConfig.blockSizeHorizontal! * 85,
         child: Center(
             child:
-            Column(mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-        SizedBox(height: SizeConfig.blockSizeVertical! *10),
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: SizeConfig.blockSizeVertical! * 10),
           Image.asset('lib/assets/eye_catch/eyecatch.png',
               height: 200, width: 200),
           const SizedBox(height: 20),
