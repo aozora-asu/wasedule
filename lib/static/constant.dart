@@ -486,7 +486,14 @@ class Department {
         sportsScience,
         global
       ];
-  static Department? byTet(String text) {}
+  static Department? byText(String text) {
+    for (var department in _departments) {
+      if (department.text == text) {
+        return department;
+      }
+    }
+    return null;
+  }
 }
 
 class SubjectClassification {
