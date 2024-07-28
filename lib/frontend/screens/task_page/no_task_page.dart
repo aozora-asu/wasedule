@@ -24,6 +24,7 @@ class _NoTaskPageState extends State<NoTaskPage> {
         padding:const EdgeInsets.all(20),
         child:Column(
           children:[
+        SizedBox(height: SizeConfig.blockSizeVertical! *10),
         Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
         const SizedBox(height:30),
         Text("現在課題はありません。",style:TextStyle(fontWeight: FontWeight.bold,fontSize: SizeConfig.blockSizeHorizontal! * 5,),),
