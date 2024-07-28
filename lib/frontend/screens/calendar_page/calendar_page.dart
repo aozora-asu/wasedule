@@ -31,7 +31,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../assist_files/size_config.dart';
-import 'add_event_button.dart';
+import 'add_event_dialog.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:math';
