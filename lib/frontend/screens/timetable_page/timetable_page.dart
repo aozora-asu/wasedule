@@ -47,7 +47,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     });
     currentSemester = Term.whenSemester(now) != null
         ? Term.whenSemester(now)!
-        : Term.fullYear;
+        : Term.fallSemester;
   }
 
   @override
@@ -574,7 +574,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       year: thisYear,
                       semester: currentSemester,
                       weekDay: DayOfWeek.weekAt(weekDay),
-                      period: Lesson.atPeriod(index),
+                      period: Lesson.atPeriod(index + 1),
                       setTimetableState: setState,
                     );
                   });
