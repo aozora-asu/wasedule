@@ -1,6 +1,6 @@
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -12,6 +12,7 @@ import 'dart:convert';
 import '../../../backend/service/home_widget.dart';
 import "./request_calendar_url.dart";
 import "../../../backend/DB/handler/user_info_db_handler.dart";
+import "./syllabus_query_result.dart";
 
 void printWrapped(String text) {
   final pattern = RegExp('.{1,500}'); // 800 is the size of each chunk

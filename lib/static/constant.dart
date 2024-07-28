@@ -165,6 +165,15 @@ class Term {
     return null;
   }
 
+  static Term? byText(String semester) {
+    for (var term in _terms) {
+      if (semester.contains(term.text)) {
+        return term;
+      }
+    }
+    return null;
+  }
+
   static int whenSchoolYear(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month - 4, dateTime.day).year;
   }
@@ -395,7 +404,7 @@ class Department {
       color: WASEDA_HSS_COLOR,
       departmentID: "242006",
       subjectClassifications: null);
-  static Department cultureAndMediaStudie = const Department._internal(
+  static const Department cultureAndMediaStudie = Department._internal(
       value: "cultureAndMediaStudie",
       text: "文化構想学部",
       TLC: "CMS",
@@ -423,21 +432,21 @@ class Department {
       color: WASEDA_FSE_COLOR,
       departmentID: "262006",
       subjectClassifications: SubjectClassification.fundamentalSubClass);
-  static Department humanScience = const Department._internal(
+  static const Department humanScience = Department._internal(
       value: "humanScience",
       text: "人間科学部",
       TLC: "HUM",
       color: WASEDA_HUM_COLOR,
       departmentID: "192000",
       subjectClassifications: null);
-  static Department sportsScience = const Department._internal(
+  static const Department sportsScience = Department._internal(
       value: "sportsScience",
       text: "スポーツ科学部",
       TLC: "SPS",
       color: WASEDA_SPS_COLOR,
       departmentID: "202003",
       subjectClassifications: null);
-  static Department global = const Department._internal(
+  static const Department global = Department._internal(
       value: "global",
       text: "グローバル",
       TLC: "",
@@ -459,7 +468,7 @@ class Department {
   final Color color;
   final List<SubjectClassification>? subjectClassifications;
 
-  static List<Department> get departments => [
+  static List<Department> get _departments => [
         education,
         politicalEconomy,
         law,
@@ -475,6 +484,7 @@ class Department {
         sportsScience,
         global
       ];
+  static Department? byTet(String text) {}
 }
 
 class SubjectClassification {

@@ -34,9 +34,7 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                     onConsoleMessage: (controller, consoleMessage) async {
                       //print(consoleMessage.message);
                     },
-                    initialUrlRequest: URLRequest(
-                        url: WebUri(
-                            "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=$pageID")),
+                    initialUrlRequest: URLRequest(url: WebUri(pageID)),
                     onWebViewCreated: (controller) async {
                       webMoodleViewController = controller;
                       String javascriptCode = await rootBundle.loadString(
