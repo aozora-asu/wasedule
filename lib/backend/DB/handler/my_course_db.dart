@@ -6,35 +6,6 @@ import "../../../static/converter.dart";
 import "../../../static/constant.dart";
 import 'package:intl/intl.dart';
 
-class SyllabusQueryResult {
-  String courseName;
-  String classRoom;
-  Lesson? period;
-  DayOfWeek? weekday;
-  Term? semester;
-  int year;
-  String? syllabusID;
-  SyllabusQueryResult(
-      {required this.courseName,
-      required this.classRoom,
-      required this.period,
-      required this.weekday,
-      required this.semester,
-      required this.year,
-      required this.syllabusID});
-  Map<String, dynamic> toMap() {
-    return {
-      "courseName": courseName,
-      "classRoom": classRoom,
-      "semester": semester?.value,
-      "year": year,
-      "syllabusID": syllabusID,
-      "period": period?.period,
-      "weekday": weekday?.index
-    };
-  }
-}
-
 class MoodleCourse {
   String courseName;
   String pageID;
@@ -103,9 +74,9 @@ class MyCourse {
 
     return {
       "courseName": courseName,
-      "weekday": weekday ?? -1,
-      "period": period ?? -1,
-      "semester": semester,
+      "weekday": weekday?.index ?? -1,
+      "period": period?.period ?? -1,
+      "semester": semester?.value,
       "classRoom": classRoom,
       "memo": memo,
       "color": color,
@@ -353,9 +324,9 @@ class MyCourseDatabaseHandler {
           'year = ? AND weekday = ? AND period = ? AND semester = ? AND syllabusID=?',
       whereArgs: [
         newMyCourse.year,
-        newMyCourse.weekday,
-        newMyCourse.period,
-        newMyCourse.semester,
+        newMyCourse.weekday?.index ?? -1,
+        newMyCourse.period?.period ?? -1,
+        newMyCourse.semester?.value,
         newMyCourse.syllabusID
       ],
     );

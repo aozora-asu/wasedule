@@ -4,7 +4,7 @@ import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -15,6 +15,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 import "../../../static/constant.dart";
 import "./const_map_info.dart";
+import "../moodle_view_page/syllabus_query_result.dart";
 
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;
@@ -144,7 +145,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          const SizedBox(width:10),
+          const SizedBox(width: 10),
           SizedBox(
               width: 40,
               height: 40,
@@ -153,9 +154,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
           const Text(
             " わせまっぷ",
             style: TextStyle(
-                color: BLUEGREY,
-                fontSize: 40,
-                fontWeight: FontWeight.bold),
+                color: BLUEGREY, fontSize: 40, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
           //＠ブックマーク
