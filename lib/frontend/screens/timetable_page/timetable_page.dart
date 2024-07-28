@@ -343,7 +343,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         width: SizeConfig.blockSizeHorizontal! * 85,
         child: Center(
             child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Column(mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+        SizedBox(height: SizeConfig.blockSizeVertical! *10),
           Image.asset('lib/assets/eye_catch/eyecatch.png',
               height: 200, width: 200),
           const SizedBox(height: 20),
@@ -425,7 +427,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
   double cellWidth = 15.3;
-  double cellHeight = 14;
+  double cellHeight = 15;
 
   Widget generateWeekThumbnail() {
     List<String> days = ["月", "火", "水", "木", "金", "土"];
