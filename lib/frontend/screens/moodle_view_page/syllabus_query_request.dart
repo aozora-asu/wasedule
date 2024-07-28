@@ -1,18 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 
 import 'package:http/http.dart' as http;
 
-import "./classRoom.dart";
 import 'package:html/parser.dart' as html_parser;
 
 import 'package:uuid/uuid.dart';
-import "../../../backend/DB/handler/my_course_db.dart";
-import 'package:collection/collection.dart';
 
 import 'package:html/dom.dart';
 import "./syllabus_query_result.dart";
@@ -276,7 +269,7 @@ class SyllabusRequestQuery {
         syllabusInfo.querySelectorAll("table > tbody > tr");
     String? _abstract;
     String? _agenda;
-    String? _textBook;
+    String? _textbook;
     String? _reference;
     String? _criteria;
     String? _remark;
@@ -289,7 +282,7 @@ class SyllabusRequestQuery {
           case "授業計画":
             _agenda = zenkaku2hankaku(th.nextElementSibling!.text);
           case "教科書":
-            _textBook = zenkaku2hankaku(th.nextElementSibling!.text);
+            _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
           case "参考文献":
             _reference = zenkaku2hankaku(th.nextElementSibling!.text);
           case "成績評価方法":
@@ -308,8 +301,13 @@ class SyllabusRequestQuery {
         syllabusID: syllabusURL,
         teacher: _teacher,
         credit: _credit,
-        criteria: null,
+        criteria: _criteria,
         department: _department,
-        subjectClassification: _subjectClassification);
+        subjectClassification: _subjectClassification,
+        abstract: _abstract,
+        agenda: _agenda,
+        reference: _reference,
+        remark: _remark,
+        textbook: _textbook);
   }
 }

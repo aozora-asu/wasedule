@@ -387,7 +387,7 @@ class Department {
       subjectClassifications: null);
   static Department internationalEducation = const Department._internal(
       value: "internationalEducation",
-      text: "国際教養悪部",
+      text: "国際教養学部",
       TLC: "SILS",
       color: WASEDA_SILS_COLOR,
       departmentID: "212004",
@@ -406,7 +406,7 @@ class Department {
       color: WASEDA_HSS_COLOR,
       departmentID: "242006",
       subjectClassifications: null);
-  static const Department cultureAndMediaStudie = Department._internal(
+  static const Department cultureAndMediaStudy = Department._internal(
       value: "cultureAndMediaStudie",
       text: "文化構想学部",
       TLC: "CMS",
@@ -478,7 +478,7 @@ class Department {
         internationalEducation,
         socialScience,
         literature,
-        cultureAndMediaStudie,
+        cultureAndMediaStudy,
         advancedScience,
         creativeScience,
         fundamentalScience,
