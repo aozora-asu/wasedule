@@ -470,7 +470,7 @@ class Department {
   final Color color;
   final List<SubjectClassification>? subjectClassifications;
 
-  static List<Department> get _departments => [
+  static List<Department> get departments => [
         education,
         politicalEconomy,
         law,
@@ -487,7 +487,7 @@ class Department {
         global
       ];
   static Department? byValue(String value) {
-    for (var department in _departments) {
+    for (var department in departments) {
       if (department.value == value) {
         return department;
       }
