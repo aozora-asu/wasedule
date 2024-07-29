@@ -9,8 +9,7 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-class SyllabusSearchDialog extends ConsumerStatefulWidget{
+class SyllabusSearchDialog extends ConsumerStatefulWidget {
   Term? gakki;
   DayOfWeek? youbi;
   Lesson? jigen;
@@ -50,21 +49,17 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     isFullYear = false;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap:(){},
-      child:searchWindow());
+    return GestureDetector(onTap: () {}, child: searchWindow());
   }
 
   Widget searchWindow() {
     String courseTimeText;
-    String year = returnFiscalYear(DateTime.now()).toString();
+    String year = Term.whenSchoolYear(DateTime.now()).toString();
     int radiusType = 0;
-    if(!widget.topRadius){
-       radiusType = 3;
+    if (!widget.topRadius) {
+      radiusType = 3;
     }
 
     if (widget.youbi != null && widget.jigen != null) {
@@ -82,24 +77,26 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return Container(
       decoration: roundedBoxdecorationWithShadow(radiusType: radiusType),
       width: SizeConfig.blockSizeHorizontal! * 100,
-      padding: const EdgeInsets.symmetric(horizontal: 12.5,vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
       child: Column(
         children: [
-          
-          Row(children:[
+          Row(children: [
             const SizedBox(
-              width:60,
-              child: Text(
-                "候補",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-              ),
-            )),
+                width: 60,
+                child: Text(
+                  "候補",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
             const Spacer(),
-            Text(courseTimeText,style: searchConditionTextStyle,),
+            Text(
+              courseTimeText,
+              style: searchConditionTextStyle,
+            ),
             const Spacer(),
           ]),
           const Divider(),
@@ -116,9 +113,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
               departmentPicker(widget.gakubu),
             ],
           ),
-          const SizedBox(height:5),
+          const SizedBox(height: 5),
           subjectClassificationPicker(searchConditionTextStyle),
-          const SizedBox(height:5),
+          const SizedBox(height: 5),
           Row(
             children: [
               SizedBox(
@@ -130,11 +127,13 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 ),
               ),
               searchTextField(
-                TextEditingController(text:requestQuery.keyword ?? ""),
-                (value){requestQuery.keyword = value;}),
+                  TextEditingController(text: requestQuery.keyword ?? ""),
+                  (value) {
+                requestQuery.keyword = value;
+              }),
             ],
           ),
-          const SizedBox(height:5),
+          const SizedBox(height: 5),
           Row(
             children: [
               SizedBox(
@@ -146,13 +145,12 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 ),
               ),
               CupertinoCheckbox(
-                value: requestQuery.p_open,
-                onChanged: (value){
-                  setState(() {
-                    requestQuery.p_open = value!;
-                  });
-                }),
-
+                  value: requestQuery.p_open,
+                  onChanged: (value) {
+                    setState(() {
+                      requestQuery.p_open = value!;
+                    });
+                  }),
               SizedBox(
                 width: 50,
                 child: Text(
@@ -162,21 +160,19 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 ),
               ),
               CupertinoCheckbox(
-                value: isFullYear,
-                onChanged: (value){
-                  isFullYear = value!;
-                  if(value){
-                  setState(() {
-                    
-                    requestQuery.p_gakki = Term.fullYear;
-                  });
-                  }else{
-                  setState(() {
-                    requestQuery.p_gakki = widget.gakki;
-                  });
-                  }
-
-                })
+                  value: isFullYear,
+                  onChanged: (value) {
+                    isFullYear = value!;
+                    if (value) {
+                      setState(() {
+                        requestQuery.p_gakki = Term.fullYear;
+                      });
+                    } else {
+                      setState(() {
+                        requestQuery.p_gakki = widget.gakki;
+                      });
+                    }
+                  })
             ],
           ),
           const Divider(),
@@ -186,22 +182,22 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     );
   }
 
-  Widget searchTextField(TextEditingController controller, Function(String) onSubmitted){
-
+  Widget searchTextField(
+      TextEditingController controller, Function(String) onSubmitted) {
     return Expanded(
-      child:CupertinoTextField(
-        controller: controller,
-        onSubmitted: (value) {
-          setState(() {
-            onSubmitted(value);
-          });
-        },
-      ));
+        child: CupertinoTextField(
+      controller: controller,
+      onSubmitted: (value) {
+        setState(() {
+          onSubmitted(value);
+        });
+      },
+    ));
   }
 
   Widget departmentPicker(Department? gakubu) {
     List<Department?> items = Department.departments;
-    items.insert(0,gakubu);
+    items.insert(0, gakubu);
 
     return Expanded(
       child: CupertinoPicker(
@@ -225,243 +221,252 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     Widget value;
     Department? gakubu = requestQuery.p_gakubu;
 
-    if(gakubu == null || gakubu.subjectClassifications == null){
-      value = const SizedBox(); 
-    }else{     
+    if (gakubu == null || gakubu.subjectClassifications == null) {
+      value = const SizedBox();
+    } else {
       List<SubjectClassification?> items = [];
       items.add(null);
       items.addAll(gakubu.subjectClassifications!);
 
-      value = Row(
-            children: [
-              SizedBox(
-                width: 80,
-                child: Text(
-                  "科目区分",
-                  style: searchConditionTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ), 
-        Expanded(
-        child: CupertinoPicker(
-          useMagnifier: true,
-          itemExtent: 32.0,
-          onSelectedItemChanged: (int index) {
-            setState(() {
-              requestQuery.subjectClassification = items.elementAt(index);
-            });
-          },
-          children: List<Widget>.generate(items.length, (int index) {
-            return Center(
-              child: Text(items[index]?.text ?? "科目区分を選択"),
-            );
-          }),
+      value = Row(children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            "科目区分",
+            style: searchConditionTextStyle,
+            textAlign: TextAlign.center,
+          ),
         ),
-      )
-    ]);
-  }
+        Expanded(
+          child: CupertinoPicker(
+            useMagnifier: true,
+            itemExtent: 32.0,
+            onSelectedItemChanged: (int index) {
+              setState(() {
+                requestQuery.subjectClassification = items.elementAt(index);
+              });
+            },
+            children: List<Widget>.generate(items.length, (int index) {
+              return Center(
+                child: Text(items[index]?.text ?? "科目区分を選択"),
+              );
+            }),
+          ),
+        )
+      ]);
+    }
 
-    return  value;
+    return value;
   }
 
   List<SyllabusQueryResult> resultList = [];
-Widget searchResult() {
-  resultList = [];
+  Widget searchResult() {
+    resultList = [];
 
-  // 検索条件の値をコンソールに出力
-  print(requestQuery.p_gakubu?.text ?? '学部が設定されていません');
-  print(requestQuery.p_gakki?.text ?? '学期が設定されていません');
-  print(requestQuery.p_youbi?.text ?? '曜日が設定されていません');
-  print(requestQuery.p_jigen?.text ?? '時限が設定されていません');
-  print(requestQuery.subjectClassification?.text ?? '科目群が設定されていません');
-  print(requestQuery.kamoku?? '科目名が設定されていません');
-  print(requestQuery.keyword ?? 'キーワードが設定されていません');
-  print(requestQuery.p_open);
+    // 検索条件の値をコンソールに出力
+    print(requestQuery.p_gakubu?.text ?? '学部が設定されていません');
+    print(requestQuery.p_gakki?.text ?? '学期が設定されていません');
+    print(requestQuery.p_youbi?.text ?? '曜日が設定されていません');
+    print(requestQuery.p_jigen?.text ?? '時限が設定されていません');
+    print(requestQuery.subjectClassification?.text ?? '科目群が設定されていません');
+    print(requestQuery.kamoku ?? '科目名が設定されていません');
+    print(requestQuery.keyword ?? 'キーワードが設定されていません');
+    print(requestQuery.p_open);
 
-  return StreamBuilder<SyllabusQueryResult>(
-    stream: requestQuery.fetchAllSyllabusInfo(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const SizedBox(
-          height: 70,
-          child: Center(child: CircularProgressIndicator(color: PALE_MAIN_COLOR)),
-        );
-
-      } else if (snapshot.hasError) {
-        // エラーメッセージを表示
-        return Text(snapshot.error.toString());
-      } else if(!snapshot.hasData){
-        // 検索結果がない場合のメッセージを表示
-        return const SizedBox(
-          height: 70,
-          child: Center(
-            child: Text("検索結果なし", style: TextStyle(color: Colors.grey)),
-          ),
-        );
-      }else{
-        print("Data Found");
-        resultList.add(snapshot.data!);
-        // シラバス情報をリスト形式で表示
-        return ListView.separated(
-          itemBuilder: (context, index) {
-           // 取得したデータのコース名を表示
-            return resultListChild(
-              resultList.elementAt(index));  // シラバス情報のコース名を表示
-          },
-          separatorBuilder: (context, index) {
-            return const SizedBox(height: 2);
-          },
-          itemCount: resultList.length,
-          shrinkWrap: true,
-        );
-      }
-    },
-  );
-}
-
- Widget resultListChild(SyllabusQueryResult result){
-  int boxRadiusType = 2;
-  String credits = result.credit ?? "0";
-  Color creditsIndiatorColor;
-
-  switch(credits){
-    case "1":
-      creditsIndiatorColor = Colors.lightBlue;
-    case "2" : 
-      creditsIndiatorColor = Colors.orange;
-    case "3" :
-      creditsIndiatorColor = Colors.deepOrange;
-    case "4" :
-      creditsIndiatorColor = Colors.red;
-    case "8" :
-      creditsIndiatorColor = Colors.deepPurple;
-    default :
-      creditsIndiatorColor = Colors.yellow;
-  }
-
-  return GestureDetector(
-    onTap:() async{
-      await showCourseDescriptionModalSheet(result);
-    },
-    child:Container(
-      decoration: roundedBoxdecorationWithShadow(
-        radiusType: boxRadiusType,
-        backgroundColor: BACKGROUND_COLOR),
-      padding:const EdgeInsets.symmetric(vertical:2,horizontal:5),
-      child: 
-        Row(children:[
-
-          const Text("単\n位",style:TextStyle(color:Colors.grey,fontSize:10)),
-
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: creditsIndiatorColor,),
-            height:25,width:25,
+    return StreamBuilder<SyllabusQueryResult>(
+      stream: requestQuery.fetchAllSyllabusInfo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 70,
             child: Center(
-              child:Text(credits,
-                style: const TextStyle(
-                  fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white))),
-          ),
-
-          Expanded(
-            child:Text(result.courseName,
-              overflow: TextOverflow.clip,
-              style:const TextStyle(fontWeight:FontWeight.bold))),
-
-          Container(
-            constraints: const BoxConstraints(maxWidth: 50),
-            child:Text(result.classRoom,
-              style:const TextStyle(
-                overflow: TextOverflow.clip,
-                color:Colors.grey))),
-          
-          const Icon(Icons.search,color:Colors.grey),
-      
-          GestureDetector(
-            onTap:(){},
-            child:Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: BLUEGREY),
-              height:25,
-              child:const Center(
-                child:Text("  + 追加  ",
-                  style: TextStyle(
-                    fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white))),
-            )),
-        ]),
-    ));
- }
-
-  Future<void> showCourseDescriptionModalSheet(SyllabusQueryResult result) async{
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: SizeConfig.blockSizeVertical! *60,
-          width: SizeConfig.blockSizeHorizontal! *100,
-          decoration: roundedBoxdecorationWithShadow(radiusType: 1),
-          padding:const  EdgeInsets.all(15),
-          child:SingleChildScrollView(
-           child: Column(
-            children: [
-            Row(children: [
-              Expanded(
-                child:Center(
-                  child:Text(result.courseName,
-                    style: const TextStyle(fontWeight: FontWeight.bold,fontSize:25),
-                    overflow: TextOverflow.clip,))),
-              buttonModel(
-                (){
-
-                },
-                BLUEGREY,"追加",horizontalPadding: 30),
-            ],),
-            const SizedBox(height:5),
-            descriptionElementTile("年度/学期/時限","${result.year.toString()}/${result.semesterAndWeekdayAndPeriod}",radiusType: 1),
-            descriptionElementTile("学部",result.department ?? "なし"),
-            descriptionElementTile("単位数",result.credit.toString()),
-            descriptionElementTile("科目群",result.subjectClassification ?? "なし",fontWeight: FontWeight.normal),
-            descriptionElementTile("教室",result.classRoom,fontWeight: FontWeight.normal),
-            descriptionElementTile("教科書",result.textbook ?? "なし",),
-            descriptionElementTile("評価方法",result.criteria.toString()),
-            descriptionElementTile("教員",result.teacher ?? "なし",fontWeight: FontWeight.normal),
-            descriptionElementTile("概要",result.abstract ?? "なし",fontWeight: FontWeight.normal),
-            descriptionElementTile("備考",result.remark ?? "なし",fontWeight: FontWeight.normal),
-            descriptionElementTile("授業計画",result.agenda ?? "なし",fontWeight: FontWeight.normal),
-            descriptionElementTile("参考文献",result.reference ?? "なし",fontWeight: FontWeight.normal,radiusType: 3),
-            ],
-          ),
-        )
-        );
+                child: CircularProgressIndicator(color: PALE_MAIN_COLOR)),
+          );
+        } else if (snapshot.hasError) {
+          // エラーメッセージを表示
+          return Text(snapshot.error.toString());
+        } else if (!snapshot.hasData) {
+          // 検索結果がない場合のメッセージを表示
+          return const SizedBox(
+            height: 70,
+            child: Center(
+              child: Text("検索結果なし", style: TextStyle(color: Colors.grey)),
+            ),
+          );
+        } else {
+          print("Data Found");
+          resultList.add(snapshot.data!);
+          // シラバス情報をリスト形式で表示
+          return ListView.separated(
+            itemBuilder: (context, index) {
+              // 取得したデータのコース名を表示
+              return resultListChild(
+                  resultList.elementAt(index)); // シラバス情報のコース名を表示
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(height: 2);
+            },
+            itemCount: resultList.length,
+            shrinkWrap: true,
+          );
+        }
       },
     );
   }
 
-  Widget descriptionElementTile(
-   String titleText,String descriptionText,
-   {int radiusType = 2,FontWeight fontWeight = FontWeight.bold}){
+  Widget resultListChild(SyllabusQueryResult result) {
+    int boxRadiusType = 2;
+    String credits = result.credit ?? "0";
+    Color creditsIndiatorColor;
+
+    switch (credits) {
+      case "1":
+        creditsIndiatorColor = Colors.lightBlue;
+      case "2":
+        creditsIndiatorColor = Colors.orange;
+      case "3":
+        creditsIndiatorColor = Colors.deepOrange;
+      case "4":
+        creditsIndiatorColor = Colors.red;
+      case "8":
+        creditsIndiatorColor = Colors.deepPurple;
+      default:
+        creditsIndiatorColor = Colors.yellow;
+    }
+
+    return GestureDetector(
+        onTap: () async {
+          await showCourseDescriptionModalSheet(result);
+        },
+        child: Container(
+          decoration: roundedBoxdecorationWithShadow(
+              radiusType: boxRadiusType, backgroundColor: BACKGROUND_COLOR),
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+          child: Row(children: [
+            const Text("単\n位",
+                style: TextStyle(color: Colors.grey, fontSize: 10)),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: creditsIndiatorColor,
+              ),
+              height: 25,
+              width: 25,
+              child: Center(
+                  child: Text(credits,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white))),
+            ),
+            Expanded(
+                child: Text(result.courseName,
+                    overflow: TextOverflow.clip,
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            Container(
+                constraints: const BoxConstraints(maxWidth: 50),
+                child: Text(result.classRoom,
+                    style: const TextStyle(
+                        overflow: TextOverflow.clip, color: Colors.grey))),
+            const Icon(Icons.search, color: Colors.grey),
+            GestureDetector(
+                onTap: () {},
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10), color: BLUEGREY),
+                  height: 25,
+                  child: const Center(
+                      child: Text("  + 追加  ",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))),
+                )),
+          ]),
+        ));
+  }
+
+  Future<void> showCourseDescriptionModalSheet(
+      SyllabusQueryResult result) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+            height: SizeConfig.blockSizeVertical! * 60,
+            width: SizeConfig.blockSizeHorizontal! * 100,
+            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+            padding: const EdgeInsets.all(15),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Center(
+                              child: Text(
+                        result.courseName,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25),
+                        overflow: TextOverflow.clip,
+                      ))),
+                      buttonModel(() {}, BLUEGREY, "追加", horizontalPadding: 30),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  descriptionElementTile("年度/学期/時限",
+                      "${result.year.toString()}/${result.semesterAndWeekdayAndPeriod}",
+                      radiusType: 1),
+                  descriptionElementTile("学部", result.department ?? "なし"),
+                  descriptionElementTile("単位数", result.credit.toString()),
+                  descriptionElementTile(
+                      "科目群", result.subjectClassification ?? "なし",
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile("教室", result.classRoom,
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile(
+                    "教科書",
+                    result.textbook ?? "なし",
+                  ),
+                  descriptionElementTile("評価方法", result.criteria.toString()),
+                  descriptionElementTile("教員", result.teacher ?? "なし",
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile("概要", result.abstract ?? "なし",
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile("備考", result.remark ?? "なし",
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile("授業計画", result.agenda ?? "なし",
+                      fontWeight: FontWeight.normal),
+                  descriptionElementTile("参考文献", result.reference ?? "なし",
+                      fontWeight: FontWeight.normal, radiusType: 3),
+                ],
+              ),
+            ));
+      },
+    );
+  }
+
+  Widget descriptionElementTile(String titleText, String descriptionText,
+      {int radiusType = 2, FontWeight fontWeight = FontWeight.bold}) {
     return Container(
       decoration: roundedBoxdecorationWithShadow(
-        radiusType: radiusType,backgroundColor: BACKGROUND_COLOR),
+          radiusType: radiusType, backgroundColor: BACKGROUND_COLOR),
       margin: const EdgeInsets.symmetric(vertical: 1),
-      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-      child:Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-        Text(titleText,style:const TextStyle(color:Colors.grey,fontSize: 15),),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          titleText,
+          style: const TextStyle(color: Colors.grey, fontSize: 15),
+        ),
         const SizedBox(width: 10),
         Expanded(
-          child:Center(
-            child:Text(
-              descriptionText,
-              style: TextStyle(fontWeight:fontWeight),
+            child: Center(
+                child: Text(
+          descriptionText,
+          style: TextStyle(fontWeight: fontWeight),
         )))
       ]),
     );
   }
-
 }
