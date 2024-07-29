@@ -79,7 +79,7 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
           
           Row(children:[
             const SizedBox(
-              width:80,
+              width:60,
               child: Text(
                 "候補",
                 textAlign: TextAlign.center,
@@ -271,11 +271,18 @@ Widget searchResult() {
         // シラバス情報をリスト形式で表示
         return ListView.separated(
           itemBuilder: (context, index) {
+            bool isLast = false;
+            if(index+1 == resultList.length){
+              isLast = true;
+            }
            // 取得したデータのコース名を表示
-            return Text(resultList.elementAt(index).courseName);  // シラバス情報のコース名を表示
+            return resultListChild(
+              resultList.elementAt(index),
+              index,
+              isLast);  // シラバス情報のコース名を表示
           },
           separatorBuilder: (context, index) {
-            return const SizedBox(height: 5);
+            return const SizedBox(height: 2);
           },
           itemCount: resultList.length,
           shrinkWrap: true,
@@ -284,5 +291,28 @@ Widget searchResult() {
     },
   );
 }
+
+ Widget resultListChild(SyllabusQueryResult result,int index,bool isLast){
+  int boxRadiusType = 2;
+  if(index == 0){
+    boxRadiusType = 1;
+  }else if(isLast){
+    boxRadiusType = 3;
+  }
+
+
+  return Container(
+    decoration: roundedBoxdecorationWithShadow(
+      radiusType: boxRadiusType,
+      backgroundColor: BACKGROUND_COLOR),
+    padding:const EdgeInsets.all(3),
+    child: Row(children:[
+      Expanded(
+        child:Text(result.courseName,
+          overflow: TextOverflow.clip,
+          style:const TextStyle(fontWeight:FontWeight.bold)))
+    ]),
+  );
+ }
 
 }
