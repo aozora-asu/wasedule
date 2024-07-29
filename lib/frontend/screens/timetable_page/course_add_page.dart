@@ -71,12 +71,17 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                   children: [
                                     const Text("時間割に新規追加...",
                                         style: TextStyle(
-                                            fontSize: 30,
+                                            fontSize: 25,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     courseInfo(),
-                                    const SizedBox(height:20),
-                                    SyllabusSearchDialog()
+                                    const SizedBox(height:1),
+                                    SyllabusSearchDialog(
+                                      gakki: widget.semester,
+                                      jigen: widget.period,
+                                      youbi: widget.weekDay,
+                                      gakubu: Department.advancedScience
+                                    )
                                   ])))))));
     }));
   }
@@ -99,7 +104,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Padding(
                 padding: const EdgeInsets.all(12.5),
@@ -107,6 +112,50 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
+                        const SizedBox(
+                          width:100,
+                          child: Text(
+                            "手動登録",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                        Text(errorText,
+                            style: const TextStyle(color: Colors.red)),
+                        const Spacer(),
+                        buttonModel(() {
+                          className = classNameController.text;
+                          classRoom = classRoomController.text;
+                          memo = memoController.text;
+                          if (isValid()) {
+                            //＠ここに時間割データの追加関数！！！
+                            MyCourseDatabaseHandler()
+                                .resisterMyCourseFromMoodle(MyCourse(
+                                    classRoom: classRoom,
+                                    color: "#96C78C",
+                                    courseName: className,
+                                    pageID: null,
+                                    period: period,
+                                    semester: semester,
+                                    syllabusID: null,
+                                    weekday: weekDay,
+                                    year: year,
+                                    criteria: null,
+                                    memo: memo));
+                            widget.setTimetableState(() {});
+                            Navigator.pop(context);
+                          } else {}
+                        }, isValid() ? MAIN_COLOR : Colors.grey, "   追加   "),
+                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                      ]),
+                      dividerModel,
+                      Row(children: [
+                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                        const Icon(Icons.school, color: MAIN_COLOR),
+                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
                         textFieldModel("授業名…", classNameController,
                             FontWeight.normal, (value) {}),
                       ]),
@@ -146,38 +195,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                         textFieldModel("授業メモ…", memoController,
                             FontWeight.normal, (value) {}),
                       ]),
-                      dividerModel,
                       const SizedBox(height: 2),
-                      Row(children: [
-                        const SizedBox(width: 5),
-                        Text(errorText,
-                            style: const TextStyle(color: Colors.red)),
-                        const Spacer(),
-                        buttonModel(() {
-                          className = classNameController.text;
-                          classRoom = classRoomController.text;
-                          memo = memoController.text;
-                          if (isValid()) {
-                            //＠ここに時間割データの追加関数！！！
-                            MyCourseDatabaseHandler()
-                                .resisterMyCourseFromMoodle(MyCourse(
-                                    classRoom: classRoom,
-                                    color: "#96C78C",
-                                    courseName: className,
-                                    pageID: null,
-                                    period: period,
-                                    semester: semester,
-                                    syllabusID: null,
-                                    weekday: weekDay,
-                                    year: year,
-                                    criteria: null,
-                                    memo: memo));
-                            widget.setTimetableState(() {});
-                            Navigator.pop(context);
-                          } else {}
-                        }, isValid() ? ACCENT_COLOR : Colors.grey, "   追加   "),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                      ])
                     ]))));
   }
 
