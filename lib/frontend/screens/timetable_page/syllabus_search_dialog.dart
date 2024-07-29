@@ -28,6 +28,7 @@ class SyllabusSearchDialog extends StatefulWidget{
 
 class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
+  late bool isFullYear;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
       p_open: false,
       subjectClassification: null,
     );
+    isFullYear = false;
   }
 
 
@@ -142,6 +144,31 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
                   setState(() {
                     requestQuery.p_open = value!;
                   });
+                }),
+
+              SizedBox(
+                width: 50,
+                child: Text(
+                  "通年",
+                  style: searchConditionTextStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              CupertinoCheckbox(
+                value: isFullYear,
+                onChanged: (value){
+                  isFullYear = value!;
+                  if(value){
+                  setState(() {
+                    
+                    requestQuery.p_gakki = Term.fullYear;
+                  });
+                  }else{
+                  setState(() {
+                    requestQuery.p_gakki = widget.gakki;
+                  });
+                  }
+
                 })
             ],
           ),
