@@ -33,8 +33,8 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
   void initState() {
     super.initState();
     requestQuery = SyllabusRequestQuery(
-      keyword: "",
-      kamoku: "",
+      keyword: null,
+      kamoku: null,
       p_gakki: widget.gakki,
       p_youbi: widget.youbi,
       p_jigen: widget.jigen,
@@ -121,7 +121,7 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
                 ),
               ),
               searchTextField(
-                TextEditingController(text:requestQuery.keyword),
+                TextEditingController(text:requestQuery.keyword ?? ""),
                 (value){requestQuery.keyword = value;}),
             ],
           ),
@@ -176,6 +176,7 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
         onSelectedItemChanged: (int index) {
           setState(() {
             requestQuery.p_gakubu = items.elementAt(index);
+            requestQuery.subjectClassification = null;
           });
         },
         children: List<Widget>.generate(items.length, (int index) {
@@ -194,8 +195,9 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
     if(gakubu == null || gakubu.subjectClassifications == null){
       value = const SizedBox(); 
     }else{     
-    List<SubjectClassification> items =
-      gakubu.subjectClassifications!;
+      List<SubjectClassification?> items = [];
+      items.add(null);
+      items.addAll(gakubu.subjectClassifications!);
 
       value = Row(
             children: [
@@ -213,12 +215,12 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
           itemExtent: 32.0,
           onSelectedItemChanged: (int index) {
             setState(() {
-              requestQuery.subjectClassification;
+              requestQuery.subjectClassification = items.elementAt(index);
             });
           },
           children: List<Widget>.generate(items.length, (int index) {
             return Center(
-              child: Text(items[index].text),
+              child: Text(items[index]?.text ?? "科目区分を選択"),
             );
           }),
         ),
@@ -229,42 +231,58 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
     return  value;
   }
 
-  Widget searchResult(){
-    print(requestQuery.p_gakubu!.text);
-    print(requestQuery.p_gakki!.text);
-    print(requestQuery.p_youbi!.text);
-    print(requestQuery.p_jigen!.text);
-    print(requestQuery.keyword);
-    print(requestQuery.p_open);
-    return StreamBuilder(
-      stream: requestQuery.fetchAllSyllabusInfo(),
-      builder: (context,snapShot){
-        if(snapShot.connectionState == ConnectionState.waiting){
-          return const SizedBox(
-            height:70,
-            child:Center(
-              child:CircularProgressIndicator(color:PALE_MAIN_COLOR)));
-        }else if(snapShot.hasData){
-          return ListView.separated(
-            itemBuilder:(context,index){
-              return Text(snapShot.data!.courseName);
-            },
-            separatorBuilder:(context,index){
-              return const SizedBox(height:5);
-            },
-            itemCount: 3,//snapShot.data!.length,
-            shrinkWrap: true,
-            );
-        }else if(snapShot.hasError){
-          return Text(snapShot.error.toString());
-        }else{
-          return const SizedBox(
-            height:70,
-            child:Center(
-              child:Text("検索結果なし",
-                style:TextStyle(color:Colors.grey))));
-        }
-      },);
-  }
+  List<SyllabusQueryResult> resultList = [];
+Widget searchResult() {
+  resultList = [];
+
+  // 検索条件の値をコンソールに出力
+  print(requestQuery.p_gakubu?.text ?? '学部が設定されていません');
+  print(requestQuery.p_gakki?.text ?? '学期が設定されていません');
+  print(requestQuery.p_youbi?.text ?? '曜日が設定されていません');
+  print(requestQuery.p_jigen?.text ?? '時限が設定されていません');
+  print(requestQuery.subjectClassification?.text ?? '科目群が設定されていません');
+  print(requestQuery.kamoku?? '科目名が設定されていません');
+  print(requestQuery.keyword ?? 'キーワードが設定されていません');
+  print(requestQuery.p_open);
+
+  return StreamBuilder<SyllabusQueryResult>(
+    stream: requestQuery.fetchAllSyllabusInfo(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox(
+          height: 70,
+          child: Center(child: CircularProgressIndicator(color: PALE_MAIN_COLOR)),
+        );
+
+      } else if (snapshot.hasError) {
+        // エラーメッセージを表示
+        return Text(snapshot.error.toString());
+      } else if(!snapshot.hasData){
+        // 検索結果がない場合のメッセージを表示
+        return const SizedBox(
+          height: 70,
+          child: Center(
+            child: Text("検索結果なし", style: TextStyle(color: Colors.grey)),
+          ),
+        );
+      }else{
+        print("Data Found");
+        resultList.add(snapshot.data!);
+        // シラバス情報をリスト形式で表示
+        return ListView.separated(
+          itemBuilder: (context, index) {
+           // 取得したデータのコース名を表示
+            return Text(resultList.elementAt(index).courseName);  // シラバス情報のコース名を表示
+          },
+          separatorBuilder: (context, index) {
+            return const SizedBox(height: 5);
+          },
+          itemCount: resultList.length,
+          shrinkWrap: true,
+        );
+      }
+    },
+  );
+}
 
 }

@@ -1,5 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -30,6 +31,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController classNameController = TextEditingController();
   TextEditingController classRoomController = TextEditingController();
   late int viewMode;
+  late bool searchMode;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     classRoomController.text = target["classRoom"] ?? "";
     classNameController.text = target["courseName"] ?? "";
     viewMode = 0;
+    searchMode = false;
   }
 
   @override
@@ -68,7 +71,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const SizedBox(height: 20),
-                                    courseInfo(),
+                                    switchSearchMode(),
                                     const SizedBox(height: 15),
                                     relatedTasks(),
                                     const SizedBox(height: 15),
@@ -76,6 +79,37 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                     const SizedBox(height: 20),
                                   ])))))));
     }));
+  }
+
+  Widget switchSearchMode(){
+    if(searchMode){
+      return Column(children:[
+        GestureDetector(
+          onTap:(){},
+          child: Container(
+            height: 50,
+            padding:const EdgeInsets.symmetric(horizontal:20),
+            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+            child: Row(children:[
+              const Icon(Icons.search,color:Colors.blue),
+              const Text(" シラバス検索",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
+              const Spacer(),
+              descriptionModeSwitch()
+            ]),
+          )),
+        const SizedBox(height:1),
+        SyllabusSearchDialog(
+          gakki:Term.byValue(widget.target["semester"]),
+          youbi:DayOfWeek.weekAt(widget.target["weekday"]),
+          jigen:Lesson.atPeriod(widget.target["period"]),
+          gakubu:Department.commerce)
+      ]);
+    }else{
+      return courseInfo();
+    }
   }
 
   Widget courseInfo() {
@@ -116,6 +150,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                       const SizedBox(height: 5),
                       Row(children: [
                         viewModeSwitch(),
+                        searchModeSwitch(),
                         const Spacer(),
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
@@ -148,7 +183,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           setState(() {
             viewMode = 1;
           });
-        }, Colors.blueAccent, " シラバス詳細 ");
+        }, Colors.blueAccent, " 授業の詳細 ");
       } else {
         return const SizedBox();
       }
@@ -157,9 +192,27 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     }
   }
 
+  Widget searchModeSwitch() {
+      if (!searchMode && viewMode == 0) {
+        return buttonModel(() {
+          setState(() {
+            searchMode = true;
+          });
+        }, Colors.blueAccent, " シラバス検索 ");
+      } else {
+        return const SizedBox();
+      }
+  }
+
   Widget descriptionModeSwitch() {
     Map target = widget.target;
-    if (target["syllabusID"] != null && target["syllabusID"] != "") {
+    if(searchMode){
+        return buttonModel(() {
+          setState(() {
+            searchMode = false;
+          });
+        }, Colors.blueAccent, " もどる ");
+    }else if (target["syllabusID"] != null && target["syllabusID"] != "") {
       if (viewMode == 0) {
         return const SizedBox();
       } else {
