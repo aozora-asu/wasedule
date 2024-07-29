@@ -7,15 +7,18 @@ import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_sche
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-class SyllabusSearchDialog extends StatefulWidget{
+class SyllabusSearchDialog extends ConsumerStatefulWidget{
   Term? gakki;
   DayOfWeek? youbi;
   Lesson? jigen;
   Department? gakubu;
+  bool topRadius;
 
   SyllabusSearchDialog({
+    required this.topRadius,
     this.gakki,
     this.youbi,
     this.jigen,
@@ -26,7 +29,7 @@ class SyllabusSearchDialog extends StatefulWidget{
   _SyllabusSearchDialogState createState() => _SyllabusSearchDialogState();
 }
 
-class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
+class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
 
@@ -59,6 +62,10 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
   Widget searchWindow() {
     String courseTimeText;
     String year = returnFiscalYear(DateTime.now()).toString();
+    int radiusType = 0;
+    if(!widget.topRadius){
+       radiusType = 3;
+    }
 
     if (widget.youbi != null && widget.jigen != null) {
       courseTimeText =
@@ -73,7 +80,7 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
     );
 
     return Container(
-      decoration: roundedBoxdecorationWithShadow(radiusType: 3),
+      decoration: roundedBoxdecorationWithShadow(radiusType: radiusType),
       width: SizeConfig.blockSizeHorizontal! * 100,
       padding: const EdgeInsets.symmetric(horizontal: 12.5,vertical: 5),
       child: Column(
@@ -198,7 +205,6 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
 
     return Expanded(
       child: CupertinoPicker(
-        useMagnifier: true,
         itemExtent: 32.0,
         onSelectedItemChanged: (int index) {
           setState(() {
@@ -298,15 +304,9 @@ Widget searchResult() {
         // シラバス情報をリスト形式で表示
         return ListView.separated(
           itemBuilder: (context, index) {
-            bool isLast = false;
-            if(index+1 == resultList.length){
-              isLast = true;
-            }
            // 取得したデータのコース名を表示
             return resultListChild(
-              resultList.elementAt(index),
-              index,
-              isLast);  // シラバス情報のコース名を表示
+              resultList.elementAt(index));  // シラバス情報のコース名を表示
           },
           separatorBuilder: (context, index) {
             return const SizedBox(height: 2);
@@ -319,27 +319,149 @@ Widget searchResult() {
   );
 }
 
- Widget resultListChild(SyllabusQueryResult result,int index,bool isLast){
+ Widget resultListChild(SyllabusQueryResult result){
   int boxRadiusType = 2;
-  if(index == 0){
-    boxRadiusType = 1;
-  }else if(isLast){
-    boxRadiusType = 3;
+  String credits = result.credit ?? "0";
+  Color creditsIndiatorColor;
+
+  switch(credits){
+    case "1":
+      creditsIndiatorColor = Colors.lightBlue;
+    case "2" : 
+      creditsIndiatorColor = Colors.orange;
+    case "3" :
+      creditsIndiatorColor = Colors.deepOrange;
+    case "4" :
+      creditsIndiatorColor = Colors.red;
+    case "8" :
+      creditsIndiatorColor = Colors.deepPurple;
+    default :
+      creditsIndiatorColor = Colors.yellow;
   }
 
+  return GestureDetector(
+    onTap:() async{
+      await showCourseDescriptionModalSheet(result);
+    },
+    child:Container(
+      decoration: roundedBoxdecorationWithShadow(
+        radiusType: boxRadiusType,
+        backgroundColor: BACKGROUND_COLOR),
+      padding:const EdgeInsets.symmetric(vertical:2,horizontal:5),
+      child: 
+        Row(children:[
 
-  return Container(
-    decoration: roundedBoxdecorationWithShadow(
-      radiusType: boxRadiusType,
-      backgroundColor: BACKGROUND_COLOR),
-    padding:const EdgeInsets.all(3),
-    child: Row(children:[
-      Expanded(
-        child:Text(result.courseName,
-          overflow: TextOverflow.clip,
-          style:const TextStyle(fontWeight:FontWeight.bold)))
-    ]),
-  );
+          const Text("単\n位",style:TextStyle(color:Colors.grey,fontSize:10)),
+
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: creditsIndiatorColor,),
+            height:25,width:25,
+            child: Center(
+              child:Text(credits,
+                style: const TextStyle(
+                  fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white))),
+          ),
+
+          Expanded(
+            child:Text(result.courseName,
+              overflow: TextOverflow.clip,
+              style:const TextStyle(fontWeight:FontWeight.bold))),
+
+          Container(
+            constraints: const BoxConstraints(maxWidth: 50),
+            child:Text(result.classRoom,
+              style:const TextStyle(
+                overflow: TextOverflow.clip,
+                color:Colors.grey))),
+          
+          const Icon(Icons.search,color:Colors.grey),
+      
+          GestureDetector(
+            onTap:(){},
+            child:Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: BLUEGREY),
+              height:25,
+              child:const Center(
+                child:Text("  + 追加  ",
+                  style: TextStyle(
+                    fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white))),
+            )),
+        ]),
+    ));
  }
+
+  Future<void> showCourseDescriptionModalSheet(SyllabusQueryResult result) async{
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: SizeConfig.blockSizeVertical! *60,
+          width: SizeConfig.blockSizeHorizontal! *100,
+          decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+          padding:const  EdgeInsets.all(15),
+          child:SingleChildScrollView(
+           child: Column(
+            children: [
+            Row(children: [
+              Expanded(
+                child:Center(
+                  child:Text(result.courseName,
+                    style: const TextStyle(fontWeight: FontWeight.bold,fontSize:25),
+                    overflow: TextOverflow.clip,))),
+              buttonModel(
+                (){
+
+                },
+                BLUEGREY,"追加",horizontalPadding: 30),
+            ],),
+            const SizedBox(height:5),
+            descriptionElementTile("年度/学期/時限","${result.year.toString()}/${result.semesterAndWeekdayAndPeriod}",radiusType: 1),
+            descriptionElementTile("学部",result.department ?? "なし"),
+            descriptionElementTile("単位数",result.credit.toString()),
+            descriptionElementTile("科目群",result.subjectClassification ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("教室",result.classRoom,fontWeight: FontWeight.normal),
+            descriptionElementTile("教科書",result.textbook ?? "なし",),
+            descriptionElementTile("評価方法",result.criteria.toString()),
+            descriptionElementTile("教員",result.teacher ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("概要",result.abstract ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("備考",result.remark ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("授業計画",result.agenda ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("参考文献",result.reference ?? "なし",fontWeight: FontWeight.normal,radiusType: 3),
+            ],
+          ),
+        )
+        );
+      },
+    );
+  }
+
+  Widget descriptionElementTile(
+   String titleText,String descriptionText,
+   {int radiusType = 2,FontWeight fontWeight = FontWeight.bold}){
+    return Container(
+      decoration: roundedBoxdecorationWithShadow(
+        radiusType: radiusType,backgroundColor: BACKGROUND_COLOR),
+      margin: const EdgeInsets.symmetric(vertical: 1),
+      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+      child:Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+        Text(titleText,style:const TextStyle(color:Colors.grey,fontSize: 15),),
+        const SizedBox(width: 10),
+        Expanded(
+          child:Center(
+            child:Text(
+              descriptionText,
+              style: TextStyle(fontWeight:fontWeight),
+        )))
+      ]),
+    );
+  }
 
 }

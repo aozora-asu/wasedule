@@ -102,6 +102,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           )),
         const SizedBox(height:1),
         SyllabusSearchDialog(
+          topRadius: false,
           gakki:Term.byValue(widget.target["semester"]),
           youbi:DayOfWeek.weekAt(widget.target["weekday"]),
           jigen:Lesson.atPeriod(widget.target["period"]),

@@ -54,7 +54,10 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
           reverse: true,
-          child: Padding(
+          child: Scrollbar(
+           interactive: true,
+           thickness: 5,
+           child:Padding(
               padding: EdgeInsets.only(bottom: bottomSpace / 2),
               child: ConstrainedBox(
                   constraints: BoxConstraints(
@@ -75,14 +78,15 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     courseInfo(),
-                                    const SizedBox(height:1),
+                                    const SizedBox(height:2),
                                     SyllabusSearchDialog(
+                                      topRadius: true,
                                       gakki: widget.semester,
                                       jigen: widget.period,
                                       youbi: widget.weekDay,
                                       gakubu: Department.advancedScience
                                     )
-                                  ])))))));
+                                  ]))))))));
     }));
   }
 
@@ -104,7 +108,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+            decoration: roundedBoxdecorationWithShadow(radiusType: 0),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Padding(
                 padding: const EdgeInsets.all(12.5),
@@ -148,7 +152,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                             widget.setTimetableState(() {});
                             Navigator.pop(context);
                           } else {}
-                        }, isValid() ? MAIN_COLOR : Colors.grey, "   追加   "),
+                        }, isValid() ? BLUEGREY : Colors.grey, "   追加   "),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ]),
                       dividerModel,
