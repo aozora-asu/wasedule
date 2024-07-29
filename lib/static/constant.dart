@@ -387,7 +387,7 @@ class Department {
       subjectClassifications: null);
   static Department internationalEducation = const Department._internal(
       value: "internationalEducation",
-      text: "国際教養悪部",
+      text: "国際教養学部",
       TLC: "SILS",
       color: WASEDA_SILS_COLOR,
       departmentID: "212004",
@@ -406,7 +406,7 @@ class Department {
       color: WASEDA_HSS_COLOR,
       departmentID: "242006",
       subjectClassifications: null);
-  static const Department cultureAndMediaStudie = Department._internal(
+  static const Department cultureAndMediaStudy = Department._internal(
       value: "cultureAndMediaStudie",
       text: "文化構想学部",
       TLC: "CMS",
@@ -470,7 +470,7 @@ class Department {
   final Color color;
   final List<SubjectClassification>? subjectClassifications;
 
-  static List<Department> get _departments => [
+  static List<Department> get departments => [
         education,
         politicalEconomy,
         law,
@@ -478,7 +478,7 @@ class Department {
         internationalEducation,
         socialScience,
         literature,
-        cultureAndMediaStudie,
+        cultureAndMediaStudy,
         advancedScience,
         creativeScience,
         fundamentalScience,
@@ -487,7 +487,7 @@ class Department {
         global
       ];
   static Department? byValue(String value) {
-    for (var department in _departments) {
+    for (var department in departments) {
       if (department.value == value) {
         return department;
       }

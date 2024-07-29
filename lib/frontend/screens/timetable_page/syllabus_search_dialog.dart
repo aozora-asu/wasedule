@@ -20,7 +20,6 @@ class SyllabusSearchDialog extends StatefulWidget{
     this.gakubu,
   });
 
-  
   @override
   _SyllabusSearchDialogState createState() => _SyllabusSearchDialogState();
 }
@@ -221,5 +220,4 @@ class _SyllabusSearchDialogState extends State<SyllabusSearchDialog> {
 
     return  value;
   }
-
 }
