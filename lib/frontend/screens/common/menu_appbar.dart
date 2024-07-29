@@ -317,7 +317,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             ref,
             icon:Icons.school,
             subIndex:1,
-            title: "WyWaseda"
+            title: "MyWaseda"
           ),
           space(68.0),
         ],
