@@ -11,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manage
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
+import "../../../static/constant.dart";
 
 class UnivSchedulePage extends ConsumerStatefulWidget {
   const UnivSchedulePage({super.key});
@@ -296,9 +297,10 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             const SizedBox(height: 10),
             buttonModelWithChild(() async {
               Navigator.pop(context);
-              String currentYear = returnFiscalYear(DateTime.now()).toString();
+              String currentYear =
+                  Term.whenSchoolYear(DateTime.now()).toString();
               String nextYear =
-                  (returnFiscalYear(DateTime.now()) + 1).toString();
+                  (Term.whenSchoolYear(DateTime.now()) + 1).toString();
 
               bool isScheduleDownloadSuccess = await importAcademicCalendar(
                   "${alphabet}_${currentYear}_$nextYear");
@@ -493,14 +495,5 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
             child: departmentPanel(WASEDA_SPS_COLOR, "SPS", "スポーツ科学部")),
       ],
     );
-  }
-}
-
-int returnFiscalYear(DateTime dt) {
-  int month = dt.month;
-  if (month <= 3) {
-    return dt.year - 1;
-  } else {
-    return dt.year;
   }
 }
