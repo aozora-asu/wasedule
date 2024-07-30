@@ -12,9 +12,11 @@ late InAppWebViewController wineWebViewController;
 
 class SyllabusDescriptonView extends StatefulWidget{
   SyllabusQueryResult syllabusQuery;
+  bool showHeader;
 
   SyllabusDescriptonView({
-    required this.syllabusQuery
+    required this.syllabusQuery,
+    required this.showHeader
   });
 
   @override
@@ -36,20 +38,25 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
     
     return  Column(
         children: [
-        Padding(
-          padding:const  EdgeInsets.symmetric(horizontal: 15,vertical:5),
-          child:Row(children: [
-            Expanded(
-              child:Center(
-                child:Text(syllabusQuery.courseName,
-                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize:25),
-                  overflow: TextOverflow.clip,))),
-            if (isWineView) returnFromWineButton() else addCourseToTimetableButton(),
-          ],)),
+        if(widget.showHeader) header(),
         const SizedBox(height:5),
         if(!isWineView) descriptionList() else webWineView(syllabusQuery.textbook ?? "")
       ],
     );
+  }
+
+  Widget header(){
+    SyllabusQueryResult syllabusQuery = widget.syllabusQuery;
+    return Padding(
+      padding:const  EdgeInsets.symmetric(horizontal: 15,vertical:5),
+      child:Row(children: [
+        Expanded(
+          child:Center(
+            child:Text(syllabusQuery.courseName,
+              style: const TextStyle(fontWeight: FontWeight.bold,fontSize:25),
+              overflow: TextOverflow.clip,))),
+        if (isWineView) returnFromWineButton() else addCourseToTimetableButton(),
+      ],));
   }
 
   Widget descriptionList(){

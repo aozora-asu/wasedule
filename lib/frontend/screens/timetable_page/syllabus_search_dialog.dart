@@ -406,8 +406,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           height: SizeConfig.blockSizeVertical! *60,
           width: SizeConfig.blockSizeHorizontal! *100,
           decoration: roundedBoxdecorationWithShadow(radiusType: 1),
-          padding:const  EdgeInsets.all(0),
-          child:SyllabusDescriptonView(syllabusQuery: result)
+          child:SyllabusDescriptonView(
+            showHeader: true,
+            syllabusQuery: result)
         );
       },
     );

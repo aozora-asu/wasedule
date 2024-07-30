@@ -1,5 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -56,6 +58,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     }, child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
+          physics: viewMode == 1
+              ? const NeverScrollableScrollPhysics() 
+              : const ScrollPhysics(),
           reverse: true,
           child: Padding(
               padding: EdgeInsets.only(bottom: bottomSpace / 2),
@@ -65,6 +70,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                       maxHeight: viewportConstraints.maxHeight),
                   child: Center(
                       child: SingleChildScrollView(
+                          physics: viewMode == 1
+                            ? const NeverScrollableScrollPhysics() 
+                            : const ScrollPhysics(),
                           child: Padding(
                               padding: padding,
                               child: Column(
@@ -172,7 +180,31 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (viewMode == 0) {
       return summaryContent(dividerModel, target);
     } else {
-      return SyllabusWebView(pageID: widget.target["syllabusID"]);
+      print(target);
+      return SizedBox(
+        height: SizeConfig.blockSizeVertical! *60,
+        width: SizeConfig.blockSizeHorizontal! *100,
+        child:SyllabusDescriptonView(
+          showHeader: false,
+          syllabusQuery: SyllabusQueryResult(
+            courseName: target["courseName"],
+            classRoom: target["classRoom"],
+            year: target["year"],
+            syllabusID: target["syllabusID"],
+            semesterAndWeekdayAndPeriod:"ここに年度曜日時限のデータを加工して受け渡し",
+            teacher: null,
+            credit: null,
+            criteria:target["criteria"],
+            department: null,
+            subjectClassification: null,
+            abstract: null,
+            agenda: null,
+            reference: null,
+            remark: null,
+            textbook: null
+            )
+          )
+      );
     }
   }
 
