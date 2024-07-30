@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,7 +52,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () {}, child: searchWindow());
+    SizeConfig().init(context);
+    return GestureDetector(
+      onTap:(){},
+      child:searchWindow());
+
   }
 
   Widget searchWindow() {
@@ -176,7 +181,10 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             ],
           ),
           const Divider(),
-          searchResult()
+          Container(
+            constraints: BoxConstraints(
+              maxHeight: SizeConfig.blockSizeVertical! *50),
+            child:searchResult())
         ],
       ),
     );
@@ -391,82 +399,19 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   Future<void> showCourseDescriptionModalSheet(
       SyllabusQueryResult result) async {
     showModalBottomSheet(
+      enableDrag: false,
       context: context,
       builder: (context) {
         return Container(
-            height: SizeConfig.blockSizeVertical! * 60,
-            width: SizeConfig.blockSizeHorizontal! * 100,
-            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
-            padding: const EdgeInsets.all(15),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Center(
-                              child: Text(
-                        result.courseName,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 25),
-                        overflow: TextOverflow.clip,
-                      ))),
-                      buttonModel(() {}, BLUEGREY, "追加", horizontalPadding: 30),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  descriptionElementTile("年度/学期/時限",
-                      "${result.year.toString()}/${result.semesterAndWeekdayAndPeriod}",
-                      radiusType: 1),
-                  descriptionElementTile("学部", result.department ?? "なし"),
-                  descriptionElementTile("単位数", result.credit.toString()),
-                  descriptionElementTile(
-                      "科目群", result.subjectClassification ?? "なし",
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile("教室", result.classRoom,
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile(
-                    "教科書",
-                    result.textbook ?? "なし",
-                  ),
-                  descriptionElementTile("評価方法", result.criteria.toString()),
-                  descriptionElementTile("教員", result.teacher ?? "なし",
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile("概要", result.abstract ?? "なし",
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile("備考", result.remark ?? "なし",
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile("授業計画", result.agenda ?? "なし",
-                      fontWeight: FontWeight.normal),
-                  descriptionElementTile("参考文献", result.reference ?? "なし",
-                      fontWeight: FontWeight.normal, radiusType: 3),
-                ],
-              ),
-            ));
+          height: SizeConfig.blockSizeVertical! *60,
+          width: SizeConfig.blockSizeHorizontal! *100,
+          decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+          padding:const  EdgeInsets.all(0),
+          child:SyllabusDescriptonView(syllabusQuery: result)
+        );
       },
     );
   }
 
-  Widget descriptionElementTile(String titleText, String descriptionText,
-      {int radiusType = 2, FontWeight fontWeight = FontWeight.bold}) {
-    return Container(
-      decoration: roundedBoxdecorationWithShadow(
-          radiusType: radiusType, backgroundColor: BACKGROUND_COLOR),
-      margin: const EdgeInsets.symmetric(vertical: 1),
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          titleText,
-          style: const TextStyle(color: Colors.grey, fontSize: 15),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-            child: Center(
-                child: Text(
-          descriptionText,
-          style: TextStyle(fontWeight: fontWeight),
-        )))
-      ]),
-    );
-  }
 }
+
