@@ -1,3 +1,4 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -80,7 +81,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                     courseInfo(),
                                     const SizedBox(height:2),
                                     SyllabusSearchDialog(
-                                      topRadius: true,
+                                      topRadius: false,
                                       gakki: widget.semester,
                                       jigen: widget.period,
                                       youbi: widget.weekDay,
@@ -105,17 +106,21 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     } else {
       courseTimeText = "$year年 / ${semester.text} / オンデマンド / 時限なし";
     }
+
     return GestureDetector(
         onTap: () {},
         child: Container(
             decoration: roundedBoxdecorationWithShadow(radiusType: 0),
             width: SizeConfig.blockSizeHorizontal! * 100,
-            child: Padding(
+            child: Material(
+              borderRadius:const BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25)),
+              child:Padding(
                 padding: const EdgeInsets.all(12.5),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
+                child: ExpandablePanel(
+                  header: 
+                    Row(children: [
                         const SizedBox(
                           width:100,
                           child: Text(
@@ -130,31 +135,14 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                         Text(errorText,
                             style: const TextStyle(color: Colors.red)),
                         const Spacer(),
-                        buttonModel(() {
-                          className = classNameController.text;
-                          classRoom = classRoomController.text;
-                          memo = memoController.text;
-                          if (isValid()) {
-                            //＠ここに時間割データの追加関数！！！
-                            MyCourseDatabaseHandler()
-                                .resisterMyCourseFromMoodle(MyCourse(
-                                    classRoom: classRoom,
-                                    color: "#96C78C",
-                                    courseName: className,
-                                    pageID: null,
-                                    period: period,
-                                    semester: semester,
-                                    syllabusID: null,
-                                    weekday: weekDay,
-                                    year: year,
-                                    criteria: null,
-                                    memo: memo));
-                            widget.setTimetableState(() {});
-                            Navigator.pop(context);
-                          } else {}
-                        }, isValid() ? BLUEGREY : Colors.grey, "   追加   "),
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
                       ]),
+                  collapsed: const SizedBox(),
+                  expanded: 
+                   Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+
                       dividerModel,
                       Row(children: [
                         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
@@ -199,8 +187,40 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                         textFieldModel("授業メモ…", memoController,
                             FontWeight.normal, (value) {}),
                       ]),
-                      const SizedBox(height: 2),
-                    ]))));
+                      dividerModel,
+
+                      Row(children:[
+                        const Spacer(),
+                        buttonModel(() {
+                          className = classNameController.text;
+                          classRoom = classRoomController.text;
+                          memo = memoController.text;
+                          if (isValid()) {
+                            //＠ここに時間割データの追加関数！！！
+                            MyCourseDatabaseHandler()
+                                .resisterMyCourseFromMoodle(MyCourse(
+                                    classRoom: classRoom,
+                                    color: "#96C78C",
+                                    courseName: className,
+                                    pageID: null,
+                                    period: period,
+                                    semester: semester,
+                                    syllabusID: null,
+                                    weekday: weekDay,
+                                    year: year,
+                                    criteria: null,
+                                    memo: memo));
+                            widget.setTimetableState(() {});
+                            Navigator.pop(context);
+                          } else {}
+                        }, isValid() ? BLUEGREY : Colors.grey, "   追加   "),
+                      ])
+                    ])
+                  )
+                )
+              )
+            )
+          );
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
