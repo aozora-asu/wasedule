@@ -53,9 +53,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
         backgroundColor:MAIN_COLOR.withOpacity(0.95),
         
         elevation: 2,
-        title: 
-        Container(
-          child:Row(children: <Widget>[
+        title: Row(children: <Widget>[
             GestureDetector(
               onTap:(){
                 if(Platform.isIOS){
@@ -80,8 +78,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
               },
             ),
             popupMenuButton(contentColor)
-          ])
-        ),
+          ]),
          leading: switchLeading(context),
           shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -100,7 +97,11 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
   Widget? switchLeading(context){
    if(backButton){
-    return BackButton(color:contentColor);
+    return IconButton(
+      icon:Icon(Icons.arrow_back_ios,color:contentColor),
+      onPressed: (){
+        Navigator.pop(context);
+      },);
    }else{
     return null;
    }

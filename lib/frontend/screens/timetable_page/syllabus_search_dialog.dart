@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
@@ -396,20 +397,17 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
   Future<void> showCourseDescriptionModalSheet(
       SyllabusQueryResult result) async {
-    showModalBottomSheet(
-      enableDrag: false,
-      context: context,
-      builder: (context) {
-        return Container(
-          height: SizeConfig.blockSizeVertical! *60,
-          width: SizeConfig.blockSizeHorizontal! *100,
-          decoration: roundedBoxdecorationWithShadow(radiusType: 1),
-          child:SyllabusDescriptonView(
-            showHeader: true,
-            syllabusQuery: result)
-        );
-      },
-    );
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context){
+          return Scaffold(
+            appBar:CustomAppBar(backButton: true),
+            body:SyllabusDescriptonView(
+              showHeader: true,
+              syllabusQuery: result)
+            );
+          }
+        )
+      );
   }
 
 }

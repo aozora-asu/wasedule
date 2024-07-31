@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -72,8 +73,9 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
             descriptionElementTile("科目群",syllabusQuery.subjectClassification ?? "なし"),
             descriptionElementTile("教室",syllabusQuery.classRoom),
             textBookTile(syllabusQuery.textbook ?? "なし",(){}),
-            descriptionElementTile("評価方法",syllabusQuery.criteria.toString()),
-            descriptionElementTile("教員",syllabusQuery.teacher ?? "なし",fontWeight: FontWeight.normal),
+            descriptionElementTile("評価方法",syllabusQuery.criteria.toString(),radiusType: 3),
+            const SizedBox(height:10),
+            descriptionElementTile("教員",syllabusQuery.teacher ?? "なし",fontWeight: FontWeight.normal,radiusType: 1),
             descriptionElementTile("概要",syllabusQuery.abstract ?? "なし",fontWeight: FontWeight.normal),
             descriptionElementTile("備考",syllabusQuery.remark ?? "なし",fontWeight: FontWeight.normal),
             descriptionElementTile("授業計画",syllabusQuery.agenda ?? "なし",fontWeight: FontWeight.normal),
@@ -141,8 +143,8 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
 
   Widget addCourseToTimetableButton(){
     return buttonModel(
-      (){
-
+      ()async{
+         await showConfirmationDialog(context, widget.syllabusQuery);
       },
       BLUEGREY,"追加",horizontalPadding: 30);
   }
@@ -165,7 +167,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
         color: FORGROUND_COLOR.withOpacity(0.6),
         child: Container(
           width: SizeConfig.blockSizeHorizontal! * 100,
-          height: SizeConfig.blockSizeVertical! * 50,
+          height: SizeConfig.blockSizeVertical! * 90,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey)),
           child: SizedBox(
