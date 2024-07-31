@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
@@ -80,9 +82,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                   children: [
                                     const SizedBox(height: 20),
                                     switchSearchMode(),
-                                    const SizedBox(height: 15),
                                     relatedTasks(),
-                                    const SizedBox(height: 15),
+                                    const SizedBox(height: 5),
                                     attendMenuPanel(),
                                     const SizedBox(height: 20),
                                   ])))))));
@@ -108,9 +109,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               descriptionModeSwitch()
             ]),
           )),
-        const SizedBox(height:1),
+        const SizedBox(height:0.3),
         SyllabusSearchDialog(
-          topRadius: false,
+          radiusType: 2,
           gakki:Term.byValue(widget.target["semester"]),
           youbi:DayOfWeek.weekAt(widget.target["weekday"]),
           jigen:Lesson.atPeriod(widget.target["period"]),
@@ -135,7 +136,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
             width: SizeConfig.blockSizeHorizontal! * 95,
             child: Padding(
                 padding: padding,
@@ -182,7 +183,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     } else {
       print(target);
       return SizedBox(
-        height: SizeConfig.blockSizeVertical! *60,
+        height: SizeConfig.blockSizeVertical! *50,
         width: SizeConfig.blockSizeHorizontal! *100,
         child:SyllabusDescriptonView(
           showHeader: false,
@@ -231,7 +232,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           setState(() {
             searchMode = true;
           });
-        }, Colors.blueAccent, " シラバス検索 ");
+        }, Colors.lightBlueAccent, " シラバス検索 ");
       } else {
         return const SizedBox();
       }
@@ -436,19 +437,20 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+            decoration: roundedBoxdecorationWithShadow(radiusType: 3),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
             width: SizeConfig.blockSizeHorizontal! * 95,
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                const Text("出席管理",
+                const Text("出席記録",
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 22.5)),
                 const Spacer(),
                 remainingAbesentViewBuilder()
               ]),
-              const SizedBox(height: 5),
+              const SizedBox(height:3),
+              const Divider(height:5),
               attendRecordView(),
               const Divider(),
               attendSettingsPanel(),
@@ -739,8 +741,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget relatedTasks() {
     if (widget.taskList.isNotEmpty) {
-      return Container(
-          decoration: roundedBoxdecorationWithShadow(),
+      return Column(children:[
+        const SizedBox(height:5),
+        Container(
+          decoration: roundedBoxdecorationWithShadow(radiusType: 2),
           padding: const EdgeInsets.all(10.0),
           width: SizeConfig.blockSizeHorizontal! * 95,
           child: Column(children: [
@@ -767,7 +771,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
             )
-          ]));
+          ])
+        )
+      ]);
     } else {
       return const SizedBox();
     }
@@ -812,9 +818,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: FORGROUND_COLOR,
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                    color: BACKGROUND_COLOR
+                  ),
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   child: Column(

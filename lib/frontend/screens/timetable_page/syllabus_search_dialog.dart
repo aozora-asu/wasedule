@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
@@ -15,10 +14,10 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
   DayOfWeek? youbi;
   Lesson? jigen;
   Department? gakubu;
-  bool topRadius;
+  int radiusType;
 
   SyllabusSearchDialog({
-    required this.topRadius,
+    required this.radiusType,
     this.gakki,
     this.youbi,
     this.jigen,
@@ -62,10 +61,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   Widget searchWindow() {
     String courseTimeText;
     String year = Term.whenSchoolYear(DateTime.now()).toString();
-    int radiusType = 0;
-    if (!widget.topRadius) {
-      radiusType = 3;
-    }
+    int radiusType = widget.radiusType;
 
     if (widget.youbi != null && widget.jigen != null) {
       courseTimeText =
@@ -379,7 +375,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         overflow: TextOverflow.clip, color: Colors.grey))),
             const Icon(Icons.search, color: Colors.grey),
             GestureDetector(
-                onTap: () {},
+                onTap: () async{
+                  await showConfirmationDialog(context, result);
+                },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
@@ -416,3 +414,51 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
 }
 
+Future<void> showConfirmationDialog(BuildContext context,SyllabusQueryResult courseData) async{
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: const Text("確認"),
+        content: Text('" ' +courseData.courseName + ' "を時間割へ追加してもよろしいですか？'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); 
+            },
+            child: const Text("キャンセル",style: TextStyle(color:Colors.red),),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              showDisclaimerDialog(context); 
+            },
+            child: const Text("追加"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> showDisclaimerDialog(BuildContext context) async{
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: const Text("追加しました！"),
+        content: const Text(
+          "※履修登録が完了したわけではありません。履修登録は、期間中に大学の「成績照会・科目登録専用」サイトから行ってください。",
+          style: TextStyle(color:Colors.red)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); 
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      );
+    },
+  );
+}

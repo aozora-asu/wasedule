@@ -78,15 +78,15 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                             fontSize: 25,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
-                                    courseInfo(),
-                                    const SizedBox(height:2),
                                     SyllabusSearchDialog(
-                                      topRadius: false,
+                                      radiusType: 1,
                                       gakki: widget.semester,
                                       jigen: widget.period,
                                       youbi: widget.weekDay,
                                       gakubu: Department.advancedScience
-                                    )
+                                    ),
+                                    const SizedBox(height:2),
+                                    courseInfo(),
                                   ]))))))));
     }));
   }
@@ -114,8 +114,10 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Material(
               borderRadius:const BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25)),
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25)),
               child:Padding(
                 padding: const EdgeInsets.all(12.5),
                 child: ExpandablePanel(

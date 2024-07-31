@@ -3,7 +3,9 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -82,7 +84,31 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
-        return SyllabusWebView(pageID: widget.target["syllabusID"]);
+        print(target);
+        return SizedBox(
+          height: SizeConfig.blockSizeVertical! *50,
+          width: SizeConfig.blockSizeHorizontal! *100,
+          child:SyllabusDescriptonView(
+            showHeader: false,
+            syllabusQuery: SyllabusQueryResult(
+              courseName: target["courseName"],
+              classRoom: target["classRoom"],
+              year: target["year"],
+              syllabusID: target["syllabusID"],
+              semesterAndWeekdayAndPeriod:"ここに年度曜日時限のデータを加工して受け渡し",
+              teacher: null,
+              credit: null,
+              criteria:target["criteria"],
+              department: null,
+              subjectClassification: null,
+              abstract: null,
+              agenda: null,
+              reference: null,
+              remark: null,
+              textbook: null
+              )
+            )
+        );
       }
     }
 

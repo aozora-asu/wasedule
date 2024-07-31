@@ -1,8 +1,6 @@
 import 'package:flutter_calandar_app/backend/notify/notify_content.dart';
-import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:intl/intl.dart';
 
 class NotifyConfig {
   String notifyType;
