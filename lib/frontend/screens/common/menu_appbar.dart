@@ -195,43 +195,48 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
 
   Widget space(double width){
     Color underBarColor = PALE_MAIN_COLOR;
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    return SizedBox(
+      width: SizeConfig.blockSizeHorizontal! *width,
+      height: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children:[
-        SizedBox(
-          width: SizeConfig.blockSizeHorizontal! *width,
-          height: 30,
-        ),
-        Container(
-          width: SizeConfig.blockSizeHorizontal! *width,
-          height: 5,
-          color:underBarColor
-        ),
-      ]);
+          const SizedBox(
+            height: 30,
+            child: VerticalDivider(
+              color: Colors.grey,
+              endIndent: 8,
+              indent: 8,
+              )),
+          Container(
+            width: SizeConfig.blockSizeHorizontal! *width,
+            height: 5,
+            color:underBarColor
+          ),
+      ])
+    );
   }
 
   Map<int,List<Widget>> returnSubPage(ref){
 
     Map<int,List<Widget>> subPageTabs = {
       0 : [
-          space(0),
           subMenuPanel(
             ref,
             icon:Icons.location_on,
             subIndex:0,
             title: "わせまっぷ"
           ),
-          space(79.0),
+          space(80.0),
           ],
       1 : [
-          space(0),
           subMenuPanel(
             ref,
             icon:Icons.grid_on,
             subIndex:0,
             title: "時間割"
           ),
-          space(79.0),
+          space(80.0),
       ],
       2 : [
           space(0),
@@ -270,7 +275,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:4,
             title: "設定"
           ),
-          space(0),
         ],
         3 : [
           space(0),
@@ -305,7 +309,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           space(20.00),
         ],
         4 : [
-          space(1.0),
           subMenuPanel(
             ref,
             icon:Icons.school,
@@ -319,7 +322,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:1,
             title: "MyWaseda"
           ),
-          space(68.0),
+          space(69.0),
         ],
       };
     return subPageTabs;

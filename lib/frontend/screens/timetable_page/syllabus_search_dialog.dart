@@ -192,6 +192,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return Expanded(
         child: CupertinoTextField(
       controller: controller,
+      onChanged: (value){},
       onSubmitted: (value) {
         setState(() {
           onSubmitted(value);
@@ -201,8 +202,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   }
 
   Widget departmentPicker(Department? gakubu) {
-    List<Department?> items = Department.departments;
-    items.insert(0, gakubu);
+    List<Department?> items = [];
+    items.add(gakubu);
+    items.addAll(Department.departments);
 
     return Expanded(
       child: CupertinoPicker(
@@ -400,6 +402,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         Navigator.push(context,
           MaterialPageRoute(builder: (context){
           return Scaffold(
+            backgroundColor: FORGROUND_COLOR,
             appBar:CustomAppBar(backButton: true),
             body:SyllabusDescriptonView(
               showHeader: true,

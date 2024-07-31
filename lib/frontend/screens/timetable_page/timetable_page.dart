@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -42,8 +44,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context, now, ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      String? userDepartment = 
+        SharepreferenceHandler().getValue(SharepreferenceKeys.user_department);
+      if(userDepartment == null){await showUserDepartmentSettingDialog(context);}
+      await showAttendanceDialog(context, now, ref);
     });
   }
 
@@ -77,14 +82,32 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             ),
           )),
       floatingActionButton: Container(
+          width: SizeConfig.blockSizeHorizontal! *90,
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
-            const Spacer(),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2), 
+                      spreadRadius: 2,
+                      blurRadius: 5, 
+                      offset:const Offset(0, 3),
+                ),]
+                ),
+                child:buttonModel(() async {
+                await showMoodleRegisterGuide(
+                  context, false, MoodleRegisterGuideType.timetable);
+                  widget.moveToMoodlePage(4);
+                }, PALE_MAIN_COLOR, "自動取得", verticalpadding: 15))),
+            const SizedBox(width: 10),
             FloatingActionButton(
                 onPressed: () {
                   showDialog(
                       context: context,
-                      builder: (BuildContext context) {
+                    builder: (BuildContext context) {
                         return CourseAddPage(
                           setTimetableState: setState,
                         );
@@ -307,16 +330,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       ref.read(timeTableProvider).initUniversityScheduleByDay(
                           thisYear,
                           [currentQuarter, currentSemester, Term.fullYear]);
-                      for (int i = 0; i < snapshot.data!.length; i++) {}
-                      for (int i = 0;
-                          i <
-                              ref
-                                  .read(timeTableProvider)
-                                  .sortedDataByWeekDay
-                                  .length;
-                          i++) {}
                       return timeTableBody();
-                    } else {
+                    } else if(snapshot.data == null){
+                        ref
+                          .read(timeTableProvider)
+                          .sortDataByWeekDay([]);
+                      ref.read(timeTableProvider).initUniversityScheduleByDay(
+                          thisYear,
+                          [currentQuarter, currentSemester, Term.fullYear]);
+                      return timeTableBody();
+                    }else{
                       return noDataScreen();
                     }
                   })),
@@ -380,11 +403,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 ))
               ]),
           const SizedBox(height: 30),
-          buttonModel(() async {
-            await showMoodleRegisterGuide(
-                context, false, MoodleRegisterGuideType.timetable);
-            widget.moveToMoodlePage(4);
-          }, PALE_MAIN_COLOR, "登録画面へ", verticalpadding: 10)
+
         ])));
   }
 
