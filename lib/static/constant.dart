@@ -242,13 +242,13 @@ class Lesson {
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("21:25"), tz.local),
   );
   static Lesson ondemand = Lesson._internal(
-    period: 88,
+    period: 8,
     text: "フルオンデマンド",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
   );
   static Lesson others = Lesson._internal(
-    period: 99,
+    period: 9,
     text: "その他",
     start: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),
     end: tz.TZDateTime.from(DateFormat("HH:mm").parse("00:00"), tz.local),

@@ -61,7 +61,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
           physics: viewMode == 1
-              ? const NeverScrollableScrollPhysics() 
+              ? const NeverScrollableScrollPhysics()
               : const ScrollPhysics(),
           reverse: true,
           child: Padding(
@@ -73,8 +73,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   child: Center(
                       child: SingleChildScrollView(
                           physics: viewMode == 1
-                            ? const NeverScrollableScrollPhysics() 
-                            : const ScrollPhysics(),
+                              ? const NeverScrollableScrollPhysics()
+                              : const ScrollPhysics(),
                           child: Padding(
                               padding: padding,
                               child: Column(
@@ -90,34 +90,33 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     }));
   }
 
-  Widget switchSearchMode(){
-    if(searchMode){
-      return Column(children:[
+  Widget switchSearchMode() {
+    if (searchMode) {
+      return Column(children: [
         GestureDetector(
-          onTap:(){},
-          child: Container(
-            height: 50,
-            padding:const EdgeInsets.symmetric(horizontal:20),
-            decoration: roundedBoxdecorationWithShadow(radiusType: 1),
-            child: Row(children:[
-              const Icon(Icons.search,color:Colors.blue),
-              const Text(" シラバス検索",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
-              const Spacer(),
-              descriptionModeSwitch()
-            ]),
-          )),
-        const SizedBox(height:0.3),
+            onTap: () {},
+            child: Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: roundedBoxdecorationWithShadow(radiusType: 1),
+              child: Row(children: [
+                const Icon(Icons.search, color: Colors.blue),
+                const Text(" シラバス検索",
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                descriptionModeSwitch()
+              ]),
+            )),
+        const SizedBox(height: 0.3),
         SyllabusSearchDialog(
-          radiusType: 2,
-          gakki:Term.byValue(widget.target["semester"]),
-          youbi:DayOfWeek.weekAt(widget.target["weekday"]),
-          jigen:Lesson.atPeriod(widget.target["period"]),
-          gakubu:Department.commerce)
+            radiusType: 2,
+            gakki: Term.byValue(widget.target["semester"]),
+            youbi: DayOfWeek.weekAt(widget.target["weekday"]),
+            jigen: Lesson.atPeriod(widget.target["period"]),
+            gakubu: Department.fundamentalScience)
       ]);
-    }else{
+    } else {
       return courseInfo();
     }
   }
@@ -183,29 +182,26 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     } else {
       print(target);
       return SizedBox(
-        height: SizeConfig.blockSizeVertical! *50,
-        width: SizeConfig.blockSizeHorizontal! *100,
-        child:SyllabusDescriptonView(
-          showHeader: false,
-          syllabusQuery: SyllabusQueryResult(
-            courseName: target["courseName"],
-            classRoom: target["classRoom"],
-            year: target["year"],
-            syllabusID: target["syllabusID"],
-            semesterAndWeekdayAndPeriod:"ここに年度曜日時限のデータを加工して受け渡し",
-            teacher: null,
-            credit: null,
-            criteria:target["criteria"],
-            department: null,
-            subjectClassification: null,
-            abstract: null,
-            agenda: null,
-            reference: null,
-            remark: null,
-            textbook: null
-            )
-          )
-      );
+          height: SizeConfig.blockSizeVertical! * 50,
+          width: SizeConfig.blockSizeHorizontal! * 100,
+          child: SyllabusDescriptonView(
+              showHeader: false,
+              syllabusQuery: SyllabusQueryResult(
+                  courseName: target["courseName"],
+                  classRoom: target["classRoom"],
+                  year: target["year"],
+                  syllabusID: target["syllabusID"],
+                  semesterAndWeekdayAndPeriod: "ここに年度曜日時限のデータを加工して受け渡し",
+                  teacher: null,
+                  credit: null,
+                  criteria: target["criteria"],
+                  department: null,
+                  subjectClassification: null,
+                  abstract: null,
+                  agenda: null,
+                  reference: null,
+                  remark: null,
+                  textbook: null)));
     }
   }
 
@@ -227,26 +223,26 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget searchModeSwitch() {
-      if (!searchMode && viewMode == 0) {
-        return buttonModel(() {
-          setState(() {
-            searchMode = true;
-          });
-        }, Colors.lightBlueAccent, " シラバス検索 ");
-      } else {
-        return const SizedBox();
-      }
+    if (!searchMode && viewMode == 0) {
+      return buttonModel(() {
+        setState(() {
+          searchMode = true;
+        });
+      }, Colors.lightBlueAccent, " シラバス検索 ");
+    } else {
+      return const SizedBox();
+    }
   }
 
   Widget descriptionModeSwitch() {
     Map target = widget.target;
-    if(searchMode){
-        return buttonModel(() {
-          setState(() {
-            searchMode = false;
-          });
-        }, Colors.blueAccent, " もどる ");
-    }else if (target["syllabusID"] != null && target["syllabusID"] != "") {
+    if (searchMode) {
+      return buttonModel(() {
+        setState(() {
+          searchMode = false;
+        });
+      }, Colors.blueAccent, " もどる ");
+    } else if (target["syllabusID"] != null && target["syllabusID"] != "") {
       if (viewMode == 0) {
         return const SizedBox();
       } else {
@@ -449,8 +445,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                 const Spacer(),
                 remainingAbesentViewBuilder()
               ]),
-              const SizedBox(height:3),
-              const Divider(height:5),
+              const SizedBox(height: 3),
+              const Divider(height: 5),
               attendRecordView(),
               const Divider(),
               attendSettingsPanel(),
@@ -741,38 +737,37 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget relatedTasks() {
     if (widget.taskList.isNotEmpty) {
-      return Column(children:[
-        const SizedBox(height:5),
+      return Column(children: [
+        const SizedBox(height: 5),
         Container(
-          decoration: roundedBoxdecorationWithShadow(radiusType: 2),
-          padding: const EdgeInsets.all(10.0),
-          width: SizeConfig.blockSizeHorizontal! * 95,
-          child: Column(children: [
-            Row(
-              children: [
-                const SizedBox(width: 10),
-                const Text("関連する課題",
-                    style:
-                        TextStyle(fontSize: 22.5, fontWeight: FontWeight.bold)),
-                const Spacer(),
-                lengthBadge(widget.taskList.length, 17.5, false),
-                const SizedBox(width: 10),
-              ],
-            ),
-            const SizedBox(height: 5),
-            ListView.separated(
-              itemBuilder: (context, index) {
-                return taskListChild(widget.taskList.elementAt(index));
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(height: 5);
-              },
-              itemCount: widget.taskList.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-            )
-          ])
-        )
+            decoration: roundedBoxdecorationWithShadow(radiusType: 2),
+            padding: const EdgeInsets.all(10.0),
+            width: SizeConfig.blockSizeHorizontal! * 95,
+            child: Column(children: [
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  const Text("関連する課題",
+                      style: TextStyle(
+                          fontSize: 22.5, fontWeight: FontWeight.bold)),
+                  const Spacer(),
+                  lengthBadge(widget.taskList.length, 17.5, false),
+                  const SizedBox(width: 10),
+                ],
+              ),
+              const SizedBox(height: 5),
+              ListView.separated(
+                itemBuilder: (context, index) {
+                  return taskListChild(widget.taskList.elementAt(index));
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 5);
+                },
+                itemCount: widget.taskList.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+              )
+            ]))
       ]);
     } else {
       return const SizedBox();
@@ -818,9 +813,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: BACKGROUND_COLOR
-                  ),
+                      borderRadius: BorderRadius.circular(10),
+                      color: BACKGROUND_COLOR),
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   child: Column(

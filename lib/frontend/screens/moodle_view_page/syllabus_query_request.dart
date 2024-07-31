@@ -95,7 +95,7 @@ class SyllabusRequestQuery {
       'kyoin': kyoin,
       'p_gakki': p_gakki?.indexForSyllabusQuery,
       'p_youbi': p_youbi?.index,
-      'p_jigen': p_jigen?.period,
+      'p_jigen': "${p_jigen?.period}${p_jigen?.period}",
       //フルオンデマンドを選択した時
       'p_gengo': p_gengo,
       'p_gakubu': p_gakubu?.departmentID,
@@ -213,6 +213,7 @@ class SyllabusRequestQuery {
     List<String> syllabusURLs =
         await _getSyllabusURLs(perfectMatchedCourseName);
     if (syllabusURLs.isEmpty) {
+      print("見つかりませんでした");
       return null;
     } else {
       return await _getSingleSyllabusInfo(syllabusURLs.first);
@@ -292,8 +293,7 @@ class SyllabusRequestQuery {
         }
       }
     }
-
-    return SyllabusQueryResult(
+    SyllabusQueryResult res = SyllabusQueryResult(
         courseName: _courseName,
         classRoom: _classRoom,
         year: _year,
@@ -309,5 +309,7 @@ class SyllabusRequestQuery {
         reference: _reference,
         remark: _remark,
         textbook: _textbook);
+    print(res.department);
+    return res;
   }
 }
