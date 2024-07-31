@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
@@ -114,7 +115,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             gakki: Term.byValue(widget.target["semester"]),
             youbi: DayOfWeek.weekAt(widget.target["weekday"]),
             jigen: Lesson.atPeriod(widget.target["period"]),
-            gakubu: Department.fundamentalScience)
+            gakubu: Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.user_department)))
       ]);
     } else {
       return courseInfo();

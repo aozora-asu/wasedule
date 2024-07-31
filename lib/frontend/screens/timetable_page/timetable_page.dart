@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -42,8 +44,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showAttendanceDialog(context, now, ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      String? userDepartment = 
+        SharepreferenceHandler().getValue(SharepreferenceKeys.user_department);
+      if(userDepartment == null){await showUserDepartmentSettingDialog(context);}
+      await showAttendanceDialog(context, now, ref);
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -48,7 +49,6 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
   @override
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
-
     return GestureDetector(onTap: () {
       Navigator.pop(context);
     }, child: LayoutBuilder(
@@ -83,7 +83,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                       gakki: widget.semester,
                                       jigen: widget.period,
                                       youbi: widget.weekDay,
-                                      gakubu: Department.advancedScience
+                                      gakubu: Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.user_department))
                                     ),
                                     const SizedBox(height:2),
                                     courseInfo(),
