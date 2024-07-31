@@ -88,6 +88,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2), 

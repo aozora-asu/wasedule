@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_han
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_dialog.dart';
@@ -32,29 +33,7 @@ class _TagAndTemplatePageState extends ConsumerState<TagAndTemplatePage> {
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider);
     return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(color: Colors.white),
-        backgroundColor: MAIN_COLOR,
-        elevation: 10,
-        title:const Column(
-          children: <Widget>[
-            Row(children: [
-              Icon(
-                Icons.tag,
-                color: WIDGET_COLOR,
-              ),
-              SizedBox(width: 20),
-              Text(
-                'タグとテンプレート',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white),
-              ),
-            ])
-          ],
-        ),
-      ),
+      appBar: CustomAppBar(backButton: true),
       body: SingleChildScrollView(
           child: Column(children: [
         const SizedBox(height: 8),
