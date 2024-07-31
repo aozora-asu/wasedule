@@ -11,7 +11,7 @@ import 'package:html/dom.dart';
 import "./syllabus_query_result.dart";
 
 class SyllabusRequestQuery {
-  String? p_number = "100";
+  String? p_number;
   String? p_page;
   String? keyword;
   String s_bunya1_hid = "大分類を絞ってください";
@@ -37,14 +37,14 @@ class SyllabusRequestQuery {
   String ControllerParameters = "JAA103SubCon";
   String? pOcw;
   String? pType;
-  String? pLng = "jp";
+  String? pLng;
 //オープン科目の検索時0に設定
   bool p_open;
   //科目区分検索時学部IDを設定
   SubjectClassification? subjectClassification;
-  String? p_keyb = "";
-  String? p_searcha = "a";
-  String? p_searchb = "b";
+  String? p_keyb;
+  String? p_searcha;
+  String? p_searchb;
 
   String boundary = '----WebKitFormBoundary${const Uuid().v4()}';
 
@@ -82,7 +82,7 @@ class SyllabusRequestQuery {
 
   Map<String, dynamic> _toMap() {
     Map<String, dynamic> normalQuery = {
-      "p_number": p_number,
+      "p_number": p_number ?? "100",
       "p_page": p_page,
       'keyword': keyword,
       's_bunya1_hid': s_bunya1_hid,
@@ -236,6 +236,9 @@ class SyllabusRequestQuery {
     late String _classRoom;
     String? _credit;
     String? _teacher;
+    String? _campus;
+    String? _allocateYear;
+    String? _lectureSystem;
     late String _semesterAndWeekdayAndPeriod;
 
     for (var trElement in courseTrElements) {
@@ -262,6 +265,12 @@ class SyllabusRequestQuery {
           case "学期曜日時限":
             _semesterAndWeekdayAndPeriod =
                 zenkaku2hankaku(th.nextElementSibling!.text);
+          case "キャンパス":
+            _campus = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "配当年次":
+            _allocateYear = zenkaku2hankaku(th.nextElementSibling!.text);
+          case "授業方法区分":
+            _lectureSystem = zenkaku2hankaku(th.nextElementSibling!.text);
         }
       }
     }
@@ -280,7 +289,7 @@ class SyllabusRequestQuery {
           case "授業概要":
             _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
           case "授業計画":
-            _agenda = zenkaku2hankaku(th.nextElementSibling!.text);
+            _agenda = zenkaku2hankaku(th.nextElementSibling!.text).trim();
           case "教科書":
             _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
           case "参考文献":
