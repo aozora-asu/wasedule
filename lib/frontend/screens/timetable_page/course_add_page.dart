@@ -54,46 +54,48 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     }, child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       Department? userDepartment;
-      String? userDepartmentString = SharepreferenceHandler().getValue(SharepreferenceKeys.user_department);
-      if(userDepartmentString != null){
+      String? userDepartmentString = SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.user_department);
+      if (userDepartmentString != null) {
         userDepartment = Department.byValue(userDepartmentString);
       }
 
       return SingleChildScrollView(
           reverse: true,
           child: Scrollbar(
-           interactive: true,
-           thickness: 5,
-           child:Padding(
-              padding: EdgeInsets.only(bottom: bottomSpace / 2),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minHeight: viewportConstraints.maxHeight,
-                      maxHeight: viewportConstraints.maxHeight),
-                  child: Center(
-                      child: SingleChildScrollView(
-                          child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("時間割に新規追加...",
-                                        style: TextStyle(
-                                            fontSize: 25,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                    SyllabusSearchDialog(
-                                      radiusType: 1,
-                                      gakki: widget.semester,
-                                      jigen: widget.period,
-                                      youbi: widget.weekDay,
-                                      gakubu: userDepartment
-                                    ),
-                                    const SizedBox(height:2),
-                                    courseInfo(),
-                                  ]))))))));
+              interactive: true,
+              thickness: 5,
+              child: Padding(
+                  padding: EdgeInsets.only(bottom: bottomSpace / 2),
+                  child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          minHeight: viewportConstraints.maxHeight,
+                          maxHeight: viewportConstraints.maxHeight),
+                      child: Center(
+                          child: SingleChildScrollView(
+                              child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("時間割に新規追加...",
+                                            style: TextStyle(
+                                                fontSize: 25,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold)),
+                                        SyllabusSearchDialog(
+                                            radiusType: 1,
+                                            gakki: widget.semester,
+                                            jigen: widget.period,
+                                            youbi: widget.weekDay,
+                                            gakubu: userDepartment),
+                                        const SizedBox(height: 2),
+                                        courseInfo(),
+                                      ]))))))));
     }));
   }
 
@@ -119,116 +121,118 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
             decoration: roundedBoxdecorationWithShadow(radiusType: 0),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Material(
-              borderRadius:const BorderRadius.only(
-                topLeft: Radius.circular(2),
-                topRight: Radius.circular(2),
-                bottomLeft: Radius.circular(25),
-                bottomRight: Radius.circular(25)),
-              child:Padding(
-                padding: const EdgeInsets.all(12.5),
-                child: ExpandablePanel(
-                  header: 
-                    Row(children: [
-                        const SizedBox(
-                          width:100,
-                          child: Text(
-                            "手動登録",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                          ),
-                        )),
-                        Text(errorText,
-                            style: const TextStyle(color: Colors.red)),
-                        const Spacer(),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                      ]),
-                  collapsed: const SizedBox(),
-                  expanded: 
-                   Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.school, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        textFieldModel("授業名…", classNameController,
-                            FontWeight.normal, (value) {}),
-                      ]),
-                      const SizedBox(height: 3),
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.access_time, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        Expanded(
-                            child: GestureDetector(
-                                onTap: () async {
-                                  await showWeekdayAndPeriodDialogue();
-                                  setState(() {
-                                    isValid();
-                                  });
-                                },
-                                child: Text(courseTimeText,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        overflow: TextOverflow.clip,
-                                        color: Colors.blueAccent)))),
-                      ]),
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.group, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        textFieldModel("教室…", classRoomController,
-                            FontWeight.normal, (value) {})
-                      ]),
-                      dividerModel,
-                      Row(children: [
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                        const Icon(Icons.sticky_note_2, color: MAIN_COLOR),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-                        textFieldModel("授業メモ…", memoController,
-                            FontWeight.normal, (value) {}),
-                      ]),
-                      dividerModel,
-
-                      Row(children:[
-                        const Spacer(),
-                        buttonModel(() {
-                          className = classNameController.text;
-                          classRoom = classRoomController.text;
-                          memo = memoController.text;
-                          if (isValid()) {
-                            //＠ここに時間割データの追加関数！！！
-                            MyCourseDatabaseHandler()
-                                .resisterMyCourseFromMoodle(MyCourse(
-                                    classRoom: classRoom,
-                                    color: "#96C78C",
-                                    courseName: className,
-                                    pageID: null,
-                                    period: period,
-                                    semester: semester,
-                                    syllabusID: null,
-                                    weekday: weekDay,
-                                    year: year,
-                                    criteria: null,
-                                    memo: memo));
-                            widget.setTimetableState(() {});
-                            Navigator.pop(context);
-                          } else {}
-                        }, isValid() ? BLUEGREY : Colors.grey, "   追加   "),
-                      ])
-                    ])
-                  )
-                )
-              )
-            )
-          );
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(2),
+                    topRight: Radius.circular(2),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25)),
+                child: Padding(
+                    padding: const EdgeInsets.all(12.5),
+                    child: ExpandablePanel(
+                        header: Row(children: [
+                          const SizedBox(
+                              width: 100,
+                              child: Text(
+                                "手動登録",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )),
+                          Text(errorText,
+                              style: const TextStyle(color: Colors.red)),
+                          const Spacer(),
+                          SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+                        ]),
+                        collapsed: const SizedBox(),
+                        expanded: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.school, color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                textFieldModel("授業名…", classNameController,
+                                    FontWeight.normal, (value) {}),
+                              ]),
+                              const SizedBox(height: 3),
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.access_time,
+                                    color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                Expanded(
+                                    child: GestureDetector(
+                                        onTap: () async {
+                                          await showWeekdayAndPeriodDialogue();
+                                          setState(() {
+                                            isValid();
+                                          });
+                                        },
+                                        child: Text(courseTimeText,
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                overflow: TextOverflow.clip,
+                                                color: Colors.blueAccent)))),
+                              ]),
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.group, color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                textFieldModel("教室…", classRoomController,
+                                    FontWeight.normal, (value) {})
+                              ]),
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.sticky_note_2,
+                                    color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                textFieldModel("授業メモ…", memoController,
+                                    FontWeight.normal, (value) {}),
+                              ]),
+                              dividerModel,
+                              Row(children: [
+                                const Spacer(),
+                                buttonModel(() {
+                                  className = classNameController.text;
+                                  classRoom = classRoomController.text;
+                                  memo = memoController.text;
+                                  if (isValid()) {
+                                    //＠ここに時間割データの追加関数！！！
+                                    MyCourseDatabaseHandler()
+                                        .resisterMyCourseFromMoodle(MyCourse(
+                                            classRoom: classRoom,
+                                            color: "#96C78C",
+                                            courseName: className,
+                                            pageID: null,
+                                            period: period,
+                                            semester: semester,
+                                            syllabusID: null,
+                                            weekday: weekDay,
+                                            year: year,
+                                            criteria: null,
+                                            memo: memo));
+                                    widget.setTimetableState(() {});
+                                    Navigator.pop(context);
+                                  } else {}
+                                }, isValid() ? BLUEGREY : Colors.grey,
+                                    "   追加   "),
+                              ])
+                            ]))))));
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,

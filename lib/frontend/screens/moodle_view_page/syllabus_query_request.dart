@@ -1,3 +1,4 @@
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 
@@ -95,7 +96,8 @@ class SyllabusRequestQuery {
       'kyoin': kyoin,
       'p_gakki': p_gakki?.indexForSyllabusQuery,
       'p_youbi': p_youbi?.index,
-      'p_jigen': "${p_jigen?.period}${p_jigen?.period}",
+      'p_jigen':
+          p_jigen != null ? "${p_jigen?.period}${p_jigen?.period}" : null,
       //フルオンデマンドを選択した時
       'p_gengo': p_gengo,
       'p_gakubu': p_gakubu?.departmentID,
@@ -132,7 +134,7 @@ class SyllabusRequestQuery {
     Map<String, dynamic> map = _toMap();
     String body = map.entries
         .map((e) =>
-            "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value != null ? e.value.toString() : ""}\n")
+            "--$boundary\nContent-Disposition: form-data; name=\"${e.key}\"\n\n${e.value ?? ""}\n")
         .join("");
     body += "--$boundary--";
 
@@ -169,6 +171,7 @@ class SyllabusRequestQuery {
   Future<List<String>> _getSyllabusURLs(
       String? perfectMatchedCourseName) async {
     List<Element> trElements = await fetchSyllabusSearchResults();
+
     if (trElements.isEmpty) {
       return [];
     } else {
@@ -190,6 +193,7 @@ class SyllabusRequestQuery {
     String? syllabusURL = match?.group(1) != null
         ? "https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${match?.group(1)}"
         : null;
+
     if (perfectMatchedCourseName == null) {
       return syllabusURL;
     } else {
@@ -212,6 +216,7 @@ class SyllabusRequestQuery {
       String? perfectMatchedCourseName) async {
     List<String> syllabusURLs =
         await _getSyllabusURLs(perfectMatchedCourseName);
+
     if (syllabusURLs.isEmpty) {
       return null;
     } else {

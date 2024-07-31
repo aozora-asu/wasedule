@@ -53,10 +53,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return GestureDetector(
-      onTap:(){},
-      child:searchWindow());
-
+    return GestureDetector(onTap: () {}, child: searchWindow());
   }
 
   Widget searchWindow() {
@@ -66,7 +63,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
     if (widget.youbi != null && widget.jigen != null) {
       courseTimeText =
-          "$year年 / ${widget.gakki?.text} / ${widget.youbi?.text}曜日 / ${widget.jigen!.period}限";
+          "$year年 / ${widget.gakki?.text} / ${widget.youbi!.text}曜日 / ${widget.jigen!.period}限";
     } else {
       courseTimeText = "$year年 / ${widget.gakki?.text} / オンデマンド / 時限なし";
     }
@@ -179,9 +176,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           ),
           const Divider(),
           Container(
-            constraints: BoxConstraints(
-              maxHeight: SizeConfig.blockSizeVertical! *50),
-            child:searchResult())
+              constraints:
+                  BoxConstraints(maxHeight: SizeConfig.blockSizeVertical! * 50),
+              child: searchResult())
         ],
       ),
     );
@@ -192,7 +189,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return Expanded(
         child: CupertinoTextField(
       controller: controller,
-      onChanged: (value){},
+      onChanged: (value) {},
       onSubmitted: (value) {
         setState(() {
           onSubmitted(value);
@@ -378,7 +375,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         overflow: TextOverflow.clip, color: Colors.grey))),
             const Icon(Icons.search, color: Colors.grey),
             GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   await showConfirmationDialog(context, result);
                 },
                 child: Container(
@@ -399,40 +396,38 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
   Future<void> showCourseDescriptionModalSheet(
       SyllabusQueryResult result) async {
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context){
-          return Scaffold(
-            backgroundColor: FORGROUND_COLOR,
-            appBar:CustomAppBar(backButton: true),
-            body:SyllabusDescriptonView(
-              showHeader: true,
-              syllabusQuery: result)
-            );
-          }
-        )
-      );
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return Scaffold(
+          backgroundColor: FORGROUND_COLOR,
+          appBar: CustomAppBar(backButton: true),
+          body:
+              SyllabusDescriptonView(showHeader: true, syllabusQuery: result));
+    }));
   }
-
 }
 
-Future<void> showConfirmationDialog(BuildContext context,SyllabusQueryResult courseData) async{
+Future<void> showConfirmationDialog(
+    BuildContext context, SyllabusQueryResult courseData) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
         title: const Text("確認"),
-        content: Text('" ' +courseData.courseName + ' "を時間割へ追加してもよろしいですか？'),
+        content: Text('" ' + courseData.courseName + ' "を時間割へ追加してもよろしいですか？'),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
             },
-            child: const Text("キャンセル",style: TextStyle(color:Colors.red),),
+            child: const Text(
+              "キャンセル",
+              style: TextStyle(color: Colors.red),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              showDisclaimerDialog(context); 
+              showDisclaimerDialog(context);
             },
             child: const Text("追加"),
           ),
@@ -442,19 +437,19 @@ Future<void> showConfirmationDialog(BuildContext context,SyllabusQueryResult cou
   );
 }
 
-Future<void> showDisclaimerDialog(BuildContext context) async{
+Future<void> showDisclaimerDialog(BuildContext context) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
         title: const Text("追加しました！"),
         content: const Text(
-          "※履修登録が完了したわけではありません。履修登録は、期間中に大学の「成績照会・科目登録専用」サイトから行ってください。",
-          style: TextStyle(color:Colors.red)),
+            "※履修登録が完了したわけではありません。履修登録は、期間中に大学の「成績照会・科目登録専用」サイトから行ってください。",
+            style: TextStyle(color: Colors.red)),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
             },
             child: const Text("OK"),
           ),

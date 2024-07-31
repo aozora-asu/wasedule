@@ -115,7 +115,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             gakki: Term.byValue(widget.target["semester"]),
             youbi: DayOfWeek.weekAt(widget.target["weekday"]),
             jigen: Lesson.atPeriod(widget.target["period"]),
-            gakubu: Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.user_department)))
+            gakubu: Department.byValue(SharepreferenceHandler()
+                .getValue(SharepreferenceKeys.user_department)))
       ]);
     } else {
       return courseInfo();

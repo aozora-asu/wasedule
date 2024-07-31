@@ -233,14 +233,15 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
     p_open: false,
     subjectClassification: null,
   );
+
   SyllabusQueryResult? syllabusQueryResult;
 
   if (moodleCourse.courseName == "確率・統計") {
     syllabusQueryResult = await syllabusrequestQuery
         .getFirstSingleSyllabusInfo(moodleCourse.courseName);
   } else {
-    syllabusQueryResult = await syllabusrequestQuery
-        .getFirstSingleSyllabusInfo(moodleCourse.courseName);
+    syllabusQueryResult =
+        await syllabusrequestQuery.getFirstSingleSyllabusInfo(null);
   }
 
   if (syllabusQueryResult != null) {
