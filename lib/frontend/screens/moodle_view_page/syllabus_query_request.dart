@@ -213,7 +213,6 @@ class SyllabusRequestQuery {
     List<String> syllabusURLs =
         await _getSyllabusURLs(perfectMatchedCourseName);
     if (syllabusURLs.isEmpty) {
-      print("見つかりませんでした");
       return null;
     } else {
       return await _getSingleSyllabusInfo(syllabusURLs.first);
@@ -309,7 +308,7 @@ class SyllabusRequestQuery {
         reference: _reference,
         remark: _remark,
         textbook: _textbook);
-    print(res.department);
+
     return res;
   }
 }
