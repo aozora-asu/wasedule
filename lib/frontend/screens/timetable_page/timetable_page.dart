@@ -82,14 +82,31 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             ),
           )),
       floatingActionButton: Container(
+          width: SizeConfig.blockSizeHorizontal! *90,
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
-            const Spacer(),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2), 
+                      spreadRadius: 2,
+                      blurRadius: 5, 
+                      offset:const Offset(0, 3),
+                ),]
+                ),
+                child:buttonModel(() async {
+                await showMoodleRegisterGuide(
+                  context, false, MoodleRegisterGuideType.timetable);
+                  widget.moveToMoodlePage(4);
+                }, PALE_MAIN_COLOR, "自動取得", verticalpadding: 15))),
+            const SizedBox(width: 10),
             FloatingActionButton(
                 onPressed: () {
                   showDialog(
                       context: context,
-                      builder: (BuildContext context) {
+                    builder: (BuildContext context) {
                         return CourseAddPage(
                           setTimetableState: setState,
                         );
@@ -312,16 +329,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       ref.read(timeTableProvider).initUniversityScheduleByDay(
                           thisYear,
                           [currentQuarter, currentSemester, Term.fullYear]);
-                      for (int i = 0; i < snapshot.data!.length; i++) {}
-                      for (int i = 0;
-                          i <
-                              ref
-                                  .read(timeTableProvider)
-                                  .sortedDataByWeekDay
-                                  .length;
-                          i++) {}
                       return timeTableBody();
-                    } else {
+                    } else if(snapshot.data == null){
+                        ref
+                          .read(timeTableProvider)
+                          .sortDataByWeekDay([]);
+                      ref.read(timeTableProvider).initUniversityScheduleByDay(
+                          thisYear,
+                          [currentQuarter, currentSemester, Term.fullYear]);
+                      return timeTableBody();
+                    }else{
                       return noDataScreen();
                     }
                   })),
@@ -385,11 +402,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 ))
               ]),
           const SizedBox(height: 30),
-          buttonModel(() async {
-            await showMoodleRegisterGuide(
-                context, false, MoodleRegisterGuideType.timetable);
-            widget.moveToMoodlePage(4);
-          }, PALE_MAIN_COLOR, "登録画面へ", verticalpadding: 10)
+
         ])));
   }
 
