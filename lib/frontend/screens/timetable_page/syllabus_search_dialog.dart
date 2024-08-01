@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -199,25 +200,36 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   }
 
   Widget departmentPicker(Department? gakubu) {
-    List<Department?> items = [];
-    items.add(gakubu);
-    items.addAll(Department.departments);
+    List<Department?> departments = [];
+    departments.add(gakubu);
+    departments.addAll(Department.departments);
+    departments.remove(gakubu);
+    
+    List<DropdownMenuItem<Department>> items = [];
+    for(int i = 0; i < departments.length; i++){
+      String menuText = "学部を選択";
+      if(departments.elementAt(i) != null){
+        menuText = departments.elementAt(i)!.text;
+      }
+
+      items.add(DropdownMenuItem(
+        value: departments.elementAt(i),
+        child: Center(
+         child:Text(menuText,
+          style: const TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.normal),))));
+    }
 
     return Expanded(
-      child: CupertinoPicker(
-        itemExtent: 32.0,
-        onSelectedItemChanged: (int index) {
-          setState(() {
-            requestQuery.p_gakubu = items.elementAt(index);
-            requestQuery.subjectClassification = null;
-          });
-        },
-        children: List<Widget>.generate(items.length, (int index) {
-          return Center(
-            child: Text(items[index]?.text ?? "学部なし"),
-          );
-        }),
-      ),
+      child: cupertinoLikeDropDownListModel(
+        items,requestQuery.p_gakubu,
+        (value) {
+            setState(() {
+              requestQuery.p_gakubu = value;
+              requestQuery.subjectClassification = null;
+            });
+        },)
     );
   }
 
@@ -228,10 +240,25 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     if (gakubu == null || gakubu.subjectClassifications == null) {
       value = const SizedBox();
     } else {
-      List<SubjectClassification?> items = [];
-      items.add(null);
-      items.addAll(gakubu.subjectClassifications!);
+      List<SubjectClassification?> subjectClassifications = [];
+      subjectClassifications.add(null);
+      subjectClassifications.addAll(gakubu.subjectClassifications!);
+    
+    List<DropdownMenuItem<SubjectClassification>> items = [];
+    for(int i = 0; i < subjectClassifications.length; i++){
+      String menuText = "科目区分を選択";
+      if(subjectClassifications.elementAt(i) != null){
+        menuText = subjectClassifications.elementAt(i)!.text;
+      }
 
+      items.add(DropdownMenuItem(
+        value: subjectClassifications.elementAt(i),
+        child: Center(
+         child:Text(menuText,
+          style: const TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.normal),))));
+    }
       value = Row(children: [
         SizedBox(
           width: 80,
@@ -242,20 +269,13 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           ),
         ),
         Expanded(
-          child: CupertinoPicker(
-            useMagnifier: true,
-            itemExtent: 32.0,
-            onSelectedItemChanged: (int index) {
+          child: cupertinoLikeDropDownListModel(
+          items, requestQuery.subjectClassification,
+           (value) {
               setState(() {
-                requestQuery.subjectClassification = items.elementAt(index);
+                requestQuery.subjectClassification = value;
               });
-            },
-            children: List<Widget>.generate(items.length, (int index) {
-              return Center(
-                child: Text(items[index]?.text ?? "科目区分を選択"),
-              );
-            }),
-          ),
+            },)
         )
       ]);
     }
@@ -266,16 +286,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   List<SyllabusQueryResult> resultList = [];
   Widget searchResult() {
     resultList = [];
-
-    // 検索条件の値をコンソールに出力
-    print(requestQuery.p_gakubu?.text ?? '学部が設定されていません');
-    print(requestQuery.p_gakki?.text ?? '学期が設定されていません');
-    print(requestQuery.p_youbi?.text ?? '曜日が設定されていません');
-    print(requestQuery.p_jigen?.text ?? '時限が設定されていません');
-    print(requestQuery.subjectClassification?.text ?? '科目群が設定されていません');
-    print(requestQuery.kamoku ?? '科目名が設定されていません');
-    print(requestQuery.keyword ?? 'キーワードが設定されていません');
-    print(requestQuery.p_open);
 
     return StreamBuilder<SyllabusQueryResult>(
       stream: requestQuery.fetchAllSyllabusInfo(),
@@ -298,7 +308,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             ),
           );
         } else {
-          print("Data Found");
           resultList.add(snapshot.data!);
           // シラバス情報をリスト形式で表示
           return ListView.separated(

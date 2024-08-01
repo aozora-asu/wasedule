@@ -146,3 +146,31 @@ BoxDecoration roundedBoxdecorationWithShadow({int radiusType = 0,Color? backgrou
       borderRadius: boxRadius(type: radiusType)
     );
 }
+
+Widget cupertinoLikeDropDownListModel(
+  List<DropdownMenuItem<dynamic>> items,
+  dynamic value,
+  Function(dynamic) onChanged
+){
+  return  Material(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.grey.withOpacity(0.2),
+        child:DropdownButtonFormField(
+          borderRadius: BorderRadius.circular(20),
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+            isDense: true,
+            border: InputBorder.none),
+            style:const  TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              fontSize:22
+            ),
+            isExpanded: true,
+            icon: const Icon(Icons.arrow_drop_down_rounded, color: Colors.grey),
+          items:items,
+          value: value,
+          onChanged: onChanged,
+        ),
+      );
+}
