@@ -242,7 +242,7 @@ class SyllabusRequestQuery {
     String? _credit;
     String? _teacher;
     String? _campus;
-    String? _allocateYear;
+    String? _allocatedYear;
     String? _lectureSystem;
     late String _semesterAndWeekdayAndPeriod;
 
@@ -273,7 +273,7 @@ class SyllabusRequestQuery {
           case "キャンパス":
             _campus = zenkaku2hankaku(th.nextElementSibling!.text);
           case "配当年次":
-            _allocateYear = zenkaku2hankaku(th.nextElementSibling!.text);
+            _allocatedYear = zenkaku2hankaku(th.nextElementSibling!.text);
           case "授業方法区分":
             _lectureSystem = zenkaku2hankaku(th.nextElementSibling!.text);
         }
@@ -321,7 +321,10 @@ class SyllabusRequestQuery {
         agenda: _agenda,
         reference: _reference,
         remark: _remark,
-        textbook: _textbook);
+        textbook: _textbook,
+        lectureSystem: _lectureSystem,
+        campus: _campus,
+        allocatedYear: _allocatedYear);
 
     return res;
   }

@@ -86,29 +86,29 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       } else {
         print(target);
         return SizedBox(
-          height: SizeConfig.blockSizeVertical! *50,
-          width: SizeConfig.blockSizeHorizontal! *100,
-          child:SyllabusDescriptonView(
-            showHeader: false,
-            syllabusQuery: SyllabusQueryResult(
-              courseName: target["courseName"],
-              classRoom: target["classRoom"],
-              year: target["year"],
-              syllabusID: target["syllabusID"],
-              semesterAndWeekdayAndPeriod:"ここに年度曜日時限のデータを加工して受け渡し",
-              teacher: null,
-              credit: null,
-              criteria:target["criteria"],
-              department: null,
-              subjectClassification: null,
-              abstract: null,
-              agenda: null,
-              reference: null,
-              remark: null,
-              textbook: null
-              )
-            )
-        );
+            height: SizeConfig.blockSizeVertical! * 50,
+            width: SizeConfig.blockSizeHorizontal! * 100,
+            child: SyllabusDescriptonView(
+                showHeader: false,
+                syllabusQuery: SyllabusQueryResult(
+                    courseName: target["courseName"],
+                    classRoom: target["classRoom"],
+                    year: target["year"],
+                    syllabusID: target["syllabusID"],
+                    semesterAndWeekdayAndPeriod: "ここに年度曜日時限のデータを加工して受け渡し",
+                    teacher: null,
+                    credit: null,
+                    criteria: target["criteria"],
+                    department: null,
+                    subjectClassification: null,
+                    abstract: null,
+                    agenda: null,
+                    reference: null,
+                    remark: null,
+                    textbook: null,
+                    lectureSystem: null,
+                    campus: null,
+                    allocatedYear: null)));
       }
     }
 

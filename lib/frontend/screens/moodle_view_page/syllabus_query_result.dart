@@ -33,6 +33,9 @@ class SyllabusQueryResult {
   final String? textbook;
   final String? agenda;
   final String? abstract;
+  final String? campus;
+  final String? lectureSystem;
+  final String? allocatedYear;
 
   SyllabusQueryResult(
       {required this.courseName,
@@ -49,7 +52,10 @@ class SyllabusQueryResult {
       required this.agenda,
       required this.reference,
       required this.remark,
-      required this.textbook});
+      required this.textbook,
+      required this.allocatedYear,
+      required this.campus,
+      required this.lectureSystem});
   Map<String, dynamic> toMap() {
     return {
       "courseName": courseName,

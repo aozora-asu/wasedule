@@ -203,7 +203,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   agenda: null,
                   reference: null,
                   remark: null,
-                  textbook: null)));
+                  textbook: null,
+                  allocatedYear: null,
+                  campus: null,
+                  lectureSystem: null)));
     }
   }
 
