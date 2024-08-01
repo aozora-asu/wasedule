@@ -149,19 +149,33 @@ Future<void> showUserDepartmentSettingDialog(BuildContext context)async{
 }
 
   Widget _departmentPicker() {
-    List<Department?> items = Department.departments;
+    List<Department?> departments = [];
+    departments.addAll(Department.departments);
+    
+    List<DropdownMenuItem<Department>> items = [];
+    for(int i = 0; i < departments.length; i++){
+      String menuText = "学部を選択";
+      if(departments.elementAt(i) != null){
+        menuText = departments.elementAt(i)!.text;
+      }
 
-    return CupertinoPicker(
-        itemExtent: 32.0,
-        onSelectedItemChanged: (int index) {
+      items.add(DropdownMenuItem(
+        value: departments.elementAt(i),
+        child: Center(
+         child:Text(menuText,
+          style: const TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.normal),))));
+    }
+
+    return cupertinoLikeDropDownListModel(
+        items,
+        Department.byValue(SharepreferenceHandler().getValue(
+            SharepreferenceKeys.userDepartment)),
+        (value) {
           SharepreferenceHandler().setValue(
             SharepreferenceKeys.userDepartment,
-            items.elementAt(index)!.value);
+            value.value);
         },
-        children: List<Widget>.generate(items.length, (int index) {
-          return Center(
-            child: Text(items[index]?.text ?? "学部なし"),
-          );
-        }),
-      );
+    );
   }

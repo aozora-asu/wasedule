@@ -852,6 +852,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         child: Text(
                   className,
                   style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       fontSize: fontSize, overflow: TextOverflow.ellipsis),
                   maxLines: 4,
                 ))),
@@ -962,6 +963,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   child: Center(
                 child: Text(className,
                     style: TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: fontSize, overflow: TextOverflow.ellipsis),
                     maxLines: 4),
               ))

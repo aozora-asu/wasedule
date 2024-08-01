@@ -25,7 +25,7 @@ class TimeTableData {
   var sortedDataByWeekDay = {};
   var currentSemesterClasses = {};
   var universityScheduleByWeekDay = {};
-  int maxPeriod = 4;
+  int maxPeriod = 6;
 
   TimeTableData({
     List<Map<String, dynamic>> timeTableDataList = const [],
@@ -51,7 +51,7 @@ class TimeTableData {
 
   Map<int, List<Map<String, dynamic>>> sortDataByWeekDay(TDList) {
     Map<int, List<Map<String, dynamic>>> sortedData = {};
-    maxPeriod = 4;
+    maxPeriod = 6;
     for (int i = 0; i < TDList.length; i++) {
       int targetWeekDay = TDList[i]["weekday"] ?? 7;
       int period = TDList[i]["period"] ?? 0;
