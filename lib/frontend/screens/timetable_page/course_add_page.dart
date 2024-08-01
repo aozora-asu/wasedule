@@ -55,7 +55,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       Department? userDepartment;
       String? userDepartmentString = SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.user_department);
+          .getValue(SharepreferenceKeys.userDepartment);
       if (userDepartmentString != null) {
         userDepartment = Department.byValue(userDepartmentString);
       }

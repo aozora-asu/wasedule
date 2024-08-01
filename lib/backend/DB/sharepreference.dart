@@ -76,8 +76,8 @@ class SharepreferenceKeys {
       SharepreferenceKeys._(key: "backupID", defaultValue: null);
   static const expireDayBackupID =
       SharepreferenceKeys._(key: "expireDayBackupID", defaultValue: true);
-  static const user_department =
-      SharepreferenceKeys._(key: "user_department", defaultValue: null);
+  static const userDepartment =
+      SharepreferenceKeys._(key: "userDepartment", defaultValue: null);
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =
@@ -94,6 +94,6 @@ class SharepreferenceKeys {
         bgColorTheme,
         initCampusNum,
         showAttendDialogAutomatically,
-        user_department,
+        userDepartment,
       ];
 }

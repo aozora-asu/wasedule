@@ -46,7 +46,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     isScreenShotBeingTaken = false;
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       String? userDepartment = 
-        SharepreferenceHandler().getValue(SharepreferenceKeys.user_department);
+        SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
       if(userDepartment == null){await showUserDepartmentSettingDialog(context);}
       await showAttendanceDialog(context, now, ref);
     });
