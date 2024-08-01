@@ -91,7 +91,7 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
 
   Widget userDepartmentSettingPreview(){
     Department? userDepartment = 
-      Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.user_department) ?? "設定なし");
+      Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment) ?? "設定なし");
     String departmentString ="設定なし";
 
     if(userDepartment != null){
@@ -155,7 +155,7 @@ Future<void> showUserDepartmentSettingDialog(BuildContext context)async{
         itemExtent: 32.0,
         onSelectedItemChanged: (int index) {
           SharepreferenceHandler().setValue(
-            SharepreferenceKeys.user_department,
+            SharepreferenceKeys.userDepartment,
             items.elementAt(index)!.value);
         },
         children: List<Widget>.generate(items.length, (int index) {
