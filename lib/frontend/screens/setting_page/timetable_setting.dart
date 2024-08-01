@@ -167,11 +167,15 @@ Future<void> showUserDepartmentSettingDialog(BuildContext context)async{
             fontSize:20,
             fontWeight: FontWeight.normal),))));
     }
-
+    String? userDepartmentString = 
+      SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
+    Department? userDepartment;
+    if(userDepartmentString != null){
+      userDepartment = Department.byValue(userDepartmentString);
+    }
+  
     return cupertinoLikeDropDownListModel(
-        items,
-        Department.byValue(SharepreferenceHandler().getValue(
-            SharepreferenceKeys.userDepartment)),
+        items,userDepartment,
         (value) {
           SharepreferenceHandler().setValue(
             SharepreferenceKeys.userDepartment,
