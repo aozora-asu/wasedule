@@ -18,6 +18,7 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_vi
 import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywaseda_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 
 import '../screens/calendar_page/calendar_page.dart';
@@ -113,7 +114,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   List<List<Widget>> parentPages() {
     return [
       [const WasedaMapPage()],
-      [TimeTablePage(moveToMoodlePage: _onItemTapped)],
+      timeTableSubPages(),
       calendarSubPages(),
       taskSubPages(),
       moodleSubPages(),
@@ -167,6 +168,13 @@ class _AppPageState extends ConsumerState<AppPage> {
         body: body);
   }
 
+  List<Widget> timeTableSubPages(){
+    return [
+      TimeTablePage(moveToMoodlePage: _onItemTapped),
+      SyllabusSearchPage()
+    ];
+  }
+
   List<Widget> calendarSubPages() {
     String thisMonth =
         "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
@@ -189,7 +197,10 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
   List<Widget> moodleSubPages() {
-    return [const MoodleViewPage(), const MyWasedaViewPage()];
+    return [
+      const MoodleViewPage(),
+      const MyWasedaViewPage()
+    ];
   }
 
   void startTimer() {
