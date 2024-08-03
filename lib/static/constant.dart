@@ -694,12 +694,12 @@ class Department {
   static Department? byDepartmentID(String? departmentID) {
     if (departmentID != null) {
       for (var department in departments) {
-        if (department.value == departmentID) {
+        if (department.departmentID == departmentID) {
           return department;
         }
       }
       for (var department in masters) {
-        if (department.value == departmentID) {
+        if (department.departmentID == departmentID) {
           return department;
         }
       }

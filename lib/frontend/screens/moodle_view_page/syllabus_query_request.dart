@@ -163,6 +163,7 @@ class SyllabusRequestQuery {
       SharepreferenceHandler().setValue(
           SharepreferenceKeys.recentSyllabusQueryDepartmentID,
           p_gakubu?.departmentID);
+
       SharepreferenceHandler()
           .setValue(SharepreferenceKeys.recentSyllabusQueryIsOpen, p_open);
       SharepreferenceHandler()
