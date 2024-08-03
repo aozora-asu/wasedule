@@ -50,7 +50,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       p_gakki: widget.gakki,
       p_youbi: widget.youbi,
       p_jigen: widget.jigen,
-      p_gakubu: Department.byValue(SharepreferenceHandler()
+      p_gakubu: Department.byDepartmentID(SharepreferenceHandler()
           .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID)),
       p_gengo: null,
       p_open: SharepreferenceHandler()
