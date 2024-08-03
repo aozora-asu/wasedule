@@ -169,7 +169,7 @@ class SyllabusRequestQuery {
           .setValue(SharepreferenceKeys.recentSyllabusQueryKamoku, kamoku);
       SharepreferenceHandler().setValue(
           SharepreferenceKeys.recentSyllabusQueryKeya,
-          subjectClassification!.p_keya);
+          subjectClassification?.p_keya);
       SharepreferenceHandler()
           .setValue(SharepreferenceKeys.recentSyllabusQueryKeyword, keyword);
       return html_parser

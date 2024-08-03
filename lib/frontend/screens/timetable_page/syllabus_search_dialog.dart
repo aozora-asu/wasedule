@@ -33,7 +33,7 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
 
 class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
-  late Map<String, dynamic> initQuery;
+
   late bool isFullYear;
 
   late bool isGraduateSchool;
@@ -63,11 +63,12 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     );
 
     isGraduateSchool = SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduate);
+        .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool);
 
     keywordController.text = "";
 
-    isFullYear = false;
+    isFullYear = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
   }
 
   @override
@@ -205,7 +206,8 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                     setState(() {
                       isGraduateSchool = value!;
                       SharepreferenceHandler().setValue(
-                          SharepreferenceKeys.recentSyllabusQueryIsGraduate,
+                          SharepreferenceKeys
+                              .recentSyllabusQueryIsGraduateSchool,
                           value);
                     });
                   })

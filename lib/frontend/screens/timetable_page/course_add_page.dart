@@ -53,9 +53,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       Navigator.pop(context);
     }, child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
-      Department? userDepartment;
-      String? userDepartmentString = SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.userDepartment);
+      Department? userDepartment = Department.byDepartmentID(
+          SharepreferenceHandler()
+              .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID));
+      String? userDepartmentString =
+          SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
       if (userDepartmentString != null) {
         userDepartment = Department.byValue(userDepartmentString);
       }

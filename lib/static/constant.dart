@@ -673,13 +673,40 @@ class Department {
         japanese,
         abroadStudy,
       ];
-  static Department? byValue(String value) {
-    for (var department in departments) {
-      if (department.value == value) {
-        return department;
+  static Department? byValue(String? value) {
+    if (value != null) {
+      for (var department in departments) {
+        if (department.value == value) {
+          return department;
+        }
       }
+      for (var department in masters) {
+        if (department.value == value) {
+          return department;
+        }
+      }
+      return null;
+    } else {
+      return null;
     }
-    return null;
+  }
+
+  static Department? byDepartmentID(String? departmentID) {
+    if (departmentID != null) {
+      for (var department in departments) {
+        if (department.value == departmentID) {
+          return department;
+        }
+      }
+      for (var department in masters) {
+        if (department.value == departmentID) {
+          return department;
+        }
+      }
+      return null;
+    } else {
+      return null;
+    }
   }
 }
 
