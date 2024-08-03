@@ -202,6 +202,25 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         crossAxisAlignment: CrossAxisAlignment.start,
         children:[
           const SizedBox(
+            height: 30),
+          Container(
+            width: SizeConfig.blockSizeHorizontal! *width,
+            height: 5,
+            color:underBarColor
+          ),
+        ])
+    );
+  }
+
+  Widget indexBar(){
+    Color underBarColor = PALE_MAIN_COLOR;
+    return SizedBox(
+      width: 0,
+      height: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          const SizedBox(
             height: 30,
             child: VerticalDivider(
               color: Colors.grey,
@@ -209,7 +228,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
               indent: 8,
               )),
           Container(
-            width: SizeConfig.blockSizeHorizontal! *width,
+            width: SizeConfig.blockSizeHorizontal! *0,
             height: 5,
             color:underBarColor
           ),
@@ -236,62 +255,67 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:0,
             title: "時間割"
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.search,
             subIndex:1,
             title: "シラバス"
           ),
+          indexBar(),
+          subMenuPanel(
+            ref,
+            icon:Icons.abc_sharp,
+            subIndex:1,
+            title: "単位"
+          ),
+          indexBar(),
+          subMenuPanel(
+            ref,
+            icon:Icons.school,
+            subIndex:1,
+            title: "出欠"
+          ),
           space(60.0),
       ],
       2 : [
-          space(0),
           subMenuPanel(
             ref,
             icon:Icons.calendar_month,
             subIndex:0,
             title: "予定"
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.groups,
             subIndex:1,
             title: "シェア"
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.currency_yen,
             subIndex:2,
             title: "バイト"
           ),
-
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.school,
             subIndex:3,
             title: "大学暦"
           ),
-          space(0),
-          subMenuPanel(
-            ref,
-            icon:Icons.settings,
-            subIndex:4,
-            title: "設定"
-          ),
+          space(20.0),
         ],
         3 : [
-          space(0),
           subMenuPanel(
             ref,
             icon:Icons.check,
             subIndex:0,
             title: "課題"
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.close,
@@ -299,14 +323,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             title: "期限切れ",
             showExpiredTasks: true
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.delete,
             subIndex:2,
             title: "削除済み"
           ),
-          space(0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.edit,
@@ -322,14 +346,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:0,
             title: "Moodle"
           ),
-          space(1.0),
+          indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.school,
             subIndex:1,
             title: "MyWaseda"
           ),
-          space(69.0),
+          space(70.0),
         ],
       };
     return subPageTabs;
