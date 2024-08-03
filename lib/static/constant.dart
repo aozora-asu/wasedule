@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
@@ -492,7 +493,7 @@ class Department {
       subjectClassifications: null);
   static const Department educationLab = Department._internal(
       value: "educationLab",
-      text: "教研",
+      text: "教育研",
       TLC: "",
       color: MAIN_COLOR,
       departmentID: "371990",
@@ -690,6 +691,20 @@ class SubjectClassification {
       {required this.p_keya,
       required this.parentDepartmentID,
       required this.text});
+
+  static SubjectClassification? byKeyAndID(
+      String? p_keya, String? parentDepartmentID) {
+    switch (parentDepartmentID) {
+      case "282006":
+        return advancedSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+      case "272006":
+        return creativeSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+      case "262006":
+        return fundamentalSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+      default:
+        return null;
+    }
+  }
 
   static List<SubjectClassification> advancedSubClass = const [
     SubjectClassification._internal(

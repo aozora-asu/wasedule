@@ -78,6 +78,18 @@ class SharepreferenceKeys {
       SharepreferenceKeys._(key: "expireDayBackupID", defaultValue: true);
   static const userDepartment =
       SharepreferenceKeys._(key: "userDepartment", defaultValue: null);
+  static const recentSyllabusQueryIsGraduate = SharepreferenceKeys._(
+      key: "recentSyllabusQueryIsGraduate", defaultValue: true);
+  static const recentSyllabusQueryKeyword = SharepreferenceKeys._(
+      key: "recentSyllabusQueryKeyword", defaultValue: null);
+  static const recentSyllabusQueryKamoku = SharepreferenceKeys._(
+      key: "recentSyllabusQueryKamoku", defaultValue: null);
+  static const recentSyllabusQueryIsOpen = SharepreferenceKeys._(
+      key: "recentSyllabusQueryIsOpen", defaultValue: false);
+  static const recentSyllabusQueryKeya =
+      SharepreferenceKeys._(key: "recentSyllabusQueryKeya", defaultValue: null);
+  static const recentSyllabusQueryDepartmentID = SharepreferenceKeys._(
+      key: "recentSyllabusQueryDepartmentID", defaultValue: null);
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =

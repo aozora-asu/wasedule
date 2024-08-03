@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
@@ -44,10 +46,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      String? userDepartment = 
-        SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
-      if(userDepartment == null){await showUserDepartmentSettingDialog(context);}
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String? userDepartment =
+          SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
+
+      if (userDepartment == null) {
+        await showUserDepartmentSettingDialog(context);
+      }
       await showAttendanceDialog(context, now, ref);
     });
   }
@@ -82,32 +87,32 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             ),
           )),
       floatingActionButton: Container(
-          width: SizeConfig.blockSizeHorizontal! *90,
+          width: SizeConfig.blockSizeHorizontal! * 90,
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2), 
-                      spreadRadius: 2,
-                      blurRadius: 5, 
-                      offset:const Offset(0, 3),
-                ),]
-                ),
-                child:buttonModel(() async {
-                await showMoodleRegisterGuide(
-                  context, false, MoodleRegisterGuideType.timetable);
-                  widget.moveToMoodlePage(4);
-                }, PALE_MAIN_COLOR, "自動取得", verticalpadding: 15))),
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]),
+                    child: buttonModel(() async {
+                      await showMoodleRegisterGuide(
+                          context, false, MoodleRegisterGuideType.timetable);
+                      widget.moveToMoodlePage(4);
+                    }, PALE_MAIN_COLOR, "自動取得", verticalpadding: 15))),
             const SizedBox(width: 10),
             FloatingActionButton(
                 onPressed: () {
                   showDialog(
                       context: context,
-                    builder: (BuildContext context) {
+                      builder: (BuildContext context) {
                         return CourseAddPage(
                           setTimetableState: setState,
                         );
@@ -331,15 +336,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                           thisYear,
                           [currentQuarter, currentSemester, Term.fullYear]);
                       return timeTableBody();
-                    } else if(snapshot.data == null){
-                        ref
-                          .read(timeTableProvider)
-                          .sortDataByWeekDay([]);
+                    } else if (snapshot.data == null) {
+                      ref.read(timeTableProvider).sortDataByWeekDay([]);
                       ref.read(timeTableProvider).initUniversityScheduleByDay(
                           thisYear,
                           [currentQuarter, currentSemester, Term.fullYear]);
                       return timeTableBody();
-                    }else{
+                    } else {
                       return noDataScreen();
                     }
                   })),
@@ -403,7 +406,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 ))
               ]),
           const SizedBox(height: 30),
-
         ])));
   }
 
@@ -853,7 +855,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   className,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                      fontSize: fontSize,
+                      overflow: TextOverflow.ellipsis),
                   maxLines: 4,
                 ))),
                 classRoomView,
@@ -964,7 +967,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 child: Text(className,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                        fontSize: fontSize,
+                        overflow: TextOverflow.ellipsis),
                     maxLines: 4),
               ))
             ]),
