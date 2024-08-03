@@ -455,6 +455,167 @@ class Department {
       color: MAIN_COLOR,
       departmentID: "9S2013",
       subjectClassifications: null);
+  static const Department politicsLab = Department._internal(
+      value: "politicsLab",
+      text: "政研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "311951",
+      subjectClassifications: null);
+  static const Department economyLab = Department._internal(
+      value: "economyLab",
+      text: "経研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "321951",
+      subjectClassifications: null);
+  static const Department lawLab = Department._internal(
+      value: "lawLab",
+      text: "法研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "331951",
+      subjectClassifications: null);
+  static const Department literatureLab = Department._internal(
+      value: "literatureLab",
+      text: "文研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "342002",
+      subjectClassifications: null);
+  static const Department commerceLab = Department._internal(
+      value: "commerceLab",
+      text: "商研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "351951",
+      subjectClassifications: null);
+  static const Department educationLab = Department._internal(
+      value: "educationLab",
+      text: "教研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "371990",
+      subjectClassifications: null);
+  static const Department humanLab = Department._internal(
+      value: "humanLab",
+      text: "人研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "381991",
+      subjectClassifications: null);
+  static const Department socialScienceLab = Department._internal(
+      value: "economyLab",
+      text: "社学研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "391994",
+      subjectClassifications: null);
+  static const Department asiaLab = Department._internal(
+      value: "asiaLab",
+      text: "アジア研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "402003",
+      subjectClassifications: null);
+  static const Department japaneseEducationLab = Department._internal(
+      value: "japaneseEducationLab",
+      text: "日本語教育研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "432001",
+      subjectClassifications: null);
+  static const Department infomationSystemLab = Department._internal(
+      value: "infomationSystemLab",
+      text: "情シス研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "442003",
+      subjectClassifications: null);
+  static const Department judicialAffairsLab = Department._internal(
+      value: "judicialAffairsLab",
+      text: "法務研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "472004",
+      subjectClassifications: null);
+  static const Department accountLab = Department._internal(
+      value: "accountLab",
+      text: "会計研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "482005",
+      subjectClassifications: null);
+  static const Department sportsLab = Department._internal(
+      value: "sportsLab",
+      text: "スポーツ研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "502005",
+      subjectClassifications: null);
+  static const Department fundamentalScienceLab = Department._internal(
+      value: "fundamentalScienceLab",
+      text: "基幹研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "512006",
+      subjectClassifications: null);
+  static const Department advancedScienceLab = Department._internal(
+      value: "advancedScienceLab",
+      text: "先進研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "532006",
+      subjectClassifications: null);
+  static const Department creativeScienceLab = Department._internal(
+      value: "creativeScienceLab",
+      text: "創造研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "522006",
+      subjectClassifications: null);
+  static const Department environmentEnergyLab = Department._internal(
+      value: "environmentEnergyLab",
+      text: "環境エネルギー研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "542006",
+      subjectClassifications: null);
+  static const Department internationalCommunicationLab = Department._internal(
+      value: "internationalCommunicationLab",
+      text: "国際コミュ研",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "562012",
+      subjectClassifications: null);
+  static const Department businessAdministrationLab = Department._internal(
+      value: "businessAdministrationLab",
+      text: "経営管理研",
+      TLC: "WBS",
+      color: MAIN_COLOR,
+      departmentID: "572015",
+      subjectClassifications: null);
+  static const Department artLab = Department._internal(
+      value: "artLab",
+      text: "芸術",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "712001",
+      subjectClassifications: null);
+  static const Department japanese = Department._internal(
+      value: "japanese",
+      text: "日本語",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "922006",
+      subjectClassifications: null);
+  static const Department abroadStudy = Department._internal(
+      value: "abroadStudy",
+      text: "留学",
+      TLC: "",
+      color: MAIN_COLOR,
+      departmentID: "982007",
+      subjectClassifications: null);
 
   const Department._internal(
       {required this.value,
@@ -485,6 +646,31 @@ class Department {
         humanScience,
         sportsScience,
         global
+      ];
+  static List<Department> get masters => [
+        politicsLab,
+        economyLab,
+        lawLab,
+        literatureLab,
+        commerceLab,
+        educationLab,
+        humanLab,
+        socialScienceLab,
+        asiaLab,
+        japaneseEducationLab,
+        infomationSystemLab,
+        judicialAffairsLab,
+        accountLab,
+        sportsLab,
+        fundamentalScienceLab,
+        advancedScienceLab,
+        creativeScienceLab,
+        environmentEnergyLab,
+        internationalCommunicationLab,
+        businessAdministrationLab,
+        artLab,
+        japanese,
+        abroadStudy,
       ];
   static Department? byValue(String value) {
     for (var department in departments) {

@@ -9,8 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import '../../assist_files/screen_manager.dart';
-import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
+
 import "../../../backend/service/share_from_web.dart";
+import 'package:flutter/services.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -21,45 +22,10 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-Codec<String, String> stringToBase64 = utf8.fuse(base64);
-
 class _MyAppState extends State<MyApp> {
-  static const MethodChannel platform =
-      MethodChannel('com.example.wasedule/navigation');
-
   _MyAppState() {
-    // メソッドチャネルのコールバックを設定
     platform.setMethodCallHandler((MethodCall call) async {
-      if (call.method == 'navigateTo') {
-        // Base64 エンコードされた文字列をデコード
-        String base64UrlEncodedData = call.arguments as String;
-        try {
-          // URL スキームからデータを取り出す
-          Uri uri = Uri.parse(base64UrlEncodedData);
-          String base64UrlData = uri.queryParameters['data'] ?? '';
-          String cleanedBase64UrlData = base64UrlData.replaceAll(' ', '+');
-          // Base64URL デコード
-          String base64Data = cleanedBase64UrlData
-              .replaceAll('-', '+') // Base64URL の変換
-              .replaceAll('_', '/') // Base64URL の変換
-              .padRight((base64UrlData.length + 3) & ~3, '='); // パディングを追加
-          String jsonString = utf8.decode(base64.decode(base64Data));
-
-          // デバッグ用にデコードした JSON 文字列を表示
-          print('Decoded JSON string: $jsonString');
-
-          // JSON 文字列を JSON オブジェクトに変換
-          Map<String, dynamic> jsonData = json.decode(jsonString);
-
-          // デバッグ用に内容を表示
-          print('Received JSON data: $jsonData');
-
-          // URLに基づいて画面遷移
-          navigateBasedOnURL(jsonData);
-        } catch (e) {
-          print('Failed to decode JSON data: $e');
-        }
-      }
+      methodChannel(call);
     });
   }
 
@@ -81,27 +47,6 @@ class _MyAppState extends State<MyApp> {
       },
       home: const FadingImage(),
     );
-  }
-
-  // URLに基づいて画面を遷移させるロジックを実装する関数
-  void navigateBasedOnURL(Map<String, dynamic> jsonData) {
-    document(jsonData['data']["html"]);
-    // 例: JSON オブジェクトの "type" フィールドに基づいて遷移先を決定
-    if (jsonData['type'] == 'shared_content') {
-      // 共有されたコンテンツがある場合、特定の画面に遷移
-      navigatorKey.currentState?.pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => AppPage(initIndex: 1),
-        ),
-      );
-    } else {
-      // デフォルトの画面に遷移する
-      navigatorKey.currentState?.pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => AppPage(initIndex: 2),
-        ),
-      );
-    }
   }
 }
 
