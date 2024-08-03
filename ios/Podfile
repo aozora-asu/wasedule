@@ -34,6 +34,7 @@ target 'Runner' do
 
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
 end
 
 target 'HomeWidgetExtension' do
@@ -46,6 +47,18 @@ target 'HomeWidgetExtension' do
   # pod 'Firebase/Core'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+target 'ShareExtension' do
+  use_frameworks!
+  use_modular_headers!
+  # Inherit the settings from the main app
+  inherit! :search_paths
+  # Add required Firebase dependencies for the extension if needed
+  # pod 'Firebase/Analytics'
+  # pod 'Firebase/Core'
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
 end
 
 post_install do |installer|

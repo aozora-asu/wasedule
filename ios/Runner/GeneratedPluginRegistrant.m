@@ -84,10 +84,22 @@
 @import rate_my_app;
 #endif
 
+#if __has_include(<receive_sharing_intent/ReceiveSharingIntentPlugin.h>)
+#import <receive_sharing_intent/ReceiveSharingIntentPlugin.h>
+#else
+@import receive_sharing_intent;
+#endif
+
 #if __has_include(<share_plus/FPPSharePlusPlugin.h>)
 #import <share_plus/FPPSharePlusPlugin.h>
 #else
 @import share_plus;
+#endif
+
+#if __has_include(<shared_preference_app_group/SharedPreferenceAppGroupPlugin.h>)
+#import <shared_preference_app_group/SharedPreferenceAppGroupPlugin.h>
+#else
+@import shared_preference_app_group;
 #endif
 
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
@@ -100,6 +112,12 @@
 #import <sqflite/SqflitePlugin.h>
 #else
 @import sqflite;
+#endif
+
+#if __has_include(<uni_links/UniLinksPlugin.h>)
+#import <uni_links/UniLinksPlugin.h>
+#else
+@import uni_links;
 #endif
 
 #if __has_include(<url_launcher_ios/URLLauncherPlugin.h>)
@@ -124,9 +142,12 @@
   [MobileScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"MobileScannerPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [SwiftRateMyAppPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftRateMyAppPlugin"]];
+  [ReceiveSharingIntentPlugin registerWithRegistrar:[registry registrarForPlugin:@"ReceiveSharingIntentPlugin"]];
   [FPPSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPSharePlusPlugin"]];
+  [SharedPreferenceAppGroupPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferenceAppGroupPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
+  [UniLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"UniLinksPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
 }
 

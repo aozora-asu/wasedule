@@ -39,6 +39,7 @@ import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
 import "../../../backend/notify/notify_content.dart";
+import "../../../backend/service/share_from_web.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -71,6 +72,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   @override
   void initState() {
     super.initState();
+
     initTargetSem();
     LocalNotificationSetting().requestIOSPermission();
     LocalNotificationSetting().requestAndroidPermission();
@@ -448,7 +450,8 @@ class _CalendarState extends ConsumerState<Calendar> {
         menuListChild(Icons.info, "サポート", () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true)),
+            MaterialPageRoute(
+                builder: (context) => SnsLinkPage(showAppBar: true)),
           );
         }),
         const SizedBox(height: 15),
@@ -758,7 +761,6 @@ class _CalendarState extends ConsumerState<Calendar> {
   double calendarCellWidth = SizeConfig.blockSizeHorizontal! * 14.285;
   double calendarCellsHeight = SizeConfig.blockSizeVertical! * 14;
 
-
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 14.285,
@@ -789,10 +791,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                                   style: TextStyle(
                                       color: dateColour(target),
                                       fontWeight: FontWeight.bold,
-                                      fontSize:15))),
+                                      fontSize: 15))),
                           const Spacer(),
                           doNotContainScreenShot(
-                            taskListLength(target,calendarCellWidth / 8)),
+                              taskListLength(target, calendarCellWidth / 8)),
                           const SizedBox(width: 3)
                         ]),
                         Expanded(child: calendarCellsChild(target)),
@@ -979,23 +981,17 @@ class _CalendarState extends ConsumerState<Calendar> {
       dateTimeData = Text(
         "${" " + targetDayData.elementAt(index)["startTime"]}～" +
             targetDayData.elementAt(index)["endTime"],
-        style: TextStyle(
-            color: Colors.grey,
-            fontSize: fontSize),
+        style: TextStyle(color: Colors.grey, fontSize: fontSize),
       );
     } else if (targetDayData.elementAt(index)["startTime"].trim() != "") {
       dateTimeData = Text(
         " " + targetDayData.elementAt(index)["startTime"],
-        style: TextStyle(
-            color: Colors.grey,
-            fontSize: fontSize),
+        style: TextStyle(color: Colors.grey, fontSize: fontSize),
       );
     } else {
       dateTimeData = Text(
         " 終日",
-        style: TextStyle(
-            color: Colors.grey,
-            fontSize: fontSize),
+        style: TextStyle(color: Colors.grey, fontSize: fontSize),
       );
     }
     return publicContainScreenShot(
@@ -1008,9 +1004,8 @@ class _CalendarState extends ConsumerState<Calendar> {
             Flexible(
               child: Text(
                 " " + targetDayData.elementAt(index)["subject"],
-                style: TextStyle(
-                  color: BLACK,
-                  fontSize: calendarCellsHeight / 16),
+                style:
+                    TextStyle(color: BLACK, fontSize: calendarCellsHeight / 16),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1037,14 +1032,17 @@ class _CalendarState extends ConsumerState<Calendar> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      universityClassData,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: calendarCellsHeight/18)),
+                    Text(universityClassData,
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: calendarCellsHeight / 18)),
                     Row(children: [
-                      Icon(Icons.school, color: MAIN_COLOR, size: calendarCellsHeight/16),
-                      Text(" 授業", style: TextStyle(color: BLACK, fontSize: calendarCellsHeight/16)),
+                      Icon(Icons.school,
+                          color: MAIN_COLOR, size: calendarCellsHeight / 16),
+                      Text(" 授業",
+                          style: TextStyle(
+                              color: BLACK,
+                              fontSize: calendarCellsHeight / 16)),
                     ]),
                     Divider(
                       height: 2,
@@ -1069,9 +1067,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         return Row(children: [
           const SizedBox(width: 1),
           Container(
-            width: calendarCellsHeight / 30,
-            height: calendarCellsHeight / 14, 
-            color: returnTagColor(id, ref))
+              width: calendarCellsHeight / 30,
+              height: calendarCellsHeight / 14,
+              color: returnTagColor(id, ref))
         ]);
       }
     }
@@ -1131,14 +1129,14 @@ class _CalendarState extends ConsumerState<Calendar> {
           Container(
               decoration: roundedBoxdecorationWithShadow(radiusType: 2),
               width: SizeConfig.blockSizeHorizontal! * 95,
-              padding:const EdgeInsets.symmetric(vertical:5),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: Center(
                   child: Row(children: [
                 const SizedBox(width: 20),
                 Icon(icon, color: MAIN_COLOR, size: 40),
                 const Spacer(),
                 Text(text,
-                    style:const TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                     )),
                 const Spacer(),
@@ -1189,16 +1187,11 @@ class _CalendarState extends ConsumerState<Calendar> {
           child: Center(
               child: Row(children: [
             const SizedBox(width: 10),
-            Container(
-                width: 8,
-                height: 17,
-                color: accentColor),
+            Container(width: 8, height: 17, color: accentColor),
             const SizedBox(width: 5),
             Text(text,
-                style:const TextStyle(
-                    fontSize: 15,
-                    color: BLACK,
-                    fontWeight: FontWeight.bold)),
+                style: const TextStyle(
+                    fontSize: 15, color: BLACK, fontWeight: FontWeight.bold)),
             const Spacer(),
           ]))),
       Divider(
@@ -1222,13 +1215,11 @@ class _CalendarState extends ConsumerState<Calendar> {
               MaterialPageRoute(builder: (context) => SettingsPage()),
             );
           },
-          child:const Icon(Icons.settings,
-              size: 20, color: Colors.grey));
+          child: const Icon(Icons.settings, size: 20, color: Colors.grey));
     }
     Widget icon = const SizedBox();
     if (showIcon) {
-      icon = Icon(headerIcon,
-          size: 18, color: Colors.grey);
+      icon = Icon(headerIcon, size: 18, color: Colors.grey);
     }
 
     return Container(
@@ -1245,9 +1236,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 icon,
                 Text(
                   " $headerText",
-                  style:const TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey),
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
                 const Spacer(),
                 customButton,
@@ -1519,11 +1508,9 @@ class _CalendarState extends ConsumerState<Calendar> {
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
     } else {
-      dateTimeData =const Text(
+      dateTimeData = const Text(
         "終日",
-        style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       );
     }
 
@@ -1578,10 +1565,8 @@ class _CalendarState extends ConsumerState<Calendar> {
         tagThumbnail(sortedMapList.elementAt(index).values.first["tagID"]),
         Text(
           " ${returnTagTitle(sortedMapList.elementAt(index).values.first["tagID"] ?? "", ref)}",
-          style:const TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-              fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold),
         )
       ]);
     }
@@ -1641,7 +1626,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 .values
                                 .first["subject"],
                         overflow: TextOverflow.clip,
-                        style:const TextStyle(
+                        style: const TextStyle(
                             color: BLACK,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
@@ -1787,10 +1772,10 @@ class _CalendarState extends ConsumerState<Calendar> {
                       color: MAIN_COLOR,
                       size: 12,
                     ),
-                    const SizedBox(width:4),
+                    const SizedBox(width: 4),
                     Text(
                         "${"日月火水木金土"[sortedMapList.elementAt(index).values.first["weekday"] % 7]}曜日の授業 / ",
-                        style:const TextStyle(
+                        style: const TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                             fontSize: 12)),
@@ -1799,9 +1784,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                             .elementAt(index)
                             .values
                             .first["classRoom"],
-                        style:const TextStyle(
+                        style: const TextStyle(
                             color: Colors.grey,
-                            fontSize:12,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold)),
                   ]),
                   SizedBox(
@@ -1907,7 +1892,7 @@ class _CalendarState extends ConsumerState<Calendar> {
             Widget dateTimeData = Container();
             dateTimeData = Text(
               sortedData[target]!.elementAt(index)["title"],
-              style:const TextStyle(
+              style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
                   fontWeight: FontWeight.bold),
@@ -1973,9 +1958,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                         padding: EdgeInsets.only(
                           left: SizeConfig.blockSizeHorizontal! * 2,
                         ),
-                        child: Text(
-                          timeEnd,
-                          textAlign: TextAlign.center,
+                        child: Text(timeEnd,
+                            textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -2017,9 +2001,9 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 sortedData[target]!
                                         .elementAt(index)["summary"] ??
                                     "(詳細なし)",
-                                style:const TextStyle(
+                                style: const TextStyle(
                                     color: BLACK,
-                                    fontSize:20,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               )
                             ]),
@@ -2091,11 +2075,9 @@ class _CalendarState extends ConsumerState<Calendar> {
     String year = targetMonth.substring(0, 4);
     String month = targetMonth.substring(5, 7);
     String targetKey = "$year-$month";
-    TextStyle titletyle =const TextStyle(
-        color: Colors.grey, fontSize: 17);
-    TextStyle previewStyle =const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 22);
+    TextStyle titletyle = const TextStyle(color: Colors.grey, fontSize: 17);
+    TextStyle previewStyle =
+        const TextStyle(fontWeight: FontWeight.bold, fontSize: 22);
     Duration workTimeSum =
         ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey, ref);
 

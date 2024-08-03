@@ -84,6 +84,10 @@ dependencies:
   isar: ^3.1.0
   isar_flutter_libs: ^3.0.0
   collection: ^1.18.0
+  receive_sharing_intent: ^1.8.0
+  shared_preference_app_group: ^1.1.1
+  auto_route: ^8.3.0
+  uni_links: ^0.5.1
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +102,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
   build_runner: ^2.2.5
+  auto_route_generator: ^8.0.0
   analyzer: ^5.13.0
 
 dependency_overrides:
