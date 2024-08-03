@@ -16,12 +16,11 @@
 		1413124A2C3903510019E223 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 141312492C3903510019E223 /* AppIntent.swift */; };
 		1413124C2C3903540019E223 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1413124B2C3903540019E223 /* Assets.xcassets */; };
 		141312502C3903540019E223 /* HomeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1413123F2C3903510019E223 /* HomeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1491C6D52C5AC02B00364666 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; };
-		1491C6D62C5AC02B00364666 /* Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1407B8002BF5361800A0B63A /* Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1DD79CD6518CF3B5AA2B4456 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D252EBF8F6AAFE753708120 /* GoogleService-Info.plist */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		5B975FEE2C5E443C0009C09C /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B47DD322C457861005DEE7C /* Flutter.xcframework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -47,17 +46,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1491C6D72C5AC02B00364666 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				1491C6D62C5AC02B00364666 /* Flutter.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5B8CF78D2C1E932400B128AA /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -135,7 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1491C6D52C5AC02B00364666 /* Flutter.xcframework in Frameworks */,
+				5B975FEE2C5E443C0009C09C /* Flutter.xcframework in Frameworks */,
 				FD64A183EE262CBCC5228AB2 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,7 +288,6 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				5B8CF78D2C1E932400B128AA /* Embed Foundation Extensions */,
 				5233E115BB9C98F1E3D7FBFF /* [CP] Embed Pods Frameworks */,
-				1491C6D72C5AC02B00364666 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 			);
 			buildRules = (

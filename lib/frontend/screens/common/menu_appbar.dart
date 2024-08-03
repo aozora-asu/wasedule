@@ -236,7 +236,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
             subIndex:0,
             title: "時間割"
           ),
-          space(80.0),
+          space(0),
+          subMenuPanel(
+            ref,
+            icon:Icons.search,
+            subIndex:1,
+            title: "シラバス"
+          ),
+          space(60.0),
       ],
       2 : [
           space(0),
@@ -303,7 +310,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           subMenuPanel(
             ref,
             icon:Icons.edit,
-            subIndex:4,
+            subIndex:3,
             title: "学習記録"
           ),
           space(20.00),
