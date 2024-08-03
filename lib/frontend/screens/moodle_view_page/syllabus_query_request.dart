@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 
 import 'package:html/dom.dart';
 import "./syllabus_query_result.dart";
+import "../../../backend/DB/sharepreference.dart";
 
 class SyllabusRequestQuery {
   String? p_number;
@@ -159,6 +160,18 @@ class SyllabusRequestQuery {
 
     // レスポンスを処理
     if (response.statusCode == 200) {
+      SharepreferenceHandler().setValue(
+          SharepreferenceKeys.recentSyllabusQueryDepartmentID,
+          p_gakubu?.departmentID);
+      SharepreferenceHandler()
+          .setValue(SharepreferenceKeys.recentSyllabusQueryIsOpen, p_open);
+      SharepreferenceHandler()
+          .setValue(SharepreferenceKeys.recentSyllabusQueryKamoku, kamoku);
+      SharepreferenceHandler().setValue(
+          SharepreferenceKeys.recentSyllabusQueryKeya,
+          subjectClassification!.p_keya);
+      SharepreferenceHandler()
+          .setValue(SharepreferenceKeys.recentSyllabusQueryKeyword, keyword);
       return html_parser
           .parse(response.body)
           .querySelectorAll('.ct-vh > tbody > tr');

@@ -10,6 +10,7 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import "../../../backend/DB/sharepreference.dart";
 
 class SyllabusSearchDialog extends ConsumerStatefulWidget {
   Term? gakki;
@@ -32,27 +33,43 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
 
 class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
+  late Map<String, dynamic> initQuery;
   late bool isFullYear;
+
   late bool isGraduateSchool;
   TextEditingController keywordController = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
     requestQuery = SyllabusRequestQuery(
-      keyword: null,
-      kamoku: null,
+      keyword: SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword),
+      kamoku: SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku),
       p_gakki: widget.gakki,
       p_youbi: widget.youbi,
       p_jigen: widget.jigen,
-      p_gakubu: widget.gakubu,
+      p_gakubu: Department.byValue(SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID)),
       p_gengo: null,
-      p_open: false,
-      subjectClassification: null,
+      p_open: SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.recentSyllabusQueryIsOpen),
+      subjectClassification: SubjectClassification.byKeyAndID(
+          SharepreferenceHandler()
+              .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
+          SharepreferenceHandler()
+              .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID)),
     );
+
+    isGraduateSchool = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduate);
+
     keywordController.text = "";
+
     isFullYear = false;
-    isGraduateSchool = false;
+
   }
 
   @override
@@ -224,33 +241,34 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     departments.add(gakubu);
     departments.addAll(Department.departments);
     departments.remove(gakubu);
-    
+
     List<DropdownMenuItem<Department>> items = [];
-    for(int i = 0; i < departments.length; i++){
+    for (int i = 0; i < departments.length; i++) {
       String menuText = "学部を選択";
-      if(departments.elementAt(i) != null){
+      if (departments.elementAt(i) != null) {
         menuText = departments.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: departments.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: departments.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_gakubu,
-        (value) {
-            setState(() {
-              requestQuery.p_gakubu = value;
-              requestQuery.subjectClassification = null;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_gakubu,
+      (value) {
+        setState(() {
+          requestQuery.p_gakubu = value;
+          requestQuery.subjectClassification = null;
+        });
+      },
+    ));
   }
 
   Widget graduateSchoolPicker(Department? gakubu) {
@@ -297,22 +315,23 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       List<SubjectClassification?> subjectClassifications = [];
       subjectClassifications.add(null);
       subjectClassifications.addAll(gakubu.subjectClassifications!);
-    
-    List<DropdownMenuItem<SubjectClassification>> items = [];
-    for(int i = 0; i < subjectClassifications.length; i++){
-      String menuText = "科目区分を選択";
-      if(subjectClassifications.elementAt(i) != null){
-        menuText = subjectClassifications.elementAt(i)!.text;
-      }
 
-      items.add(DropdownMenuItem(
-        value: subjectClassifications.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
-    }
+      List<DropdownMenuItem<SubjectClassification>> items = [];
+      for (int i = 0; i < subjectClassifications.length; i++) {
+        String menuText = "科目区分を選択";
+        if (subjectClassifications.elementAt(i) != null) {
+          menuText = subjectClassifications.elementAt(i)!.text;
+        }
+
+        items.add(DropdownMenuItem(
+            value: subjectClassifications.elementAt(i),
+            child: Center(
+                child: Text(
+              menuText,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+            ))));
+      }
       value = Row(children: [
         SizedBox(
           width: 80,
@@ -323,14 +342,15 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           ),
         ),
         Expanded(
-          child: cupertinoLikeDropDownListModel(
-          items, requestQuery.subjectClassification,
-           (value) {
-              setState(() {
-                requestQuery.subjectClassification = value;
-              });
-            },)
-        )
+            child: cupertinoLikeDropDownListModel(
+          items,
+          requestQuery.subjectClassification,
+          (value) {
+            setState(() {
+              requestQuery.subjectClassification = value;
+            });
+          },
+        ))
       ]);
     }
 
