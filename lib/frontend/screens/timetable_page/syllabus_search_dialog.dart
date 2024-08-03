@@ -33,6 +33,7 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
 class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
+  late bool isGraduateSchool;
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       subjectClassification: null,
     );
     isFullYear = false;
+    isGraduateSchool = false;
   }
 
   @override
@@ -110,7 +112,10 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              departmentPicker(widget.gakubu),
+            if(isGraduateSchool) 
+              graduateSchoolPicker(requestQuery.p_gakubu)
+            else
+              departmentPicker(requestQuery.p_gakubu),
             ],
           ),
           const SizedBox(height: 5),
@@ -137,7 +142,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           Row(
             children: [
               SizedBox(
-                width: 100,
                 child: Text(
                   "オープン科目",
                   style: searchConditionTextStyle,
@@ -152,7 +156,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                     });
                   }),
               SizedBox(
-                width: 50,
                 child: Text(
                   "通年",
                   style: searchConditionTextStyle,
@@ -172,7 +175,22 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         requestQuery.p_gakki = widget.gakki;
                       });
                     }
-                  })
+                  }),
+            SizedBox(
+              child: Text(
+                "大学院/その他",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            CupertinoCheckbox(
+              value: isGraduateSchool,
+              onChanged: (value) {
+                requestQuery.p_gakubu = null;
+                setState(() {
+                  isGraduateSchool = value!;
+                });
+              })
             ],
           ),
           const Divider(),
@@ -208,6 +226,40 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     List<DropdownMenuItem<Department>> items = [];
     for(int i = 0; i < departments.length; i++){
       String menuText = "学部を選択";
+      if(departments.elementAt(i) != null){
+        menuText = departments.elementAt(i)!.text;
+      }
+
+      items.add(DropdownMenuItem(
+        value: departments.elementAt(i),
+        child: Center(
+         child:Text(menuText,
+          style: const TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.normal),))));
+    }
+
+    return Expanded(
+      child: cupertinoLikeDropDownListModel(
+        items,requestQuery.p_gakubu,
+        (value) {
+            setState(() {
+              requestQuery.p_gakubu = value;
+              requestQuery.subjectClassification = null;
+            });
+        },)
+    );
+  }
+
+  Widget graduateSchoolPicker(Department? gakubu) {
+    List<Department?> departments = [null];
+    departments.add(gakubu);
+    departments.addAll(Department.masters);
+    departments.remove(gakubu);
+    
+    List<DropdownMenuItem<Department>> items = [];
+    for(int i = 0; i < departments.length; i++){
+      String menuText = "研究科/学校を選択";
       if(departments.elementAt(i) != null){
         menuText = departments.elementAt(i)!.text;
       }

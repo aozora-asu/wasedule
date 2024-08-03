@@ -21,6 +21,7 @@ class SyllabusSearchPage extends StatefulWidget {
 class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
+  late bool isGraduateSchool;
   TextEditingController keyWordController = TextEditingController();
   TextEditingController courseNameController = TextEditingController();
   TextEditingController teacherNameController = TextEditingController();
@@ -44,6 +45,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       subjectClassification: null,
     );
     isFullYear = false;
+    isGraduateSchool = false;
   }
 
   @override
@@ -130,6 +132,9 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               textAlign: TextAlign.center,
             ),
           ),
+        if(isGraduateSchool) 
+          graduateSchoolPicker(requestQuery.p_gakubu)
+        else
           departmentPicker(requestQuery.p_gakubu),
         ],
       ),
@@ -193,7 +198,6 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       Row(
         children: [
           SizedBox(
-            width: 100,
             child: Text(
               "オープン科目",
               style: searchConditionTextStyle,
@@ -208,7 +212,6 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
                 });
               }),
           SizedBox(
-            width: 50,
             child: Text(
               "通年",
               style: searchConditionTextStyle,
@@ -228,7 +231,22 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
                     requestQuery.p_gakki = requestQuery.p_gakki;
                   });
                 }
-              })
+              }),
+          SizedBox(
+            child: Text(
+              "大学院/その他",
+              style: searchConditionTextStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          CupertinoCheckbox(
+            value: isGraduateSchool,
+            onChanged: (value) {
+              requestQuery.p_gakubu = null;
+              setState(() {
+                isGraduateSchool = value!;
+              });
+            })
         ],
       ),
     ]);
@@ -376,6 +394,40 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
     List<DropdownMenuItem<Department>> items = [];
     for(int i = 0; i < departments.length; i++){
       String menuText = "学部を選択";
+      if(departments.elementAt(i) != null){
+        menuText = departments.elementAt(i)!.text;
+      }
+
+      items.add(DropdownMenuItem(
+        value: departments.elementAt(i),
+        child: Center(
+         child:Text(menuText,
+          style: const TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.normal),))));
+    }
+
+    return Expanded(
+      child: cupertinoLikeDropDownListModel(
+        items,requestQuery.p_gakubu,
+        (value) {
+            setState(() {
+              requestQuery.p_gakubu = value;
+              requestQuery.subjectClassification = null;
+            });
+        },)
+    );
+  }
+
+  Widget graduateSchoolPicker(Department? gakubu) {
+    List<Department?> departments = [null];
+    departments.add(gakubu);
+    departments.addAll(Department.masters);
+    departments.remove(gakubu);
+    
+    List<DropdownMenuItem<Department>> items = [];
+    for(int i = 0; i < departments.length; i++){
+      String menuText = "研究科/学校を選択";
       if(departments.elementAt(i) != null){
         menuText = departments.elementAt(i)!.text;
       }
