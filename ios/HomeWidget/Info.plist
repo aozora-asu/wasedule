@@ -4,8 +4,15 @@
 <dict>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.widgetkit-extension</string>
+    	<key>NSExtensionPointIdentifier</key>
+    	<string>com.apple.widget-extension</string>
+    	<key>NSExtensionAttributes</key>
+    	<dict>
+        	<key>CFBundleIdentifier</key>
+        	<string>com.example.wasedule.HomeWidget</string>
+    	</dict>
+        <key>NSExtensionPrincipalClass</key>
+        <string>$(PRODUCT_MODULE_NAME).HomeWidget</string>
 	</dict>
 </dict>
 </plist>

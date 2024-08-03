@@ -17,7 +17,9 @@ class NextCourseHomeWidget {
     List<Map<String, dynamic>> nextCourseList =
         await MyCourseDatabaseHandler().getNextCourse();
 
+    // Set the app group ID for iOS
     HomeWidget.setAppGroupId(appGroupID);
+
     if (nextCourseList.isEmpty) {
       nextCourse = NextCourse(
         classRoom: "",
@@ -34,18 +36,14 @@ class NextCourseHomeWidget {
           startTime: DateFormat("H:mm")
               .format(Lesson.atPeriod(course["period"])!.start));
     }
-    // nextCourse = NextCourse(
-    //     classRoom: DateTime.fromMicrosecondsSinceEpoch(34567876543).toString(),
-    //     className: "className",
-    //     period: DateTime.now().second.toString(),
-    //     startTime: DateTime.now().minute.toString());
 
-    // DartからJSON文字列に変換
+    // Convert Dart object to JSON string
     String jsonData = jsonEncode(nextCourse.toJson());
     try {
       // Save the data to UserDefaults
       await HomeWidget.saveWidgetData<String>('widgetData', jsonData);
-      // ウィジェットを更新
+
+      // Update the widget on iOS and Android
       await HomeWidget.updateWidget(
         iOSName: iOSWidgetName,
         androidName: androidWidgetName,

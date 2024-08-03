@@ -85,7 +85,6 @@ class _AppPageState extends ConsumerState<AppPage> {
     }
   }
 
-
   void _onTabTapped(int subIndex) {
     ref.read(taskDataProvider).isInit = true;
     setState(() {
