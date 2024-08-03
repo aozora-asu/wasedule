@@ -34,6 +34,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
   late bool isGraduateSchool;
+  TextEditingController keywordController = TextEditingController();
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       p_open: false,
       subjectClassification: null,
     );
+    keywordController.text = "";
     isFullYear = false;
     isGraduateSchool = false;
   }
@@ -132,7 +134,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 ),
               ),
               searchTextField(
-                  TextEditingController(text: requestQuery.keyword ?? ""),
+                  keywordController,
                   (value) {
                 requestQuery.keyword = value;
               }),
