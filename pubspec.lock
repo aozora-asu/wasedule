@@ -49,6 +49,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  auto_route:
+    dependency: "direct main"
+    description:
+      name: auto_route
+      sha256: a9001a90539ca3effc168f7e1029a5885c7326b9032c09ac895e303c1d137704
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.3.0"
+  auto_route_generator:
+    dependency: "direct dev"
+    description:
+      name: auto_route_generator
+      sha256: ba28133d3a3bf0a66772bcc98dade5843753cd9f1a8fb4802b842895515b67d3
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -1038,6 +1054,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  receive_sharing_intent:
+    dependency: "direct main"
+    description:
+      name: receive_sharing_intent
+      sha256: f127989f8662ea15e193bd1e10605e5a0ab6bb92dffd51f3ce002feb0ce24c93
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.8.0"
   riverpod:
     dependency: transitive
     description:
@@ -1070,6 +1094,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  shared_preference_app_group:
+    dependency: "direct main"
+    description:
+      name: shared_preference_app_group
+      sha256: "478ad76d03397a930a964d3b0e64f9d4fca816c83c1c059542032eafeb29b607"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1315,6 +1347,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  uni_links:
+    dependency: "direct main"
+    description:
+      name: uni_links
+      sha256: "051098acfc9e26a9fde03b487bef5d3d228ca8f67693480c6f33fd4fbb8e2b6e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
+  uni_links_platform_interface:
+    dependency: transitive
+    description:
+      name: uni_links_platform_interface
+      sha256: "929cf1a71b59e3b7c2d8a2605a9cf7e0b125b13bc858e55083d88c62722d4507"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uni_links_web:
+    dependency: transitive
+    description:
+      name: uni_links_web
+      sha256: "7539db908e25f67de2438e33cc1020b30ab94e66720b5677ba6763b25f6394df"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   unicode:
     dependency: transitive
     description:

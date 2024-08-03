@@ -15,6 +15,7 @@ import "backend/DB/sharepreference.dart";
 import "./frontend/screens/moodle_view_page/syllabus_query_request.dart";
 
 import "./static/constant.dart";
+import "./backend/service/share_from_web.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

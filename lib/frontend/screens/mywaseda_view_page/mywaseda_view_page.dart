@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 InAppWebView? webView;
 
 class MyWasedaViewPage extends ConsumerStatefulWidget {
@@ -19,8 +22,9 @@ class _MyWasedaViewPageState extends ConsumerState<MyWasedaViewPage> {
   late InAppWebViewController webViewController;
   double progress = 0;
 
-  static const String moodleUrl = "https://my.waseda.jp/portal/view/portal-top-view";
-
+  // static const String moodleUrl =
+  //     "https://my.waseda.jp/portal/view/portal-top-view";
+  static const String moodleUrl = "https://my.waseda.jp/login/login";
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +40,27 @@ class _MyWasedaViewPageState extends ConsumerState<MyWasedaViewPage> {
           child: InAppWebView(
         key: webViewKey,
         initialSettings: InAppWebViewSettings(
-            thirdPartyCookiesEnabled: true,),
+            thirdPartyCookiesEnabled: true,
+            javaScriptCanOpenWindowsAutomatically: true,
+            javaScriptEnabled: true,
+            supportMultipleWindows: true),
         initialUrlRequest: URLRequest(url: WebUri(moodleUrl)),
         onWebViewCreated: (controller) {
           webViewController = controller;
+        },
+        onCreateWindow: (controller, createWindowRequest) async {
+          debugPrint('onCreateWindow: ${createWindowRequest.request.url}');
+          if (createWindowRequest.request.url != null) {
+            //var url = createWindowRequest.request.url!;
+            var url = "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
+            if (await canLaunchUrl(WebUri(url))) {
+              await launchUrl(WebUri(url),
+                  mode: LaunchMode.externalApplication);
+            }
+            // webViewController.loadUrl(
+            //   urlRequest: URLRequest(url: WebUri(url)),
+            // );
+          }
         },
       )),
       const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),

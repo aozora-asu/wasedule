@@ -81,6 +81,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin rate_my_app, fr.skyost.ratemyapp.RateMyAppPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.kasem.receive_sharing_intent.ReceiveSharingIntentPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin receive_sharing_intent, com.kasem.receive_sharing_intent.ReceiveSharingIntentPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.share.SharePlusPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin share_plus, dev.fluttercommunity.plus.share.SharePlusPlugin", e);
@@ -94,6 +99,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin sqflite, com.tekartik.sqflite.SqflitePlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new name.avioli.unilinks.UniLinksPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin uni_links, name.avioli.unilinks.UniLinksPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.urllauncher.UrlLauncherPlugin());
