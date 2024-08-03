@@ -39,7 +39,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late bool isGraduateSchool;
   TextEditingController keywordController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -69,7 +68,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     keywordController.text = "";
 
     isFullYear = false;
-
   }
 
   @override
@@ -131,10 +129,10 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            if(isGraduateSchool) 
-              graduateSchoolPicker(requestQuery.p_gakubu)
-            else
-              departmentPicker(requestQuery.p_gakubu),
+              if (isGraduateSchool)
+                graduateSchoolPicker(requestQuery.p_gakubu)
+              else
+                departmentPicker(requestQuery.p_gakubu),
             ],
           ),
           const SizedBox(height: 5),
@@ -150,9 +148,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              searchTextField(
-                  keywordController,
-                  (value) {
+              searchTextField(keywordController, (value) {
                 requestQuery.keyword = value;
               }),
             ],
@@ -195,21 +191,24 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                       });
                     }
                   }),
-            SizedBox(
-              child: Text(
-                "大学院/その他",
-                style: searchConditionTextStyle,
-                textAlign: TextAlign.center,
+              SizedBox(
+                child: Text(
+                  "大学院/その他",
+                  style: searchConditionTextStyle,
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            CupertinoCheckbox(
-              value: isGraduateSchool,
-              onChanged: (value) {
-                requestQuery.p_gakubu = null;
-                setState(() {
-                  isGraduateSchool = value!;
-                });
-              })
+              CupertinoCheckbox(
+                  value: isGraduateSchool,
+                  onChanged: (value) {
+                    requestQuery.p_gakubu = null;
+                    setState(() {
+                      isGraduateSchool = value!;
+                      SharepreferenceHandler().setValue(
+                          SharepreferenceKeys.recentSyllabusQueryIsGraduate,
+                          value);
+                    });
+                  })
             ],
           ),
           const Divider(),
@@ -276,33 +275,34 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     departments.add(gakubu);
     departments.addAll(Department.masters);
     departments.remove(gakubu);
-    
+
     List<DropdownMenuItem<Department>> items = [];
-    for(int i = 0; i < departments.length; i++){
+    for (int i = 0; i < departments.length; i++) {
       String menuText = "研究科/学校を選択";
-      if(departments.elementAt(i) != null){
+      if (departments.elementAt(i) != null) {
         menuText = departments.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: departments.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: departments.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_gakubu,
-        (value) {
-            setState(() {
-              requestQuery.p_gakubu = value;
-              requestQuery.subjectClassification = null;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_gakubu,
+      (value) {
+        setState(() {
+          requestQuery.p_gakubu = value;
+          requestQuery.subjectClassification = null;
+        });
+      },
+    ));
   }
 
   Widget subjectClassificationPicker(TextStyle searchConditionTextStyle) {
