@@ -65,7 +65,6 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
-      child: Expanded(
       child:Column(
           children: [
             ExpandablePanel(
@@ -78,7 +77,6 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
                 child: searchResult())
           ],
         ),
-      )
     );
   }
 
@@ -298,7 +296,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
             setState(() {
               requestQuery.p_gakki = value;
             });
-        },)
+        })
     );
   }
 

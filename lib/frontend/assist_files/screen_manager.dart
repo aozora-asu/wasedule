@@ -18,6 +18,8 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_vi
 import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywaseda_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/deleted_tasks.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/expired_tasks.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_stats_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_page.dart';
 
@@ -171,7 +173,9 @@ class _AppPageState extends ConsumerState<AppPage> {
   List<Widget> timeTableSubPages(){
     return [
       TimeTablePage(moveToMoodlePage: _onItemTapped),
-      SyllabusSearchPage()
+      SyllabusSearchPage(),
+      CreditStatsPage(),
+      AttendStatsPage(),
     ];
   }
 
@@ -181,9 +185,8 @@ class _AppPageState extends ConsumerState<AppPage> {
     return [
       const Calendar(),
       const DataUploadPage(),
-      ArbeitStatsPage(targetMonth: thisMonth),
       const UnivSchedulePage(),
-      SettingsPage(isAppBar: false),
+      ArbeitStatsPage(targetMonth: thisMonth),
     ];
   }
 

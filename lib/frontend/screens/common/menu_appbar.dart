@@ -266,17 +266,17 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           subMenuPanel(
             ref,
             icon:Icons.abc_sharp,
-            subIndex:1,
+            subIndex:2,
             title: "単位"
           ),
           indexBar(),
           subMenuPanel(
             ref,
             icon:Icons.cut,
-            subIndex:1,
+            subIndex:3,
             title: "出欠"
           ),
-          space(60.0),
+          space(20.0),
       ],
       2 : [
           subMenuPanel(
@@ -295,16 +295,16 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           indexBar(),
           subMenuPanel(
             ref,
-            icon:Icons.currency_yen,
+            icon:Icons.school,
             subIndex:2,
-            title: "バイト"
+            title: "大学暦"
           ),
           indexBar(),
           subMenuPanel(
             ref,
-            icon:Icons.school,
+            icon:Icons.currency_yen,
             subIndex:3,
-            title: "大学暦"
+            title: "バイト"
           ),
           space(20.0),
         ],
