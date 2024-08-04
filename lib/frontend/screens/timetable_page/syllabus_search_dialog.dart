@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import "../../../backend/DB/sharepreference.dart";
 
 class SyllabusSearchDialog extends ConsumerStatefulWidget {
   Term? gakki;
@@ -33,9 +33,7 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
 
 class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
-
   late bool isFullYear;
-
   late bool isGraduateSchool;
   TextEditingController keywordController = TextEditingController();
 
@@ -43,32 +41,29 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   void initState() {
     super.initState();
     requestQuery = SyllabusRequestQuery(
-      keyword: SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword),
-      kamoku: SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku),
-      p_gakki: widget.gakki,
-      p_youbi: widget.youbi,
-      p_jigen: widget.jigen,
-      p_gakubu: Department.byDepartmentID(SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID)),
-      p_gengo: null,
-      p_open: SharepreferenceHandler()
-          .getValue(SharepreferenceKeys.recentSyllabusQueryIsOpen),
-      subjectClassification: SubjectClassification.byKeyAndID(
-          SharepreferenceHandler()
-              .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
-          SharepreferenceHandler()
-              .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID)),
-    );
-
-    isGraduateSchool = SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool);
-
-    keywordController.text = requestQuery.keyword ?? "";
-
+        keyword: SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword),
+        kamoku: SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku),
+        p_gakki: widget.gakki,
+        p_youbi: widget.youbi,
+        p_jigen: widget.jigen,
+        p_gakubu: Department.byValue(SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue)),
+        p_gengo: null,
+        p_open: SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryIsOpen),
+        subjectClassification: SubjectClassification.byKeyAndValue(
+            SharepreferenceHandler()
+                .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
+            SharepreferenceHandler().getValue(
+                SharepreferenceKeys.recentSyllabusQueryDepartmentValue)));
+    keywordController.text = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword);
     isFullYear = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
+    isGraduateSchool = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool);
   }
 
   @override
@@ -151,6 +146,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
               ),
               searchTextField(keywordController, (value) {
                 requestQuery.keyword = value;
+                SharepreferenceHandler().setValue(
+                    SharepreferenceKeys.recentSyllabusQueryKeyword,
+                    requestQuery.keyword);
               }),
             ],
           ),
@@ -169,6 +167,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   onChanged: (value) {
                     setState(() {
                       requestQuery.p_open = value!;
+                      SharepreferenceHandler().setValue(
+                          SharepreferenceKeys.recentSyllabusQueryIsOpen,
+                          requestQuery.p_open);
                     });
                   }),
               SizedBox(
@@ -182,6 +183,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   value: isFullYear,
                   onChanged: (value) {
                     isFullYear = value!;
+                    SharepreferenceHandler().setValue(
+                        SharepreferenceKeys.recentSyllabusQueryIsFullYear,
+                        isFullYear);
                     if (value) {
                       setState(() {
                         requestQuery.p_gakki = Term.fullYear;
@@ -204,11 +208,15 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   onChanged: (value) {
                     requestQuery.p_gakubu = null;
                     setState(() {
+                      SharepreferenceHandler().setValue(
+                          SharepreferenceKeys
+                              .recentSyllabusQueryDepartmentValue,
+                          requestQuery.p_gakubu?.value);
                       isGraduateSchool = value!;
                       SharepreferenceHandler().setValue(
                           SharepreferenceKeys
                               .recentSyllabusQueryIsGraduateSchool,
-                          value);
+                          isGraduateSchool);
                     });
                   })
             ],
@@ -238,7 +246,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   }
 
   Widget departmentPicker(Department? gakubu) {
-    List<Department?> departments = [];
+    List<Department?> departments = [null];
     departments.add(gakubu);
     departments.addAll(Department.departments);
     departments.remove(gakubu);
@@ -267,6 +275,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         setState(() {
           requestQuery.p_gakubu = value;
           requestQuery.subjectClassification = null;
+          SharepreferenceHandler().setValue(
+              SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+              requestQuery.p_gakubu?.value);
         });
       },
     ));
@@ -302,6 +313,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         setState(() {
           requestQuery.p_gakubu = value;
           requestQuery.subjectClassification = null;
+          SharepreferenceHandler().setValue(
+              SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+              requestQuery.p_gakubu?.value);
         });
       },
     ));
@@ -350,6 +364,12 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           (value) {
             setState(() {
               requestQuery.subjectClassification = value;
+              SharepreferenceHandler().setValue(
+                  SharepreferenceKeys.recentSyllabusQueryKeya,
+                  requestQuery.subjectClassification?.p_keya);
+              SharepreferenceHandler().setValue(
+                  SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+                  requestQuery.subjectClassification?.parentDepartmentID);
             });
           },
         ))

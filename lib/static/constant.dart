@@ -690,24 +690,6 @@ class Department {
       return null;
     }
   }
-
-  static Department? byDepartmentID(String? departmentID) {
-    if (departmentID != null) {
-      for (var department in departments) {
-        if (department.departmentID == departmentID) {
-          return department;
-        }
-      }
-      for (var department in masters) {
-        if (department.departmentID == departmentID) {
-          return department;
-        }
-      }
-      return null;
-    } else {
-      return null;
-    }
-  }
 }
 
 class SubjectClassification {
@@ -719,14 +701,13 @@ class SubjectClassification {
       required this.parentDepartmentID,
       required this.text});
 
-  static SubjectClassification? byKeyAndID(
-      String? p_keya, String? parentDepartmentID) {
-    switch (parentDepartmentID) {
-      case "282006":
+  static SubjectClassification? byKeyAndValue(String? p_keya, String? value) {
+    switch (value) {
+      case "advancedScience":
         return advancedSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
-      case "272006":
+      case "creativeScience":
         return creativeSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
-      case "262006":
+      case "fundamentalScience":
         return fundamentalSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
       default:
         return null;

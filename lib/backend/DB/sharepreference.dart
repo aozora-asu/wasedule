@@ -25,6 +25,8 @@ class SharepreferenceHandler {
       case List<String> _:
         pref!.setStringList(sharepreference.key, value);
         break;
+      default:
+        pref!.remove(sharepreference.key);
     }
   }
 
@@ -88,8 +90,8 @@ class SharepreferenceKeys {
       key: "recentSyllabusQueryIsOpen", defaultValue: false);
   static const recentSyllabusQueryKeya =
       SharepreferenceKeys._(key: "recentSyllabusQueryKeya", defaultValue: null);
-  static const recentSyllabusQueryDepartmentID = SharepreferenceKeys._(
-      key: "recentSyllabusQueryDepartmentID", defaultValue: null);
+  static const recentSyllabusQueryDepartmentValue = SharepreferenceKeys._(
+      key: "recentSyllabusQueryDepartmentValue", defaultValue: null);
   static const recentSyllabusQueryIsFullYear = SharepreferenceKeys._(
       key: "recentSyllabusQueryIsFullYear", defaultValue: false);
 
@@ -114,7 +116,7 @@ class SharepreferenceKeys {
         recentSyllabusQueryKamoku,
         recentSyllabusQueryIsOpen,
         recentSyllabusQueryKeya,
-        recentSyllabusQueryDepartmentID,
-        recentSyllabusQueryIsFullYear
+        recentSyllabusQueryDepartmentValue,
+        recentSyllabusQueryIsFullYear,
       ];
 }

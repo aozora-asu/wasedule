@@ -53,14 +53,8 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
       Navigator.pop(context);
     }, child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
-      Department? userDepartment = Department.byDepartmentID(
-          SharepreferenceHandler()
-              .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentID));
-      String? userDepartmentString =
-          SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
-      if (userDepartmentString != null) {
-        userDepartment = Department.byValue(userDepartmentString);
-      }
+      Department? userDepartment = Department.byValue(SharepreferenceHandler()
+          .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
 
       return SingleChildScrollView(
           reverse: true,
@@ -94,7 +88,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                             gakki: widget.semester,
                                             jigen: widget.period,
                                             youbi: widget.weekDay,
-                                            gakubu: userDepartment),
+                                            gakubu: null),
                                         const SizedBox(height: 2),
                                         courseInfo(),
                                       ]))))))));
