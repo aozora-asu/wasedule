@@ -25,7 +25,7 @@ class SharepreferenceHandler {
       case List<String> _:
         pref!.setStringList(sharepreference.key, value);
         break;
-      default:
+      case Null:
         pref!.remove(sharepreference.key);
     }
   }
