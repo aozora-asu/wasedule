@@ -160,10 +160,14 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
       Colors.redAccent,"戻る",horizontalPadding: 30);
   }
 
+  String wineURL = "https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE";
+
   Widget webWineView(String searchText){
     num height = 0;
     return Expanded(
-     child: Stack(children: [
+     child: Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
       Container(
         color: FORGROUND_COLOR.withOpacity(0.6),
         child: Container(
@@ -177,7 +181,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
       child: InAppWebView(
                 key: wineWebViewKey,
                 initialUrlRequest:
-                    URLRequest(url: WebUri("https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE")),
+                    URLRequest(url: WebUri(wineURL)),
                 onWebViewCreated: (controller) {
                   wineWebViewController = controller;
                 },
@@ -196,8 +200,51 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
             )
           )
         )
-      )
-    ]));
+      ),
+      menuBar()
+    ])
+    );
+  }
+
+  Widget menuBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color:Colors.white,
+        border: Border.all(color:Colors.grey)
+      ),
+      child:Row(children: [
+        IconButton(
+          onPressed: () {
+            wineWebViewController.goBack();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: SizeConfig.blockSizeVertical! * 2.5,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            wineWebViewController.loadUrl(
+                urlRequest: URLRequest(url: WebUri(wineURL)));
+          },
+          icon: Icon(
+            Icons.home,
+            size: SizeConfig.blockSizeVertical! * 3,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            wineWebViewController.goForward();
+          },
+          icon: Icon(
+            Icons.arrow_forward_ios,
+            size: SizeConfig.blockSizeVertical! * 2.5,
+          ),
+        ),
+      ])
+    );
   }
 
 }

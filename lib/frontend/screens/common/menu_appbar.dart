@@ -272,7 +272,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
           indexBar(),
           subMenuPanel(
             ref,
-            icon:Icons.school,
+            icon:Icons.cut,
             subIndex:1,
             title: "出欠"
           ),

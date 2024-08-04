@@ -57,9 +57,10 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             SharepreferenceHandler()
                 .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
             SharepreferenceHandler().getValue(
-                SharepreferenceKeys.recentSyllabusQueryDepartmentValue)));
+                SharepreferenceKeys.recentSyllabusQueryDepartmentValue))
+        );
     keywordController.text = SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword);
+        .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword) ?? "";
     isFullYear = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
     isGraduateSchool = SharepreferenceHandler()
@@ -198,7 +199,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   }),
               SizedBox(
                 child: Text(
-                  "大学院/その他",
+                  "大学院等",
                   style: searchConditionTextStyle,
                   textAlign: TextAlign.center,
                 ),
