@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
@@ -25,7 +26,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
   TextEditingController keyWordController = TextEditingController();
   TextEditingController courseNameController = TextEditingController();
   TextEditingController teacherNameController = TextEditingController();
-  Term currentTerm = Term.whenSemester(DateTime.now()) ?? Term.fullYear;
+  Term? currentTerm = Term.whenSemester(DateTime.now());
 
   @override
   void initState() {
@@ -33,17 +34,28 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
     keyWordController.text = "";
     courseNameController.text = "";
     teacherNameController.text = "";
+
+    if(currentTerm == null){
+      if(DateTime.now().month <= 6){
+        currentTerm = Term.springSemester;
+      }else{
+        currentTerm = Term.fallSemester;
+      }
+    }
+
     requestQuery = SyllabusRequestQuery(
       keyword: null,
       kamoku: null,
       p_gakki: currentTerm,
       p_youbi: null,
       p_jigen: null,
-      p_gakubu: null,
+      p_gakubu: Department.byValue(
+        SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment)),
       p_gengo: null,
       p_open: false,
       subjectClassification: null,
     );
+    
     isFullYear = false;
     isGraduateSchool = false;
   }
@@ -72,7 +84,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               header: searchHeader(),
               collapsed: const SizedBox(),
               expanded: searchConditionPanel()),
-            const Divider(),
+            const Divider(height:1),
             Expanded(
                 child: searchResult())
           ],
