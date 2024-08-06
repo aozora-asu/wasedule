@@ -242,13 +242,11 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
             ]),
             collapsed: const SizedBox(),
             expanded: Column(
-                children: [
-                  const SizedBox(height:4),
-                  const Divider(height: 2),
-                  attendRecordListBuilder(),
-                  addRecordButton()
-                ])
-              ));
+              children: [
+                attendRecordListBuilder(),
+                addRecordButton()
+              ])
+          ));
   }
 
   Widget attendRecordListBuilder() {

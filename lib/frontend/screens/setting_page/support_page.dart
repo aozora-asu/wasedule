@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -56,10 +57,54 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
           style: TextStyle(color:Colors.red,fontSize:18),),
          const SizedBox(height:5),
          const ErrorReportButton(),
+         const SizedBox(height:10),
+         const Divider(),
+         const SizedBox(height:5),
+         const Text("SPECIAL THANKS",
+           style:TextStyle(fontSize:20,fontWeight: FontWeight.bold)),
+         const SizedBox(height:5),
+         specialThanks(),
+         const SizedBox(height:5),
+         const Divider(),
+         const SizedBox(height:5),
+         const Text("©2024 Aozora.Studio",
+          textAlign: TextAlign.end,
+          style:TextStyle(color:Colors.grey)),
          const SizedBox(height:30),
         ])
       ))
       
+    );
+  }
+
+  Widget specialThanks(){
+    String name1 =dotenv.get('TESTER_NAME_1');
+    String name2 =dotenv.get('TESTER_NAME_2');
+    String name3 =dotenv.get('TESTER_NAME_3');
+    String name4 =dotenv.get('TESTER_NAME_4');
+    String name5 =dotenv.get('TESTER_NAME_5');
+    String suffix = "  様";
+
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+         const Text("Android版 テスター参加者",
+          style:TextStyle(fontSize:15,color:Colors.grey)),
+         const SizedBox(height:5),
+          Text(name1+suffix),
+          Text(name2+suffix),
+          Text(name3+suffix),
+          Text(name4+suffix),
+          Text(name5+suffix),
+          const SizedBox(height:5),
+          const Align(
+            alignment: Alignment.centerRight,
+            child:Text("他 16名")),
+          const SizedBox(height:10),
+          const Text("上記のテスター参加者の方々 総勢21名には、わせジュール Android版アプリのリリース要件達成のため、本アプリの試用にご協力いただきました。この場を借りて心からの感謝を申し上げます。",
+            overflow: TextOverflow.clip,
+            style:TextStyle(color:Colors.grey)),
+      ]
     );
   }
 }
