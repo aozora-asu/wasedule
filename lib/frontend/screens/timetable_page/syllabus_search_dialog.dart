@@ -91,8 +91,8 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     );
 
     return Container(
-      decoration: roundedBoxdecorationWithShadow(radiusType: radiusType),
-      width: SizeConfig.blockSizeHorizontal! * 100,
+      decoration: roundedBoxdecoration(radiusType: radiusType),
+      margin: const EdgeInsets.symmetric(horizontal: 0,),
       padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
       child: Column(
         children: [
@@ -449,7 +449,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           await showCourseDescriptionModalSheet(result);
         },
         child: Container(
-          decoration: roundedBoxdecorationWithShadow(
+          decoration: roundedBoxdecoration(
               radiusType: boxRadiusType, backgroundColor: BACKGROUND_COLOR),
           padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
           child: Row(children: [

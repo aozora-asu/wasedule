@@ -49,7 +49,7 @@ class _CalendarSettingPageState extends ConsumerState<CalendarSettingPage>{
           ),
           const SizedBox(height: 10),
           Container(
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecoration(),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +82,7 @@ class _CalendarSettingPageState extends ConsumerState<CalendarSettingPage>{
                   ])),
           const SizedBox(height: 10),
           Container(
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecoration(),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

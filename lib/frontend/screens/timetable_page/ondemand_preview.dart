@@ -147,7 +147,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecoration(),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Padding(
                 padding: const EdgeInsets.all(12.5),
@@ -241,9 +241,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   Widget relatedTasks() {
     if (widget.taskList.isNotEmpty) {
       return Container(
-          decoration: roundedBoxdecorationWithShadow(),
+          decoration: roundedBoxdecoration(),
           padding: const EdgeInsets.all(10.0),
-          width: SizeConfig.blockSizeHorizontal! * 95,
+          margin:const EdgeInsets.symmetric(horizontal:5),
           child: Column(children: [
             const Text("関連する課題",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),

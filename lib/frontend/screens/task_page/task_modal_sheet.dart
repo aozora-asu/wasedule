@@ -446,7 +446,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
 
   Widget textFieldModel(String title, int type, Widget child) {
     return Container(
-      decoration: roundedBoxdecorationWithShadow(radiusType: type),
+      decoration: roundedBoxdecoration(radiusType: type),
       margin: const EdgeInsets.symmetric(vertical: 1),
       padding: const EdgeInsets.all(15),
       child: Column(

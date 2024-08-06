@@ -37,6 +37,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late Term currentSemester;
   late DateTime now;
 
+
+  double cellWidth = 15.3;
+  double cellHeight = 15;
+  double cellsRadius = 10.0;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +49,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     now = DateTime.now();
     NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       String? userDepartment =
           SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
@@ -457,9 +462,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  double cellWidth = 15.3;
-  double cellHeight = 15;
-
   Widget generateWeekThumbnail() {
     List<String> days = ["月", "火", "水", "木", "金", "土"];
     return SizedBox(
@@ -476,7 +478,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2.5), color: bgColor),
+                    borderRadius: BorderRadius.circular(cellsRadius / 2), color: bgColor),
                 child: Center(
                     child: Text(
                   days.elementAt(index),
@@ -512,7 +514,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           return Container(
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
-                  color: bgColor, borderRadius: BorderRadius.circular(2.5)),
+                  color: bgColor, borderRadius: BorderRadius.circular(cellsRadius / 2)),
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: Column(
@@ -587,7 +589,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
     return Color.fromRGBO(red, green, blue, 1);
   }
-
+  
   Widget timetableSells(int weekDay) {
     final tableData = ref.read(timeTableProvider);
     return SizedBox(
@@ -676,7 +678,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                       color: lineColor,
                       width: lineWidth,
                     ),
-                    borderRadius: BorderRadius.circular(4)),
+                    borderRadius: BorderRadius.circular(cellsRadius)),
                 child: cellContents);
           }),
           separatorBuilder: (context, index) {
@@ -754,7 +756,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         color: BACKGROUND_COLOR,
                         width: 2,
                       ),
-                      borderRadius: BorderRadius.circular(4)),
+                      borderRadius: BorderRadius.circular(cellsRadius)),
                   child: FutureBuilder(
                       future: TaskDatabaseHelper().getTaskListByCourseName(
                           tableData.sortedDataByWeekDay[7]
@@ -832,7 +834,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
           decoration: BoxDecoration(
               color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
-              borderRadius: BorderRadius.circular(2)),
+              borderRadius: BorderRadius.circular(cellsRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           child: InkWell(
               onTap: () {
@@ -853,7 +855,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         child: Text(
                   className,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
                       fontSize: fontSize,
                       overflow: TextOverflow.ellipsis),
                   maxLines: 4,
@@ -956,7 +957,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         child: Stack(children: [
           Container(
             decoration: BoxDecoration(
-                color: bgColor, borderRadius: BorderRadius.circular(2)),
+                color: bgColor,
+                borderRadius: BorderRadius.circular(cellsRadius)),
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -965,7 +967,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   child: Center(
                 child: Text(className,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: fontSize,
                         overflow: TextOverflow.ellipsis),
                     maxLines: 4),
@@ -994,7 +995,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           height: SizeConfig.blockSizeVertical! * cellHeight,
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
           decoration: BoxDecoration(
-              color: bgColor, borderRadius: BorderRadius.circular(2)),
+              color: bgColor, borderRadius: BorderRadius.circular(cellsRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           child: const Center(
               child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),

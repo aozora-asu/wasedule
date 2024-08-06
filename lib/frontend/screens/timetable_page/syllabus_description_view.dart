@@ -92,7 +92,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
    String titleText,String descriptionText,
    {int radiusType = 2,FontWeight fontWeight = FontWeight.bold}){
     return Container(
-      decoration: roundedBoxdecorationWithShadow(
+      decoration: roundedBoxdecoration(
         radiusType: radiusType,backgroundColor: BACKGROUND_COLOR),
       margin: const EdgeInsets.symmetric(vertical: 1),
       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),
@@ -119,7 +119,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView>{
         });
       },
       child:Container(
-        decoration: roundedBoxdecorationWithShadow(
+        decoration: roundedBoxdecoration(
           radiusType: 2,backgroundColor: BACKGROUND_COLOR),
         margin: const EdgeInsets.symmetric(vertical: 1),
         padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 15),

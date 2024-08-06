@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_menu_panel.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -146,7 +147,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
             await showAttendanceDialog(context, now, ref,true);
             setState(() {});
           },
-          Colors.blue,"今日の出欠")),
+          Colors.blueAccent,"今日の出欠")),
       const SizedBox(width:10)
     ]);
   }
@@ -199,7 +200,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
             return courseListChild(currentCourseDataList.elementAt(index));
           },
           separatorBuilder: (context,index){
-            return const SizedBox(height:5);
+            return const SizedBox(height:7);
           },
           itemCount: currentCourseDataList.length,
           shrinkWrap: true,
@@ -208,35 +209,40 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
   }
 
   Widget courseListChild(Map courseData){
-    return Container(
-      padding:const EdgeInsets.symmetric(horizontal: 10),
-      decoration: roundedBoxdecorationWithShadow(
-        radiusType: 2,backgroundColor: FORGROUND_COLOR),
-      child:Column(children:[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children:[
-          Text(
-              DayOfWeek.weekAt(courseData["weekday"]).text
-              + "/"
-              + courseData["period"].toString()
-              + "限",
-            style:const TextStyle(
-              color:Colors.grey,
-              overflow: TextOverflow.clip,
-              fontSize: 10)),
-          const SizedBox(width:10),
-          Expanded(child:      
-            Text(courseData["courseName"],
+    return GestureDetector(
+      onTap: ()async{
+        await showAttendMenuPanel(courseData);
+      },
+      child:Container(
+        padding:const EdgeInsets.symmetric(horizontal: 10),
+        decoration: roundedBoxdecoration(
+          radiusType: 2,backgroundColor: FORGROUND_COLOR),
+        child:Column(children:[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children:[
+            Text(
+                DayOfWeek.weekAt(courseData["weekday"]).text
+                + "/"
+                + courseData["period"].toString()
+                + "限",
               style:const TextStyle(
-                fontWeight: FontWeight.bold,
+                color:Colors.grey,
                 overflow: TextOverflow.clip,
-                fontSize: 17))
-          ),
-          remainingAbesentViewBuilder(courseData)
-        ]),
-        attendStatsIndicatorFrame(courseData)
-      ])
+                fontSize: 10)),
+            const SizedBox(width:10),
+            Expanded(child:      
+              Text(courseData["courseName"],
+                style:const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  overflow: TextOverflow.clip,
+                  fontSize: 17))
+            ),
+            remainingAbesentViewBuilder(courseData)
+          ]),
+          attendStatsIndicatorFrame(courseData)
+        ])
+      )
     );
   }
 
@@ -281,7 +287,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
 
   Widget attendStatsIndicatorFrame(Map courseData){
     return Container(
-      margin:const EdgeInsets.symmetric(vertical: 3),
+      margin:const EdgeInsets.symmetric(vertical: 7),
       padding:const EdgeInsets.symmetric(horizontal: 10,vertical: 3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
@@ -305,6 +311,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
     int absentNum = 0;
     TextStyle bold = const TextStyle(fontWeight: FontWeight.bold);
     TextStyle grey = const TextStyle(color: Colors.grey);
+    TextStyle absentTextStyle = grey;
 
     for(int i = 0; i < attendRecordList.length; i++){
       String? targetAttendStatus = attendRecordList.elementAt(i)["attendStatus"];
@@ -317,19 +324,23 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
       }
     }
 
+    if(absentNum > 0){
+      absentTextStyle =
+         const TextStyle(fontWeight: FontWeight.bold,color: Colors.red);
+    }
+
     return Column(children:[
       Row(children: [
-        Text("授業 ${courseData["classNum"].toString() } 回中  ",
-          style: bold),
+        Text("授業 ${courseData["classNum"].toString() } 回中  "),
         attendStatusIcon(AttendStatus.attend),
         Text("${attendNum.toString()} ",
-          style: bold),
+          style: attendNum > 0 ? bold : grey),
         attendStatusIcon(AttendStatus.late),
         Text("${lateNum.toString()} ",
-          style: bold),
+          style: lateNum > 0 ? bold : grey),
         attendStatusIcon(AttendStatus.absent),
         Text("${absentNum.toString()} ",
-          style: bold),
+          style: absentTextStyle),
       ]),
       const Divider(height:10),
       Row(children: [
@@ -372,5 +383,46 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
             color: Colors.white
         ))),
     );
+  }
+
+  Future<void> showAttendMenuPanel(Map courseData) async{
+    Widget header = Container(
+      margin:const EdgeInsets.symmetric(horizontal: 10),
+      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 7),
+      decoration:
+        roundedBoxdecoration(
+          radiusType: 1,
+          backgroundColor: FORGROUND_COLOR,
+          shadow: true),
+      child: Row(children:[
+        Expanded(
+          child:Text(courseData["courseName"],
+            overflow: TextOverflow.clip,
+            style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
+        GestureDetector(
+          onTap:()=> Navigator.pop(context),
+          child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
+      ])
+    );
+
+    await showDialog(
+      context: context,
+      builder: (context){
+        return Column(
+            children: [
+              const Spacer(),
+              Stack(children:[
+                Column(children:[
+                  header,
+                  AttendMenuPanel(
+                    courseData: courseData,
+                    setTimetableState: setState),
+                ]),
+                header
+              ]),
+              const Spacer(),
+            ]
+          );
+      });
   }
 }

@@ -136,7 +136,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
 
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
-        decoration: roundedBoxdecorationWithShadow(),
+        decoration: roundedBoxdecoration(),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
             dateEnd,
@@ -239,7 +239,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
       GestureDetector(
           onTap: () {},
           child: Container(
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecoration(),
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(children: [
                 const SizedBox(height: 10),

@@ -524,7 +524,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
       return Column(children: [
         const SizedBox(height: 20),
         Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecoration(),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

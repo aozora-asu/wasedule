@@ -55,7 +55,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       p_open: false,
       subjectClassification: null,
     );
-    
+
     isFullYear = false;
     isGraduateSchool = false;
   }
@@ -582,7 +582,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
           await showCourseDescriptionModalSheet(result);
         },
         child: Container(
-          decoration: roundedBoxdecorationWithShadow(
+          decoration: roundedBoxdecoration(
               radiusType: boxRadiusType, backgroundColor: FORGROUND_COLOR),
           padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
           child: Column(
