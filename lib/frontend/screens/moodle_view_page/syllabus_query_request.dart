@@ -216,7 +216,7 @@ class SyllabusRequestQuery {
   Stream<SyllabusQueryResult> fetchAllSyllabusInfo() async* {
     List<String> syllabusURLs = await _getSyllabusURLs(null);
     for (var syllabusURL in syllabusURLs) {
-      yield await _getSingleSyllabusInfo(syllabusURL);
+      yield await getSingleSyllabusInfo(syllabusURL);
     }
   }
 
@@ -228,11 +228,12 @@ class SyllabusRequestQuery {
     if (syllabusURLs.isEmpty) {
       return null;
     } else {
-      return await _getSingleSyllabusInfo(syllabusURLs.first);
+      return await getSingleSyllabusInfo(syllabusURLs.first);
     }
   }
 
-  Future<SyllabusQueryResult> _getSingleSyllabusInfo(String syllabusURL) async {
+  static Future<SyllabusQueryResult> getSingleSyllabusInfo(
+      String syllabusURL) async {
     final response = await http.post(
       Uri.parse(syllabusURL),
     );
@@ -244,7 +245,8 @@ class SyllabusRequestQuery {
         courseInfo.querySelectorAll("table > tbody > tr");
     int _year = Term.whenSchoolYear(DateTime.now());
     late String _courseName;
-    String? _subjectClassification = subjectClassification?.text;
+
+    String? _subjectClassification;
     String? _department;
     late String _classRoom;
     String? _credit;
