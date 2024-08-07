@@ -174,6 +174,11 @@ class DrawerMenu extends ConsumerWidget {
                 4,1,context
               ),
               const Spacer(),
+              menuPanel(
+                Icons.abc_rounded,
+                "成績照会",
+                4,2,context
+              ),
             ]),
 
             index("その他"),
