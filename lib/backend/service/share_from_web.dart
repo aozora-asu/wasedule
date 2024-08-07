@@ -1,5 +1,6 @@
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
+import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:html/parser.dart' as html_parser;
@@ -77,7 +78,7 @@ void document(String str) async {
       for (var grandChild in result[parentKey][childKey].keys) {
         for (var map in result[parentKey][childKey][grandChild]) {
           myGrade = MyGrade(
-              courseName: map["courseName"],
+              courseName: zenkaku2hankaku(map["courseName"]),
               credit: map["credit"],
               grade: map["grade"],
               gradePoint: map["gradePoint"],
