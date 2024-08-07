@@ -174,13 +174,12 @@ flutter:
     - lib/assets/schedule_share/schedule_broadcast_download.png
     - .env
 
-    - lib/frontend/screens/moodle_view_page/auto_login_checkbox.js
-
-    - lib/frontend/screens/moodle_view_page/get_course_button.js
-    - lib/frontend/assist_files/scroll_controller.js
-    - lib/frontend/screens/moodle_view_page/show_loading_screen.js
-    - lib/frontend/screens/moodle_view_page/hide_loading_screen.js
-    - lib/frontend/screens/moodle_view_page/go_to_myGradePage.js
+    - lib/backend/service/js/auto_login_checkbox.js
+    - lib/backend/service/js/get_course_button.js
+    - lib/backend/service/js/scroll_controller.js
+    - lib/backend/service/js/show_loading_screen.js
+    - lib/backend/service/js/hide_loading_screen.js
+    - lib/backend/service/js/go_to_myGradePage.js
     - ios/ShareExtension/GetURL.js
 
   fonts:

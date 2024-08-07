@@ -1,6 +1,6 @@
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -10,9 +10,9 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'dart:convert';
 import '../../../backend/service/home_widget.dart';
-import "./request_calendar_url.dart";
+import "../../../backend/service/request_calendar_url.dart";
 import "../../../backend/DB/handler/user_info_db_handler.dart";
-import "./syllabus_query_result.dart";
+import "../../../backend/service/syllabus_query_result.dart";
 
 void printWrapped(String text) {
   final pattern = RegExp('.{1,500}'); // 800 is the size of each chunk
@@ -104,7 +104,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                   }
                 }
                 javascriptCode = await rootBundle.loadString(
-                    'lib/frontend/screens/moodle_view_page/hide_loading_screen.js');
+                    'lib/backend/service/js/hide_loading_screen.js');
                 await webViewController.evaluateJavascript(
                     source: javascriptCode);
               case "calendarUrl":
@@ -126,8 +126,8 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
         onLoadStop: (controller, currentUrl) async {
           switch (currentUrl.toString()) {
             case moodleUrl:
-              javascriptCode = await rootBundle.loadString(
-                  'lib/frontend/screens/moodle_view_page/get_course_button.js');
+              javascriptCode = await rootBundle
+                  .loadString('lib/backend/service/js/get_course_button.js');
               await webViewController.evaluateJavascript(
                   source: javascriptCode);
             // case moodleLoginUrl:

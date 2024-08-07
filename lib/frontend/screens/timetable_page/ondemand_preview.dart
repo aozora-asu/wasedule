@@ -3,7 +3,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -243,7 +243,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       return Container(
           decoration: roundedBoxdecoration(),
           padding: const EdgeInsets.all(10.0),
-          margin:const EdgeInsets.symmetric(horizontal:5),
+          margin: const EdgeInsets.symmetric(horizontal: 5),
           child: Column(children: [
             const Text("関連する課題",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),

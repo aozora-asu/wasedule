@@ -4,7 +4,7 @@ import "./vacant_room.dart";
 import 'package:isar/isar.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
-import "../../../frontend/screens/moodle_view_page/classRoom.dart";
+import "../../service/classRoom.dart";
 import "../../../static/constant.dart";
 
 Isar? isar;

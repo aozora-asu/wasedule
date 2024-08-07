@@ -9,8 +9,8 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:uuid/uuid.dart';
 
 import 'package:html/dom.dart';
-import "./syllabus_query_result.dart";
-import "../../../backend/DB/sharepreference.dart";
+import "syllabus_query_result.dart";
+import "../DB/sharepreference.dart";
 
 class SyllabusRequestQuery {
   String? p_number;

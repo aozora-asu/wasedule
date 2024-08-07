@@ -6,8 +6,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,10 +57,10 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             SharepreferenceHandler()
                 .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
             SharepreferenceHandler().getValue(
-                SharepreferenceKeys.recentSyllabusQueryDepartmentValue))
-        );
+                SharepreferenceKeys.recentSyllabusQueryDepartmentValue)));
     keywordController.text = SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword) ?? "";
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword) ??
+        "";
     isFullYear = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
     isGraduateSchool = SharepreferenceHandler()
@@ -92,7 +92,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
     return Container(
       decoration: roundedBoxdecoration(radiusType: radiusType),
-      margin: const EdgeInsets.symmetric(horizontal: 0,),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 0,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
       child: Column(
         children: [

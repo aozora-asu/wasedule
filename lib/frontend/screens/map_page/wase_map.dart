@@ -4,7 +4,7 @@ import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -15,7 +15,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 import "../../../static/constant.dart";
 import "./const_map_info.dart";
-import "../moodle_view_page/syllabus_query_result.dart";
+import "../../../backend/service/syllabus_query_result.dart";
 
 final GlobalKey mapWebViewKey = GlobalKey();
 late InAppWebViewController mapWebViewController;

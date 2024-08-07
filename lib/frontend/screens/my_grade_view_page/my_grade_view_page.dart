@@ -72,7 +72,7 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
                   case moodleUrl:
                     print("コード実行");
                     javascriptCode = await rootBundle.loadString(
-                        'lib/frontend/screens/moodle_view_page/go_to_myGradePage.js');
+                        'lib/backend/service/js/go_to_myGradePage.js');
                     await webViewController.evaluateJavascript(
                         source: javascriptCode);
                   // case moodleLoginUrl:

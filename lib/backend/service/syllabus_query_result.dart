@@ -7,13 +7,13 @@ import 'package:html/dom.dart';
 
 import 'package:http/http.dart' as http;
 
-import "./classRoom.dart";
+import "classRoom.dart";
 import 'package:html/parser.dart' as html_parser;
 
 import 'package:uuid/uuid.dart';
-import "../../../backend/DB/handler/my_course_db.dart";
+import "../DB/handler/my_course_db.dart";
 import 'package:collection/collection.dart';
-import "./syllabus_query_request.dart";
+import "syllabus_query_request.dart";
 
 class SyllabusQueryResult {
   final String courseName;
