@@ -58,6 +58,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
         backgroundColor: MAIN_COLOR.withOpacity(0.95),
         elevation: 2,
         surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         title: SizedBox(
           height:45,
           child:Row(children: <Widget>[
@@ -84,7 +85,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
                 );
               },
             ),
-            popupMenuButton(Colors.white)
+            popupMenuButton(Colors.white,context)
            ])
           ),
           shape: const RoundedRectangleBorder(
@@ -389,39 +390,13 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget{
     );
   }
 
-Widget popupMenuButton(color){
-  return PopupMenuButton(
+Widget popupMenuButton(color,context){
+  return IconButton(
     color: FORGROUND_COLOR,
-    icon:Icon(Icons.more_vert,color:color),
-    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-      PopupMenuItem(
-        child: ListTile(
-          tileColor: FORGROUND_COLOR,
-          leading:const Icon(Icons.info_rounded,color:MAIN_COLOR),
-          title :const Text('サポート'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true,)));
-          }
-        )
-      ),
-      const PopupMenuDivider(),
-      PopupMenuItem(
-        child: ListTile(
-          tileColor: FORGROUND_COLOR,
-          leading:const Icon(Icons.settings,color:MAIN_COLOR),
-          title :const Text('設定'),
-          onTap:(){
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsPage()));
-          }
-        )
-      ),
-    ],
+    icon:Icon(Icons.menu_rounded,color:color),
+    onPressed: (){
+      Scaffold.of(context).openDrawer();
+    },
   );
 }
 

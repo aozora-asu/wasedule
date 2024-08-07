@@ -42,7 +42,6 @@ class _TemplateInputFormState extends ConsumerState<TemplateInputForm> {
     scheduleForm.isAllDay = false;
     return Scaffold(
       appBar:CustomAppBar(backButton: true,),
-      drawer: const burgerMenu(),
       body: 
       SingleChildScrollView(child:Padding(
         padding: const EdgeInsets.only(right:10,left:10),

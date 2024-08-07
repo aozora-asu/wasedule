@@ -28,7 +28,6 @@ class  _StatsPageState extends ConsumerState<StatsPage> {
         appBar: CustomAppBar(backButton: true,),
         body:const StatsPageBody(),
         floatingActionButton: backButton(),
-        drawer: const burgerMenu(),
       )
     );
   }

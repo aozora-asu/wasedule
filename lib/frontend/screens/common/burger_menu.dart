@@ -11,20 +11,28 @@ import '../../assist_files/size_config.dart';
 import '../setting_page/setting_page.dart';
 
 
-class burgerMenu extends ConsumerWidget {
-  const burgerMenu({super.key});
+class DrawerMenu extends ConsumerWidget {
+  Function(int) changeParentIndex;
+  Function(int) changeChildIndex;
+
+  DrawerMenu({
+    required this.changeChildIndex,
+    required this.changeParentIndex,
+    super.key});
 
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     return Drawer(
+      width:SizeConfig.blockSizeHorizontal! *70,
+      backgroundColor: BACKGROUND_COLOR,
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding:EdgeInsets.zero,
         children: <Widget>[
           Container(
-            height: SizeConfig.blockSizeHorizontal! *30, // 高さを設定
+            height: SizeConfig.blockSizeVertical! *15,
             decoration:const BoxDecoration(
-              color: ACCENT_COLOR,
+              color: MAIN_COLOR,
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -40,72 +48,229 @@ class burgerMenu extends ConsumerWidget {
               ],
             ),
           ),
-
-          menuPanel(
-            Icons.school,
-            "使い方ガイド",
-            MaterialPageRoute(builder: (context) => const HowToUsePage()),
-            context
-          ),
-
-          scheduleEmptyFlag(ref,menuPanel(
-            Icons.tag_rounded,
-            "タグとテンプレート",
-            MaterialPageRoute(builder: (context) => const TagAndTemplatePage()),
-            context
-          ),),
-
-          tagEmptyFlag(ref,menuPanel(
-            Icons.currency_yen_rounded,
-            "アルバイト",
-            MaterialPageRoute(builder: (context) => ArbeitStatsPage(targetMonth:DateFormat('yyyy/MM').format(DateTime.now()))),
-            context
-          ),),
+          Container(
+            height: SizeConfig.blockSizeVertical! *1,
+            decoration:const BoxDecoration(
+              color: PALE_MAIN_COLOR,
+          )),
 
 
-          // menuPanel(
-          //   Icons.ios_share,
-          //   "SNS共有コンテンツ",
-          //   MaterialPageRoute(builder: (context) => SnsContentsPage()),
-          //   context
-          // ),
+        Padding(
+          padding:const EdgeInsets.symmetric(horizontal:10),
+        child: Column(children:[
 
-          menuPanel(
-            Icons.info_rounded,
-            "サポート",
-            MaterialPageRoute(builder: (context) => SnsLinkPage(showAppBar: true,)),
-            context
-          ),
+            index("カレンダー"),
 
-          menuPanel(
-            Icons.settings,
-            "設定",
-            MaterialPageRoute(builder: (context) => SettingsPage()),
-            context
-          ),
+            Row(children:[
+              const Spacer(),
+              menuPanel(
+                Icons.calendar_month,
+                "予定",
+                2,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.group,
+                "シェア",
+                2,1,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.school,
+                "大学暦",
+                2,2,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.currency_yen_rounded,
+                "バイト",
+                2,3,context
+              ),
+              const Spacer(),
+            ]),
 
+            index("課題"),
+
+
+            Row(children:[
+              const Spacer(),
+              menuPanel(
+                Icons.done,
+                "課題",
+                3,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.close,
+                "期限切れ",
+                3,1,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.delete,
+                "削除済み",
+                3,2,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.edit,
+                "学習記録",
+                3,3,context
+              ),
+              const Spacer(),
+            ]),
+
+            index("時間割"),
+
+            Row(children:[
+              const Spacer(),
+              menuPanel(
+                Icons.grid_on_rounded,
+                "時間割",
+                1,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.search_rounded,
+                "シラバス",
+                1,1,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.abc_rounded,
+                "単位",
+                1,2,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.cut_rounded,
+                "出欠",
+                1,3,context
+              ),
+              const Spacer(),
+            ]),
+
+            index("わせまっぷ"),
+
+            menuPanel(
+              Icons.location_pin,
+              "わせまっぷ",
+              0,0,context
+            ),
+
+            index("Webページ"),
+
+            Row(children:[
+              const Spacer(),
+              menuPanel(
+                Icons.school,
+                "Moodle",
+                4,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                Icons.school,
+                "MyWaseda",
+                4,1,context
+              ),
+              const Spacer(),
+            ]),
+
+            index("その他"),
+            
+            Row(children:[
+              const Spacer(),
+              navigatorMenuPanel(
+                Icons.settings,
+                "設定",
+                SettingsPage(isAppBar: true,),
+                context
+              ),
+              const Spacer(),
+              navigatorMenuPanel(
+                Icons.info,
+                "サポート",
+                SnsLinkPage(showAppBar: true),
+                context
+              ),
+              const Spacer(),
+            ])
+          ])
+        )
         ],
       ),
     );
   }
 
-  Widget menuPanel(IconData icon, String title, MaterialPageRoute ontap, BuildContext context){
-    return ListTile(
-            leading: Icon(icon, color: MAIN_COLOR,),
-            title: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 22.5,
-                fontWeight: FontWeight.w800,
-              ),
+  Widget menuPanel(
+    IconData icon,
+    String title,
+    int parentIndex,
+    int childIndex,
+    BuildContext context){
+    return GestureDetector(
+        onTap: () {
+          Navigator.pop(context); 
+          changeParentIndex(parentIndex);
+          changeChildIndex(childIndex);
+        },
+        child: Row(children: [
+            Column(
+              children:[
+                Icon(icon, color: MAIN_COLOR,size: 40),
+                  Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ]
             ),
-            onTap: () {
-              Navigator.pop(context); 
-              Navigator.push(
-                context,ontap
-              );
-            },
+          ])
+      );
+  }
+
+  Widget navigatorMenuPanel(
+    IconData icon,
+    String title,
+    Widget page,
+    BuildContext context){
+    return GestureDetector(
+        onTap: () {
+          Navigator.pop(context); 
+          Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => page
+            )
           );
+        },
+        child: Row(children: [
+            Column(
+              children:[
+                Icon(icon, color: MAIN_COLOR,size: 40),
+                  Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ]
+            ),
+          ])
+      );
+  }
+
+  Widget index(String text){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:[
+        const SizedBox(height:7),
+        Text(" " + text,style:TextStyle(color:Colors.grey,fontSize:20)),
+        const Divider(color:Colors.grey,height: 2,),
+        const SizedBox(height:5),
+    ]);
   }
 }
 
