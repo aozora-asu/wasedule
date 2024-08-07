@@ -180,6 +180,7 @@ flutter:
     - lib/frontend/assist_files/scroll_controller.js
     - lib/frontend/screens/moodle_view_page/show_loading_screen.js
     - lib/frontend/screens/moodle_view_page/hide_loading_screen.js
+    - lib/frontend/screens/moodle_view_page/go_to_myGradePage.js
     - ios/ShareExtension/GetURL.js
 
   fonts:

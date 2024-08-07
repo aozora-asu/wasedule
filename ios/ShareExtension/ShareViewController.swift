@@ -31,7 +31,7 @@ class ShareViewController: UIViewController {
                            
                             
                             if let results = dict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
-                    
+            
                                 
                                 if let html = results["html"] as? String {
                                     

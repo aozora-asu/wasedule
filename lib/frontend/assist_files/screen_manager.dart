@@ -28,7 +28,7 @@ import '../screens/calendar_page/calendar_page.dart';
 import '../screens/to_do_page/to_do_page.dart';
 import '../screens/task_page/task_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import "../screens/my_grade_view_page/my_grade_view_page.dart";
 import '../screens/task_page/task_data_manager.dart';
 //主に画面の遷移などに関する処理をまとめるもの
 
@@ -153,30 +153,30 @@ class _AppPageState extends ConsumerState<AppPage> {
     }
 
     return Scaffold(
-        extendBodyBehindAppBar: false,
-        extendBody: isExtendBottom,
-        appBar: PreferredSize(
-            preferredSize: Size(SizeConfig.blockSizeHorizontal! * 100, height),
-            child: MenuAppBar(
-              currentIndex: _currentIndex,
-              onItemTapped: _onItemTapped,
-              currentSubIndex: _currentSubIndex,
-              onTabTapped: _onTabTapped,
-              setosute: setState,
-              isChildmenuExpand: showChildMenu,
-              changeChildmenuState: _switchChildMenu,
-            )),
-        bottomNavigationBar:
-            customBottomBar(context, _currentIndex, _onItemTapped, setState),
-        body: body,
-        drawer: DrawerMenu(
-          changeParentIndex:_onItemTapped,
-          changeChildIndex:_onTabTapped,
-        ),
-        );
+      extendBodyBehindAppBar: false,
+      extendBody: isExtendBottom,
+      appBar: PreferredSize(
+          preferredSize: Size(SizeConfig.blockSizeHorizontal! * 100, height),
+          child: MenuAppBar(
+            currentIndex: _currentIndex,
+            onItemTapped: _onItemTapped,
+            currentSubIndex: _currentSubIndex,
+            onTabTapped: _onTabTapped,
+            setosute: setState,
+            isChildmenuExpand: showChildMenu,
+            changeChildmenuState: _switchChildMenu,
+          )),
+      bottomNavigationBar:
+          customBottomBar(context, _currentIndex, _onItemTapped, setState),
+      body: body,
+      drawer: DrawerMenu(
+        changeParentIndex: _onItemTapped,
+        changeChildIndex: _onTabTapped,
+      ),
+    );
   }
 
-  List<Widget> timeTableSubPages(){
+  List<Widget> timeTableSubPages() {
     return [
       TimeTablePage(moveToMoodlePage: _onItemTapped),
       SyllabusSearchPage(),
@@ -208,7 +208,8 @@ class _AppPageState extends ConsumerState<AppPage> {
   List<Widget> moodleSubPages() {
     return [
       const MoodleViewPage(),
-      const MyWasedaViewPage()
+      const MyWasedaViewPage(),
+      const MyGradeViewPage()
     ];
   }
 
