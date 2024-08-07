@@ -54,7 +54,7 @@ Future<void> showAttendanceDialog(
   }
 
   if (isShowDialog) {
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AttendanceDialog(
@@ -119,7 +119,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       const Spacer(),
       Container(
           width: 800,
-          decoration: roundedBoxdecorationWithShadow(),
+          decoration: roundedBoxdecoration(),
           margin: const EdgeInsets.symmetric(horizontal: 10),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           child: Material(child: buildMainBody())),
@@ -371,7 +371,7 @@ class _IndividualCourseEditDialogState
 
     return Container(
       padding: const EdgeInsets.all(15),
-      decoration: roundedBoxdecorationWithShadow(),
+      decoration: roundedBoxdecoration(),
       child: Column(children: [
         Text(widget.myCourseData["courseName"] + " の出欠記録",
             style: const TextStyle(

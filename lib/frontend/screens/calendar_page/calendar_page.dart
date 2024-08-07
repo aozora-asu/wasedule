@@ -1127,7 +1127,7 @@ class _CalendarState extends ConsumerState<Calendar> {
         onTap: ontap,
         child: Column(children: [
           Container(
-              decoration: roundedBoxdecorationWithShadow(radiusType: 2),
+              decoration: roundedBoxdecoration(radiusType: 2),
               width: SizeConfig.blockSizeHorizontal! * 95,
               padding: const EdgeInsets.symmetric(vertical: 5),
               child: Center(

@@ -139,12 +139,20 @@ BorderRadius boxRadius({int type = 0}){
   
 }
 
-BoxDecoration roundedBoxdecorationWithShadow({int radiusType = 0,Color? backgroundColor}) {
+BoxDecoration roundedBoxdecoration({int radiusType = 0,bool shadow = false, Color? backgroundColor}) {
 
   return BoxDecoration(
-      color: backgroundColor ?? FORGROUND_COLOR,
-      borderRadius: boxRadius(type: radiusType)
-    );
+    boxShadow: [
+      if(shadow) BoxShadow(
+        color: Colors.black.withOpacity(0.2), // 影の色
+        spreadRadius: 0, // 影の広がり
+        blurRadius: 2, // ぼかしの強さ
+        offset: const Offset(0, 3), // 影の位置 (x, y)
+      )
+    ], 
+    color: backgroundColor ?? FORGROUND_COLOR,
+    borderRadius: boxRadius(type: radiusType)
+  );
 }
 
 Widget cupertinoLikeDropDownListModel(

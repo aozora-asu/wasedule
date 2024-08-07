@@ -120,7 +120,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
       padding: const EdgeInsets.only(left: 5, right: 5, top: 40),
       child: Column(children: [
         Container(
-            decoration: roundedBoxdecorationWithShadow(),
+            decoration: roundedBoxdecoration(),
             child: Column(children: [
               Container(
                 height: 40,

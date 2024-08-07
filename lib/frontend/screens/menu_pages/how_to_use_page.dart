@@ -81,7 +81,7 @@ class _HowToUsePageState extends State<HowToUsePage> {
     return
     Column(children:[
      Container(
-      decoration: roundedBoxdecorationWithShadow(),
+      decoration: roundedBoxdecoration(),
       child:
       Padding(
         padding:const EdgeInsets.all(10),

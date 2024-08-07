@@ -196,7 +196,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
       return Column(children: [
         const SizedBox(height: 20),
         Container(
-            decoration: roundedBoxdecorationWithShadow(backgroundColor: BACKGROUND_COLOR),
+            decoration: roundedBoxdecoration(backgroundColor: BACKGROUND_COLOR),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,

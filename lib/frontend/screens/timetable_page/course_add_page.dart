@@ -114,7 +114,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecorationWithShadow(radiusType: 0),
+            decoration: roundedBoxdecoration(radiusType: 0),
             width: SizeConfig.blockSizeHorizontal! * 100,
             child: Material(
                 borderRadius: const BorderRadius.only(

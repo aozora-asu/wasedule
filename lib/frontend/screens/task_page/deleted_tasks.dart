@@ -63,7 +63,7 @@ class _DeletedTaskPageState extends ConsumerState<DeletedTaskPage> {
                 margin:const EdgeInsets.symmetric(horizontal: 15,vertical:7.5),
                 padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, bottom: 10.0, top: 10.0),
-                decoration: roundedBoxdecorationWithShadow(),
+                decoration: roundedBoxdecoration(),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

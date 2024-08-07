@@ -28,7 +28,7 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
           ),
           const SizedBox(height: 5),
           Container(
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecoration(),
               padding:
                   const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
               margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
@@ -62,7 +62,7 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
 
           const SizedBox(height: 5),
           Container(
-              decoration: roundedBoxdecorationWithShadow(),
+              decoration: roundedBoxdecoration(),
               padding:
                   const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
               margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),

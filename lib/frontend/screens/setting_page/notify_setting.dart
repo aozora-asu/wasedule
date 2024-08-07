@@ -38,7 +38,7 @@ class _NotifySettingPageState extends ConsumerState<NotifySettingPage>{
       ),
       const SizedBox(height: 5),
       Container(
-          decoration: roundedBoxdecorationWithShadow(),
+          decoration: roundedBoxdecoration(),
           padding: const EdgeInsets.all(7.5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -68,7 +68,7 @@ class _NotifySettingPageState extends ConsumerState<NotifySettingPage>{
           ])),
       const SizedBox(height: 10),
       Container(
-          decoration: roundedBoxdecorationWithShadow(),
+          decoration: roundedBoxdecoration(),
           padding: const EdgeInsets.all(7.5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
