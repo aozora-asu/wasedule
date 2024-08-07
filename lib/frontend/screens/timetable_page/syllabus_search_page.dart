@@ -12,13 +12,11 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_calandar_app/static/constant.dart';
 
 class SyllabusSearchPage extends StatefulWidget {
-
   @override
   _SyllabusSearchPageState createState() => _SyllabusSearchPageState();
-
 }
 
-class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
+class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
   late bool isGraduateSchool;
@@ -51,9 +49,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: searchWindow());
+    return Scaffold(backgroundColor: BACKGROUND_COLOR, body: searchWindow());
   }
 
   TextStyle searchConditionTextStyle = const TextStyle(
@@ -62,30 +58,28 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
   );
 
   Widget searchWindow() {
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
-      child:Column(
-          children: [
-            ExpandablePanel(
+      child: Column(
+        children: [
+          ExpandablePanel(
               controller: ExpandableController(initialExpanded: true),
               header: searchHeader(),
               collapsed: const SizedBox(),
               expanded: searchConditionPanel()),
-            const Divider(),
-            Expanded(
-                child: searchResult())
-          ],
-        ),
+          const Divider(),
+          Expanded(child: searchResult())
+        ],
+      ),
     );
   }
 
-  Widget searchHeader(){
-
-
+  Widget searchHeader() {
     return const Row(children: [
-      Icon(Icons.search,color:BLUEGREY,size: 30),
-      SizedBox(width: 5,),
+      Icon(Icons.search, color: BLUEGREY, size: 30),
+      SizedBox(
+        width: 5,
+      ),
       Text(
         "シラバス検索",
         textAlign: TextAlign.center,
@@ -99,8 +93,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
     ]);
   }
 
-  Widget searchConditionPanel(){
-    return Column(children:[
+  Widget searchConditionPanel() {
+    return Column(children: [
       const Divider(),
       Row(
         children: [
@@ -130,10 +124,10 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               textAlign: TextAlign.center,
             ),
           ),
-        if(isGraduateSchool) 
-          graduateSchoolPicker(requestQuery.p_gakubu)
-        else
-          departmentPicker(requestQuery.p_gakubu),
+          if (isGraduateSchool)
+            graduateSchoolPicker(requestQuery.p_gakubu)
+          else
+            departmentPicker(requestQuery.p_gakubu),
         ],
       ),
       const SizedBox(height: 5),
@@ -149,9 +143,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               textAlign: TextAlign.center,
             ),
           ),
-          searchTextField(
-              keyWordController,
-              (value) {
+          searchTextField(keyWordController, (value) {
             requestQuery.keyword = value;
           }),
         ],
@@ -167,9 +159,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               textAlign: TextAlign.center,
             ),
           ),
-          searchTextField(
-              courseNameController,
-              (value) {
+          searchTextField(courseNameController, (value) {
             requestQuery.kamoku = value;
           }),
         ],
@@ -185,9 +175,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               textAlign: TextAlign.center,
             ),
           ),
-          searchTextField(
-           teacherNameController,
-              (value) {
+          searchTextField(teacherNameController, (value) {
             requestQuery.kyoin = value;
           }),
         ],
@@ -211,40 +199,19 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               }),
           SizedBox(
             child: Text(
-              "通年",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          CupertinoCheckbox(
-              value: isFullYear,
-              onChanged: (value) {
-                isFullYear = value!;
-                if (value) {
-                  setState(() {
-                    requestQuery.p_gakki = Term.fullYear;
-                  });
-                } else {
-                  setState(() {
-                    requestQuery.p_gakki = requestQuery.p_gakki;
-                  });
-                }
-              }),
-          SizedBox(
-            child: Text(
               "大学院/その他",
               style: searchConditionTextStyle,
               textAlign: TextAlign.center,
             ),
           ),
           CupertinoCheckbox(
-            value: isGraduateSchool,
-            onChanged: (value) {
-              requestQuery.p_gakubu = null;
-              setState(() {
-                isGraduateSchool = value!;
-              });
-            })
+              value: isGraduateSchool,
+              onChanged: (value) {
+                requestQuery.p_gakubu = null;
+                setState(() {
+                  isGraduateSchool = value!;
+                });
+              })
         ],
       ),
     ]);
@@ -272,32 +239,30 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       Term.fullYear,
       Term.others
     ];
-    
+
     List<DropdownMenuItem<Term>> items = [];
-    for(int i = 0; i < terms.length; i++){
+    for (int i = 0; i < terms.length; i++) {
       String menuText = "なし";
-      if(terms.elementAt(i) != null){
+      if (terms.elementAt(i) != null) {
         menuText = terms.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: terms.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: terms.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_gakki,
-        (value) {
-            setState(() {
-              requestQuery.p_gakki = value;
-            });
-        })
-    );
+        child: cupertinoLikeDropDownListModel(items, requestQuery.p_gakki,
+            (value) {
+      setState(() {
+        requestQuery.p_gakki = value;
+      });
+    }));
   }
 
   Widget weekDayPicker() {
@@ -312,32 +277,33 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       DayOfWeek.sunday,
       DayOfWeek.anotherday
     ];
-    
+
     List<DropdownMenuItem<DayOfWeek>> items = [];
-    for(int i = 0; i < weekDays.length; i++){
+    for (int i = 0; i < weekDays.length; i++) {
       String menuText = "なし";
-      if(weekDays.elementAt(i) != null){
+      if (weekDays.elementAt(i) != null) {
         menuText = weekDays.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: weekDays.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: weekDays.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_youbi,
-        (value) {
-            setState(() {
-              requestQuery.p_youbi = value;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_youbi,
+      (value) {
+        setState(() {
+          requestQuery.p_youbi = value;
+        });
+      },
+    ));
   }
 
   Widget periodPicker() {
@@ -354,67 +320,68 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       Lesson.zeroth,
       Lesson.others
     ];
-    
+
     List<DropdownMenuItem<Lesson>> items = [];
-    for(int i = 0; i < period.length; i++){
+    for (int i = 0; i < period.length; i++) {
       String menuText = "なし";
-      if(period.elementAt(i) != null){
+      if (period.elementAt(i) != null) {
         menuText = period.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: period.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: period.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_jigen,
-        (value) {
-            setState(() {
-              requestQuery.p_jigen = value;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_jigen,
+      (value) {
+        setState(() {
+          requestQuery.p_jigen = value;
+        });
+      },
+    ));
   }
-
 
   Widget departmentPicker(Department? gakubu) {
     List<Department?> departments = [null];
     departments.add(gakubu);
     departments.addAll(Department.departments);
     departments.remove(gakubu);
-    
+
     List<DropdownMenuItem<Department>> items = [];
-    for(int i = 0; i < departments.length; i++){
+    for (int i = 0; i < departments.length; i++) {
       String menuText = "学部を選択";
-      if(departments.elementAt(i) != null){
+      if (departments.elementAt(i) != null) {
         menuText = departments.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: departments.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: departments.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_gakubu,
-        (value) {
-            setState(() {
-              requestQuery.p_gakubu = value;
-              requestQuery.subjectClassification = null;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_gakubu,
+      (value) {
+        setState(() {
+          requestQuery.p_gakubu = value;
+          requestQuery.subjectClassification = null;
+        });
+      },
+    ));
   }
 
   Widget graduateSchoolPicker(Department? gakubu) {
@@ -422,33 +389,34 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
     departments.add(gakubu);
     departments.addAll(Department.masters);
     departments.remove(gakubu);
-    
+
     List<DropdownMenuItem<Department>> items = [];
-    for(int i = 0; i < departments.length; i++){
+    for (int i = 0; i < departments.length; i++) {
       String menuText = "研究科/学校を選択";
-      if(departments.elementAt(i) != null){
+      if (departments.elementAt(i) != null) {
         menuText = departments.elementAt(i)!.text;
       }
 
       items.add(DropdownMenuItem(
-        value: departments.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
+          value: departments.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
     }
 
     return Expanded(
-      child: cupertinoLikeDropDownListModel(
-        items,requestQuery.p_gakubu,
-        (value) {
-            setState(() {
-              requestQuery.p_gakubu = value;
-              requestQuery.subjectClassification = null;
-            });
-        },)
-    );
+        child: cupertinoLikeDropDownListModel(
+      items,
+      requestQuery.p_gakubu,
+      (value) {
+        setState(() {
+          requestQuery.p_gakubu = value;
+          requestQuery.subjectClassification = null;
+        });
+      },
+    ));
   }
 
   Widget subjectClassificationPicker(TextStyle searchConditionTextStyle) {
@@ -461,22 +429,23 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
       List<SubjectClassification?> subjectClassifications = [];
       subjectClassifications.add(null);
       subjectClassifications.addAll(gakubu.subjectClassifications!);
-    
-    List<DropdownMenuItem<SubjectClassification>> items = [];
-    for(int i = 0; i < subjectClassifications.length; i++){
-      String menuText = "科目区分を選択";
-      if(subjectClassifications.elementAt(i) != null){
-        menuText = subjectClassifications.elementAt(i)!.text;
-      }
 
-      items.add(DropdownMenuItem(
-        value: subjectClassifications.elementAt(i),
-        child: Center(
-         child:Text(menuText,
-          style: const TextStyle(
-            fontSize:20,
-            fontWeight: FontWeight.normal),))));
-    }
+      List<DropdownMenuItem<SubjectClassification>> items = [];
+      for (int i = 0; i < subjectClassifications.length; i++) {
+        String menuText = "科目区分を選択";
+        if (subjectClassifications.elementAt(i) != null) {
+          menuText = subjectClassifications.elementAt(i)!.text;
+        }
+
+        items.add(DropdownMenuItem(
+            value: subjectClassifications.elementAt(i),
+            child: Center(
+                child: Text(
+              menuText,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+            ))));
+      }
       value = Row(children: [
         SizedBox(
           width: 80,
@@ -487,14 +456,15 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
           ),
         ),
         Expanded(
-          child: cupertinoLikeDropDownListModel(
-          items, requestQuery.subjectClassification,
-           (value) {
-              setState(() {
-                requestQuery.subjectClassification = value;
-              });
-            },)
-        )
+            child: cupertinoLikeDropDownListModel(
+          items,
+          requestQuery.subjectClassification,
+          (value) {
+            setState(() {
+              requestQuery.subjectClassification = value;
+            });
+          },
+        ))
       ]);
     }
 
@@ -570,64 +540,66 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
           await showCourseDescriptionModalSheet(result);
         },
         child: Container(
-          decoration: roundedBoxdecorationWithShadow(
-              radiusType: boxRadiusType, backgroundColor: FORGROUND_COLOR),
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-          child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-            Row(children:[
-              const SizedBox(width: 15),
-              Text(result.semesterAndWeekdayAndPeriod,
-                style: const TextStyle(color:Colors.grey,fontSize: 12,fontWeight: FontWeight.bold))
-            ]),
-            Row(children: [
-              const Text("単\n位",
-                  style: TextStyle(color: Colors.grey, fontSize: 10)),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: creditsIndiatorColor,
+            decoration: roundedBoxdecorationWithShadow(
+                radiusType: boxRadiusType, backgroundColor: FORGROUND_COLOR),
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const SizedBox(width: 15),
+                Text(result.semesterAndWeekdayAndPeriod,
+                    style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold))
+              ]),
+              Row(children: [
+                const Text("単\n位",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: creditsIndiatorColor,
+                  ),
+                  height: 25,
+                  width: 25,
+                  child: Center(
+                      child: Text(credits,
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))),
                 ),
-                height: 25,
-                width: 25,
-                child: Center(
-                    child: Text(credits,
+                Expanded(
+                    child: Text(result.courseName,
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(fontWeight: FontWeight.bold))),
+                Container(
+                    constraints: const BoxConstraints(maxWidth: 50),
+                    child: Text(result.classRoom,
                         style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))),
-              ),
-              Expanded(
-                  child: Text(result.courseName,
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(fontWeight: FontWeight.bold))),
-              Container(
-                  constraints: const BoxConstraints(maxWidth: 50),
-                  child: Text(result.classRoom,
-                      style: const TextStyle(
-                          overflow: TextOverflow.clip, color: Colors.grey))),
-              const Icon(Icons.search, color: Colors.grey),
-              GestureDetector(
-                  onTap: () async {
-                    await showConfirmationDialog(context, result);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10), color: BLUEGREY),
-                    height: 25,
-                    child: const Center(
-                        child: Text("  + 追加  ",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white))),
-                  )),
-            ]),
-          ])
-        ));
+                            overflow: TextOverflow.clip, color: Colors.grey))),
+                const Icon(Icons.search, color: Colors.grey),
+                GestureDetector(
+                    onTap: () async {
+                      await showConfirmationDialog(context, result);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: BLUEGREY),
+                      height: 25,
+                      child: const Center(
+                          child: Text("  + 追加  ",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white))),
+                    )),
+              ]),
+            ])));
   }
 
   Future<void> showCourseDescriptionModalSheet(
@@ -640,6 +612,4 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage>{
               SyllabusDescriptonView(showHeader: true, syllabusQuery: result));
     }));
   }
-
-
 }

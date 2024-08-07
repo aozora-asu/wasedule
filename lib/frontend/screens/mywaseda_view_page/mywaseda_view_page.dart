@@ -54,8 +54,10 @@ class _MyWasedaViewPageState extends ConsumerState<MyWasedaViewPage> {
             //var url = createWindowRequest.request.url!;
             var url = "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
             if (await canLaunchUrl(WebUri(url))) {
-              await launchUrl(WebUri(url),
-                  mode: LaunchMode.externalApplication);
+              await launchUrl(
+                WebUri(url),
+                mode: LaunchMode.externalApplication,
+              );
             }
             // webViewController.loadUrl(
             //   urlRequest: URLRequest(url: WebUri(url)),
