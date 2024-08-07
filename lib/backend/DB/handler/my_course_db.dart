@@ -75,7 +75,6 @@ class MyCourse {
     }
 
     return {
-      "id": id,
       "courseName": courseName,
       "weekday": weekday?.index ?? -1,
       "period": period?.period ?? -1,

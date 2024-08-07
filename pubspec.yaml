@@ -180,6 +180,7 @@ flutter:
     - lib/backend/service/js/show_loading_screen.js
     - lib/backend/service/js/hide_loading_screen.js
     - lib/backend/service/js/go_to_myGradePage.js
+    - lib/backend/service/js/get_myGrade.js
     - ios/ShareExtension/GetURL.js
 
   fonts:

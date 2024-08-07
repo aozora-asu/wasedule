@@ -27,8 +27,8 @@ import "../../frontend/screens/common/eyecatch_page.dart";
 
 import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
 
-void document(String str) async {
-  final document = html_parser.parse(str);
+void getMyGrade(String str) async {
+  final document = html_parser.parse(json.decode(str));
   final trElements = document.querySelectorAll(".operationboxf");
 
   var result = {};
@@ -71,6 +71,7 @@ void document(String str) async {
       result[path[0]][path[1]][path[2]].add(tempMap);
     }
   }
+  printWrapped(result.toString());
 
   MyGrade myGrade;
   for (var parentKey in result.keys) {
@@ -120,7 +121,6 @@ Future<void> methodChannel(MethodCall call) async {
 
 // URLに基づいて画面を遷移させるロジックを実装する関数
 void navigateBasedOnURL(Map<String, dynamic> jsonData) {
-  document(jsonData['data']["html"]);
   // 例: JSON オブジェクトの "type" フィールドに基づいて遷移先を決定
   if (jsonData['type'] == 'shared_content') {
     // 共有されたコンテンツがある場合、特定の画面に遷移

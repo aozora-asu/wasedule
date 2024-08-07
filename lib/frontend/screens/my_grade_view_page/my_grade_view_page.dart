@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/service/share_from_web.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/link.dart';
@@ -25,13 +27,14 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
 
   static const String moodleUrl =
       "https://my.waseda.jp/portal/view/portal-top-view?communityId=1&communityPageId=9";
-  // static const String moodleUrl = "https://my.waseda.jp/login/login";
+  static const String myGradeUrl =
+      "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     String javascriptCode;
-    Map<String, dynamic> messageData;
+
     return Scaffold(
         body: Column(children: [
       progress < 1.0
@@ -49,30 +52,16 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
               onWebViewCreated: (controller) {
                 webViewController = controller;
               },
-              onCreateWindow: (controller, createWindowRequest) async {
-                debugPrint(
-                    'onCreateWindow: ${createWindowRequest.request.url}');
-
-                if (createWindowRequest.request.url != null) {
-                  //var url = createWindowRequest.request.url!;
-                  // var url = "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
-                  // if (await canLaunchUrl(WebUri(url))) {
-                  //   await launchUrl(
-                  //     WebUri(url),
-                  //     mode: LaunchMode.externalApplication,
-                  //   );
-                  // }
-                  // webViewController.loadUrl(
-                  //   urlRequest: URLRequest(url: WebUri(url)),
-                  // );
-                }
-              },
               onLoadStop: (controller, currentUrl) async {
                 switch (currentUrl.toString()) {
                   case moodleUrl:
-                    print("コード実行");
                     javascriptCode = await rootBundle.loadString(
                         'lib/backend/service/js/go_to_myGradePage.js');
+                    await webViewController.evaluateJavascript(
+                        source: javascriptCode);
+                  case myGradeUrl:
+                    javascriptCode = await rootBundle
+                        .loadString('lib/backend/service/js/get_myGrade.js');
                     await webViewController.evaluateJavascript(
                         source: javascriptCode);
                   // case moodleLoginUrl:
@@ -83,7 +72,9 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
                 }
               },
               onConsoleMessage: (controller, consoleMessage) async {
-                print(consoleMessage.message);
+                if (consoleMessage.message != "") {
+                  getMyGrade(consoleMessage.message);
+                }
               })),
       const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
       Container(
