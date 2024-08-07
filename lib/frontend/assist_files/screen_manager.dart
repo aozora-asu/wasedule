@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.da
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
@@ -167,7 +168,12 @@ class _AppPageState extends ConsumerState<AppPage> {
             )),
         bottomNavigationBar:
             customBottomBar(context, _currentIndex, _onItemTapped, setState),
-        body: body);
+        body: body,
+        drawer: DrawerMenu(
+          changeParentIndex:_onItemTapped,
+          changeChildIndex:_onTabTapped,
+        ),
+        );
   }
 
   List<Widget> timeTableSubPages(){

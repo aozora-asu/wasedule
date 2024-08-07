@@ -37,7 +37,6 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late Term currentSemester;
   late DateTime now;
 
-
   double cellWidth = 15.3;
   double cellHeight = 15;
   double cellsRadius = 10.0;
@@ -57,7 +56,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       if (userDepartment == null) {
         await showUserDepartmentSettingDialog(context);
       }
-      await showAttendanceDialog(context, now, ref);
+      if(mounted){
+        await showAttendanceDialog(context, now, ref);
+        }
     });
   }
 
