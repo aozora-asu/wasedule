@@ -1,19 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/university_schedule.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/mywaseda_view_page/mywaseda_view_page.dart';
@@ -46,12 +41,13 @@ class _AppPageState extends ConsumerState<AppPage> {
   int _currentIndex = 0;
   int _currentSubIndex = 0;
   PageController pageController = PageController();
+  ScrollPhysics physics = const ScrollPhysics();
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initIndex ?? 2;
-    pageController = PageController(initialPage: 0); //widget.initIndex ?? 2);
+    pageController = PageController(initialPage: 0);
     initRateMyApp(context);
   }
 
@@ -60,10 +56,20 @@ class _AppPageState extends ConsumerState<AppPage> {
     setState(() {
       _currentSubIndex = 0;
       _currentIndex = index;
+      setPageConfig();
     });
-    setPageConfig();
     pageController.jumpToPage(0);
   }
+
+  void _onTabTapped(int subIndex) {
+    ref.read(taskDataProvider).isInit = true;
+    setState(() {
+      _currentSubIndex = subIndex;
+      setPageConfig();
+    });
+    pageController.jumpToPage(subIndex);
+  }
+
 
   void setPageConfig() {
     if (_currentIndex == 0) {
@@ -89,15 +95,6 @@ class _AppPageState extends ConsumerState<AppPage> {
     }
   }
 
-  void _onTabTapped(int subIndex) {
-    ref.read(taskDataProvider).isInit = true;
-    setState(() {
-      _currentSubIndex = subIndex;
-    });
-    pageController.jumpToPage(subIndex);
-  }
-
-  ScrollPhysics physics = const ScrollPhysics();
   bool isExtendBody = true;
   bool isExtendBottom = true;
   bool showAppBar = true;
