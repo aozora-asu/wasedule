@@ -24,7 +24,7 @@ class DrawerMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     return Drawer(
-      width:SizeConfig.blockSizeHorizontal! *70,
+      width:SizeConfig.blockSizeHorizontal! *75,
       backgroundColor: BACKGROUND_COLOR,
       child: ListView(
         padding:EdgeInsets.zero,
@@ -58,6 +58,8 @@ class DrawerMenu extends ConsumerWidget {
         Padding(
           padding:const EdgeInsets.symmetric(horizontal:10),
         child: Column(children:[
+            
+            const SizedBox(height:20),
 
             index("カレンダー"),
 
@@ -152,11 +154,33 @@ class DrawerMenu extends ConsumerWidget {
 
             index("わせまっぷ"),
 
-            menuPanel(
-              Icons.location_pin,
-              "わせまっぷ",
-              0,0,context
-            ),
+            Row(children:[
+              const Spacer(),
+              menuPanel(
+                Icons.location_pin,
+                "わせまっぷ",
+                0,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                null,
+                "",
+                0,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                null,
+                "",
+                0,0,context
+              ),
+              const Spacer(),
+              menuPanel(
+                null,
+                "",
+                0,0,context
+              ),
+              const Spacer(),
+            ]),
 
             index("Webページ"),
 
@@ -179,6 +203,13 @@ class DrawerMenu extends ConsumerWidget {
                 "成績照会",
                 4,2,context
               ),
+              const Spacer(),
+              menuPanel(
+                null,
+                "",
+                4,0,context
+              ),
+              const Spacer(),
             ]),
 
             index("その他"),
@@ -208,7 +239,7 @@ class DrawerMenu extends ConsumerWidget {
   }
 
   Widget menuPanel(
-    IconData icon,
+    IconData? icon,
     String title,
     int parentIndex,
     int childIndex,
@@ -222,11 +253,11 @@ class DrawerMenu extends ConsumerWidget {
         child: Row(children: [
             Column(
               children:[
-                Icon(icon, color: MAIN_COLOR,size: 40),
+                Icon(icon, color: MAIN_COLOR,size: 30),
                   Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 10,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -253,11 +284,11 @@ class DrawerMenu extends ConsumerWidget {
         child: Row(children: [
             Column(
               children:[
-                Icon(icon, color: MAIN_COLOR,size: 40),
+                Icon(icon, color: MAIN_COLOR,size: 30),
                   Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 10,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -272,8 +303,8 @@ class DrawerMenu extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children:[
         const SizedBox(height:7),
-        Text(" " + text,style:TextStyle(color:Colors.grey,fontSize:20)),
         const Divider(color:Colors.grey,height: 2,),
+        Text(" " + text,style:const TextStyle(color:Colors.grey,fontSize:15)),
         const SizedBox(height:5),
     ]);
   }
