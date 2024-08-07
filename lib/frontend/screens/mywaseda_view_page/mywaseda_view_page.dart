@@ -48,22 +48,6 @@ class _MyWasedaViewPageState extends ConsumerState<MyWasedaViewPage> {
         onWebViewCreated: (controller) {
           webViewController = controller;
         },
-        onCreateWindow: (controller, createWindowRequest) async {
-          debugPrint('onCreateWindow: ${createWindowRequest.request.url}');
-          if (createWindowRequest.request.url != null) {
-            //var url = createWindowRequest.request.url!;
-            var url = "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
-            if (await canLaunchUrl(WebUri(url))) {
-              await launchUrl(
-                WebUri(url),
-                mode: LaunchMode.externalApplication,
-              );
-            }
-            // webViewController.loadUrl(
-            //   urlRequest: URLRequest(url: WebUri(url)),
-            // );
-          }
-        },
       )),
       const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
       Container(

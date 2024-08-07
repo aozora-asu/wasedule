@@ -253,7 +253,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
         subMenuPanel(ref, icon: Icons.school, subIndex: 1, title: "MyWaseda"),
         indexBar(),
         subMenuPanel(ref, icon: Icons.abc_sharp, subIndex: 2, title: "成績照会"),
-        space(70.0),
+        space(60.0),
       ],
     };
     return subPageTabs;
