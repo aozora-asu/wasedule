@@ -20,20 +20,13 @@ import 'package:flutter/material.dart';
 import '../../frontend/assist_files/screen_manager.dart';
 import "../DB/handler/task_db_handler.dart";
 
-import "../DB/handler/my_course_db.dart";
+import "../DB/handler/my_grade_db.dart";
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
-import "../../static/constant.dart";
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import "../DB/sharepreference.dart";
 
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
-import 'package:html/parser.dart' as html_parser;
-import 'dart:convert';
 
-void document(String str) {
+void document(String str) async {
   final document = html_parser.parse(str);
   final trElements = document.querySelectorAll(".operationboxf");
 
@@ -57,11 +50,11 @@ void document(String str) {
     } else {
       tempMap = {
         "courseName": tdElements[0].text.trim(),
-        "yesr": tdElements[1].text.trim(),
-        "semester": tdElements[2].text.trim(),
+        "year": tdElements[1].text.trim(),
+        "term": tdElements[2].text.trim(),
         "credit": tdElements[3].text.trim(),
         "grade": tdElements[4].text.trim(),
-        "GP": tdElements[5].text.trim()
+        "gradePoint": tdElements[5].text.trim()
       };
 
       if (result[path[0]] == null) {
@@ -71,17 +64,33 @@ void document(String str) {
         result[path[0]][path[1]] = {};
       }
       if (result[path[0]][path[1]][path[2]] == null) {
-        result[path[0]][path[1]][path[2]] = {};
+        result[path[0]][path[1]][path[2]] = [];
       }
 
-      result[path[0]][path[1]][path[2]][tdElements[0].text.trim()] = tempMap;
+      result[path[0]][path[1]][path[2]].add(tempMap);
     }
   }
-  printWrapped(result.toString());
 
-  // JSONとして出力
-  //String prettyString = const JsonEncoder.withIndent('  ').convert(result);
-  //printWrapped(prettyString);
+  MyGrade myGrade;
+  for (var parentKey in result.keys) {
+    for (var childKey in result[parentKey].keys) {
+      for (var grandChild in result[parentKey][childKey].keys) {
+        for (var map in result[parentKey][childKey][grandChild]) {
+          myGrade = MyGrade(
+              courseName: map["courseName"],
+              credit: map["credit"],
+              grade: map["grade"],
+              gradePoint: map["gradePoint"],
+              majorClassification: parentKey,
+              middleClassification: childKey,
+              minorClassification: grandChild,
+              term: map["term"],
+              year: map["year"]);
+          await myGrade.resisterMyGrade();
+        }
+      }
+    }
+  }
 }
 
 const MethodChannel platform = MethodChannel('com.example.wasedule/navigation');
