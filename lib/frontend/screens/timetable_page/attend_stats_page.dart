@@ -7,6 +7,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_menu
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import "../../../backend/DB/handler/my_course_db.dart";
 
 class AttendStatsPage extends ConsumerStatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
   late Term currentQuarter;
   late Term currentSemester;
   late DateTime now;
-  List currentCourseDataList = [];
+  List<MyCourse> currentCourseDataList = [];
 
   @override
   void initState() {
@@ -29,29 +30,29 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
   void generateCurrentCourseData() {
     currentCourseDataList = [];
-    List data = ref.read(timeTableProvider).timeTableDataList;
+    List<MyCourse> data = ref.read(timeTableProvider).timeTableDataList;
     for (int i = 0; i < data.length; i++) {
-      int targetYear = data.elementAt(i)["year"];
-      String targetSemester = data.elementAt(i)["semester"];
-      int? targetWeekday = data.elementAt(i)["weekday"];
-      int? targetPeriod = data.elementAt(i)["period"];
+      int targetYear = data.elementAt(i).year;
+      Term? targetSemester = data.elementAt(i).semester;
+      DayOfWeek? targetWeekday = data.elementAt(i).weekday;
+      Lesson? targetPeriod = data.elementAt(i).period;
 
       if (targetPeriod != null && targetWeekday != null) {
         if (currentSemester == Term.springSemester && targetYear == thisYear) {
-          if (targetSemester == Term.springSemester.value ||
-              targetSemester == Term.springQuarter.value ||
-              targetSemester == Term.summerQuarter.value) {
+          if (targetSemester == Term.springSemester ||
+              targetSemester == Term.springQuarter ||
+              targetSemester == Term.summerQuarter) {
             currentCourseDataList.add(data.elementAt(i));
           }
         } else if (currentSemester == Term.fallSemester &&
             targetYear == thisYear) {
-          if (targetSemester == Term.fallSemester.value ||
-              targetSemester == Term.fallQuarter.value ||
-              targetSemester == Term.winterQuarter.value) {
+          if (targetSemester == Term.fallSemester ||
+              targetSemester == Term.fallQuarter ||
+              targetSemester == Term.winterQuarter) {
             currentCourseDataList.add(data.elementAt(i));
           }
         } else {
-          if (targetSemester == Term.fullYear.value) {
+          if (targetSemester == Term.fullYear) {
             currentCourseDataList.add(data.elementAt(i));
           }
         }
