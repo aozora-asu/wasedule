@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 
 import "../../../static/constant.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,27 +13,27 @@ final timeTableProvider =
 class TimeTableNotifier extends StateNotifier<TimeTableData> {
   TimeTableNotifier() : super(TimeTableData(timeTableDataList: []));
 
-  void addNewData(Map<String, dynamic> newDataMap) {
+  void addNewData(MyCourse newDataMap) {
     final newtimeTableDataList = [...state.timeTableDataList, newDataMap];
     state = state.copyWith(taskDataList: newtimeTableDataList);
   }
 }
 
 class TimeTableData {
-  List<Map<String, dynamic>> timeTableDataList = [];
+  List<MyCourse> timeTableDataList = [];
   bool isInit = false;
   bool isRenewed = false;
-  var sortedDataByWeekDay = {};
-  var currentSemesterClasses = {};
-  var universityScheduleByWeekDay = {};
+  Map<int, List<MyCourse>> sortedDataByWeekDay = {};
+  Map<int, List<MyCourse>> currentSemesterClasses = {};
+  Map<int, String> universityScheduleByWeekDay = {};
   int maxPeriod = 6;
 
   TimeTableData({
-    List<Map<String, dynamic>> timeTableDataList = const [],
+    List<MyCourse> timeTableDataList = const [],
   }) : timeTableDataList = timeTableDataList;
 
   TimeTableData copyWith({
-    List<Map<String, dynamic>>? taskDataList,
+    List<MyCourse>? taskDataList,
     int? taskPageIndex,
   }) {
     return TimeTableData(
@@ -40,21 +41,21 @@ class TimeTableData {
     );
   }
 
-  Future<void> getData(Future<List<Map<String, dynamic>>> data) async {
+  Future<void> getData(Future<List<MyCourse>> data) async {
     timeTableDataList = await data;
   }
 
-  void addNewData(Map<String, dynamic> newDataMap) {
+  void addNewData(MyCourse newDataMap) {
     timeTableDataList = [...timeTableDataList, newDataMap];
     isInit = false;
   }
 
-  Map<int, List<Map<String, dynamic>>> sortDataByWeekDay(TDList) {
-    Map<int, List<Map<String, dynamic>>> sortedData = {};
+  Map<int, List<MyCourse>> sortDataByWeekDay(List<MyCourse> TDList) {
+    Map<int, List<MyCourse>> sortedData = {};
     maxPeriod = 6;
     for (int i = 0; i < TDList.length; i++) {
-      int targetWeekDay = TDList[i]["weekday"] ?? 7;
-      int period = TDList[i]["period"] ?? 0;
+      int targetWeekDay = TDList[i].weekday?.index ?? 7;
+      int period = TDList[i].period?.period ?? 0;
       if (maxPeriod < period) {
         maxPeriod = period;
       }
@@ -67,10 +68,10 @@ class TimeTableData {
     }
 
     for (int i = 0; i < sortedData.length; i++) {
-      List<Map<String, dynamic>> data = sortedData.values.elementAt(i);
+      List<MyCourse> data = sortedData.values.elementAt(i);
       int targetKey = sortedData.keys.elementAt(i);
       if (targetKey != 7) {
-        data.sort((a, b) => (a["period"] as int).compareTo(b["period"] as int));
+        data.sort((a, b) => (a.period!.period).compareTo(b.period!.period));
         sortedData[targetKey] = data;
       }
     }
@@ -79,21 +80,24 @@ class TimeTableData {
   }
 
   String returnStringClassTime(int thisYear, List<Term> terms, int weekDay) {
-    List<Map<String, dynamic>> weekDayData = sortedDataByWeekDay[weekDay] ?? [];
+    List<MyCourse> weekDayData = sortedDataByWeekDay[weekDay] ?? [];
     String startTime = "";
     String endTime = "";
     String result = "";
 
-    List<Map<String, dynamic>> thisSemesterData = [];
+    List<MyCourse> thisSemesterData = [];
     for (int i = 0; i < weekDayData.length; i++) {
-      Map<String, dynamic> target = weekDayData.elementAt(i);
-      if (target["year"] == thisYear &&
-          target["weekday"] != null &&
-          target["period"] != null) {
-        if (terms.map((e) => e.value).toList().contains(target["semester"])) {
+      MyCourse target = weekDayData.elementAt(i);
+      if (target.year == thisYear &&
+          target.weekday != null &&
+          target.period != null) {
+        if (terms
+            .map((e) => e.value)
+            .toList()
+            .contains(target.semester?.value)) {
           //年度・学期が条件に沿うデータのみを抽出
           thisSemesterData.add(target);
-          int targetWeekDay = target["weekday"];
+          int targetWeekDay = target.weekday!.index;
           if (currentSemesterClasses.containsKey(targetWeekDay)) {
             currentSemesterClasses[targetWeekDay]!.add(target);
           } else {
@@ -103,14 +107,12 @@ class TimeTableData {
       }
     }
     if (weekDayData.isNotEmpty && thisSemesterData.isNotEmpty) {
-      startTime = Lesson.atPeriod(thisSemesterData.first["period"]) != null
-          ? DateFormat("HH:mm")
-              .format(Lesson.atPeriod(thisSemesterData.first["period"])!.start)
+      startTime = thisSemesterData.first.period != null
+          ? DateFormat("HH:mm").format(thisSemesterData.first.period!.start)
           : "";
 
-      endTime = Lesson.atPeriod(thisSemesterData.last["period"]) != null
-          ? DateFormat("HH:mm")
-              .format(Lesson.atPeriod(thisSemesterData.last["period"])!.end)
+      endTime = thisSemesterData.last.period != null
+          ? DateFormat("HH:mm").format(thisSemesterData.last.period!.end)
           : "";
       result = "$startTime~$endTime";
     }
@@ -128,23 +130,23 @@ class TimeTableData {
     universityScheduleByWeekDay[6] = returnStringClassTime(thisYear, terms, 6);
   }
 
-  List<Map<String, dynamic>> targetDateClasses(DateTime target) {
-    List<Map<String, dynamic>> result = [];
+  List<MyCourse> targetDateClasses(DateTime target) {
+    List<MyCourse> result = [];
     int year = Term.whenSchoolYear(target);
 
     int weekDay = target.weekday;
 
     for (var item in timeTableDataList) {
-      if (item["year"] == year && item["weekday"] == weekDay) {
+      if (item.year == year && item.weekday?.index == weekDay) {
         if (Term.whenTerms(target)
             .map((e) => e.value)
             .toList()
-            .contains(item["semester"])) {
+            .contains(item.semester?.value)) {
           result.add(item);
         }
       }
     }
-    result.sort((a, b) => a['period'].compareTo(b['period']));
+    result.sort((a, b) => a.period!.period.compareTo(b.period!.period));
     return result;
   }
 

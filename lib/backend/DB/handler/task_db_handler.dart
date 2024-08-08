@@ -255,7 +255,7 @@ class TaskDatabaseHelper {
 
   Future<void> setpageID() async {
     List<Map<String, dynamic>> pageIDAndCourseNameList =
-        await MyCourseDatabaseHandler().getUniqueCourseNameAndPageIDList();
+        await MyCourse.getUniqueCourseNameAndPageIDList();
     // 'tasks' テーブル内の特定の行を更新
     await _initDatabase();
     for (var pageIDAndCourseName in pageIDAndCourseNameList) {

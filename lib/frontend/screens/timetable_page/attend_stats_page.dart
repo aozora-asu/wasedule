@@ -8,12 +8,12 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_d
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AttendStatsPage extends ConsumerStatefulWidget{
+class AttendStatsPage extends ConsumerStatefulWidget {
   @override
   _AttendStatsPageState createState() => _AttendStatsPageState();
 }
 
-class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
+class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
   late int thisYear;
   late Term currentQuarter;
   late Term currentSemester;
@@ -21,47 +21,39 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
   List currentCourseDataList = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     now = DateTime.now();
     initTargetSem();
   }
 
-  void generateCurrentCourseData(){
+  void generateCurrentCourseData() {
     currentCourseDataList = [];
     List data = ref.read(timeTableProvider).timeTableDataList;
-    for(int i = 0; i < data.length; i++){
+    for (int i = 0; i < data.length; i++) {
       int targetYear = data.elementAt(i)["year"];
       String targetSemester = data.elementAt(i)["semester"];
       int? targetWeekday = data.elementAt(i)["weekday"];
       int? targetPeriod = data.elementAt(i)["period"];
 
-      if(targetPeriod != null && targetWeekday != null){
-
-        if(currentSemester == Term.springSemester &&
-          targetYear == thisYear){
-
-          if(targetSemester == Term.springSemester.value
-          || targetSemester == Term.springQuarter.value
-          || targetSemester == Term.summerQuarter.value){
+      if (targetPeriod != null && targetWeekday != null) {
+        if (currentSemester == Term.springSemester && targetYear == thisYear) {
+          if (targetSemester == Term.springSemester.value ||
+              targetSemester == Term.springQuarter.value ||
+              targetSemester == Term.summerQuarter.value) {
             currentCourseDataList.add(data.elementAt(i));
           }
-
-        }else if(currentSemester == Term.fallSemester &&
-        targetYear == thisYear){
-
-          if(targetSemester == Term.fallSemester.value
-          || targetSemester == Term.fallQuarter.value
-          || targetSemester == Term.winterQuarter.value){
+        } else if (currentSemester == Term.fallSemester &&
+            targetYear == thisYear) {
+          if (targetSemester == Term.fallSemester.value ||
+              targetSemester == Term.fallQuarter.value ||
+              targetSemester == Term.winterQuarter.value) {
             currentCourseDataList.add(data.elementAt(i));
           }
-
-        }else{
-
-          if(targetSemester == Term.fullYear.value){
+        } else {
+          if (targetSemester == Term.fullYear.value) {
             currentCourseDataList.add(data.elementAt(i));
           }
-
         }
       }
     }
@@ -104,19 +96,20 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     generateCurrentCourseData();
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Column(children:[
-        header(),
-        if(currentCourseDataList.isEmpty)
-          noCourseDataScreen() else semesterCourseList(),
-      ])
-    );
+        backgroundColor: BACKGROUND_COLOR,
+        body: Column(children: [
+          header(),
+          if (currentCourseDataList.isEmpty)
+            noCourseDataScreen()
+          else
+            semesterCourseList(),
+        ]));
   }
 
-  Widget header(){
+  Widget header() {
     return Row(children: [
       IconButton(
           onPressed: () {
@@ -128,9 +121,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
       Text(
         "$thisYear年  ${currentSemester.text}",
         style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: BLUEGREY),
+            fontSize: 17, fontWeight: FontWeight.w700, color: BLUEGREY),
       ),
       IconButton(
           onPressed: () {
@@ -142,13 +133,11 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
           iconSize: 20,
           color: BLUEGREY),
       Expanded(
-        child:buttonModel(
-          ()async{
-            await showAttendanceDialog(context, now, ref,true);
-            setState(() {});
-          },
-          Colors.blueAccent,"今日の出欠")),
-      const SizedBox(width:10)
+          child: buttonModel(() async {
+        await showAttendanceDialog(context, now, ref, true);
+        setState(() {});
+      }, Colors.blueAccent, "今日の出欠")),
+      const SizedBox(width: 10)
     ]);
   }
 
@@ -178,79 +167,71 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
     setState(() {});
   }
 
-  Widget noCourseDataScreen(){
+  Widget noCourseDataScreen() {
     return const Expanded(
-      child:Center(
-        child:Text("この学期の授業データはありません。",
-          style: TextStyle(
-            color:Colors.grey,
-            fontWeight: FontWeight.normal,
-            overflow: TextOverflow.clip,
-            fontSize:20))
-      )
-    );
+        child: Center(
+            child: Text("この学期の授業データはありません。",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.normal,
+                    overflow: TextOverflow.clip,
+                    fontSize: 20))));
   }
 
-  Widget semesterCourseList(){
+  Widget semesterCourseList() {
     return Expanded(
-      child:Padding(
-        padding:const EdgeInsets.symmetric(horizontal: 10),
-        child:ListView.separated(
-          itemBuilder: (context,index){
-            return courseListChild(currentCourseDataList.elementAt(index));
-          },
-          separatorBuilder: (context,index){
-            return const SizedBox(height:7);
-          },
-          itemCount: currentCourseDataList.length,
-          shrinkWrap: true,
-          ))
-    );
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+                return courseListChild(currentCourseDataList.elementAt(index));
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 7);
+              },
+              itemCount: currentCourseDataList.length,
+              shrinkWrap: true,
+            )));
   }
 
-  Widget courseListChild(Map courseData){
+  Widget courseListChild(MyCourse courseData) {
     return GestureDetector(
-      onTap: ()async{
-        await showAttendMenuPanel(courseData);
-      },
-      child:Container(
-        padding:const EdgeInsets.symmetric(horizontal: 10),
-        decoration: roundedBoxdecoration(
-          radiusType: 2,backgroundColor: FORGROUND_COLOR),
-        child:Column(children:[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children:[
-            Text(
-                DayOfWeek.weekAt(courseData["weekday"]).text
-                + "/"
-                + courseData["period"].toString()
-                + "限",
-              style:const TextStyle(
-                color:Colors.grey,
-                overflow: TextOverflow.clip,
-                fontSize: 10)),
-            const SizedBox(width:10),
-            Expanded(child:      
-              Text(courseData["courseName"],
-                style:const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  overflow: TextOverflow.clip,
-                  fontSize: 17))
-            ),
-            remainingAbesentViewBuilder(courseData)
-          ]),
-          attendStatsIndicatorFrame(courseData)
-        ])
-      )
-    );
+        onTap: () async {
+          await showAttendMenuPanel(courseData);
+        },
+        child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: roundedBoxdecoration(
+                radiusType: 2, backgroundColor: FORGROUND_COLOR),
+            child: Column(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Text(
+                    DayOfWeek.weekAt(courseData.weekday!.index).text +
+                        "/" +
+                        courseData.period!.period.toString() +
+                        "限",
+                    style: const TextStyle(
+                        color: Colors.grey,
+                        overflow: TextOverflow.clip,
+                        fontSize: 10)),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: Text(courseData.courseName,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.clip,
+                            fontSize: 17))),
+                remainingAbesentViewBuilder(courseData)
+              ]),
+              attendStatsIndicatorFrame(courseData)
+            ])));
   }
 
-  Widget remainingAbesentViewBuilder(Map courseData) {
-    int maxAbsentNum = courseData["remainAbsent"] ?? 0;
+  Widget remainingAbesentViewBuilder(MyCourse courseData) {
+    int maxAbsentNum = courseData.remainAbsent ?? 0;
     return FutureBuilder(
-        future: MyCourseDatabaseHandler()
-            .getAttendStatusCount(courseData["id"], AttendStatus.absent),
+        future:
+            MyCourse.getAttendStatusCount(courseData.id!, AttendStatus.absent),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.done) {
             if (snapShot.data == null) {
@@ -271,7 +252,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
   Widget remainingAbesentView(int absentNum) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 3),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
           color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
       child: Row(children: [
@@ -285,27 +266,26 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
     );
   }
 
-  Widget attendStatsIndicatorFrame(Map courseData){
+  Widget attendStatsIndicatorFrame(MyCourse courseData) {
     return Container(
-      margin:const EdgeInsets.symmetric(vertical: 7),
-      padding:const EdgeInsets.symmetric(horizontal: 10,vertical: 3),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        color: BACKGROUND_COLOR,
-      ),
-      child:FutureBuilder(
-        future: MyCourseDatabaseHandler().getAttendanceRecordFromDB(courseData["id"]),
-        builder: (context,snapshot){
-          if(snapshot.connectionState == ConnectionState.done){
-             return attendStatsIndicator(courseData,snapshot.data!);
-          }else{
-            return const CircularProgressIndicator(color:Colors.blue);
-          }
-        })
-    );
+        margin: const EdgeInsets.symmetric(vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: BACKGROUND_COLOR,
+        ),
+        child: FutureBuilder(
+            future: MyCourse.getAttendanceRecordFromDB(courseData.id!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return attendStatsIndicator(courseData, snapshot.data!);
+              } else {
+                return const CircularProgressIndicator(color: Colors.blue);
+              }
+            }));
   }
 
-  Widget attendStatsIndicator(Map courseData,List attendRecordList){
+  Widget attendStatsIndicator(MyCourse courseData, List attendRecordList) {
     int attendNum = 0;
     int lateNum = 0;
     int absentNum = 0;
@@ -313,116 +293,109 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
     TextStyle grey = const TextStyle(color: Colors.grey);
     TextStyle absentTextStyle = grey;
 
-    for(int i = 0; i < attendRecordList.length; i++){
-      String? targetAttendStatus = attendRecordList.elementAt(i)["attendStatus"];
-      if(targetAttendStatus == AttendStatus.attend.value){
-        attendNum ++;
-      }else if(targetAttendStatus == AttendStatus.late.value){
+    for (int i = 0; i < attendRecordList.length; i++) {
+      String? targetAttendStatus =
+          attendRecordList.elementAt(i)["attendStatus"];
+      if (targetAttendStatus == AttendStatus.attend.value) {
+        attendNum++;
+      } else if (targetAttendStatus == AttendStatus.late.value) {
         lateNum = 0;
-      }else if(targetAttendStatus == AttendStatus.absent.value){
-        absentNum ++;
+      } else if (targetAttendStatus == AttendStatus.absent.value) {
+        absentNum++;
       }
     }
 
-    if(absentNum > 0){
+    if (absentNum > 0) {
       absentTextStyle =
-         const TextStyle(fontWeight: FontWeight.bold,color: Colors.red);
+          const TextStyle(fontWeight: FontWeight.bold, color: Colors.red);
     }
 
-    return Column(children:[
+    return Column(children: [
       Row(children: [
-        Text("授業 ${courseData["classNum"].toString() } 回中  "),
+        Text("授業 ${courseData.classNum.toString()} 回中  "),
         attendStatusIcon(AttendStatus.attend),
-        Text("${attendNum.toString()} ",
-          style: attendNum > 0 ? bold : grey),
+        Text("${attendNum.toString()} ", style: attendNum > 0 ? bold : grey),
         attendStatusIcon(AttendStatus.late),
-        Text("${lateNum.toString()} ",
-          style: lateNum > 0 ? bold : grey),
+        Text("${lateNum.toString()} ", style: lateNum > 0 ? bold : grey),
         attendStatusIcon(AttendStatus.absent),
-        Text("${absentNum.toString()} ",
-          style: absentTextStyle),
+        Text("${absentNum.toString()} ", style: absentTextStyle),
       ]),
-      const Divider(height:10),
+      const Divider(height: 10),
       Row(children: [
-        Text("最大欠席可能数 ${courseData["remainAbsent"].toString()}回 / ",
-          style: grey),
-        Text("残り欠席数(残機) ${(courseData["remainAbsent"] - absentNum).toString()}回",
-          style: grey),
+        Text("最大欠席可能数 ${courseData.remainAbsent.toString()}回 / ", style: grey),
+        Text("残り欠席数(残機) ${(courseData.remainAbsent! - absentNum).toString()}回",
+            style: grey),
       ])
     ]);
   }
 
-  Widget attendStatusIcon(AttendStatus status){
+  Widget attendStatusIcon(AttendStatus status) {
     String iconText;
     Color iconColor;
-    if(status == AttendStatus.attend){
+    if (status == AttendStatus.attend) {
       iconText = "出";
       iconColor = Colors.blue;
-    }else if(status == AttendStatus.late){
+    } else if (status == AttendStatus.late) {
       iconText = "遅";
       iconColor = Colors.orange;
-    }else if(status == AttendStatus.absent){
+    } else if (status == AttendStatus.absent) {
       iconText = "欠";
       iconColor = Colors.red;
-    } else{
+    } else {
       iconText = "";
       iconColor = Colors.transparent;
     }
 
     return Container(
       decoration: BoxDecoration(
-        color: iconColor,
-        borderRadius: BorderRadius.circular(5)
-      ),
-      padding:const EdgeInsets.symmetric(horizontal: 5),
-      margin:const EdgeInsets.symmetric(horizontal: 5),
+          color: iconColor, borderRadius: BorderRadius.circular(5)),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       child: Center(
-        child:Text(iconText,
-          style:const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white
-        ))),
+          child: Text(iconText,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.white))),
     );
   }
 
-  Future<void> showAttendMenuPanel(Map courseData) async{
+  Future<void> showAttendMenuPanel(MyCourse courseData) async {
     Widget header = Container(
-      margin:const EdgeInsets.symmetric(horizontal: 10),
-      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 7),
-      decoration:
-        roundedBoxdecoration(
-          radiusType: 1,
-          backgroundColor: FORGROUND_COLOR,
-          shadow: true),
-      child: Row(children:[
-        Expanded(
-          child:Text(courseData["courseName"],
-            overflow: TextOverflow.clip,
-            style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
-        GestureDetector(
-          onTap:()=> Navigator.pop(context),
-          child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
-      ])
-    );
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+        decoration: roundedBoxdecoration(
+            radiusType: 1, backgroundColor: FORGROUND_COLOR, shadow: true),
+        child: Row(children: [
+          Expanded(
+              child: Text(courseData.courseName,
+                  overflow: TextOverflow.clip,
+                  style: const TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(
+                Icons.cancel_rounded,
+                size: 20,
+                color: Colors.red,
+              ))
+        ]));
 
     await showDialog(
-      context: context,
-      builder: (context){
-        return Column(
-            children: [
-              const Spacer(),
-              Stack(children:[
-                Column(children:[
-                  header,
-                  AttendMenuPanel(
-                    courseData: courseData,
-                    setTimetableState: setState),
-                ]),
-                header
+        context: context,
+        builder: (context) {
+          return Column(children: [
+            const Spacer(),
+            Stack(children: [
+              Column(children: [
+                header,
+                AttendMenuPanel(
+                    courseData: courseData, setTimetableState: setState),
               ]),
-              const Spacer(),
-            ]
-          );
-      });
+              header
+            ]),
+            const Spacer(),
+          ]);
+        });
   }
 }

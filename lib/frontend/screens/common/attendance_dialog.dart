@@ -31,7 +31,7 @@ Future<void> showAttendanceDialog(
     int myCourseId = classMap["id"];
     String date = DateFormat("MM/dd").format(targetDate);
     Map<String, dynamic>? attendStatusData =
-        await MyCourseDatabaseHandler().getAttendStatus(myCourseId, date);
+        await MyCourse.getAttendStatus(myCourseId, date);
     if (attendStatusData != null) {
       numOfNotEmptyData += 1;
     }
@@ -161,7 +161,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         int id = data[i]["id"];
         String date = DateFormat("MM/dd").format(widget.targetDate);
         Map<String, dynamic>? attendStatusData =
-            await MyCourseDatabaseHandler().getAttendStatus(id, date);
+            await MyCourse.getAttendStatus(id, date);
 
         if (attendStatusData != null) {
           enteredData[id] = attendStatusData["attendStatus"];
@@ -169,8 +169,8 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
           enteredData[id] = "attend";
         }
 
-        int currentAbsentNum = await MyCourseDatabaseHandler()
-            .getAttendStatusCount(id, AttendStatus.absent);
+        int currentAbsentNum =
+            await MyCourse.getAttendStatusCount(id, AttendStatus.absent);
         int remainAbsent = data.elementAt(i)["remainAbsent"] ?? 0;
         int remainingNum = remainAbsent - currentAbsentNum;
         if (remainingNum <= 0) {
@@ -244,7 +244,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
         const Spacer(),
         buttonModel(() async {
           for (int i = 0; i < enteredData.length; i++) {
-            await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
+            await MyCourse.recordAttendStatus(AttendanceRecord(
                 attendDate: DateFormat("MM/dd").format(widget.targetDate),
                 attendStatus:
                     AttendStatus.values[enteredData.values.elementAt(i)]!,
@@ -308,7 +308,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 }
 
 Future<bool> showIndividualCourseEditDialog(
-    context, Map myCourseData, Function onDone,
+    context, MyCourse myCourseData, Function onDone,
     {Map? initData}) async {
   await showDialog(
     context: context,
@@ -328,7 +328,7 @@ Future<bool> showIndividualCourseEditDialog(
 }
 
 class IndividualCourseEditDialog extends StatefulWidget {
-  late Map myCourseData;
+  late MyCourse myCourseData;
   late Map? initData;
   late Function onDone;
   IndividualCourseEditDialog({
@@ -373,7 +373,7 @@ class _IndividualCourseEditDialogState
       padding: const EdgeInsets.all(15),
       decoration: roundedBoxdecoration(),
       child: Column(children: [
-        Text(widget.myCourseData["courseName"] + " の出欠記録",
+        Text(widget.myCourseData.courseName + " の出欠記録",
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 overflow: TextOverflow.clip,
@@ -434,10 +434,10 @@ class _IndividualCourseEditDialogState
         Row(children: [
           const Spacer(),
           buttonModel(() async {
-            await MyCourseDatabaseHandler().recordAttendStatus(AttendanceRecord(
+            await MyCourse.recordAttendStatus(AttendanceRecord(
                 attendDate: dateString,
                 attendStatus: AttendStatus.values[attendStatus]!,
-                myCourseID: widget.myCourseData["id"]));
+                myCourseID: widget.myCourseData.id!));
             widget.onDone();
             Navigator.pop(context);
           }, Colors.blue, buttonText, verticalpadding: 5, horizontalPadding: 40)
@@ -450,7 +450,7 @@ class _IndividualCourseEditDialogState
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime(
-          widget.myCourseData["year"],
+          widget.myCourseData.year,
           int.parse(dateString.substring(0, 2)),
           int.parse(dateString.substring(3, 5))),
       firstDate: DateTime(2000),
