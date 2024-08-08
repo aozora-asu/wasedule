@@ -8,20 +8,17 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AttendMenuPanel extends ConsumerStatefulWidget{
-  Map courseData;
+class AttendMenuPanel extends ConsumerStatefulWidget {
+  MyCourse courseData;
   StateSetter setTimetableState;
 
-  AttendMenuPanel({
-    required this.courseData,
-    required this.setTimetableState
-  });
+  AttendMenuPanel({required this.courseData, required this.setTimetableState});
 
-  @override  
+  @override
   _AttendMenuPanelState createState() => _AttendMenuPanelState();
 }
 
-class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
+class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
   int maxAbsentNum = 0;
   int totalClassNum = 0;
   bool isClassNumSettingInit = true;
@@ -30,10 +27,10 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
   @override
   void initState() {
     super.initState();
-    Map myCourseData = widget.courseData;
+    MyCourse myCourseData = widget.courseData;
     if (isClassNumSettingInit) {
-      maxAbsentNum = myCourseData["remainAbsent"];
-      totalClassNum = myCourseData["classNum"] ?? 0;
+      maxAbsentNum = myCourseData.remainAbsent!;
+      totalClassNum = myCourseData.classNum ?? 0;
       isClassNumSettingInit = false;
     }
   }
@@ -46,13 +43,12 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
             decoration: roundedBoxdecoration(radiusType: 3),
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
             width: SizeConfig.blockSizeHorizontal! * 95,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [
-                const SizedBox(height: 3),
-                attendRecordView(),
-                const Divider(),
-                attendSettingsPanel(),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const SizedBox(height: 3),
+              attendRecordView(),
+              const Divider(),
+              attendSettingsPanel(),
             ])));
   }
 
@@ -71,8 +67,8 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
 
   Widget remainingAbesentViewBuilder() {
     return FutureBuilder(
-        future: MyCourseDatabaseHandler()
-            .getAttendStatusCount(widget.courseData["id"], AttendStatus.absent),
+        future: MyCourse.getAttendStatusCount(
+            widget.courseData.id!, AttendStatus.absent),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.done) {
             if (snapShot.data == null) {
@@ -166,8 +162,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         onTap: () async {
           isExpandSettingPanel = true;
           totalClassNum = totalClassNum + 1;
-          await MyCourseDatabaseHandler()
-              .updateClassNum(widget.courseData["id"], totalClassNum);
+          await MyCourse.updateClassNum(widget.courseData.id!, totalClassNum);
           setState(() {});
           widget.setTimetableState(() {});
         });
@@ -185,8 +180,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
           isExpandSettingPanel = true;
           totalClassNum =
               totalClassNum <= maxAbsentNum ? maxAbsentNum : totalClassNum - 1;
-          await MyCourseDatabaseHandler()
-              .updateClassNum(widget.courseData["id"], totalClassNum);
+          await MyCourse.updateClassNum(widget.courseData.id!, totalClassNum);
           setState(() {});
           widget.setTimetableState(() {});
         });
@@ -203,8 +197,8 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         onTap: () async {
           maxAbsentNum =
               maxAbsentNum >= totalClassNum ? totalClassNum : maxAbsentNum + 1;
-          await MyCourseDatabaseHandler()
-              .updateRemainAbsent(widget.courseData["id"], maxAbsentNum);
+          await MyCourse.updateRemainAbsent(
+              widget.courseData.id!, maxAbsentNum);
           setState(() {});
           widget.setTimetableState(() {});
         });
@@ -220,8 +214,8 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         ),
         onTap: () async {
           maxAbsentNum = maxAbsentNum <= 0 ? 0 : maxAbsentNum - 1;
-          await MyCourseDatabaseHandler()
-              .updateRemainAbsent(widget.courseData["id"], maxAbsentNum);
+          await MyCourse.updateRemainAbsent(
+              widget.courseData.id!, maxAbsentNum);
           setState(() {});
           widget.setTimetableState(() {});
         });
@@ -232,27 +226,22 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         color: Colors.transparent,
         child: ExpandablePanel(
             controller: ExpandableController(initialExpanded: true),
-            header: Column(children:[
+            header: Column(children: [
               Row(children: [
                 const Text("出席記録",
-                    style: TextStyle(color:Colors.grey, fontSize: 20)),
+                    style: TextStyle(color: Colors.grey, fontSize: 20)),
                 const Spacer(),
                 remainingAbesentViewBuilder()
               ]),
             ]),
             collapsed: const SizedBox(),
             expanded: Column(
-              children: [
-                attendRecordListBuilder(),
-                addRecordButton()
-              ])
-          ));
+                children: [attendRecordListBuilder(), addRecordButton()])));
   }
 
   Widget attendRecordListBuilder() {
     return FutureBuilder(
-        future: MyCourseDatabaseHandler()
-            .getAttendanceRecordFromDB(widget.courseData["id"]),
+        future: MyCourse.getAttendanceRecordFromDB(widget.courseData.id!),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null || snapshot.data!.isEmpty) {
@@ -268,16 +257,16 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
 
   Widget attendRecordList(List attendRecordList) {
     return ListView.separated(
-        itemCount: attendRecordList.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return attendRecordListPanel(attendRecordList.elementAt(index));
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(height:1);
-        },
-        );
+      itemCount: attendRecordList.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return attendRecordListPanel(attendRecordList.elementAt(index));
+      },
+      separatorBuilder: (context, index) {
+        return const Divider(height: 1);
+      },
+    );
   }
 
   Widget attendRecordListPanel(Map attendRecord) {
@@ -297,8 +286,8 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
             margin: const EdgeInsets.symmetric(vertical: 1),
-            decoration:
-              roundedBoxdecoration(radiusType: 2,backgroundColor: Colors.transparent),
+            decoration: roundedBoxdecoration(
+                radiusType: 2, backgroundColor: Colors.transparent),
             child: Row(children: [
               Text(attendRecord["attendDate"],
                   style: const TextStyle(
@@ -322,8 +311,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
               const SizedBox(width: 10),
               GestureDetector(
                   onTap: () async {
-                    await MyCourseDatabaseHandler()
-                        .deleteAttendRecord(attendRecord["id"]);
+                    await MyCourse.deleteAttendRecord(attendRecord["id"]);
                     widget.setTimetableState(() {});
                     setState(() {});
                   },
@@ -342,10 +330,9 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 15),
             margin: const EdgeInsets.symmetric(vertical: 3),
-            decoration: 
-              roundedBoxdecoration(radiusType: 2,backgroundColor:Colors.blueAccent),
+            decoration: roundedBoxdecoration(
+                radiusType: 2, backgroundColor: Colors.blueAccent),
             child: const Center(
                 child: Icon(Icons.add, color: Colors.white, size: 30))));
   }
-
 }

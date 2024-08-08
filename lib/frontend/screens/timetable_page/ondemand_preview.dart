@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import "../../../static/constant.dart";
 
 class OndemandPreview extends ConsumerStatefulWidget {
-  late Map target;
+  late MyCourse target;
   late StateSetter setTimetableState;
   late List<Map<String, dynamic>> taskList;
   OndemandPreview(
@@ -72,7 +72,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   }
 
   Widget courseInfo() {
-    Map target = widget.target;
+    MyCourse target = widget.target;
     Widget dividerModel = const Divider(
       height: 2,
     );
@@ -111,8 +111,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     }
 
     Widget _viewModeSwitch() {
-      Map target = widget.target;
-      if (target["syllabusID"] != null && target["syllabusID"] != "") {
+      MyCourse target = widget.target;
+      if (target.syllabusID != null && target.syllabusID != "") {
         if (viewMode == 0) {
           return buttonModel(() {
             setState(() {
@@ -128,8 +128,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     }
 
     Widget _descriptionModeSwitch() {
-      Map target = widget.target;
-      if (target["syllabusID"] != null && target["syllabusID"] != "") {
+      MyCourse target = widget.target;
+      if (target.syllabusID != null && target.syllabusID != "") {
         if (viewMode == 0) {
           return const SizedBox();
         } else {
@@ -157,10 +157,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                       Row(children: [
                         textFieldModel("授業名を入力…", classNameController,
                             FontWeight.bold, 25.0, (value) async {
-                          id = target["id"];
+                          id = target.id!;
                           //＠ここに授業名のアップデート関数！！！
-                          await MyCourseDatabaseHandler()
-                              .updateCourseName(id, value);
+                          await MyCourse.updateCourseName(id, value);
                         }),
                         _descriptionModeSwitch(),
                       ]),
@@ -171,10 +170,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
                             onTap: () async {
-                              id = target["id"];
+                              id = target.id!;
                               //＠ここに削除実行関数！！！
-                              await MyCourseDatabaseHandler()
-                                  .deleteMyCourse(id);
+                              await MyCourse.deleteMyCourse(id);
                               Navigator.pop(context);
                               widget.setTimetableState(() {});
                             }),
@@ -211,7 +209,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
             (value) async {
           int id = target["id"];
           //＠ここにメモのアップデート関数！！！
-          await MyCourseDatabaseHandler().updateMemo(id, value);
+          await MyCourse.updateMemo(id, value);
           widget.setTimetableState(() {});
         }),
       ]),

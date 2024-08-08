@@ -40,7 +40,7 @@ void notificationTapBackground(
         attendDate: decodedPayload["attendDate"],
         attendStatus: AttendStatus.values[notificationResponse.actionId!]!,
         myCourseID: decodedPayload["myCourseID"]);
-    await MyCourseDatabaseHandler().recordAttendStatus(attendanceRecord);
+    await MyCourse.recordAttendStatus(attendanceRecord);
   }
   // print('notification(${notificationResponse.id}) action tapped: '
   //     '${notificationResponse.actionId} with'

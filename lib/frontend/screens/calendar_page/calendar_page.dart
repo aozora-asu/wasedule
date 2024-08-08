@@ -40,6 +40,7 @@ import 'dart:async';
 import '../../../backend/notify/notify_setting.dart';
 import "../../../backend/notify/notify_content.dart";
 import "../../../backend/service/share_from_web.dart";
+import "../../../backend/DB/handler/my_course_db.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
@@ -936,13 +937,12 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    List<Map<String, dynamic>> targetDayList =
-        timeTable.targetDateClasses(target);
+    List<MyCourse> targetDayList = timeTable.targetDateClasses(target);
     if (targetDayList.isNotEmpty) {
-      Map firstClass = targetDayList.first;
-      Map lastClass = targetDayList.last;
-      DateTime? startTime = Lesson.atPeriod(firstClass["period"])?.start;
-      DateTime? endTime = Lesson.atPeriod(lastClass["period"])?.end;
+      MyCourse firstClass = targetDayList.first;
+      MyCourse lastClass = targetDayList.last;
+      DateTime? startTime = firstClass.period?.start;
+      DateTime? endTime = lastClass.period?.end;
       if (startTime != null && endTime != null) {
         String universityClassData =
             "${DateFormat("HH:mm").format(startTime)}~${DateFormat("HH:mm").format(endTime)}";
@@ -1412,21 +1412,15 @@ class _CalendarState extends ConsumerState<Calendar> {
     final timeTable = ref.read(timeTableProvider);
     // Map<dynamic, dynamic> timeTableData = timeTable.currentSemesterClasses;
     // int weekDay = targetDay.weekday;
-    List<Map<String, dynamic>> targetDayList =
-        timeTable.targetDateClasses(target);
+    List<MyCourse> targetDayList = timeTable.targetDateClasses(target);
 
     for (int i = 0; i < targetDayList.length; i++) {
-      Map<String, dynamic> targetClass = targetDayList.elementAt(i);
+      MyCourse targetClass = targetDayList.elementAt(i);
 
-      Lesson? lesson = Lesson.atPeriod(targetClass["period"]);
+      Lesson? lesson = targetClass.period;
       if (lesson != null) {
-        final newTargetClass = {
-          ...targetClass,
-          "startTime": DateFormat("HH:mm").format(lesson.start),
-          "endTime": DateFormat("HH:mm").format(lesson.end)
-        };
         DateTime key = lesson.start;
-        mapList.add({key: newTargetClass});
+        mapList.add({key: targetClass});
       }
     }
 

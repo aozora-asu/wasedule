@@ -95,8 +95,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
 
                   if (myCourseList != null) {
                     for (var myCourse in myCourseList) {
-                      await MyCourseDatabaseHandler()
-                          .resisterMyCourseFromMoodle(myCourse);
+                      await myCourse.resisterDB();
                     }
 
                     await TaskDatabaseHelper().setpageID();

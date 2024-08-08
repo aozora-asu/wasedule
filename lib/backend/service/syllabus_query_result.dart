@@ -255,6 +255,10 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
         _extractDayAndPeriod(syllabusQueryResult.semesterAndWeekdayAndPeriod);
     for (var time in semesterAndWeekdayAndPerid) {
       MyCourse myCourse = MyCourse(
+          attendCount: null,
+          classNum: null,
+          memo: null,
+          remainAbsent: null,
           classRoom: syllabusQueryResult.classRoom,
           color: moodleCourse.color,
           courseName: moodleCourse.courseName,

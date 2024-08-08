@@ -203,25 +203,28 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                               dividerModel,
                               Row(children: [
                                 const Spacer(),
-                                buttonModel(() {
+                                buttonModel(() async {
                                   className = classNameController.text;
                                   classRoom = classRoomController.text;
                                   memo = memoController.text;
                                   if (isValid()) {
                                     //＠ここに時間割データの追加関数！！！
-                                    MyCourseDatabaseHandler()
-                                        .resisterMyCourseFromMoodle(MyCourse(
-                                            classRoom: classRoom,
-                                            color: "#96C78C",
-                                            courseName: className,
-                                            pageID: null,
-                                            period: period,
-                                            semester: semester,
-                                            syllabusID: null,
-                                            weekday: weekDay,
-                                            year: year,
-                                            criteria: null,
-                                            memo: memo));
+                                    MyCourse myCourse = MyCourse(
+                                        attendCount: null,
+                                        classNum: null,
+                                        remainAbsent: null,
+                                        classRoom: classRoom,
+                                        color: "#96C78C",
+                                        courseName: className,
+                                        pageID: null,
+                                        period: period,
+                                        semester: semester,
+                                        syllabusID: null,
+                                        weekday: weekDay,
+                                        year: year,
+                                        criteria: null,
+                                        memo: memo);
+                                    await myCourse.resisterDB();
                                     widget.setTimetableState(() {});
                                     Navigator.pop(context);
                                   } else {}

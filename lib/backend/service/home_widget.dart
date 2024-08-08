@@ -14,8 +14,7 @@ class NextCourseHomeWidget {
 
   Future<void> updateNextCourse() async {
     NextCourse nextCourse;
-    List<Map<String, dynamic>> nextCourseList =
-        await MyCourseDatabaseHandler().getNextCourse();
+    List<MyCourse> nextCourseList = await MyCourse.getNextCourse();
 
     // Set the app group ID for iOS
     HomeWidget.setAppGroupId(appGroupID);
@@ -30,11 +29,11 @@ class NextCourseHomeWidget {
     } else {
       var course = nextCourseList.last;
       nextCourse = NextCourse(
-          classRoom: course["classRoom"] ?? "",
-          className: course["courseName"] ?? "",
-          period: course["period"]?.toString() ?? "",
+          classRoom: course.classRoom,
+          className: course.courseName,
+          period: course.period?.period.toString() ?? "",
           startTime: DateFormat("H:mm")
-              .format(Lesson.atPeriod(course["period"])!.start));
+              .format(Lesson.atPeriod(course.period!.period)!.start));
     }
 
     // Convert Dart object to JSON string

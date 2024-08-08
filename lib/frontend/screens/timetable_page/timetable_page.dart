@@ -56,9 +56,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       if (userDepartment == null) {
         await showUserDepartmentSettingDialog(context);
       }
-      if(mounted){
+      if (mounted) {
         await showAttendanceDialog(context, now, ref);
-        }
+      }
     });
   }
 
@@ -327,7 +327,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
               ]),
               const SizedBox(height: 10),
               FutureBuilder(
-                  future: MyCourseDatabaseHandler().getAllMyCourse(),
+                  future: MyCourse.getAllMyCourse(),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return timeTableBody();
@@ -479,7 +479,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             return Container(
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(cellsRadius / 2), color: bgColor),
+                    borderRadius: BorderRadius.circular(cellsRadius / 2),
+                    color: bgColor),
                 child: Center(
                     child: Text(
                   days.elementAt(index),
@@ -515,7 +516,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
           return Container(
               height: SizeConfig.blockSizeVertical! * cellHeight,
               decoration: BoxDecoration(
-                  color: bgColor, borderRadius: BorderRadius.circular(cellsRadius / 2)),
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(cellsRadius / 2)),
               child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: Column(
@@ -590,7 +592,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
     return Color.fromRGBO(red, green, blue, 1);
   }
-  
+
   Widget timetableSells(int weekDay) {
     final tableData = ref.read(timeTableProvider);
     return SizedBox(
@@ -617,34 +619,40 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             });
 
             if (tableData.currentSemesterClasses.containsKey(weekDay) &&
-                returnExistingPeriod(tableData.currentSemesterClasses[weekDay])
+                returnExistingPeriod(tableData.currentSemesterClasses[weekDay]!)
                     .contains(index + 1) &&
-                tableData.currentSemesterClasses[weekDay].elementAt(
-                        returnIndexFromPeriod(
-                            tableData.currentSemesterClasses[weekDay],
-                            index + 1))["year"] ==
+                tableData.currentSemesterClasses[weekDay]
+                        ?.elementAt(returnIndexFromPeriod(
+                            tableData.currentSemesterClasses[weekDay]!,
+                            index + 1))
+                        .year ==
                     thisYear) {
-              if (tableData.currentSemesterClasses[weekDay].elementAt(
-                          returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay],
-                              index + 1))["semester"] ==
-                      currentQuarter.value ||
-                  tableData.currentSemesterClasses[weekDay].elementAt(
-                          returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay],
-                              index + 1))["semester"] ==
-                      currentSemester.value ||
-                  tableData.currentSemesterClasses[weekDay].elementAt(
-                          returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay],
-                              index + 1))["semester"] ==
-                      "full_year") {
+              if (tableData.currentSemesterClasses[weekDay]
+                          ?.elementAt(returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay]!,
+                              index + 1))
+                          .semester ==
+                      currentQuarter ||
+                  tableData.currentSemesterClasses[weekDay]
+                          ?.elementAt(returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay]!,
+                              index + 1))
+                          .semester ==
+                      currentSemester ||
+                  tableData.currentSemesterClasses[weekDay]
+                          ?.elementAt(returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay]!,
+                              index + 1))
+                          .semester ==
+                      Term.fullYear) {
                 cellContents = FutureBuilder(
                     future: TaskDatabaseHelper().getTaskListByCourseName(
-                        tableData.currentSemesterClasses[weekDay].elementAt(
-                            returnIndexFromPeriod(
-                                tableData.currentSemesterClasses[weekDay],
-                                index + 1))["courseName"]),
+                        tableData.currentSemesterClasses[weekDay]
+                                ?.elementAt(returnIndexFromPeriod(
+                                    tableData.currentSemesterClasses[weekDay]!,
+                                    index + 1))
+                                .courseName ??
+                            ""),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return timeTableSellsChild(weekDay, index + 1, []);
@@ -728,7 +736,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     final tableData = ref.read(timeTableProvider);
     int listLength = 0;
     if (tableData.sortedDataByWeekDay.containsKey(7)) {
-      listLength = tableData.sortedDataByWeekDay[7].length;
+      listLength = tableData.sortedDataByWeekDay[7]!.length;
     }
 
     return ListView.builder(
@@ -741,13 +749,22 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
             child = ondemandAddSell();
             return child;
           } else {
-            if (tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+            if (tableData.sortedDataByWeekDay[7]
+                        ?.elementAt(index)
+                        .semester
+                        ?.value ==
                     currentQuarter.value ||
-                tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                tableData.sortedDataByWeekDay[7]
+                        ?.elementAt(index)
+                        .semester
+                        ?.value ==
                     "full_year" ||
-                tableData.sortedDataByWeekDay[7].elementAt(index)["semester"] ==
+                tableData.sortedDataByWeekDay[7]
+                            ?.elementAt(index)
+                            .semester
+                            ?.value ==
                         currentSemester.value &&
-                    tableData.sortedDataByWeekDay[7].elementAt(index)["year"] ==
+                    tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
                         thisYear) {
               child = Container(
                   height: SizeConfig.blockSizeVertical! * cellHeight,
@@ -761,7 +778,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   child: FutureBuilder(
                       future: TaskDatabaseHelper().getTaskListByCourseName(
                           tableData.sortedDataByWeekDay[7]
-                              .elementAt(index)["courseName"]),
+                                  ?.elementAt(index)
+                                  .courseName ??
+                              ""),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -778,18 +797,18 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         });
   }
 
-  List<int> returnExistingPeriod(List<Map> target) {
+  List<int> returnExistingPeriod(List<MyCourse> target) {
     List<int> result = [];
     for (int i = 0; i < target.length; i++) {
-      result.add(target.elementAt(i)["period"]);
+      result.add(target.elementAt(i).period!.period);
     }
     return result;
   }
 
-  int returnIndexFromPeriod(List<Map> target, int period) {
+  int returnIndexFromPeriod(List<MyCourse> target, int period) {
     int result = 0;
     for (int i = 0; i < target.length; i++) {
-      if (target.elementAt(i)["period"] == period) {
+      if (target.elementAt(i).period!.period == period) {
         result = i;
       }
     }
@@ -800,18 +819,21 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       int weekDay, int period, List<Map<String, dynamic>> taskList) {
     double fontSize = 12;
     final timeTableData = ref.read(timeTableProvider);
-    Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]
+    Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]!
         .elementAt(returnIndexFromPeriod(
-            timeTableData.currentSemesterClasses[weekDay], period))["color"]);
-    Map targetData = timeTableData.currentSemesterClasses[weekDay].elementAt(
-        returnIndexFromPeriod(
-            timeTableData.currentSemesterClasses[weekDay], period));
-    String className = timeTableData.currentSemesterClasses[weekDay].elementAt(
-        returnIndexFromPeriod(timeTableData.currentSemesterClasses[weekDay],
-            period))["courseName"];
-    String? classRoom = timeTableData.currentSemesterClasses[weekDay].elementAt(
-        returnIndexFromPeriod(timeTableData.currentSemesterClasses[weekDay],
-            period))["classRoom"];
+            timeTableData.currentSemesterClasses[weekDay]!, period))
+        .color);
+    MyCourse targetData = timeTableData.currentSemesterClasses[weekDay]!
+        .elementAt(returnIndexFromPeriod(
+            timeTableData.currentSemesterClasses[weekDay]!, period));
+    String className = timeTableData.currentSemesterClasses[weekDay]!
+        .elementAt(returnIndexFromPeriod(
+            timeTableData.currentSemesterClasses[weekDay]!, period))
+        .courseName;
+    String? classRoom = timeTableData.currentSemesterClasses[weekDay]
+        ?.elementAt(returnIndexFromPeriod(
+            timeTableData.currentSemesterClasses[weekDay]!, period))
+        .classRoom;
     int taskLength = taskList.length;
 
     Widget classRoomView = const SizedBox();
@@ -856,8 +878,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                         child: Text(
                   className,
                   style: TextStyle(
-                      fontSize: fontSize,
-                      overflow: TextOverflow.ellipsis),
+                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
                   maxLines: 4,
                 ))),
                 classRoomView,
@@ -872,11 +893,11 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     ]);
   }
 
-  Widget absentBadgeBuilder(Map targetData) {
-    int myCourseID = targetData["id"];
-    int remainAbsent = targetData["remainAbsent"] ?? 0;
+  Widget absentBadgeBuilder(MyCourse targetData) {
+    int myCourseID = targetData.id!;
+    int remainAbsent = targetData.remainAbsent ?? 0;
     return FutureBuilder(
-        future: MyCourseDatabaseHandler().getAttendanceRecordFromDB(myCourseID),
+        future: MyCourse.getAttendanceRecordFromDB(myCourseID),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.done) {
             if (snapShot.hasData && snapShot.data!.isNotEmpty) {
@@ -934,13 +955,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
   Widget ondemandSellsChild(int index, List<Map<String, dynamic>> taskList) {
     final tableData = ref.read(timeTableProvider);
-    Map target = tableData.sortedDataByWeekDay[7].elementAt(index);
+    MyCourse target = tableData.sortedDataByWeekDay[7]!.elementAt(index);
     double fontSize = 11;
-    String className = target["courseName"];
+    String className = target.courseName;
     int taskLength = taskList.length;
 
     Color colorning =
-        hexToColor(tableData.sortedDataByWeekDay[7].elementAt(index)["color"]);
+        hexToColor(tableData.sortedDataByWeekDay[7]!.elementAt(index).color);
     Color bgColor = cellBackGroundColor(taskLength, colorning).withOpacity(0.7);
 
     return GestureDetector(
@@ -968,8 +989,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                   child: Center(
                 child: Text(className,
                     style: TextStyle(
-                        fontSize: fontSize,
-                        overflow: TextOverflow.ellipsis),
+                        fontSize: fontSize, overflow: TextOverflow.ellipsis),
                     maxLines: 4),
               ))
             ]),
