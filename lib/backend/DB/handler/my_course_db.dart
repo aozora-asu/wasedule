@@ -75,7 +75,7 @@ class MyCourse {
     }
 
     return {
-      "id": id,
+      //"id": id,
       "courseName": courseName,
       "weekday": weekday?.index ?? -1,
       "period": period?.period ?? -1,
@@ -226,7 +226,7 @@ class MyCourse {
           myCourseTable,
           map,
           where:
-              'year = ? AND period= ? AND weekday = ? AND semester = ? AND syllabusID = ?',
+              'year = ? AND period = ? AND weekday = ? AND semester = ? AND syllabusID = ?',
           whereArgs: [
             map["year"],
             map["period"],
