@@ -11,10 +11,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AttendMenuPanel extends ConsumerStatefulWidget{
   Map courseData;
   StateSetter setTimetableState;
+  Color? backgroundColor = FORGROUND_COLOR;
 
   AttendMenuPanel({
     required this.courseData,
-    required this.setTimetableState
+    required this.setTimetableState,
+    this.backgroundColor
   });
 
   @override  
@@ -43,9 +45,9 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecoration(radiusType: 3),
+            decoration: roundedBoxdecoration(radiusType: 3,backgroundColor: widget.backgroundColor),
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
-            width: SizeConfig.blockSizeHorizontal! * 95,
+            margin: const EdgeInsets.symmetric(horizontal:5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
@@ -76,34 +78,38 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.done) {
             if (snapShot.data == null) {
-              return remainingAbesentView(maxAbsentNum);
+              return remainingAbesentView(maxAbsentNum,maxAbsentNum);
             } else {
               int remainingLife = maxAbsentNum - snapShot.data!;
               if (remainingLife <= 0) {
                 remainingLife = 0;
               }
-              return remainingAbesentView(remainingLife);
+              return remainingAbesentView(remainingLife,maxAbsentNum);
             }
           } else {
-            return remainingAbesentView(maxAbsentNum);
+            return remainingAbesentView(maxAbsentNum,maxAbsentNum);
           }
         });
   }
 
-  Widget remainingAbesentView(int absentNum) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-          color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
-      child: Row(children: [
-        const Text("残機 ",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-        const Icon(Icons.favorite, color: Colors.redAccent, size: 22),
-        Text("×${absentNum.toString()}",
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey)),
-      ]),
+  Widget remainingAbesentView(int absentNum,int maxAbsentNum) {
+    return SizedBox(
+      height:25,
+      child:Expanded(
+        child: ListView.builder(
+          itemBuilder:(context,index){
+            if(index+1 <= absentNum){
+              return const Icon(Icons.favorite, color: Colors.redAccent, size: 22);
+            }else{
+              return Icon(Icons.favorite, color: Colors.grey.withOpacity(0.5), size: 22);
+            }
+
+          },
+        itemCount: maxAbsentNum,
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        )
+      )
     );
   }
 
@@ -234,17 +240,15 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
             controller: ExpandableController(initialExpanded: true),
             header: Column(children:[
               Row(children: [
-                const Text("出席記録",
-                    style: TextStyle(color:Colors.grey, fontSize: 20)),
+                remainingAbesentViewBuilder(),
                 const Spacer(),
-                remainingAbesentViewBuilder()
+                addRecordButton(),
               ]),
             ]),
             collapsed: const SizedBox(),
             expanded: Column(
               children: [
                 attendRecordListBuilder(),
-                addRecordButton()
               ])
           ));
   }
@@ -340,12 +344,12 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel>{
           });
         },
         child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 15),
-            margin: const EdgeInsets.symmetric(vertical: 3),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            margin: const EdgeInsets.symmetric(vertical:3,),
             decoration: 
-              roundedBoxdecoration(radiusType: 2,backgroundColor:Colors.blueAccent),
+              const BoxDecoration(shape: BoxShape.circle,color:Colors.blueAccent),
             child: const Center(
-                child: Icon(Icons.add, color: Colors.white, size: 30))));
+              child: Icon(Icons.add, color: Colors.white, size: 25))));
   }
 
 }

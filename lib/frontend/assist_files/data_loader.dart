@@ -30,7 +30,7 @@ class ConfigDataLoader {
 
   Future<void> createConfigData(
       String widgetName, int defaultState, WidgetRef ref) async {
-    final calendarData = ref.watch(calendarDataProvider);
+    final calendarData = ref.read(calendarDataProvider);
     bool found = false;
     await ref.read(calendarDataProvider).getConfigData(getConfigDataSource());
     for (var data in calendarData.configData) {

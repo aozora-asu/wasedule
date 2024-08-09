@@ -167,6 +167,8 @@ class _AppPageState extends ConsumerState<AppPage> {
           customBottomBar(context, _currentIndex, _onItemTapped, setState),
       body: body,
       drawer: DrawerMenu(
+        currentParentIndex: _currentIndex,
+        currentChildIndex: _currentSubIndex,
         changeParentIndex: _onItemTapped,
         changeChildIndex: _onTabTapped,
       ),

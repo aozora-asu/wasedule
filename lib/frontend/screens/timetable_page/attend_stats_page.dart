@@ -200,7 +200,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
             return courseListChild(currentCourseDataList.elementAt(index));
           },
           separatorBuilder: (context,index){
-            return const SizedBox(height:7);
+            return const SizedBox(height:15);
           },
           itemCount: currentCourseDataList.length,
           shrinkWrap: true,
@@ -387,13 +387,9 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
 
   Future<void> showAttendMenuPanel(Map courseData) async{
     Widget header = Container(
-      margin:const EdgeInsets.symmetric(horizontal: 10),
-      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 7),
-      decoration:
-        roundedBoxdecoration(
-          radiusType: 1,
-          backgroundColor: FORGROUND_COLOR,
-          shadow: true),
+      margin:const EdgeInsets.symmetric(horizontal: 5),
+      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+      decoration: dialogHeader(),
       child: Row(children:[
         Expanded(
           child:Text(courseData["courseName"],
@@ -408,10 +404,14 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
     await showDialog(
       context: context,
       builder: (context){
-        return Column(
+        return Container(
+          margin:const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
             children: [
               const Spacer(),
-              Stack(children:[
+              Stack(
+                alignment:const  Alignment(0,-0.98),
+                children:[
                 Column(children:[
                   header,
                   AttendMenuPanel(
@@ -422,7 +422,8 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage>{
               ]),
               const Spacer(),
             ]
-          );
+          )
+        );
       });
   }
 }
