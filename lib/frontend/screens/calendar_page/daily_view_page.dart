@@ -24,6 +24,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import "../../../static/constant.dart";
+import "../../../backend/DB/handler/my_course_db.dart";
 
 final inputFormProvider = StateNotifierProvider<InputFormNotifier, InputForm>(
   (ref) => InputFormNotifier(),
@@ -134,7 +135,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           " ${widget.target.year}/${widget.target.month}",
-                          style:const TextStyle(
+                          style: const TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.w700,
                               color: Colors.white),
@@ -154,7 +155,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         " ${widget.target.day}", //+ weekDayEng(widget.target.weekday),
-                        style:const TextStyle(
+                        style: const TextStyle(
                             fontSize: 60,
                             fontWeight: FontWeight.w700,
                             color: Colors.black),
@@ -175,7 +176,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                 ],
               ),
               Container(
-                padding:const EdgeInsets.symmetric(horizontal:10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 //width: SizeConfig.blockSizeHorizontal! * 90,
                 child: listView(),
               ),
@@ -299,12 +300,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    List<Map<String, dynamic>> targetDayList =
-        timeTable.targetDateClasses(widget.target);
+    List<MyCourse> targetDayList = timeTable.targetDateClasses(widget.target);
 
     for (int i = 0; i < targetDayList.length; i++) {
-      Map targetClass = targetDayList.elementAt(i);
-      DateTime? key = Lesson.atPeriod(targetClass["period"])?.start;
+      MyCourse targetClass = targetDayList.elementAt(i);
+      DateTime? key = targetClass.period?.start;
 
       Widget value = switchWidget(timeTableListChild(targetClass),
           ConfigDataLoader().searchConfigData("timetableInDailyView", ref));
@@ -621,7 +621,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: SizedBox(
-                        height:35,
+                        height: 35,
                         child: Row(children: [
                           const Icon(Icons.arrow_left, color: Colors.grey),
                           Expanded(
@@ -647,9 +647,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         ]));
   }
 
-  Widget timeTableListChild(Map classData) {
+  Widget timeTableListChild(MyCourse classData) {
     final data = ref.read(timeTableProvider);
-    Lesson? lesson = Lesson.atPeriod(classData["period"]);
+    Lesson? lesson = classData.period;
     String? startTime =
         lesson != null ? DateFormat("HH:mm").format(lesson.start) : null;
     String? endTime =
@@ -697,7 +697,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${"日月火水木金土"[classData["weekday"] % 7]}曜日の授業",
+                      Text("${classData.weekday!.text}曜日の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
@@ -710,7 +710,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
-                                classData["courseName"],
+                                classData.courseName,
                                 overflow: TextOverflow.clip,
                                 style: const TextStyle(
                                     color: Colors.black,
@@ -718,7 +718,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                     fontWeight: FontWeight.bold),
                               ))),
                       Text(
-                        classData["classRoom"],
+                        classData.classRoom,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                             color: Colors.grey,

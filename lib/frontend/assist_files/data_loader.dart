@@ -7,9 +7,8 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TimeTableDataLoader {
-  Future<List<Map<String, dynamic>>> getTimeTableDataSource() async {
-    List<Map<String, dynamic>> timeTableList =
-        await MyCourseDatabaseHandler().getAllMyCourse() ?? [];
+  Future<List<MyCourse>> getTimeTableDataSource() async {
+    List<MyCourse> timeTableList = await MyCourse.getAllMyCourse() ?? [];
     return timeTableList;
   }
 }

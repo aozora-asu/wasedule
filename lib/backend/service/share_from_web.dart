@@ -71,7 +71,6 @@ void getMyGrade(String str) async {
       result[path[0]][path[1]][path[2]].add(tempMap);
     }
   }
-  printWrapped(result.toString());
 
   MyGrade myGrade;
   for (var parentKey in result.keys) {
@@ -94,6 +93,8 @@ void getMyGrade(String str) async {
     }
   }
 }
+
+void getu(String str) async {}
 
 const MethodChannel platform = MethodChannel('com.example.wasedule/navigation');
 Future<void> methodChannel(MethodCall call) async {

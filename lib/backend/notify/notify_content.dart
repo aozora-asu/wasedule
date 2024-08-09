@@ -492,10 +492,10 @@ class NotifyContent {
       }
     } else {
       if (notifyFormat.notifyFormat == null) {
-        notifyTitle = "今日(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+        notifyTitle = "今日(${'日月火水木金土'[now.weekday % 7]})のお知らせ";
       } else {
         notifyTitle =
-            "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'月火水木金土日'[now.weekday - 1]})のお知らせ";
+            "${DateFormat(notifyFormat.notifyFormat).format(now)}(${'日月火水木金土'[now.weekday % 7]})のお知らせ";
       }
     }
     notificationDetails = _setNotificationDetail(
@@ -556,34 +556,33 @@ class NotifyContent {
   }
 
   Future<void> setClassNotify() async {
-    List<Map<String, dynamic>>? myCourseList =
-        await MyCourseDatabaseHandler().getPresentTermCourseList();
+    List<MyCourse>? myCourseList = await MyCourse.getPresentTermCourseList();
     if (myCourseList.isNotEmpty) {
       tz.TZDateTime weeklyScheduleDate;
       String body;
       String classNotifyTitle;
 
       for (var myCourse in myCourseList) {
-        if (myCourse["period"] != null && myCourse["weekday"] != null) {
+        if (myCourse.period != null && myCourse.weekday != null) {
           weeklyScheduleDate = _nextInstanceOfWeeklyTime(
               DateFormat("H:mm")
-                  .format(Lesson.atPeriod(myCourse["period"] - 1)!.end),
-              myCourse["weekday"]);
+                  .format(Lesson.atPeriod(myCourse.period!.period - 1)!.end),
+              myCourse.weekday!.index);
           body =
-              "${DateFormat("H:mm").format(Lesson.atPeriod(myCourse["period"])!.start)}~ ${myCourse["classRoom"]}";
+              "${DateFormat("H:mm").format(myCourse.period!.start)}~ ${myCourse.classRoom}";
           String encodedPayload = jsonEncode({
             "route": "timeTablePage",
             "notifyDate": weeklyScheduleDate.toIso8601String(),
             "attendDate": DateFormat("MM/dd").format(weeklyScheduleDate),
-            "myCourseID": myCourse["id"]
+            "myCourseID": myCourse.id
           });
-          if (await MyCourseDatabaseHandler()
-              .hasClass(myCourse["weekday"], myCourse["period"] - 1)) {
+          if (await MyCourse.hasClass(
+              myCourse.weekday!.index, myCourse.period!.period - 1)) {
             classNotifyTitle =
-                "次の授業 ${myCourse["period"]}限 ${myCourse["courseName"]}";
+                "次の授業 ${myCourse.period!.period}限 ${myCourse.courseName}";
           } else {
             classNotifyTitle =
-                "今日の授業 ${myCourse["period"]}限 ${myCourse["courseName"]}";
+                "今日の授業 ${myCourse.period!.period}限 ${myCourse.courseName}";
           }
 
           notificationDetails = _setNotificationDetail(notifyID++,

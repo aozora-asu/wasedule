@@ -27,7 +27,7 @@ class MyGrade {
 
   Map<String, dynamic> _toMap() {
     return {
-      "id": id,
+      //"id": id,
       "courseName": courseName,
       "majorClassification": majorClassification,
       "middleClassification": middleClassification,
@@ -68,16 +68,20 @@ class MyGrade {
 
   Future<void> resisterMyGrade() async {
     final Database db = await _initDB();
+    Map<String, dynamic> map = _toMap();
     try {
-      await db.insert(tableName, _toMap());
+      await db.insert(tableName, map);
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
         await db.update(
           tableName,
-          _toMap(),
-          where: 'id = ? ',
-          whereArgs: [_toMap()["id"]],
+          map,
+          where: 'year = ? AND courseName = ?',
+          whereArgs: [
+            map["year"],
+            map["courseName"],
+          ],
         );
       }
     }

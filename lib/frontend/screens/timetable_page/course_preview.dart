@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class CoursePreview extends ConsumerStatefulWidget {
-  late Map target;
+  late MyCourse target;
   late StateSetter setTimetableState;
   late List<Map<String, dynamic>> taskList;
   CoursePreview(
@@ -43,10 +43,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   @override
   void initState() {
     super.initState();
-    Map target = widget.target;
-    memoController.text = target["memo"] ?? "";
-    classRoomController.text = target["classRoom"] ?? "";
-    classNameController.text = target["courseName"] ?? "";
+    MyCourse target = widget.target;
+    memoController.text = target.memo ?? "";
+    classRoomController.text = target.classRoom;
+    classNameController.text = target.courseName;
     viewMode = 0;
     searchMode = false;
   }
@@ -136,9 +136,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: SyllabusSearchDialog(
                   radiusType: 2,
-                  gakki: Term.byValue(widget.target["semester"]),
-                  youbi: DayOfWeek.weekAt(widget.target["weekday"]),
-                  jigen: Lesson.atPeriod(widget.target["period"]),
+                  gakki: widget.target.semester,
+                  youbi: widget.target.weekday,
+                  jigen: widget.target.period,
                   gakubu: Department.byValue(SharepreferenceHandler()
                       .getValue(SharepreferenceKeys.userDepartment))))
         ]),
@@ -150,7 +150,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget courseInfo() {
-    Map target = widget.target;
+    MyCourse target = widget.target;
     int id;
 
     Widget header = Container(
@@ -160,9 +160,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 22.0,
             (value) async {
-          id = target["id"];
+          id = target.id!;
           //＠ここに授業名変更関数を登録！！！
-          await MyCourseDatabaseHandler().updateCourseName(id, value);
+          await MyCourse.updateCourseName(id, value);
           widget.setTimetableState(() {});
         }),
         descriptionModeSwitch(),
@@ -210,10 +210,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                 child: const Icon(Icons.delete,
                                     color: Colors.grey),
                                 onTap: () async {
-                                  id = target["id"];
+                                  id = target.id!;
                                   //＠ここに削除実行関数！！！
-                                  await MyCourseDatabaseHandler()
-                                      .deleteMyCourse(id);
+                                  await MyCourse.deleteMyCourse(id);
                                   widget.setTimetableState(() {});
                                   Navigator.pop(context);
                                 }),
@@ -226,7 +225,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ]));
   }
 
-  Widget switchViewMode(dividerModel, target) {
+  Widget switchViewMode(dividerModel, MyCourse target) {
     if (viewMode == 0) {
       return summaryContent(dividerModel, target);
     } else {
@@ -265,8 +264,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget viewModeSwitch() {
-    Map target = widget.target;
-    if (target["syllabusID"] != null && target["syllabusID"] != "") {
+    MyCourse target = widget.target;
+    if (target.syllabusID != null && target.syllabusID != "") {
       if (viewMode == 0) {
         return buttonModel(() {
           setState(() {
@@ -294,14 +293,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget descriptionModeSwitch() {
-    Map target = widget.target;
+    MyCourse target = widget.target;
     if (searchMode) {
       return buttonModel(() {
         setState(() {
           searchMode = false;
         });
       }, Colors.blueAccent, " もどる ");
-    } else if (target["syllabusID"] != null && target["syllabusID"] != "") {
+    } else if (target.syllabusID != null && target.syllabusID != "") {
       if (viewMode == 0) {
         return const SizedBox();
       } else {
@@ -316,14 +315,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     }
   }
 
-  Widget summaryContent(dividerModel, target) {
+  Widget summaryContent(dividerModel, MyCourse target) {
     return Column(children: [
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
         const Icon(Icons.access_time, color: Colors.blue),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         Text(
-          "${"日月火水木金土"[target["weekday"] % 7]}曜日 ${target["period"]}限",
+          "${target.weekday!.text}曜日 ${target.period!.period}限",
           style: const TextStyle(
             fontSize: 20,
           ),
@@ -331,7 +330,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const SizedBox(width: 20),
         Expanded(
             child: Text(
-          "${target["year"]} ${Term.byValue(target["semester"])?.fullText ?? Term.fullYear.fullText}",
+          "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
           style: const TextStyle(fontSize: 15, color: Colors.grey),
           overflow: TextOverflow.clip,
         )),
@@ -350,9 +349,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
         textFieldModel("メモを入力…", memoController, FontWeight.normal, 20.0,
             (value) async {
-          int id = target["id"];
+          int id = target.id!;
           //＠ここに教室のアップデート関数！！！
-          await MyCourseDatabaseHandler().updateMemo(id, value);
+          await MyCourse.updateMemo(id, value);
           widget.setTimetableState(() {});
         })
       ]),
@@ -360,8 +359,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     ]);
   }
 
-  Widget classRoomSelector(BuildContext context, Map<String, dynamic> target) {
-    List<String> classRooms = target["classRoom"].toString().split("\n");
+  Widget classRoomSelector(BuildContext context, MyCourse target) {
+    List<String> classRooms = target.classRoom.toString().split("\n");
     Map<String, bool> selectedRooms = {};
     int id;
     for (var classroom in classRooms) {
@@ -371,9 +370,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (classRooms.length <= 2) {
       return textFieldModel(
           "教室を入力…", classRoomController, FontWeight.bold, 20.0, (value) async {
-        id = target["id"];
+        id = target.id!;
         //＠ここに教室のアップデート関数！！！
-        await MyCourseDatabaseHandler().updateClassRoom(id, value);
+        await MyCourse.updateClassRoom(id, value);
         widget.setTimetableState(() {});
       });
     } else {
@@ -416,15 +415,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   );
                 },
               ).whenComplete(() async {
-                id = target["id"];
+                id = target.id!;
                 String selectedRoomValue = selectedRooms.entries
                     .where((entry) => entry.value)
                     .map((entry) => entry.key)
                     .join("\n")
                     .trimRight();
 
-                await MyCourseDatabaseHandler()
-                    .updateClassRoom(id, selectedRoomValue);
+                await MyCourse.updateClassRoom(id, selectedRoomValue);
                 setState(() {});
               });
             },
