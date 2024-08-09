@@ -368,7 +368,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
       decoration: dialogHeader(),
       child: Row(children:[
         Expanded(
-          child:Text(courseData["courseName"],
+          child:Text(courseData.courseName,
             overflow: TextOverflow.clip,
             style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
         GestureDetector(

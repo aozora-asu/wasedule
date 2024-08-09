@@ -233,9 +233,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     }
   }
 
-  Widget syllabusPageViewBuilder(Map target){
+  Widget syllabusPageViewBuilder(MyCourse target){
     return FutureBuilder(
-      future: SyllabusRequestQuery.getSingleSyllabusInfo(target["syllabusID"]),
+      future: SyllabusRequestQuery.getSingleSyllabusInfo(target.syllabusID!),
       builder: (conetext,snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
           return const Center(
