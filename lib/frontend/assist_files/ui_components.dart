@@ -101,9 +101,10 @@ LinearGradient gradationDecoration(
   );
 }
 
-BorderRadius boxRadius({int type = 0}){
   double endRadius = 30;
   double middleRadius = 3;
+
+BorderRadius boxRadius({int type = 0}){
 
   switch(type){
     case 1: 
@@ -152,6 +153,31 @@ BoxDecoration roundedBoxdecoration({int radiusType = 0,bool shadow = false, Colo
     ], 
     color: backgroundColor ?? FORGROUND_COLOR,
     borderRadius: boxRadius(type: radiusType)
+  );
+}
+
+BoxDecoration dialogHeader({Color? backgroundColor}) {
+
+  return BoxDecoration(
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.5),
+        spreadRadius: 1,
+        blurRadius: 2, 
+        offset: const Offset(0, 0.5),
+      )
+    ], 
+    color: backgroundColor ?? FORGROUND_COLOR,
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(endRadius),
+      topRight: Radius.circular(endRadius),
+    ),
+    border:const Border(
+      bottom: BorderSide(
+        color: Colors.grey, 
+        width: 0.3,
+      ),
+    ),
   );
 }
 

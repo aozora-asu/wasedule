@@ -71,19 +71,25 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     subTitle: "早稲田から、落単をなくしたい。",
                   )),
               const Spacer(),
-              InkWell(
-                child: const Icon(Icons.notifications_outlined,
-                    color: Colors.white),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingsPage(initIndex: 1)),
-                  );
-                },
-              ),
-              popupMenuButton(Colors.white, context)
             ])),
+        actions:[
+        IconButton(
+          icon:const Icon(Icons.schedule),
+          color:Colors.white,
+          onPressed: (){}),
+          InkWell(
+            child: const Icon(Icons.notifications_outlined,
+                color: Colors.white),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SettingsPage(initIndex: 1)),
+              );
+            },
+          ),
+          popupMenuButton(Colors.white, context),
+          ],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(0),

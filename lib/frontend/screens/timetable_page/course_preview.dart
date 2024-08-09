@@ -1,7 +1,9 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_menu_panel.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
@@ -34,8 +36,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController classRoomController = TextEditingController();
   late int viewMode;
   late bool searchMode;
-  Widget space = const SizedBox(height: 1.5);
+  Widget space = const SizedBox(height: 7);
   Widget dividerModel = const Divider(height: 2);
+  TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 20,fontWeight: FontWeight.normal);
 
   @override
   void initState() {
@@ -52,9 +55,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 5);
-    // if (viewMode == 1) {
-    //   padding = EdgeInsets.zero;
-    // }
+ 
     return GestureDetector(onTap: () {
       Navigator.pop(context);
     }, child: LayoutBuilder(
@@ -77,20 +78,36 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                               : const ScrollPhysics(),
                           child: Padding(
                               padding: padding,
-                              child: Column(
+                              child: Container(
+                                decoration: roundedBoxdecoration(
+                                  backgroundColor: FORGROUND_COLOR,
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal:2),
+                                child:Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const SizedBox(height: 20),
                                     switchSearchMode(),
                                     relatedTasks(),
                                     space,
+                                    Row(children:[
+                                    Text(" 出欠  ",
+                                        style: titleStyle)]),
                                     AttendMenuPanel(
                                         courseData: widget.target,
                                         setTimetableState:
-                                            widget.setTimetableState),
-                                    const SizedBox(height: 20),
-                                  ])))))));
-    }));
+                                            widget.setTimetableState,
+                                        backgroundColor: BACKGROUND_COLOR,),
+                                    const SizedBox(height:7)
+                                  ])
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    );
+      })
+    );
   }
 
   Widget switchSearchMode() {
@@ -99,7 +116,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         child: Container(
           height: 50,
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          margin: const EdgeInsets.symmetric(horizontal: 5),
+          margin: const EdgeInsets.symmetric(horizontal: 0),
           decoration: roundedBoxdecoration(radiusType: 1, shadow: true),
           child: Row(children: [
             const Icon(Icons.search, color: Colors.blue),
@@ -114,6 +131,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       return Stack(children: [
         Column(children: [
           header,
+          space,
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: SyllabusSearchDialog(
@@ -136,11 +154,11 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     int id;
 
     Widget header = Container(
-      decoration: roundedBoxdecoration(radiusType: 1, shadow: true),
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+      decoration: dialogHeader(),
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 25.0,
+        textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 22.0,
             (value) async {
           id = target.id!;
           //＠ここに授業名変更関数を登録！！！
@@ -159,11 +177,22 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
     return GestureDetector(
         onTap: () {},
-        child: Stack(children: [
+        child: Stack(
+          alignment:const Alignment(0, -1),
+          children: [
           Column(children: [
             header,
+            space,
+            Row(children: [
+              Text(
+                " 概要",style:titleStyle,
+              ),
+              const Spacer()
+            ]),
             Container(
-                decoration: roundedBoxdecoration(radiusType: 2),
+                decoration: roundedBoxdecoration(
+                  radiusType: 2,
+                  backgroundColor: viewMode == 0 ? BACKGROUND_COLOR : FORGROUND_COLOR),
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Padding(
                     padding: const EdgeInsets.only(
@@ -200,31 +229,38 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (viewMode == 0) {
       return summaryContent(dividerModel, target);
     } else {
-      return SizedBox(
+      return syllabusPageViewBuilder(target);
+    }
+  }
+
+  Widget syllabusPageViewBuilder(Map target){
+    return FutureBuilder(
+      future: SyllabusRequestQuery.getSingleSyllabusInfo(target["syllabusID"]),
+      builder: (conetext,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return const Center(
+            child:CircularProgressIndicator(
+              color:Colors.blueAccent)
+            );
+        }else if(snapshot.hasData){
+      return Container(
+          decoration: BoxDecoration(
+            color:FORGROUND_COLOR,
+            border: const Border(bottom: BorderSide(color: Colors.grey))
+          ),
           height: SizeConfig.blockSizeVertical! * 50,
           width: SizeConfig.blockSizeHorizontal! * 100,
           child: SyllabusDescriptonView(
               showHeader: false,
-              syllabusQuery: SyllabusQueryResult(
-                  courseName: target.courseName,
-                  classRoom: target.classRoom,
-                  year: target.year,
-                  syllabusID: target.syllabusID,
-                  semesterAndWeekdayAndPeriod: "ここに年度曜日時限のデータを加工して受け渡し",
-                  teacher: null,
-                  credit: null,
-                  criteria: target.criteria,
-                  department: null,
-                  subjectClassification: null,
-                  abstract: null,
-                  agenda: null,
-                  reference: null,
-                  remark: null,
-                  textbook: null,
-                  allocatedYear: null,
-                  campus: null,
-                  lectureSystem: null)));
-    }
+              syllabusQuery: snapshot.data!));
+        }else{
+          return const Center(
+            child:CircularProgressIndicator(
+              color:Colors.blueAccent)
+            );
+        }
+        
+      });
   }
 
   Widget viewModeSwitch() {
@@ -281,14 +317,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget summaryContent(dividerModel, MyCourse target) {
     return Column(children: [
-      const Row(children: [
-        Text(
-          "概要",
-          style: TextStyle(fontSize: 20, color: Colors.grey),
-        ),
-        Spacer()
-      ]),
-      dividerModel,
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
         const Icon(Icons.access_time, color: Colors.blue),
@@ -426,12 +454,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       FontWeight weight, double fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
+        color: Colors.transparent,
       child: TextField(
           controller: controller,
           maxLines: null,
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration.collapsed(
-              fillColor: FORGROUND_COLOR,
+              fillColor: Colors.transparent,
               filled: true,
               border: InputBorder.none,
               hintText: hintText),
@@ -445,21 +474,21 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     if (widget.taskList.isNotEmpty) {
       return Column(children: [
         space,
+        Row(
+          children: [
+            const SizedBox(width: 5 ),
+            Text("課題",
+                style: titleStyle),
+            const Spacer(),
+            lengthBadge(widget.taskList.length, 17.5, false),
+            const SizedBox(width: 10),
+          ],
+        ),
         Container(
             decoration: roundedBoxdecoration(radiusType: 2),
             padding: const EdgeInsets.all(10.0),
             margin: const EdgeInsets.symmetric(horizontal: 5),
             child: Column(children: [
-              Row(
-                children: [
-                  const SizedBox(width: 3),
-                  const Text("関連する課題",
-                      style: TextStyle(fontSize: 20, color: Colors.grey)),
-                  const Spacer(),
-                  lengthBadge(widget.taskList.length, 17.5, false),
-                  const SizedBox(width: 10),
-                ],
-              ),
               const SizedBox(height: 2),
               ListView.separated(
                 itemBuilder: (context, index) {

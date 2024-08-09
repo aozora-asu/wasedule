@@ -181,18 +181,20 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
   Widget semesterCourseList() {
     return Expanded(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                return courseListChild(currentCourseDataList.elementAt(index));
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(height: 7);
-              },
-              itemCount: currentCourseDataList.length,
-              shrinkWrap: true,
-            )));
+      child:Padding(
+        padding:const EdgeInsets.symmetric(horizontal: 10),
+        child:ListView.separated(
+          itemBuilder: (context,index){
+            return courseListChild(currentCourseDataList.elementAt(index));
+          },
+          separatorBuilder: (context,index){
+            return const SizedBox(height:15);
+          },
+          itemCount: currentCourseDataList.length,
+          shrinkWrap: true,
+          ))
+    );
+
   }
 
   Widget courseListChild(MyCourse courseData) {
@@ -361,42 +363,44 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
   Future<void> showAttendMenuPanel(MyCourse courseData) async {
     Widget header = Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-        decoration: roundedBoxdecoration(
-            radiusType: 1, backgroundColor: FORGROUND_COLOR, shadow: true),
-        child: Row(children: [
-          Expanded(
-              child: Text(courseData.courseName,
-                  overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                  ))),
-          GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(
-                Icons.cancel_rounded,
-                size: 20,
-                color: Colors.red,
-              ))
-        ]));
+      margin:const EdgeInsets.symmetric(horizontal: 5),
+      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+      decoration: dialogHeader(),
+      child: Row(children:[
+        Expanded(
+          child:Text(courseData["courseName"],
+            overflow: TextOverflow.clip,
+            style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
+        GestureDetector(
+          onTap:()=> Navigator.pop(context),
+          child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
+      ])
+    );
 
     await showDialog(
-        context: context,
-        builder: (context) {
-          return Column(children: [
-            const Spacer(),
-            Stack(children: [
-              Column(children: [
-                header,
-                AttendMenuPanel(
-                    courseData: courseData, setTimetableState: setState),
+      context: context,
+      builder: (context){
+        return Container(
+          margin:const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              const Spacer(),
+              Stack(
+                alignment:const  Alignment(0,-0.98),
+                children:[
+                Column(children:[
+                  header,
+                  AttendMenuPanel(
+                    courseData: courseData,
+                    setTimetableState: setState),
+                ]),
+                header
               ]),
-              header
-            ]),
-            const Spacer(),
-          ]);
-        });
+              const Spacer(),
+            ]
+          )
+        );
+      });
+
   }
 }
