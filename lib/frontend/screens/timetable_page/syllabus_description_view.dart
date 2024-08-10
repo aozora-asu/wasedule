@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_webview.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -23,11 +24,13 @@ class SyllabusDescriptonView extends StatefulWidget {
 
 class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
   late bool isWineView;
+  late bool isSyllabusWebView;
 
   @override
   void initState() {
     super.initState();
     isWineView = false;
+    isSyllabusWebView = false;
   }
 
   @override
@@ -38,10 +41,13 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
       children: [
         if (widget.showHeader) header(),
         const SizedBox(height: 5),
-        if (!isWineView)
-          descriptionList()
-        else
+        if (isWineView)
           webWineView(syllabusQuery.textbook ?? "")
+        else if(isSyllabusWebView)
+          SyllabusWebView(pageID:syllabusQuery.syllabusID)
+        else
+          descriptionList()
+
       ],
     );
   }
@@ -59,7 +65,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               overflow: TextOverflow.clip,
             ))),
-            if (isWineView)
+            if (isWineView || isSyllabusWebView)
               returnFromWineButton()
             else
               addCourseToTimetableButton(),
@@ -74,6 +80,18 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(children: [
+                  Row(children:[
+                    const Icon(Icons.public,color:Colors.blue,size:15),
+                    GestureDetector(
+                      onTap:(){
+                        setState(() {
+                          isSyllabusWebView = true;
+                        });
+                      },
+                      child: const Text(
+                        "シラバスページ",
+                        style:TextStyle(color:Colors.blue)))
+                  ]),
                   descriptionElementTile("年度/学期/時限",
                       "${syllabusQuery.year.toString()}/${syllabusQuery.semesterAndWeekdayAndPeriod}",
                       radiusType: 1),
@@ -173,6 +191,7 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
     return buttonModel(() {
       setState(() {
         isWineView = false;
+        isSyllabusWebView = false;
       });
     }, Colors.redAccent, "戻る", horizontalPadding: 30);
   }

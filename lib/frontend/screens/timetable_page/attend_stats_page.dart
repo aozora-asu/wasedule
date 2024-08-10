@@ -103,6 +103,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
         backgroundColor: BACKGROUND_COLOR,
         body: Column(children: [
           header(),
+          const Divider(height:1,indent: 10,endIndent: 10,),
           if (currentCourseDataList.isEmpty)
             noCourseDataScreen()
           else
@@ -111,35 +112,43 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
   }
 
   Widget header() {
-    return Row(children: [
-      IconButton(
+    return Padding(
+      padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+      child:Row(children: [
+        IconButton(
           onPressed: () {
             decreasePgNumber();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           iconSize: 20,
           color: BLUEGREY),
-      Text(
-        "$thisYear年  ${currentSemester.text}",
-        style: const TextStyle(
-            fontSize: 17, fontWeight: FontWeight.w700, color: BLUEGREY),
-      ),
-      IconButton(
+        Text(
+          "$thisYear年  ${currentSemester.text}",
+          style: const TextStyle(
+              fontSize: 17, fontWeight: FontWeight.w700, color: BLUEGREY),
+        ),
+        IconButton(
           onPressed: () {
             setState(() {
               increasePgNumber();
             });
           },
-          icon: const Icon(Icons.arrow_forward_ios),
+          icon: const Icon(Icons.arrow_forward_ios_rounded),
           iconSize: 20,
           color: BLUEGREY),
-      Expanded(
-          child: buttonModel(() async {
+      const Spacer(),
+      buttonModel(() async {
         await showAttendanceDialog(context, now, ref, true);
         setState(() {});
-      }, Colors.blueAccent, "今日の出欠")),
+      },
+      PALE_MAIN_COLOR,
+      "今日の出欠",
+      verticalpadding: 10,
+      horizontalPadding:30,
+      ),
       const SizedBox(width: 10)
-    ]);
+    ])
+    );
   }
 
   void increasePgNumber() {

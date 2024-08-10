@@ -47,6 +47,7 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
     final data = ref.read(dataProvider);
     return 
     Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       body:pageHead(),
       floatingActionButton:showButtonOrNot(context,ref),
     );

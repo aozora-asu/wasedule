@@ -20,12 +20,12 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
     String? pageID = widget.pageID;
 
     if (pageID != null && pageID != "") {
-      return Column(children: [
+      return Expanded(
+        child:
         Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
-            height: SizeConfig.blockSizeVertical! * 75,
+            height: SizeConfig.blockSizeVertical! * 90,
             decoration: BoxDecoration(border: Border.all()),
-            child: SingleChildScrollView(
               child: SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 100,
                   height: SizeConfig.blockSizeVertical! * height,
@@ -38,13 +38,13 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                     onWebViewCreated: (controller) async {
                       webMoodleViewController = controller;
                       String javascriptCode = await rootBundle.loadString(
-                          'lib/frontend/assist_files/scroll_controller.js');
+                          'lib/backend/service/js/scroll_controller.js');
                       await webMoodleViewController.evaluateJavascript(
                           source: javascriptCode);
                     },
                     onLoadStop: (a, b) async {
                       String javascriptCode = await rootBundle.loadString(
-                          'lib/frontend/assist_files/scroll_controller.js');
+                          'lib/backend/service/js/scroll_controller.js');
                       await webMoodleViewController.evaluateJavascript(
                           source: javascriptCode);
                       setState(() {});
@@ -53,8 +53,8 @@ class _SyllabusWebViewState extends State<SyllabusWebView> {
                       setState(() {});
                     },
                   )),
-            )),
-      ]);
+            ),
+      );
     } else {
       return const SizedBox();
     }

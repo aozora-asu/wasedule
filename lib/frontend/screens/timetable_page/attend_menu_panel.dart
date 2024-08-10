@@ -53,22 +53,19 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
               children: [
                 const SizedBox(height: 3),
                 attendRecordView(),
-                const Divider(),
-                attendSettingsPanel(),
-            ])));
+                isExpandSettingPanel ? attendSettingsPanel() : const SizedBox(),
+            ])
+          )
+        );
   }
 
   Widget attendSettingsPanel() {
-    return Material(
-        color: Colors.transparent,
-        child: ExpandablePanel(
-            controller:
-                ExpandableController(initialExpanded: isExpandSettingPanel),
-            header: GestureDetector(
-                child: const Text("設定",
-                    style: TextStyle(fontSize: 20, color: Colors.grey))),
-            collapsed: const SizedBox(),
-            expanded: remainingAbsentSetting()));
+    return Column(children:[
+      const Divider(),
+      const Text("設定",
+              style: TextStyle(fontSize: 20, color: Colors.grey)),
+      remainingAbsentSetting(),
+    ]);
   }
 
   Widget remainingAbesentViewBuilder() {
@@ -241,6 +238,21 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
                 remainingAbesentViewBuilder(),
                 const Spacer(),
                 addRecordButton(),
+                const SizedBox(width:5),
+                GestureDetector(
+                  onTap: (){
+                    setState(() {
+                      if(isExpandSettingPanel){
+                        isExpandSettingPanel = false;
+                      }else{
+                        isExpandSettingPanel = true;
+                      }
+                    });
+                  },
+                  child:Icon(
+                    isExpandSettingPanel ? Icons.close :  Icons.settings,
+                    size:20,color:Colors.grey)
+                )
               ]),
             ]),
             collapsed: const SizedBox(),
@@ -268,17 +280,21 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
   }
 
   Widget attendRecordList(List attendRecordList) {
-    return ListView.separated(
-      itemCount: attendRecordList.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return attendRecordListPanel(attendRecordList.elementAt(index));
-      },
-      separatorBuilder: (context, index) {
-        return const Divider(height: 1);
-      },
-    );
+    return 
+    Column(children:[
+      const Divider(),
+      ListView.separated(
+        itemCount: attendRecordList.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return attendRecordListPanel(attendRecordList.elementAt(index));
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(height: 1);
+        },
+      )
+    ]);
   }
 
   Widget attendRecordListPanel(Map attendRecord) {
@@ -332,19 +348,18 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
   }
 
   Widget addRecordButton() {
-    return GestureDetector(
-        onTap: () async {
+    return buttonModel(
+        () async {
           showIndividualCourseEditDialog(context, widget.courseData, () {
             setState(() {});
             widget.setTimetableState(() {});
           });
         },
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            margin: const EdgeInsets.symmetric(vertical:3,),
-            decoration: 
-              const BoxDecoration(shape: BoxShape.circle,color:Colors.blueAccent),
-            child: const Center(
-              child: Icon(Icons.add, color: Colors.white, size: 25))));
+        Colors.blueAccent,
+        "+ 記録",
+        horizontalPadding: 15,
+        verticalpadding: 7
+      );
+
   }
 }

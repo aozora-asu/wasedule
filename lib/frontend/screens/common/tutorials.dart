@@ -163,7 +163,8 @@ class _IntroPageState extends State<IntroPage> {
 
   enum MoodleRegisterGuideType {
     task,
-    timetable
+    timetable,
+    credit,
   }
 
   Future<void> showMoodleRegisterGuide(
@@ -178,6 +179,9 @@ class _IntroPageState extends State<IntroPage> {
     }else if(dialogType == MoodleRegisterGuideType.timetable){
       titleText = "時間割をアプリに取得しましょう。";
       guideText = "'Moodle'ページから、時間割をアプリに取得しましょう！\n\n■手順\n１.Moodleにログイン\n２.「わせジュール 拡張機能」\n３.「時間割を自動登録する」\n\nこれだけで、あなたの授業がアプリに登録されます！\n";
+    }else if(dialogType == MoodleRegisterGuideType.credit){
+      titleText = "単位取得状況をアプリに取得しましょう。";
+      guideText = "'成績照会'ページから、単位取得状況をアプリに取得しましょう！\n\n■手順\n１.成績照会画面でログイン\n２.「わせジュールにダウンロード」\n\nこれであなたの単位取得情報ががアプリに登録され、以後はアプリ内から確認できます！\n";
     }
 
     if(istutorial){
