@@ -7,7 +7,6 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_menu
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import "../../../backend/DB/handler/my_course_db.dart";
 
 class AttendStatsPage extends ConsumerStatefulWidget {
   @override

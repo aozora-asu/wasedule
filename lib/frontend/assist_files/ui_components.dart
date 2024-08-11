@@ -184,15 +184,16 @@ BoxDecoration dialogHeader({Color? backgroundColor}) {
 Widget cupertinoLikeDropDownListModel(
   List<DropdownMenuItem<dynamic>> items,
   dynamic value,
-  Function(dynamic) onChanged
+  Function(dynamic) onChanged,
+  {double verticalPadding = 5.0}
 ){
   return  Material(
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey.withOpacity(0.2),
         child:DropdownButtonFormField(
           borderRadius: BorderRadius.circular(20),
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 0.0),
             isDense: true,
             border: InputBorder.none),
             style:const  TextStyle(

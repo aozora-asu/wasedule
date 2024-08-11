@@ -16,12 +16,39 @@ class CreditStatsPage extends StatefulWidget{
 
 class _CreditStatsPageState extends State<CreditStatsPage>{
   Map<String?,List<MyGrade>> majorClassificationGroupMap = {};
+  late List<String> yearList;
+  late String selectedYear;
+  late List<String> termList;
+  late String selectedTerm;
   late bool isGPview;
 
   @override 
   void initState(){
     super.initState();
     isGPview = false;
+    yearList = [];
+    selectedYear = "すべて";
+    termList = [];
+    selectedTerm = "すべて";
+  }
+
+  void generateOptions(List<MyGrade> data){
+    yearList = [];
+    termList = [];
+
+    for(int i = 0; i < data.length; i++){
+      MyGrade target = data.elementAt(i);
+
+      if(!yearList.contains(target.year)){
+        yearList.add(target.year);
+      }
+
+      if(!termList.contains(target.term)){
+        termList.add(target.term);
+      }
+
+    }
+
   }
 
   void sortDataByMajorClassification(List<MyGrade> data){
@@ -57,6 +84,7 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
     Map<String?,List<MyGrade>> result = {};
     for(int i = 0; i < data.length; i++){
       MyGrade target = data.elementAt(i);
+
       if(result.containsKey(
         target.minorClassification
       )){
@@ -94,7 +122,6 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
 
   @override
   Widget build(BuildContext context){
-    
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       body: Padding(
@@ -102,7 +129,6 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
         child:Column(children:[
           pageHeader(),
           const Divider(height: 1),
-          Row(children:[changeGPviewButton()]),
           Expanded(
             child:ListView(children:[
               individualDataListBuilder(),
@@ -143,6 +169,63 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
     );
   }
 
+  Widget termPicker() {
+    List<String> terms = ["すべて"];
+    terms.addAll(termList);
+
+    List<DropdownMenuItem<String>> items = [];
+    for (int i = 0; i < terms.length; i++) {
+      String menuText = "なし";
+      menuText = terms.elementAt(i);
+
+      items.add(
+        DropdownMenuItem(
+          value: terms.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
+    }
+
+    return Expanded(
+        child: cupertinoLikeDropDownListModel(items,selectedTerm,
+     (value) {
+      setState(() {
+        selectedTerm = value;
+      });
+    },verticalPadding: 0
+    ));
+  }
+
+  Widget yearPicker() {
+    List<String> years = ["すべて"];
+    years.addAll(yearList);
+
+    List<DropdownMenuItem<String>> items = [];
+    for (int i = 0; i < years.length; i++) {
+      String menuText = "なし";
+      menuText = years.elementAt(i);
+
+      items.add(DropdownMenuItem(
+          value: years.elementAt(i),
+          child: Center(
+              child: Text(
+            menuText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+          ))));
+    }
+
+    return Expanded(
+        child: cupertinoLikeDropDownListModel(items,selectedYear,
+     (value) {
+      setState(() {
+        selectedYear = value;
+      });
+    },verticalPadding: 0
+    ));
+  }
+
   Widget pageHeader() {
     return Padding(
       padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
@@ -181,6 +264,7 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
       builder: (context,snapshot){
         if(snapshot.hasData && snapshot.data != []){
           sortDataByMajorClassification(snapshot.data!);
+          generateOptions(snapshot.data!);
           return dataListByMajorClassification(snapshot.data!);
         }else{
           return noGradeDataScreen();
@@ -201,18 +285,29 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
   }
 
   Widget dataListByMajorClassification(List<MyGrade> data){
-    return ListView.builder(
-      itemBuilder: (context,index){
-        return Column(children: [
-          const SizedBox(height:10),
-            Text(majorClassificationGroupMap.keys.elementAt(index) ?? "【大分類なし】",
-              style:const TextStyle(fontSize:20,fontWeight: FontWeight.bold)),
-          dataListByMiddleClassification(index)
-        ]);
-      },
-      itemCount: majorClassificationGroupMap.length,
-      shrinkWrap: true,
-      physics:const NeverScrollableScrollPhysics(),);
+    return Column(
+      children:[
+        Row(children:[
+          changeGPviewButton(),
+          const SizedBox(width: 5),
+          yearPicker(),
+          const SizedBox(width: 5),
+          termPicker(),
+          ]),
+        ListView.builder(
+          itemBuilder: (context,index){
+            return Column(children: [
+              const SizedBox(height:10),
+                Text(majorClassificationGroupMap.keys.elementAt(index) ?? "【大分類なし】",
+                  style:const TextStyle(fontSize:20,fontWeight: FontWeight.bold)),
+              dataListByMiddleClassification(index)
+            ]);
+          },
+          itemCount: majorClassificationGroupMap.length,
+          shrinkWrap: true,
+        physics:const NeverScrollableScrollPhysics(),
+        )
+    ]);
   }
 
 
@@ -244,6 +339,8 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
             Text("単位計：$creditSum\nGP平均：$gradeAverage",
               style:smallGreyFont),
           ]),
+          const SizedBox(height:3),
+          Divider(height:1,color: FORGROUND_COLOR),
           dataListByMinorClassification(data.values.elementAt(index))
         ]);
       },
@@ -279,7 +376,31 @@ class _CreditStatsPageState extends State<CreditStatsPage>{
 
     return ListView.builder(
       itemBuilder: (context,index){
-        return gradeDataListChild(data.elementAt(index));
+        MyGrade target = data.elementAt(index);
+        bool showList = true;
+         
+        if(selectedYear != "すべて" &&
+          target.year != selectedYear){
+
+          showList = false;
+        }
+          
+        if(selectedTerm != "すべて" &&
+          target.term != selectedTerm){
+        
+          if(selectedTerm == "春期" && target.term == "春ク"
+           ||selectedTerm == "春期" && target.term == "夏ク"){
+
+          }else if(
+             selectedTerm == "秋期" && target.term == "秋ク"
+           ||selectedTerm == "秋期" && target.term == "冬ク"){
+
+          }else{
+            showList = false;
+          }
+        }
+
+        return showList ? gradeDataListChild(target) : const SizedBox();
       },
       itemCount: data.length,
       shrinkWrap: true,
