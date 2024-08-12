@@ -167,13 +167,13 @@ class _AppPageState extends ConsumerState<AppPage> {
       bottomNavigationBar:
           customBottomBar(context, _currentIndex, _onItemTapped, setState),
       body: body,
-      drawer: DrawerMenu(
+      endDrawer: DrawerMenu(
         currentParentIndex: _currentIndex,
         currentChildIndex: _currentSubIndex,
         changeParentIndex: _onItemTapped,
         changeChildIndex: _onTabTapped,
       ),
-      endDrawer: TimelineDrawer(),
+      drawer: TimelineDrawer(),
     );
   }
 

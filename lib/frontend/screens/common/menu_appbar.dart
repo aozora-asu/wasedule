@@ -290,7 +290,7 @@ Widget popupMenuButton(color, context) {
     color: FORGROUND_COLOR,
     icon: Icon(Icons.menu_rounded, color: color),
     onPressed: () {
-      Scaffold.of(context).openDrawer();
+      Scaffold.of(context).openEndDrawer();
     },
   );
 }
@@ -300,7 +300,7 @@ Widget timeLineButton(color, context) {
     color: FORGROUND_COLOR,
     icon: Icon(Icons.schedule, color: color),
     onPressed: () {
-      Scaffold.of(context).openEndDrawer();
+      Scaffold.of(context).openDrawer();
     },
   );
 }

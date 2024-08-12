@@ -29,7 +29,7 @@ class TimelineDrawer extends ConsumerWidget {
             width: drawerWidth,
             height: SizeConfig.blockSizeVertical! *15,
             decoration:const BoxDecoration(
-              color: PALE_MAIN_COLOR,
+              color: MAIN_COLOR,
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -113,7 +113,7 @@ class _TimelineState extends ConsumerState<Timeline>{
 
   Widget checkBoxRow() {
     return Container(
-      color: BACKGROUND_COLOR,
+      color: PALE_MAIN_COLOR,
       padding:const EdgeInsets.symmetric(horizontal: 10),
       child:Row(children: [
         checkBox(isShowSchedule, "予定", (newValue) {
@@ -145,7 +145,7 @@ class _TimelineState extends ConsumerState<Timeline>{
 
   Widget checkBox(bool value, String text, Function(bool) onChanged) {
     return Row(children: [
-      Text(text, style: const TextStyle(color: Colors.grey, fontSize: 15)),
+      Text(text, style: const TextStyle(color: Colors.white, fontSize: 15)),
       CupertinoCheckbox(
           value: value,
           onChanged: (newValue) {
