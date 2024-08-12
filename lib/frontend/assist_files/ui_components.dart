@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
@@ -208,4 +209,26 @@ Widget cupertinoLikeDropDownListModel(
           onChanged: onChanged,
         ),
       );
+}
+
+Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function ondeleted)async{
+  await showCupertinoDialog(
+    context: context,
+    builder: (context){
+      return CupertinoAlertDialog(
+        title:Text(object + " を削除しますか？"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child:const Text("キャンセル")),
+          TextButton(
+            onPressed: () {
+              ondeleted();
+              Navigator.pop(context);
+            },
+            child:const Text("削除",style: TextStyle(color:Colors.red),)),
+        ],);
+    });
 }

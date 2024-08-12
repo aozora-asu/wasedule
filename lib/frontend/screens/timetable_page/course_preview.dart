@@ -211,10 +211,15 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                     color: Colors.grey),
                                 onTap: () async {
                                   id = target.id!;
-                                  //＠ここに削除実行関数！！！
-                                  await MyCourse.deleteMyCourse(id);
-                                  widget.setTimetableState(() {});
-                                  Navigator.pop(context);
+                                  await showConfirmDeleteDialog(
+                                    context,
+                                    target.courseName,
+                                    ()async{ 
+                                      //＠ここに削除実行関数！！！
+                                      await MyCourse.deleteMyCourse(id);
+                                      widget.setTimetableState(() {});
+                                      Navigator.pop(context);
+                                    });
                                 }),
                             SizedBox(
                                 width: SizeConfig.blockSizeHorizontal! * 1),
