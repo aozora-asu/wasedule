@@ -223,7 +223,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                         weekday: weekDay,
                                         year: year,
                                         criteria: null,
-                                        memo: memo);
+                                        memo: memo,
+                                        subjectClassification: null,
+                                        credit: null);
                                     await myCourse.resisterDB();
                                     widget.setTimetableState(() {});
                                     Navigator.pop(context);
