@@ -202,13 +202,13 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
           shrinkWrap: true,
           ))
     );
-
   }
 
   Widget courseListChild(MyCourse courseData) {
     return GestureDetector(
         onTap: () async {
-          await showAttendMenuPanel(courseData);
+          int absentNum = await  MyCourse.getAttendStatusCount(courseData.id!, AttendStatus.absent);
+          await showAttendMenuPanel(courseData,absentNum);
         },
         child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -331,12 +331,6 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
         attendStatusIcon(AttendStatus.absent),
         Text("${absentNum.toString()} ", style: absentTextStyle),
       ]),
-      const Divider(height: 10),
-      Row(children: [
-        Text("最大欠席可能数 ${courseData.remainAbsent.toString()}回 / ", style: grey),
-        Text("残り欠席数(残機) ${(courseData.remainAbsent! - absentNum).toString()}回",
-            style: grey),
-      ])
     ]);
   }
 
@@ -369,19 +363,29 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
     );
   }
 
-  Future<void> showAttendMenuPanel(MyCourse courseData) async {
+  Future<void> showAttendMenuPanel(MyCourse courseData, int absentNum) async {
+    TextStyle grey = const TextStyle(color: Colors.grey);
     Widget header = Container(
       margin:const EdgeInsets.symmetric(horizontal: 5),
       padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
       decoration: dialogHeader(),
-      child: Row(children:[
-        Expanded(
-          child:Text(courseData.courseName,
-            overflow: TextOverflow.clip,
-            style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
-        GestureDetector(
-          onTap:()=> Navigator.pop(context),
-          child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
+      child: Column(
+        children:[
+          Row(children:[
+            Expanded(
+              child:Text(courseData.courseName,
+                overflow: TextOverflow.clip,
+                style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
+            GestureDetector(
+              onTap:()=> Navigator.pop(context),
+              child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
+          ]),
+          //const Divider(height: 10),
+          Row(children: [
+            Text("残り欠席数(残機) ${(courseData.remainAbsent! - absentNum).toString()}回 / ",
+                style: grey),
+            Text("欠席可能数 ${courseData.remainAbsent.toString()}回", style: grey),
+          ]),
       ])
     );
 

@@ -95,6 +95,13 @@ class SharepreferenceKeys {
   static const recentSyllabusQueryIsFullYear = SharepreferenceKeys._(
       key: "recentSyllabusQueryIsFullYear", defaultValue: false);
 
+  static const isShowTimelineSchedule = SharepreferenceKeys._(
+      key: "isShowTimelineSchedule", defaultValue: true);
+  static const isShowTimelineTask = SharepreferenceKeys._(
+      key: "isShowTimelineTask", defaultValue: true);
+  static const isShowTimelineCourse = SharepreferenceKeys._(
+      key: "isShowTimelineCourse", defaultValue: true);
+
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =
         SharepreferenceKeys._(key: "isMapDBEmpty_$id", defaultValue: true);
@@ -118,5 +125,8 @@ class SharepreferenceKeys {
         recentSyllabusQueryKeya,
         recentSyllabusQueryDepartmentValue,
         recentSyllabusQueryIsFullYear,
+        isShowTimelineSchedule,
+        isShowTimelineCourse,
+        isShowTimelineTask,
       ];
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_daily_view_page/todo_daily_view_page.dart';
-import 'package:rate_my_app/rate_my_app.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:nholiday_jp/nholiday_jp.dart';
 
@@ -223,9 +221,6 @@ class _CalendarState extends ConsumerState<Calendar> {
     return Scaffold(
         body: Container(
           decoration: BoxDecoration(
-              //   image: DecorationImage(
-              // image: calendarBackGroundImage(),
-              // fit: BoxFit.cover)
               color: BACKGROUND_COLOR),
           child: Scrollbar(
             controller: controller,
@@ -266,13 +261,12 @@ class _CalendarState extends ConsumerState<Calendar> {
                           displayDB();
                           ref.read(taskDataProvider).isRenewed = false;
                         }
-                        ref.read(calendarDataProvider).getData(snapshot.data!);
                         ref.read(taskDataProvider).getData(taskData);
+                        ref.read(calendarDataProvider).getData(snapshot.data!);
                         ref.read(calendarDataProvider).sortDataByDay();
                         ref.read(timeTableProvider).sortDataByWeekDay(
-                            ref.read(timeTableProvider).timeTableDataList);
-                        ref
-                            .read(timeTableProvider)
+                        ref.read(timeTableProvider).timeTableDataList);
+                        ref.read(timeTableProvider)
                             .initUniversityScheduleByDay(thisYear, [
                           if (currentQuarter != null) currentQuarter!,
                           if (currentSemester != null) currentSemester!,

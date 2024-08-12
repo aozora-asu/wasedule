@@ -35,16 +35,18 @@ class DrawerMenu extends ConsumerWidget {
               color: MAIN_COLOR,
             ),
             child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  'MENU',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
+                Row(children:[
+                  Text(
+                    '  MENU',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
+                ])
               ],
             ),
           ),

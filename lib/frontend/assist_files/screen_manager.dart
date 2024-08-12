@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/timeline_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/map_page/wase_map.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/schedule_broadcast_page.dart';
@@ -172,6 +173,7 @@ class _AppPageState extends ConsumerState<AppPage> {
         changeParentIndex: _onItemTapped,
         changeChildIndex: _onTabTapped,
       ),
+      endDrawer: TimelineDrawer(),
     );
   }
 

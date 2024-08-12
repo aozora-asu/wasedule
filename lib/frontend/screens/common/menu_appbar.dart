@@ -73,10 +73,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
               const Spacer(),
             ])),
         actions:[
-        IconButton(
-          icon:const Icon(Icons.schedule),
-          color:Colors.white,
-          onPressed: (){}),
+          timeLineButton(Colors.white, context),
           InkWell(
             child: const Icon(Icons.notifications_outlined,
                 color: Colors.white),
@@ -294,6 +291,16 @@ Widget popupMenuButton(color, context) {
     icon: Icon(Icons.menu_rounded, color: color),
     onPressed: () {
       Scaffold.of(context).openDrawer();
+    },
+  );
+}
+
+Widget timeLineButton(color, context) {
+  return IconButton(
+    color: FORGROUND_COLOR,
+    icon: Icon(Icons.schedule, color: color),
+    onPressed: () {
+      Scaffold.of(context).openEndDrawer();
     },
   );
 }
