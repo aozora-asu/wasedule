@@ -140,7 +140,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                   youbi: widget.target.weekday,
                   jigen: widget.target.period,
                   gakubu: Department.byValue(SharepreferenceHandler()
-                      .getValue(SharepreferenceKeys.userDepartment))))
+                      .getValue(SharepreferenceKeys.userDepartment)),
+                  setTimetableState: widget.setTimetableState))
         ]),
         header
       ]);

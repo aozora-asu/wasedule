@@ -18,9 +18,11 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
   Lesson? jigen;
   Department? gakubu;
   int radiusType;
+  late StateSetter setTimetableState;
 
   SyllabusSearchDialog({
     required this.radiusType,
+    required this.setTimetableState,
     this.gakki,
     this.youbi,
     this.jigen,
@@ -484,7 +486,8 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             const Icon(Icons.search, color: Colors.grey),
             GestureDetector(
                 onTap: () async {
-                  await showConfirmationDialog(context, result);
+                  await showAddCourseConfirmationDialog(context, result);
+                  widget.setTimetableState(() {});
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -508,15 +511,17 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       return Scaffold(
           backgroundColor: FORGROUND_COLOR,
           appBar: CustomAppBar(backButton: true),
-          body:
-              SyllabusDescriptonView(showHeader: true, syllabusQuery: result));
+          body: SyllabusDescriptonView(
+                showHeader: true,
+                syllabusQuery: result,
+                setTimetableState: widget.setTimetableState));
     }));
   }
 }
 
-Future<void> showConfirmationDialog(
+Future<void> showAddCourseConfirmationDialog(
     BuildContext context, SyllabusQueryResult courseData) async {
-  showDialog(
+  await showDialog(
     context: context,
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
@@ -524,7 +529,7 @@ Future<void> showConfirmationDialog(
         content: Text('" ' + courseData.courseName + ' "を時間割へ追加してもよろしいですか？'),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async{
               Navigator.of(context).pop();
             },
             child: const Text(
@@ -533,7 +538,8 @@ Future<void> showConfirmationDialog(
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async{
+              await courseData.resisterMyCourseDB();
               Navigator.of(context).pop();
               showDisclaimerDialog(context);
             },
@@ -546,7 +552,7 @@ Future<void> showConfirmationDialog(
 }
 
 Future<void> showDisclaimerDialog(BuildContext context) async {
-  showDialog(
+  await showDialog(
     context: context,
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
