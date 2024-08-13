@@ -24,15 +24,16 @@ import "../DB/handler/task_db_handler.dart";
 
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
-import "../DB/handler/my_grade.dart";
+import "../DB/handler/my_grade_db.dart";
 import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
 
 void getMyGrade(String str, List<MajorClass> list) async {
+  if (list.isEmpty) return;
   final document = html_parser.parse(str);
   final trElements = document.querySelectorAll(".operationboxf");
 
   Map<String, dynamic> result = {};
-  Map<String, String> tempMap = {};
+  Map<String, dynamic> tempMap = {};
   Map<int, String> path = {};
   String text;
 
@@ -57,7 +58,7 @@ void getMyGrade(String str, List<MajorClass> list) async {
         "courseName": zenkaku2hankaku(tdElements[0].text.trim()),
         "year": tdElements[1].text.trim(),
         "term": tdElements[2].text.trim(),
-        "credit": tdElements[3].text.trim(),
+        "credit": int.parse(tdElements[3].text.trim()),
         "grade": tdElements[4].text.trim(),
         "gradePoint": tdElements[5].text.trim()
       };
@@ -118,10 +119,10 @@ void getMyGrade(String str, List<MajorClass> list) async {
   for (var majorClass in list) {
     await MyGradeDB().insertMajorClass(majorClass);
   }
-  List<MajorClass> data = await MyGradeDB.getAllMajorClasses();
-  for (var datum in data) {
-    print(datum.toDisplay());
-  }
+  // List<MajorClass> data = await MyGradeDB.getAllMajorClasses();
+  // for (var datum in data) {
+  //   print(datum.toDisplay());
+  // }
 }
 
 List<MajorClass> getMyCredit(String str) {

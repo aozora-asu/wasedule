@@ -14,7 +14,7 @@ class MyGradeDB {
   static Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), dbName);
     return await openDatabase(path,
-        version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   static Future<void> _createDB(Database db, int version) async {
@@ -60,7 +60,7 @@ class MyGradeDB {
     courseName TEXT,
     year TEXT,
     term TEXT,
-    credit TEXT,
+    credit INTEGER,
     grade TEXT,
     gradePoint TEXT,
     FOREIGN KEY(minorClassId) REFERENCES $minorClassTable(id) ON DELETE CASCADE,
@@ -86,7 +86,7 @@ class MyGradeDB {
     } catch (e) {
       // エラーが UNIQUE constraint failed の場合のみ無視する
       if (e.toString().contains("UNIQUE constraint failed")) {
-        majorClass.id = await db.update(
+        await db.update(
           majorClassTable,
           {
             'text': majorClass.text,
@@ -97,6 +97,17 @@ class MyGradeDB {
           where: 'text = ?',
           whereArgs: [majorClass.text],
         );
+
+        // 更新後のidを取得
+        List<Map<String, dynamic>> result = await db.query(
+          majorClassTable,
+          where: 'text = ?',
+          whereArgs: [majorClass.text],
+        );
+
+        if (result.isNotEmpty) {
+          majorClass.id = result.first['id'];
+        }
       }
     }
 
@@ -112,7 +123,7 @@ class MyGradeDB {
       } catch (e) {
         // エラーが UNIQUE constraint failed の場合のみ無視する
         if (e.toString().contains("UNIQUE constraint failed")) {
-          middleClass.id = await db.update(
+          await db.update(
             middleClassTable,
             {
               'majorClassId': majorClass.id,
@@ -124,6 +135,61 @@ class MyGradeDB {
             where: 'text = ?',
             whereArgs: [middleClass.text],
           );
+
+          // 更新後のidを取得
+          List<Map<String, dynamic>> result = await db.query(
+            middleClassTable,
+            where: 'text = ?',
+            whereArgs: [middleClass.text],
+          );
+
+          if (result.isNotEmpty) {
+            middleClass.id = result.first['id'];
+          }
+        }
+      }
+      for (MyGrade myGrade in middleClass.myGrade) {
+        try {
+          myGrade.id = await db.insert(myGradeTable, {
+            'middleClassId': middleClass.id,
+            'minorClassId': null,
+            'courseName': myGrade.courseName,
+            'year': myGrade.year,
+            'term': myGrade.term,
+            'credit': myGrade.credit,
+            'grade': myGrade.grade,
+            'gradePoint': myGrade.gradePoint,
+          });
+        } catch (e) {
+          // エラーが UNIQUE constraint failed の場合のみ無視する
+          if (e.toString().contains("UNIQUE constraint failed")) {
+            await db.update(
+              myGradeTable,
+              {
+                'middleClassId': middleClass.id,
+                'minorClassId': null,
+                'courseName': myGrade.courseName,
+                'year': myGrade.year,
+                'term': myGrade.term,
+                'credit': myGrade.credit,
+                'grade': myGrade.grade,
+                'gradePoint': myGrade.gradePoint,
+              },
+              where: 'year = ? AND courseName = ? ',
+              whereArgs: [myGrade.year, myGrade.courseName],
+            );
+
+            // 更新後のidを取得
+            List<Map<String, dynamic>> result = await db.query(
+              myGradeTable,
+              where: 'year = ? AND courseName = ?',
+              whereArgs: [myGrade.year, myGrade.courseName],
+            );
+
+            if (result.isNotEmpty) {
+              myGrade.id = result.first['id'];
+            }
+          }
         }
       }
 
@@ -139,7 +205,7 @@ class MyGradeDB {
         } catch (e) {
           // エラーが UNIQUE constraint failed の場合のみ無視する
           if (e.toString().contains("UNIQUE constraint failed")) {
-            minorClass.id = await db.update(
+            await db.update(
               minorClassTable,
               {
                 'middleClassId': middleClass.id,
@@ -151,6 +217,17 @@ class MyGradeDB {
               where: 'text = ?',
               whereArgs: [minorClass.text],
             );
+
+            // 更新後のidを取得
+            List<Map<String, dynamic>> result = await db.query(
+              minorClassTable,
+              where: 'text = ?',
+              whereArgs: [minorClass.text],
+            );
+
+            if (result.isNotEmpty) {
+              minorClass.id = result.first['id'];
+            }
           }
         }
 
@@ -169,7 +246,7 @@ class MyGradeDB {
           } catch (e) {
             // エラーが UNIQUE constraint failed の場合のみ無視する
             if (e.toString().contains("UNIQUE constraint failed")) {
-              myGrade.id = await db.update(
+              await db.update(
                 myGradeTable,
                 {
                   'middleClassId': middleClass.id,
@@ -184,39 +261,17 @@ class MyGradeDB {
                 where: 'year = ? AND courseName = ? ',
                 whereArgs: [myGrade.year, myGrade.courseName],
               );
-            }
-          }
-        }
-        for (MyGrade myGrade in middleClass.myGrade) {
-          try {
-            myGrade.id = await db.insert(myGradeTable, {
-              'middleClassId': middleClass.id,
-              'minorClassId': minorClass.id,
-              'courseName': myGrade.courseName,
-              'year': myGrade.year,
-              'term': myGrade.term,
-              'credit': myGrade.credit,
-              'grade': myGrade.grade,
-              'gradePoint': myGrade.gradePoint,
-            });
-          } catch (e) {
-            // エラーが UNIQUE constraint failed の場合のみ無視する
-            if (e.toString().contains("UNIQUE constraint failed")) {
-              myGrade.id = await db.update(
+
+              // 更新後のidを取得
+              List<Map<String, dynamic>> result = await db.query(
                 myGradeTable,
-                {
-                  'middleClassId': middleClass.id,
-                  'minorClassId': minorClass.id,
-                  'courseName': myGrade.courseName,
-                  'year': myGrade.year,
-                  'term': myGrade.term,
-                  'credit': myGrade.credit,
-                  'grade': myGrade.grade,
-                  'gradePoint': myGrade.gradePoint,
-                },
-                where: 'year = ? AND courseName = ? ',
+                where: 'year = ? AND courseName = ?',
                 whereArgs: [myGrade.year, myGrade.courseName],
               );
+
+              if (result.isNotEmpty) {
+                myGrade.id = result.first['id'];
+              }
             }
           }
         }
@@ -440,7 +495,7 @@ class MyGrade {
   String courseName;
   String year;
   String term;
-  String credit;
+  int credit;
   String grade;
   String? gradePoint;
 
