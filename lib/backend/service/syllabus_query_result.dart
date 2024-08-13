@@ -25,7 +25,7 @@ class SyllabusQueryResult {
   final String? teacher;
   final String? criteria;
   final String? subjectClassification;
-  final String? credit;
+  final int? credit;
   final String? department;
 
   final String? remark;
@@ -62,11 +62,11 @@ class SyllabusQueryResult {
       "classRoom": classRoom,
       "year": year,
       "syllabusID": syllabusID,
-      "teacher": teacher ?? "",
-      "criteria": criteria ?? "",
-      "subjectClassification": subjectClassification ?? "",
-      "credit": credit ?? "",
-      "department": department ?? ""
+      "teacher": teacher,
+      "criteria": criteria,
+      "subjectClassification": subjectClassification,
+      "credit": credit,
+      "department": department
     };
   }
 
@@ -77,6 +77,35 @@ class SyllabusQueryResult {
       return input;
     } else {
       return matches.map((e) => e.group(1)).toList().join("\n").trimRight();
+    }
+  }
+
+  Future<void> resisterMyCourseDB() async {
+    List<Map<String, dynamic>> semesterAndWeekdayAndPerid =
+        _extractDayAndPeriod(semesterAndWeekdayAndPeriod);
+    MyCourse myCourse;
+    for (var time in semesterAndWeekdayAndPerid) {
+      myCourse = MyCourse(
+          attendCount: null,
+          classRoom: classRoom,
+          color: "#F79428",
+          courseName: courseName,
+          memo: null,
+          pageID: syllabusID,
+          period:
+              time["period"] != null ? Lesson.atPeriod(time["period"]) : null,
+          semester: Term.byText(semesterAndWeekdayAndPeriod),
+          syllabusID: syllabusID,
+          weekday: time["weekday"] != null
+              ? DayOfWeek.weekAt(time["weekday"])
+              : null,
+          year: year,
+          criteria: criteria,
+          remainAbsent: null,
+          classNum: null,
+          subjectClassification: subjectClassification,
+          credit: credit);
+      myCourse.resisterDB();
     }
   }
 }
@@ -272,7 +301,9 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
               ? DayOfWeek.weekAt(time["weekday"])
               : null,
           year: syllabusQueryResult.year,
-          criteria: null);
+          criteria: syllabusQueryResult.criteria,
+          subjectClassification: syllabusQueryResult.subjectClassification,
+          credit: syllabusQueryResult.credit);
       myCourseList.add(myCourse);
     }
   }

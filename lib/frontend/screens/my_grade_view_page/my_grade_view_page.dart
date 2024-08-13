@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/backend/service/share_from_web.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:path/path.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -29,11 +31,14 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
       "https://my.waseda.jp/portal/view/portal-top-view?communityId=1&communityPageId=9";
   static const String myGradeUrl =
       "https://gradereport-ty.waseda.jp/kyomu/epb2051.htm";
+  static const String myCreditUrl =
+      "https://gradereport-ty.waseda.jp/kyomu/epb2052.htm";
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     String javascriptCode;
+    List<MajorClass> majorClassList = [];
 
     return Scaffold(
         body: Column(children: [
@@ -64,6 +69,14 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
                         .loadString('lib/backend/service/js/get_myGrade.js');
                     await webViewController.evaluateJavascript(
                         source: javascriptCode);
+
+                    getMyGrade(
+                        await controller.getHtml() ?? "", majorClassList);
+                  case myCreditUrl:
+                    majorClassList =
+                        getMyCredit(await controller.getHtml() ?? "");
+                    webViewController.goBack();
+
                   // case moodleLoginUrl:
                   //   javascriptCode = await rootBundle.loadString(
                   //       'lib/frontend/screens/moodle_view_page/auto_login_checkbox.js');
@@ -72,9 +85,7 @@ class _MyWasedaViewPageState extends ConsumerState<MyGradeViewPage> {
                 }
               },
               onConsoleMessage: (controller, consoleMessage) async {
-                if (consoleMessage.message != "") {
-                  getMyGrade(consoleMessage.message);
-                }
+                if (consoleMessage.message != "") {}
               })),
       const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
       Container(

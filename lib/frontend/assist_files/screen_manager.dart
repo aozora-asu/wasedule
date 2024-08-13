@@ -71,7 +71,6 @@ class _AppPageState extends ConsumerState<AppPage> {
     pageController.jumpToPage(subIndex);
   }
 
-
   void setPageConfig() {
     if (_currentIndex == 0) {
       isExtendBody = false;
@@ -182,7 +181,11 @@ class _AppPageState extends ConsumerState<AppPage> {
       TimeTablePage(moveToMoodlePage: _onItemTapped),
       SyllabusSearchPage(),
       CreditStatsPage(
-        moveToMyWaseda: (){_onItemTapped(4);_onTabTapped(2);},),
+        moveToMyWaseda: () {
+          _onItemTapped(4);
+          _onTabTapped(2);
+        },
+      ),
       AttendStatsPage(),
     ];
   }

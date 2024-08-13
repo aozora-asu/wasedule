@@ -428,19 +428,19 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
 
   Widget resultListChild(SyllabusQueryResult result) {
     int boxRadiusType = 2;
-    String credits = result.credit ?? "0";
+    int credits = result.credit ?? 0;
     Color creditsIndiatorColor;
 
     switch (credits) {
-      case "1":
+      case 1:
         creditsIndiatorColor = Colors.lightBlue;
-      case "2":
+      case 2:
         creditsIndiatorColor = Colors.orange;
-      case "3":
+      case 3:
         creditsIndiatorColor = Colors.deepOrange;
-      case "4":
+      case 4:
         creditsIndiatorColor = Colors.red;
-      case "8":
+      case 8:
         creditsIndiatorColor = Colors.deepPurple;
       default:
         creditsIndiatorColor = Colors.yellow;
@@ -466,7 +466,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
               height: 25,
               width: 25,
               child: Center(
-                  child: Text(credits,
+                  child: Text(credits.toString(),
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

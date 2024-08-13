@@ -43,6 +43,8 @@ class MyCourse {
   String? criteria;
   int? classNum;
   int? remainAbsent;
+  int? credit;
+  String? subjectClassification;
 
   MyCourse(
       {this.id,
@@ -59,7 +61,9 @@ class MyCourse {
       required this.year,
       required this.criteria,
       required this.remainAbsent,
-      required this.classNum});
+      required this.classNum,
+      required this.subjectClassification,
+      required this.credit});
   Map<String, dynamic> _toMap() {
     if (semester != null) {
       if (semester!.value.contains("quarter")) {
@@ -87,12 +91,13 @@ class MyCourse {
       "classNum": classNum,
       "year": year,
       "pageID": pageID,
-      "syllabusID": syllabusID ?? "",
-      "criteria": criteria
+      "syllabusID": syllabusID,
+      "criteria": criteria,
+      "credit": credit,
+      "subjectClassification": subjectClassification
     };
   }
 
-  late Database _database;
   static const String databaseName = "my_course";
   static const String myCourseTable = "my_course";
   static const String myCourseTableNew = "my_course_new";
@@ -101,7 +106,7 @@ class MyCourse {
   static Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), '$databaseName.db');
     return await openDatabase(path,
-        version: 2,
+        version: 3,
         onCreate: _createMyCourseDatabase,
         onUpgrade: _upgradeMyCourseDatabase);
   }
@@ -124,6 +129,8 @@ class MyCourse {
         pageID TEXT,
         syllabusID TEXT,
         criteria TEXT,
+        credit INTEGER,
+        subjectClassification TEXT,
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
@@ -157,41 +164,15 @@ class MyCourse {
         pageID TEXT,
         syllabusID TEXT,
         criteria TEXT,
+        credit INTEGER,
+        subjectClassification TEXT,
         CONSTRAINT unique_course UNIQUE (year, period, weekday, semester,syllabusID)
       )
     ''');
       // 既存のデータを新しいテーブルに移行
       var myCourseList = await db.query(myCourseTable);
-      MyCourse myCourseClass;
-
       for (var myCourse in myCourseList) {
-        myCourseClass = MyCourse(
-          classNum: null,
-          attendCount: null,
-          remainAbsent: null,
-          id: null,
-          classRoom: myCourse["classRoom"] as String,
-          color: myCourse["color"] as String,
-          courseName: myCourse["courseName"] as String,
-          pageID: myCourse["pageID"] as String,
-          period: Lesson.atPeriod(myCourse["period"] as int),
-          semester: [
-            Term.springQuarter,
-            Term.summerQuarter,
-            Term.springSemester,
-            Term.fallQuarter,
-            Term.winterQuarter,
-            Term.fallSemester,
-            Term.fullYear,
-            Term.others
-          ].firstWhere((e) => e.value == myCourse["semester"]),
-          syllabusID: myCourse["syllabusID"] as String,
-          weekday: DayOfWeek.weekAt(myCourse["weekday"] as int),
-          year: myCourse["year"] as int,
-          criteria: myCourse["criteria"] as String?,
-          memo: myCourse["memo"] as String?,
-        );
-        await db.insert(myCourseTableNew, myCourseClass._toMap());
+        await db.insert(myCourseTableNew, myCourse);
       }
 
       // 既存のテーブルを削除
@@ -212,11 +193,23 @@ class MyCourse {
       )
     ''');
     }
+    if (newVersion == 3) {
+      await db.execute('''
+      ALTER TABLE $myCourseTable
+      ADD COLUMN credit INTEGER
+    ''');
+
+      await db.execute('''
+      ALTER TABLE $myCourseTable 
+      ADD COLUMN subjectClassification TEXT
+    ''');
+    }
   }
 
   Future<void> resisterDB() async {
     final Database db = await _initDB();
     var map = _toMap();
+
     try {
       await db.insert(myCourseTable, map);
     } catch (e) {
@@ -340,24 +333,25 @@ class MyCourse {
     } else {
       return myCourseList
           .map((e) => MyCourse(
-                id: e["id"],
-                attendCount: e["attendCount"],
-                classRoom: e["classRoom"],
-                color: e["color"],
-                courseName: e["courseName"],
-                memo: e["memo"],
-                pageID: e["pageID"],
-                period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
-                semester:
-                    e["semester"] == null ? null : Term.byValue(e["semester"]),
-                syllabusID: e["syllabusID"],
-                weekday:
-                    e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
-                year: e["year"],
-                criteria: e["criteria"],
-                remainAbsent: e["remainAbsent"],
-                classNum: e["classNum"],
-              ))
+              id: e["id"],
+              attendCount: e["attendCount"],
+              classRoom: e["classRoom"],
+              color: e["color"],
+              courseName: e["courseName"],
+              memo: e["memo"],
+              pageID: e["pageID"],
+              period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
+              semester:
+                  e["semester"] == null ? null : Term.byValue(e["semester"]),
+              syllabusID: e["syllabusID"],
+              weekday:
+                  e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
+              year: e["year"],
+              criteria: e["criteria"],
+              remainAbsent: e["remainAbsent"],
+              classNum: e["classNum"],
+              subjectClassification: e["subjectClassification"],
+              credit: e["credit"]))
           .toList();
     }
   }
@@ -377,24 +371,24 @@ class MyCourse {
 
     return courses
         .map((e) => MyCourse(
-              id: e["id"],
-              attendCount: e["attendCount"],
-              classRoom: e["classRoom"],
-              color: e["color"],
-              courseName: e["courseName"],
-              memo: e["memo"],
-              pageID: e["pageID"],
-              period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
-              semester:
-                  e["semester"] == null ? null : Term.byValue(e["semester"]),
-              syllabusID: e["syllabusID"],
-              weekday:
-                  e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
-              year: e["year"],
-              criteria: e["criteria"],
-              remainAbsent: e["remainAbsent"],
-              classNum: e["classNum"],
-            ))
+            id: e["id"],
+            attendCount: e["attendCount"],
+            classRoom: e["classRoom"],
+            color: e["color"],
+            courseName: e["courseName"],
+            memo: e["memo"],
+            pageID: e["pageID"],
+            period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
+            semester:
+                e["semester"] == null ? null : Term.byValue(e["semester"]),
+            syllabusID: e["syllabusID"],
+            weekday: e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
+            year: e["year"],
+            criteria: e["criteria"],
+            remainAbsent: e["remainAbsent"],
+            classNum: e["classNum"],
+            subjectClassification: e["subjectClassification"],
+            credit: e["credit"]))
         .toList();
   }
 
@@ -437,7 +431,8 @@ class MyCourse {
             criteria: courses.first["criteria"],
             remainAbsent: courses.first["remainAbsent"],
             classNum: courses.first["classNum"],
-          );
+            subjectClassification: courses.first["subjectClassification"],
+            credit: courses.first["credit"]);
   }
 
   static Future<bool> hasClass(int weekday, int period) async {
@@ -477,24 +472,24 @@ class MyCourse {
 
     return courses
         .map((e) => MyCourse(
-              id: e["id"],
-              attendCount: e["attendCount"],
-              classRoom: e["classRoom"],
-              color: e["color"],
-              courseName: e["courseName"],
-              memo: e["memo"],
-              pageID: e["pageID"],
-              period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
-              semester:
-                  e["semester"] == null ? null : Term.byValue(e["semester"]),
-              syllabusID: e["syllabusID"],
-              weekday:
-                  e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
-              year: e["year"],
-              criteria: e["criteria"],
-              remainAbsent: e["remainAbsent"],
-              classNum: e["classNum"],
-            ))
+            id: e["id"],
+            attendCount: e["attendCount"],
+            classRoom: e["classRoom"],
+            color: e["color"],
+            courseName: e["courseName"],
+            memo: e["memo"],
+            pageID: e["pageID"],
+            period: e["period"] == -1 ? null : Lesson.atPeriod(e["period"]),
+            semester:
+                e["semester"] == null ? null : Term.byValue(e["semester"]),
+            syllabusID: e["syllabusID"],
+            weekday: e["weekday"] == -1 ? null : DayOfWeek.weekAt(e["weekday"]),
+            year: e["year"],
+            criteria: e["criteria"],
+            remainAbsent: e["remainAbsent"],
+            classNum: e["classNum"],
+            subjectClassification: e["subjectClassification"],
+            credit: e["credit"]))
         .toList();
   }
 

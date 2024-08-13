@@ -27,14 +27,14 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   late int viewMode;
-  late Map<String, dynamic> target;
+  late MyCourse target;
 
   @override
   void initState() {
     super.initState();
-    target = widget.target as Map<String, dynamic>;
-    memoController.text = target["memo"] ?? "";
-    classNameController.text = target["courseName"] ?? "";
+    target = widget.target;
+    memoController.text = target.memo ?? "";
+    classNameController.text = target.courseName;
     viewMode = 0;
   }
 
@@ -78,7 +78,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     );
     int id;
 
-    Widget _switchViewMode(dividerModel, target) {
+    Widget _switchViewMode(dividerModel, MyCourse target) {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
@@ -89,14 +89,14 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
             child: SyllabusDescriptonView(
                 showHeader: false,
                 syllabusQuery: SyllabusQueryResult(
-                    courseName: target["courseName"],
-                    classRoom: target["classRoom"],
-                    year: target["year"],
-                    syllabusID: target["syllabusID"],
+                    courseName: target.courseName,
+                    classRoom: target.classRoom,
+                    year: target.year,
+                    syllabusID: target.syllabusID,
                     semesterAndWeekdayAndPeriod: "ここに年度曜日時限のデータを加工して受け渡し",
                     teacher: null,
                     credit: null,
-                    criteria: target["criteria"],
+                    criteria: target.criteria,
                     department: null,
                     subjectClassification: null,
                     abstract: null,
@@ -181,8 +181,8 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                     ]))));
   }
 
-  Widget summaryContent(dividerModel, target) {
-    String text = Term.byValue(target["semester"])?.fullText ?? "";
+  Widget summaryContent(dividerModel, MyCourse target) {
+    String text = target.semester?.fullText ?? "";
 
     return Column(children: [
       dividerModel,
@@ -196,7 +196,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       ]),
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-        Text("${target["year"]} $text",
+        Text("${target.year} $text",
             style: const TextStyle(fontSize: 16, color: Colors.grey)),
         const Spacer(),
       ]),
@@ -207,7 +207,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
         textFieldModel("授業メモを入力…", memoController, FontWeight.normal, 20.0,
             (value) async {
-          int id = target["id"];
+          int id = target.id!;
           //＠ここにメモのアップデート関数！！！
           await MyCourse.updateMemo(id, value);
           widget.setTimetableState(() {});

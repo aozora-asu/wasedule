@@ -249,7 +249,7 @@ class SyllabusRequestQuery {
     String? _subjectClassification;
     String? _department;
     late String _classRoom;
-    String? _credit;
+    int? _credit;
     String? _teacher;
     String? _campus;
     String? _allocatedYear;
@@ -274,7 +274,9 @@ class SyllabusRequestQuery {
           case "使用教室":
             _classRoom = zenkaku2hankaku(th.nextElementSibling!.text);
           case "単位数":
-            _credit = zenkaku2hankaku(th.nextElementSibling!.text);
+            _credit =
+                int.tryParse(zenkaku2hankaku(th.nextElementSibling!.text));
+
           case "担当教員":
             _teacher = zenkaku2hankaku(th.nextElementSibling!.text);
           case "学期曜日時限":
