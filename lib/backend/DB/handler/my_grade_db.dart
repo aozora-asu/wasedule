@@ -348,7 +348,7 @@ class MyGradeDB {
         courseName: myGradeMap['courseName'],
         year: myGradeMap['year'],
         term: myGradeMap['term'],
-        credit: myGradeMap['credit'],
+        credit: int.parse(myGradeMap['credit']),
         grade: myGradeMap['grade'],
         gradePoint: myGradeMap['gradePoint'],
       );
@@ -370,7 +370,7 @@ class MyGradeDB {
         courseName: myGradeMap['courseName'],
         year: myGradeMap['year'],
         term: myGradeMap['term'],
-        credit: myGradeMap['credit'],
+        credit: int.parse(myGradeMap['credit']),
         grade: myGradeMap['grade'],
         gradePoint: myGradeMap['gradePoint'],
       );
