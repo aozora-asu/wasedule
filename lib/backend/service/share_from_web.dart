@@ -119,10 +119,10 @@ void getMyGrade(String str, List<MajorClass> list) async {
   for (var majorClass in list) {
     await MyGradeDB().insertMajorClass(majorClass);
   }
-  // List<MajorClass> data = await MyGradeDB.getAllMajorClasses();
-  // for (var datum in data) {
-  //   print(datum.toDisplay());
-  // }
+  List<MajorClass> data = await MyGradeDB.getAllMajorClasses();
+  for (var datum in data) {
+    print(datum.toDisplay());
+  }
 }
 
 List<MajorClass> getMyCredit(String str) {
