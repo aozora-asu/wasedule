@@ -180,8 +180,12 @@ class _AppPageState extends ConsumerState<AppPage> {
     return [
       TimeTablePage(moveToMoodlePage: _onItemTapped),
       SyllabusSearchPage(),
-      // CreditStatsPage(
-      //   moveToMyWaseda: (){_onItemTapped(4);_onTabTapped(2);},),
+      CreditStatsPage(
+        moveToMyWaseda: () {
+          _onItemTapped(4);
+          _onTabTapped(2);
+        },
+      ),
       AttendStatsPage(),
     ];
   }
