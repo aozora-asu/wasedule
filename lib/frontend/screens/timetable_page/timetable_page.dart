@@ -53,10 +53,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
       String? userDepartment =
           SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
 
-      if (userDepartment == null) {
+      if (userDepartment == null && mounted) {
         await showUserDepartmentSettingDialog(context);
-      }
-      if (mounted) {
+      }else if (mounted) {
         await showAttendanceDialog(context, now, ref);
       }
     });
