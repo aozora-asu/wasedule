@@ -13,9 +13,12 @@ late InAppWebViewController wineWebViewController;
 class SyllabusDescriptonView extends StatefulWidget {
   SyllabusQueryResult syllabusQuery;
   bool showHeader;
+  StateSetter? setTimetableState;
 
   SyllabusDescriptonView(
-      {required this.syllabusQuery, required this.showHeader});
+      {required this.syllabusQuery,
+       required this.showHeader,
+       this.setTimetableState});
 
   @override
   _SyllabusDescriptionViewState createState() =>
@@ -183,7 +186,10 @@ class _SyllabusDescriptionViewState extends State<SyllabusDescriptonView> {
 
   Widget addCourseToTimetableButton() {
     return buttonModel(() async {
-      await showConfirmationDialog(context, widget.syllabusQuery);
+      await showAddCourseConfirmationDialog(context, widget.syllabusQuery);
+      if(widget.setTimetableState != null){
+        widget.setTimetableState!(() {});
+      }
     }, BLUEGREY, "追加", horizontalPadding: 30);
   }
 

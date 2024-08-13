@@ -595,7 +595,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
                 const Icon(Icons.search, color: Colors.grey),
                 GestureDetector(
                     onTap: () async {
-                      await showConfirmationDialog(context, result);
+                      await showAddCourseConfirmationDialog(context, result);
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),

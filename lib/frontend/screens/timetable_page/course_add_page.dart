@@ -88,7 +88,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                             gakki: widget.semester,
                                             jigen: widget.period,
                                             youbi: widget.weekDay,
-                                            gakubu: null),
+                                            gakubu: null,
+                                            setTimetableState: widget.setTimetableState
+                                            ),
                                         const SizedBox(height: 2),
                                         courseInfo(),
                                       ]))))))));
