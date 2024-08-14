@@ -13,7 +13,7 @@ class CreditStatsPage extends StatefulWidget {
 }
 
 class _CreditStatsPageState extends State<CreditStatsPage> {
-  Map<String?, List<MajorClass>> majorClassificationGroupMap = {};
+  List<MajorClass> majorClassificationGroupList = [];
   late List<String> yearList;
   late String selectedYear;
   late List<String> termList;
@@ -66,8 +66,9 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
       }
     }
 
-    double roundedNumber =
-        double.parse(((result / data.length) * 100).round().toString()) / 100;
+    double roundedNumber = data.isNotEmpty ?
+        double.parse(((result / data.length) * 100).round().toString()) / 100
+        : 0;
     return roundedNumber;
   }
 
@@ -196,7 +197,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         future: MyGradeDB.getAllMajorClasses(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != []) {
-            //sortDataByMajorClassification(snapshot.data!);
+            majorClassificationGroupList = snapshot.data!;
             generateOptions(snapshot.data!);
             return dataListByMajorClassification(snapshot.data!);
           } else {
@@ -230,13 +231,13 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         itemBuilder: (context, index) {
           return Column(children: [
             const SizedBox(height: 10),
-            Text(majorClassificationGroupMap.keys.elementAt(index) ?? "【大分類なし】",
+            Text(majorClassificationGroupList.elementAt(index).text ?? "【大分類なし】",
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             dataListByMiddleClassification(data[index])
           ]);
         },
-        itemCount: majorClassificationGroupMap.length,
+        itemCount: majorClassificationGroupList.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       )
