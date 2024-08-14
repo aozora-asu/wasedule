@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -231,28 +232,27 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         itemBuilder: (context, index) {
           return Column(children: [
             const SizedBox(height: 10),
-            Text(majorClassificationGroupList.elementAt(index).text ?? "【大分類なし】",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            dataListByMiddleClassification(data[index])
+            Text(data.elementAt(index).text ?? "【大分類なし】",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            dataListByMiddleClassification(data[index].middleClass)
           ]);
         },
-        itemCount: majorClassificationGroupList.length,
+        itemCount: data.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       )
     ]);
   }
 
-  Widget dataListByMiddleClassification(MajorClass majorClass) {
+  Widget dataListByMiddleClassification(List<MiddleClass> data) {
     TextStyle smallGreyFont = const TextStyle(
         fontSize: 10, fontWeight: FontWeight.normal, color: Colors.grey);
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        int creditSum = majorClass.middleClass[index].acquiredCredit;
+        int creditSum = data[index].acquiredCredit;
         double gradeAverage =
-            calculateGradeAverage(majorClass.middleClass[index].myGrade);
+            calculateGradeAverage(data[index].myGrade);
 
         return Column(children: [
           const SizedBox(height: 10),
@@ -260,8 +260,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
             Text("単位", style: smallGreyFont),
             Expanded(
                 child: Text(
-                    majorClass.middleClass[index].text != ""
-                        ? majorClass.middleClass[index].text
+                    data[index].text != ""
+                        ? data[index].text
                         : "【中分類なし】",
                     overflow: TextOverflow.clip,
                     textAlign: TextAlign.center,
@@ -273,46 +273,48 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           ]),
           const SizedBox(height: 3),
           Divider(height: 1, color: FORGROUND_COLOR),
-          dataListByMinorClassification(majorClass.middleClass)
+          dataListByMinorClassification(data[index].minorClass),
+          gradeDataList(data[index].myGrade)
         ]);
       },
-      itemCount: majorClass.middleClass.length,
+      itemCount: data.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
   }
 
   Widget dataListByMinorClassification(
-      List<MiddleClass> middleClassificationGroupList) {
+      List<MinorClass> minorClassificationGroupList) {
     // Map<String?, List<MiddleClass>> data =
     //     sortDataByMinorClassification(middleClassificationGroupList);
 
     return ListView.builder(
       itemBuilder: (context, index) {
+
         return Column(children: [
-          if (middleClassificationGroupList.elementAt(index).text != "")
+          if (minorClassificationGroupList.elementAt(index).text != "")
             const SizedBox(height: 10),
           Row(children: [
-            if (middleClassificationGroupList.elementAt(index).text != "")
-              Text(middleClassificationGroupList.elementAt(index).text,
+            if (minorClassificationGroupList.elementAt(index).text != "")
+              Text(minorClassificationGroupList.elementAt(index).text,
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
                       color: Colors.grey)),
           ]),
           gradeDataList(
-              middleClassificationGroupList.elementAt(index).minorClass)
-        ]);
+              minorClassificationGroupList.elementAt(index).myGrade),
+          ]);
       },
-      itemCount: middleClassificationGroupList.length,
+      itemCount: minorClassificationGroupList.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
   }
 
-  Widget gradeDataList(List<MinorClass> minorClassificationGroupList) {
+  Widget gradeDataList(List<MyGrade> minorClassificationGroupList) {
     List<MyGrade> data =
-        minorClassificationGroupList.expand((e) => e.myGrade).toList();
+        minorClassificationGroupList; //.expand((e) => e.myGrade).toList();
 
     return ListView.builder(
       itemBuilder: (context, index) {
