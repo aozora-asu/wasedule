@@ -187,12 +187,12 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     List data =
         ref.read(timeTableProvider).targetDateClasses(widget.targetDate);
     if (data.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
           height: 60,
           child: Center(
               child: Text(
-            "この日の授業はありません。",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            "${DateFormat("M月d日").format(widget.targetDate)} の授業はありません。",
+            style:const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           )));
     } else {
       return FutureBuilder(

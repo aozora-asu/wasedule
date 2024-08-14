@@ -100,13 +100,15 @@ class _TimelineState extends ConsumerState<Timeline>{
   @override 
   Widget build(BuildContext context){
     return Expanded(child:
-      Stack(children:[
-        ListView(
-          padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
-          children:[
-            timelineBuilder(),
-        ]),
+      Column(children:[
         checkBoxRow(),
+        Expanded(child:
+          ListView(
+            padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
+            children:[
+              timelineBuilder(),
+          ]),
+        )
       ])
     );
   }
@@ -319,8 +321,10 @@ class DaylyData{
         DateTime timeStart = target!.period!.start;
         DateTime dateTimeStart = DateTime(now.year,now.month,now.day,
           timeStart.hour,timeStart.minute,timeStart.second);
+        DateTime timeEnd = target.period!.end;
 
-        result.add({dateTimeStart:timetableListChild(dateTimeStart,target)});
+        result.add({dateTimeStart:
+          timetableListChild(dateTimeStart,timeEnd,target)});
       }
     }
 
@@ -389,8 +393,8 @@ class DaylyData{
       ]));
   }
 
-  Widget timetableListChild(DateTime time,MyCourse courseData){
-    return listChildFrame(time,
+  Widget timetableListChild(DateTime startTime,DateTime endTime,MyCourse courseData){
+    return listChildFrame(startTime,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -400,7 +404,8 @@ class DaylyData{
           const Spacer()
         ]),
         Text(courseData.courseName,style:largeChar)
-      ]));
+      ]),
+      endTime: endTime);
   }
 
   Widget listChildFrame(DateTime time,Widget child,{bool allDay = false, DateTime? endTime}){

@@ -101,6 +101,8 @@ class SharepreferenceKeys {
       key: "isShowTimelineTask", defaultValue: true);
   static const isShowTimelineCourse = SharepreferenceKeys._(
       key: "isShowTimelineCourse", defaultValue: true);
+  static const isShowTimelineAutomatically = SharepreferenceKeys._(
+      key: "isShowTimelineAutomatically", defaultValue: true);
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =
@@ -128,5 +130,6 @@ class SharepreferenceKeys {
         isShowTimelineSchedule,
         isShowTimelineCourse,
         isShowTimelineTask,
+        isShowTimelineAutomatically,
       ];
 }

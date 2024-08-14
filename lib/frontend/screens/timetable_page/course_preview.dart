@@ -34,6 +34,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   TextEditingController classRoomController = TextEditingController();
+  TextEditingController classificationController = TextEditingController();
   late int viewMode;
   late bool searchMode;
   Widget space = const SizedBox(height: 7);
@@ -47,6 +48,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     memoController.text = target.memo ?? "";
     classRoomController.text = target.classRoom;
     classNameController.text = target.courseName;
+    classificationController.text = target.subjectClassification ?? "";
     viewMode = 0;
     searchMode = false;
   }
@@ -322,6 +324,12 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget summaryContent(dividerModel, MyCourse target) {
+    int? credit = target.credit;
+    String creditString = 
+      credit != null ? credit.toString() : "？";
+    String criteria = 
+      target.criteria ?? "？";
+
     return Column(children: [
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
@@ -359,6 +367,32 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           //＠ここに教室のアップデート関数！！！
           await MyCourse.updateMemo(id, value);
           widget.setTimetableState(() {});
+        })
+      ]),
+      dividerModel,
+      Row(children: [
+        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: 17),),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+      //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
+      //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+      //   Expanded(
+      //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
+      ]),
+      dividerModel,
+      Row(children: [
+        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+        const Icon(Icons.class_, color: Colors.blue),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, 20.0,
+            (value) async {
+              int id = target.id!;
+              MyCourse newMyCourse = widget.target;
+              newMyCourse.subjectClassification = classificationController.text;
+              await MyCourse.updateMyCourse(id,newMyCourse);
+              widget.setTimetableState(() {});
         })
       ]),
       dividerModel,

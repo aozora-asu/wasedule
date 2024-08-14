@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -26,6 +27,7 @@ class OndemandPreview extends ConsumerStatefulWidget {
 class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
+  TextEditingController classificationController = TextEditingController();
   late int viewMode;
   late MyCourse target;
 
@@ -35,6 +37,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     target = widget.target;
     memoController.text = target.memo ?? "";
     classNameController.text = target.courseName;
+    classificationController.text = target.subjectClassification ?? "";
     viewMode = 0;
   }
 
@@ -78,7 +81,38 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     );
     int id;
 
-    Widget _switchViewMode(dividerModel, MyCourse target) {
+
+  Widget syllabusPageViewBuilder(MyCourse target){
+    return FutureBuilder(
+      future: SyllabusRequestQuery.getSingleSyllabusInfo(target.syllabusID!),
+      builder: (conetext,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return const Center(
+            child:CircularProgressIndicator(
+              color:Colors.blueAccent)
+            );
+        }else if(snapshot.hasData){
+      return Container(
+          decoration: BoxDecoration(
+            color:FORGROUND_COLOR,
+            border: const Border(bottom: BorderSide(color: Colors.grey))
+          ),
+          height: SizeConfig.blockSizeVertical! * 50,
+          width: SizeConfig.blockSizeHorizontal! * 100,
+          child: SyllabusDescriptonView(
+              showHeader: false,
+              syllabusQuery: snapshot.data!));
+        }else{
+          return const Center(
+            child:CircularProgressIndicator(
+              color:Colors.blueAccent)
+            );
+        }
+        
+      });
+  }
+
+      Widget _switchViewMode(dividerModel, MyCourse target) {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
@@ -86,27 +120,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
         return SizedBox(
             height: SizeConfig.blockSizeVertical! * 50,
             width: SizeConfig.blockSizeHorizontal! * 100,
-            child: SyllabusDescriptonView(
-                showHeader: false,
-                syllabusQuery: SyllabusQueryResult(
-                    courseName: target.courseName,
-                    classRoom: target.classRoom,
-                    year: target.year,
-                    syllabusID: target.syllabusID,
-                    semesterAndWeekdayAndPeriod: "ここに年度曜日時限のデータを加工して受け渡し",
-                    teacher: null,
-                    credit: null,
-                    criteria: target.criteria,
-                    department: null,
-                    subjectClassification: null,
-                    abstract: null,
-                    agenda: null,
-                    reference: null,
-                    remark: null,
-                    textbook: null,
-                    lectureSystem: null,
-                    campus: null,
-                    allocatedYear: null)));
+            child: syllabusPageViewBuilder(target));
       }
     }
 
@@ -183,6 +197,11 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
 
   Widget summaryContent(dividerModel, MyCourse target) {
     String text = target.semester?.fullText ?? "";
+    int? credit = target.credit;
+    String creditString = 
+      credit != null ? credit.toString() : "？";
+    String criteria = 
+      target.criteria ?? "？";
 
     return Column(children: [
       dividerModel,
@@ -214,11 +233,37 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
         }),
       ]),
       dividerModel,
+      Row(children: [
+        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: 17),),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+      //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
+      //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+      //   Expanded(
+      //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
+      ]),
+      dividerModel,
+      Row(children: [
+        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+        const Icon(Icons.class_, color: MAIN_COLOR),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, 20.0,
+            (value) async {
+              int id = target.id!;
+              MyCourse newMyCourse = widget.target;
+              newMyCourse.subjectClassification = classificationController.text;
+              await MyCourse.updateMyCourse(id,newMyCourse);
+              widget.setTimetableState(() {});
+        })
+      ]),
+      dividerModel,
     ]);
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double fontSize, Function(String) onSubmitted) {
+      FontWeight weight, double fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
       child: TextField(
@@ -232,7 +277,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
               hintText: hintText),
           style: TextStyle(
               color: Colors.black, fontWeight: weight, fontSize: fontSize),
-          onSubmitted: onSubmitted),
+          onChanged: onChanged),
     ));
   }
 

@@ -150,6 +150,79 @@ class TimeTableData {
     return result;
   }
 
+  List<MyCourse> targetSemesterClasses(Term targetTerm,int targetYear){
+    List<MyCourse> result = [];
+    List<String> courseNameList = [];
+    for(int i = 0; i < timeTableDataList.length; i++){
+      MyCourse targetCourse = timeTableDataList.elementAt(i);
+      if(targetCourse.year == targetYear){
+        if(targetCourse.semester == targetTerm){
+
+          if(!courseNameList.contains(targetCourse.courseName)){
+            courseNameList.add(targetCourse.courseName);
+            result.add(targetCourse);
+          }
+
+        }else if(targetTerm == Term.springSemester){
+          if(targetCourse.semester == Term.springQuarter ||
+            targetCourse.semester == Term.summerQuarter){
+
+            if(!courseNameList.contains(targetCourse.courseName)){
+              courseNameList.add(targetCourse.courseName);
+              result.add(targetCourse);
+            }
+
+          }
+        }else if(targetTerm == Term.fallSemester){
+          if(targetCourse.semester == Term.fallQuarter ||
+            targetCourse.semester == Term.winterQuarter){
+
+            if(!courseNameList.contains(targetCourse.courseName)){
+              courseNameList.add(targetCourse.courseName);
+              result.add(targetCourse);
+            }
+
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  int creditsTotalSum(List<MyCourse> courses){
+    int result = 0;
+    for(var item in courses){
+      if(item.credit != null){
+        result += item.credit!;
+      }
+    }
+    return result;
+  }
+
+  Map<String?,List<MyCourse>> sortDataByClassification(List<MyCourse> courseList){
+    Map<String?,List<MyCourse>> result = {};
+    for(var course in courseList){
+      if(result.containsKey(course.subjectClassification)){
+        result[course.subjectClassification]!.add(course);
+      }else{
+        result[course.subjectClassification] = [course];
+      }
+    }
+    return result;
+  }
+
+  Map<Term?,List<MyCourse>> sortDataByQuarter(List<MyCourse> courseList){
+    Map<Term?,List<MyCourse>> result = {};
+    for(var course in courseList){
+      if(result.containsKey(course.semester)){
+        result[course.semester]!.add(course);
+      }else{
+        result[course.semester] = [course];
+      }
+    }
+    return result;
+  }  
+
   void clearContents() {
     timeTableDataList.clear();
   }

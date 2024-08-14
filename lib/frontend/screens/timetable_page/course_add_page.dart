@@ -31,10 +31,14 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
   TextEditingController memoController = TextEditingController();
   TextEditingController classNameController = TextEditingController();
   TextEditingController classRoomController = TextEditingController();
+  TextEditingController creditController = TextEditingController();
+  TextEditingController classificationController = TextEditingController();
+  TextEditingController criteriaController = TextEditingController();
   DayOfWeek? weekDay;
   Lesson? period;
   late int year;
   late Term semester;
+  late int creditNum;
   String errorText = "";
 
   @override
@@ -44,6 +48,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
     semester = widget.semester ?? Term.fullYear;
     period = widget.period;
     weekDay = widget.weekDay;
+    creditNum = 0;
   }
 
   @override
@@ -204,6 +209,60 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                               ]),
                               dividerModel,
                               Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.class_, color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                textFieldModel("科目分類…", classificationController,
+                                    FontWeight.normal, (value) {})
+                              ]),
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Icon(Icons.reviews, color: MAIN_COLOR),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                textFieldModel("評価基準…", criteriaController,
+                                    FontWeight.normal, (value) {})
+                              ]),
+                              dividerModel,
+                              Row(children: [
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                                const Text("単位数",style:TextStyle(fontSize: 20,color: Colors.grey)),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 3),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if(creditNum >= 1){
+                                        creditNum -= 1;
+                                      }
+                                    });
+                                  },
+                                  child:const Icon(Icons.arrow_back_ios,color: Colors.grey,),
+                                ),
+                                const Spacer(),
+                                Text(creditNum.toString(),
+                                  style:const TextStyle(fontSize: 20)),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      creditNum += 1;
+                                    });
+                                  },
+                                  child:const Icon(Icons.arrow_forward_ios,color: Colors.grey,),
+                                ),
+                                const Spacer(),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal! * 1),
+                              ]),
+                              dividerModel,
+                              Row(children: [
                                 const Spacer(),
                                 buttonModel(() async {
                                   className = classNameController.text;
@@ -224,10 +283,10 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                         syllabusID: null,
                                         weekday: weekDay,
                                         year: year,
-                                        criteria: null,
+                                        criteria: criteriaController.text,
                                         memo: memo,
-                                        subjectClassification: null,
-                                        credit: null);
+                                        subjectClassification: classificationController.text,
+                                        credit: creditNum);
                                     await myCourse.resisterDB();
                                     widget.setTimetableState(() {});
                                     Navigator.pop(context);

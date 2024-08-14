@@ -40,6 +40,14 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:50),
          Image.asset('lib/assets/eye_catch/eyecatch.png',height: 200, width: 200),
          const SizedBox(height:50),
+         const Text("不具合報告はこちらからお願いします。",
+          overflow: TextOverflow.clip,
+          style: TextStyle(color:Colors.red,fontSize:18),),
+         const SizedBox(height:5),
+         const ErrorReportButton(),
+         const SizedBox(height:10),
+         const Divider(),
+         const SizedBox(height:5),
          const Text("公式サイト"),
          HomePageUrlLauncher(),
          const SizedBox(height:5),
@@ -50,14 +58,6 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
          const SizedBox(height:5),
          XUrlLauncher(),
          const SizedBox(height:15),
-         const Divider(),
-         const SizedBox(height:5),
-         const Text("不具合報告はこちらからお願いします。",
-          overflow: TextOverflow.clip,
-          style: TextStyle(color:Colors.red,fontSize:18),),
-         const SizedBox(height:5),
-         const ErrorReportButton(),
-         const SizedBox(height:10),
          const Divider(),
          const SizedBox(height:5),
          const Text("SPECIAL THANKS",
@@ -101,7 +101,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
             alignment: Alignment.centerRight,
             child:Text("他 16名")),
           const SizedBox(height:10),
-          const Text("上記のテスター参加者の方々 総勢21名には、わせジュール Android版アプリのリリース要件達成のため、本アプリの試用にご協力いただきました。この場を借りて心からの感謝を申し上げます。",
+          const Text("上記のテスター参加者 総勢21名には、わせジュール Android版アプリのリリース要件達成にあたり、本アプリの試用にご協力いただきました。この場を借りて心からの感謝を申し上げます。",
             overflow: TextOverflow.clip,
             style:TextStyle(color:Colors.grey)),
       ]
@@ -201,7 +201,7 @@ class PrivacyPolicyLauncher extends StatelessWidget {
               "https://wasedule.com/privacy",
             );
           },
-          ACCENT_COLOR,
+          PALE_MAIN_COLOR,
           "   プライバシーポリシー   "
         );
   }
