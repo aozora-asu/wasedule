@@ -255,7 +255,7 @@ class SyllabusRequestQuery {
     for (var trElement in courseTrElements) {
       List<Element> ths = trElement.querySelectorAll("th");
       for (var th in ths) {
-        switch (th.text) {
+        switch (th.text.trim()) {
           case "開講年度":
             _year = int.parse(RegExp(r"(....)年度")
                 .firstMatch(th.nextElementSibling!.text)!
@@ -298,16 +298,25 @@ class SyllabusRequestQuery {
     for (var trElement in syllabusTrElements) {
       List<Element> ths = trElement.querySelectorAll("th");
       for (var th in ths) {
-        switch (th.text) {
+        switch (th.text.trim()) {
           case "授業概要":
             _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
           case "授業計画":
-            _agenda =
-                trimAgenda(zenkaku2hankaku(th.nextElementSibling!.text).trim());
+            _agenda = zenkaku2hankaku(html_parser
+                    .parseFragment(th.nextElementSibling!.innerHtml
+                        .replaceAll("<br>", "<p>\n</p>")
+                        .replaceAll("</p>", "\n</p>")
+                        .replaceAllMapped(
+                            RegExp(r"<style>(.+)</style>"), (match) => ""))
+                    .text!)
+                .replaceAllMapped(RegExp(r":\n\n"), (match) => " :  ")
+                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                .trim();
           case "教科書":
             _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
           case "参考文献":
-            _reference = zenkaku2hankaku(th.nextElementSibling!.text);
+            _reference =
+                zenkaku2hankaku(th.nextElementSibling!.text).trimRight();
           case "成績評価方法":
             _criteria =
                 trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
@@ -346,13 +355,6 @@ class SyllabusRequestQuery {
     pritterStr = pritterStr.replaceAll(RegExp(r"\n\n"), "\n");
     pritterStr = pritterStr.replaceAllMapped(
         RegExp(r":\n(.+)\n"), (match) => " : ${match.group(1)}\n    ");
-    return pritterStr.trimLeft();
-  }
-
-  static String trimAgenda(String str) {
-    String pritterStr;
-    pritterStr = str.replaceAll(RegExp(r"\n\n"), "\n");
-    pritterStr = pritterStr.replaceAllMapped(RegExp(r":\n"), (match) => " :  ");
     return pritterStr.trimLeft();
   }
 }
