@@ -232,3 +232,51 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
         ],);
     });
 }
+
+
+class DashedLinePainterWidget extends StatelessWidget {
+  late double width;
+  late double height;
+
+  DashedLinePainterWidget({
+    required this.width,
+    required this.height,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(width,height), // 幅300、高さ1の破線を描画
+      painter: DashedLinePainter(),
+    );
+  }
+}
+
+class DashedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 2;
+
+    // 破線のパターン (線の長さとギャップの長さ)
+    double dashWidth = 5;
+    double dashSpace = 3;
+    double startX = 0;
+
+    while (startX < size.width) {
+      // 破線の線を描画
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(startX + dashWidth, 0),
+        paint,
+      );
+      // 次の破線の開始点を計算
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}

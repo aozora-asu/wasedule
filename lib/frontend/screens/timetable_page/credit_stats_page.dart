@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 
 class CreditStatsPage extends StatefulWidget {
   Function() moveToMyWaseda;
@@ -220,6 +221,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget dataListByMajorClassification(MyCredit data) {
+      SizeConfig().init(context);
+
     return Column(children: [
       Row(children: [
         changeGPviewButton(),
@@ -236,7 +239,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
       ListView.builder(
         itemBuilder: (context, index) {
           return Column(children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            DashedLinePainterWidget(
+              width: SizeConfig.blockSizeHorizontal! *100,
+              height: 7),
+            const SizedBox(height: 5),
             Text(data.majorClass.elementAt(index).text,
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
