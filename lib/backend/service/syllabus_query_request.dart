@@ -2,6 +2,7 @@ import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
+import 'package:http/retry.dart';
 import 'package:uuid/uuid.dart';
 import 'package:html/dom.dart';
 import "syllabus_query_result.dart";
@@ -301,13 +302,15 @@ class SyllabusRequestQuery {
           case "授業概要":
             _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
           case "授業計画":
-            _agenda = zenkaku2hankaku(th.nextElementSibling!.text).trim();
+            _agenda =
+                trimAgenda(zenkaku2hankaku(th.nextElementSibling!.text).trim());
           case "教科書":
             _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
           case "参考文献":
             _reference = zenkaku2hankaku(th.nextElementSibling!.text);
           case "成績評価方法":
-            _criteria = zenkaku2hankaku(th.nextElementSibling!.text);
+            _criteria =
+                trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
           case "備考・関連URL":
             _remark = zenkaku2hankaku(th.nextElementSibling!.text);
         }
@@ -334,5 +337,22 @@ class SyllabusRequestQuery {
         allocatedYear: _allocatedYear);
 
     return res;
+  }
+
+  static String trimCriteria(String str) {
+    String pritterStr;
+    pritterStr = str.replaceAll("割合", "");
+    pritterStr = pritterStr.replaceAll("評価基準", "");
+    pritterStr = pritterStr.replaceAll(RegExp(r"\n\n"), "\n");
+    pritterStr = pritterStr.replaceAllMapped(
+        RegExp(r":\n(.+)\n"), (match) => " : ${match.group(1)}\n    ");
+    return pritterStr.trimLeft();
+  }
+
+  static String trimAgenda(String str) {
+    String pritterStr;
+    pritterStr = str.replaceAll(RegExp(r"\n\n"), "\n");
+    pritterStr = pritterStr.replaceAllMapped(RegExp(r":\n"), (match) => " :  ");
+    return pritterStr.trimLeft();
   }
 }
