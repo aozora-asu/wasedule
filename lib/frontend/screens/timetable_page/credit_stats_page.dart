@@ -200,7 +200,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           if (snapshot.hasData && snapshot.data!.majorClass != []) {
             majorClassificationGroupList = snapshot.data!.majorClass;
             generateOptions(snapshot.data!.majorClass);
-            return dataListByMajorClassification(snapshot.data!.majorClass);
+            return dataListByMajorClassification(snapshot.data!);
           } else {
             return noGradeDataScreen();
           }
@@ -219,7 +219,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
                     fontSize: 20))));
   }
 
-  Widget dataListByMajorClassification(List<MajorClass> data) {
+  Widget dataListByMajorClassification(MyCredit data) {
     return Column(children: [
       Row(children: [
         changeGPviewButton(),
@@ -232,15 +232,17 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         itemBuilder: (context, index) {
           return Column(children: [
             const SizedBox(height: 10),
-            Text(data.elementAt(index).text ?? "【大分類なし】",
+            Text(data.majorClass.elementAt(index).text,
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            necessaryCreditsIndicstor(data[index].requiredCredit,
-                data[index].acquiredCredit, data[index].countedCredit),
-            dataListByMiddleClassification(data[index].middleClass)
+            necessaryCreditsIndicstor(
+                data.majorClass[index].requiredCredit,
+                data.majorClass[index].acquiredCredit,
+                data.majorClass[index].countedCredit),
+            dataListByMiddleClassification(data.majorClass[index].middleClass)
           ]);
         },
-        itemCount: data.length,
+        itemCount: data.majorClass.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       )
@@ -287,9 +289,6 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
   Widget dataListByMinorClassification(
       List<MinorClass> minorClassificationGroupList) {
-    // Map<String?, List<MiddleClass>> data =
-    //     sortDataByMinorClassification(middleClassificationGroupList);
-
     return ListView.builder(
       itemBuilder: (context, index) {
         return Column(children: [
