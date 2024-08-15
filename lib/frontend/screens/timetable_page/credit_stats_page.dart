@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 
 class CreditStatsPage extends StatefulWidget {
   Function() moveToMyWaseda;
@@ -220,6 +221,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget dataListByMajorClassification(List<MajorClass> data) {
+    SizeConfig().init(context);
     return Column(children: [
       Row(children: [
         changeGPviewButton(),
@@ -230,14 +232,19 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
       ]),
       ListView.builder(
         itemBuilder: (context, index) {
-          return Column(children: [
-            const SizedBox(height: 10),
+          return Column(
+           children: [
+            const SizedBox(height: 20),
+            DashedLinePainterWidget(
+              width: SizeConfig.blockSizeHorizontal! *100,
+              height: 7),
+            const SizedBox(height: 5),
             Text(data.elementAt(index).text ?? "【大分類なし】",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             necessaryCreditsIndicstor(
               data[index].requiredCredit,
               data[index].acquiredCredit,
-              data[index].countedCredit),
+              data[index].countedCredit,),
             dataListByMiddleClassification(data[index].middleClass)
           ]);
         },
@@ -327,7 +334,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   Widget necessaryCreditsIndicstor(
     int? requiredCredit,
     int acquiredCredit,
-    int countedCredit
+    int countedCredit,
+    {Color? backgroundColor}
   ){
     TextStyle categoryStyle =const TextStyle(fontSize: 14,color: Colors.grey);
     TextStyle numberStyle =const TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: BLUEGREY);
@@ -336,8 +344,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
      return Container(
       decoration: roundedBoxdecoration(
-        backgroundColor:BACKGROUND_COLOR,
-        radiusType: 2),
+        backgroundColor:backgroundColor ?? BACKGROUND_COLOR,
+        radiusType: 0),
       margin:const EdgeInsets.symmetric(vertical:2),
       padding: const EdgeInsets.symmetric(vertical:2,horizontal: 15),
       child: Row(
