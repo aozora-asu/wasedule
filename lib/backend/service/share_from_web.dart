@@ -1,31 +1,13 @@
-import 'package:collection/collection.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:html/parser.dart' as html_parser;
-
-import 'package:uuid/uuid.dart';
-
-import 'package:html/dom.dart';
-
 import 'dart:async';
-
-import 'dart:io';
-// ignore: unnecessary_import
-
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'package:flutter/material.dart';
-
 import '../../frontend/assist_files/screen_manager.dart';
-import "../DB/handler/task_db_handler.dart";
-
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";
 import "../DB/handler/my_grade_db.dart";
 import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
+import "../DB/sharepreference.dart";
 
 void getMyGrade(String str, List<MajorClass> list) async {
   if (list.isEmpty) return;
@@ -119,10 +101,9 @@ void getMyGrade(String str, List<MajorClass> list) async {
   for (var majorClass in list) {
     await MyGradeDB().insertMajorClass(majorClass);
   }
-  List<MajorClass> data = await MyGradeDB.getAllMajorClasses();
-  for (var datum in data) {
-    print(datum.toDisplay());
-  }
+  // MyCredit data = await MyGradeDB.getMyCredit();
+
+  // print(data.toMap());
 }
 
 List<MajorClass> getMyCredit(String str) {
@@ -154,22 +135,32 @@ List<MajorClass> getMyCredit(String str) {
     final tdElements = trElement.children;
 
     if (tdElements[0].text.trim().isNotEmpty) {
-      majorClass = MajorClass(
-          text: "",
-          middleClass: [],
-          requiredCredit: 0,
-          acquiredCredit: 0,
-          countedCredit: 0);
-
-      majorClass.text = zenkaku2hankaku(tdElements[0].text.trim());
-      if (majorClass.text == "他箇所聴講科目") {
-        majorClass.middleClass.add(MiddleClass(
-            text: "卒業不算入科目",
-            minorClass: [],
+      if (tdElements[0].text.trim() == "総合計") {
+        Map<String, int> map = {
+          "requiredCredit": int.parse(tdElements[2].text.trim()),
+          "acquiredCredit": int.parse(tdElements[3].text.trim()),
+          "countedCredit": int.parse(tdElements[4].text.trim()),
+        };
+        SharepreferenceHandler().setValue(
+            SharepreferenceKeys.graduationRequireCredit, json.encode(map));
+      } else {
+        majorClass = MajorClass(
+            text: "",
+            middleClass: [],
             requiredCredit: 0,
             acquiredCredit: 0,
-            countedCredit: 0,
-            myGrade: []));
+            countedCredit: 0);
+
+        majorClass.text = zenkaku2hankaku(tdElements[0].text.trim());
+        if (majorClass.text == "他箇所聴講科目") {
+          majorClass.middleClass.add(MiddleClass(
+              text: "卒業不算入科目",
+              minorClass: [],
+              requiredCredit: 0,
+              acquiredCredit: 0,
+              countedCredit: 0,
+              myGrade: []));
+        }
       }
     }
     if (!tdElements[1].text.startsWith("　　") &&

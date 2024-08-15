@@ -68,8 +68,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
       }
     }
 
-    double roundedNumber = data.isNotEmpty ?
-        double.parse(((result / data.length) * 100).round().toString()) / 100
+    double roundedNumber = data.isNotEmpty
+        ? double.parse(((result / data.length) * 100).round().toString()) / 100
         : 0;
     return roundedNumber;
   }
@@ -196,11 +196,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
   Widget individualDataListBuilder() {
     return FutureBuilder(
-        future: MyGradeDB.getAllMajorClasses(),
+        future: MyGradeDB.getMyCredit(),
         builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != []) {
-            majorClassificationGroupList = snapshot.data!;
-            generateOptions(snapshot.data!);
+          if (snapshot.hasData && snapshot.data!.majorClass != []) {
+            majorClassificationGroupList = snapshot.data!.majorClass;
+            generateOptions(snapshot.data!.majorClass);
             return dataListByMajorClassification(snapshot.data!);
           } else {
             return noGradeDataScreen();
@@ -220,8 +220,9 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
                     fontSize: 20))));
   }
 
-  Widget dataListByMajorClassification(List<MajorClass> data) {
-    SizeConfig().init(context);
+  Widget dataListByMajorClassification(MyCredit data) {
+      SizeConfig().init(context);
+
     return Column(children: [
       Row(children: [
         changeGPviewButton(),
@@ -230,25 +231,30 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         const SizedBox(width: 5),
         termPicker(),
       ]),
+      const SizedBox(height: 10),
+      Text(data.text,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      necessaryCreditsIndicstor(
+          data.requiredCredit, data.acquiredCredit, data.countedCredit),
       ListView.builder(
         itemBuilder: (context, index) {
-          return Column(
-           children: [
+          return Column(children: [
             const SizedBox(height: 20),
             DashedLinePainterWidget(
               width: SizeConfig.blockSizeHorizontal! *100,
               height: 7),
             const SizedBox(height: 5),
-            Text(data.elementAt(index).text ?? "【大分類なし】",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(data.majorClass.elementAt(index).text,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             necessaryCreditsIndicstor(
-              data[index].requiredCredit,
-              data[index].acquiredCredit,
-              data[index].countedCredit,),
-            dataListByMiddleClassification(data[index].middleClass)
+                data.majorClass[index].requiredCredit,
+                data.majorClass[index].acquiredCredit,
+                data.majorClass[index].countedCredit),
+            dataListByMiddleClassification(data.majorClass[index].middleClass)
           ]);
         },
-        itemCount: data.length,
+        itemCount: data.majorClass.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       )
@@ -262,8 +268,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
     return ListView.builder(
       itemBuilder: (context, index) {
         int creditSum = data[index].acquiredCredit;
-        double gradeAverage =
-            calculateGradeAverage(data[index].myGrade);
+        double gradeAverage = calculateGradeAverage(data[index].myGrade);
 
         return Column(children: [
           const SizedBox(height: 10),
@@ -271,9 +276,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
             Text("単位", style: smallGreyFont),
             Expanded(
                 child: Text(
-                    data[index].text != ""
-                        ? data[index].text
-                        : "【中分類なし】",
+                    data[index].text != "" ? data[index].text : "【中分類なし】",
                     overflow: TextOverflow.clip,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
@@ -284,10 +287,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           ]),
           const SizedBox(height: 3),
           Divider(height: 1, color: FORGROUND_COLOR),
-          necessaryCreditsIndicstor(
-            data[index].requiredCredit,
-            data[index].acquiredCredit,
-            data[index].countedCredit),
+          necessaryCreditsIndicstor(data[index].requiredCredit,
+              data[index].acquiredCredit, data[index].countedCredit),
           dataListByMinorClassification(data[index].minorClass),
           gradeDataList(data[index].myGrade)
         ]);
@@ -300,12 +301,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
   Widget dataListByMinorClassification(
       List<MinorClass> minorClassificationGroupList) {
-    // Map<String?, List<MiddleClass>> data =
-    //     sortDataByMinorClassification(middleClassificationGroupList);
-
     return ListView.builder(
       itemBuilder: (context, index) {
-
         return Column(children: [
           if (minorClassificationGroupList.elementAt(index).text != "")
             const SizedBox(height: 10),
@@ -321,9 +318,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           //   minorClassificationGroupList[index].requiredCredit,
           //   minorClassificationGroupList[index].acquiredCredit,
           //   minorClassificationGroupList[index].countedCredit),
-          gradeDataList(
-              minorClassificationGroupList.elementAt(index).myGrade),
-          ]);
+          gradeDataList(minorClassificationGroupList.elementAt(index).myGrade),
+        ]);
       },
       itemCount: minorClassificationGroupList.length,
       shrinkWrap: true,
@@ -332,35 +328,31 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget necessaryCreditsIndicstor(
-    int? requiredCredit,
-    int acquiredCredit,
-    int countedCredit,
-    {Color? backgroundColor}
-  ){
-    TextStyle categoryStyle =const TextStyle(fontSize: 14,color: Colors.grey);
-    TextStyle numberStyle =const TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: BLUEGREY);
-    String requiredCreditString = 
-      requiredCredit != null ? requiredCredit.toString() : "？";
+      int? requiredCredit, int acquiredCredit, int countedCredit) {
+    TextStyle categoryStyle = const TextStyle(fontSize: 14, color: Colors.grey);
+    TextStyle numberStyle = const TextStyle(
+        fontSize: 18, fontWeight: FontWeight.bold, color: BLUEGREY);
+    String requiredCreditString =
+        requiredCredit != null ? requiredCredit.toString() : "？";
 
-     return Container(
+    return Container(
       decoration: roundedBoxdecoration(
-        backgroundColor:backgroundColor ?? BACKGROUND_COLOR,
-        radiusType: 0),
-      margin:const EdgeInsets.symmetric(vertical:2),
-      padding: const EdgeInsets.symmetric(vertical:2,horizontal: 15),
+          backgroundColor: BACKGROUND_COLOR, radiusType: 2),
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children:[
-          Text("算入 ",style:categoryStyle),
-          Text(countedCredit.toString(),style:numberStyle),
-          Text("単位 / 所定 ",style:categoryStyle),
-          Text(requiredCreditString,style:numberStyle),
-          Text("単位  (既得 ",style:categoryStyle),
-          Text(acquiredCredit.toString(),style:categoryStyle),
-          Text(" 単位)",style:categoryStyle),
-        ]),
-      );
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("算入 ", style: categoryStyle),
+            Text(countedCredit.toString(), style: numberStyle),
+            Text("単位 / 所定 ", style: categoryStyle),
+            Text(requiredCreditString, style: numberStyle),
+            Text("単位  (既得 ", style: categoryStyle),
+            Text(acquiredCredit.toString(), style: categoryStyle),
+            Text(" 単位)", style: categoryStyle),
+          ]),
+    );
   }
 
   Widget gradeDataList(List<MyGrade> minorClassificationGroupList) {

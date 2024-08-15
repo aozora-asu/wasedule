@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_vi
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
+import "../sharepreference.dart";
 
 class MyGradeDB {
   static const String dbName = "myGrade.db";
@@ -378,7 +379,7 @@ class MyGradeDB {
   }
 
 // MajorClass を全て取得する関数
-  static Future<List<MajorClass>> getAllMajorClasses() async {
+  static Future<List<MajorClass>> _getAllMajorClasses() async {
     final db = await _initDB();
     final List<Map<String, dynamic>> majorClassMaps =
         await db.query(majorClassTable);
@@ -398,6 +399,18 @@ class MyGradeDB {
     }
 
     return majorClasses;
+  }
+
+  static Future<MyCredit> getMyCredit() async {
+    Map<String, dynamic> map = json.decode(SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.graduationRequireCredit));
+    MyCredit myCredit = MyCredit(
+        requiredCredit: map["requiredCredit"]!,
+        acquiredCredit: map["acquiredCredit"]!,
+        countedCredit: map["countedCredit"]!,
+        majorClass: await _getAllMajorClasses());
+
+    return myCredit;
   }
 }
 
@@ -516,6 +529,28 @@ class MyGrade {
       "credit": credit,
       "grade": grade,
       "gradePoint": gradePoint
+    };
+  }
+}
+
+class MyCredit {
+  int requiredCredit;
+  int acquiredCredit;
+  int countedCredit;
+  String text = "卒業要件単位数";
+  List<MajorClass> majorClass;
+  MyCredit(
+      {required this.requiredCredit,
+      required this.acquiredCredit,
+      required this.countedCredit,
+      required this.majorClass});
+  Map<String, dynamic> toMap() {
+    return {
+      "text": text,
+      "requiredCredit": requiredCredit,
+      "acquiredCredit": acquiredCredit,
+      "countedCredit": countedCredit,
+      "majorClass": majorClass.map((e) => e.toMap()).toList(),
     };
   }
 }

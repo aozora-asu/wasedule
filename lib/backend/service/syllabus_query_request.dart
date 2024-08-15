@@ -1,13 +1,9 @@
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:html/parser.dart' as html_parser;
-
+import 'package:http/retry.dart';
 import 'package:uuid/uuid.dart';
-
 import 'package:html/dom.dart';
 import "syllabus_query_result.dart";
 import "../DB/sharepreference.dart";
@@ -259,7 +255,7 @@ class SyllabusRequestQuery {
     for (var trElement in courseTrElements) {
       List<Element> ths = trElement.querySelectorAll("th");
       for (var th in ths) {
-        switch (th.text) {
+        switch (th.text.trim()) {
           case "開講年度":
             _year = int.parse(RegExp(r"(....)年度")
                 .firstMatch(th.nextElementSibling!.text)!
@@ -302,17 +298,28 @@ class SyllabusRequestQuery {
     for (var trElement in syllabusTrElements) {
       List<Element> ths = trElement.querySelectorAll("th");
       for (var th in ths) {
-        switch (th.text) {
+        switch (th.text.trim()) {
           case "授業概要":
             _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
           case "授業計画":
-            _agenda = zenkaku2hankaku(th.nextElementSibling!.text).trim();
+            _agenda = zenkaku2hankaku(html_parser
+                    .parseFragment(th.nextElementSibling!.innerHtml
+                        .replaceAll("<br>", "<p>\n</p>")
+                        .replaceAll("</p>", "\n</p>")
+                        .replaceAllMapped(
+                            RegExp(r"<style>(.+)</style>"), (match) => ""))
+                    .text!)
+                .replaceAllMapped(RegExp(r":\n\n"), (match) => " :  ")
+                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                .trim();
           case "教科書":
             _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
           case "参考文献":
-            _reference = zenkaku2hankaku(th.nextElementSibling!.text);
+            _reference =
+                zenkaku2hankaku(th.nextElementSibling!.text).trimRight();
           case "成績評価方法":
-            _criteria = zenkaku2hankaku(th.nextElementSibling!.text);
+            _criteria =
+                trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
           case "備考・関連URL":
             _remark = zenkaku2hankaku(th.nextElementSibling!.text);
         }
@@ -339,5 +346,15 @@ class SyllabusRequestQuery {
         allocatedYear: _allocatedYear);
 
     return res;
+  }
+
+  static String trimCriteria(String str) {
+    String pritterStr;
+    pritterStr = str.replaceAll("割合", "");
+    pritterStr = pritterStr.replaceAll("評価基準", "");
+    pritterStr = pritterStr.replaceAll(RegExp(r"\n\n"), "\n");
+    pritterStr = pritterStr.replaceAllMapped(
+        RegExp(r":\n(.+)\n"), (match) => " : ${match.group(1)}\n    ");
+    return pritterStr.trimLeft();
   }
 }
