@@ -228,6 +228,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         const SizedBox(width: 5),
         termPicker(),
       ]),
+      const SizedBox(height: 10),
+      Text(data.text,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      necessaryCreditsIndicstor(
+          data.requiredCredit, data.acquiredCredit, data.countedCredit),
       ListView.builder(
         itemBuilder: (context, index) {
           return Column(children: [

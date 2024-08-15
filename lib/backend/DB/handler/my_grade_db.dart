@@ -537,7 +537,7 @@ class MyCredit {
   int requiredCredit;
   int acquiredCredit;
   int countedCredit;
-  String text = "卒業要件単位";
+  String text = "卒業要件単位数";
   List<MajorClass> majorClass;
   MyCredit(
       {required this.requiredCredit,
