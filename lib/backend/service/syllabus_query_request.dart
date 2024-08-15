@@ -1,13 +1,8 @@
-import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:html/parser.dart' as html_parser;
-
 import 'package:uuid/uuid.dart';
-
 import 'package:html/dom.dart';
 import "syllabus_query_result.dart";
 import "../DB/sharepreference.dart";

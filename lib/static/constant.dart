@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
-import 'package:flutter_calandar_app/static/error_exception/exception.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
