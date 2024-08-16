@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:html/dom.dart';
 import "syllabus_query_result.dart";
 import "../DB/sharepreference.dart";
+import "../DB/chache.dart";
 
 class SyllabusRequestQuery {
   String? p_number;
@@ -212,7 +213,160 @@ class SyllabusRequestQuery {
   Stream<SyllabusQueryResult> fetchAllSyllabusInfo() async* {
     List<String> syllabusURLs = await _getSyllabusURLs(null);
     for (var syllabusURL in syllabusURLs) {
-      yield await getSingleSyllabusInfo(syllabusURL);
+      SyllabusQueryResult res = await getSingleSyllabusInfo(syllabusURL);
+
+      yield res;
+    }
+  }
+
+  static Future<SyllabusQueryResult> getSingleSyllabusInfo(
+      String syllabusURL) async {
+    SyllabusQueryResult? res = await syllabusQueryCache.get(syllabusURL);
+    if (res != null) {
+      return res;
+    } else {
+      final response = await http.post(
+        Uri.parse(syllabusURL),
+      );
+      final Document document = html_parser.parse(response.body);
+      List<Element> c_mblocks =
+          document.getElementById("cEdit")?.children ?? [];
+      Element courseInfo = c_mblocks.first;
+      Element syllabusInfo = c_mblocks[1];
+      List<Element> courseTrElements =
+          courseInfo.querySelectorAll("table > tbody > tr");
+      int _year = Term.whenSchoolYear(DateTime.now());
+      late String _courseName;
+
+      String? _subjectClassification;
+      String? _department;
+      late String _classRoom;
+      int? _credit;
+      String? _teacher;
+      String? _campus;
+      String? _allocatedYear;
+      String? _lectureSystem;
+      late String _semesterAndWeekdayAndPeriod;
+
+      for (var trElement in courseTrElements) {
+        List<Element> ths = trElement.querySelectorAll("th");
+        for (var th in ths) {
+          switch (th.text.trim()) {
+            case "開講年度":
+              _year = int.parse(RegExp(r"(....)年度")
+                  .firstMatch(th.nextElementSibling!.text)!
+                  .group(1)!);
+            case "科目名":
+              _courseName = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "科目区分":
+              _subjectClassification =
+                  zenkaku2hankaku(th.nextElementSibling!.text);
+            case "開講箇所":
+              _department = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "使用教室":
+              _classRoom = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "単位数":
+              _credit =
+                  int.tryParse(zenkaku2hankaku(th.nextElementSibling!.text));
+
+            case "担当教員":
+              _teacher = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "学期曜日時限":
+              _semesterAndWeekdayAndPeriod =
+                  zenkaku2hankaku(th.nextElementSibling!.text);
+            case "キャンパス":
+              _campus = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "配当年次":
+              _allocatedYear = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "授業方法区分":
+              _lectureSystem = zenkaku2hankaku(th.nextElementSibling!.text);
+          }
+        }
+      }
+      List<Element> syllabusTrElements =
+          syllabusInfo.querySelectorAll("table > tbody > tr");
+      String? _abstract;
+      String? _agenda;
+      String? _textbook;
+      String? _reference;
+      String? _criteria;
+      String? _remark;
+      for (var trElement in syllabusTrElements) {
+        List<Element> ths = trElement.querySelectorAll("th");
+        for (var th in ths) {
+          switch (th.text.trim()) {
+            case "授業概要":
+              _abstract = zenkaku2hankaku(html_parser
+                      .parseFragment(th.nextElementSibling!.innerHtml
+                          .replaceAll("<br>", "<p>\n</p>")
+                          .replaceAll("</p>", "\n</p>")
+                          .replaceAll("</td>", "\n</td>")
+                          .replaceAll("</div>", "\n</div>")
+                          .replaceAllMapped(
+                              RegExp(r"<style>(.+)</style>"), (match) => ""))
+                      .text!)
+                  .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
+                  .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                  .trim();
+            case "授業計画":
+              _agenda = zenkaku2hankaku(html_parser
+                      .parseFragment(th.nextElementSibling!.innerHtml
+                          .replaceAll("<br>", "<p>\n</p>")
+                          .replaceAll("</p>", "\n</p>")
+                          .replaceAll("</td>", "\n</td>")
+                          .replaceAll("</div>", "\n</div>")
+                          .replaceAllMapped(
+                              RegExp(r"<style>(.+)</style>"), (match) => ""))
+                      .text!)
+                  .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
+                  .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                  .trim();
+            case "教科書":
+              _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
+            case "参考文献":
+              _reference = zenkaku2hankaku(th.nextElementSibling!.text).trim();
+            case "成績評価方法":
+              _criteria =
+                  trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
+            case "備考・関連URL":
+              _remark = zenkaku2hankaku(html_parser
+                      .parseFragment(th.nextElementSibling!.innerHtml
+                          .replaceAll("<br>", "<p>\n</p>")
+                          .replaceAll("</p>", "\n</p>")
+                          .replaceAll("</td>", "\n</td>")
+                          .replaceAll("</div>", "\n</div>")
+                          .replaceAllMapped(
+                              RegExp(r"<style>(.+)</style>"), (match) => ""))
+                      .text!)
+                  .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
+                  .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                  .trim();
+          }
+        }
+      }
+      res = SyllabusQueryResult(
+          courseName: _courseName,
+          classRoom: _classRoom,
+          year: _year,
+          semesterAndWeekdayAndPeriod: _semesterAndWeekdayAndPeriod,
+          syllabusID: syllabusURL,
+          teacher: _teacher,
+          credit: _credit,
+          criteria: _criteria,
+          department: _department,
+          subjectClassification: _subjectClassification,
+          abstract: _abstract,
+          agenda: _agenda,
+          reference: _reference,
+          remark: _remark,
+          textbook: _textbook,
+          lectureSystem: _lectureSystem,
+          campus: _campus,
+          allocatedYear: _allocatedYear);
+
+      await syllabusQueryCache.set(syllabusURL, res);
+
+      return res;
     }
   }
 
@@ -226,149 +380,6 @@ class SyllabusRequestQuery {
     } else {
       return await getSingleSyllabusInfo(syllabusURLs.first);
     }
-  }
-
-  static Future<SyllabusQueryResult> getSingleSyllabusInfo(
-      String syllabusURL) async {
-    final response = await http.post(
-      Uri.parse(syllabusURL),
-    );
-    final Document document = html_parser.parse(response.body);
-    List<Element> c_mblocks = document.getElementById("cEdit")?.children ?? [];
-    Element courseInfo = c_mblocks.first;
-    Element syllabusInfo = c_mblocks[1];
-    List<Element> courseTrElements =
-        courseInfo.querySelectorAll("table > tbody > tr");
-    int _year = Term.whenSchoolYear(DateTime.now());
-    late String _courseName;
-
-    String? _subjectClassification;
-    String? _department;
-    late String _classRoom;
-    int? _credit;
-    String? _teacher;
-    String? _campus;
-    String? _allocatedYear;
-    String? _lectureSystem;
-    late String _semesterAndWeekdayAndPeriod;
-
-    for (var trElement in courseTrElements) {
-      List<Element> ths = trElement.querySelectorAll("th");
-      for (var th in ths) {
-        switch (th.text.trim()) {
-          case "開講年度":
-            _year = int.parse(RegExp(r"(....)年度")
-                .firstMatch(th.nextElementSibling!.text)!
-                .group(1)!);
-          case "科目名":
-            _courseName = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "科目区分":
-            _subjectClassification =
-                zenkaku2hankaku(th.nextElementSibling!.text);
-          case "開講箇所":
-            _department = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "使用教室":
-            _classRoom = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "単位数":
-            _credit =
-                int.tryParse(zenkaku2hankaku(th.nextElementSibling!.text));
-
-          case "担当教員":
-            _teacher = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "学期曜日時限":
-            _semesterAndWeekdayAndPeriod =
-                zenkaku2hankaku(th.nextElementSibling!.text);
-          case "キャンパス":
-            _campus = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "配当年次":
-            _allocatedYear = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "授業方法区分":
-            _lectureSystem = zenkaku2hankaku(th.nextElementSibling!.text);
-        }
-      }
-    }
-    List<Element> syllabusTrElements =
-        syllabusInfo.querySelectorAll("table > tbody > tr");
-    String? _abstract;
-    String? _agenda;
-    String? _textbook;
-    String? _reference;
-    String? _criteria;
-    String? _remark;
-    for (var trElement in syllabusTrElements) {
-      List<Element> ths = trElement.querySelectorAll("th");
-      for (var th in ths) {
-        switch (th.text.trim()) {
-          case "授業概要":
-            _abstract = zenkaku2hankaku(html_parser
-                    .parseFragment(th.nextElementSibling!.innerHtml
-                        .replaceAll("<br>", "<p>\n</p>")
-                        .replaceAll("</p>", "\n</p>")
-                        .replaceAll("</td>", "\n</td>")
-                        .replaceAll("</div>", "\n</div>")
-                        .replaceAllMapped(
-                            RegExp(r"<style>(.+)</style>"), (match) => ""))
-                    .text!)
-                .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
-                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
-                .trim();
-          case "授業計画":
-            _agenda = zenkaku2hankaku(html_parser
-                    .parseFragment(th.nextElementSibling!.innerHtml
-                        .replaceAll("<br>", "<p>\n</p>")
-                        .replaceAll("</p>", "\n</p>")
-                        .replaceAll("</td>", "\n</td>")
-                        .replaceAll("</div>", "\n</div>")
-                        .replaceAllMapped(
-                            RegExp(r"<style>(.+)</style>"), (match) => ""))
-                    .text!)
-                .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
-                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
-                .trim();
-          case "教科書":
-            _textbook = zenkaku2hankaku(th.nextElementSibling!.text);
-          case "参考文献":
-            _reference = zenkaku2hankaku(th.nextElementSibling!.text).trim();
-          case "成績評価方法":
-            _criteria =
-                trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
-          case "備考・関連URL":
-            _remark = zenkaku2hankaku(html_parser
-                    .parseFragment(th.nextElementSibling!.innerHtml
-                        .replaceAll("<br>", "<p>\n</p>")
-                        .replaceAll("</p>", "\n</p>")
-                        .replaceAll("</td>", "\n</td>")
-                        .replaceAll("</div>", "\n</div>")
-                        .replaceAllMapped(
-                            RegExp(r"<style>(.+)</style>"), (match) => ""))
-                    .text!)
-                .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
-                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
-                .trim();
-        }
-      }
-    }
-    SyllabusQueryResult res = SyllabusQueryResult(
-        courseName: _courseName,
-        classRoom: _classRoom,
-        year: _year,
-        semesterAndWeekdayAndPeriod: _semesterAndWeekdayAndPeriod,
-        syllabusID: syllabusURL,
-        teacher: _teacher,
-        credit: _credit,
-        criteria: _criteria,
-        department: _department,
-        subjectClassification: _subjectClassification,
-        abstract: _abstract,
-        agenda: _agenda,
-        reference: _reference,
-        remark: _remark,
-        textbook: _textbook,
-        lectureSystem: _lectureSystem,
-        campus: _campus,
-        allocatedYear: _allocatedYear);
-
-    return res;
   }
 
   static String trimCriteria(String str) {

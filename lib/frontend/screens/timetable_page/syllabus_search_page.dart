@@ -11,6 +11,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_de
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SyllabusSearchPage extends StatefulWidget {
   @override
@@ -486,21 +487,24 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
   List<SyllabusQueryResult> resultList = [];
   Widget searchResult() {
     resultList = [];
-
-    return StreamBuilder<SyllabusQueryResult>(
-      stream: requestQuery.fetchAllSyllabusInfo(),
+    return StreamBuilder<List<SyllabusQueryResult>>(
+      stream: requestQuery.fetchAllSyllabusInfo().scan(
+          (accumulated, current, index) {
+        accumulated.add(current);
+        return accumulated;
+      }, <SyllabusQueryResult>[]).asBroadcastStream(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            resultList.isEmpty) {
           return const SizedBox(
             height: 70,
             child: Center(
-                child: CircularProgressIndicator(color: PALE_MAIN_COLOR)),
+              child: CircularProgressIndicator(color: PALE_MAIN_COLOR),
+            ),
           );
         } else if (snapshot.hasError) {
-          // エラーメッセージを表示
-          return Text(snapshot.error.toString());
-        } else if (!snapshot.hasData) {
-          // 検索結果がない場合のメッセージを表示
+          return Text('エラーが発生しました: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox(
             height: 70,
             child: Center(
@@ -508,18 +512,15 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
             ),
           );
         } else {
-          resultList.add(snapshot.data!);
-          // シラバス情報をリスト形式で表示
+          final results = snapshot.data!;
           return ListView.separated(
             itemBuilder: (context, index) {
-              // 取得したデータのコース名を表示
-              return resultListChild(
-                  resultList.elementAt(index)); // シラバス情報のコース名を表示
+              return resultListChild(results[index]);
             },
             separatorBuilder: (context, index) {
               return const SizedBox(height: 2);
             },
-            itemCount: resultList.length,
+            itemCount: results.length,
             shrinkWrap: true,
           );
         }
