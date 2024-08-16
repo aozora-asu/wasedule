@@ -300,7 +300,18 @@ class SyllabusRequestQuery {
       for (var th in ths) {
         switch (th.text.trim()) {
           case "授業概要":
-            _abstract = zenkaku2hankaku(th.nextElementSibling!.text);
+            _abstract = zenkaku2hankaku(html_parser
+                    .parseFragment(th.nextElementSibling!.innerHtml
+                        .replaceAll("<br>", "<p>\n</p>")
+                        .replaceAll("</p>", "\n</p>")
+                        .replaceAll("</td>", "\n</td>")
+                        .replaceAll("</div>", "\n</div>")
+                        .replaceAllMapped(
+                            RegExp(r"<style>(.+)</style>"), (match) => ""))
+                    .text!)
+                .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
+                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                .trim();
           case "授業計画":
             _agenda = zenkaku2hankaku(html_parser
                     .parseFragment(th.nextElementSibling!.innerHtml
@@ -322,7 +333,18 @@ class SyllabusRequestQuery {
             _criteria =
                 trimCriteria(zenkaku2hankaku(th.nextElementSibling!.text));
           case "備考・関連URL":
-            _remark = zenkaku2hankaku(th.nextElementSibling!.text);
+            _remark = zenkaku2hankaku(html_parser
+                    .parseFragment(th.nextElementSibling!.innerHtml
+                        .replaceAll("<br>", "<p>\n</p>")
+                        .replaceAll("</p>", "\n</p>")
+                        .replaceAll("</td>", "\n</td>")
+                        .replaceAll("</div>", "\n</div>")
+                        .replaceAllMapped(
+                            RegExp(r"<style>(.+)</style>"), (match) => ""))
+                    .text!)
+                .replaceAllMapped(RegExp(r":(\n+)"), (match) => " :  ")
+                .replaceAllMapped(RegExp(r"\n+"), (match) => "\n")
+                .trim();
         }
       }
     }
