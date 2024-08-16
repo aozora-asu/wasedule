@@ -235,7 +235,7 @@ class MyGradeDB {
         for (MyGrade myGrade in minorClass.myGrade) {
           try {
             myGrade.id = await db.insert(myGradeTable, {
-              'middleClassId': middleClass.id,
+              'middleClassId': null,
               'minorClassId': minorClass.id,
               'courseName': myGrade.courseName,
               'year': myGrade.year,
@@ -250,7 +250,7 @@ class MyGradeDB {
               await db.update(
                 myGradeTable,
                 {
-                  'middleClassId': middleClass.id,
+                  'middleClassId': null,
                   'minorClassId': minorClass.id,
                   'courseName': myGrade.courseName,
                   'year': myGrade.year,
@@ -552,5 +552,9 @@ class MyCredit {
       "countedCredit": countedCredit,
       "majorClass": majorClass.map((e) => e.toMap()).toList(),
     };
+  }
+
+  toDisplay() {
+    printWrapped(const JsonEncoder.withIndent('  ').convert(toMap()));
   }
 }
