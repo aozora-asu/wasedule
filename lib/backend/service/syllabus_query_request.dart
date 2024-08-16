@@ -237,7 +237,7 @@ class SyllabusRequestQuery {
 
   Stream<SyllabusQueryResult> fetchAllSyllabusInfo() async* {
     List<String> syllabusURLs = await _getSyllabusURLs(null);
-    print("検索検索");
+
     for (var syllabusURL in syllabusURLs) {
       SyllabusQueryResult res = await getSingleSyllabusInfo(syllabusURL);
       yield res;

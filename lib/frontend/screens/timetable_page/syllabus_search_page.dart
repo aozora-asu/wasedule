@@ -505,7 +505,9 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
           );
         } else if (snapshot.hasError) {
           return Text('エラーが発生しました: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (!snapshot.hasData ||
+            snapshot.data!.isEmpty ||
+            resultList.isEmpty) {
           return const SizedBox(
             height: 70,
             child: Center(

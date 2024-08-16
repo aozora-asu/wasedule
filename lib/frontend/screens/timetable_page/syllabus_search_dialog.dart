@@ -402,6 +402,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           (accumulated, current, index) {
         if (index == 0) {
           resultList = [];
+          return resultList;
         }
         resultList.add(current);
         return resultList;
@@ -417,7 +418,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           );
         } else if (snapshot.hasError) {
           return Text('エラーが発生しました: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (!snapshot.hasData ||
+            snapshot.data!.isEmpty ||
+            resultList.isEmpty) {
           return const SizedBox(
             height: 70,
             child: Center(
