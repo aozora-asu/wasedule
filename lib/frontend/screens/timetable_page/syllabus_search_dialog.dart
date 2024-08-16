@@ -74,6 +74,19 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   }
 
   void updateQuery(SyllabusRequestQuery newQuery) {
+    if (isFullYear) {
+      newQuery.p_gakki = Term.fullYear;
+    } else {
+      newQuery.p_gakki = widget.gakki;
+    }
+    newQuery.p_gakubu = Department.byValue(SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
+    newQuery.subjectClassification = SubjectClassification.byKeyAndValue(
+        SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
+        SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
+
     setState(() {
       requestQuery = newQuery;
     });
@@ -209,13 +222,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                     SharepreferenceHandler().setValue(
                         SharepreferenceKeys.recentSyllabusQueryIsFullYear,
                         isFullYear);
-                    if (value) {
-                      requestQuery.p_gakki = Term.fullYear;
-                      updateQuery(requestQuery);
-                    } else {
-                      requestQuery.p_gakki = widget.gakki;
-                      updateQuery(requestQuery);
-                    }
+                    updateQuery(requestQuery);
                   }),
               SizedBox(
                 child: Text(

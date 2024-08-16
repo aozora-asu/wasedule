@@ -61,6 +61,19 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
   }
 
   void updateQuery(SyllabusRequestQuery newQuery) {
+    if (isFullYear) {
+      newQuery.p_gakki = Term.fullYear;
+    } else {
+      newQuery.p_gakki = currentTerm;
+    }
+    newQuery.p_gakubu = Department.byValue(SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
+    newQuery.subjectClassification = SubjectClassification.byKeyAndValue(
+        SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
+        SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
+
     setState(() {
       requestQuery = newQuery;
     });
