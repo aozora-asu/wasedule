@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
@@ -727,7 +729,7 @@ Widget pageHeader(){
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * cellHeight,
                 decoration: BoxDecoration(
-                    color:(weekDay + index).isEven ? lighten(bgColor,0.025) : darken(bgColor,0.0025),
+                    color:weekDay.isEven ? lighten(bgColor,0.025) : darken(bgColor,0.0025),
                     border: Border.all(
                       color: lineColor,
                       width: lineWidth,
@@ -914,7 +916,7 @@ Widget pageHeader(){
             maxLines: 2,
           ));
     }
-
+    Random random = Random();
     return Stack(children: [
       Container(
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -922,7 +924,7 @@ Widget pageHeader(){
               color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
               borderRadius: BorderRadius.circular(cellsRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
-          margin: const EdgeInsets.only(top : 4),
+          margin: EdgeInsets.only(top : (random.nextInt(8)+2).toDouble()),
 
           child: InkWell(
               onTap: () {
@@ -936,25 +938,25 @@ Widget pageHeader(){
                       );
                     });
               },
-              child: Column(children: [
-                SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
-                Expanded(
-                    child: Center(
-                        child: Text(
-                  className,
-                  style: TextStyle(
-                      fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                  maxLines: 3,
-                ))),
-                classRoomView,
-                const SizedBox(height: 10),
-              ]))),
-      doNotContainScreenShot(Align(
-          alignment: const Alignment(0.9, -0.85),
-          child: absentBadgeBuilder(targetData))),
-      doNotContainScreenShot(Align(
-          alignment: const Alignment(-1, -0.9),
-          child: lengthBadge(taskLength, fontSize, true))),
+            child: Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:[
+                  doNotContainScreenShot(absentBadgeBuilder(targetData)),
+                  const SizedBox(height: 20),
+                  doNotContainScreenShot(lengthBadge(taskLength, fontSize, true)),
+              ]),
+              Expanded(
+                  child: Center(
+                      child: Text(
+                className,
+                style: TextStyle(
+                    fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                maxLines: 3,
+              ))),
+              classRoomView,
+              const SizedBox(height: 10),
+            ]))),
     ]);
   }
 

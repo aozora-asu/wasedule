@@ -306,15 +306,6 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
-      switchWidget(tipsAndNewsPanel(randomNumber, ""),
-          ConfigDataLoader().searchConfigData("tips", ref)),
-      const SizedBox(height: 10),
-      switchWidget(todaysScheduleListView(),
-          ConfigDataLoader().searchConfigData("todaysSchedule", ref)),
-      switchWidget(
-          taskDataListList(
-              ConfigDataLoader().searchConfigInfo("taskList", ref)),
-          ConfigDataLoader().searchConfigData("taskList", ref)),
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
@@ -12,8 +13,10 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/task_view_page.d
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 int type = 0;
+bool hasTimelineShown = false;
 
 class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   late int currentIndex;
@@ -41,6 +44,14 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int pageNum = currentIndex;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bool isShowTimeline = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineAutomatically);
+      if (isShowTimeline && !hasTimelineShown) {
+        Scaffold.of(context).openDrawer();
+        hasTimelineShown = true;
+      }
+    });
 
     if (pageNum == 0 || pageNum == 3 || pageNum == 4) {
       contentColor = BLACK;
