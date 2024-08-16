@@ -233,6 +233,23 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
     });
 }
 
+  Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin = 3}) {
+    return GestureDetector(
+        onTap:onTap,
+        child: Container(
+          decoration: roundedBoxdecoration(),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
+          margin: EdgeInsets.symmetric(vertical: 4,horizontal: horizontalMargin),
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 15,
+                fontWeight: FontWeight.normal),
+          ),
+        )
+      );
+  }
 
 class DashedLinePainterWidget extends StatelessWidget {
   late double width;

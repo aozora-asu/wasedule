@@ -42,9 +42,10 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late bool isSelectedlistGenerated;
   late List<bool> isSelectedList;
 
-  double cellWidth = 15.3;
-  double cellHeight = 15;
-  double cellsRadius = 10.0;
+  double cellWidth = 15.0;
+  double cellHeight = 13;
+  double cellsRadius = 5.0;
+  double separatorHeight = 4;
 
   @override
   void initState() {
@@ -94,14 +95,9 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
            pageHeader(),
            const Divider(height: 1),
            Expanded(
-            child:Scrollbar(
-              controller: controller,
-              interactive: true,
-              radius: const Radius.circular(20),
-              thumbVisibility: true,
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: SizeConfig.blockSizeHorizontal! * 0, //2.5
+                  left: SizeConfig.blockSizeHorizontal! * 0,
                   right: SizeConfig.blockSizeHorizontal! * 0,
                 ),
                 child: ListView(
@@ -115,29 +111,13 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 ),
               ),
             )
-          )
         ])
       ),
       floatingActionButton: Container(
           width: SizeConfig.blockSizeHorizontal! * 90,
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
-            Expanded(
-              child:Container(
-                decoration: floatingButtonDecorartion,
-                child: buttonModel(() {
-                  showAttendanceDialog(context, DateTime.now(), ref, true);
-                }, Colors.blueAccent, "今日の出欠", verticalpadding: 15))),
-            const SizedBox(width: 5),
-            Expanded(
-                child: Container(
-                    decoration: floatingButtonDecorartion,
-                    child: buttonModel(() async {
-                      await showMoodleRegisterGuide(
-                          context, false, MoodleRegisterGuideType.timetable);
-                      widget.moveToMoodlePage(4);
-                    }, PALE_MAIN_COLOR, "自動取得", verticalpadding: 15))),
-            const SizedBox(width: 10),
+            const Spacer(),
             FloatingActionButton(
                 onPressed: () {
                   showDialog(
@@ -359,7 +339,22 @@ Widget pageHeader(){
         child: Container(
             decoration: switchDecoration(),
             child: Column(children: [
-              const SizedBox(height: 10),
+              Row(children:[
+                const SizedBox(width: 5),
+                simpleSmallButton(
+                  "今日の出欠",
+                  () async{
+                    await showAttendanceDialog(context, DateTime.now(), ref, true);
+                  }),
+                simpleSmallButton(
+                  "授業の自動取得",
+                () async {
+                  await showMoodleRegisterGuide(
+                      context, false, MoodleRegisterGuideType.timetable);
+                  widget.moveToMoodlePage(4);
+                })
+              ]),
+              const SizedBox(height: 5),
               FutureBuilder(
                   future: MyCourse.getAllMyCourse(),
                   builder: ((context, snapshot) {
@@ -416,7 +411,6 @@ Widget pageHeader(){
 
   Widget noDataScreen() {
     return SizedBox(
-        //height: SizeConfig.blockSizeVertical! * 80,
         width: SizeConfig.blockSizeHorizontal! * 85,
         child: Center(
             child:
@@ -456,22 +450,28 @@ Widget pageHeader(){
   }
 
   Widget timeTableBody() {
-    return Column(children: [
+    return Column(
+      children: [
       Row(children: [
-        Expanded(child: generatePerirodColumn()),
-        Column(children: [
-          generateWeekThumbnail(),
-          SizedBox(
-              width: SizeConfig.blockSizeHorizontal! * cellWidth * 6,
-              child: Row(children: [
-                timetableCells(1),
-                timetableCells(2),
-                timetableCells(3),
-                timetableCells(4),
-                timetableCells(5),
-                timetableCells(6),
-              ]))
-        ])
+        generatePerirodColumn(),
+        Expanded(child:
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              generateWeekThumbnail(),
+              SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * cellWidth * 6,
+                  child: Row(children: [
+                    timetableCells(1),
+                    timetableCells(2),
+                    timetableCells(3),
+                    timetableCells(4),
+                    timetableCells(5),
+                    timetableCells(6),
+              ])
+             )
+          ])
+        )
       ]),
       SizedBox(height: SizeConfig.blockSizeVertical! * 1),
       const Align(
@@ -484,7 +484,7 @@ Widget pageHeader(){
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
           child: generateOndemandRow()),
-      SizedBox(height: SizeConfig.blockSizeVertical! * 1),
+      const SizedBox(height: 30),
       Row(children:[
         const Text("   登録単位数",
           style: TextStyle(
@@ -539,79 +539,82 @@ Widget pageHeader(){
   Widget generatePerirodColumn() {
     double fontSize = 8;
 
-    return Column(children: [
-      SizedBox(
-        height: SizeConfig.blockSizeVertical! * 2.5,
-      ),
-      ListView.separated(
-        itemBuilder: (context, index) {
-          Color bgColor = BACKGROUND_COLOR;
-          Color fontColor = BLUEGREY;
-          DateTime now = DateTime.now();
-          if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
-              Lesson.atPeriod(index + 1)!.end)) {
-            bgColor = PALE_MAIN_COLOR;
-            fontColor = FORGROUND_COLOR;
-          }
+    return SizedBox(
+      width: SizeConfig.blockSizeHorizontal! * cellWidth * 0.5,
+      child:Column(children: [
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 2.5,
+        ),
+        ListView.separated(
+          itemBuilder: (context, index) {
+            Color bgColor = BACKGROUND_COLOR;
+            Color fontColor = BLUEGREY;
+            DateTime now = DateTime.now();
+            if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                Lesson.atPeriod(index + 1)!.end)) {
+              bgColor = PALE_MAIN_COLOR;
+              fontColor = FORGROUND_COLOR;
+            }
 
-          return Container(
-              height: SizeConfig.blockSizeVertical! * cellHeight,
-              decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(cellsRadius / 2)),
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          DateFormat("HH:mm")
-                              .format(Lesson.atPeriod(index + 1)!.start),
-                          style: TextStyle(
-                              color: fontColor,
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text((index + 1).toString(),
+            return Container(
+                height: SizeConfig.blockSizeVertical! * cellHeight,
+                decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(cellsRadius / 2)),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            DateFormat("HH:mm")
+                                .format(Lesson.atPeriod(index + 1)!.start),
                             style: TextStyle(
                                 color: fontColor,
-                                fontSize: fontSize * 2.2,
-                                fontWeight: FontWeight.bold)),
-                        Text(
-                          DateFormat("HH:mm")
-                              .format(Lesson.atPeriod(index + 1)!.end),
-                          style: TextStyle(
-                              color: fontColor,
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ])));
-        },
-        separatorBuilder: (context, index) {
-          Widget resultinging = const SizedBox();
-          DateTime now = DateTime.now();
-          Color bgColor = BACKGROUND_COLOR;
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text((index + 1).toString(),
+                              style: TextStyle(
+                                  color: fontColor,
+                                  fontSize: fontSize * 2.2,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            DateFormat("HH:mm")
+                                .format(Lesson.atPeriod(index + 1)!.end),
+                            style: TextStyle(
+                                color: fontColor,
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ])));
+          },
+          separatorBuilder: (context, index) {
+            Widget resultinging = SizedBox(height: separatorHeight,);
+            DateTime now = DateTime.now();
+            Color bgColor = BACKGROUND_COLOR;
 
-          if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
-            bgColor = PALE_MAIN_COLOR;
-          }
-          if (index == 1) {
-            resultinging = Container(
-                height: SizeConfig.blockSizeVertical! * 2.5,
-                color: bgColor,
-                child: const Column(children: [
-                  //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
-                  Spacer(),
-                  //Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
-                ]));
-          }
-          return resultinging;
-        },
-        itemCount: ref.read(timeTableProvider).maxPeriod,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-      )
-    ]);
+            if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
+              bgColor = PALE_MAIN_COLOR;
+            }
+            if (index == 1) {
+              resultinging = Container(
+                  height: SizeConfig.blockSizeVertical! * 2.5,
+                  color: bgColor,
+                  child: const Column(children: [
+                    //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
+                    Spacer(),
+                    //Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
+                  ]));
+            }
+            return resultinging;
+          },
+          itemCount: ref.read(timeTableProvider).maxPeriod,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+        )
+      ])
+    );
   }
 
   Color cellBackGroundColor(int taskCount, Color color) {
@@ -707,9 +710,10 @@ Widget pageHeader(){
               }
             }
 
-            Color lineColor = BACKGROUND_COLOR;
-            double lineWidth = 1;
+            Color lineColor = Colors.transparent;
+            double lineWidth = 0;
             DateTime now = DateTime.now();
+            double minRadius = 0;
 
             if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
                     Lesson.atPeriod(index + 1)!.end) &&
@@ -723,16 +727,29 @@ Widget pageHeader(){
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * cellHeight,
                 decoration: BoxDecoration(
-                    color: bgColor,
+                    color:(weekDay + index).isEven ? lighten(bgColor,0.025) : darken(bgColor,0.0025),
                     border: Border.all(
                       color: lineColor,
                       width: lineWidth,
                     ),
-                    borderRadius: BorderRadius.circular(cellsRadius)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: weekDay == 1 ? 
+                        Radius.circular(cellsRadius *2) : 
+                        Radius.circular(minRadius),
+                      bottomLeft: weekDay == 1 ? 
+                        Radius.circular(cellsRadius*2) : 
+                        Radius.circular(minRadius),
+                      topRight: weekDay == 6 ? 
+                        Radius.circular(cellsRadius*2) : 
+                        Radius.circular(minRadius),
+                      bottomRight: weekDay == 6 ? 
+                        Radius.circular(cellsRadius*2) : 
+                        Radius.circular(minRadius),
+                    )),
                 child: cellContents);
           }),
           separatorBuilder: (context, index) {
-            Widget resultinging = const SizedBox();
+            Widget resultinging = SizedBox(height: separatorHeight);
             DateTime now = DateTime.now();
             Color bgColor = BACKGROUND_COLOR;
             Color fontColor = BLUEGREY;
@@ -781,7 +798,7 @@ Widget pageHeader(){
     }
 
     return Row(children:[
-      SizedBox(width:cellWidth * 2),
+      SizedBox(width:SizeConfig.blockSizeHorizontal! * cellWidth * 0.5),
       Expanded(child:
         ListView.builder(
           shrinkWrap: true,
@@ -863,7 +880,7 @@ Widget pageHeader(){
 
   Widget timeTableCellsChild(
       int weekDay, int period, List<Map<String, dynamic>> taskList) {
-    double fontSize = 12;
+    double fontSize = 11;
     final timeTableData = ref.read(timeTableProvider);
     Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]!
         .elementAt(returnIndexFromPeriod(
@@ -905,6 +922,8 @@ Widget pageHeader(){
               color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
               borderRadius: BorderRadius.circular(cellsRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
+          margin: const EdgeInsets.only(top : 4),
+
           child: InkWell(
               onTap: () {
                 showDialog(
@@ -925,16 +944,16 @@ Widget pageHeader(){
                   className,
                   style: TextStyle(
                       fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                  maxLines: 4,
+                  maxLines: 3,
                 ))),
                 classRoomView,
                 const SizedBox(height: 10),
               ]))),
       doNotContainScreenShot(Align(
-          alignment: const Alignment(1, -1),
+          alignment: const Alignment(0.9, -0.85),
           child: absentBadgeBuilder(targetData))),
       doNotContainScreenShot(Align(
-          alignment: const Alignment(-1, -1),
+          alignment: const Alignment(-1, -0.9),
           child: lengthBadge(taskLength, fontSize, true))),
     ]);
   }
@@ -969,7 +988,7 @@ Widget pageHeader(){
       return Container(
         decoration: const BoxDecoration(
             color: Colors.blue,
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5))),
+            borderRadius: BorderRadius.all(Radius.circular(5))),
         child: Text(
           " 無欠席 ",
           style: TextStyle(
@@ -987,9 +1006,9 @@ Widget pageHeader(){
         decoration: BoxDecoration(
             color: backGroundColor,
             borderRadius:
-                const BorderRadius.only(bottomLeft: Radius.circular(5))),
+                const BorderRadius.all( Radius.circular(5))),
         child: Text(
-          " 欠席 " + absentNum.toString() + "/" + remainAbsent.toString(),
+          " 欠席 " + absentNum.toString(), // + "/" + remainAbsent.toString(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeVertical! * cellHeight / 12,
@@ -1151,7 +1170,7 @@ Widget pageHeader(){
                    showClassificationContentDialog
                      (classificationName,sortedCourseByClassification.values.elementAt(index));
                 },
-                child:const Icon(Icons.arrow_drop_down_circle,color:Colors.grey),
+                child:const Icon(Icons.more_horiz,color:Colors.grey),
               )
             ]),
           );
