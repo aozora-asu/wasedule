@@ -248,10 +248,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text("${(index+1).toString()}. ${data.majorClass.elementAt(index).text}",
+              Text(" ${(index+1).toString()}. ${data.majorClass.elementAt(index).text}",
                   style:
                       const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const Divider(thickness:2,height: 5),
+              const SizedBox(height: 2),
+              const Divider(thickness:2,height:2,color:BLUEGREY),
               Row(children:[
                 necessaryCreditsIndicator(
                     data.majorClass[index].requiredCredit,
@@ -282,7 +283,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           Row(crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "${(parentIndex + 1).toString()}-${(index + 1).toString()}  ${data[index].text != "" ? data[index].text : "(中分類なし)"}",
+                " ${(parentIndex + 1).toString()}-${(index + 1).toString()}  ${data[index].text != "" ? data[index].text : "(中分類なし)"}",
                 overflow: TextOverflow.clip,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -310,7 +311,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           // ]),
           gradeDataList(data[index].myGrade),
           dataListByMinorClassification(data[index].minorClass),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
         ]);
       },
       itemCount: data.length,

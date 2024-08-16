@@ -27,20 +27,33 @@ class TimelineDrawer extends ConsumerWidget {
       child: Column(children:[
           Container(
             width: drawerWidth,
-            height: SizeConfig.blockSizeVertical! *15,
+            height: SizeConfig.blockSizeVertical! *17,
             decoration:const BoxDecoration(
               color: MAIN_COLOR,
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Row(children:[
+                const Row(children:[
                   Spacer(),
+                  Icon(Icons.schedule,color:Colors.white,size:28),
+                  SizedBox(width: 3),
                   Text(
                     'TIMELINE  ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ]),
+                Row(children:[
+                  const Spacer(),
+                  Text(
+                    DateFormat("MM月dd日(E)  ","ja_jp").format(now),
+                    style:const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -71,6 +84,7 @@ class _TimelineState extends ConsumerState<Timeline>{
   late bool isShowSchedule;
   late bool isShowTask;
   late bool isShowCourse;
+  late bool isShowAutomatically;
 
   @override 
   void initState(){
@@ -78,17 +92,20 @@ class _TimelineState extends ConsumerState<Timeline>{
     isShowSchedule = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineSchedule);
     isShowTask = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineTask);
     isShowCourse = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineCourse);
+    isShowAutomatically = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineAutomatically);
   }
 
   Future<List<Map<String, dynamic>>> loadDataBases() async {
     List<Map<String,dynamic>> taskData = 
       await TaskDatabaseHelper().getTaskFromDB();
+    ref
+        .read(taskDataProvider)
+        .getData(taskData);
+    ref
+        .read(taskDataProvider).sortDataByDtEnd(taskData);
     await ref
         .read(calendarDataProvider)
         .getTagData(TagDataLoader().getTagDataSource());
-    ref
-    .read(taskDataProvider)
-    .getData(taskData);
     await ref
         .read(timeTableProvider)
         .getData(TimeTableDataLoader().getTimeTableDataSource());
@@ -99,20 +116,19 @@ class _TimelineState extends ConsumerState<Timeline>{
 
   @override 
   Widget build(BuildContext context){
-    return Expanded(child:
-      Column(children:[
-        checkBoxRow(),
-        Expanded(child:
-          ListView(
-            padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
-            children:[
-              timelineBuilder(),
-          ]),
-        )
-      ])
+    return Expanded(
+      child: Column(
+        children:[
+          checkBoxRow(),
+              Expanded(
+                child: timelineBuilder(),
+            ),
+          ],
+        ),
     );
   }
 
+  
   Widget checkBoxRow() {
     return Container(
       color: PALE_MAIN_COLOR,
@@ -145,14 +161,28 @@ class _TimelineState extends ConsumerState<Timeline>{
     );
   }
 
-  Widget checkBox(bool value, String text, Function(bool) onChanged) {
+  Widget autoShowSettingsCheckBox(){
+    return 
+      checkBox(isShowAutomatically, " アプリ起動時に表示：", 
+      fontColor: Colors.grey,
+      (newValue) {
+        SharepreferenceHandler()
+          .setValue(SharepreferenceKeys.isShowTimelineAutomatically,newValue);
+        setState(() {
+          isShowAutomatically = newValue;
+        });
+      }
+    );
+  }
+
+  Widget checkBox(bool value, String text, Function(bool) onChanged,{Color fontColor = Colors.white}) {
     return Row(children: [
-      Text(text, style: const TextStyle(color: Colors.white, fontSize: 15)),
+      Text(text, style: TextStyle(color: fontColor, fontSize: 15)),
       CupertinoCheckbox(
-          value: value,
-          onChanged: (newValue) {
-            onChanged(newValue!);
-          }),
+        value: value,
+        onChanged: (newValue) {
+          onChanged(newValue!);
+      }),
     ]);
   }
 
@@ -166,14 +196,16 @@ class _TimelineState extends ConsumerState<Timeline>{
           ref.read(calendarDataProvider).getData(snapshot.data!);
           ref.read(calendarDataProvider).sortDataByDay();
           return ListView.builder(
+            padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
             itemBuilder: (context, index) {
               final DateTime now = DateTime.now();
               // 今日の日付からインデックス分の差を計算
               final date = DateTime(now.year,now.month,now.day).add(Duration(days: index));
-              return dayObject(date);
+              return Column(children:[
+                  if(index == 0) autoShowSettingsCheckBox(),
+                  dayObject(date)
+                ]);
             },
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
             itemCount:180
           );
         }else{
@@ -227,6 +259,7 @@ class _TimelineState extends ConsumerState<Timeline>{
           const SizedBox(width: 5),
         ]),
         ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 0),
           itemBuilder:(context,index){
             return targetDayData.integratedData(ref).elementAt(index).values.first;
           },
@@ -386,8 +419,11 @@ class DaylyData{
         children: [
         Row(children: [
           listIcon(Icons.task,Colors.blueAccent),
-          Text(" 課題",style:smallChar),
-          const Spacer()
+          Expanded(child:
+            Text(
+              " 課題 ：${taskData["title"]}",
+              overflow: TextOverflow.clip,
+              style: smallChar)),
         ]),
         Text(taskData["summary"],style:largeChar)
       ]));
