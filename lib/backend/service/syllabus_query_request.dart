@@ -128,6 +128,31 @@ class SyllabusRequestQuery {
     return normalQuery;
   }
 
+  SyllabusRequestQuery copyWith({
+    String? keyword,
+    String? kamoku,
+    Term? p_gakki,
+    DayOfWeek? p_youbi,
+    Lesson? p_jigen,
+    Department? p_gakubu,
+    String? p_gengo,
+    bool? p_open,
+    SubjectClassification? subjectClassification,
+  }) {
+    return SyllabusRequestQuery(
+      keyword: keyword ?? this.keyword,
+      kamoku: kamoku ?? this.kamoku,
+      p_gakki: p_gakki ?? this.p_gakki,
+      p_youbi: p_youbi ?? this.p_youbi,
+      p_jigen: p_jigen ?? this.p_jigen,
+      p_gakubu: p_gakubu ?? this.p_gakubu,
+      p_gengo: p_gengo ?? this.p_gengo,
+      p_open: p_open ?? this.p_open,
+      subjectClassification:
+          subjectClassification ?? this.subjectClassification,
+    );
+  }
+
   String _makeBody() {
     Map<String, dynamic> map = _toMap();
     String body = map.entries
@@ -212,9 +237,9 @@ class SyllabusRequestQuery {
 
   Stream<SyllabusQueryResult> fetchAllSyllabusInfo() async* {
     List<String> syllabusURLs = await _getSyllabusURLs(null);
+    print("検索検索");
     for (var syllabusURL in syllabusURLs) {
       SyllabusQueryResult res = await getSingleSyllabusInfo(syllabusURL);
-
       yield res;
     }
   }

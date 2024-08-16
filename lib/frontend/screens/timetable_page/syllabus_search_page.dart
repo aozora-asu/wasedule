@@ -57,6 +57,13 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
 
     isFullYear = false;
     isGraduateSchool = false;
+    updateQuery(requestQuery);
+  }
+
+  void updateQuery(SyllabusRequestQuery newQuery) {
+    setState(() {
+      requestQuery = newQuery;
+    });
   }
 
   @override
@@ -206,9 +213,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
           CupertinoCheckbox(
               value: requestQuery.p_open,
               onChanged: (value) {
-                setState(() {
-                  requestQuery.p_open = value!;
-                });
+                requestQuery.p_open = value!;
+                updateQuery(requestQuery);
               }),
           SizedBox(
             child: Text(
@@ -221,9 +227,9 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
               value: isGraduateSchool,
               onChanged: (value) {
                 requestQuery.p_gakubu = null;
-                setState(() {
-                  isGraduateSchool = value!;
-                });
+
+                isGraduateSchool = value!;
+                updateQuery(requestQuery);
               })
         ],
       ),
@@ -237,9 +243,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
       controller: controller,
       onChanged: (value) {},
       onSubmitted: (value) {
-        setState(() {
-          onSubmitted(value);
-        });
+        onSubmitted(value);
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -272,9 +277,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
     return Expanded(
         child: cupertinoLikeDropDownListModel(items, requestQuery.p_gakki,
             (value) {
-      setState(() {
-        requestQuery.p_gakki = value;
-      });
+      requestQuery.p_gakki = value;
+      updateQuery(requestQuery);
     }));
   }
 
@@ -312,9 +316,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
       items,
       requestQuery.p_youbi,
       (value) {
-        setState(() {
-          requestQuery.p_youbi = value;
-        });
+        requestQuery.p_youbi = value;
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -355,9 +358,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
       items,
       requestQuery.p_jigen,
       (value) {
-        setState(() {
-          requestQuery.p_jigen = value;
-        });
+        requestQuery.p_jigen = value;
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -389,10 +391,9 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
       items,
       requestQuery.p_gakubu,
       (value) {
-        setState(() {
-          requestQuery.p_gakubu = value;
-          requestQuery.subjectClassification = null;
-        });
+        requestQuery.p_gakubu = value;
+        requestQuery.subjectClassification = null;
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -424,10 +425,9 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
       items,
       requestQuery.p_gakubu,
       (value) {
-        setState(() {
-          requestQuery.p_gakubu = value;
-          requestQuery.subjectClassification = null;
-        });
+        requestQuery.p_gakubu = value;
+        requestQuery.subjectClassification = null;
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -473,9 +473,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
           items,
           requestQuery.subjectClassification,
           (value) {
-            setState(() {
-              requestQuery.subjectClassification = value;
-            });
+            requestQuery.subjectClassification = value;
+            updateQuery(requestQuery);
           },
         ))
       ]);
@@ -484,18 +483,20 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
     return value;
   }
 
-  List<SyllabusQueryResult> resultList = [];
   Widget searchResult() {
-    resultList = [];
+    List<SyllabusQueryResult> resultList = [];
     return StreamBuilder<List<SyllabusQueryResult>>(
       stream: requestQuery.fetchAllSyllabusInfo().scan(
           (accumulated, current, index) {
-        accumulated.add(current);
-        return accumulated;
+        if (index == 0) {
+          resultList = [];
+        }
+        resultList.add(current);
+        return resultList;
       }, <SyllabusQueryResult>[]).asBroadcastStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
-            resultList.isEmpty) {
+            snapshot.data == null) {
           return const SizedBox(
             height: 70,
             child: Center(

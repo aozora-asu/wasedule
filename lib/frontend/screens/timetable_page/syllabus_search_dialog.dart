@@ -40,6 +40,8 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late bool isGraduateSchool;
   TextEditingController keywordController = TextEditingController();
 
+  final BehaviorSubject<SyllabusRequestQuery> _querySubject =
+      BehaviorSubject<SyllabusRequestQuery>();
   @override
   void initState() {
     super.initState();
@@ -68,6 +70,21 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
     isGraduateSchool = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool);
+    updateQuery(requestQuery);
+  }
+
+  void updateQuery(SyllabusRequestQuery newQuery) {
+    setState(() {
+      requestQuery = newQuery;
+    });
+  }
+
+  @override
+  void dispose() {
+    // BehaviorSubjectをクローズ
+
+    _querySubject.close();
+    super.dispose();
   }
 
   @override
@@ -155,6 +172,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 SharepreferenceHandler().setValue(
                     SharepreferenceKeys.recentSyllabusQueryKeyword,
                     requestQuery.keyword);
+                updateQuery(requestQuery);
               }),
             ],
           ),
@@ -171,12 +189,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
               CupertinoCheckbox(
                   value: requestQuery.p_open,
                   onChanged: (value) {
-                    setState(() {
-                      requestQuery.p_open = value!;
-                      SharepreferenceHandler().setValue(
-                          SharepreferenceKeys.recentSyllabusQueryIsOpen,
-                          requestQuery.p_open);
-                    });
+                    requestQuery.p_open = value!;
+                    SharepreferenceHandler().setValue(
+                        SharepreferenceKeys.recentSyllabusQueryIsOpen,
+                        requestQuery.p_open);
+                    updateQuery(requestQuery);
                   }),
               SizedBox(
                 child: Text(
@@ -193,13 +210,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         SharepreferenceKeys.recentSyllabusQueryIsFullYear,
                         isFullYear);
                     if (value) {
-                      setState(() {
-                        requestQuery.p_gakki = Term.fullYear;
-                      });
+                      requestQuery.p_gakki = Term.fullYear;
+                      updateQuery(requestQuery);
                     } else {
-                      setState(() {
-                        requestQuery.p_gakki = widget.gakki;
-                      });
+                      requestQuery.p_gakki = widget.gakki;
+                      updateQuery(requestQuery);
                     }
                   }),
               SizedBox(
@@ -213,17 +228,15 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   value: isGraduateSchool,
                   onChanged: (value) {
                     requestQuery.p_gakubu = null;
-                    setState(() {
-                      SharepreferenceHandler().setValue(
-                          SharepreferenceKeys
-                              .recentSyllabusQueryDepartmentValue,
-                          requestQuery.p_gakubu?.value);
-                      isGraduateSchool = value!;
-                      SharepreferenceHandler().setValue(
-                          SharepreferenceKeys
-                              .recentSyllabusQueryIsGraduateSchool,
-                          isGraduateSchool);
-                    });
+
+                    SharepreferenceHandler().setValue(
+                        SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+                        requestQuery.p_gakubu?.value);
+                    isGraduateSchool = value!;
+                    SharepreferenceHandler().setValue(
+                        SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool,
+                        isGraduateSchool);
+                    updateQuery(requestQuery);
                   })
             ],
           ),
@@ -242,11 +255,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return Expanded(
         child: CupertinoTextField(
       controller: controller,
-      onChanged: (value) {},
+      onChanged: (value) {
+        updateQuery(requestQuery);
+      },
       onSubmitted: (value) {
-        setState(() {
-          onSubmitted(value);
-        });
+        onSubmitted(value);
       },
     ));
   }
@@ -278,13 +291,12 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       items,
       requestQuery.p_gakubu,
       (value) {
-        setState(() {
-          requestQuery.p_gakubu = value;
-          requestQuery.subjectClassification = null;
-          SharepreferenceHandler().setValue(
-              SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
-              requestQuery.p_gakubu?.value);
-        });
+        requestQuery.p_gakubu = value;
+        requestQuery.subjectClassification = null;
+        SharepreferenceHandler().setValue(
+            SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+            requestQuery.p_gakubu?.value);
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -316,13 +328,12 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
       items,
       requestQuery.p_gakubu,
       (value) {
-        setState(() {
-          requestQuery.p_gakubu = value;
-          requestQuery.subjectClassification = null;
-          SharepreferenceHandler().setValue(
-              SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
-              requestQuery.p_gakubu?.value);
-        });
+        requestQuery.p_gakubu = value;
+        requestQuery.subjectClassification = null;
+        SharepreferenceHandler().setValue(
+            SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+            requestQuery.p_gakubu?.value);
+        updateQuery(requestQuery);
       },
     ));
   }
@@ -368,15 +379,14 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           items,
           requestQuery.subjectClassification,
           (value) {
-            setState(() {
-              requestQuery.subjectClassification = value;
-              SharepreferenceHandler().setValue(
-                  SharepreferenceKeys.recentSyllabusQueryKeya,
-                  requestQuery.subjectClassification?.p_keya);
-              SharepreferenceHandler().setValue(
-                  SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
-                  requestQuery.subjectClassification?.parentDepartmentID);
-            });
+            requestQuery.subjectClassification = value;
+            SharepreferenceHandler().setValue(
+                SharepreferenceKeys.recentSyllabusQueryKeya,
+                requestQuery.subjectClassification?.p_keya);
+            SharepreferenceHandler().setValue(
+                SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+                requestQuery.subjectClassification?.parentDepartmentID);
+            updateQuery(requestQuery);
           },
         ))
       ]);
@@ -385,19 +395,20 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return value;
   }
 
-  List<SyllabusQueryResult> resultList = [];
   Widget searchResult() {
-    resultList = [];
-
+    List<SyllabusQueryResult> resultList = [];
     return StreamBuilder<List<SyllabusQueryResult>>(
       stream: requestQuery.fetchAllSyllabusInfo().scan(
           (accumulated, current, index) {
-        accumulated.add(current);
-        return accumulated;
+        if (index == 0) {
+          resultList = [];
+        }
+        resultList.add(current);
+        return resultList;
       }, <SyllabusQueryResult>[]).asBroadcastStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
-            resultList.isEmpty) {
+            snapshot.data == null) {
           return const SizedBox(
             height: 70,
             child: Center(
@@ -415,6 +426,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           );
         } else {
           final results = snapshot.data!;
+
           return ListView.separated(
             itemBuilder: (context, index) {
               return resultListChild(results[index]);
