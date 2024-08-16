@@ -83,6 +83,13 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
             child: Column(children: [
               pageHeader(),
               const Divider(height: 1),
+              Row(children: [
+                changeGPviewButton(),
+                const SizedBox(width: 5),
+                yearPicker(),
+                const SizedBox(width: 5),
+                termPicker(),
+              ]),
               Expanded(
                   child: ListView(children: [
                 individualDataListBuilder(),
@@ -112,7 +119,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
                 fontSize: 15,
                 fontWeight: FontWeight.normal),
           ),
-        ));
+        )
+      );
   }
 
   Widget termPicker() {
@@ -221,38 +229,39 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget dataListByMajorClassification(MyCredit data) {
-      SizeConfig().init(context);
+    SizeConfig().init(context);
 
     return Column(children: [
-      Row(children: [
-        changeGPviewButton(),
-        const SizedBox(width: 5),
-        yearPicker(),
-        const SizedBox(width: 5),
-        termPicker(),
-      ]),
-      const SizedBox(height: 10),
-      Text(data.text,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      necessaryCreditsIndicstor(
-          data.requiredCredit, data.acquiredCredit, data.countedCredit),
+      const SizedBox(height: 15),
+      Container(
+        decoration: roundedBoxdecoration(radiusType: 0),
+        padding:const EdgeInsets.symmetric(vertical: 7),
+        child: Column(children:[
+          Text(data.text,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          necessaryCreditsIndicator(
+              data.requiredCredit, data.acquiredCredit, data.countedCredit)
+      ])),
       ListView.builder(
         itemBuilder: (context, index) {
-          return Column(children: [
-            const SizedBox(height: 20),
-            DashedLinePainterWidget(
-              width: SizeConfig.blockSizeHorizontal! *100,
-              height: 7),
-            const SizedBox(height: 5),
-            Text(data.majorClass.elementAt(index).text,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            necessaryCreditsIndicstor(
-                data.majorClass[index].requiredCredit,
-                data.majorClass[index].acquiredCredit,
-                data.majorClass[index].countedCredit),
-            dataListByMiddleClassification(data.majorClass[index].middleClass)
-          ]);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Text("${(index+1).toString()}. ${data.majorClass.elementAt(index).text}",
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const Divider(thickness:2,height: 5),
+              Row(children:[
+                necessaryCreditsIndicator(
+                    data.majorClass[index].requiredCredit,
+                    data.majorClass[index].acquiredCredit,
+                    data.majorClass[index].countedCredit,
+                )
+              ]),
+              const SizedBox(height: 15),
+              dataListByMiddleClassification(data.majorClass[index].middleClass,index),
+            ]);
         },
         itemCount: data.majorClass.length,
         shrinkWrap: true,
@@ -261,36 +270,47 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
     ]);
   }
 
-  Widget dataListByMiddleClassification(List<MiddleClass> data) {
+  Widget dataListByMiddleClassification(List<MiddleClass> data,int parentIndex) {
     TextStyle smallGreyFont = const TextStyle(
         fontSize: 10, fontWeight: FontWeight.normal, color: Colors.grey);
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        int creditSum = data[index].acquiredCredit;
         double gradeAverage = calculateGradeAverage(data[index].myGrade);
 
         return Column(children: [
-          const SizedBox(height: 10),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text("単位", style: smallGreyFont),
-            Expanded(
-                child: Text(
-                    data[index].text != "" ? data[index].text : "【中分類なし】",
-                    overflow: TextOverflow.clip,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey))),
-            Text("単位計：$creditSum\nGP平均：$gradeAverage", style: smallGreyFont),
+          Row(crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "${(parentIndex + 1).toString()}-${(index + 1).toString()}  ${data[index].text != "" ? data[index].text : "(中分類なし)"}",
+                overflow: TextOverflow.clip,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey)),
+          ]),
+          Divider(height: 1, color: FORGROUND_COLOR),
+          Row(crossAxisAlignment: CrossAxisAlignment.end,
+            children:[
+              necessaryCreditsIndicator(data[index].requiredCredit,
+                  data[index].acquiredCredit, data[index].countedCredit),
+              const Spacer(),
+              Text("GP平均：$gradeAverage", style: smallGreyFont),
           ]),
           const SizedBox(height: 3),
-          Divider(height: 1, color: FORGROUND_COLOR),
-          necessaryCreditsIndicstor(data[index].requiredCredit,
-              data[index].acquiredCredit, data[index].countedCredit),
+          // Row(mainAxisSize: MainAxisSize.max,
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   crossAxisAlignment: CrossAxisAlignment.end,
+          //   children:[
+          //       if(data[index].minorClass.isEmpty && data[index].myGrade.isNotEmpty) 
+          //         Text("単位", style: smallGreyFont)
+          //       else
+          //         Text("　　", style: smallGreyFont),
+          // ]),
+          gradeDataList(data[index].myGrade),
           dataListByMinorClassification(data[index].minorClass),
-          gradeDataList(data[index].myGrade)
+          const SizedBox(height: 20),
         ]);
       },
       itemCount: data.length,
@@ -314,10 +334,6 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
                       fontWeight: FontWeight.normal,
                       color: Colors.grey)),
           ]),
-          // necessaryCreditsIndicstor(
-          //   minorClassificationGroupList[index].requiredCredit,
-          //   minorClassificationGroupList[index].acquiredCredit,
-          //   minorClassificationGroupList[index].countedCredit),
           gradeDataList(minorClassificationGroupList.elementAt(index).myGrade),
         ]);
       },
@@ -327,7 +343,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
     );
   }
 
-  Widget necessaryCreditsIndicstor(
+  Widget necessaryCreditsIndicator(
       int? requiredCredit, int acquiredCredit, int countedCredit) {
     TextStyle categoryStyle = const TextStyle(fontSize: 14, color: Colors.grey);
     TextStyle numberStyle = const TextStyle(
@@ -337,18 +353,18 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
     return Container(
       decoration: roundedBoxdecoration(
-          backgroundColor: BACKGROUND_COLOR, radiusType: 2),
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
+          backgroundColor: Colors.transparent, radiusType: 2),
+      margin: const EdgeInsets.symmetric(vertical: 0),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("算入 ", style: categoryStyle),
             Text(countedCredit.toString(), style: numberStyle),
-            Text("単位 / 所定 ", style: categoryStyle),
+            Text(" 単位 / 所定 ", style: categoryStyle),
             Text(requiredCreditString, style: numberStyle),
-            Text("単位  (既得 ", style: categoryStyle),
+            Text(" 単位  (既得 ", style: categoryStyle),
             Text(acquiredCredit.toString(), style: categoryStyle),
             Text(" 単位)", style: categoryStyle),
           ]),
