@@ -47,7 +47,8 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bool isShowTimeline = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineAutomatically);
-      if (isShowTimeline && !hasTimelineShown) {
+      bool hasTutorialsDone = SharepreferenceHandler().getValue(SharepreferenceKeys.hasCompletedIntro);
+      if (isShowTimeline && !hasTimelineShown && hasTutorialsDone) {
         Scaffold.of(context).openDrawer();
         hasTimelineShown = true;
       }

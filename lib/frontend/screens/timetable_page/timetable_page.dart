@@ -729,7 +729,7 @@ Widget pageHeader(){
                 width: SizeConfig.blockSizeHorizontal! * cellWidth,
                 height: SizeConfig.blockSizeVertical! * cellHeight,
                 decoration: BoxDecoration(
-                    color:weekDay.isEven ? lighten(bgColor,0.025) : darken(bgColor,0.0025),
+                    color:weekDay.isEven ? lighten(bgColor,0.025) : darken(bgColor,0.025),
                     border: Border.all(
                       color: lineColor,
                       width: lineWidth,
@@ -924,7 +924,7 @@ Widget pageHeader(){
               color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
               borderRadius: BorderRadius.circular(cellsRadius)),
           padding: const EdgeInsets.symmetric(horizontal: 3),
-          margin: EdgeInsets.only(top : (random.nextInt(8)+2).toDouble()),
+          margin: EdgeInsets.only(top : 5.toDouble()),
 
           child: InkWell(
               onTap: () {

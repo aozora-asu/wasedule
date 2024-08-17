@@ -132,6 +132,9 @@ flutter:
     - lib/assets/eye_catch/wase_map_logo.png
     - lib/assets/eye_catch/wase_map_logo_transparent.png
 
+    - lib/assets/calendar_background/ookuma_day.png
+    - lib/assets/page_background/sky_wallpaper.png
+
     - lib/assets/tutorial_images/tag_and_template_button.png
     - lib/assets/tutorial_images/tag_button.png
     - lib/assets/tutorial_images/arbeit_button.png

@@ -49,8 +49,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   }
 
   Future<void> _initializeData() async {
-    //ここの中にロードを1時間に1回までに制限する仕組みを書いて、
-    //initState内で呼び出せばよさそうじゃない？
     urlString = await UserDatabaseHelper().getUrl();
     if (await databaseHelper.hasData() || urlString != null) {
       await loadData();
@@ -82,7 +80,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
     Widget dividerModel = const VerticalDivider(
       width: 2,
@@ -103,21 +100,13 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      height: SizeConfig.blockSizeVertical! * 4.5,
                       child: Row(children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: foldStateSwitch(),
-                        ),
-                        dividerModel,
+                        const SizedBox(width: 5,),
+                        foldStateSwitch(),
                         sortSwitch(),
-                        dividerModel,
-                        TextButton(
-                          child: const Text("注意事項",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          onPressed: () {
+                        simpleSmallButton(
+                          "注意事項",
+                          () {
                             showDisclaimerDialogue(context);
                           },
                         ),
@@ -126,7 +115,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   ),
                 ),
               ])),
-          //const Divider(thickness: 1, height: 1, color: Colors.grey),
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(
@@ -271,32 +259,29 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     final taskData = ref.watch(taskDataProvider);
     switch (taskData.foldState) {
       case 0:
-        return TextButton(
-            onPressed: () {
+        return simpleSmallButton(
+            "畳む",
+            () {
               setState(() {
                 taskData.foldState = 1;
               });
-            },
-            child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+            });
       case 1:
-        return TextButton(
-            onPressed: () {
+        return simpleSmallButton(
+            "展開",
+            () {
               setState(() {
                 taskData.foldState = 2;
               });
-            },
-            child: const Text("展開",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+            });
       default:
-        return TextButton(
-            onPressed: () {
+        return simpleSmallButton(
+            "畳む",
+            () {
               setState(() {
                 taskData.foldState = 1;
               });
-            },
-            child: const Text("畳む",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+            });
     }
   }
 
@@ -304,26 +289,22 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     final taskData = ref.watch(taskDataProvider);
     switch (taskData.taskPageIndex) {
       case 0:
-        return TextButton(
-            onPressed: () {
+        return simpleSmallButton(
+            "期限順",
+            () {
               setState(() {
                 ref.read(taskDataProvider).taskPageIndex = 1;
               });
-            },
-            child: const Text("期限順",
-                style: TextStyle(fontWeight: FontWeight.bold)));
+            });
 
       default:
-        return TextButton(
-            onPressed: () {
+        return simpleSmallButton(
+            "カテゴリ別",
+            () {
               setState(() {
                 ref.read(taskDataProvider).taskPageIndex = 0;
               });
-            },
-            child: const Text("カテゴリ別",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                )));
+            });
     }
   }
 }
