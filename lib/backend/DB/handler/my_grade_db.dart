@@ -400,16 +400,18 @@ class MyGradeDB {
     return majorClasses;
   }
 
-  static Future<MyCredit> getMyCredit() async {
+  static Future<MyCredit?> getMyCredit() async {
     Map<String, dynamic> map = json.decode(SharepreferenceHandler()
         .getValue(SharepreferenceKeys.graduationRequireCredit));
-    MyCredit myCredit = MyCredit(
-        requiredCredit: map["requiredCredit"]!,
-        acquiredCredit: map["acquiredCredit"]!,
-        countedCredit: map["countedCredit"]!,
-        majorClass: await _getAllMajorClasses());
-
-    return myCredit;
+    if (map.isNotEmpty) {
+      MyCredit myCredit = MyCredit(
+          requiredCredit: map["requiredCredit"]!,
+          acquiredCredit: map["acquiredCredit"]!,
+          countedCredit: map["countedCredit"]!,
+          majorClass: await _getAllMajorClasses());
+      return myCredit;
+    }
+    return null;
   }
 }
 
