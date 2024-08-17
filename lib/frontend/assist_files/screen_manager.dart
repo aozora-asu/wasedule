@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
@@ -155,15 +156,21 @@ class _AppPageState extends ConsumerState<AppPage> {
       extendBody: isExtendBottom,
       appBar: PreferredSize(
           preferredSize: Size(SizeConfig.blockSizeHorizontal! * 100, height),
-          child: MenuAppBar(
-            currentIndex: _currentIndex,
-            onItemTapped: _onItemTapped,
-            currentSubIndex: _currentSubIndex,
-            onTabTapped: _onTabTapped,
-            setosute: setState,
-            isChildmenuExpand: showChildMenu,
-            changeChildmenuState: _switchChildMenu,
-          )),
+          child: Stack(
+            alignment:const  Alignment(0,2.2),
+            children: [
+              MenuAppBar(
+                currentIndex: _currentIndex,
+                onItemTapped: _onItemTapped,
+                currentSubIndex: _currentSubIndex,
+                onTabTapped: _onTabTapped,
+                setosute: setState,
+                isChildmenuExpand: showChildMenu,
+                changeChildmenuState: _switchChildMenu,
+              ),
+
+          ])
+        ),
       bottomNavigationBar:
           customBottomBar(context, _currentIndex, _onItemTapped, setState),
       body: body,
@@ -219,20 +226,8 @@ class _AppPageState extends ConsumerState<AppPage> {
     ];
   }
 
-  void startTimer() {
-    _timer?.cancel();
-    _timer = Timer(const Duration(seconds: 4), () {
-      setState(() {
-        if (_currentIndex != 3) {
-          showAppBar = false;
-        }
-      });
-    });
-  }
-
   @override
   void dispose() {
-    _timer?.cancel(); // リソースの解放
     super.dispose();
   }
 }

@@ -427,21 +427,20 @@ class _CalendarState extends ConsumerState<Calendar> {
                     ],
                     showIcon: false))),
         const SizedBox(height: 15),
-        menuListChild(Icons.settings, "設定", () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SettingsPage()),
-          );
-        }),
-        menuListChild(Icons.info, "サポート", () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SnsLinkPage(showAppBar: true)),
-          );
-        }),
-        const SizedBox(height: 15),
-        const SizedBox(height: 20),
+        // menuListChild(Icons.settings, "設定", () {
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => SettingsPage()),
+        //   );
+        // }),
+        // menuListChild(Icons.info, "サポート", () {
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => SnsLinkPage(showAppBar: true)),
+        //   );
+        // }),
+        const SizedBox(height: 100),
       ])
     ]);
   }
