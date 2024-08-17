@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
@@ -28,6 +29,7 @@ class _IntroPageState extends State<IntroPage> {
       bodyFlex: 2);
 
   List<PageViewModel> getPages() {
+    dismissTimelinePop = true;
     return [
       PageViewModel(
           title: "わせジュールへようこそ",

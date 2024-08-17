@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 int type = 0;
 bool hasTimelineShown = false;
+bool dismissTimelinePop = false;
 
 class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
@@ -48,9 +49,15 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bool isShowTimeline = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineAutomatically);
       bool hasTutorialsDone = SharepreferenceHandler().getValue(SharepreferenceKeys.hasCompletedIntro);
+
       if (isShowTimeline && !hasTimelineShown && hasTutorialsDone) {
         Scaffold.of(context).openDrawer();
         hasTimelineShown = true;
+
+        if(dismissTimelinePop){
+          Navigator.pop(context);
+        }
+
       }
     });
 
