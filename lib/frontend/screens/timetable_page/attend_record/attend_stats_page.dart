@@ -3,8 +3,8 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_menu_panel.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_record/attend_menu_panel.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

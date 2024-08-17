@@ -329,7 +329,7 @@ class DrawerMenu extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 10,
-                      fontWeight: isPageSelected ? FontWeight.bold : null,
+                      fontWeight: FontWeight.bold,
                       color: itemColor,
                     ),
                   )

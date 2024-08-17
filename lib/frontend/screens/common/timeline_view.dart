@@ -10,7 +10,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_progress_indicator.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../assist_files/size_config.dart';

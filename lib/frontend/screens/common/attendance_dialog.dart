@@ -5,7 +5,7 @@ import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "../../../static/constant.dart";

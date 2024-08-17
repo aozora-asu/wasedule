@@ -14,8 +14,8 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 
 import 'package:intl/intl.dart';

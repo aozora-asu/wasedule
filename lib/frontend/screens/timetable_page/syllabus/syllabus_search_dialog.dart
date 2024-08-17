@@ -8,7 +8,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
@@ -248,9 +248,8 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             ],
           ),
           const Divider(),
-          Container(
-              constraints:
-                  BoxConstraints(maxHeight: SizeConfig.blockSizeVertical! * 50),
+          SizedBox(
+              height: SizeConfig.blockSizeVertical! * 30,
               child: searchResult())
         ],
       ),
@@ -263,7 +262,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         child: CupertinoTextField(
       controller: controller,
       onChanged: (value) {
-        updateQuery(requestQuery);
+        //updateQuery(requestQuery);
       },
       onSubmitted: (value) {
         onSubmitted(value);

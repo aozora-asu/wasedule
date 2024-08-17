@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requiredcredits_stats.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 
 class CreditStatsPage extends StatefulWidget {
@@ -240,7 +241,9 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           Text(data.text,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           necessaryCreditsIndicator(
-              data.requiredCredit, data.acquiredCredit, data.countedCredit)
+              data.requiredCredit, data.acquiredCredit, data.countedCredit),
+         const Divider(),
+         RequiredCreditsStats(),
       ])),
       ListView.builder(
         itemBuilder: (context, index) {

@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requiredcredits_stats.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -13,15 +14,15 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_add_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/ondemand_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_add_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/ondemand_preview.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import "../../../backend/service/home_widget.dart";
+import "../../../../backend/service/home_widget.dart";
 import 'package:intl/intl.dart';
 
 class TimeTablePage extends ConsumerStatefulWidget {
@@ -1135,6 +1136,28 @@ Widget pageHeader(){
             const Spacer(),
           ]),
       ),
+        Container(
+          decoration: roundedBoxdecoration(radiusType: 2),
+          padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
+          margin: margin,
+          child: classesList.isNotEmpty ?
+            ListView.builder(
+              itemBuilder: (context,index){
+                Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
+                String termString = term.text;
+                int numOfCredits = sortedCourseByQuarter.values.elementAt(index).length;
+                return Text("$termString : ${numOfCredits.toString()} 単位",
+                  style: smallGrayChar);
+              },
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: sortedCourseByQuarter.length,
+            ) : 
+            SizedBox(
+              height: 40,
+              child: Center(
+                child:Text("この学期の授業はまだありません。",style: smallGrayChar)))
+        ),
       ListView.builder(
         itemBuilder: (context, index) {
           int numOfCredits = timetable.creditsTotalSum(sortedCourseByClassification.values.elementAt(index));
@@ -1181,28 +1204,12 @@ Widget pageHeader(){
         physics: const NeverScrollableScrollPhysics(),
         itemCount: sortedCourseByClassification.length,
       ),
-        Container(
+      Container(
           decoration: roundedBoxdecoration(radiusType: 3),
           padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
           margin: margin,
-          child: classesList.isNotEmpty ?
-            ListView.builder(
-              itemBuilder: (context,index){
-                Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
-                String termString = term.text;
-                int numOfCredits = sortedCourseByQuarter.values.elementAt(index).length;
-                return Text("$termString : ${numOfCredits.toString()} 単位",
-                  style: smallGrayChar);
-              },
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: sortedCourseByQuarter.length,
-            ) : 
-            SizedBox(
-              height: 40,
-              child: Center(
-                child:Text("この学期の授業はまだありません。",style: smallGrayChar)))
-        )
+          child:RequiredCreditsStats()
+        ),
     ]);
   }
 

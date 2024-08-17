@@ -6,10 +6,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_description_view.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_description_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import "../../../static/constant.dart";
+import "../../../../static/constant.dart";
 
 class OndemandPreview extends ConsumerStatefulWidget {
   late MyCourse target;

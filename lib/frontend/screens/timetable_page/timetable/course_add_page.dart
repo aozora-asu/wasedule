@@ -5,7 +5,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus_search_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

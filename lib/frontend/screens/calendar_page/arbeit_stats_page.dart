@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -464,31 +465,7 @@ class ArbeitStatsPageState extends ConsumerState<ArbeitStatsPage> {
     }
     PreferredSizeWidget? appbar;
     if(isAppBar){
-        appbar =  AppBar(
-      leading:  BackButton(color: FORGROUND_COLOR),
-      backgroundColor: MAIN_COLOR,
-      elevation: 10,
-      title: Column(
-        children: <Widget>[
-          Row(children: [
-            const Icon(
-              Icons.data_exploration_outlined,
-              color: WIDGET_COLOR,
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Text(
-              'アルバイト',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color:  FORGROUND_COLOR),
-            ),
-          ])
-        ],
-      ),
-    );
+        appbar = CustomAppBar(backButton: true);
   }
     
 
