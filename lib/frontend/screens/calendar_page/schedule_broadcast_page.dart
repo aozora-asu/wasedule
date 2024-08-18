@@ -92,14 +92,14 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
     if (currentIndex == 1) {
       return Image.asset(
         'lib/assets/schedule_share/schedule_broadcast_download.png',
-        height: SizeConfig.blockSizeHorizontal! * 100,
-        width: SizeConfig.blockSizeHorizontal! * 100,
+        height: 300,
+        width: 300,
       );
     } else {
       return Image.asset(
         'lib/assets/schedule_share/schedule_broadcast_upload.png',
-        height: SizeConfig.blockSizeHorizontal! * 100,
-        width: SizeConfig.blockSizeHorizontal! * 100,
+        height: 300,
+        width: 300,
       );
     }
   }
