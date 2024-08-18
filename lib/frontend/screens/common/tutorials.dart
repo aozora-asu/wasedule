@@ -74,7 +74,7 @@ class _IntroPageState extends State<IntroPage> {
       
       PageViewModel(
           title: "課題",
-          body: "Moodleから毎日自動でインポート。\n通知だってきめ細やかです。",
+          body: "Moodleから毎日自動でインポート。\n思いのままに通知設定。",
           image: Center(
             child: Image.asset(
               "lib/assets/tutorial_images/task_introduction.png",
