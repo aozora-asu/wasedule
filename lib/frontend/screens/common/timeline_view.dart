@@ -95,23 +95,33 @@ class _TimelineState extends ConsumerState<Timeline>{
     isShowAutomatically = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineAutomatically);
   }
 
-  Future<List<Map<String, dynamic>>> loadDataBases() async {
+  Future<bool> loadDataBases() async {
+    final taskProvider = ref.read(taskDataProvider);
+    final calendarProvider = ref.read(calendarDataProvider);
+    final timetableProvider = ref.read(timeTableProvider);
+
     List<Map<String,dynamic>> taskData = 
       await TaskDatabaseHelper().getTaskFromDB();
-    ref
-        .read(taskDataProvider)
-        .getData(taskData);
-    ref
-        .read(taskDataProvider).sortDataByDtEnd(taskData);
-    await ref
-        .read(calendarDataProvider)
-        .getTagData(TagDataLoader().getTagDataSource());
-    await ref
-        .read(timeTableProvider)
-        .getData(TimeTableDataLoader().getTimeTableDataSource());
-    List<Map<String, dynamic>> result =
+    taskProvider.getData(taskData);
+    taskProvider.sortDataByDtEnd(taskData);
+
+    List<Map<String, dynamic>> calendarData =
         await CalendarDataLoader().getDataSource();
-    return result;
+    await calendarProvider
+      .getTagData(TagDataLoader().getTagDataSource());
+    calendarProvider.getData(calendarData);
+    calendarProvider.sortDataByDay();
+
+    await timetableProvider
+      .getData(TimeTableDataLoader().getTimeTableDataSource());
+
+    if(timetableProvider.timeTableDataList.isEmpty &&
+       taskProvider.taskDataList.isEmpty &&
+       calendarProvider.calendarData.isEmpty){
+      return false;
+    }else{
+      return true;
+    }
   }
 
   @override 
@@ -191,25 +201,53 @@ class _TimelineState extends ConsumerState<Timeline>{
       future:loadDataBases(),
       builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.waiting){
+
           return const SizedBox();
+
         }else if(snapshot.hasData){
-          ref.read(calendarDataProvider).getData(snapshot.data!);
-          ref.read(calendarDataProvider).sortDataByDay();
-          return ListView.builder(
-            padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
-            itemBuilder: (context, index) {
-              final DateTime now = DateTime.now();
-              // 今日の日付からインデックス分の差を計算
-              final date = DateTime(now.year,now.month,now.day).add(Duration(days: index));
-              return Column(children:[
-                  if(index == 0) autoShowSettingsCheckBox(),
-                  dayObject(date)
-                ]);
-            },
-            itemCount:180
-          );
+          
+          if(snapshot.data!){
+
+            return ListView.builder(
+              padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
+              itemBuilder: (context, index) {
+                final DateTime now = DateTime.now();
+                // 今日の日付からインデックス分の差を計算
+                final date = DateTime(now.year,now.month,now.day).add(Duration(days: index));
+                return Column(children:[
+                    if(index == 0) autoShowSettingsCheckBox(),
+                    dayObject(date)
+                  ]);
+              },
+              itemCount:180
+            );
+
+          }else{
+
+            return  Center(
+              child:Padding(
+                padding:const EdgeInsets.symmetric(horizontal: 15),
+                child:Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children:[
+                    const Text("まだデータはありません",
+                      style:TextStyle(color:Colors.grey,fontSize: 20)),
+                    const SizedBox(height: 30),
+                    Image.asset("lib/assets/eye_catch/eyecatch.png",
+                      width: 100,height:100),
+                    const SizedBox(height: 30),
+                    const Text("ここに課題・授業・予定がひとまとめで表示されます。",
+                      style:TextStyle(color:Colors.grey,fontSize: 20))
+                ])
+              )
+            );
+
+          }
+
         }else{
+
           return const  CircularProgressIndicator(color:PALE_MAIN_COLOR);
+
         }
     },);
   }
