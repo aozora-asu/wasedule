@@ -59,7 +59,7 @@ class _RequiredCreditsStatsState extends State<RequiredCreditsStats>{
             return Column(children: [
               Row(children:[
                 Expanded(child:
-                  Text("${(index+1).toString()}. ${item.text}",style: blackBoldStyle)),
+                  Text("  ${(index+1).toString()}. ${item.text}",style: blackBoldStyle)),
                 GestureDetector(
                   onTap:(){
                     setState(() {
@@ -76,7 +76,11 @@ class _RequiredCreditsStatsState extends State<RequiredCreditsStats>{
                     size:25
                   ),)
                 ]),
-                requiredCreditsIndicator(item.countedCredit, item.requiredCredit),
+                Row(children:[
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child:requiredCreditsIndicator(item.countedCredit, item.requiredCredit))
+                ]),
                 if(isExpandedList[index])
                   const Divider(height:10,indent:15),
                 if(isExpandedList[index])

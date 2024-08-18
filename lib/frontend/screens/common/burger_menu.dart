@@ -165,6 +165,39 @@ class DrawerMenu extends ConsumerWidget {
                 ])
               ),
 
+              index("Webページ"),
+
+              menuBackground(
+                4,
+                Row(children:[
+                  const Spacer(),
+                  menuPanel(
+                    Icons.school,
+                    "Moodle",
+                    4,0,context
+                  ),
+                  const Spacer(),
+                  menuPanel(
+                    Icons.school,
+                    "MyWaseda",
+                    4,1,context
+                  ),
+                  const Spacer(),
+                  menuPanel(
+                    Icons.abc_rounded,
+                    "成績照会",
+                    4,2,context
+                  ),
+                  const Spacer(),
+                  menuPanel(
+                    null,
+                    "",
+                    4,10,context
+                  ),
+                  const Spacer(),
+                ])
+              ),
+
               index("わせまっぷ"),
 
               menuBackground(
@@ -198,38 +231,6 @@ class DrawerMenu extends ConsumerWidget {
                 ])
               ),
 
-              index("Webページ"),
-
-              menuBackground(
-                4,
-                Row(children:[
-                  const Spacer(),
-                  menuPanel(
-                    Icons.school,
-                    "Moodle",
-                    4,0,context
-                  ),
-                  const Spacer(),
-                  menuPanel(
-                    Icons.school,
-                    "MyWaseda",
-                    4,1,context
-                  ),
-                  const Spacer(),
-                  menuPanel(
-                    Icons.abc_rounded,
-                    "成績照会",
-                    4,2,context
-                  ),
-                  const Spacer(),
-                  menuPanel(
-                    null,
-                    "",
-                    4,10,context
-                  ),
-                  const Spacer(),
-                ])
-              ),
 
               index("その他"),
               menuBackground(

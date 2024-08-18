@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
@@ -231,6 +233,21 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
 
   Widget dataListByMajorClassification(MyCredit data) {
     SizeConfig().init(context);
+    int requiredCredit = data.requiredCredit;
+    int countedCredit = data.countedCredit;
+
+    if(requiredCredit == 0 && countedCredit == 0){
+      requiredCredit == 1;
+    }else if(requiredCredit == 0){
+      requiredCredit == countedCredit;
+    }
+
+    double circularIndicatorValue = countedCredit / requiredCredit;
+    if(circularIndicatorValue > 1){
+     circularIndicatorValue = 1;
+    }
+
+    String circularIndicatorValueString = "${(circularIndicatorValue * 100).round().toString()}％";
 
     return Column(children: [
       const SizedBox(height: 15),
@@ -238,8 +255,27 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         decoration: roundedBoxdecoration(radiusType: 0),
         padding:const EdgeInsets.symmetric(vertical: 7),
         child: Column(children:[
-          Text(data.text,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children:[
+            Stack(
+              alignment:const Alignment(0,0),
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                  width: 75,height:75,
+                  child:CircularProgressIndicator(
+                    strokeCap: StrokeCap.round,
+                    backgroundColor: lighten(Colors.grey,0.25),
+                    value: circularIndicatorValue,
+                    strokeWidth: 10.0,
+                )),
+                Text(circularIndicatorValueString,
+                  style: const TextStyle(fontSize: 22.5, fontWeight: FontWeight.bold))
+            ]),
+            Text(data.text,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
+        ]),
           necessaryCreditsIndicator(
               data.requiredCredit, data.acquiredCredit, data.countedCredit),
          const Divider(),
@@ -504,3 +540,4 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
     );
   }
 }
+
