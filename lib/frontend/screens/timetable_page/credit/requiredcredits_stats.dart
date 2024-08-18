@@ -33,7 +33,9 @@ class _RequiredCreditsStatsState extends State<RequiredCreditsStats>{
           if (snapshot.hasData && snapshot.data!.majorClass != []) {
             return majorClassificationList(snapshot.data!);
           } else {
-            return const SizedBox();
+            return const SizedBox(
+              child:Row(mainAxisSize: MainAxisSize.max)
+            );
           }
       })
     );
