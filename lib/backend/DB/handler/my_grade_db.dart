@@ -401,9 +401,10 @@ class MyGradeDB {
   }
 
   static Future<MyCredit?> getMyCredit() async {
-    Map<String, dynamic> map = json.decode(SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.graduationRequireCredit));
-    if (map.isNotEmpty) {
+    String str = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.graduationRequireCredit);
+    if (str.isNotEmpty) {
+      Map<String, dynamic> map = json.decode(str);
       MyCredit myCredit = MyCredit(
           requiredCredit: map["requiredCredit"]!,
           acquiredCredit: map["acquiredCredit"]!,
