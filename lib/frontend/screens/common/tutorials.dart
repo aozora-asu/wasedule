@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
@@ -18,15 +19,23 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
-  PageDecoration decoration = PageDecoration(
+  PageDecoration decoration =const PageDecoration(
       titleTextStyle: TextStyle(
-          fontSize: SizeConfig.blockSizeHorizontal! * 5,
-          fontWeight: FontWeight.w700),
-      bodyTextStyle: const TextStyle(fontSize: 17.0),
+          height: 1,
+          fontSize: 35,
+          fontWeight: FontWeight.bold,
+          color: BLUEGREY),
+      bodyTextStyle: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
       pageColor: Colors.white,
-      imagePadding: const EdgeInsets.only(top: 100),
-      imageFlex: 5,
-      bodyFlex: 2);
+      imagePadding:  EdgeInsets.only(top: 10,bottom: 0),
+      imageFlex: 8,
+      contentMargin : EdgeInsets.all(0),
+      pageMargin : EdgeInsets.only(bottom: 0),
+      titlePadding : EdgeInsets.only(bottom: 10),
+      bodyPadding : EdgeInsets.zero, 
+      footerPadding : EdgeInsets.symmetric(vertical: 0),
+      bodyFlex: 2,
+      footerFlex: 5);
 
   List<PageViewModel> getPages() {
     dismissTimelinePop = true;
@@ -38,12 +47,21 @@ class _IntroPageState extends State<IntroPage> {
               "lib/assets/eye_catch/eyecatch.png",
             ),
           ),
-          bodyWidget: const Column(children: [
-            Text(
-              "あなたの生活に、\nわせジュールがやってきました。",
-              style: TextStyle(fontSize: 20),
-            ),
-          ]),
+          bodyWidget: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child:Column(children: [
+              Text(
+                "あなたの生活に、\nわせジュールがやってきました。",
+                style: TextStyle(fontSize: 20),
+              ),
+              Divider(height: 30),
+              Text(
+                "さて、一体どんなことができるのか。\nなにが今までと違うのか。\n今から少し、ご覧に入れましょう。",
+                style: TextStyle(fontSize: 17,color:Colors.grey),
+              ),
+            ])
+          ),
+
           decoration: const PageDecoration(
               titleTextStyle:
                   TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
@@ -51,19 +69,12 @@ class _IntroPageState extends State<IntroPage> {
               pageColor: Colors.white,
               imagePadding: EdgeInsets.only(top: 100),
               imageFlex: 3,
+              pageMargin : EdgeInsets.only(bottom: 0),
               bodyFlex: 2)),
+      
       PageViewModel(
-          title: "①「カレンダー」ページ",
-          body: "日々の予定は「カレンダー」ページで管理",
-          image: Center(
-            child: Image.asset(
-              "lib/assets/tutorial_images/calendar_introduction.png",
-            ),
-          ),
-          decoration: decoration),
-      PageViewModel(
-          title: "②「課題」ページ",
-          body: "授業課題やToDoは「課題」ページで管理",
+          title: "課題",
+          body: "Moodleから毎日自動でインポート。\n通知だってきめ細やかです。",
           image: Center(
             child: Image.asset(
               "lib/assets/tutorial_images/task_introduction.png",
@@ -71,11 +82,56 @@ class _IntroPageState extends State<IntroPage> {
           ),
           decoration: decoration),
       PageViewModel(
-          title: "③「学習記録」ページ",
-          body: "勉強などの計画は「学習記録」ページで管理",
+          title: "単位と成績",
+          body: "卒業まであと何単位？\n成績照会画面からインポート。",
           image: Center(
             child: Image.asset(
-              "lib/assets/tutorial_images/study_introduction.png",
+              "lib/assets/tutorial_images/credits_introduction.png",
+            ),
+          ),
+          decoration: decoration),
+      PageViewModel(
+          title: "予定",
+          body: "大学学部の行事予定をインポート。\nアルバイト年収も推計して管理！",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/calendar_introduction.png",
+            ),
+          ),
+          decoration: decoration),
+      PageViewModel(
+          title: "授業",
+          body: "Moodleからインポート。\n授業の入力候補も出してくれます",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/timetable_introduction.png",
+            ),
+          ),
+          decoration: decoration),
+      PageViewModel(
+          title: "Moodle\nMyWaseda・成績照会",
+          body: "主要Webページのブックマーク搭載。",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/moodle_introduction.png",
+            ),
+          ),
+          decoration: decoration),
+      PageViewModel(
+          title: "空き教室\n図書館・食堂情報",
+          body: "地図 × (ブックマーク + 教室検索)\n=便利！",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/map_introduction.png",
+            ),
+          ),
+          decoration: decoration),
+      PageViewModel(
+          title: "And More...",
+          body: "ここでご紹介したのは、ほんの少し。\nあなただけの学生生活を、\nわせジュールで見つけてください。",
+          image: Center(
+            child: Image.asset(
+              "lib/assets/tutorial_images/more_introduction.png",
             ),
           ),
           decoration: decoration),
@@ -111,7 +167,7 @@ class _IntroPageState extends State<IntroPage> {
                 );
               },
               style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(ACCENT_COLOR)),
+                  backgroundColor: WidgetStatePropertyAll(PALE_MAIN_COLOR)),
               child: const Text(
                 "いいえ",
                 style: TextStyle(color: Colors.white),
@@ -150,10 +206,10 @@ class _IntroPageState extends State<IntroPage> {
       next: const Icon(Icons.keyboard_arrow_right),
       dotsDecorator: DotsDecorator(
         size: const Size.square(10.0),
-        activeSize: const Size(20.0, 10.0),
+        activeSize: const Size(10.0, 10.0),
         activeColor: Theme.of(context).primaryColor,
         color: Colors.black26,
-        spacing: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 40),
+        spacing: const EdgeInsets.symmetric(horizontal: 1.5, vertical: 20),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
         ),

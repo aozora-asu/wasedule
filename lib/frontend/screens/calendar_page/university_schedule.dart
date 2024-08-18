@@ -78,8 +78,8 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
   Image thumbnailImage() {
     return Image.asset(
       'lib/assets/eye_catch/eyecatch.png',
-      height: SizeConfig.blockSizeHorizontal! * 60,
-      width: SizeConfig.blockSizeHorizontal! * 60,
+      height: 200,
+      width: 200,
     );
   }
 

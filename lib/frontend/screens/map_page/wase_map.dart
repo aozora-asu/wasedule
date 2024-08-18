@@ -457,7 +457,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               showStreamLoader(context,
                   renewProgressBar(campusID2buildingsList()[campusID]!.length)),
-              const Text("空き教室データ取得中(所要時間:1分程度)",
+              const Text("空き教室データ初回取得中(所要時間:1分程度)",
                   style: TextStyle(
                       color: MAIN_COLOR, fontWeight: FontWeight.bold)),
               streamProgressText(context, renewText())
