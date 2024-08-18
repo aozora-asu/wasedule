@@ -105,7 +105,7 @@ class SharepreferenceKeys {
       key: "isShowTimelineAutomatically", defaultValue: true);
 
   static const graduationRequireCredit =
-      SharepreferenceKeys._(key: "GraduationRequireCredit", defaultValue: null);
+      SharepreferenceKeys._(key: "GraduationRequireCredit", defaultValue: "");
 
   static SharepreferenceKeys isMapDBEmpty(int id) {
     SharepreferenceKeys key =
