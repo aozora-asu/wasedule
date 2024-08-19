@@ -543,7 +543,7 @@ Widget pageHeader(){
     double fontSize = 8;
 
     return SizedBox(
-      width: SizeConfig.blockSizeHorizontal! * cellWidth * 0.5,
+      width: SizeConfig.blockSizeHorizontal! * cellWidth * 0.6,
       child:Column(children: [
         SizedBox(
           height: SizeConfig.blockSizeVertical! * 2.5,
