@@ -66,13 +66,8 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
     } else {
       newQuery.p_gakki = currentTerm;
     }
-    newQuery.p_gakubu = Department.byValue(SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
-    newQuery.subjectClassification = SubjectClassification.byKeyAndValue(
-        SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
-        SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
+    newQuery.p_gakubu = requestQuery.p_gakubu;
+    newQuery.subjectClassification = requestQuery.subjectClassification;
 
     setState(() {
       requestQuery = newQuery;
