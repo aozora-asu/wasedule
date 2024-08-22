@@ -113,7 +113,7 @@ class _TimelineState extends ConsumerState<Timeline>{
     calendarProvider.sortDataByDay();
 
     await timetableProvider
-      .getData(TimeTableDataLoader().getTimeTableDataSource());
+      .getData();
 
     if(timetableProvider.timeTableDataList.isEmpty &&
        taskProvider.taskDataList.isEmpty &&

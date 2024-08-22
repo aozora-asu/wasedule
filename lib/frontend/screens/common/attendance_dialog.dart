@@ -21,7 +21,7 @@ Future<void> showAttendanceDialog(
 
   await ref
       .read(timeTableProvider)
-      .getData(TimeTableDataLoader().getTimeTableDataSource());
+      .getData();
 
   List data = ref.read(timeTableProvider).targetDateClasses(targetDate);
 

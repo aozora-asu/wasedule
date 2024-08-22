@@ -203,7 +203,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     await ref.read(calendarDataProvider).getArbeitData(_getArbeitDataSource());
     await ref
         .read(timeTableProvider)
-        .getData(TimeTableDataLoader().getTimeTableDataSource());
+        .getData();
     List<Map<String, dynamic>> result =
         await CalendarDataLoader().getDataSource();
     return result;

@@ -336,6 +336,12 @@ Widget pageHeader(){
   ]);
 }
 
+  Future<List<MyCourse>?> loadData() async{
+    await ref.read(timeTableProvider).getData();
+    List<MyCourse>? result = await MyCourse.getAllMyCourse();
+    return result;
+  }
+
   Widget timeTable() {
     return Screenshot(
         controller: _screenShotController,
@@ -359,7 +365,7 @@ Widget pageHeader(){
               ]),
               const SizedBox(height: 5),
               FutureBuilder(
-                  future: MyCourse.getAllMyCourse(),
+                  future:loadData(),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return timeTableBody();
@@ -372,6 +378,7 @@ Widget pageHeader(){
                       ref.read(timeTableProvider).initUniversityScheduleByDay(
                           thisYear,
                           [currentQuarter, currentSemester, Term.fullYear]);
+
                       return timeTableBody();
                     } else if (snapshot.data == null) {
                       ref.read(timeTableProvider).sortDataByWeekDay([]);
@@ -494,7 +501,7 @@ Widget pageHeader(){
             fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY)),
         const Spacer(),
         if(selectedCreditsSum != 0) 
-          const Text("選択中の単位数： ",style:TextStyle(color:Colors.grey)),
+          const Text("選択中の単位数合計： ",style:TextStyle(color:Colors.grey)),
         if(selectedCreditsSum != 0) 
           Text(selectedCreditsSum.toString(),
             style:const TextStyle(color:Colors.black,fontWeight:FontWeight.bold,fontSize: 20)),
@@ -917,7 +924,6 @@ Widget pageHeader(){
             maxLines: 2,
           ));
     }
-    Random random = Random();
     return Stack(children: [
       Container(
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -928,8 +934,9 @@ Widget pageHeader(){
           margin: EdgeInsets.only(top : 5.toDouble()),
 
           child: InkWell(
-              onTap: () {
-                showDialog(
+              onTap: () async{
+                isSelectedlistGenerated = false;
+                await showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return CoursePreview(
@@ -1145,7 +1152,10 @@ Widget pageHeader(){
               itemBuilder: (context,index){
                 Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
                 String termString = term.text;
-                int numOfCredits = sortedCourseByQuarter.values.elementAt(index).length;
+                int numOfCredits = 0;
+                for(var course in sortedCourseByQuarter.values.elementAt(index)){
+                  numOfCredits += course.credit ?? 0;
+                }
                 return Text("$termString : ${numOfCredits.toString()} 単位",
                   style: smallGrayChar);
               },
@@ -1164,7 +1174,10 @@ Widget pageHeader(){
           String classificationName = sortedCourseByClassification.keys.elementAt(index) ?? "分類なし";
           if(!isSelectedlistGenerated)
             {selectedCreditsSum = 0;
-             isSelectedList = List<bool>.filled(sortedCourseByClassification.length, false);}
+             isSelectedList = List<bool>.filled(
+              sortedCourseByClassification.length + 
+              36,
+              false);}
           isSelectedlistGenerated = true;
           bool isSelected = isSelectedList.elementAt(index);
 

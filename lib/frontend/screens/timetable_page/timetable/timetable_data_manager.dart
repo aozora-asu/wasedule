@@ -41,8 +41,8 @@ class TimeTableData {
     );
   }
 
-  Future<void> getData(Future<List<MyCourse>> data) async {
-    timeTableDataList = await data;
+  Future<void> getData() async {
+    timeTableDataList = await MyCourse.getAllMyCourse() ?? [];
   }
 
   void addNewData(MyCourse newDataMap) {
