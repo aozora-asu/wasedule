@@ -74,7 +74,7 @@ class _IntroPageState extends State<IntroPage> {
       
       PageViewModel(
           title: "課題",
-          body: "Moodleから毎日自動でインポート。\n思いのままに通知設定。",
+          body: "Moodleから毎日自動でデータ取得。\n思いのままに通知設定。",
           image: Center(
             child: Image.asset(
               "lib/assets/tutorial_images/task_introduction.png",
@@ -220,6 +220,7 @@ class _IntroPageState extends State<IntroPage> {
 }
 
   enum MoodleRegisterGuideType {
+    notAvailableAndroid,
     task,
     timetable,
     credit,
@@ -240,7 +241,11 @@ class _IntroPageState extends State<IntroPage> {
     }else if(dialogType == MoodleRegisterGuideType.credit){
       titleText = "単位取得状況をアプリに取得しましょう。";
       guideText = "'成績照会'ページから、単位取得状況をアプリに取得しましょう！\n\n■手順\n１.成績照会画面でログイン\n２.「わせジュールにダウンロード」\n\nこれであなたの単位取得情報ががアプリに登録され、以後はアプリ内から確認できます！\n";
+    }else if(dialogType == MoodleRegisterGuideType.notAvailableAndroid){
+      titleText = "この機能は準備中です。";
+      guideText = "大変申し訳ございません。現在Android版ではこの機能はご利用いただけません。近日中の完成を予定して開発中ですので今しばらくお待ちください。\n";
     }
+
 
     if(istutorial){
       button = SizedBox(

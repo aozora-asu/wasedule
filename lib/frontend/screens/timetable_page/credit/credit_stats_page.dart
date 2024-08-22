@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
+import 'package:flutter_calandar_app/backend/service/share_from_web.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -30,9 +32,9 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
     super.initState();
     isGPview = false;
     yearList = [];
-    selectedYear = "すべて";
+    selectedYear = "全年度";
     termList = [];
-    selectedTerm = "すべて";
+    selectedTerm = "全学期";
   }
 
   void generateOptions(List<MajorClass> data) {
@@ -127,7 +129,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget termPicker() {
-    List<String> terms = ["すべて"];
+    List<String> terms = ["全学期"];
     terms.addAll(termList);
 
     List<DropdownMenuItem<String>> items = [];
@@ -153,7 +155,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget yearPicker() {
-    List<String> years = ["すべて"];
+    List<String> years = ["全年度"];
     years.addAll(yearList);
 
     List<DropdownMenuItem<String>> items = [];
@@ -197,9 +199,14 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           ),
           const Spacer(),
           buttonModel(() async {
-            await showMoodleRegisterGuide(
-                context, false, MoodleRegisterGuideType.credit);
-            widget.moveToMyWaseda();
+            if(Platform.isIOS){
+              await showMoodleRegisterGuide(
+                  context, false, MoodleRegisterGuideType.credit);
+              widget.moveToMyWaseda();
+            }else{
+              await showMoodleRegisterGuide(
+                  context, false, MoodleRegisterGuideType.notAvailableAndroid);
+            }
           }, PALE_MAIN_COLOR, "データ取得",
               verticalpadding: 10, horizontalPadding: 30),
         ]));
@@ -420,11 +427,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         MyGrade target = data.elementAt(index);
         bool showList = true;
 
-        if (selectedYear != "すべて" && target.year != selectedYear) {
+        if (selectedYear != "全年度" && target.year != selectedYear) {
           showList = false;
         }
 
-        if (selectedTerm != "すべて" && target.term != selectedTerm) {
+        if (selectedTerm != "全学期" && target.term != selectedTerm) {
           if (selectedTerm == "春期" && target.term == "春ク" ||
               selectedTerm == "春期" && target.term == "夏ク") {
           } else if (selectedTerm == "秋期" && target.term == "秋ク" ||
