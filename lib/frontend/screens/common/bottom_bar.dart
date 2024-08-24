@@ -53,8 +53,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Moodle',
+            icon: Icon(Icons.language),
+            label: 'Web',
             backgroundColor:Colors.transparent
           ),
           // BottomNavigationBarItem(

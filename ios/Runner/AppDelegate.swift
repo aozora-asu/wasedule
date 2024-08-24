@@ -3,7 +3,7 @@ import Flutter
 import flutter_local_notifications
 import WidgetKit
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
 
     private let methodChannelName = "com.example.wasedule/update_data"

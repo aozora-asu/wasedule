@@ -172,19 +172,19 @@ class DrawerMenu extends ConsumerWidget {
                 Row(children:[
                   const Spacer(),
                   menuPanel(
-                    Icons.school,
+                    Icons.language,
                     "Moodle",
                     4,0,context
                   ),
                   const Spacer(),
                   menuPanel(
-                    Icons.school,
+                    Icons.language,
                     "MyWaseda",
                     4,1,context
                   ),
                   const Spacer(),
                   menuPanel(
-                    Icons.abc_rounded,
+                    Icons.language,
                     "成績照会",
                     4,2,context
                   ),

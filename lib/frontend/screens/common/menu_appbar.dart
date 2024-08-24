@@ -270,11 +270,11 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
         space(20.00),
       ],
       4: [
-        subMenuPanel(ref, icon: Icons.school, subIndex: 0, title: "Moodle"),
+        subMenuPanel(ref, icon: Icons.language, subIndex: 0, title: "Moodle"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.school, subIndex: 1, title: "MyWaseda"),
+        subMenuPanel(ref, icon: Icons.language, subIndex: 1, title: "MyWaseda"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.abc_sharp, subIndex: 2, title: "成績照会"),
+        subMenuPanel(ref, icon: Icons.language, subIndex: 2, title: "成績照会"),
         space(60.0),
       ],
     };
