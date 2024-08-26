@@ -91,23 +91,22 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
 
   Widget remainingAbesentView(int absentNum,int maxAbsentNum) {
     return SizedBox(
-      height:25,
-      child:Expanded(
-        child: ListView.builder(
-          itemBuilder:(context,index){
-            if(index+1 <= absentNum){
-              return const Icon(Icons.favorite, color: Colors.redAccent, size: 22);
-            }else{
-              return Icon(Icons.favorite, color: Colors.grey.withOpacity(0.5), size: 22);
-            }
+      height:20,
+      child:ListView.builder(
+            itemBuilder:(context,index){
+              if(index+1 <= absentNum){
+                return const Icon(Icons.favorite, color: Colors.redAccent, size: 22);
+              }else{
+                return Icon(Icons.favorite, color: Colors.grey.withOpacity(0.5), size: 22);
+              }
 
-          },
-        itemCount: maxAbsentNum,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        )
-      )
-    );
+            },
+          itemCount: maxAbsentNum,
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          )
+        
+      );
   }
 
   Widget remainingAbsentSetting() {
