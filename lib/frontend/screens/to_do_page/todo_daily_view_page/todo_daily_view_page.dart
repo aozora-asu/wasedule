@@ -17,13 +17,9 @@ import 'package:intl/intl.dart';
 
 
 class DaylyViewPage extends ConsumerStatefulWidget {
-  //Future<List<Map<String, dynamic>>>? events;
-  //AsyncSnapshot<List<Map<String, dynamic>>> snapshot;
   BuildContext context;
 
   DaylyViewPage({super.key, 
-    //this.events,
-    //required this.snapshot,
     required this.context
   });
 
@@ -40,11 +36,11 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
   void initState() {
     super.initState();
     targetMonth = thisMonth;
+    ref.read(dataProvider).isVertical = true;
   }
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.read(dataProvider);
     return 
     Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -57,10 +53,10 @@ class _DaylyViewPageState extends ConsumerState<DaylyViewPage> {
     if(data.dataList.isEmpty){
       return Container();
     }else{
-      return Container(
+      return SizedBox(
         child:FloatingActionButton.extended(
           label: Text("統計",style: TextStyle(color:FORGROUND_COLOR),),
-          backgroundColor: ACCENT_COLOR,
+          backgroundColor: PALE_MAIN_COLOR,
           icon:  Icon(Icons.insert_chart_outlined_rounded,color:FORGROUND_COLOR,size: 20,),
           onPressed: (){
             Navigator.push(
@@ -85,9 +81,7 @@ Column(
         TimerView(
           targetMonthData: data.sortDataByMonth()[targetMonth],
           thisMonthData:data.sortDataByMonth()[thisMonth],
-          //events:widget.events,
           context:widget.context,
-          //snapshot: widget.snapshot,
         ),
         SizedBox(
           child: Row(
@@ -452,7 +446,7 @@ Color highLightTodayTile(String date,String formattedDuration){
    return const Color.fromARGB(255, 255, 220, 220);
  }else{
   if(formattedDuration == "0h00m"){
-   return FORGROUND_COLOR;
+   return BACKGROUND_COLOR;
   }else{
    return const Color.fromARGB(255, 255, 255, 212);
   }
@@ -1070,7 +1064,7 @@ class  _TextFieldListState extends ConsumerState<TextFieldList> {
     return  Container(
        height: switchHeight(ref.read(dataProvider).isVertical),
        width:SizeConfig.blockSizeHorizontal! *67,
-       color: FORGROUND_COLOR,
+       color: Colors.transparent,
        child:SizedBox(
         child:ListView.separated(
           separatorBuilder: (context, index) {
