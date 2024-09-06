@@ -202,7 +202,7 @@ class _AppPageState extends ConsumerState<AppPage> {
     String thisMonth =
         "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}";
     return [
-      const Calendar(),
+      Calendar(movePage:_onTabTapped,),
       const DataUploadPage(),
       const UnivSchedulePage(),
       ArbeitStatsPage(targetMonth: thisMonth),

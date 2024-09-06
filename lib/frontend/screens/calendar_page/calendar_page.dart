@@ -21,7 +21,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_temp
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/arbeit_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/menu_pages/how_to_use_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
@@ -36,15 +35,15 @@ import 'dart:math';
 import 'dart:async';
 
 import '../../../backend/notify/notify_setting.dart';
-import "../../../backend/notify/notify_content.dart";
-import "../../../backend/service/share_from_web.dart";
 import "../../../backend/DB/handler/my_course_db.dart";
 
 var random = Random(DateTime.now().millisecondsSinceEpoch);
 var randomNumber = random.nextInt(10); // 0から10までの整数を生成
 
 class Calendar extends ConsumerStatefulWidget {
-  const Calendar({
+  Function(int) movePage;
+  Calendar({
+    required this.movePage,
     super.key,
   });
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails;
@@ -306,6 +305,13 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
+      Row(children:[
+        simpleSmallButton(
+          "年間行事予定の取得",
+          (){
+            widget.movePage(2);
+          }),
+      ]),
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(

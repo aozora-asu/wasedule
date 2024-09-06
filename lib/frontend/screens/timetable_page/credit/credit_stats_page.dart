@@ -285,6 +285,15 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
         ]),
           necessaryCreditsIndicator(
               data.requiredCredit, data.acquiredCredit, data.countedCredit),
+        const SizedBox(height:2),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+            const Text("ー 卒業まであと ",style:TextStyle(color:Colors.grey),),
+            Text((data.requiredCredit - data.acquiredCredit).toString(),
+              style:const TextStyle(color:BLUEGREY,fontSize:25,fontWeight: FontWeight.bold),),
+            const Text(" 単位 ー",style:TextStyle(color:Colors.grey),),
+        ]),
          const Divider(),
          RequiredCreditsStats(),
       ])),

@@ -346,21 +346,23 @@ Widget pageHeader(){
         child: Container(
             decoration: switchDecoration(),
             child: Column(children: [
-              Row(children:[
-                const SizedBox(width: 5),
-                simpleSmallButton(
-                  "今日の出欠",
-                  () async{
-                    await showAttendanceDialog(context, DateTime.now(), ref, true);
-                  }),
-                simpleSmallButton(
-                  "授業の自動取得",
-                () async {
-                  await showMoodleRegisterGuide(
-                      context, false, MoodleRegisterGuideType.timetable);
-                  widget.moveToMoodlePage(4);
-                })
-              ]),
+              doNotContainScreenShot(
+                Row(children:[
+                  const SizedBox(width: 5),
+                  simpleSmallButton(
+                    "今日の出欠",
+                    () async{
+                      await showAttendanceDialog(context, DateTime.now(), ref, true);
+                    }),
+                  simpleSmallButton(
+                    "授業の自動取得",
+                  () async {
+                    await showMoodleRegisterGuide(
+                        context, false, MoodleRegisterGuideType.timetable);
+                    widget.moveToMoodlePage(4);
+                  })
+                ])
+              ),
               const SizedBox(height: 5),
               FutureBuilder(
                   future:loadData(),
@@ -492,22 +494,26 @@ Widget pageHeader(){
       SizedBox(
           height: SizeConfig.blockSizeVertical! * cellHeight,
           child: generateOndemandRow()),
-      const SizedBox(height: 30),
-      Row(children:[
-        const Text("   登録単位数",
-          style: TextStyle(
-            fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY)),
-        const Spacer(),
-        if(selectedCreditsSum != 0) 
-          const Text("選択中の単位数合計： ",style:TextStyle(color:Colors.grey)),
-        if(selectedCreditsSum != 0) 
-          Text(selectedCreditsSum.toString(),
-            style:const TextStyle(color:Colors.black,fontWeight:FontWeight.bold,fontSize: 20)),
-        const SizedBox(width: 15)
-      ]),
-      timetableCreditsView(),
-      SizedBox(
-        height: SizeConfig.blockSizeVertical! * 3,
+      doNotContainScreenShot(
+        Column(children:[
+          const SizedBox(height: 30),
+          Row(children:[
+            const Text("   登録単位数",
+              style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY)),
+            const Spacer(),
+            if(selectedCreditsSum != 0) 
+              const Text("選択中の単位数合計： ",style:TextStyle(color:Colors.grey)),
+            if(selectedCreditsSum != 0) 
+              Text(selectedCreditsSum.toString(),
+                style:const TextStyle(color:Colors.black,fontWeight:FontWeight.bold,fontSize: 20)),
+            const SizedBox(width: 15)
+          ]),
+          timetableCreditsView(),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 3,
+          )
+        ])
       )
     ]);
   }
