@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
-import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
-import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import "../../../backend/DB/isar_collection/isar_handler.dart";
 import "../../../static/constant.dart";

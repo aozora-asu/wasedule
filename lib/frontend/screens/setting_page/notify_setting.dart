@@ -15,7 +15,7 @@ class NotifySettingPage extends ConsumerStatefulWidget{
   Function buildConfig;
   TextEditingController controller;
 
-  NotifySettingPage({
+  NotifySettingPage({super.key, 
     required this.buildConfig ,
     required this.controller,
   });
@@ -468,7 +468,7 @@ class _NotifySettingPageState extends ConsumerState<NotifySettingPage>{
   Widget noneSettingWidget() {
     return const SizedBox(
       height: 75,
-      child: const Center(
+      child: Center(
           child:
               Text("登録されている通知はありません。", style: TextStyle(color: Colors.grey))),
     );

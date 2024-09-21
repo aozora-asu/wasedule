@@ -16,7 +16,7 @@ class SyllabusDescriptonView extends StatefulWidget {
   StateSetter? setTimetableState;
 
   SyllabusDescriptonView(
-      {required this.syllabusQuery,
+      {super.key, required this.syllabusQuery,
        required this.showHeader,
        this.setTimetableState});
 

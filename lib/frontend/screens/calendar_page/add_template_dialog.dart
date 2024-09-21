@@ -8,7 +8,6 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_pag
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
-import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

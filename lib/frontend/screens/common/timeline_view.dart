@@ -76,6 +76,8 @@ class TimelineDrawer extends ConsumerWidget {
 
 
 class Timeline extends ConsumerStatefulWidget{
+  const Timeline({super.key});
+
   @override 
   _TimelineState createState() => _TimelineState();
 }
@@ -483,7 +485,7 @@ class DaylyData{
   }
 
   Widget listChildFrame(DateTime time,Widget child,{bool allDay = false, DateTime? endTime}){
-    String endTimeString = endTime == null ? "" :  "\n" + DateFormat("HH:mm").format(endTime);
+    String endTimeString = endTime == null ? "" :  "\n${DateFormat("HH:mm").format(endTime)}";
     String timeString = DateFormat("HH:mm").format(time) + endTimeString;
     return Row(
      children:[

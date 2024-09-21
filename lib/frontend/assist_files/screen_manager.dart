@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/request_app_review.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/burger_menu.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/menu_appbar.dart';
@@ -78,15 +76,19 @@ class _AppPageState extends ConsumerState<AppPage> {
       isExtendBody = false;
       isExtendBottom = false;
       physics = const ScrollPhysics();
-    } else if (_currentIndex == 1 || _currentIndex == 2) {
+    } else if (_currentIndex == 1) {
       isExtendBody = true;
       isExtendBottom = true;
       physics = const ScrollPhysics();
-    } else if (_currentIndex == 3) {
+    } else if (_currentIndex == 2) {
       isExtendBody = false;
       isExtendBottom = true;
       physics = const ScrollPhysics();
-    } else if (_currentIndex == 4) {
+    } else if(_currentIndex == 3){
+      isExtendBody = false;
+      isExtendBottom = false;
+      physics = const ScrollPhysics();
+    }else if (_currentIndex == 4) {
       isExtendBottom = false;
       isExtendBody = false;
       physics = const NeverScrollableScrollPhysics();
@@ -100,7 +102,6 @@ class _AppPageState extends ConsumerState<AppPage> {
   bool isExtendBody = true;
   bool isExtendBottom = true;
   bool showAppBar = true;
-  Timer? _timer;
   bool showChildMenu = true;
 
   void _switchChildMenu() {

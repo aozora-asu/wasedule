@@ -897,7 +897,7 @@ void AddNewPage(String targetMonth){
                           padding: const EdgeInsets.all(7.5),
                           decoration: BoxDecoration(
                             color:FORGROUND_COLOR,
-                            borderRadius: BorderRadius.all(Radius.circular(20))
+                            borderRadius: const BorderRadius.all(Radius.circular(20))
                           ),
                           child:SingleChildScrollView(
                             scrollDirection: Axis.horizontal,

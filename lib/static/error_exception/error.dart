@@ -49,9 +49,9 @@ enum ServerCommonErrorCode implements StatusCode {
 
 class ServerCommonError extends CustomException {
   const ServerCommonError(
-    ServerCommonErrorCode errorCode, {
-    dynamic info,
-  }) : super(errorCode, info: info);
+    ServerCommonErrorCode super.errorCode, {
+    super.info,
+  });
 
   // factoryでエラーから生成する
   factory ServerCommonError.fromCode(String errorCode) {

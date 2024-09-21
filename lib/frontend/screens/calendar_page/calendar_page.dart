@@ -1782,7 +1782,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 .values
                                 .first["courseName"],
                         overflow: TextOverflow.clip,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: BLACK,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),

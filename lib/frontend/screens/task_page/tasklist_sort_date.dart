@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'dart:async';
-import 'package:expandable/expandable.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
+import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 
 import 'task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import "../../../backend/DB/sharepreference.dart";
 import 'package:intl/intl.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
@@ -21,9 +21,53 @@ class TaskListByDtEnd extends ConsumerStatefulWidget {
 }
 
 class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
+  final int _range = 1461;
+  final DateTime now = DateTime.now();
+  late ScrollController _taskScrollController;
+  late ScrollController _calendarScrollController;
+  List<GlobalKey> _keys = [];
+  List<double> _heights = [];
+
   @override
   void initState() {
     super.initState();
+    _taskScrollController = ScrollController();
+    _calendarScrollController = ScrollController();
+
+    // コントローラ1のスクロールをコントローラ2に反映
+    _calendarScrollController.addListener(() {
+      if (_calendarScrollController.offset != _taskScrollController.offset) {
+        _taskScrollController.jumpTo(_calendarScrollController.offset *2);
+      }
+    });
+
+    // コントローラ2のスクロールをコントローラ1に反映
+    _taskScrollController.addListener(() {
+      if (_taskScrollController.offset != _calendarScrollController.offset) {
+        _calendarScrollController.jumpTo(_taskScrollController.offset);
+      }
+    });
+
+    // 各アイテムに対して GlobalKey を作成
+    _keys = List.generate(_range, (index) => GlobalKey());
+
+  }
+
+  // 各要素の高さを取得
+  void _getAllHeights() {
+    List<double> heights = [];
+    for (var key in _keys) {
+      final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null) {
+        heights.add(renderBox.size.height);
+      }
+    }
+      _heights = heights;
+  }
+
+  DateTime _getDateFromIndex(int index) {
+    final DateTime startDate = DateTime(now.year,now.month,now.day,0,0,0,0,0);
+    return startDate.add(Duration(days: index));
   }
 
   @override
@@ -34,62 +78,148 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    return Scrollbar(
-        child: Stack(children: [
+
+    return 
+   // Scrollbar(child: 
+          Stack(children: [
       Column(children: [
         Expanded(
           child: ListView.builder(
             shrinkWrap: true,
-            itemBuilder: (BuildContext context, int keyIndex) {
-              DateTime dateEnd = sortedData.keys.elementAt(keyIndex);
-              dateEnd = DateTime.fromMillisecondsSinceEpoch(
-                  sortedData.values.elementAt(keyIndex).first["dtEnd"]);
-              String adjustedDtEnd =
-                  ("${dateEnd.month}月${dateEnd.day}日 (${"日月火水木金土日"[dateEnd.weekday % 7]}) ");
+            controller: _taskScrollController,
+            primary: false,
+            itemBuilder: (BuildContext context, int index) {
+              DateTime date = _getDateFromIndex(index);
+              Widget child;
+
+              if(sortedData.containsKey(date)){
+                child = dailyViewWithTasks(context, date);
+              }else{
+                child = dailyViewWithoutTasks(date);
+              }
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _getAllHeights();
+              });
+
               return Container(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, bottom: 0.0, top: 4.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ExpandablePanel(
-                            header: Row(children: [
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(children: [
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        adjustedDtEnd,
-                                        style:const TextStyle(
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.w800,
-                                            color: BLUEGREY),
-                                      ),
-                                    ]),
-                                    const SizedBox(height: 5),
-                                    remainingTime(dateEnd)
-                                  ]),
-                            ]),
-                            collapsed: const SizedBox(),
-                            expanded: dtEndTaskGroup(
-                              keyIndex,
-                            ),
-                            controller:
-                                ExpandableController(initialExpanded: true)),
-                        const Divider(
-                            thickness: 1,
-                            indent: 3,
-                            endIndent: 3,
-                            color: Colors.transparent)
-                      ]));
+                key:_keys[index],
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: BACKGROUND_COLOR,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                margin:const EdgeInsets.symmetric(horizontal:5,vertical:2),
+                child: child);
+
             },
-            itemCount: sortedData.keys.length,
+            itemCount: _range,
           ),
         )
       ]),
-      executeDeleteButton()
-    ]));
+      executeDeleteButton(),
+      Align(
+        alignment: const Alignment(0, 1),
+        child:dateSelector()),
+     ]
+    );
+  }
+
+  Widget dailyViewWithTasks(BuildContext context, DateTime date){
+    final taskData = ref.watch(taskDataProvider);
+    Map<DateTime, List<Map<String, dynamic>>> sortedData = widget.sortedData;
+    sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
+    DateTime dateEnd = DateTime.fromMillisecondsSinceEpoch(
+        sortedData[date]!.first["dtEnd"]);
+    String adjustedDtEnd =
+        ("${dateEnd.month}月${dateEnd.day}日 (${"日月火水木金土日"[dateEnd.weekday % 7]}) ");
+      return Container(
+          padding: const EdgeInsets.only(
+              left: 8.0, right: 8.0, bottom: 13.0, top: 4.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(children:[
+                    Row(children: [
+                      const SizedBox(width: 5),
+                      Text(
+                        adjustedDtEnd,
+                        style:const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            color: BLUEGREY),
+                      ),
+                      const Spacer(),
+                      remainingTime(dateEnd),
+                      const SizedBox(width: 10)
+                    ]),
+                    dtEndTaskGroup(
+                      sortedData.keys.toList().indexOf(date),
+                    ),
+                ])
+              ]));
+  }
+
+  Widget dailyViewWithoutTasks(DateTime date){
+    String adjustedDtEnd = 
+      ("${date.month}月${date.day}日 (${"日月火水木金土日"[date.weekday % 7]}) ");
+
+    return Container(
+        padding: const EdgeInsets.only(
+            left: 8.0, right: 8.0, bottom: 13.0, top: 4.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                Row(children: [
+                    Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        const SizedBox(width: 5),
+                        Text(
+                          adjustedDtEnd,
+                          style:const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: BLUEGREY),
+                        ),
+                      ]),
+                      GestureDetector(
+                        onTap: (){
+                          print(_heights);
+                          final inputForm = ref.read(inputFormProvider);
+                          inputForm.clearContents();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return TaskInputForm(
+                                initDate: date,
+                                setosute: setState);
+                            });
+                        },
+                        child:Container(
+                          padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                          margin: const EdgeInsets.only(top: 5),
+                          child:const Row(children:[
+                            Icon(
+                              Icons.add_circle_outline_outlined,
+                              color:Colors.grey,
+                              size: 20),
+                          SizedBox(width: 5),
+                          Text("課題の追加",
+                            style: TextStyle(fontWeight: FontWeight.bold,color:Colors.grey),)
+                        ])
+                      )),
+                    ]),
+                  ]),
+              ]));
   }
 
   bool isLimitOver(
@@ -156,7 +286,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           },
           child: Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
-            height: SizeConfig.blockSizeVertical! * 10,
+            height: SizeConfig.blockSizeVertical! * 7,
             color: Colors.redAccent,
             child: Row(children: [
               const Spacer(),
@@ -218,13 +348,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           return Text(
             snapshot.data!,
             style: TextStyle(
-              fontSize: 17,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: FORGROUND_COLOR,
             ),
           );
         } else {
-          return const SizedBox(); // データがない場合は何も表示しない
+          return const SizedBox();
         }
       },
     );
@@ -242,7 +372,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   Widget remainingTime(DateTime dtEnd) {
-    double fontSize = 17;
+    double fontSize = 13;
     DateTime timeLimit = dtEnd;
     Duration difference = dtEnd.difference(DateTime.now());
     if (timeLimit.isBefore(DateTime.now()) == false) {
@@ -302,11 +432,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   Widget dtEndTaskGroup(keyIndex) {
+    ScrollController _controller = ScrollController();
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
-    return Container(
-      child: ListView.separated(
+    return  ListView.separated(
         shrinkWrap: true,
+        primary: false,
+        controller: _controller,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int valueIndex) {
           return Container(child: dtEndTaskChild(keyIndex, valueIndex));
@@ -316,8 +448,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         },
         itemCount: widget
             .sortedData[widget.sortedData.keys.elementAt(keyIndex)]!.length,
-      ),
-    );
+      );
   }
 
   Widget dtEndTaskChild(keyIndex, valueIndex) {
@@ -355,14 +486,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
     return Row(children: [
       SizedBox(
-          width: 50,
+          width: 35,
           child: 
             Text(
               DateFormat("HH:mm").format(
                   DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"])),
               textAlign: TextAlign.center,
               style:const TextStyle(
-                  fontSize: 15,
+                  fontSize: 12.5,
 
                   fontWeight: FontWeight.w700,
                   color: BLUEGREY))),
@@ -374,7 +505,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               child: Container(
                   padding: boxInset,
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 3),
                     decoration: BoxDecoration(
                       color: FORGROUND_COLOR,
                       borderRadius: radius,
@@ -412,14 +543,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                     child: Text(
                                         targetData["summary"] ?? "(詳細なし)",
                                         style:const TextStyle(
-                                              fontSize: 17,
+                                              fontSize: 13,
                                             fontWeight: FontWeight.w700,
                                             color: BLACK))),
                                 SizedBox(
                                     child:
                                         Text(targetData["title"] ?? "(タイトルなし)",
                                             style:const TextStyle(
-                                              fontSize: 15,
+                                              fontSize: 12.5,
                                               color: Colors.grey,
                                             ))),
                                 draftIndicator
@@ -437,12 +568,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     String? memoData = targetData["memo"];
     if (memoData != null && memoData != "") {
       return const Row(children: [
-        const Spacer(),
-        const Text("💬下書きあり",
+        Spacer(),
+        Text("💬下書きあり",
             style: TextStyle(
                 color: BLUEGREY,
                 fontWeight: FontWeight.bold,
-                fontSize: 13)),
+                fontSize: 12)),
         // Text("/ " + memoData.length.toString() + "字",
         //   style:TextStyle(
         //     color: Colors.grey,
@@ -457,4 +588,89 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   bool isEditingText(TextEditingController controller) {
     return controller.text.isNotEmpty;
   }
+
+  Widget dateSelector(){
+    return Container(
+      decoration: BoxDecoration(
+        color:  Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, -1),
+          ),
+        ],
+      ),
+      height: 70,
+      child:ListView.separated(
+          controller: _calendarScrollController,
+          primary: false,
+          itemBuilder:(context,index){
+            DateTime date = _getDateFromIndex(index);
+            DateTime now = DateTime.now();
+            bool isToday = 
+                date.year == now.year && 
+                date.month == now.month &&
+                date.day == now.day;
+
+            Color barColor = Colors.transparent;
+            if(date.weekday == 6){
+              barColor = Colors.blue[300]!;
+            }else if(date.weekday == 7){
+              barColor = Colors.red[300]!;
+            }
+            if(isToday){
+              barColor = Colors.blueAccent;
+            }
+
+            List dailyData = widget.sortedData[date] ?? [];
+
+            return GestureDetector(
+              onTap:(){
+
+              },
+              child:Stack(
+                alignment: AlignmentDirectional.topEnd,
+                children:[
+                  Container(
+                    color: Colors.white,
+                    padding:const EdgeInsets.symmetric(horizontal:0),
+                    child:Column(children: [
+                      Container(height:3,width: 55,color:barColor),
+                      Text("${date.month.toString()} /       ",
+                          style:const TextStyle(fontSize: 10,fontWeight: FontWeight.normal,color: Colors.grey)),
+                      const Spacer(),
+                      Text(date.day.toString(),
+                        style:const TextStyle(fontSize: 12.5
+                        ,fontWeight: FontWeight.bold)),
+                      const Spacer(),
+                      Text(DateFormat("E","ja_jp").format(date),
+                        style:const TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.grey)),
+                      const SizedBox(height: 2),
+                      Container(height: 5),
+                    ]),
+                  ),
+                  lengthBadge(dailyData.length,10.0,true)
+              ])
+            );
+          },
+          separatorBuilder: (context,index){
+            // return const VerticalDivider(
+            //   width: 1,indent: 10,endIndent: 10);
+            return const SizedBox();
+          },
+          scrollDirection: Axis.horizontal,
+          itemCount: _range,
+        )
+    );
+  }
+
+  @override
+  void dispose() {
+    _calendarScrollController.dispose();
+    _taskScrollController.dispose();
+    super.dispose();
+  }
+
 }

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import '../../frontend/assist_files/screen_manager.dart';
 import "../DB/handler/task_db_handler.dart";
-import "./notify_content.dart";
 import "../DB/handler/my_course_db.dart";
 import 'dart:convert';
 import "../../frontend/screens/common/eyecatch_page.dart";

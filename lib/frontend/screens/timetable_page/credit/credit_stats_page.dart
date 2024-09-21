@@ -14,7 +14,7 @@ import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_fil
 class CreditStatsPage extends StatefulWidget {
   Function() moveToMyWaseda;
 
-  CreditStatsPage({required this.moveToMyWaseda});
+  CreditStatsPage({super.key, required this.moveToMyWaseda});
   @override
   _CreditStatsPageState createState() => _CreditStatsPageState();
 }

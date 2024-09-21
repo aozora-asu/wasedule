@@ -15,7 +15,7 @@ class CalendarSettingPage extends ConsumerStatefulWidget{
   TextEditingController controller;
   Function updateConfigInfo;
 
-  CalendarSettingPage({
+  CalendarSettingPage({super.key, 
     required this.buildConfig ,
     required this.nodeText1,
     required this.controller,

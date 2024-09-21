@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -35,6 +36,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late int thisYear;
   late bool isScreenShotBeingTaken;
   final ScreenshotController _screenShotController = ScreenshotController();
+  final ScrollController pageScrollController = ScrollController();
   late Term currentQuarter;
   late Term currentSemester;
   late DateTime now;
@@ -43,10 +45,16 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   late bool isSelectedlistGenerated;
   late List<bool> isSelectedList;
 
-  double cellWidth = 15.0;
-  double cellHeight = 13;
+  late bool isShowSaturday;
+  late bool isOndemandTableSide;
+
+  bool _isFabVisible = true;
+
+  late double tableRowLength;
+  late double cellWidth;
+  double cellHeight = 11.5;
   double cellsRadius = 5.0;
-  double separatorHeight = 4;
+  double separatorHeight = 0;
 
   @override
   void initState() {
@@ -60,6 +68,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
     isSelectedlistGenerated = false;
     isSelectedList = [];
 
+    pageScrollController.addListener(_onScroll);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       String? userDepartment =
           SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment);
@@ -70,6 +80,53 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
         await showAttendanceDialog(context, now, ref);
       }
     });
+  }
+
+void initCellWidth() {
+  tableRowLength = 5;
+
+  if (isShowSaturday) {
+    tableRowLength += 1;
+  }
+  if (isOndemandTableSide) {
+    tableRowLength += 1;
+  }
+
+  switch (tableRowLength) {
+    case 5:
+      cellWidth = 18.35;
+      break;
+    case 6:
+      cellWidth = 15.25;
+      break;
+    case 7:
+      cellWidth = 13.15;
+      break;
+    default:
+      cellWidth = 15;
+      break;
+  }
+
+  setState(() {});
+}
+
+  void _onScroll() {
+    // スクロールの方向に応じてFABを表示・非表示にする
+    if (pageScrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      // 下方向にスクロールした場合
+      if (_isFabVisible) {
+        setState(() {
+          _isFabVisible = false;  // FABを非表示
+        });
+      }
+    } else if (pageScrollController.position.userScrollDirection == ScrollDirection.forward) {
+      // 上方向にスクロールした場合
+      if (!_isFabVisible) {
+        setState(() {
+          _isFabVisible = true;  // FABを表示
+        });
+      }
+    }
   }
 
   BoxDecoration floatingButtonDecorartion =
@@ -87,34 +144,41 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    ScrollController controller = ScrollController();
+    isShowSaturday = SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.isShowSaturday);
+    isOndemandTableSide = SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.isOndemandTableSide);
+    initCellWidth();
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
-      body: Container(
-          decoration: BoxDecoration(color: BACKGROUND_COLOR),
-          child: Column(children: [
-           pageHeader(),
-           const Divider(height: 1),
-           Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: SizeConfig.blockSizeHorizontal! * 0,
-                  right: SizeConfig.blockSizeHorizontal! * 0,
-                ),
-                child: ListView(
-                  primary: false,
-                  controller: controller,
-                  shrinkWrap: true,
-                  children: [
-                    timeTable(),
-                    const SizedBox(height: 80),
-                  ],
-                ),
-              ),
-            )
-        ])
-      ),
-      floatingActionButton: Container(
+      body: CustomScrollView(
+        controller: pageScrollController,
+        slivers: <Widget>[
+          SliverAppBar(
+            // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
+            floating: true,
+            pinned: false,
+            snap: true,
+            expandedHeight: 80,
+            // AppBar の拡張部分 (スクロール時に表示される)
+            flexibleSpace: pageHeader(),
+          ),
+           SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Column(children:[
+                  timeTable(),
+                  const SizedBox(height:100)
+                ]);
+              },
+              // リストアイテムの数
+              childCount: 1,
+            ),
+          ),
+        ]),
+      floatingActionButton: _isFabVisible
+        ? Container(
           width: SizeConfig.blockSizeHorizontal! * 90,
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: Row(children: [
@@ -128,6 +192,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                           semester: currentSemester,
                           year: thisYear,
                           setTimetableState: setState,
+                          period: Lesson.ondemand,
+                          weekDay: DayOfWeek.anotherday,
                         );
                       });
                 },
@@ -135,7 +201,8 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
                 child: Icon(Icons.add, color: FORGROUND_COLOR)),
             const SizedBox(width: 10),
             timetableShareButton(context),
-          ])),
+          ])) 
+          : null
     );
   }
 
@@ -298,40 +365,64 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   }
 
 Widget pageHeader(){
-  return Row(children: [
-    IconButton(
-        onPressed: () {
-          setState(() {
-            isSelectedlistGenerated = false;
-            decreasePgNumber();
-          });
-        },
-        icon: const Icon(Icons.arrow_back_ios),
-        iconSize: 20,
-        color: BLUEGREY),
-    Text(
-      "$thisYear年  ${currentSemester.text}",
-      style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w700,
-          color: BLUEGREY),
-    ),
-    IconButton(
-        onPressed: () {
-          setState(() {
-            isSelectedlistGenerated = false;
-            increasePgNumber();
-          });
-        },
-        icon: const Icon(Icons.arrow_forward_ios),
-        iconSize: 20,
-        color: BLUEGREY),
-    const Spacer(),
-    doNotContainScreenShot(springFallQuarterButton()),
-    doNotContainScreenShot(summerWinterQuarterButton()),
-    showOnlyScreenShot(LogoAndTitle(size: 5)),
-    const SizedBox(width: 40),
-  ]);
+  return Container(
+    color:BACKGROUND_COLOR,
+    child:Column(children:[
+      Row(children: [
+        IconButton(
+            onPressed: () {
+              setState(() {
+                isSelectedlistGenerated = false;
+                decreasePgNumber();
+              });
+            },
+            icon: const Icon(Icons.arrow_back_ios),
+            iconSize: 20,
+            color: BLUEGREY),
+        Text(
+          "$thisYear年  ${currentSemester.text}",
+          style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: BLUEGREY),
+        ),
+        IconButton(
+            onPressed: () {
+              setState(() {
+                isSelectedlistGenerated = false;
+                increasePgNumber();
+              });
+            },
+            icon: const Icon(Icons.arrow_forward_ios),
+            iconSize: 20,
+            color: BLUEGREY),
+        const Spacer(),
+        doNotContainScreenShot(springFallQuarterButton()),
+        doNotContainScreenShot(summerWinterQuarterButton()),
+        const SizedBox(width: 40),
+      ]),
+
+        doNotContainScreenShot(
+          Row(children:[
+            const SizedBox(width: 5),
+            simpleSmallButton(
+              "今日の出欠",
+              () async{
+                await showAttendanceDialog(context, DateTime.now(), ref, true);
+              }),
+            simpleSmallButton(
+              "授業の自動取得",
+            () async {
+              await showMoodleRegisterGuide(
+                  context, false, MoodleRegisterGuideType.timetable);
+              widget.moveToMoodlePage(4);
+            })
+          ])
+        ),
+      const Divider(height: 1),
+
+    ])
+  );
 }
 
   Future<List<MyCourse>?> loadData() async{
@@ -346,24 +437,6 @@ Widget pageHeader(){
         child: Container(
             decoration: switchDecoration(),
             child: Column(children: [
-              doNotContainScreenShot(
-                Row(children:[
-                  const SizedBox(width: 5),
-                  simpleSmallButton(
-                    "今日の出欠",
-                    () async{
-                      await showAttendanceDialog(context, DateTime.now(), ref, true);
-                    }),
-                  simpleSmallButton(
-                    "授業の自動取得",
-                  () async {
-                    await showMoodleRegisterGuide(
-                        context, false, MoodleRegisterGuideType.timetable);
-                    widget.moveToMoodlePage(4);
-                  })
-                ])
-              ),
-              const SizedBox(height: 5),
               FutureBuilder(
                   future:loadData(),
                   builder: ((context, snapshot) {
@@ -460,43 +533,82 @@ Widget pageHeader(){
   }
 
   Widget timeTableBody() {
+    double _cellWidth = cellWidth;
+    double _tableRowLength = tableRowLength;
     return Column(
       children: [
-      Row(children: [
-        generatePerirodColumn(),
-        Expanded(child:
+        showOnlyScreenShot(
+          Container(
+            color: MAIN_COLOR,
+            child:Row(children:[
+              Padding(
+                padding:const EdgeInsets.symmetric(horizontal: 10),
+                child:LogoAndTitle(size: 5,isLogoWhite: true,color: Colors.white)),
+              const Spacer(),
+              Text(
+                "$thisYear年  ${currentSemester.text}・${currentQuarter.text}",
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white),
+              ),
+              const SizedBox(width: 15),
+            ]))
+          ),
+        showOnlyScreenShot(
+          const Divider(
+            height: 3,
+            thickness: 3,
+            color: PALE_MAIN_COLOR,
+            indent:0,
+            endIndent:0)
+          ),
+        Row(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+          generatePerirodColumn(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height:5),
+              doNotContainScreenShot(const SizedBox(height:5)),
               generateWeekThumbnail(),
               SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * cellWidth * 6,
-                  child: Row(children: [
-                    timetableCells(1),
-                    timetableCells(2),
-                    timetableCells(3),
-                    timetableCells(4),
-                    timetableCells(5),
-                    timetableCells(6),
+                  width: SizeConfig.blockSizeHorizontal! * _cellWidth * _tableRowLength,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      timetableCells(1),
+                      timetableCells(2),
+                      timetableCells(3),
+                      timetableCells(4),
+                      timetableCells(5),
+                      if(isShowSaturday)
+                        timetableCells(6),
+                      if(isOndemandTableSide)
+                        generateOndemandColumn()
               ])
              )
           ])
-        )
       ]),
-      SizedBox(height: SizeConfig.blockSizeVertical! * 1),
-      const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "   オンデマンド・その他",
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY),
-          )),
-      SizedBox(
-          height: SizeConfig.blockSizeVertical! * cellHeight,
-          child: generateOndemandRow()),
+
+      if(!isOndemandTableSide)
+        const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "   オンデマンド・その他",
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY),
+            )),
+      if(!isOndemandTableSide)
+        SizedBox(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            child: generateOndemandRow()),
+      
       doNotContainScreenShot(
         Column(children:[
-          const SizedBox(height: 30),
+          if(!isOndemandTableSide)
+            const SizedBox(height: 30),
           Row(children:[
             const Text("   登録単位数",
               style: TextStyle(
@@ -519,7 +631,13 @@ Widget pageHeader(){
   }
 
   Widget generateWeekThumbnail() {
-    List<String> days = ["月", "火", "水", "木", "金", "土"];
+    List<String> days = ["月", "火", "水", "木", "金"];
+    if(isShowSaturday){
+      days.add("土");
+    }
+    if(isOndemandTableSide){
+      days.add("OD他");
+    }
     return SizedBox(
         height: 20,
         child: ListView.builder(
@@ -543,7 +661,7 @@ Widget pageHeader(){
                       TextStyle(color: fontColor, fontWeight: FontWeight.bold),
                 )));
           },
-          itemCount: 6,
+          itemCount: days.length,
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           physics: const NeverScrollableScrollPhysics(),
@@ -551,81 +669,84 @@ Widget pageHeader(){
   }
 
   Widget generatePerirodColumn() {
-    double fontSize = 8;
+    double fontSize = 7.5;
 
-    return SizedBox(
-      width: SizeConfig.blockSizeHorizontal! * cellWidth * 0.6,
+    return Expanded(
       child:Column(children: [
         SizedBox(
           height: SizeConfig.blockSizeVertical! * 2.5,
         ),
-        ListView.separated(
-          itemBuilder: (context, index) {
-            Color bgColor = BACKGROUND_COLOR;
-            Color fontColor = BLUEGREY;
-            DateTime now = DateTime.now();
-            if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
-                Lesson.atPeriod(index + 1)!.end)) {
-              bgColor = PALE_MAIN_COLOR;
-              fontColor = FORGROUND_COLOR;
-            }
+        MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child:ListView.separated(
+            itemBuilder: (context, index) {
+              Color bgColor = BACKGROUND_COLOR;
+              Color fontColor = BLUEGREY;
+              DateTime now = DateTime.now();
+              if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                  Lesson.atPeriod(index + 1)!.end)) {
+                bgColor = PALE_MAIN_COLOR;
+                fontColor = FORGROUND_COLOR;
+              }
 
-            return Container(
-                height: SizeConfig.blockSizeVertical! * cellHeight,
-                decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(cellsRadius / 2)),
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            DateFormat("HH:mm")
-                                .format(Lesson.atPeriod(index + 1)!.start),
-                            style: TextStyle(
-                                color: fontColor,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text((index + 1).toString(),
+              return Container(
+                  height: SizeConfig.blockSizeVertical! * cellHeight,
+                  decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(cellsRadius / 2)),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              DateFormat("HH:mm")
+                                  .format(Lesson.atPeriod(index + 1)!.start),
                               style: TextStyle(
                                   color: fontColor,
-                                  fontSize: fontSize * 2.2,
-                                  fontWeight: FontWeight.bold)),
-                          Text(
-                            DateFormat("HH:mm")
-                                .format(Lesson.atPeriod(index + 1)!.end),
-                            style: TextStyle(
-                                color: fontColor,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ])));
-          },
-          separatorBuilder: (context, index) {
-            Widget resultinging = SizedBox(height: separatorHeight,);
-            DateTime now = DateTime.now();
-            Color bgColor = BACKGROUND_COLOR;
+                                  fontSize: fontSize,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text((index + 1).toString(),
+                                style: TextStyle(
+                                    color: fontColor,
+                                    fontSize: fontSize * 2.2,
+                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              DateFormat("HH:mm")
+                                  .format(Lesson.atPeriod(index + 1)!.end),
+                              style: TextStyle(
+                                  color: fontColor,
+                                  fontSize: fontSize,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ])));
+            },
+            separatorBuilder: (context, index) {
+              Widget resultinging = SizedBox(height: separatorHeight,);
+              DateTime now = DateTime.now();
+              Color bgColor = BACKGROUND_COLOR;
 
-            if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
-              bgColor = PALE_MAIN_COLOR;
-            }
-            if (index == 1) {
-              resultinging = Container(
-                  height: SizeConfig.blockSizeVertical! * 2.5,
-                  color: bgColor,
-                  child: const Column(children: [
-                    //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
-                    Spacer(),
-                    //Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
-                  ]));
-            }
-            return resultinging;
-          },
-          itemCount: ref.read(timeTableProvider).maxPeriod,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+              if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
+                bgColor = PALE_MAIN_COLOR;
+              }
+              if (index == 1) {
+                resultinging = Container(
+                    height: SizeConfig.blockSizeVertical! * 2.5,
+                    color: bgColor,
+                    child: const Column(children: [
+                      //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
+                      Spacer(),
+                      //Divider(color: Colors.grey, height: 0.5, thickness: 0.5)
+                    ]));
+              }
+              return resultinging;
+            },
+            itemCount: ref.read(timeTableProvider).maxPeriod,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+          )
         )
       ])
     );
@@ -655,153 +776,158 @@ Widget pageHeader(){
     final tableData = ref.read(timeTableProvider);
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * cellWidth,
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: ref.read(timeTableProvider).maxPeriod,
-          physics: const NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: ((context, index) {
-            Color bgColor = FORGROUND_COLOR;
-            Widget cellContents = GestureDetector(onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CourseAddPage(
-                      year: thisYear,
-                      semester: currentSemester,
-                      weekDay: DayOfWeek.weekAt(weekDay),
-                      period: Lesson.atPeriod(index + 1),
-                      setTimetableState: setState,
-                    );
-                  });
-            });
-
-            if (tableData.currentSemesterClasses.containsKey(weekDay) &&
-                returnExistingPeriod(tableData.currentSemesterClasses[weekDay]!)
-                    .contains(index + 1) &&
-                tableData.currentSemesterClasses[weekDay]
-                        ?.elementAt(returnIndexFromPeriod(
-                            tableData.currentSemesterClasses[weekDay]!,
-                            index + 1))
-                        .year ==
-                    thisYear) {
-              if (tableData.currentSemesterClasses[weekDay]
-                          ?.elementAt(returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay]!,
-                              index + 1))
-                          .semester ==
-                      currentQuarter ||
-                  tableData.currentSemesterClasses[weekDay]
-                          ?.elementAt(returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay]!,
-                              index + 1))
-                          .semester ==
-                      currentSemester ||
-                  tableData.currentSemesterClasses[weekDay]
-                          ?.elementAt(returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay]!,
-                              index + 1))
-                          .semester ==
-                      Term.fullYear) {
-                cellContents = FutureBuilder(
-                    future: TaskDatabaseHelper().getTaskListByCourseName(
-                        tableData.currentSemesterClasses[weekDay]
-                                ?.elementAt(returnIndexFromPeriod(
-                                    tableData.currentSemesterClasses[weekDay]!,
-                                    index + 1))
-                                .courseName ??
-                            ""),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return timeTableCellsChild(weekDay, index + 1, []);
-                      } else if (snapshot.hasData) {
-                        return timeTableCellsChild(
-                            weekDay, index + 1, snapshot.data!);
-                      } else {
-                        return timeTableCellsChild(weekDay, index + 1, []);
-                      }
+        child: MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child:ListView.separated(
+            shrinkWrap: true,
+            itemCount: ref.read(timeTableProvider).maxPeriod,
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: ((context, index) {
+              Color bgColor = FORGROUND_COLOR;
+              Widget cellContents = GestureDetector(onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CourseAddPage(
+                        year: thisYear,
+                        semester: currentSemester,
+                        weekDay: DayOfWeek.weekAt(weekDay),
+                        period: Lesson.atPeriod(index + 1),
+                        setTimetableState: setState,
+                      );
                     });
+              });
+
+              if (tableData.currentSemesterClasses.containsKey(weekDay) &&
+                  returnExistingPeriod(tableData.currentSemesterClasses[weekDay]!)
+                      .contains(index + 1) &&
+                  tableData.currentSemesterClasses[weekDay]
+                          ?.elementAt(returnIndexFromPeriod(
+                              tableData.currentSemesterClasses[weekDay]!,
+                              index + 1))
+                          .year ==
+                      thisYear) {
+                if (tableData.currentSemesterClasses[weekDay]
+                            ?.elementAt(returnIndexFromPeriod(
+                                tableData.currentSemesterClasses[weekDay]!,
+                                index + 1))
+                            .semester ==
+                        currentQuarter ||
+                    tableData.currentSemesterClasses[weekDay]
+                            ?.elementAt(returnIndexFromPeriod(
+                                tableData.currentSemesterClasses[weekDay]!,
+                                index + 1))
+                            .semester ==
+                        currentSemester ||
+                    tableData.currentSemesterClasses[weekDay]
+                            ?.elementAt(returnIndexFromPeriod(
+                                tableData.currentSemesterClasses[weekDay]!,
+                                index + 1))
+                            .semester ==
+                        Term.fullYear) {
+                  cellContents = FutureBuilder(
+                      future: TaskDatabaseHelper().getTaskListByCourseName(
+                          tableData.currentSemesterClasses[weekDay]
+                                  ?.elementAt(returnIndexFromPeriod(
+                                      tableData.currentSemesterClasses[weekDay]!,
+                                      index + 1))
+                                  .courseName ??
+                              ""),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return timeTableCellsChild(weekDay, index + 1, []);
+                        } else if (snapshot.hasData) {
+                          return timeTableCellsChild(
+                              weekDay, index + 1, snapshot.data!);
+                        } else {
+                          return timeTableCellsChild(weekDay, index + 1, []);
+                        }
+                      });
+                }
               }
-            }
 
-            Color lineColor = Colors.transparent;
-            double lineWidth = 0;
-            DateTime now = DateTime.now();
-            double minRadius = 0;
+              Color lineColor = Colors.transparent;
+              double lineWidth = 0;
+              DateTime now = DateTime.now();
+              double minRadius = 0;
 
-            if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
-                    Lesson.atPeriod(index + 1)!.end) &&
-                now.weekday == weekDay &&
-                weekDay <= 6) {
-              lineWidth = 4;
-              lineColor = PALE_MAIN_COLOR;
-            }
+              if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                      Lesson.atPeriod(index + 1)!.end) &&
+                  now.weekday == weekDay &&
+                  weekDay <= 6) {
+                lineWidth = 4;
+                lineColor = PALE_MAIN_COLOR;
+              }
 
-            return Container(
-                width: SizeConfig.blockSizeHorizontal! * cellWidth,
-                height: SizeConfig.blockSizeVertical! * cellHeight,
-                decoration: BoxDecoration(
-                    color:weekDay.isEven ? lighten(bgColor,0.025) : darken(bgColor,0.025),
-                    border: Border.all(
-                      color: lineColor,
-                      width: lineWidth,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: weekDay == 1 ? 
-                        Radius.circular(cellsRadius *2) : 
-                        Radius.circular(minRadius),
-                      bottomLeft: weekDay == 1 ? 
-                        Radius.circular(cellsRadius*2) : 
-                        Radius.circular(minRadius),
-                      topRight: weekDay == 6 ? 
-                        Radius.circular(cellsRadius*2) : 
-                        Radius.circular(minRadius),
-                      bottomRight: weekDay == 6 ? 
-                        Radius.circular(cellsRadius*2) : 
-                        Radius.circular(minRadius),
-                    )),
-                child: cellContents);
-          }),
-          separatorBuilder: (context, index) {
-            Widget resultinging = SizedBox(height: separatorHeight);
-            DateTime now = DateTime.now();
-            Color bgColor = BACKGROUND_COLOR;
-            Color fontColor = BLUEGREY;
+              return Container(
+                  width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                  height: SizeConfig.blockSizeVertical! * cellHeight,
+                  decoration: BoxDecoration(
+                      color: (weekDay + index).isEven ? lighten(bgColor,0.025) : darken(bgColor,0.025),
+                      border: Border.all(
+                        color: lineColor,
+                        width: lineWidth,
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: weekDay == 1 && (index == 2 || index == 0)? 
+                          Radius.circular(cellsRadius *2) : 
+                          Radius.circular(minRadius),
+                        bottomLeft: weekDay == 1 && (index == 1 || index == 5)? 
+                          Radius.circular(cellsRadius*2) : 
+                          Radius.circular(minRadius),
+                        topRight: weekDay == 6 && (index == 2 || index == 0)? 
+                          Radius.circular(cellsRadius*2) : 
+                          Radius.circular(minRadius),
+                        bottomRight: weekDay == 6 && (index == 1 || index == 5)? 
+                          Radius.circular(cellsRadius*2) : 
+                          Radius.circular(minRadius),
+                      )),
+                  child: cellContents);
+            }),
+            separatorBuilder: (context, index) {
+              Widget resultinging = SizedBox(height: separatorHeight);
+              DateTime now = DateTime.now();
+              Color bgColor = BACKGROUND_COLOR;
+              Color fontColor = BLUEGREY;
 
-            if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
-              bgColor = PALE_MAIN_COLOR;
-              fontColor = Colors.white;
-            }
-            String childText = "";
-            if (weekDay == 2) {
-              childText = "昼";
-            }
-            if (weekDay == 3) {
-              childText = "休";
-            }
-            if (weekDay == 4) {
-              childText = "み";
-            }
+              if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
+                bgColor = PALE_MAIN_COLOR;
+                fontColor = Colors.white;
+              }
+              String childText = "";
+              if (weekDay == 2) {
+                childText = "昼";
+              }
+              if (weekDay == 3) {
+                childText = "休";
+              }
+              if (weekDay == 4) {
+                childText = "み";
+              }
 
-            if (index == 1) {
-              resultinging = Container(
-                  height: 25,
-                  color: bgColor,
-                  child: Column(children: [
-                    const Spacer(),
-                    Text(
-                      childText,
-                      style: TextStyle(
-                          color: fontColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                  ]));
-            }
-            return resultinging;
-          },
-        ));
+              if (index == 1) {
+                resultinging = Container(
+                    height: 3,
+                    color: bgColor,
+                    child:const Column(children: [
+                      const Spacer(),
+                      // Text(
+                      //   childText,
+                      //   style: TextStyle(
+                      //       color: fontColor,
+                      //       fontSize: 12,
+                      //       fontWeight: FontWeight.bold),
+                      // ),
+                      const Spacer(),
+                    ]));
+              }
+              return resultinging;
+            },
+          )
+        )
+    );
   }
 
   Widget generateOndemandRow() {
@@ -874,6 +1000,87 @@ Widget pageHeader(){
     ]);
   }
 
+  Widget generateOndemandColumn() {
+    final tableData = ref.read(timeTableProvider);
+    int listLength = 0;
+    if (tableData.sortedDataByWeekDay.containsKey(7)) {
+      listLength = tableData.sortedDataByWeekDay[7]!.length;
+    }
+
+    return SizedBox(
+        width: SizeConfig.blockSizeHorizontal! *cellWidth,
+        child:ListView.separated(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemCount: listLength + 1,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            Widget child = const SizedBox();
+            if (index == listLength) {
+              child = ondemandAddCell();
+              return child;
+            } else {
+              if (tableData.sortedDataByWeekDay[7]
+                          ?.elementAt(index)
+                          .semester
+                          ?.value ==
+                      currentQuarter.value ||
+                  tableData.sortedDataByWeekDay[7]
+                          ?.elementAt(index)
+                          .semester
+                          ?.value ==
+                      "full_year" ||
+                  tableData.sortedDataByWeekDay[7]
+                              ?.elementAt(index)
+                              .semester
+                              ?.value ==
+                          currentSemester.value &&
+                      tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
+                          thisYear) {
+                child = Container(
+                    height: SizeConfig.blockSizeVertical! * cellHeight,
+                    width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: BACKGROUND_COLOR,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(cellsRadius)),
+                    child: FutureBuilder(
+                        future: TaskDatabaseHelper().getTaskListByCourseName(
+                            tableData.sortedDataByWeekDay[7]
+                                    ?.elementAt(index)
+                                    .courseName ??
+                                ""),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ondemandCellsChild(index, []);
+                          } else if (snapshot.hasData) {
+                            return ondemandCellsChild(index, snapshot.data!);
+                          } else {
+                            return ondemandCellsChild(index, []);
+                          }
+                        }));
+              }
+              return child;
+            }
+          },
+          separatorBuilder: (context, index) {
+            Widget resultinging = const SizedBox();
+              // if (index == 1) {
+              //   resultinging = Container(
+              //       color:Colors.amberAccent,
+              //       height: 3,
+              //   );
+              // }
+              return resultinging;
+          },
+        )
+        
+      );
+  }
+
   List<int> returnExistingPeriod(List<MyCourse> target) {
     List<int> result = [];
     for (int i = 0; i < target.length; i++) {
@@ -894,7 +1101,7 @@ Widget pageHeader(){
 
   Widget timeTableCellsChild(
       int weekDay, int period, List<Map<String, dynamic>> taskList) {
-    double fontSize = 11;
+    double fontSize = SizeConfig.blockSizeVertical! * 1.2;
     final timeTableData = ref.read(timeTableProvider);
     Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]!
         .elementAt(returnIndexFromPeriod(
@@ -921,21 +1128,30 @@ Widget pageHeader(){
               borderRadius: const BorderRadius.all(Radius.circular(2))),
           child: Text(
             classRoom,
-            style: const TextStyle(
-              fontSize: 10,
+            style: TextStyle(
+              fontSize: fontSize,
             ),
             overflow: TextOverflow.visible,
             maxLines: 2,
           ));
     }
-    return Stack(children: [
+    return 
       Container(
           width: SizeConfig.blockSizeHorizontal! * cellWidth,
           decoration: BoxDecoration(
-              color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.7),
-              borderRadius: BorderRadius.circular(cellsRadius)),
+              color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.6),
+              borderRadius: BorderRadius.circular(cellsRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 3),
-          margin: EdgeInsets.only(top : 5.toDouble()),
+          margin: const EdgeInsets.all(1),
 
           child: InkWell(
               onTap: () async{
@@ -954,8 +1170,11 @@ Widget pageHeader(){
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[
-                  doNotContainScreenShot(absentBadgeBuilder(targetData)),
-                  const SizedBox(height: 20),
+                  doNotContainScreenShot(
+                    Padding(
+                      padding:const EdgeInsets.symmetric(vertical: 2),
+                      child:absentBadgeBuilder(targetData))
+                  ),
                   doNotContainScreenShot(lengthBadge(taskLength, fontSize, true)),
               ]),
               Expanded(
@@ -963,13 +1182,14 @@ Widget pageHeader(){
                       child: Text(
                 className,
                 style: TextStyle(
-                    fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                maxLines: 3,
+                    fontSize: fontSize, overflow: TextOverflow.clip),
+                maxLines: null,
               ))),
               classRoomView,
-              const SizedBox(height: 10),
-            ]))),
-    ]);
+              const SizedBox(height: 3),
+            ])
+          )
+        );
   }
 
   Widget absentBadgeBuilder(MyCourse targetData) {
@@ -1022,7 +1242,7 @@ Widget pageHeader(){
             borderRadius:
                 const BorderRadius.all( Radius.circular(5))),
         child: Text(
-          " 欠席 " + absentNum.toString(), // + "/" + remainAbsent.toString(),
+          " 欠席 $absentNum", // + "/" + remainAbsent.toString(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: SizeConfig.blockSizeVertical! * cellHeight / 12,
@@ -1055,53 +1275,66 @@ Widget pageHeader(){
                 );
               });
         },
-        child: Stack(children: [
+        child: 
           Container(
             decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(cellsRadius)),
+                borderRadius: BorderRadius.circular(cellsRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              SizedBox(height: SizeConfig.blockSizeVertical! * 2.25),
-              Expanded(
-                  child: Center(
-                child: Text(className,
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                doNotContainScreenShot(Align(
+                  alignment: const Alignment(-1, -1),
+                  child: lengthBadge(taskLength, fontSize, true))),
+                Expanded(
+                    child: Center(
+                  child: Text(className,
                     style: TextStyle(
                         fontSize: fontSize, overflow: TextOverflow.ellipsis),
                     maxLines: 4),
               ))
             ]),
           ),
-          doNotContainScreenShot(Align(
-              alignment: const Alignment(-1, -1),
-              child: lengthBadge(taskLength, fontSize, true)))
-        ]));
+
+        );
   }
 
   Widget ondemandAddCell() {
     Color bgColor = FORGROUND_COLOR;
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CourseAddPage(
-                setTimetableState: setState,
-                year:thisYear,
-                semester:currentSemester,
-              );
-            });
-      },
-      child: Container(
-          height: SizeConfig.blockSizeVertical! * cellHeight,
-          width: SizeConfig.blockSizeHorizontal! * cellWidth,
-          decoration: BoxDecoration(
-              color: bgColor, borderRadius: BorderRadius.circular(cellsRadius)),
-          padding: const EdgeInsets.symmetric(horizontal: 3),
-          child: const Center(
-              child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
-    );
+    return doNotContainScreenShot(
+      GestureDetector(
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CourseAddPage(
+                  setTimetableState: setState,
+                  year:thisYear,
+                  semester:currentSemester,
+                  weekDay: DayOfWeek.anotherday,
+                  period: Lesson.ondemand,
+                );
+              });
+        },
+        child: Container(
+            height: SizeConfig.blockSizeVertical! * cellHeight,
+            width: SizeConfig.blockSizeHorizontal! * cellWidth,
+            margin:const EdgeInsets.symmetric(horizontal: 3,vertical: 2),
+            decoration: BoxDecoration(
+                color: bgColor, borderRadius: BorderRadius.circular(cellsRadius)),
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: const Center(
+                child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
+      ));
   }
 
   Color hexToColor(String hexColor) {
@@ -1134,7 +1367,8 @@ Widget pageHeader(){
     TextStyle smallBlackChar = const TextStyle(color: Colors.black,fontSize:15);
     TextStyle largeChar = const TextStyle(fontWeight: FontWeight.bold,fontSize:35);
 
-    return Column(children:[
+    return Column(
+      children:[
       Container(
         decoration: roundedBoxdecoration(radiusType: 1),
         padding: padding,
@@ -1152,80 +1386,86 @@ Widget pageHeader(){
           padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
           margin: margin,
           child: classesList.isNotEmpty ?
-            ListView.builder(
-              itemBuilder: (context,index){
-                Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
-                String termString = term.text;
-                int numOfCredits = 0;
-                for(var course in sortedCourseByQuarter.values.elementAt(index)){
-                  numOfCredits += course.credit ?? 0;
-                }
-                return Text("$termString : ${numOfCredits.toString()} 単位",
-                  style: smallGrayChar);
-              },
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: sortedCourseByQuarter.length,
-            ) : 
+            MediaQuery.removePadding(
+              context: context,
+              removeBottom: true,
+              child:ListView.builder(
+                    itemBuilder: (context,index){
+                      Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
+                      String termString = term.text;
+                      int numOfCredits = 0;
+                      for(var course in sortedCourseByQuarter.values.elementAt(index)){
+                        numOfCredits += course.credit ?? 0;
+                      }
+                      return Text("$termString : ${numOfCredits.toString()} 単位",
+                        style: smallGrayChar);
+                    },
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: sortedCourseByQuarter.length,
+            )) : 
             SizedBox(
               height: 40,
               child: Center(
                 child:Text("この学期の授業はまだありません。",style: smallGrayChar)))
         ),
-      ListView.builder(
-        itemBuilder: (context, index) {
-          int numOfCredits = timetable.creditsTotalSum(sortedCourseByClassification.values.elementAt(index));
-          String classificationName = sortedCourseByClassification.keys.elementAt(index) ?? "分類なし";
-          if(!isSelectedlistGenerated)
-            {selectedCreditsSum = 0;
-             isSelectedList = List<bool>.filled(
-              sortedCourseByClassification.length + 
-              36,
-              false);}
-          isSelectedlistGenerated = true;
-          bool isSelected = isSelectedList.elementAt(index);
+      MediaQuery.removePadding(
+        context: context,
+        removeBottom: true,
+        child:ListView.builder(
+          itemBuilder: (context, index) {
+            int numOfCredits = timetable.creditsTotalSum(sortedCourseByClassification.values.elementAt(index));
+            String classificationName = sortedCourseByClassification.keys.elementAt(index) ?? "分類なし";
+            if(!isSelectedlistGenerated)
+              {selectedCreditsSum = 0;
+              isSelectedList = List<bool>.filled(
+                sortedCourseByClassification.length + 
+                36,
+                false);}
+            isSelectedlistGenerated = true;
+            bool isSelected = isSelectedList.elementAt(index);
 
-          return Container(
-            decoration: roundedBoxdecoration(radiusType: 2),
-            padding: padding,
-            margin: margin,
-            child: Row(children:[
-              CupertinoCheckbox(
-                value: isSelected,
-                onChanged: (value){
-                  setState(() {
-                    isSelectedList[index] = value!;
-                    if (value) {
-                      selectedCreditsSum += numOfCredits;
-                    } else {
-                      selectedCreditsSum -= numOfCredits;
-                    }
-                  });
-              }),
-              Expanded(child:
-                Text(classificationName,style: smallGrayChar,overflow: TextOverflow.clip)),
-              SizedBox(
-                width: 25,
-                child:Text(numOfCredits.toString(),style: smallBlackChar)),
-              GestureDetector(
-                onTap:(){
-                   showClassificationContentDialog
-                     (classificationName,sortedCourseByClassification.values.elementAt(index));
-                },
-                child:const Icon(Icons.more_horiz,color:Colors.grey),
-              )
-            ]),
-          );
-        },
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: sortedCourseByClassification.length,
-      ),
+            return Container(
+              decoration: roundedBoxdecoration(radiusType: 2),
+              padding: padding,
+              margin: margin,
+              child: Row(children:[
+                CupertinoCheckbox(
+                  value: isSelected,
+                  onChanged: (value){
+                    setState(() {
+                      isSelectedList[index] = value!;
+                      if (value) {
+                        selectedCreditsSum += numOfCredits;
+                      } else {
+                        selectedCreditsSum -= numOfCredits;
+                      }
+                    });
+                }),
+                Expanded(child:
+                  Text(classificationName,style: smallGrayChar,overflow: TextOverflow.clip)),
+                SizedBox(
+                  width: 25,
+                  child:Text(numOfCredits.toString(),style: smallBlackChar)),
+                GestureDetector(
+                  onTap:(){
+                    showClassificationContentDialog
+                      (classificationName,sortedCourseByClassification.values.elementAt(index));
+                  },
+                  child:const Icon(Icons.more_horiz,color:Colors.grey),
+                )
+              ]),
+            );
+          },
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: sortedCourseByClassification.length,
+      )),
       Container(
           decoration: roundedBoxdecoration(radiusType: 3),
           padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
           margin: margin,
-          child:RequiredCreditsStats()
+          child:const  RequiredCreditsStats()
         ),
     ]);
   }

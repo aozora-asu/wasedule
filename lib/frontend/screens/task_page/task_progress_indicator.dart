@@ -2,7 +2,6 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_date.dart';
 import 'package:intl/intl.dart';
 
 import 'package:percent_indicator/percent_indicator.dart';

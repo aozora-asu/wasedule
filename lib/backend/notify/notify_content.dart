@@ -7,7 +7,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import "notify_db.dart";
-import "../../static/converter.dart";
 import "../DB/sharepreference.dart";
 import 'dart:convert';
 import "../../static/constant.dart";

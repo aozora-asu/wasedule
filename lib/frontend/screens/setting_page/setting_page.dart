@@ -1,10 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
-import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/calendar_setting.dart';
@@ -13,16 +9,11 @@ import 'package:flutter_calandar_app/frontend/screens/setting_page/notify_settin
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/theme_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
-import 'package:flutter_calandar_app/frontend/screens/task_page/task_progress_indicator.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
-import "../../../backend/notify/notify_db.dart";
-import "../../../backend/notify/notify_content.dart";
 
 class SettingsPage extends StatelessWidget {
   int? initIndex;

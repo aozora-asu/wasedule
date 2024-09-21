@@ -21,7 +21,7 @@ class SyllabusSearchDialog extends ConsumerStatefulWidget {
   int radiusType;
   late StateSetter setTimetableState;
 
-  SyllabusSearchDialog({
+  SyllabusSearchDialog({super.key, 
     required this.radiusType,
     required this.setTimetableState,
     this.gakki,
@@ -111,11 +111,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     String year = Term.whenSchoolYear(DateTime.now()).toString();
     int radiusType = widget.radiusType;
 
-    if (widget.youbi != null && widget.jigen != null) {
+    if (widget.youbi != DayOfWeek.anotherday && widget.jigen != Lesson.ondemand) {
       courseTimeText =
           "$year年 / ${widget.gakki?.text} / ${widget.youbi!.text}曜日 / ${widget.jigen!.period}限";
     } else {
-      courseTimeText = "$year年 / ${widget.gakki?.text} / オンデマンド / 時限なし";
+      courseTimeText = "$year年 / ${widget.gakki?.text} / オンデマンド";
     }
 
     TextStyle searchConditionTextStyle = const TextStyle(
@@ -175,16 +175,16 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
               SizedBox(
                 width: 80,
                 child: Text(
-                  "キーワード",
+                  "科目名",
                   style: searchConditionTextStyle,
                   textAlign: TextAlign.center,
                 ),
               ),
               searchTextField(keywordController, (value) {
-                requestQuery.keyword = value;
+                requestQuery.kamoku = value;
                 SharepreferenceHandler().setValue(
-                    SharepreferenceKeys.recentSyllabusQueryKeyword,
-                    requestQuery.keyword);
+                    SharepreferenceKeys.recentSyllabusQueryKamoku,
+                    requestQuery.kamoku);
                 updateQuery(requestQuery);
               }),
             ],
@@ -549,7 +549,7 @@ Future<void> showAddCourseConfirmationDialog(
     builder: (BuildContext context) {
       return CupertinoAlertDialog(
         title: const Text("確認"),
-        content: Text('" ' + courseData.courseName + ' "を時間割へ追加してもよろしいですか？'),
+        content: Text('" ${courseData.courseName} "を時間割へ追加してもよろしいですか？'),
         actions: [
           TextButton(
             onPressed: () async {

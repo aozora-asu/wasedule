@@ -72,7 +72,7 @@ class AttendanceDialog extends ConsumerStatefulWidget {
   bool enforceShowing;
   bool showAutomatically;
   AttendanceDialog(
-      {required this.targetDate,
+      {super.key, required this.targetDate,
       required this.enforceShowing,
       required this.showAutomatically});
   @override
@@ -222,7 +222,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     }
 
     return Column(children: [
-      Text(dateText + "の出席記録",
+      Text("$dateTextの出席記録",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
       const SizedBox(height: 10),
       ListView.builder(
@@ -331,7 +331,7 @@ class IndividualCourseEditDialog extends StatefulWidget {
   late MyCourse myCourseData;
   late Map? initData;
   late Function onDone;
-  IndividualCourseEditDialog({
+  IndividualCourseEditDialog({super.key, 
     required this.initData,
     required this.myCourseData,
     required this.onDone,
@@ -373,7 +373,7 @@ class _IndividualCourseEditDialogState
       padding: const EdgeInsets.all(15),
       decoration: roundedBoxdecoration(),
       child: Column(children: [
-        Text(widget.myCourseData.courseName + " の出欠記録",
+        Text("${widget.myCourseData.courseName} の出欠記録",
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 overflow: TextOverflow.clip,

@@ -14,6 +14,8 @@ import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SyllabusSearchPage extends StatefulWidget {
+  const SyllabusSearchPage({super.key});
+
   @override
   _SyllabusSearchPageState createState() => _SyllabusSearchPageState();
 }

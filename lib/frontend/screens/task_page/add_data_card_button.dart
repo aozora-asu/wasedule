@@ -69,7 +69,10 @@ class InputForm {
 class AddDataCardButton extends ConsumerStatefulWidget {
   late StateSetter setosute;
 
-  AddDataCardButton({super.key, required this.setosute});
+  AddDataCardButton({
+      super.key,
+      required this.setosute,
+    });
 
   @override
   AddDataCardButtonState createState() => AddDataCardButtonState();
@@ -100,12 +103,26 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
 
 class TaskInputForm extends ConsumerStatefulWidget {
   late StateSetter setosute;
-  TaskInputForm({super.key, required this.setosute});
+    DateTime? initDate;
+  TaskInputForm({
+      super.key,
+      required this.setosute,
+      this.initDate
+    });
   @override
   TaskInputFormState createState() => TaskInputFormState();
 }
 
 class TaskInputFormState extends ConsumerState<TaskInputForm> {
+  @override
+  void initState(){
+    super.initState();
+    if(widget.initDate != null){
+      final inputForm = ref.read(inputFormProvider);
+      inputForm.dtEndController.text = DateFormat('yyyy-MM-dd HH:mm').format(widget.initDate!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(taskDataProvider);
@@ -133,6 +150,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
       dateEnd = DateFormat("MM月dd日(E)", 'ja_JP').format(dtEnd);
       timeEnd = DateFormat("HH:mm").format(dtEnd);
     }
+
 
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
@@ -233,7 +251,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
 
   Widget pageBody() {
     final inputForm = ref.watch(inputFormProvider);
-    final taskData = ref.read(taskDataProvider);
+
     return SingleChildScrollView(
         child: Column(children: [
       GestureDetector(
@@ -243,25 +261,25 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(children: [
                 const SizedBox(height: 10),
-                Align(
+                const Align(
                     alignment: Alignment.centerLeft,
                     child: Row(children: [
-                      const Icon(Icons.check, size: 35, color: Colors.grey),
+                      Icon(Icons.check, size: 30, color: Colors.grey),
                       Text(
                         ' 新タスクを入力',
                         style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal! * 7,
+                          fontSize:20,
+                          fontWeight: FontWeight.normal
                         ),
                       )
                     ])),
-                const Divider(height: 7),
+                const Divider(height: 10),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 2,
+                  height: 10
                 ),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  //height: SizeConfig.blockSizeHorizontal! * 8.5,
                   child: TextField(
                     controller: inputForm.summaryController,
                     maxLines: null,
@@ -277,11 +295,10 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                 ),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 3,
+                  height: 10,
                 ),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  //height: SizeConfig.blockSizeHorizontal! * 8.5,
                   child: TextField(
                     textInputAction: TextInputAction.done,
                     controller: inputForm.descriptionController,
@@ -295,7 +312,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                 ),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 3,
+                  height: 15,
                 ),
                 DateTimePickerFormField(
                     controller: inputForm.dtEndController,
@@ -303,7 +320,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                     labelColor: requiredColour(inputForm.dtEndController.text)),
                 SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 90,
-                  height: SizeConfig.blockSizeHorizontal! * 3,
+                  height: 7,
                 ),
                 InkWell(
                   onTap: () {
@@ -311,7 +328,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                   },
                   child: Container(
                     width: SizeConfig.blockSizeHorizontal! * 90,
-                    height: SizeConfig.blockSizeHorizontal! * 8.5,
+                    height: 60,
                     padding:
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
@@ -321,12 +338,20 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                         width: 1,
                       ),
                     ),
-                    child: Text(categoryWithNum(inputForm.titleController.text),
-                        style: TextStyle(
+                    child: Center(
+                      child:Align(
+                        alignment: Alignment.centerLeft,
+                        child:Text(categoryWithNum(inputForm.titleController.text),
+                          style: TextStyle(
                             color:
                                 requiredColour(inputForm.titleController.text),
-                            fontSize: 15)),
+                            fontSize: 15))),
+                    )
                   ),
+                ),
+                SizedBox(
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  height: 15,
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -659,6 +684,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                 TextButton(
                     onPressed: () {
                       inputForm.titleController.clear();
+                      Navigator.pop(context);
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -788,7 +814,7 @@ class DateTimePickerFormField extends ConsumerWidget {
       children: <Widget>[
         SizedBox(
           width: SizeConfig.blockSizeHorizontal! * 90,
-          height: SizeConfig.blockSizeHorizontal! * 8.5,
+          height: 60,
           child: InkWell(
             onTap: () {
               selectDateAndTime(context, ref);

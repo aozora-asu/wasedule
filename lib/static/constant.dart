@@ -700,14 +700,14 @@ class SubjectClassification {
       required this.parentDepartmentID,
       required this.text});
 
-  static SubjectClassification? byKeyAndValue(String? p_keya, String? value) {
+  static SubjectClassification? byKeyAndValue(String? pKeya, String? value) {
     switch (value) {
       case "advancedScience":
-        return advancedSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+        return advancedSubClass.firstWhereOrNull((e) => e.p_keya == pKeya);
       case "creativeScience":
-        return creativeSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+        return creativeSubClass.firstWhereOrNull((e) => e.p_keya == pKeya);
       case "fundamentalScience":
-        return fundamentalSubClass.firstWhereOrNull((e) => e.p_keya == p_keya);
+        return fundamentalSubClass.firstWhereOrNull((e) => e.p_keya == pKeya);
       default:
         return null;
     }

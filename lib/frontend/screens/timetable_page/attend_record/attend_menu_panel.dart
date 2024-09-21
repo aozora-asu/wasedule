@@ -13,7 +13,7 @@ class AttendMenuPanel extends ConsumerStatefulWidget {
   StateSetter setTimetableState;
   Color? backgroundColor = FORGROUND_COLOR;
 
-  AttendMenuPanel({
+  AttendMenuPanel({super.key, 
     required this.courseData,
     required this.setTimetableState,
     this.backgroundColor

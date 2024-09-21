@@ -7,6 +7,8 @@ import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TimetableSettingPage extends ConsumerStatefulWidget{
+  const TimetableSettingPage({super.key});
+
 
   @override
   _TimetableSettingPageState createState() => _TimetableSettingPageState();
@@ -70,6 +72,34 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
+                      '時間割表示の設定',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: BLUEGREY),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BLUEGREY,
+                    ),
+                    const SizedBox(height: 2),
+                    showSaturdaySwitch(),
+                    Divider(color:BACKGROUND_COLOR),
+                    ondemandPlaceSwitch(),
+                    const SizedBox(height: 2),
+                  ])),
+
+          const SizedBox(height: 5),
+          Container(
+              decoration: roundedBoxdecoration(),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
                       '出欠記録の設定',
                       style: TextStyle(
                           fontSize: 20,
@@ -114,6 +144,54 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
         onChanged: (value) async {
           SharepreferenceHandler().setValue(
               SharepreferenceKeys.showAttendDialogAutomatically, value);
+          setState(() {});
+        },
+      )
+    ]);
+  }
+
+  Widget showSaturdaySwitch() {
+    return Row(children: [
+      const Text("土曜日の表示"),
+      const Spacer(),
+      CupertinoSwitch(
+        activeColor: PALE_MAIN_COLOR,
+        value: SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.isShowSaturday),
+        onChanged: (value) async {
+          SharepreferenceHandler().setValue(
+              SharepreferenceKeys.isShowSaturday, value);
+          setState(() {});
+        },
+      )
+    ]);
+  }
+
+  Widget ondemandPlaceSwitch() {
+    bool isOndemandTableSide = SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.isOndemandTableSide);
+    
+    return Row(children: [
+      const Text("OD科目の表示位置"),
+      const Spacer(),
+      GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+            color: BACKGROUND_COLOR,
+            border: Border.all(color:Colors.grey),
+            borderRadius: BorderRadius.circular(5)
+          ),
+          padding:const EdgeInsets.symmetric(vertical: 3,horizontal: 3),
+          child:
+            Row(children:[
+              Text(isOndemandTableSide ? "時間割の横" : "時間割の下"),
+              const Icon(Icons.arrow_drop_down,size: 20,color:Colors.grey)
+            ])
+        ),
+        onTap: () async {
+          bool newValue = isOndemandTableSide ? false : true;
+          SharepreferenceHandler().setValue(
+              SharepreferenceKeys.isOndemandTableSide,newValue);
           setState(() {});
         },
       )

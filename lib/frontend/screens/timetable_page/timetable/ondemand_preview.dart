@@ -112,7 +112,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       });
   }
 
-      Widget _switchViewMode(dividerModel, MyCourse target) {
+      Widget switchViewMode(dividerModel, MyCourse target) {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
@@ -124,7 +124,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       }
     }
 
-    Widget _viewModeSwitch() {
+    Widget viewModeSwitch() {
       MyCourse target = widget.target;
       if (target.syllabusID != null && target.syllabusID != "") {
         if (viewMode == 0) {
@@ -141,7 +141,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       }
     }
 
-    Widget _descriptionModeSwitch() {
+    Widget descriptionModeSwitch() {
       MyCourse target = widget.target;
       if (target.syllabusID != null && target.syllabusID != "") {
         if (viewMode == 0) {
@@ -175,11 +175,11 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                           //＠ここに授業名のアップデート関数！！！
                           await MyCourse.updateCourseName(id, value);
                         }),
-                        _descriptionModeSwitch(),
+                        descriptionModeSwitch(),
                       ]),
-                      _switchViewMode(dividerModel, target),
+                      switchViewMode(dividerModel, target),
                       Row(children: [
-                        _viewModeSwitch(),
+                        viewModeSwitch(),
                         const Spacer(),
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),

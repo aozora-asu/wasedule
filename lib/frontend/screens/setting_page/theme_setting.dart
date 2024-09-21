@@ -5,6 +5,8 @@ import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeSettingPage extends ConsumerStatefulWidget{
+  const ThemeSettingPage({super.key});
+
 
   @override
   _ThemeSettingPageState createState() => _ThemeSettingPageState();

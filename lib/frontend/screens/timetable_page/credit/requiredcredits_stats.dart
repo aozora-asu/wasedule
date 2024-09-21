@@ -3,6 +3,8 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_grade_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
 class RequiredCreditsStats extends StatefulWidget{
+  const RequiredCreditsStats({super.key});
+
 
 @override   
 _RequiredCreditsStatsState createState()=> _RequiredCreditsStatsState();
@@ -55,46 +57,50 @@ class _RequiredCreditsStatsState extends State<RequiredCreditsStats>{
         Text(creditData.text,style: blackBoldStyle)]),
         requiredCreditsIndicator(creditData.countedCredit,creditData.requiredCredit),
         const Divider(height: 10),
-        ListView.separated(
-          itemBuilder: (context,index){
-            MajorClass item = creditData.majorClass[index];
-            return Column(children: [
-              Row(children:[
-                Expanded(child:
-                  Text("  ${(index+1).toString()}. ${item.text}",style: blackBoldStyle)),
-                GestureDetector(
-                  onTap:(){
-                    setState(() {
-                      if(isExpandedList[index]){
-                        isExpandedList[index] = false;
-                      }else{
-                        isExpandedList[index] = true;
-                      }
-                    });
-                  },
-                  child: Icon(
-                    isExpandedList[index] ? Icons.minimize_rounded : Icons.add_rounded,
-                    color:Colors.grey,
-                    size:25
-                  ),)
-                ]),
+        MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child:ListView.separated(
+            itemBuilder: (context,index){
+              MajorClass item = creditData.majorClass[index];
+              return Column(children: [
                 Row(children:[
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child:requiredCreditsIndicator(item.countedCredit, item.requiredCredit))
-                ]),
-                if(isExpandedList[index])
-                  const Divider(height:10,indent:15),
-                if(isExpandedList[index])
-                  middleClassificationList(item.middleClass)
-            ]);
-          },
-          separatorBuilder: (context,index){
-            return const Divider(height: 7);
-          },
-          itemCount: creditData.majorClass.length,
-          shrinkWrap: true,
-          physics:const NeverScrollableScrollPhysics(),)
+                  Expanded(child:
+                    Text("  ${(index+1).toString()}. ${item.text}",style: blackBoldStyle)),
+                  GestureDetector(
+                    onTap:(){
+                      setState(() {
+                        if(isExpandedList[index]){
+                          isExpandedList[index] = false;
+                        }else{
+                          isExpandedList[index] = true;
+                        }
+                      });
+                    },
+                    child: Icon(
+                      isExpandedList[index] ? Icons.minimize_rounded : Icons.add_rounded,
+                      color:Colors.grey,
+                      size:25
+                    ),)
+                  ]),
+                  Row(children:[
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child:requiredCreditsIndicator(item.countedCredit, item.requiredCredit))
+                  ]),
+                  if(isExpandedList[index])
+                    const Divider(height:10,indent:15),
+                  if(isExpandedList[index])
+                    middleClassificationList(item.middleClass)
+              ]);
+            },
+            separatorBuilder: (context,index){
+              return const Divider(height: 7);
+            },
+            itemCount: creditData.majorClass.length,
+            shrinkWrap: true,
+            physics:const NeverScrollableScrollPhysics(),)
+        )
     ]);
   }
 
@@ -106,7 +112,7 @@ class _RequiredCreditsStatsState extends State<RequiredCreditsStats>{
           itemBuilder: (context,index){
             MiddleClass item = middleClassList[index];
             return Column(children:[
-              Row(children:[Text((index + 1).toString() + ". " + item.text,style: categoryStyle)]),
+              Row(children:[Text("${index + 1}. ${item.text}",style: categoryStyle)]),
               requiredCreditsIndicator(item.countedCredit, item.requiredCredit,barColor: PALE_MAIN_COLOR)
             ]);
           },

@@ -1,4 +1,3 @@
-import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 

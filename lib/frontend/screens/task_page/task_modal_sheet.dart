@@ -118,7 +118,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize:
                                         20,
                                     fontWeight: FontWeight.bold),
@@ -150,7 +150,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize:
                                         20,
                                     fontWeight: FontWeight.bold),
@@ -222,7 +222,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   setState(() {});
                                 },
                                 controller: descriptionController,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 20,
                                 ),
                                 decoration: const InputDecoration(
@@ -335,9 +335,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                         ])),
                                   ])
                                 ])),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             webView(pageID, height),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             SizedBox(

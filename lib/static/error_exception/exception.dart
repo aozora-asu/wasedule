@@ -36,9 +36,9 @@ enum CommonExceptionCode implements StatusCode {
 
 class CommonException extends CustomException {
   const CommonException(
-    CommonExceptionCode exceptionCode, {
-    dynamic info,
-  }) : super(exceptionCode, info: info);
+    CommonExceptionCode super.exceptionCode, {
+    super.info,
+  });
 
   // factoryでエラーから生成する
   factory CommonException.fromCode(String exceptionCode) {

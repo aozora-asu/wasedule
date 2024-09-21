@@ -216,7 +216,7 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
     context: context,
     builder: (context){
       return CupertinoAlertDialog(
-        title:Text(object + " を削除しますか？"),
+        title:Text("$object を削除しますか？"),
         actions: [
           TextButton(
             onPressed: () {
@@ -255,7 +255,7 @@ class DashedLinePainterWidget extends StatelessWidget {
   late double width;
   late double height;
 
-  DashedLinePainterWidget({
+  DashedLinePainterWidget({super.key, 
     required this.width,
     required this.height,
   });

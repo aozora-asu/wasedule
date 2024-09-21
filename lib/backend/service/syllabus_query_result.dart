@@ -2,17 +2,11 @@ import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dar
 import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:html/dom.dart';
 
-import 'package:http/http.dart' as http;
 
 import "classRoom.dart";
-import 'package:html/parser.dart' as html_parser;
 
-import 'package:uuid/uuid.dart';
 import "../DB/handler/my_course_db.dart";
-import 'package:collection/collection.dart';
 import "syllabus_query_request.dart";
 
 class SyllabusQueryResult {

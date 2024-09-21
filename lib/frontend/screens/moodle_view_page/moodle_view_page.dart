@@ -1,6 +1,5 @@
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';

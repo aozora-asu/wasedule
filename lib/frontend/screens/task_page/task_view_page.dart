@@ -91,7 +91,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: FORGROUND_COLOR,
         body: Column(children: [
           Container(
               color: BACKGROUND_COLOR,
@@ -102,7 +102,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                     child: SizedBox(
                       child: Row(children: [
                         const SizedBox(width: 5,),
-                        foldStateSwitch(),
                         sortSwitch(),
                         simpleSmallButton(
                           "注意事項",
@@ -118,7 +117,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(
-            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
+            margin: const EdgeInsets.only(bottom: 60),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

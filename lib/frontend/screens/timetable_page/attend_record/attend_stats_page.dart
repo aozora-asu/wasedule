@@ -9,6 +9,8 @@ import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AttendStatsPage extends ConsumerStatefulWidget {
+  const AttendStatsPage({super.key});
+
   @override
   _AttendStatsPageState createState() => _AttendStatsPageState();
 }

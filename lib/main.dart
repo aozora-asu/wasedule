@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/isar_collection/isar_handler.dart';
 import 'package:flutter_calandar_app/backend/service/home_widget.dart';
-import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'frontend/screens/common/eyecatch_page.dart';
@@ -12,10 +11,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import "backend/DB/sharepreference.dart";
-import "backend/service/syllabus_query_request.dart";
 
-import "./static/constant.dart";
-import "./backend/service/share_from_web.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

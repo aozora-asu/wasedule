@@ -1,9 +1,6 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_page.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../task_page/task_data_manager.dart';

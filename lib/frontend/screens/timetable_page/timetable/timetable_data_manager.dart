@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 
 import "../../../../static/constant.dart";
