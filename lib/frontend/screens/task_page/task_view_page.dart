@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/no_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
 
@@ -80,6 +82,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     ref.watch(taskPageIndexProvider);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
+    bool isShowTaskCalendarLine = 
+      SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTaskCalendarLine);
+
 
     Widget dividerModel = const VerticalDivider(
       width: 2,
@@ -95,11 +100,11 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         body: Column(children: [
           Container(
               color: BACKGROUND_COLOR,
-              child: Row(children: [
-                Expanded(
-                  child: SingleChildScrollView(
+              width: SizeConfig.blockSizeHorizontal! *100,
+              child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
+                      width: SizeConfig.blockSizeHorizontal! *100,
                       child: Row(children: [
                         const SizedBox(width: 5,),
                         sortSwitch(),
@@ -109,15 +114,26 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                             showDisclaimerDialogue(context);
                           },
                         ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, 
+                              MaterialPageRoute(
+                                builder: (context)=> SettingsPage(initIndex: 3,isAppBar: true)));
+                          },
+                          child:const Icon(Icons.settings,color:Colors.grey,size:18),
+                        ),
+                        const SizedBox(width: 10)
                       ]),
                     ),
                   ),
                 ),
-              ])),
+              
           Expanded(child: pages())
         ]),
         floatingActionButton: Container(
-            margin: const EdgeInsets.only(bottom: 60),
+            margin: EdgeInsets.only(
+              bottom: isShowTaskCalendarLine ? 80 : 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

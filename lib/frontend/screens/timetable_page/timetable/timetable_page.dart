@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requiredcredits_stats.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -416,7 +417,17 @@ Widget pageHeader(){
               await showMoodleRegisterGuide(
                   context, false, MoodleRegisterGuideType.timetable);
               widget.moveToMoodlePage(4);
-            })
+            }),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, 
+                  MaterialPageRoute(
+                    builder: (context)=> SettingsPage(initIndex: 2,isAppBar: true)));
+              },
+              child:const Icon(Icons.settings,color:Colors.grey,size:18),
+            ),
+            const SizedBox(width: 10)
           ])
         ),
       const Divider(height: 1),
@@ -733,7 +744,7 @@ Widget pageHeader(){
               }
               if (index == 1) {
                 resultinging = Container(
-                    height: SizeConfig.blockSizeVertical! * 2.5,
+                    height: 3,
                     color: bgColor,
                     child: const Column(children: [
                       //Divider(color: Colors.grey, height: 0.5, thickness: 0.5),
@@ -767,7 +778,7 @@ Widget pageHeader(){
     int green = color.green;
     int blue = color.blue;
 
-    red = (red + amount).clamp(0, 255); // clampで0～255の範囲に収める
+    red = (red + amount).clamp(0, 255);
 
     return Color.fromRGBO(red, green, blue, 1);
   }
@@ -860,6 +871,7 @@ Widget pageHeader(){
                 lineWidth = 4;
                 lineColor = PALE_MAIN_COLOR;
               }
+              int maxWeekday = isShowSaturday ? 6 : 5;
 
               return Container(
                   width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -877,10 +889,10 @@ Widget pageHeader(){
                         bottomLeft: weekDay == 1 && (index == 1 || index == 5)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
-                        topRight: weekDay == 6 && (index == 2 || index == 0)? 
+                        topRight: weekDay == maxWeekday && (index == 2 || index == 0)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
-                        bottomRight: weekDay == 6 && (index == 1 || index == 5)? 
+                        bottomRight: weekDay == maxWeekday && (index == 1 || index == 5)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
                       )),
@@ -1144,11 +1156,12 @@ Widget pageHeader(){
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 4,
+                  spreadRadius: 2,
+                  blurRadius: 2,
                   offset: const Offset(0, 0),
                 ),
               ],
+              border: Border.all(width: 0.6,color:Colors.grey)
           ),
           padding: const EdgeInsets.symmetric(horizontal: 3),
           margin: const EdgeInsets.all(1),
@@ -1288,6 +1301,7 @@ Widget pageHeader(){
                     offset: const Offset(0, 0),
                   ),
                 ],
+              border: Border.all(width: 0.6,color:Colors.grey)
             ),
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child:

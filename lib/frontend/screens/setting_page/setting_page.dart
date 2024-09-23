@@ -7,7 +7,8 @@ import 'package:flutter_calandar_app/frontend/screens/setting_page/calendar_sett
 import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/notify_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/theme_setting.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/task_setting.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/common_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -81,8 +82,12 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 label: Text('時間割'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.color_lens),
-                label: Text('テーマ'),
+                icon: Icon(Icons.check),
+                label: Text('課題'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.settings),
+                label: Text('共通設定'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.backup),
@@ -189,20 +194,27 @@ class _MainContentsState extends ConsumerState<MainContents> {
         ));
 
       case 2:
-        return Expanded(
+        return const Expanded(
             child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
           child: TimetableSettingPage(),
         ));
 
       case 3:
-        return Expanded(
+        return const Expanded(
             child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-          child: ThemeSettingPage(),
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+          child: TaskSettingPage(),
+        ));
+
+      case 4:
+        return const Expanded(
+            child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+          child: CommonSettingPage(),
         ));
       
-      case 4:
+      case 5:
         return const Expanded(
           child: DataBackupPage()
         );

@@ -60,6 +60,8 @@ class _FadingImageState extends ConsumerState<FadingImage>
   late Animation<double> _animation;
   late Animation<Offset> _imageAnimation;
   String loadingText = 'Loading';
+  int initScreenIndex = SharepreferenceHandler()
+      .getValue(SharepreferenceKeys.initScreenIndex);
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
       load().then((_) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AppPage()),
+          MaterialPageRoute(builder: (context) => AppPage(initIndex: initScreenIndex)),
         );
       });
     });

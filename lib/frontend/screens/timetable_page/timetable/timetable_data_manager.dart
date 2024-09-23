@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 
 import "../../../../static/constant.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,7 +52,8 @@ class TimeTableData {
 
   Map<int, List<MyCourse>> sortDataByWeekDay(List<MyCourse> TDList) {
     Map<int, List<MyCourse>> sortedData = {};
-    maxPeriod = 6;
+    maxPeriod = SharepreferenceHandler()
+            .getValue(SharepreferenceKeys.tableColumnLength);
     for (int i = 0; i < TDList.length; i++) {
       int targetWeekDay = TDList[i].weekday?.index ?? 7;
       int period = TDList[i].period?.period ?? 0;

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
+import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'dart:async';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 
@@ -26,7 +28,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   late ScrollController _taskScrollController;
   late ScrollController _calendarScrollController;
   List<GlobalKey> _keys = [];
-  List<double> _heights = [];
+  Map<int,double> _heights = {};
+  bool _isVisible = true;
 
   @override
   void initState() {
@@ -35,16 +38,36 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     _calendarScrollController = ScrollController();
 
     // コントローラ1のスクロールをコントローラ2に反映
-    _calendarScrollController.addListener(() {
-      if (_calendarScrollController.offset != _taskScrollController.offset) {
-        _taskScrollController.jumpTo(_calendarScrollController.offset *2);
-      }
-    });
+    // _calendarScrollController.addListener(() {
+    //   if (_calendarScrollController.offset != _taskScrollController.offset) {
+    //     _taskScrollController.jumpTo(_calendarScrollController.offset *2);
+    //   }
+    // });
 
-    // コントローラ2のスクロールをコントローラ1に反映
+    // // コントローラ2のスクロールをコントローラ1に反映
+    // _taskScrollController.addListener(() {
+    //   if (_taskScrollController.offset != _calendarScrollController.offset) {
+    //     _calendarScrollController.jumpTo(_taskScrollController.offset);
+    //   }
+    // });
+
     _taskScrollController.addListener(() {
-      if (_taskScrollController.offset != _calendarScrollController.offset) {
-        _calendarScrollController.jumpTo(_taskScrollController.offset);
+      if (_taskScrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        // 下方向にスクロールしたとき
+        if (_isVisible) {
+          setState(() {
+            _isVisible = false;
+          });
+        }
+      } else if (_taskScrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        // 上方向にスクロールしたとき
+        if (!_isVisible) {
+          setState(() {
+            _isVisible = true;
+          });
+        }
       }
     });
 
@@ -55,14 +78,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
   // 各要素の高さを取得
   void _getAllHeights() {
-    List<double> heights = [];
+    int i = 0;
     for (var key in _keys) {
       final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
-        heights.add(renderBox.size.height);
+        _heights[i] = renderBox.size.height;
       }
+      i ++;
     }
-      _heights = heights;
   }
 
   DateTime _getDateFromIndex(int index) {
@@ -78,10 +101,12 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     sortedData = taskData.sortDataByDtEnd(taskData.taskDataList);
     ref.watch(taskDataProvider.notifier);
     ref.watch(taskDataProvider);
+    bool isShowDayWithoutTask = 
+      SharepreferenceHandler().getValue(SharepreferenceKeys.isShowDayWithoutTask);
+    bool isShowTaskCalendarLine = 
+      SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTaskCalendarLine);
 
-    return 
-   // Scrollbar(child: 
-          Stack(children: [
+    return Stack(children: [
       Column(children: [
         Expanded(
           child: ListView.builder(
@@ -95,7 +120,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               if(sortedData.containsKey(date)){
                 child = dailyViewWithTasks(context, date);
               }else{
-                child = dailyViewWithoutTasks(date);
+                child = isShowDayWithoutTask 
+                  ? dailyViewWithoutTasks(date)
+                  : const SizedBox();
               }
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -108,15 +135,20 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   borderRadius: BorderRadius.circular(10),
                   color: BACKGROUND_COLOR,
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 1,
-                      offset: const Offset(0, 0),
-                    ),
+                    if(sortedData.containsKey(date) || isShowDayWithoutTask )
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: const Offset(0, 0),
+                      ),
                   ],
                 ),
-                margin:const EdgeInsets.symmetric(horizontal:5,vertical:2),
+                margin: EdgeInsets.symmetric(
+                  horizontal:5,
+                  vertical:
+                    sortedData.containsKey(date) || isShowDayWithoutTask 
+                      ? 2 : 0),
                 child: child);
 
             },
@@ -125,9 +157,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         )
       ]),
       executeDeleteButton(),
-      Align(
-        alignment: const Alignment(0, 1),
-        child:dateSelector()),
+      if(isShowTaskCalendarLine)
+        Align(
+          alignment: const Alignment(0, 1),
+          child:dateSelector()),
      ]
     );
   }
@@ -590,7 +623,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   Widget dateSelector(){
-    return Container(
+    return AnimatedOpacity(
+      opacity: _isVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: Container(
       decoration: BoxDecoration(
         color:  Colors.white,
         boxShadow: [
@@ -602,7 +638,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           ),
         ],
       ),
-      height: 70,
+      height:85,
       child:ListView.separated(
           controller: _calendarScrollController,
           primary: false,
@@ -613,6 +649,16 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 date.year == now.year && 
                 date.month == now.month &&
                 date.day == now.day;
+            
+            String yearText = DateFormat("yyyy年").format(date);
+            String monthText = DateFormat("M月").format(date);
+            String indicatorText = "";
+
+            if(index == 0 || date.day == 1){
+              indicatorText = yearText;
+            }else if(index == 1 || date.day == 2){
+              indicatorText = monthText;
+            }
 
             Color barColor = Colors.transparent;
             if(date.weekday == 6){
@@ -621,30 +667,38 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               barColor = Colors.red[300]!;
             }
             if(isToday){
-              barColor = Colors.blueAccent;
+              barColor = MAIN_COLOR;
             }
 
             List dailyData = widget.sortedData[date] ?? [];
 
             return GestureDetector(
               onTap:(){
-
+                jumpToIndex(index);
               },
               child:Stack(
-                alignment: AlignmentDirectional.topEnd,
+                alignment:const Alignment(1,-0.2),
                 children:[
                   Container(
                     color: Colors.white,
                     padding:const EdgeInsets.symmetric(horizontal:0),
                     child:Column(children: [
+                      SizedBox(
+                        height:25,
+                        child:Text(indicatorText,
+                        style:const TextStyle(
+                          color: BLUEGREY,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold))),
                       Container(height:3,width: 55,color:barColor),
-                      Text("${date.month.toString()} /       ",
-                          style:const TextStyle(fontSize: 10,fontWeight: FontWeight.normal,color: Colors.grey)),
+                      // Text("${date.month.toString()} /       ",
+                      //     style:const TextStyle(fontSize: 10,fontWeight: FontWeight.normal,color: Colors.grey)),
                       const Spacer(),
                       Text(date.day.toString(),
-                        style:const TextStyle(fontSize: 12.5
-                        ,fontWeight: FontWeight.bold)),
-                      const Spacer(),
+                        style:const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 5),
                       Text(DateFormat("E","ja_jp").format(date),
                         style:const TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.grey)),
                       const SizedBox(height: 2),
@@ -663,7 +717,23 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           scrollDirection: Axis.horizontal,
           itemCount: _range,
         )
+      )
     );
+  }
+
+  void jumpToIndex(index){
+    double heightSum = 0;
+    bool isShowDayWithoutTask =  
+      SharepreferenceHandler().getValue(SharepreferenceKeys.isShowDayWithoutTask);
+    for(int i = 0; i < index; i++){
+      heightSum += _heights[i] ?? (isShowDayWithoutTask ? 80 : 0);
+    }
+    
+    _taskScrollController.animateTo(
+      heightSum,
+      duration:const Duration(milliseconds: 700),
+      curve: Curves.decelerate);
+    
   }
 
   @override

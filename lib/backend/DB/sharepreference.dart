@@ -75,21 +75,33 @@ class SharepreferenceKeys {
   //アプリの色設定
   static const bgColorTheme =
       SharepreferenceKeys._(key: "bgColorTheme", defaultValue: "white");
-  
+
+  //起動後初めに表示される画面の設定
+  static const initScreenIndex =
+      SharepreferenceKeys._(key: "initScreenIndex", defaultValue: 2);
+ 
   //出欠自動表示設定
   static const showAttendDialogAutomatically = SharepreferenceKeys._(
       key: "showAttendDialogAutomatically", defaultValue: true);
 
   //時間割関連
   static const isShowSaturday = SharepreferenceKeys._(
-      key: "isShowSaturday", defaultValue: true);
+      key: "isShowSaturday", defaultValue: false);
   static const isOndemandTableSide = SharepreferenceKeys._(
       key: "isOndemandTableSide", defaultValue: true);
+  static const tableColumnLength = SharepreferenceKeys._(
+      key: "tableColumnLength", defaultValue: 6);
 
   //課題URL
   static const calendarURL =
       SharepreferenceKeys._(key: "calendarURL", defaultValue: null);
-  
+
+  //課題ページ関連
+  static const isShowDayWithoutTask =
+      SharepreferenceKeys._(key: "isShowDayWithoutTask", defaultValue: true);
+  static const isShowTaskCalendarLine =
+      SharepreferenceKeys._(key: "isShowTaskCalendarLine", defaultValue: true);
+
   //バックアップ関連
   static const backupID =
       SharepreferenceKeys._(key: "backupID", defaultValue: null);
@@ -142,8 +154,10 @@ class SharepreferenceKeys {
         hasCompletedIntro,
         hasCompletedCalendarIntro,
         bgColorTheme,
+        initScreenIndex,
         initCampusNum,
         showAttendDialogAutomatically,
+        tableColumnLength,
         userDepartment,
         recentSyllabusQueryIsGraduateSchool,
         recentSyllabusQueryKeyword,
@@ -159,5 +173,7 @@ class SharepreferenceKeys {
         graduationRequireCredit,
         isShowSaturday,
         isOndemandTableSide,
+        isShowTaskCalendarLine,
+        isShowDayWithoutTask
       ];
 }

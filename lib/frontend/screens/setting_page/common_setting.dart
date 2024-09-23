@@ -4,16 +4,17 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ThemeSettingPage extends ConsumerStatefulWidget{
-  const ThemeSettingPage({super.key});
+class CommonSettingPage extends ConsumerStatefulWidget{
+  const CommonSettingPage({super.key});
 
 
   @override
-  _ThemeSettingPageState createState() => _ThemeSettingPageState();
+  _CommonSettingPageState createState() => _CommonSettingPageState();
 }
 
-class _ThemeSettingPageState extends ConsumerState<ThemeSettingPage>{
+class _CommonSettingPageState extends ConsumerState<CommonSettingPage>{
   String bgColorTheme = "";
+  int initScreenIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +23,36 @@ class _ThemeSettingPageState extends ConsumerState<ThemeSettingPage>{
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
-            '  テーマ設定…',
+            '  共通設定…',
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 5),
+          Container(
+              decoration: roundedBoxdecoration(),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   const Text(
+                      '起動後表示画面',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: BLUEGREY),
+                    ),
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: BLUEGREY,
+                    ),
+                    const SizedBox(height: 2),
+                    initScreenSettings(),
+                    const SizedBox(height: 5),
+                  ])),
           const SizedBox(height: 5),
           Container(
               decoration: roundedBoxdecoration(),
@@ -88,10 +114,10 @@ class _ThemeSettingPageState extends ConsumerState<ThemeSettingPage>{
             hintText: "背景テーマ色",
             border: OutlineInputBorder()),
         items: const [
-          DropdownMenuItem(value: "white", child: Text("ホワイト")),
-          DropdownMenuItem(value: "grey", child: Text("グレー")),
-          DropdownMenuItem(value: "yellow", child: Text("イエロー")),
-          DropdownMenuItem(value: "blue", child: Text("ブルー")),
+          DropdownMenuItem(value: "white", child: Text(" ホワイト")),
+          DropdownMenuItem(value: "grey", child: Text(" グレー")),
+          DropdownMenuItem(value: "yellow", child: Text(" イエロー")),
+          DropdownMenuItem(value: "blue", child: Text(" ブルー")),
         ],
         onChanged: (value) async {
           SharepreferenceHandler()
@@ -104,4 +130,34 @@ class _ThemeSettingPageState extends ConsumerState<ThemeSettingPage>{
       ),
     );
   }
+
+  Widget initScreenSettings() {
+    initScreenIndex = SharepreferenceHandler().getValue(SharepreferenceKeys.initScreenIndex);
+    return SizedBox(
+      width: 150,
+      child: DropdownButtonFormField(
+        value: initScreenIndex,
+        decoration: const InputDecoration.collapsed(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: "",
+            border: OutlineInputBorder()),
+        items: const [
+          DropdownMenuItem(value: 3, child: Text(" 課題画面")),
+          DropdownMenuItem(value: 1, child: Text(" 時間割画面")),
+          DropdownMenuItem(value: 2, child: Text(" カレンダー画面")),
+          DropdownMenuItem(value: 0, child: Text(" マップ画面")),
+          DropdownMenuItem(value: 4, child: Text(" ブラウザ画面")),
+        ],
+        onChanged: (value) async {
+          SharepreferenceHandler()
+              .setValue(SharepreferenceKeys.initScreenIndex, value!);
+          setState(() {
+            initScreenIndex = value;
+          });
+        },
+      ),
+    );
+  }
+
 }

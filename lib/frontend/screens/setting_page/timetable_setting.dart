@@ -15,6 +15,7 @@ class TimetableSettingPage extends ConsumerStatefulWidget{
 }
 
 class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
+  int tableColumnLength = 6;
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +88,8 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
                     showSaturdaySwitch(),
                     Divider(color:BACKGROUND_COLOR),
                     ondemandPlaceSwitch(),
+                    Divider(color:BACKGROUND_COLOR),
+                    timetableColumnLengthSettings(),
                     const SizedBox(height: 2),
                   ])),
 
@@ -178,14 +181,14 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
         child: Container(
           decoration: BoxDecoration(
             color: BACKGROUND_COLOR,
-            border: Border.all(color:Colors.grey),
+            border: Border.all(),
             borderRadius: BorderRadius.circular(5)
           ),
           padding:const EdgeInsets.symmetric(vertical: 3,horizontal: 3),
           child:
             Row(children:[
               Text(isOndemandTableSide ? "時間割の横" : "時間割の下"),
-              const Icon(Icons.arrow_drop_down,size: 20,color:Colors.grey)
+              const Icon(Icons.arrow_drop_down,size: 20,)
             ])
         ),
         onTap: () async {
@@ -195,6 +198,38 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
           setState(() {});
         },
       )
+    ]);
+  }
+
+  Widget timetableColumnLengthSettings() {
+    tableColumnLength = SharepreferenceHandler().getValue(SharepreferenceKeys.tableColumnLength);
+    return Row(children:[
+      const Text("時間割の最小縦マス数"),
+      const Spacer(),
+      SizedBox(
+        width: 50,
+        child: DropdownButtonFormField(
+          value: tableColumnLength,
+          decoration: const InputDecoration.collapsed(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: "",
+              border: OutlineInputBorder()),
+          items: const [
+            DropdownMenuItem(value: 4, child: Text(" 4")),
+            DropdownMenuItem(value: 5, child: Text(" 5")),
+            DropdownMenuItem(value: 6, child: Text(" 6")),
+            DropdownMenuItem(value: 7, child: Text(" 7")),
+          ],
+          onChanged: (value) async {
+            SharepreferenceHandler()
+                .setValue(SharepreferenceKeys.tableColumnLength, value!);
+            setState(() {
+              tableColumnLength = value;
+            });
+          },
+        ),
+      ),
     ]);
   }
 
