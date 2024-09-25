@@ -57,6 +57,7 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   double cellsRadius = 5.0;
   double separatorHeight = 0;
 
+
   @override
   void initState() {
     super.initState();
@@ -149,6 +150,7 @@ void initCellWidth() {
             .getValue(SharepreferenceKeys.isShowSaturday);
     isOndemandTableSide = SharepreferenceHandler()
             .getValue(SharepreferenceKeys.isOndemandTableSide);
+
     initCellWidth();
 
     return Scaffold(
@@ -271,6 +273,27 @@ void initCellWidth() {
         currentSemester = Term.fallSemester;
       }
     }
+  }
+
+  int initMaxPeriod(){
+    int maxPeriod = SharepreferenceHandler()
+        .getValue(SharepreferenceKeys.tableColumnLength);
+
+    final tableData = ref.read(timeTableProvider);
+    for(int weekDay = 1; weekDay < 7; weekDay++){
+      List<MyCourse> dailyList = tableData.currentSemesterClasses[weekDay] ?? [];
+      
+      for(var course in dailyList){
+
+        if(course.period != null){
+          if(course.period!.period > maxPeriod){
+              maxPeriod = course.period!.period;
+          }
+        }
+
+      }
+    }
+    return maxPeriod;
   }
 
   void increasePgNumber() {
@@ -546,6 +569,8 @@ Widget pageHeader(){
   Widget timeTableBody() {
     double _cellWidth = cellWidth;
     double _tableRowLength = tableRowLength;
+    int maxPeriod = initMaxPeriod();
+
     return Column(
       children: [
         showOnlyScreenShot(
@@ -577,7 +602,7 @@ Widget pageHeader(){
         Row(
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
-          generatePerirodColumn(),
+          generatePerirodColumn(maxPeriod),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -589,17 +614,18 @@ Widget pageHeader(){
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      timetableCells(1),
-                      timetableCells(2),
-                      timetableCells(3),
-                      timetableCells(4),
-                      timetableCells(5),
+                      timetableCells(1,maxPeriod),
+                      timetableCells(2,maxPeriod),
+                      timetableCells(3,maxPeriod),
+                      timetableCells(4,maxPeriod),
+                      timetableCells(5,maxPeriod),
                       if(isShowSaturday)
-                        timetableCells(6),
+                        timetableCells(6,maxPeriod),
                       if(isOndemandTableSide)
                         generateOndemandColumn()
               ])
-             )
+             ),
+             const SizedBox(height:10),
           ])
       ]),
 
@@ -679,7 +705,7 @@ Widget pageHeader(){
         ));
   }
 
-  Widget generatePerirodColumn() {
+  Widget generatePerirodColumn(int maxPeriod) {
     double fontSize = 7.5;
 
     return Expanded(
@@ -754,7 +780,7 @@ Widget pageHeader(){
               }
               return resultinging;
             },
-            itemCount: ref.read(timeTableProvider).maxPeriod,
+            itemCount: maxPeriod,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           )
@@ -783,7 +809,7 @@ Widget pageHeader(){
     return Color.fromRGBO(red, green, blue, 1);
   }
 
-  Widget timetableCells(int weekDay) {
+  Widget timetableCells(int weekDay, int maxPeriod) {
     final tableData = ref.read(timeTableProvider);
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -792,7 +818,7 @@ Widget pageHeader(){
           removeBottom: true,
           child:ListView.separated(
             shrinkWrap: true,
-            itemCount: ref.read(timeTableProvider).maxPeriod,
+            itemCount: maxPeriod,
             physics: const NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             itemBuilder: ((context, index) {
@@ -886,13 +912,13 @@ Widget pageHeader(){
                         topLeft: weekDay == 1 && (index == 2 || index == 0)? 
                           Radius.circular(cellsRadius *2) : 
                           Radius.circular(minRadius),
-                        bottomLeft: weekDay == 1 && (index == 1 || index == 5)? 
+                        bottomLeft: weekDay == 1 && (index == 1 || index == maxPeriod -1)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
                         topRight: weekDay == maxWeekday && (index == 2 || index == 0)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
-                        bottomRight: weekDay == maxWeekday && (index == 1 || index == 5)? 
+                        bottomRight: weekDay == maxWeekday && (index == 1 || index == maxPeriod -1)? 
                           Radius.circular(cellsRadius*2) : 
                           Radius.circular(minRadius),
                       )),
@@ -962,23 +988,29 @@ Widget pageHeader(){
               child = ondemandAddCell();
               return child;
             } else {
-              if (tableData.sortedDataByWeekDay[7]
+              bool isThisYear = 
+                tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
+                  thisYear;
+
+              if ((tableData.sortedDataByWeekDay[7]
                           ?.elementAt(index)
                           .semester
                           ?.value ==
-                      currentQuarter.value ||
-                  tableData.sortedDataByWeekDay[7]
+                      currentQuarter.value &&
+                      isThisYear) ||
+                  (tableData.sortedDataByWeekDay[7]
                           ?.elementAt(index)
                           .semester
                           ?.value ==
-                      "full_year" ||
-                  tableData.sortedDataByWeekDay[7]
+                      "full_year" && 
+                    isThisYear)||
+                  (tableData.sortedDataByWeekDay[7]
                               ?.elementAt(index)
                               .semester
                               ?.value ==
                           currentSemester.value &&
-                      tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
-                          thisYear) {
+                          isThisYear)
+                      ) {
                 child = Container(
                     height: SizeConfig.blockSizeVertical! * cellHeight,
                     width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -1032,23 +1064,29 @@ Widget pageHeader(){
               child = ondemandAddCell();
               return child;
             } else {
-              if (tableData.sortedDataByWeekDay[7]
+              bool isThisYear = 
+                tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
+                  thisYear;
+
+              if ((tableData.sortedDataByWeekDay[7]
                           ?.elementAt(index)
                           .semester
                           ?.value ==
-                      currentQuarter.value ||
-                  tableData.sortedDataByWeekDay[7]
+                      currentQuarter.value &&
+                      isThisYear) ||
+                  (tableData.sortedDataByWeekDay[7]
                           ?.elementAt(index)
                           .semester
                           ?.value ==
-                      "full_year" ||
-                  tableData.sortedDataByWeekDay[7]
+                      "full_year" && 
+                    isThisYear)||
+                  (tableData.sortedDataByWeekDay[7]
                               ?.elementAt(index)
                               .semester
                               ?.value ==
                           currentSemester.value &&
-                      tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
-                          thisYear) {
+                          isThisYear)
+                      ) {
                 child = Container(
                     height: SizeConfig.blockSizeVertical! * cellHeight,
                     width: SizeConfig.blockSizeHorizontal! * cellWidth,

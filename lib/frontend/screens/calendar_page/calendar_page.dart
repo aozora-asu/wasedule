@@ -305,13 +305,6 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
-      Row(children:[
-        simpleSmallButton(
-          "年間行事予定の取得",
-          (){
-            widget.movePage(2);
-          }),
-      ]),
       Screenshot(
           controller: _screenShotController,
           child: SizedBox(
@@ -329,8 +322,8 @@ class _CalendarState extends ConsumerState<Calendar> {
                       Text(
                         targetMonth,
                         style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                             color: BLUEGREY),
                       ),
                       IconButton(
@@ -343,13 +336,18 @@ class _CalendarState extends ConsumerState<Calendar> {
                           iconSize: 20,
                           color: BLUEGREY),
                       const Spacer(),
-                      doNotContainScreenShot(scheduleEmptyFlag(
+                      doNotContainScreenShot(
+                        scheduleEmptyFlag(
                         ref,
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal! * 40,
-                          height: SizeConfig.blockSizeVertical! * 4,
-                          child: TextButton.icon(
-                            onPressed: () {
+                        Container(
+                          width: 160,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: BLUEGREY,
+                            borderRadius: BorderRadius.circular(5)
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -357,22 +355,44 @@ class _CalendarState extends ConsumerState<Calendar> {
                                         const TagAndTemplatePage()),
                               );
                             },
-                            icon: Icon(Icons.tag,
-                                size: 15, color: FORGROUND_COLOR),
-                            label: Text('タグとテンプレート',
+                            child:Row(children:[
+                              const Spacer(),
+                              Icon(Icons.tag,
+                                size: 19, color: FORGROUND_COLOR),
+                              const SizedBox(width: 2),
+                              Text('タグとテンプレート',
                                 style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 12.5,
                                     color: FORGROUND_COLOR,
-                                    fontWeight: FontWeight.bold)),
-                            style: const ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(BLUEGREY),
+                                    fontWeight: FontWeight.normal)),
+                              const Spacer()
+                            ])
                             ),
                           ),
                         ),
-                      )),
+                      ),
                       showOnlyScreenShot(LogoAndTitle(size: 7)),
-                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 3)
+                      const SizedBox(width: 10)
                     ]),
+                    doNotContainScreenShot(
+                      Row(children:[
+                        simpleSmallButton(
+                          "年間行事予定の取得",
+                          (){
+                            widget.movePage(2);
+                          }),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, 
+                                MaterialPageRoute(
+                                  builder: (context)=> SettingsPage(initIndex: 0,isAppBar: true)));
+                            },
+                            child:const Icon(Icons.settings,color:Colors.grey,size:18),
+                          ),
+                          const SizedBox(width: 10)
+                    ])),
+                    const Divider(height: 2),
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 100,
                       height: SizeConfig.blockSizeVertical! * 3,

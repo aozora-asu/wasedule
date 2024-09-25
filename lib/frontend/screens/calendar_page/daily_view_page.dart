@@ -376,7 +376,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       overflow: TextOverflow.clip,
                       style: const TextStyle(
                           color: Colors.black,
-                          fontSize: 20,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold),
                     )),
               ),
@@ -714,16 +714,19 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                 overflow: TextOverflow.clip,
                                 style: const TextStyle(
                                     color: Colors.black,
-                                    fontSize: 20,
+                                    fontSize: 17,
                                     fontWeight: FontWeight.bold),
                               ))),
-                      Text(
-                        classData.classRoom,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        width: 80,
+                        child:Text(
+                          classData.classRoom,
+                          overflow: TextOverflow.clip,
+                          style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        )
                       ),
                     ])
                   ])),

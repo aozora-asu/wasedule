@@ -28,7 +28,12 @@ Future<void> showAttendanceDialog(
   int numOfNotEmptyData = 0;
 
   for (var classMap in data) {
-    int myCourseId = classMap["id"];
+    int myCourseId;
+    if(classMap.runtimeType == Map){
+      myCourseId = classMap["id"];
+    }else{
+      myCourseId = classMap.id;
+    }
     String date = DateFormat("MM/dd").format(targetDate);
     Map<String, dynamic>? attendStatusData =
         await MyCourse.getAttendStatus(myCourseId, date);
@@ -158,7 +163,13 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       remainingNumData = {};
 
       for (int i = 0; i < data.length; i++) {
-        int id = data[i]["id"];
+        int id;
+        if(data[i].runtimeType == int){
+          id = data[i]["id"];
+        }else{
+          id = data[i].id;
+        }
+
         String date = DateFormat("MM/dd").format(widget.targetDate);
         Map<String, dynamic>? attendStatusData =
             await MyCourse.getAttendStatus(id, date);
@@ -171,13 +182,13 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
 
         int currentAbsentNum =
             await MyCourse.getAttendStatusCount(id, AttendStatus.absent);
-        int remainAbsent = data.elementAt(i)["remainAbsent"] ?? 0;
+        int remainAbsent = data[i].remainAbsent ?? 0;
         int remainingNum = remainAbsent - currentAbsentNum;
         if (remainingNum <= 0) {
           remainingNum = 0;
         }
 
-        remainingNumData[data.elementAt(i)["id"]] = remainingNum;
+        remainingNumData[data[i].id] = remainingNum;
       }
       isInit = false;
     }
@@ -228,11 +239,11 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
       ListView.builder(
         itemBuilder: (context, index) {
           return classObject(
-              data.elementAt(index), enteredData[data.elementAt(index)["id"]]!,
+              data[index], enteredData[data[index].id]!,
               (value) {
-            enteredData[data.elementAt(index)["id"]] = value;
+            enteredData[data[index].id] = value;
             setState(() {});
-          }, remainingNumData[data.elementAt(index)["id"]]!);
+          }, remainingNumData[data[index].id]!);
         },
         itemCount: data.length,
         shrinkWrap: true,
@@ -256,7 +267,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
     ]);
   }
 
-  Widget classObject(Map data, String selectedStatus, Function(String) onTap,
+  Widget classObject(MyCourse data, String selectedStatus, Function(String) onTap,
       int remainCount) {
     Color attendColor = selectedStatus == AttendStatus.attend.value
         ? AttendStatus.values[selectedStatus]!.color
@@ -275,7 +286,7 @@ class _AttendanceDialogState extends ConsumerState<AttendanceDialog> {
             color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
         child: Row(children: [
           Expanded(
-              child: Text(data["courseName"],
+              child: Text(data.courseName,
                   style: const TextStyle(fontWeight: FontWeight.bold))),
           const Text(
             "残\n機 ",
