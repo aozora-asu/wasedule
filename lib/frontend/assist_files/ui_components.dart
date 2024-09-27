@@ -234,36 +234,8 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
     });
 }
 
-  Future<String> colorPickerDialogue(BuildContext context,StateSetter setState) async{
-    Color result = Colors.cyan;
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('マスの色を選択...'),
-            content: SingleChildScrollView(
-              child: BlockPicker(
-                  pickerColor: Colors.redAccent,
-                  onColorChanged: (color) {
-                    setState(() {
-                      result = color;
-                    });
-                  }),
-            ),
-            actions: <Widget>[
-              ElevatedButton(
-                child: const Text('選択'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
-    return colorToHex(result);
-  }
 
-  String colorToHex(Color color, {bool includeAlpha = false}) {
+  String colorToHexString(Color color, {bool includeAlpha = false}) {
     // ColorのvalueプロパティからARGBの値を取得
     String hexColor = '';
 
@@ -275,7 +247,7 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
       hexColor = '#${color.value.toRadixString(16).padLeft(6, '0').substring(2)}';
     }
 
-    return hexColor.toUpperCase(); // 大文字に変換
+    return hexColor.toLowerCase(); // 大文字に変換
   }
 
 Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin = 3}) {

@@ -64,7 +64,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             SharepreferenceHandler().getValue(
                 SharepreferenceKeys.recentSyllabusQueryDepartmentValue)));
     keywordController.text = SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword) ??
+            .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku) ??
         "";
     isFullYear = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);

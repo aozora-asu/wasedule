@@ -4,12 +4,13 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
-import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
+
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_description_view.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_preview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
-import "../../../../static/constant.dart";
 
 class OndemandPreview extends ConsumerStatefulWidget {
   late MyCourse target;
@@ -30,6 +31,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   TextEditingController classificationController = TextEditingController();
   late int viewMode;
   late MyCourse target;
+  late Color colorButtonColor;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
     classNameController.text = target.courseName;
     classificationController.text = target.subjectClassification ?? "";
     viewMode = 0;
+    colorButtonColor = widget.target.color.toColor() ?? Colors.grey;
   }
 
   @override
@@ -132,7 +135,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
             setState(() {
               viewMode = 1;
             });
-          }, Colors.blueAccent, " シラバス詳細 ");
+          }, colorButtonColor, " 授業詳細... ");
         } else {
           return const SizedBox();
         }
@@ -170,7 +173,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                     children: [
                       Row(children: [
                         textFieldModel("授業名を入力…", classNameController,
-                            FontWeight.bold, 25.0, (value) async {
+                            FontWeight.bold, 20.0, (value) async {
                           id = target.id!;
                           //＠ここに授業名のアップデート関数！！！
                           await MyCourse.updateCourseName(id, value);
@@ -180,6 +183,17 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
                       switchViewMode(dividerModel, target),
                       Row(children: [
                         viewModeSwitch(),
+                        colorSettingButton(
+                          context,
+                          setState,
+                          colorButtonColor,
+                          (newColor) async{
+                            int id = widget.target.id!;
+                            await MyCourse.updateColor(id,newColor);
+                            widget.setTimetableState(() {});
+                            colorButtonColor = newColor.toColor()!;
+                            setState(() {});
+                        }),
                         const Spacer(),
                         GestureDetector(
                             child: const Icon(Icons.delete, color: Colors.grey),
@@ -207,10 +221,10 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       dividerModel,
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        const Icon(Icons.info, color: MAIN_COLOR),
+        Icon(Icons.info, color: colorButtonColor),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
         const Text("オンデマンド/その他",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal)),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
       ]),
       Row(children: [
@@ -222,9 +236,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       dividerModel,
       Row(children: [
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        const Icon(Icons.sticky_note_2, color: MAIN_COLOR),
+        Icon(Icons.sticky_note_2, color: colorButtonColor),
         SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        textFieldModel("授業メモを入力…", memoController, FontWeight.normal, 20.0,
+        textFieldModel("授業メモを入力…", memoController, FontWeight.normal, null,
             (value) async {
           int id = target.id!;
           //＠ここにメモのアップデート関数！！！
@@ -235,9 +249,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       dividerModel,
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: 17),),
+        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: null),),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
+        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:17)),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
       //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
       //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
@@ -247,9 +261,9 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       dividerModel,
       Row(children: [
         SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Icon(Icons.class_, color: MAIN_COLOR),
+        Icon(Icons.class_, color: colorButtonColor),
         SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, 20.0,
+        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
             (value) async {
               int id = target.id!;
               MyCourse newMyCourse = widget.target;
@@ -263,7 +277,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double fontSize, Function(String) onChanged) {
+      FontWeight weight, double? fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
       child: TextField(

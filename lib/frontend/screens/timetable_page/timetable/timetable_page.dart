@@ -141,7 +141,7 @@ void initCellWidth() {
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
-      ]);
+        ]);
 
   @override
   Widget build(BuildContext context) {

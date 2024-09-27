@@ -36,7 +36,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   late bool searchMode;
   Widget space = const SizedBox(height: 7);
   Widget dividerModel = const Divider(height: 2);
-  TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 20,fontWeight: FontWeight.normal);
+  TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 17,fontWeight: FontWeight.normal);
+  late Color colorButtonColor;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     classificationController.text = target.subjectClassification ?? "";
     viewMode = 0;
     searchMode = false;
+    colorButtonColor = widget.target.color.toColor() ?? Colors.grey;
   }
 
   @override
@@ -158,7 +160,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       margin: const EdgeInsets.symmetric(horizontal: 0),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 22.0,
+        textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 20.0,
             (value) async {
           id = target.id!;
           //＠ここに授業名変更関数を登録！！！
@@ -175,6 +177,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       ]),
     );
 
+
     return GestureDetector(
         onTap: () {},
         child: Stack(
@@ -187,16 +190,24 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               Text(
                 " 概要",style:titleStyle,
               ),
-              const Spacer()
+              const Spacer(),
+              colorSettingButton(
+                context,
+                setState,
+                colorButtonColor,
+                (newColor) async{
+                  int id = widget.target.id!;
+                  await MyCourse.updateColor(id,newColor);
+                  widget.setTimetableState(() {});
+                  colorButtonColor = newColor.toColor()!;
+                  setState(() {});
+                })
             ]),
             Container(
-                decoration: roundedBoxdecoration(
-                  radiusType: 2,
-                  backgroundColor: viewMode == 0 ? BACKGROUND_COLOR : FORGROUND_COLOR),
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 12.5, right: 12.5, top: 5, bottom: 10),
+                        left: 0, right: 0, top: 5, bottom: 10),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -228,6 +239,15 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           ]),
           header
         ]));
+  }
+
+  Widget containerModel(Widget child){
+    return Container(
+      decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+      margin:const EdgeInsets.symmetric(vertical: 1),
+      padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
+      child: child,
+    );
   }
 
   Widget switchViewMode(dividerModel, MyCourse target) {
@@ -276,7 +296,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           setState(() {
             viewMode = 1;
           });
-        }, Colors.blueAccent, " 授業の詳細 ");
+        }, colorButtonColor, " 詳細情報... ");
       } else {
         return const SizedBox();
       }
@@ -291,7 +311,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         setState(() {
           searchMode = true;
         });
-      }, Colors.lightBlueAccent, " シラバス検索 ");
+      }, Colors.blueAccent, " シラバス検索 ");
     } else {
       return const SizedBox();
     }
@@ -304,7 +324,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         setState(() {
           searchMode = false;
         });
-      }, Colors.blueAccent, " もどる ");
+      }, colorButtonColor, " もどる ");
     } else if (target.syllabusID != null && target.syllabusID != "") {
       if (viewMode == 0) {
         return const SizedBox();
@@ -313,7 +333,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           setState(() {
             viewMode = 0;
           });
-        }, Colors.blueAccent, " もどる ");
+        }, colorButtonColor, " もどる ");
       }
     } else {
       return const SizedBox();
@@ -328,71 +348,82 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       target.criteria ?? "？";
 
     return Column(children: [
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Icon(Icons.access_time, color: Colors.blue),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        Text(
-          "${target.weekday!.text}曜日 ${target.period!.period}限",
-          style: const TextStyle(
-            fontSize: 20,
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Icon(Icons.access_time, color: colorButtonColor),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          Text(
+            "${target.weekday!.text}曜日 ${target.period!.period}限",
+            style: const TextStyle(
+              fontSize: 17,
+            ),
           ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-            child: Text(
-          "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
-          style: const TextStyle(fontSize: 15, color: Colors.grey),
-          overflow: TextOverflow.clip,
-        )),
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        const Icon(Icons.group, color: Colors.blue),
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        classRoomSelector(context, target)
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Icon(Icons.sticky_note_2, color: Colors.blue),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        textFieldModel("メモを入力…", memoController, FontWeight.normal, 20.0,
-            (value) async {
-          int id = target.id!;
-          //＠ここに教室のアップデート関数！！！
-          await MyCourse.updateMemo(id, value);
-          widget.setTimetableState(() {});
-        })
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: 17),),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-      //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
-      //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-      //   Expanded(
-      //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Icon(Icons.class_, color: Colors.blue),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, 20.0,
-            (value) async {
-              int id = target.id!;
-              MyCourse newMyCourse = widget.target;
-              newMyCourse.subjectClassification = classificationController.text;
-              await MyCourse.updateMyCourse(id,newMyCourse);
-              widget.setTimetableState(() {});
-        })
-      ]),
-      dividerModel,
+          const SizedBox(width: 20),
+          Expanded(
+              child: Text(
+            "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
+            style: const TextStyle(fontSize: null, color: Colors.grey),
+            overflow: TextOverflow.clip,
+          )),
+        ])
+      ),
+
+      containerModel(
+        Row(children: [
+          SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+          Icon(Icons.group, color: colorButtonColor),
+          SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+          classRoomSelector(context, target)
+        ])
+      ),
+
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Icon(Icons.sticky_note_2, color: colorButtonColor),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          textFieldModel("メモを入力…", memoController, FontWeight.normal, null,
+              (value) async {
+            int id = target.id!;
+            //＠ここに教室のアップデート関数！！！
+            await MyCourse.updateMemo(id, value);
+            widget.setTimetableState(() {});
+          })
+        ])
+      ),
+
+      containerModel(
+          Row(children: [
+            SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+            const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: null),),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:18)),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
+          //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          //   Expanded(
+          //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
+          ])
+      ),
+      
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Icon(Icons.class_, color: colorButtonColor),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
+              (value) async {
+                int id = target.id!;
+                MyCourse newMyCourse = widget.target;
+                newMyCourse.subjectClassification = classificationController.text;
+                await MyCourse.updateMyCourse(id,newMyCourse);
+                widget.setTimetableState(() {});
+          })
+        ])
+      ),
+    const SizedBox(height: 2),
+
     ]);
   }
 
@@ -406,7 +437,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
     if (classRooms.length <= 2) {
       return textFieldModel(
-          "教室を入力…", classRoomController, FontWeight.bold, 20.0, (value) async {
+          "教室を入力…", classRoomController, FontWeight.bold, null, (value) async {
         id = target.id!;
         //＠ここに教室のアップデート関数！！！
         await MyCourse.updateClassRoom(id, value);
@@ -488,7 +519,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double fontSize, Function(String) onChanged) {
+      FontWeight weight, double? fontSize, Function(String) onChanged) {
     return Expanded(
         child: Material(
         color: Colors.transparent,
@@ -601,3 +632,69 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ]));
   }
 }
+
+  Widget colorSettingButton(BuildContext context,StateSetter setState,Color currentColor,Function(String) onChanged){
+    Color buttonColor = currentColor;
+    return GestureDetector(
+      onTap:()async{
+        String? newColor = await colorPickerDialogue(context, setState);
+        if(newColor != null){
+          setState((){
+            buttonColor = newColor.toColor()!;
+          });
+          onChanged(newColor);
+        }
+      },
+      child:Container(
+        width: 25,
+        height: 25,
+        margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+        decoration:BoxDecoration(
+          color:buttonColor,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 1,
+              offset: const Offset(0, 1),
+            ),
+          ]
+        )
+      )
+    );
+  }
+
+  Future<String?> colorPickerDialogue(BuildContext context,StateSetter setState) async{
+    Color? result;
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('授業の色を選択...'),
+            content: SingleChildScrollView(
+              child: BlockPicker(
+                  pickerColor: Colors.redAccent,
+                  onColorChanged: (color) {
+                    setState(() {
+                      result = color;
+                    });
+                  }),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text('選択'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+    if(result != null){
+      return colorToHexString(result!);
+    }else{
+      return null;
+    }
+
+  }
