@@ -17,7 +17,14 @@ import 'package:intl/intl.dart';
 
 class TaskListByDtEnd extends ConsumerStatefulWidget {
   Map<DateTime, List<Map<String, dynamic>>> sortedData = {};
-  TaskListByDtEnd({super.key, required this.sortedData});
+  late Function(ScrollController) onScroll;
+
+  TaskListByDtEnd({
+    super.key,
+    required this.sortedData,
+    required this.onScroll
+  });
+
   @override
   _TaskListByDtEndState createState() => _TaskListByDtEndState();
 }
@@ -69,6 +76,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           });
         }
       }
+      widget.onScroll(_taskScrollController);
     });
 
     // 各アイテムに対して GlobalKey を作成
@@ -134,15 +142,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: BACKGROUND_COLOR,
-                  boxShadow: [
-                    if(sortedData.containsKey(date) || isShowDayWithoutTask )
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: const Offset(0, 0),
-                      ),
-                  ],
+                  // boxShadow: [
+                  //   if(sortedData.containsKey(date) || isShowDayWithoutTask )
+                  //     BoxShadow(
+                  //       color: Colors.black.withOpacity(0.1),
+                  //       spreadRadius: 1,
+                  //       blurRadius: 1,
+                  //       offset: const Offset(0, 0),
+                  //     ),
+                  // ],
                 ),
                 margin: EdgeInsets.symmetric(
                   horizontal:5,
@@ -175,13 +183,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         ("${dateEnd.month}月${dateEnd.day}日 (${"日月火水木金土日"[dateEnd.weekday % 7]}) ");
       return Container(
           padding: const EdgeInsets.only(
-              left: 8.0, right: 8.0, bottom: 13.0, top: 4.0),
+              left: 4.0, right: 0, bottom: 13.0, top: 4.0),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(children:[
                     Row(children: [
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 0),
                       Text(
                         adjustedDtEnd,
                         style:const TextStyle(
@@ -206,7 +214,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
     return Container(
         padding: const EdgeInsets.only(
-            left: 8.0, right: 8.0, bottom: 13.0, top: 4.0),
+            left: 4.0, right: 0, bottom: 13.0, top: 4.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -215,7 +223,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 0),
                         Text(
                           adjustedDtEnd,
                           style:const TextStyle(
@@ -226,7 +234,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                       ]),
                       GestureDetector(
                         onTap: (){
-                          print(_heights);
                           final inputForm = ref.read(inputFormProvider);
                           inputForm.clearContents();
                           showDialog(
@@ -694,13 +701,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                       // Text("${date.month.toString()} /       ",
                       //     style:const TextStyle(fontSize: 10,fontWeight: FontWeight.normal,color: Colors.grey)),
                       const Spacer(),
+                      Text(DateFormat("E","ja_jp").format(date),
+                        style:const TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.grey)),
+                      const SizedBox(height: 5),
                       Text(date.day.toString(),
                         style:const TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 5),
-                      Text(DateFormat("E","ja_jp").format(date),
-                        style:const TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.grey)),
                       const SizedBox(height: 2),
                       Container(height: 5),
                     ]),

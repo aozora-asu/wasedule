@@ -162,7 +162,8 @@ void initCellWidth() {
             // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
             floating: true,
             pinned: false,
-            snap: true,
+            snap: false,
+            collapsedHeight: 80,
             expandedHeight: 80,
             // AppBar の拡張部分 (スクロール時に表示される)
             flexibleSpace: pageHeader(),
@@ -180,32 +181,15 @@ void initCellWidth() {
             ),
           ),
         ]),
-      floatingActionButton: _isFabVisible
-        ? Container(
-          width: SizeConfig.blockSizeHorizontal! * 90,
+      floatingActionButton:           
+       AnimatedOpacity(
+        opacity: _isFabVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 600),
+        child:Container(
           margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
-          child: Row(children: [
-            const Spacer(),
-            FloatingActionButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CourseAddPage(
-                          semester: currentSemester,
-                          year: thisYear,
-                          setTimetableState: setState,
-                          period: Lesson.ondemand,
-                          weekDay: DayOfWeek.anotherday,
-                        );
-                      });
-                },
-                backgroundColor: PALE_MAIN_COLOR,
-                child: Icon(Icons.add, color: FORGROUND_COLOR)),
-            const SizedBox(width: 10),
-            timetableShareButton(context),
-          ])) 
-          : null
+          child: timetableShareButton(context),
+         ) 
+       )
     );
   }
 
@@ -390,7 +374,17 @@ void initCellWidth() {
 
 Widget pageHeader(){
   return Container(
-    color:BACKGROUND_COLOR,
+    decoration: BoxDecoration(
+      color:BACKGROUND_COLOR,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          spreadRadius: 2,
+          blurRadius: 2,
+          offset: const Offset(0, 0),
+        ),
+      ]
+    ),
     child:Column(children:[
       Row(children: [
         IconButton(
@@ -453,7 +447,7 @@ Widget pageHeader(){
             const SizedBox(width: 10)
           ])
         ),
-      const Divider(height: 1),
+      
 
     ])
   );

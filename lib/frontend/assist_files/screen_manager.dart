@@ -158,14 +158,26 @@ class _AppPageState extends ConsumerState<AppPage> {
           child: Stack(
             alignment:const  Alignment(0,2.2),
             children: [
-              MenuAppBar(
-                currentIndex: _currentIndex,
-                onItemTapped: _onItemTapped,
-                currentSubIndex: _currentSubIndex,
-                onTabTapped: _onTabTapped,
-                setosute: setState,
-                isChildmenuExpand: showChildMenu,
-                changeChildmenuState: _switchChildMenu,
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                ),
+                child:MenuAppBar(
+                  currentIndex: _currentIndex,
+                  onItemTapped: _onItemTapped,
+                  currentSubIndex: _currentSubIndex,
+                  onTabTapped: _onTabTapped,
+                  setosute: setState,
+                  isChildmenuExpand: showChildMenu,
+                  changeChildmenuState: _switchChildMenu,
+                )
               ),
 
           ])

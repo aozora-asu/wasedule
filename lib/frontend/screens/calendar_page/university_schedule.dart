@@ -338,7 +338,7 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
           actions: <Widget>[
             Align(alignment: Alignment.centerLeft, child: Text(text)),
             const SizedBox(height: 10),
-            okButton(context, 500.0)
+            okButton(context, 1500.0)
           ],
         );
       },

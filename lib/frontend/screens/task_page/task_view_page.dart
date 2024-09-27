@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
@@ -40,6 +41,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
   late bool isButton;
   late bool isLoad;
+  bool _isFabVisible = true;
 
   @override
   void initState() {
@@ -77,6 +79,26 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     }
   }
 
+  void _onScroll(ScrollController pageScrollController){
+    // スクロールの方向に応じてFABを表示・非表示にする
+    if (pageScrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      // 下方向にスクロールした場合
+      if (_isFabVisible) {
+        setState(() {
+          _isFabVisible = false;  // FABを非表示
+        });
+      }
+    } else if (pageScrollController.position.userScrollDirection == ScrollDirection.forward) {
+      // 上方向にスクロールした場合
+      if (!_isFabVisible) {
+        setState(() {
+          _isFabVisible = true;  // FABを表示
+        });
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     ref.watch(taskPageIndexProvider);
@@ -96,42 +118,18 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: FORGROUND_COLOR,
-        body: Column(children: [
-          Container(
-              color: BACKGROUND_COLOR,
-              width: SizeConfig.blockSizeHorizontal! *100,
-              child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! *100,
-                      child: Row(children: [
-                        const SizedBox(width: 5,),
-                        sortSwitch(),
-                        simpleSmallButton(
-                          "注意事項",
-                          () {
-                            showDisclaimerDialogue(context);
-                          },
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, 
-                              MaterialPageRoute(
-                                builder: (context)=> SettingsPage(initIndex: 3,isAppBar: true)));
-                          },
-                          child:const Icon(Icons.settings,color:Colors.grey,size:18),
-                        ),
-                        const SizedBox(width: 10)
-                      ]),
-                    ),
-                  ),
-                ),
-              
-          Expanded(child: pages())
+        backgroundColor: BACKGROUND_COLOR,
+        body: Stack(children:[
+          Column(children: [
+            pageHeader(),
+            Expanded(child: pages())
+          ]),
+          pageHeader()
         ]),
-        floatingActionButton: Container(
+        floatingActionButton:  AnimatedOpacity(
+          opacity: _isFabVisible ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 600),
+          child:Container(
             margin: EdgeInsets.only(
               bottom: isShowTaskCalendarLine ? 80 : 0),
             child: Row(
@@ -156,7 +154,53 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   child: Icon(Icons.refresh_outlined, color: FORGROUND_COLOR),
                 ),
               ],
-            )));
+            )
+          )
+        )
+      );
+  }
+
+  Widget pageHeader(){
+    return  Container(
+      decoration: BoxDecoration(
+        color:BACKGROUND_COLOR,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 2,
+            offset: const Offset(0, 0),
+          ),
+        ]
+      ),
+      width: SizeConfig.blockSizeHorizontal! *100,
+      child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: SizeConfig.blockSizeHorizontal! *100,
+              child: Row(children: [
+                const SizedBox(width: 5,),
+                sortSwitch(),
+                simpleSmallButton(
+                  "注意事項",
+                  () {
+                    showDisclaimerDialogue(context);
+                  },
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, 
+                      MaterialPageRoute(
+                        builder: (context)=> SettingsPage(initIndex: 3,isAppBar: true)));
+                  },
+                  child:const Icon(Icons.settings,color:Colors.grey,size:18),
+                ),
+                const SizedBox(width: 10)
+              ]),
+            ),
+          ),
+        );
   }
 
   Widget pages() {
@@ -173,8 +217,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                 return const LoadingScreen();
               } else {
                 return TaskListByDtEnd(
-                    sortedData:
-                        taskData.sortDataByDtEnd(taskData.taskDataList));
+                  onScroll: _onScroll,
+                  sortedData:
+                    taskData.sortDataByDtEnd(taskData.taskDataList));
               }
             } else if (snapshot.hasError) {
               return const SizedBox();
@@ -202,7 +247,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
               if (sortedTasks.isEmpty) {
                 return NoTaskPage(moveToMoodlePage: widget.moveToMoodlePage,);
               } else {
-                return TaskListByDtEnd(sortedData: sortedTasks);
+                return TaskListByDtEnd(
+                  onScroll: _onScroll,
+                  sortedData: sortedTasks);
               }
             } else {
               //DBからのデータがnullの場合

@@ -259,6 +259,17 @@ class MyCourse {
     );
   }
 
+  static Future<void> updateColor(int id, String newColor) async {
+    final Database db = await _initDB();
+    // データベースの更新
+    await db.update(
+      myCourseTable,
+      {'color': newColor}, // 新しいcolorの値を設定
+      where: 'id = ?', // idによってレコードを特定
+      whereArgs: [id], // idの値を指定
+    );
+  }
+
   static Future<void> updateMemo(int id, String newMemo) async {
     final Database db = await _initDB();
     await db.update(

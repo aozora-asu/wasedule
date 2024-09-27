@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -56,6 +57,9 @@ class Calendar extends ConsumerStatefulWidget {
 
 class _CalendarState extends ConsumerState<Calendar> {
   final ScreenshotController _screenShotController = ScreenshotController();
+  final ScrollController controller = ScrollController();
+  bool _isFabVisible = true;
+
   late bool isScreenShotBeingTaken;
   late String targetMonth = "";
   String thisMonth =
@@ -80,6 +84,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     generateCalendarData();
     _initializeData();
     isScreenShotBeingTaken = false;
+    controller.addListener(_onScroll);
   }
 
   @override
@@ -98,6 +103,25 @@ class _CalendarState extends ConsumerState<Calendar> {
     List<Map<String, dynamic>> arbeitList =
         await ArbeitDatabaseHelper().getArbeitFromDB();
     return arbeitList;
+  }
+
+  void _onScroll() {
+    // スクロールの方向に応じてFABを表示・非表示にする
+    if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+      // 下方向にスクロールした場合
+      if (_isFabVisible) {
+        setState(() {
+          _isFabVisible = false;  // FABを非表示
+        });
+      }
+    } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
+      // 上方向にスクロールした場合
+      if (!_isFabVisible) {
+        setState(() {
+          _isFabVisible = true;  // FABを表示
+        });
+      }
+    }
   }
 
   TaskDatabaseHelper databaseHelper = TaskDatabaseHelper();
@@ -216,24 +240,30 @@ class _CalendarState extends ConsumerState<Calendar> {
 
     ref.watch(calendarDataProvider);
     SizeConfig().init(context);
-    ScrollController controller = ScrollController();
+
     return Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              color: BACKGROUND_COLOR),
-          child: Scrollbar(
-            controller: controller,
-            interactive: true,
-            radius: const Radius.circular(20),
-            thumbVisibility: true,
-            child: ListView(
-              primary: false,
-              controller: controller,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: SizeConfig.blockSizeHorizontal! * 0, //2.5,
-                    right: SizeConfig.blockSizeHorizontal! * 0,
+        backgroundColor: BACKGROUND_COLOR,
+        body: CustomScrollView(
+        controller: controller,
+        slivers: <Widget>[
+          SliverAppBar(
+            // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
+            floating: true,
+            pinned: false,
+            snap: true,
+            collapsedHeight: 80,
+            expandedHeight: 80,
+            // AppBar の拡張部分 (スクロール時に表示される)
+            flexibleSpace: calendarHeader(),
+          ),
+           SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Column(children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                     left: SizeConfig.blockSizeHorizontal! * 0, //2.5,
+                      right: SizeConfig.blockSizeHorizontal! * 0,
                   ),
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: loadDataBases(),
@@ -277,17 +307,28 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                 ),
               ],
-            ),
+            );
+          },
+          // リストアイテムの数
+          childCount: 1,
           ),
-        ),
-        floatingActionButton: Container(
-            margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
-            child: Row(children: [
-              const Spacer(),
-              const AddEventButton(),
-              const SizedBox(width: 10),
-              calendarShareButton(context),
-            ])));
+        )
+      ]),
+        floatingActionButton: 
+          AnimatedOpacity(
+            opacity: _isFabVisible ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 600),
+            child: Container(
+              margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
+              child: Row(children: [
+                const Spacer(),
+                const AddEventButton(),
+                const SizedBox(width: 10),
+                calendarShareButton(context),
+              ])
+          )
+        )
+      );
   }
 
   AssetImage calendarBackGroundImage() {
@@ -302,119 +343,133 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+  Widget calendarHeader(){
+    return Container(
+      decoration: BoxDecoration(
+        color: BACKGROUND_COLOR,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 2,
+            offset: const Offset(0, 0),
+          ),
+        ]
+      ),
+      child: Column(children:[
+        Row(children: [
+          IconButton(
+              onPressed: () {
+                decreasePgNumber();
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+              iconSize: 20,
+              color: BLUEGREY),
+          Text(
+            targetMonth,
+            style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: BLUEGREY),
+          ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  increasePgNumber();
+                });
+              },
+              icon: const Icon(Icons.arrow_forward_ios),
+              iconSize: 20,
+              color: BLUEGREY),
+          const Spacer(),
+          doNotContainScreenShot(
+            scheduleEmptyFlag(
+            ref,
+            Container(
+              width: 160,
+              height: 35,
+              decoration: BoxDecoration(
+                color: BLUEGREY,
+                borderRadius: BorderRadius.circular(5)
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const TagAndTemplatePage()),
+                  );
+                },
+                child:Row(children:[
+                  const Spacer(),
+                  Icon(Icons.tag,
+                    size: 19, color: FORGROUND_COLOR),
+                  const SizedBox(width: 2),
+                  Text('タグとテンプレート',
+                    style: TextStyle(
+                        fontSize: 12.5,
+                        color: FORGROUND_COLOR,
+                        fontWeight: FontWeight.normal)),
+                  const Spacer()
+                ])
+                ),
+              ),
+            ),
+          ),
+          showOnlyScreenShot(LogoAndTitle(size: 7)),
+          const SizedBox(width: 10)
+        ]),
+        doNotContainScreenShot(
+          Row(children:[
+            simpleSmallButton(
+              "年間行事予定の取得",
+              (){
+                widget.movePage(2);
+              }),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, 
+                    MaterialPageRoute(
+                      builder: (context)=> SettingsPage(initIndex: 0,isAppBar: true)));
+                },
+                child:const Icon(Icons.settings,color:Colors.grey,size:18),
+              ),
+              const SizedBox(width: 10)
+        ])),
+      ])
+    );
+  }
+
   Widget calendarBody() {
     generateHoliday();
     return Column(children: [
       Screenshot(
           controller: _screenShotController,
-          child: SizedBox(
-              child: Container(
-                  decoration: switchDecoration(),
-                  child: Column(children: [
-                    Row(children: [
-                      IconButton(
-                          onPressed: () {
-                            decreasePgNumber();
-                          },
-                          icon: const Icon(Icons.arrow_back_ios),
-                          iconSize: 20,
-                          color: BLUEGREY),
-                      Text(
-                        targetMonth,
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: BLUEGREY),
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              increasePgNumber();
-                            });
-                          },
-                          icon: const Icon(Icons.arrow_forward_ios),
-                          iconSize: 20,
-                          color: BLUEGREY),
-                      const Spacer(),
-                      doNotContainScreenShot(
-                        scheduleEmptyFlag(
-                        ref,
-                        Container(
-                          width: 160,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: BLUEGREY,
-                            borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TagAndTemplatePage()),
-                              );
-                            },
-                            child:Row(children:[
-                              const Spacer(),
-                              Icon(Icons.tag,
-                                size: 19, color: FORGROUND_COLOR),
-                              const SizedBox(width: 2),
-                              Text('タグとテンプレート',
-                                style: TextStyle(
-                                    fontSize: 12.5,
-                                    color: FORGROUND_COLOR,
-                                    fontWeight: FontWeight.normal)),
-                              const Spacer()
-                            ])
-                            ),
-                          ),
-                        ),
-                      ),
-                      showOnlyScreenShot(LogoAndTitle(size: 7)),
-                      const SizedBox(width: 10)
-                    ]),
-                    doNotContainScreenShot(
-                      Row(children:[
-                        simpleSmallButton(
-                          "年間行事予定の取得",
-                          (){
-                            widget.movePage(2);
-                          }),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, 
-                                MaterialPageRoute(
-                                  builder: (context)=> SettingsPage(initIndex: 0,isAppBar: true)));
-                            },
-                            child:const Icon(Icons.settings,color:Colors.grey,size:18),
-                          ),
-                          const SizedBox(width: 10)
-                    ])),
-                    const Divider(height: 2),
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 100,
-                      height: SizeConfig.blockSizeVertical! * 3,
-                      child: generateWeekThumbnail(),
-                    ),
-                    SizedBox(
-                        width: SizeConfig.blockSizeHorizontal! * 100,
-                        child: Row(children: [
-                          generateCalendarCells("sunday"),
-                          generateCalendarCells("monday"),
-                          generateCalendarCells("tuesday"),
-                          generateCalendarCells("wednesday"),
-                          generateCalendarCells("thursday"),
-                          generateCalendarCells("friday"),
-                          generateCalendarCells("saturday")
-                        ])),
-                    Row(children: [
-                      const Spacer(),
-                      showOnlyScreenShot(screenShotDateTime()),
-                      const SizedBox(width: 7)
-                    ]),
-                  ])))),
+          child: Column(children: [
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 100,
+              height: SizeConfig.blockSizeVertical! * 3,
+              child: generateWeekThumbnail(),
+            ),
+            SizedBox(
+                width: SizeConfig.blockSizeHorizontal! * 100,
+                child: Row(children: [
+                  generateCalendarCells("sunday"),
+                  generateCalendarCells("monday"),
+                  generateCalendarCells("tuesday"),
+                  generateCalendarCells("wednesday"),
+                  generateCalendarCells("thursday"),
+                  generateCalendarCells("friday"),
+                  generateCalendarCells("saturday")
+                ])),
+            Row(children: [
+              const Spacer(),
+              showOnlyScreenShot(screenShotDateTime()),
+              const SizedBox(width: 7)
+            ]),
+          ])),
       menu()
     ]);
   }
@@ -775,8 +830,11 @@ class _CalendarState extends ConsumerState<Calendar> {
   Widget generateCalendarCells(String dayOfWeek) {
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * 14.285,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
+        child: MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: ListView.builder(
+            itemBuilder: (context, index) {
             DateTime target =
                 generateCalendarData()[dayOfWeek]!.elementAt(index);
             return InkWell(
@@ -824,7 +882,9 @@ class _CalendarState extends ConsumerState<Calendar> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
-        ));
+        )
+      )
+    );
   }
 
   Color cellColour(DateTime target) {
@@ -1252,15 +1312,17 @@ class _CalendarState extends ConsumerState<Calendar> {
                 customButton,
                 const SizedBox(width: 20),
               ])),
-          //const Divider(height: 1),
-          ListView.builder(
-            itemBuilder: (context, index) {
-              return child.elementAt(index);
-            },
+          MediaQuery.removePadding(
+            context: context,
+            removeBottom: true,
+            child:ListView.builder(
+              itemBuilder: (context, index) {
+                return child.elementAt(index);
+              },
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: child.length,
-          ),
+          )),
           //SizedBox(height: SizeConfig.safeBlockVertical! * 2),
         ]));
   }
@@ -1389,9 +1451,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       return BoxDecoration(color: BACKGROUND_COLOR);
     } else {
       return BoxDecoration(
-        color: BACKGROUND_COLOR,
-        //borderRadius: BorderRadius.circular(15.0), // 角丸の半径を指定
-      );
+        color: BACKGROUND_COLOR);
     }
   }
 
@@ -2085,7 +2145,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     Duration workTimeSum =
         ArbeitCalculator().monthlyWorkTimeSumOfAllTags(targetKey, ref);
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return 
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: const EdgeInsets.all(10),
           child: Column(children: [

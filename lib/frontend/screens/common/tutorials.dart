@@ -44,6 +44,7 @@ class _IntroPageState extends State<IntroPage> {
           image: Center(
             child: Image.asset(
               "lib/assets/eye_catch/eyecatch.png",
+              scale: 2,
             ),
           ),
           bodyWidget: const Padding(
@@ -53,9 +54,9 @@ class _IntroPageState extends State<IntroPage> {
                 "あなたの生活に、\nわせジュールがやってきました。",
                 style: TextStyle(fontSize: 20),
               ),
-              Divider(height: 30),
+              SizedBox(height: 20),
               Text(
-                "さて、一体どんなことができるのか。\nなにが今までと違うのか。\n今から少し、ご覧に入れましょう。",
+                "このアプリではこんなことができます：\n・課題を自動取得して通知\n・成績データのダウンロード\n・時間割の自動生成",
                 style: TextStyle(fontSize: 17,color:Colors.grey),
               ),
             ])

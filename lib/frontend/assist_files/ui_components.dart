@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 Widget buttonModel(Function() onTap, Color color, String text,
   {double verticalpadding = 7.5,double horizontalPadding = 5}) {
@@ -233,23 +234,67 @@ Future<void> showConfirmDeleteDialog(BuildContext context,String object,Function
     });
 }
 
-  Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin = 3}) {
-    return GestureDetector(
-        onTap:onTap,
-        child: Container(
-          decoration: roundedBoxdecoration(),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
-          margin: EdgeInsets.symmetric(vertical: 4,horizontal: horizontalMargin),
-          child: Text(
-            text,
-            style: const TextStyle(
-                color: Colors.blue,
-                fontSize: 15,
-                fontWeight: FontWeight.normal),
-          ),
-        )
-      );
+  Future<String> colorPickerDialogue(BuildContext context,StateSetter setState) async{
+    Color result = Colors.cyan;
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('マスの色を選択...'),
+            content: SingleChildScrollView(
+              child: BlockPicker(
+                  pickerColor: Colors.redAccent,
+                  onColorChanged: (color) {
+                    setState(() {
+                      result = color;
+                    });
+                  }),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text('選択'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+    return colorToHex(result);
   }
+
+  String colorToHex(Color color, {bool includeAlpha = false}) {
+    // ColorのvalueプロパティからARGBの値を取得
+    String hexColor = '';
+
+    if (includeAlpha) {
+      // Alpha（透明度）を含めたカラーコード（#AARRGGBB）
+      hexColor = '#${color.value.toRadixString(16).padLeft(8, '0')}';
+    } else {
+      // Alphaを無視してRGBのみのカラーコード（#RRGGBB）
+      hexColor = '#${color.value.toRadixString(16).padLeft(6, '0').substring(2)}';
+    }
+
+    return hexColor.toUpperCase(); // 大文字に変換
+  }
+
+Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin = 3}) {
+  return GestureDetector(
+      onTap:onTap,
+      child: Container(
+        decoration: roundedBoxdecoration(),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
+        margin: EdgeInsets.symmetric(vertical: 4,horizontal: horizontalMargin),
+        child: Text(
+          text,
+          style: const TextStyle(
+              color: Colors.blue,
+              fontSize: 15,
+              fontWeight: FontWeight.normal),
+        ),
+      )
+    );
+}
 
 class DashedLinePainterWidget extends StatelessWidget {
   late double width;
