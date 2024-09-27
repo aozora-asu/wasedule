@@ -119,7 +119,6 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       if (viewMode == 0) {
         return summaryContent(dividerModel, target);
       } else {
-        print(target);
         return SizedBox(
             height: SizeConfig.blockSizeVertical! * 50,
             width: SizeConfig.blockSizeHorizontal! * 100,
@@ -218,66 +217,78 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
       target.criteria ?? "？";
 
     return Column(children: [
-      dividerModel,
-      Row(children: [
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        Icon(Icons.info, color: colorButtonColor),
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        const Text("オンデマンド/その他",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal)),
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-      ]),
-      Row(children: [
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
-        Text("${target.year} $text",
-            style: const TextStyle(fontSize: 16, color: Colors.grey)),
-        const Spacer(),
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-        Icon(Icons.sticky_note_2, color: colorButtonColor),
-        SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-        textFieldModel("授業メモを入力…", memoController, FontWeight.normal, null,
-            (value) async {
-          int id = target.id!;
-          //＠ここにメモのアップデート関数！！！
-          await MyCourse.updateMemo(id, value);
-          widget.setTimetableState(() {});
-        }),
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: null),),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:17)),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-      //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
-      //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-      //   Expanded(
-      //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
-      ]),
-      dividerModel,
-      Row(children: [
-        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-        Icon(Icons.class_, color: colorButtonColor),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-        textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
-            (value) async {
-              int id = target.id!;
-              MyCourse newMyCourse = widget.target;
-              newMyCourse.subjectClassification = classificationController.text;
-              await MyCourse.updateMyCourse(id,newMyCourse);
-              widget.setTimetableState(() {});
-        })
-      ]),
-      dividerModel,
-    ]);
+
+      containerModel(
+        Column(children:[
+          Row(children: [
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+            Icon(Icons.info, color: colorButtonColor),
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+            const Text("オンデマンド/その他",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal)),
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+          ]),
+          Row(children: [
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 5),
+            Text("${target.year} $text",
+                style: const TextStyle(fontSize: 16, color: Colors.grey)),
+            const Spacer(),
+          ]),
+        ])
+      ),
+
+      containerModel(   
+        Row(children: [
+          SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+          Icon(Icons.sticky_note_2, color: colorButtonColor),
+          SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+          textFieldModel("授業メモを入力…", memoController, FontWeight.normal, null,
+              (value) async {
+            int id = target.id!;
+            //＠ここにメモのアップデート関数！！！
+            await MyCourse.updateMemo(id, value);
+            widget.setTimetableState(() {});
+          },bgColor: BACKGROUND_COLOR),
+        ])
+      ),
+
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: null),),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:17)),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
+        //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+        //   Expanded(
+        //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
+        ])
+      ),
+
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Icon(Icons.class_, color: colorButtonColor),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
+              (value) async {
+                int id = target.id!;
+                MyCourse newMyCourse = widget.target;
+                newMyCourse.subjectClassification = classificationController.text;
+                await MyCourse.updateMyCourse(id,newMyCourse);
+                widget.setTimetableState(() {});
+          },bgColor: BACKGROUND_COLOR)
+        ])
+      ),
+      const SizedBox(height:5)
+
+      ]);
   }
 
   Widget textFieldModel(String hintText, TextEditingController controller,
-      FontWeight weight, double? fontSize, Function(String) onChanged) {
+      FontWeight weight, double? fontSize, Function(String) onChanged,
+      {Color bgColor = Colors.transparent}) {
     return Expanded(
         child: Material(
       child: TextField(
@@ -286,7 +297,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
           textInputAction: TextInputAction.done,
           decoration: InputDecoration.collapsed(
               filled: true,
-              fillColor: FORGROUND_COLOR,
+              fillColor: bgColor,
               border: InputBorder.none,
               hintText: hintText),
           style: TextStyle(

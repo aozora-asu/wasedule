@@ -71,7 +71,6 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return AppBar(
         backgroundColor: MAIN_COLOR.withOpacity(0.95),
-        
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
         title: SizedBox(

@@ -241,14 +241,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ]));
   }
 
-  Widget containerModel(Widget child){
-    return Container(
-      decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
-      margin:const EdgeInsets.symmetric(vertical: 1),
-      padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
-      child: child,
-    );
-  }
 
   Widget switchViewMode(dividerModel, MyCourse target) {
     if (viewMode == 0) {
@@ -697,4 +689,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       return null;
     }
 
+  }
+
+  Widget containerModel(Widget child){
+    return Container(
+      decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+      margin:const EdgeInsets.symmetric(vertical: 1),
+      padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
+      child: child,
+    );
   }

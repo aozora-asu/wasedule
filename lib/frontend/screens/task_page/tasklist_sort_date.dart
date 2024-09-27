@@ -552,7 +552,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                     ),
                     child: Column(children: [
                       Row(children: [
-                        CupertinoCheckbox(
+                        Transform.scale(
+                          scale: 1.1,
+                          child: CupertinoCheckbox(
                             value: isChosen,
                             onChanged: (value) {
                               var chosenTaskIdList =
@@ -574,7 +576,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                 //ref.read(taskDataProvider.notifier).state;
                                 ref.read(taskDataProvider).manageIsButton();
                               });
-                            }),
+                            })
+                          ),
                         Expanded(
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -634,13 +637,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       opacity: _isVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 300),
       child: Container(
+      margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
         color:  Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 1,
-            blurRadius: 3,
+            blurRadius: 2,
             offset: const Offset(0, -1),
           ),
         ],
@@ -657,7 +662,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 date.month == now.month &&
                 date.day == now.day;
             
-            String yearText = DateFormat("yyyy年").format(date);
+            String yearText =DateFormat("yyyy年").format(date);
             String monthText = DateFormat("M月").format(date);
             String indicatorText = "";
 
@@ -667,14 +672,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               indicatorText = monthText;
             }
 
-            Color barColor = Colors.transparent;
+            Color barColor = BLUEGREY;
             if(date.weekday == 6){
-              barColor = Colors.blue[300]!;
+              barColor = Colors.blue!;
             }else if(date.weekday == 7){
-              barColor = Colors.red[300]!;
+              barColor = Colors.red;
             }
             if(isToday){
-              barColor = MAIN_COLOR;
+              barColor = Colors.orange;
             }
 
             List dailyData = widget.sortedData[date] ?? [];
@@ -687,11 +692,16 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 alignment:const Alignment(1,-0.2),
                 children:[
                   Container(
-                    color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     padding:const EdgeInsets.symmetric(horizontal:0),
                     child:Column(children: [
-                      SizedBox(
+                      Container(
+                        color: FORGROUND_COLOR,
                         height:25,
+                        width: 55,
                         child:Text(indicatorText,
                         style:const TextStyle(
                           color: BLUEGREY,

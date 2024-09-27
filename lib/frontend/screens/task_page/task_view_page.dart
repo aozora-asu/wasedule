@@ -9,6 +9,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/no_task_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/tasklist_sort_category.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 import 'tasklist_sort_date.dart';
 import 'dart:async';
@@ -42,6 +43,9 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   late bool isButton;
   late bool isLoad;
   bool _isFabVisible = true;
+
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
 
   @override
   void initState() {
@@ -122,39 +126,34 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
         body: Stack(children:[
           Column(children: [
             pageHeader(),
-            Expanded(child: pages())
+            Expanded(child:
+            LiquidPullToRefresh(
+                key: _refreshIndicatorKey,
+                showChildOpacityTransition: false,
+                borderWidth: 2,
+                springAnimationDurationInMilliseconds: 500,
+                animSpeedFactor: 3,
+                onRefresh: () async {
+                  if (!isLoad) {
+                    isLoad = true;
+                    await loadData();
+                    isLoad = false;
+                    setState(() {});
+                  }
+                },
+                child: pages()
+              )
+            )
           ]),
           pageHeader()
         ]),
-        floatingActionButton:  AnimatedOpacity(
+        floatingActionButton: AnimatedOpacity(
           opacity: _isFabVisible ? 1.0 : 0.0,
           duration: const Duration(milliseconds: 600),
           child:Container(
             margin: EdgeInsets.only(
               bottom: isShowTaskCalendarLine ? 80 : 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AddDataCardButton(setosute: setState),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * 2,
-                  height: SizeConfig.blockSizeVertical! * 5,
-                ),
-                FloatingActionButton(
-                  heroTag: "task_2",
-                  onPressed: () async {
-                    if (!isLoad) {
-                      isLoad = true;
-                      await loadData();
-                      isLoad = false;
-                      setState(() {});
-                    }
-                  },
-                  backgroundColor: MAIN_COLOR,
-                  child: Icon(Icons.refresh_outlined, color: FORGROUND_COLOR),
-                ),
-              ],
-            )
+            child:  AddDataCardButton(setosute: setState),          
           )
         )
       );
@@ -163,7 +162,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
   Widget pageHeader(){
     return  Container(
       decoration: BoxDecoration(
-        color:BACKGROUND_COLOR,
+        color:FORGROUND_COLOR,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
