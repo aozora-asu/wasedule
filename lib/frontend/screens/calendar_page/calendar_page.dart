@@ -319,7 +319,6 @@ class _CalendarState extends ConsumerState<Calendar> {
             opacity: _isFabVisible ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 600),
             child: Container(
-              margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
               child: Row(children: [
                 const Spacer(),
                 const AddEventButton(),
