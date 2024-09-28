@@ -640,13 +640,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color:  Colors.white,
+        color:  BACKGROUND_COLOR,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
+            spreadRadius: 2,
             blurRadius: 2,
-            offset: const Offset(0, -1),
+            offset: const Offset(0, 0),
           ),
         ],
       ),

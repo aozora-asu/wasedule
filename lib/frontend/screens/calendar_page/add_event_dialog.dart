@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calandar_app/backend/gpt_handler/calendar_gpt_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/chatGPT_result_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -129,30 +131,161 @@ class AddEventButton extends ConsumerStatefulWidget {
 }
 
 class _AddEventButtonState extends ConsumerState {
+  late TextEditingController chatGPTcontroller;
+  bool isExtend = false;
+
+  @override
+  void initState(){
+    chatGPTcontroller = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scheduleForm = ref.watch(scheduleFormProvider);
-    return SizedBox(
-      child: FloatingActionButton(
-        heroTag: "calendar_1",
-        onPressed: () {
-          scheduleForm.clearContents();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CalendarInputForm(
-                target: DateTime.now(),
-                setosute: setState,
-              ),
-            ),
-          );
-        },
-        foregroundColor: Colors.white,
-        backgroundColor: PALE_MAIN_COLOR,
-        child: const Icon(Icons.add),
+    String additionalHinttext = "";
+    if(isExtend){
+      additionalHinttext = "例：来週金曜 13時から19時までバイト";
+    }
+
+    return Container(
+      width: SizeConfig.blockSizeHorizontal! *75,
+      height:isExtend ? 300 : 55,
+      padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: PALE_MAIN_COLOR,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: const Offset(0, 3),
+          ),
+        ]
       ),
+      child: Row(children: [
+
+        Expanded(child:Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            color: BACKGROUND_COLOR,
+            borderRadius: BorderRadius.circular(10)
+          ),
+          child: TextField(
+            maxLength: isExtend ? 100 : null,
+            controller:chatGPTcontroller,
+            maxLines: isExtend ? 11 : 1,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              hintStyle: const TextStyle(color: Colors.grey,fontSize: 15),
+              hintText: "文章からカレンダーの予定を生成" + additionalHinttext,
+            ),
+            onTap: () {
+              setState(() {
+                isExtend = true;
+              });
+            },
+            onTapOutside: (event) {
+              setState(() {
+                
+
+              });
+            },
+            onChanged: (value) {
+              setState(() {
+                
+              });
+            },
+
+          ),
+        )),
+      
+      isExtend ? textFieldMenu() : manualRegisterButton()  
+
+      ])
     );
   }
+  
+  Widget manualRegisterButton(){
+    final scheduleForm = ref.watch(scheduleFormProvider);
+    return GestureDetector(
+          onTap: () {
+            scheduleForm.clearContents();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CalendarInputForm(
+                  target: DateTime.now(),
+                  setosute: setState,
+                ),
+              ),
+            );
+          },
+          child:const SizedBox(
+            width: 30,
+            child: Icon(Icons.add,color: Colors.white,)),
+        );
+  }
+
+  Widget textFieldMenu(){
+    bool isSendable = chatGPTcontroller.text.isNotEmpty && chatGPTcontroller.text.length > 10;
+
+    return Column(children:[
+
+      GestureDetector(
+          onTap: () {
+            setState(() {
+              isExtend = false;
+            });
+          },
+          child:const SizedBox(
+            width: 30,
+            height: 40,
+            child: Icon(Icons.cancel_outlined,color: Colors.white,)),
+      ),
+
+      GestureDetector(
+          onTap: () {
+            chatGPTcontroller.clear();
+          },
+          child:const SizedBox(
+            width: 30,
+            height: 40,
+            child: Icon(Icons.delete,color: Colors.white,)),
+      ),
+
+      GestureDetector(
+          onTap: () async{
+            List newScheduleList  = [];
+
+            if(chatGPTcontroller.text.isEmpty){
+              const  snackBar = SnackBar(content: Text('文字を入力してください。'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if(chatGPTcontroller.text.length < 10){
+              const  snackBar = SnackBar(content: Text('10文字以上で入力してください。'));   
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);          
+            } else {
+              newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
+              if(newScheduleList.isNotEmpty){
+                await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context);
+                chatGPTcontroller.clear();
+              }
+            }
+            
+            setState(() {
+              isExtend = false;
+            });
+          },
+          child: SizedBox(
+            width: 30,
+            height: 40,
+            child: Icon(Icons.check,
+            color: isSendable ? Colors.yellow : Colors.grey,)),
+      )
+
+    ]);
+  }
+
 }
 
 class CalendarInputForm extends ConsumerStatefulWidget {

@@ -134,7 +134,7 @@ class _OndemandPreviewState extends ConsumerState<OndemandPreview> {
             setState(() {
               viewMode = 1;
             });
-          }, colorButtonColor, " 授業詳細... ");
+          }, colorButtonColor, " 詳細情報... ");
         } else {
           return const SizedBox();
         }
