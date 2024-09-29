@@ -14,6 +14,7 @@ import flutter_local_notifications
 import flutter_timezone
 import isar_flutter_libs
 import mobile_scanner
+import package_info_plus
 import path_provider_foundation
 import rate_my_app
 import share_plus
@@ -31,6 +32,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FlutterTimezonePlugin.register(with: registry.registrar(forPlugin: "FlutterTimezonePlugin"))
   IsarFlutterLibsPlugin.register(with: registry.registrar(forPlugin: "IsarFlutterLibsPlugin"))
   MobileScannerPlugin.register(with: registry.registrar(forPlugin: "MobileScannerPlugin"))
+  FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
   SwiftRateMyAppPlugin.register(with: registry.registrar(forPlugin: "SwiftRateMyAppPlugin"))
   SharePlusMacosPlugin.register(with: registry.registrar(forPlugin: "SharePlusMacosPlugin"))

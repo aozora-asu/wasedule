@@ -1158,6 +1158,8 @@ PODS:
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
   - OrderedSet (6.0.3)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -1195,6 +1197,7 @@ DEPENDENCIES:
   - home_widget (from `.symlinks/plugins/home_widget/ios`)
   - isar_flutter_libs (from `.symlinks/plugins/isar_flutter_libs/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - rate_my_app (from `.symlinks/plugins/rate_my_app/darwin`)
   - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
@@ -1259,6 +1262,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/isar_flutter_libs/ios"
   mobile_scanner:
     :path: ".symlinks/plugins/mobile_scanner/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   rate_my_app:
@@ -1316,6 +1321,7 @@ SPEC CHECKSUMS:
   mobile_scanner: 38dcd8a49d7d485f632b7de65e4900010187aef2
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
+  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   rate_my_app: cd3e1c44d12f387482698ffaf6ea9bd669a69b94

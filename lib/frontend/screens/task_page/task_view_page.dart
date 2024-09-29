@@ -187,15 +187,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
                   },
                 ),
                 const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, 
-                      MaterialPageRoute(
-                        builder: (context)=> SettingsPage(initIndex: 3,isAppBar: true)));
-                  },
-                  child:const Icon(Icons.settings,color:Colors.grey,size:18),
-                ),
-                const SizedBox(width: 10)
               ]),
             ),
           ),

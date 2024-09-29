@@ -3,6 +3,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_h
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/app_start_settings.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/calendar_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/notify_setting.dart';
@@ -12,6 +13,9 @@ import 'package:flutter_calandar_app/frontend/screens/setting_page/common_settin
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -29,7 +33,7 @@ class SettingsPage extends StatelessWidget {
       appBar = CustomAppBar(backButton: true);
     }
 
-    return Scaffold(
+    return  Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: appBar,
       body: MyWidget(initIndex: initIndex ?? 0),
@@ -49,72 +53,136 @@ class MyWidget extends ConsumerStatefulWidget {
 
 class _MyWidgetState extends ConsumerState<MyWidget> {
   int _selectedIndex = 0;
+  PackageInfo? _packageInfo;
+
+  void init() async {
+    _packageInfo = await PackageInfo.fromPlatform();
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    init();
     _selectedIndex = widget.initIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: Row(
-        children: [
-          NavigationRail(
-            backgroundColor: FORGROUND_COLOR,
-            labelType: NavigationRailLabelType.selected,
-            selectedIconTheme: const IconThemeData(color: MAIN_COLOR),
-            selectedLabelTextStyle: const TextStyle(color: MAIN_COLOR),
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.calendar_today),
-                label: Text('カレンダー'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.notifications_active),
-                label: Text('通知'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.grid_on),
-                label: Text('時間割'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.check),
-                label: Text('課題'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.settings),
-                label: Text('共通設定'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.backup),
-                label: Text('バックアップ'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.info),
-                label: Text('その他'),
-              ),
-            ],
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-          ),
-          MainContents(index: _selectedIndex)
-        ],
-      ),
+
+    return SettingsList(
+      platform: DevicePlatform.iOS,
+      sections: [
+        SettingsSection(
+          title: const Text("アプリケーション設定"),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+                leading: const Icon(Icons.color_lens_sharp),
+                title: const Text("カラーテーマ"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.colortheme);
+                }),
+            SettingsTile.navigation(
+                leading: const Icon(Icons.notifications),
+                title: Text("通知設定"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.notification);
+                }),
+            SettingsTile.navigation(
+                leading: const Icon(Icons.smartphone),
+                title: Text("アプリ起動設定"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.initPage);
+                }),
+          ],
+        ),
+        SettingsSection(
+          title: const Text("ページ設定"),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+                leading: const Icon(Icons.check),
+                title: Text("課題"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.task);
+            }),
+            SettingsTile.navigation(
+                leading: const Icon(Icons.grid_on),
+                title: const Text("時間割"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.timetable);
+                }),
+            SettingsTile.navigation(
+                leading: const Icon(Icons.calendar_month),
+                title: Text("カレンダー"),
+                trailing: NavIcon(),
+                onPressed: (context) {
+                  movePage(SettingPages.calendar);
+                }),
+          ],
+        ),
+        SettingsSection(
+          title: Text("アカウント設定"),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+                leading:
+                    const Icon(Icons.backup),
+                title: Text("バックアップ"),
+                trailing: NavIcon(),
+                onPressed:  (context) {
+                  movePage(SettingPages.backUp);
+                }),
+          ],
+        ),
+
+        SettingsSection(
+          title: Text("その他"),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+                leading: const Icon(Icons.mail),
+                title: Text("お問い合わせ / その他"),
+                trailing: NavIcon(),
+                onPressed:  (context) {
+                  movePage(SettingPages.others);
+                }),
+            SettingsTile(
+                leading: const Icon(Icons.info),
+                title: Text("バージョン名"),
+                value: Text(_packageInfo?.version ?? "",
+                    style: Theme.of(context).textTheme.bodyLarge))
+          ],
+        )
+      ],
+    );
+  }
+
+  void movePage(SettingPages targetPage){
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MainContents(settingPages: targetPage,)),
     );
   }
 }
 
+enum SettingPages{
+  colortheme,
+  notification,
+  initPage,
+  task,
+  timetable,
+  calendar,
+  backUp,
+  others,
+}
+
 class MainContents extends ConsumerStatefulWidget {
-  final int index;
-  const MainContents({super.key, required this.index});
+  final SettingPages settingPages;
+  const MainContents({super.key, required this.settingPages});
   @override
   ConsumerState<MainContents> createState() => _MainContentsState();
 }
@@ -170,58 +238,61 @@ class _MainContentsState extends ConsumerState<MainContents> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    PreferredSizeWidget appBar = CustomAppBar(backButton: true);
 
-    switch (widget.index) {
-      case 0:
-        return Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: CalendarSettingPage(
+    switch (widget.settingPages) {
+
+      case SettingPages.calendar:
+        return Scaffold(
+          appBar: appBar, 
+          body: CalendarSettingPage(
             buildConfig: _buildConfig, 
             nodeText1: _nodeText1,
             controller: controller,
             updateConfigInfo: updateConfigInfo
-          ),
-        ));
+          ));
 
-      case 1:
-        return Expanded(
-          child: Padding(
+      case SettingPages.notification:
+        return Scaffold(
+          appBar: appBar, 
+            body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: NotifySettingPage(
             buildConfig: _buildConfig,
             controller: controller),
         ));
 
-      case 2:
-        return const Expanded(
-            child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-          child: TimetableSettingPage(),
-        ));
+      case SettingPages.timetable:
+        return Scaffold(
+          appBar: appBar, 
+            body:const TimetableSettingPage(),
+        );
 
-      case 3:
-        return const Expanded(
-            child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-          child: TaskSettingPage(),
-        ));
+      case SettingPages.task:
+        return Scaffold(
+          appBar: appBar, 
+            body:const TaskSettingPage());
 
-      case 4:
-        return const Expanded(
-            child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-          child: CommonSettingPage(),
-        ));
-      
-      case 5:
-        return const Expanded(
-          child: DataBackupPage()
+      case SettingPages.colortheme:
+        return Scaffold(
+          appBar: appBar, 
+            body:const CommonSettingPage());
+
+      case SettingPages.initPage:
+        return Scaffold(
+          appBar: appBar, 
+            body:const AppStartSettingPage());
+
+      case SettingPages.backUp:
+        return Scaffold(
+          appBar: appBar, 
+            body:const DataBackupPage()
         );
       
       default:
-        return Expanded(
-          child: SnsLinkPage(showAppBar: false)
+        return Scaffold(
+          appBar: appBar, 
+            body: SnsLinkPage(showAppBar: false)
         );
     }
   }
@@ -254,5 +325,16 @@ class _MainContentsState extends ConsumerState<MainContents> {
         setState(() {});
       }
     }
+  }
+}
+
+class NavIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      CupertinoIcons.forward,
+      color: CupertinoColors.systemGrey,
+      size: 20,
+    );
   }
 }

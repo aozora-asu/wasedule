@@ -426,16 +426,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               (){
                 widget.movePage(2);
               }),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(context, 
-                    MaterialPageRoute(
-                      builder: (context)=> SettingsPage(initIndex: 0,isAppBar: true)));
-                },
-                child:const Icon(Icons.settings,color:Colors.grey,size:18),
-              ),
-              const SizedBox(width: 10)
+              const Spacer()
         ])),
       ])
     );

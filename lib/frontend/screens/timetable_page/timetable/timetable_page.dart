@@ -417,7 +417,7 @@ Widget pageHeader(){
         const Spacer(),
         doNotContainScreenShot(springFallQuarterButton()),
         doNotContainScreenShot(summerWinterQuarterButton()),
-        const SizedBox(width: 40),
+        const SizedBox(width: 7.5),
       ]),
 
         doNotContainScreenShot(
@@ -436,15 +436,6 @@ Widget pageHeader(){
               widget.moveToMoodlePage(4);
             }),
             const Spacer(),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(
-                    builder: (context)=> SettingsPage(initIndex: 2,isAppBar: true)));
-              },
-              child:const Icon(Icons.settings,color:Colors.grey,size:18),
-            ),
-            const SizedBox(width: 10)
           ])
         ),
       

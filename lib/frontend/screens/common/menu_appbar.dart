@@ -93,13 +93,13 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
         actions:[
           timeLineButton(Colors.white, context),
           InkWell(
-            child: const Icon(Icons.notifications_outlined,
+            child: const Icon(Icons.settings,
                 color: Colors.white),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SettingsPage(initIndex: 1)),
+                    builder: (context) => SettingsPage()),
               );
             },
           ),

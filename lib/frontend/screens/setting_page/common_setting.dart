@@ -23,7 +23,7 @@ class _CommonSettingPageState extends ConsumerState<CommonSettingPage>{
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
-            '  共通設定…',
+            '  テーマ設定…',
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold),
@@ -37,28 +37,8 @@ class _CommonSettingPageState extends ConsumerState<CommonSettingPage>{
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                   const Text(
-                      '起動後表示画面',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BLUEGREY),
-                    ),
-                    const Divider(
-                      height: 2,
-                      thickness: 2,
-                      color: BLUEGREY,
-                    ),
-                    const SizedBox(height: 2),
-                    initScreenSettings(),
-                    const SizedBox(height: 5),
-                  ])),
-          const SizedBox(height: 5),
           Container(
               decoration: roundedBoxdecoration(),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -82,6 +62,8 @@ class _CommonSettingPageState extends ConsumerState<CommonSettingPage>{
                       style: TextStyle(color: Colors.grey),
                     )
                   ])),
+           ])
+          )
         ]);
   }
 

@@ -68,16 +68,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
               )
             ),
             const Spacer(),
-            InkWell(
-              child: Icon(Icons.notifications_outlined, color:contentColor),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage(initIndex:1)),
-                );
-              },
-            ),
-            popupMenuButton(contentColor)
+            
           ]),
          leading: switchLeading(context),
           shape: const RoundedRectangleBorder(

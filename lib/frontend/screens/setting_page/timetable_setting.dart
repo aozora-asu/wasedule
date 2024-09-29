@@ -5,6 +5,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:settings_ui/settings_ui.dart';
 
 class TimetableSettingPage extends ConsumerStatefulWidget{
   const TimetableSettingPage({super.key});
@@ -19,110 +20,69 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            '  時間割設定…',
-            style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 5),
-          Container(
-              decoration: roundedBoxdecoration(),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '所属学部',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BLUEGREY),
-                    ),
-                    const Divider(
-                      height: 2,
-                      thickness: 2,
-                      color: BLUEGREY,
-                    ),
-                    const SizedBox(height: 2),
-                    userDepartmentSettingPreview(),
-                    const SizedBox(height: 4),
-                    buttonModel(
-                      ()async{
-                        await showUserDepartmentSettingDialog(context);
-                        setState(() {});
-                      },
-                      BLUEGREY,
-                      "変更"),
-                    const SizedBox(height: 4),
-                  ])),
+    bool isOndemandTableSide = SharepreferenceHandler().getValue(SharepreferenceKeys.isOndemandTableSide);
+    
+    return SettingsList(
+        platform: DevicePlatform.iOS,
+        sections: [
+          SettingsSection(
+              title: Text("所属学部"),
+              tiles: <SettingsTile>[
+                SettingsTile(
+                  title: Text(userDepartmentSettingPreview(),
+                                style:const TextStyle(color:Colors.blue)),
+                  trailing: const Icon(CupertinoIcons.chevron_down),
+                  onPressed: (context) {
+                    showUserDepartmentSettingDialog(context);
+                  },
+                ),
+              ]),
+          SettingsSection(
+              title: Text("時間割表示の設定"),
+              tiles: <SettingsTile>[
+                SettingsTile(
+                  title: Text("土曜日の表示"),
+                  trailing: showSaturdaySwitch(),
+                ),
+                SettingsTile(
+                  title: Text("時間割の最小縦マス数"),
+                  trailing: timetableColumnLengthSettings(),
+                ),
+              ]),
+          SettingsSection(
+            title: Text("OD科目の表示位置"),
+            tiles: [
+              SettingsTile(
+                onPressed: (context) async{
+                  bool newValue = isOndemandTableSide ? false : true;
+                  SharepreferenceHandler().setValue(
+                      SharepreferenceKeys.isOndemandTableSide,newValue);
+                  setState(() {});
+                },
+                title: Text("時間割の下"),
+                trailing: Icon(
+                  Icons.check_rounded,color:isOndemandTableSide ? 
+                     Colors.transparent : Colors.blue)
+              ),
+              SettingsTile(
+                onPressed: (context) async{
+                  bool newValue = isOndemandTableSide ? false : true;
+                  SharepreferenceHandler().setValue(
+                      SharepreferenceKeys.isOndemandTableSide,newValue);
+                  setState(() {});
+                },
+                title: Text("時間割の横"),
+                trailing: Icon(
+                  Icons.check_rounded,color:isOndemandTableSide ? 
+                    Colors.blue : Colors.transparent)
+              ),
+          ])
+        ],
+      );
 
-          const SizedBox(height: 5),
-          Container(
-              decoration: roundedBoxdecoration(),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '時間割表示の設定',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BLUEGREY),
-                    ),
-                    const Divider(
-                      height: 2,
-                      thickness: 2,
-                      color: BLUEGREY,
-                    ),
-                    const SizedBox(height: 2),
-                    showSaturdaySwitch(),
-                    Divider(color:BACKGROUND_COLOR),
-                    ondemandPlaceSwitch(),
-                    Divider(color:BACKGROUND_COLOR),
-                    timetableColumnLengthSettings(),
-                    const SizedBox(height: 2),
-                  ])),
-
-          const SizedBox(height: 5),
-          Container(
-              decoration: roundedBoxdecoration(),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
-              margin: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '出欠記録の設定',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BLUEGREY),
-                    ),
-                    const Divider(
-                      height: 2,
-                      thickness: 2,
-                      color: BLUEGREY,
-                    ),
-                    const SizedBox(height: 2),
-                    attendDialogSettingSwitch(),
-                    const SizedBox(height: 2),
-                  ])),
-
-        ]);
   }
 
-  Widget userDepartmentSettingPreview(){
+  String userDepartmentSettingPreview(){
     Department? userDepartment = 
       Department.byValue(SharepreferenceHandler().getValue(SharepreferenceKeys.userDepartment) ?? "設定なし");
     String departmentString ="設定なし";
@@ -130,18 +90,13 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
     if(userDepartment != null){
       departmentString = userDepartment.text;}
 
-    return Text(
-      departmentString,
-      textAlign: TextAlign.center,
-      style:const TextStyle(fontSize:25,fontWeight: FontWeight.bold));
+    return  departmentString;
   }
 
   Widget attendDialogSettingSwitch() {
-    return Row(children: [
-      const Text("出欠記録画面の自動表示"),
-      const Spacer(),
+    return 
       CupertinoSwitch(
-        activeColor: PALE_MAIN_COLOR,
+        activeColor: Colors.blue,
         value: SharepreferenceHandler()
             .getValue(SharepreferenceKeys.showAttendDialogAutomatically),
         onChanged: (value) async {
@@ -149,16 +104,13 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
               SharepreferenceKeys.showAttendDialogAutomatically, value);
           setState(() {});
         },
-      )
-    ]);
+      );
   }
 
   Widget showSaturdaySwitch() {
-    return Row(children: [
-      const Text("土曜日の表示"),
-      const Spacer(),
+    return
       CupertinoSwitch(
-        activeColor: PALE_MAIN_COLOR,
+        activeColor: Colors.blue,
         value: SharepreferenceHandler()
             .getValue(SharepreferenceKeys.isShowSaturday),
         onChanged: (value) async {
@@ -166,29 +118,25 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
               SharepreferenceKeys.isShowSaturday, value);
           setState(() {});
         },
-      )
-    ]);
+      );
   }
 
   Widget ondemandPlaceSwitch() {
     bool isOndemandTableSide = SharepreferenceHandler()
             .getValue(SharepreferenceKeys.isOndemandTableSide);
     
-    return Row(children: [
-      const Text("OD科目の表示位置"),
-      const Spacer(),
+    return 
       GestureDetector(
         child: Container(
-          decoration: BoxDecoration(
-            color: BACKGROUND_COLOR,
-            border: Border.all(),
-            borderRadius: BorderRadius.circular(5)
-          ),
           padding:const EdgeInsets.symmetric(vertical: 3,horizontal: 3),
           child:
             Row(children:[
-              Text(isOndemandTableSide ? "時間割の横" : "時間割の下"),
-              const Icon(Icons.arrow_drop_down,size: 20,)
+              Text(isOndemandTableSide ? "時間割の横" : "時間割の下",
+                style:const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 15
+                )),
+              const Icon(Icons.arrow_drop_down,size: 20)
             ])
         ),
         onTap: () async {
@@ -197,31 +145,23 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
               SharepreferenceKeys.isOndemandTableSide,newValue);
           setState(() {});
         },
-      )
-    ]);
+      );
   }
 
   Widget timetableColumnLengthSettings() {
     tableColumnLength = SharepreferenceHandler().getValue(SharepreferenceKeys.tableColumnLength);
-    return Row(children:[
-      const Text("時間割の最小縦マス数"),
-      const Spacer(),
+    return 
       SizedBox(
         width: 50,
-        child: DropdownButtonFormField(
-          value: tableColumnLength,
-          decoration: const InputDecoration.collapsed(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: "",
-              border: OutlineInputBorder()),
-          items: const [
-            DropdownMenuItem(value: 4, child: Text(" 4")),
-            DropdownMenuItem(value: 5, child: Text(" 5")),
-            DropdownMenuItem(value: 6, child: Text(" 6")),
-            DropdownMenuItem(value: 7, child: Text(" 7")),
+        child: cupertinoLikeDropDownListModel(
+          const [
+            DropdownMenuItem(value: 4, child: Text(" 4 ")),
+            DropdownMenuItem(value: 5, child: Text(" 5 ")),
+            DropdownMenuItem(value: 6, child: Text(" 6 ")),
+            DropdownMenuItem(value: 7, child: Text(" 7 ")),
           ],
-          onChanged: (value) async {
+          tableColumnLength,
+          (value) async {
             SharepreferenceHandler()
                 .setValue(SharepreferenceKeys.tableColumnLength, value!);
             setState(() {
@@ -229,8 +169,7 @@ class _TimetableSettingPageState extends ConsumerState<TimetableSettingPage>{
             });
           },
         ),
-      ),
-    ]);
+      );
   }
 
 }
