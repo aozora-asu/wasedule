@@ -113,17 +113,8 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 onPressed:  (context) {
                   movePage(SettingPages.backUp);
                 }),
-            SettingsTile.navigation(
-                leading:
-                    const Icon(CupertinoIcons.link),
-                title: Text("moodle連携"),
-                trailing: NavIcon(),
-                onPressed:  (context) {
-                  movePage(SettingPages.moodleLink);
-                }),
           ],
         ),
-
 
         SettingsSection(
           title: const Text("ページ設定"),

@@ -1,4 +1,5 @@
 import 'package:expandable/expandable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -67,11 +68,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
               interactive: true,
               thickness: 5,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: bottomSpace / 2),
+                  padding: EdgeInsets.only(bottom: bottomSpace),
                   child: ConstrainedBox(
                       constraints: BoxConstraints(
-                          minHeight: viewportConstraints.maxHeight,
-                          maxHeight: viewportConstraints.maxHeight),
+                          minHeight: SizeConfig.blockSizeVertical! *80,
+                          maxHeight: SizeConfig.blockSizeVertical! *80),
                       child: Center(
                           child: SingleChildScrollView(
                               child: Padding(
@@ -83,11 +84,21 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text("時間割に新規追加...",
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
+
+                                        GestureDetector(
+                                          onTap: (){
+                                            Navigator.pop(context);
+                                          },
+                                          child: const SizedBox(
+                                            height: 30,
+                                            child: Row(children: [
+                                              Spacer(),
+                                              Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
+                                              Spacer(),
+                                            ]),
+                                          ),
+                                        ),
+
                                         SyllabusSearchDialog(
                                             radiusType: 1,
                                             gakki: widget.semester,

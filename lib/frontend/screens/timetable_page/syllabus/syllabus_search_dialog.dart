@@ -249,7 +249,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           ),
           const Divider(),
           SizedBox(
-              height: SizeConfig.blockSizeVertical! * 30,
+              height: SizeConfig.blockSizeVertical! * 45,
               child: searchResult())
         ],
       ),

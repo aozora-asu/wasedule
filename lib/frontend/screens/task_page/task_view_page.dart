@@ -307,36 +307,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
     }
   }
 
-  Widget foldStateSwitch() {
-    final taskData = ref.watch(taskDataProvider);
-    switch (taskData.foldState) {
-      case 0:
-        return simpleSmallButton(
-            "畳む",
-            () {
-              setState(() {
-                taskData.foldState = 1;
-              });
-            });
-      case 1:
-        return simpleSmallButton(
-            "展開",
-            () {
-              setState(() {
-                taskData.foldState = 2;
-              });
-            });
-      default:
-        return simpleSmallButton(
-            "畳む",
-            () {
-              setState(() {
-                taskData.foldState = 1;
-              });
-            });
-    }
-  }
-
   Widget sortSwitch() {
     final taskData = ref.watch(taskDataProvider);
     switch (taskData.taskPageIndex) {

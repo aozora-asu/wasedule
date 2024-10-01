@@ -45,7 +45,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecoration(radiusType: 3,backgroundColor: widget.backgroundColor),
+            decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: widget.backgroundColor),
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
             margin: const EdgeInsets.symmetric(horizontal:5),
             child: Column(

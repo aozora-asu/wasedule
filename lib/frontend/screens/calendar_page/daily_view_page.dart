@@ -665,6 +665,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   target: classData,
                   setTimetableState: setState,
                   taskList: const [],
+                  isOndemand: false,
                 );
               });
         },

@@ -93,8 +93,8 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
                 return TaskInputForm(setosute: widget.setosute);
               });
         },
-        foregroundColor: Colors.white,
-        backgroundColor: PALE_MAIN_COLOR,
+        foregroundColor: FORGROUND_COLOR,
+        backgroundColor: BLUEGREY,
         child: const Icon(Icons.add),
       ),
     );

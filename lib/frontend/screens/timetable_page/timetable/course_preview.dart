@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
@@ -18,11 +19,15 @@ class CoursePreview extends ConsumerStatefulWidget {
   late MyCourse target;
   late StateSetter setTimetableState;
   late List<Map<String, dynamic>> taskList;
+  late bool isOndemand;
+
   CoursePreview(
       {super.key,
       required this.target,
       required this.setTimetableState,
-      required this.taskList});
+      required this.taskList,
+      required this.isOndemand,
+      });
   @override
   _CoursePreviewState createState() => _CoursePreviewState();
 }
@@ -34,7 +39,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController classificationController = TextEditingController();
   late int viewMode;
   late bool searchMode;
-  Widget space = const SizedBox(height: 7);
+
   Widget dividerModel = const Divider(height: 2);
   TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 17,fontWeight: FontWeight.normal);
   late Color colorButtonColor;
@@ -55,11 +60,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   @override
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
-    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 5);
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 0);
  
-    return GestureDetector(onTap: () {
-      Navigator.pop(context);
-    }, child: LayoutBuilder(
+    return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
           physics: viewMode == 1
@@ -70,44 +73,51 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               padding: EdgeInsets.only(bottom: bottomSpace / 2),
               child: ConstrainedBox(
                   constraints: BoxConstraints(
-                      minHeight: viewportConstraints.maxHeight,
-                      maxHeight: viewportConstraints.maxHeight),
-                  child: Center(
-                      child: SingleChildScrollView(
+                      minHeight: SizeConfig.blockSizeVertical! *80,
+                      maxHeight:  SizeConfig.blockSizeVertical! *80),
+                  child:SingleChildScrollView(
                           physics: viewMode == 1
                               ? const NeverScrollableScrollPhysics()
                               : const ScrollPhysics(),
                           child: Padding(
                               padding: padding,
                               child: Container(
+                                
                                 decoration: roundedBoxdecoration(
                                   backgroundColor: FORGROUND_COLOR,
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal:2),
                                 child:Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.pop(context);
+                                      },
+                                      child: const SizedBox(
+                                        height: 30,
+                                        child: Row(children: [
+                                          Spacer(),
+                                          Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
+                                          Spacer(),
+                                        ]),
+                                      ),
+                                    ),
+
                                     switchSearchMode(),
                                     relatedTasks(),
-                                    space,
-                                    Row(children:[
-                                    Text(" 出欠  ",
-                                        style: titleStyle)]),
-                                    AttendMenuPanel(
-                                        courseData: widget.target,
-                                        setTimetableState:
-                                            widget.setTimetableState,
-                                        backgroundColor: BACKGROUND_COLOR,),
-                                    const SizedBox(height:7)
+
+                                    if(!widget.isOndemand)
+                                      attendanceRecord(),
                                   ])
                                 )
                               )
                             )
                           )
                         )
-                      )
+                      
                     );
-      })
+      }
     );
   }
 
@@ -115,10 +125,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     Widget header = GestureDetector(
         onTap: () {},
         child: Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           margin: const EdgeInsets.symmetric(horizontal: 0),
-          decoration: roundedBoxdecoration(radiusType: 1, shadow: true),
+          decoration: roundedBoxdecoration(radiusType: 1),
           child: Row(children: [
             const Icon(Icons.search, color: Colors.blue),
             const Text(" シラバス検索",
@@ -129,23 +138,29 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ));
 
     if (searchMode) {
-      return Stack(children: [
+      return 
         Column(children: [
           header,
-          space,
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: SyllabusSearchDialog(
-                  radiusType: 2,
-                  gakki: widget.target.semester,
-                  youbi: widget.target.weekday,
-                  jigen: widget.target.period,
-                  gakubu: Department.byValue(SharepreferenceHandler()
-                      .getValue(SharepreferenceKeys.userDepartment)),
-                  setTimetableState: widget.setTimetableState))
-        ]),
-        header
-      ]);
+          if(!widget.isOndemand)
+            SyllabusSearchDialog(
+                radiusType: 2,
+                gakki: widget.target.semester,
+                youbi: widget.target.weekday,
+                jigen: widget.target.period,
+                gakubu: Department.byValue(SharepreferenceHandler()
+                    .getValue(SharepreferenceKeys.userDepartment)),
+                setTimetableState: widget.setTimetableState)
+          else
+            SyllabusSearchDialog(
+                radiusType: 2,
+                gakki: widget.target.semester,
+                youbi: DayOfWeek.anotherday,
+                jigen: Lesson.ondemand,
+                gakubu: Department.byValue(SharepreferenceHandler()
+                    .getValue(SharepreferenceKeys.userDepartment)),
+                setTimetableState: widget.setTimetableState)
+        ]);
+
     } else {
       return courseInfo();
     }
@@ -153,26 +168,49 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget courseInfo() {
     MyCourse target = widget.target;
-    int id;
-
     Widget header = Container(
-      decoration: dialogHeader(),
       margin: const EdgeInsets.symmetric(horizontal: 0),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 20.0,
-            (value) async {
-          id = target.id!;
-          //＠ここに授業名変更関数を登録！！！
-          await MyCourse.updateCourseName(id, value);
-          widget.setTimetableState(() {});
-        }),
+
+        const SizedBox(width: 5),
+
+        colorSettingButton(
+          context,
+          setState,
+          colorButtonColor,
+          (newColor) async{
+            int id = widget.target.id!;
+            await MyCourse.updateColor(id,newColor);
+            widget.setTimetableState(() {});
+            colorButtonColor = newColor.toColor()!;
+            setState(() {});
+        }), 
+
+        const SizedBox(width: 5),
+
+        if(widget.isOndemand)
+          const Text("OD/その他",
+             style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold))
+        else
+          Text("${target.weekday!.text}曜日 ${target.period!.period}限",
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold)),
+
+        const SizedBox(width: 10),
+
+        Expanded(
+            child: Text(
+          "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
+          style: const TextStyle(fontSize: null, color: Colors.grey),
+          overflow: TextOverflow.clip,
+        )),
+
+        searchModeSwitch(),
         descriptionModeSwitch(),
-        if (viewMode == 0)
-          GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(Icons.cancel_rounded,
-                  size: 20, color: Colors.red)),
         const SizedBox(width: 5)
       ]),
     );
@@ -180,65 +218,19 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
     return GestureDetector(
         onTap: () {},
-        child: Stack(
-          alignment:const Alignment(0, -1),
-          children: [
+        child: 
           Column(children: [
             header,
-            space,
-            Row(children: [
-              Text(
-                " 概要",style:titleStyle,
-              ),
-              const Spacer(),
-              colorSettingButton(
-                context,
-                setState,
-                colorButtonColor,
-                (newColor) async{
-                  int id = widget.target.id!;
-                  await MyCourse.updateColor(id,newColor);
-                  widget.setTimetableState(() {});
-                  colorButtonColor = newColor.toColor()!;
-                  setState(() {});
-                })
-            ]),
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Padding(
                     padding: const EdgeInsets.only(
                         left: 0, right: 0, top: 5, bottom: 10),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          switchViewMode(dividerModel, target),
-                          const SizedBox(height: 5),
-                          Row(children: [
-                            viewModeSwitch(),
-                            searchModeSwitch(),
-                            const Spacer(),
-                            GestureDetector(
-                                child: const Icon(Icons.delete,
-                                    color: Colors.grey),
-                                onTap: () async {
-                                  id = target.id!;
-                                  await showConfirmDeleteDialog(
-                                    context,
-                                    target.courseName,
-                                    ()async{ 
-                                      //＠ここに削除実行関数！！！
-                                      await MyCourse.deleteMyCourse(id);
-                                      widget.setTimetableState(() {});
-                                      Navigator.pop(context);
-                                    });
-                                }),
-                            SizedBox(
-                                width: SizeConfig.blockSizeHorizontal! * 1),
-                          ]),
-                        ]))),
-          ]),
-          header
-        ]));
+                    child: switchViewMode(dividerModel, target),          
+              )
+            )
+          ])
+        );
   }
 
 
@@ -265,7 +257,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             color:FORGROUND_COLOR,
             border: const Border(bottom: BorderSide(color: Colors.grey))
           ),
-          height: SizeConfig.blockSizeVertical! * 50,
+          height: SizeConfig.blockSizeVertical! * 70,
           width: SizeConfig.blockSizeHorizontal! * 100,
           child: SyllabusDescriptonView(
               showHeader: false,
@@ -284,11 +276,13 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     MyCourse target = widget.target;
     if (target.syllabusID != null && target.syllabusID != "") {
       if (viewMode == 0) {
-        return buttonModel(() {
+        return TextButton(
+        onPressed: () {
           setState(() {
             viewMode = 1;
           });
-        }, colorButtonColor, " 詳細情報... ");
+        },
+        child:const Text(" 授業の詳細... "));
       } else {
         return const SizedBox();
       }
@@ -299,11 +293,15 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget searchModeSwitch() {
     if (!searchMode && viewMode == 0) {
-      return buttonModel(() {
+      return GestureDetector(
+        onTap:() {
         setState(() {
           searchMode = true;
         });
-      }, Colors.blueAccent, " シラバス検索 ");
+      },
+      child:const Icon(
+          CupertinoIcons.search,color: Colors.blue,size: 30),
+      );
     } else {
       return const SizedBox();
     }
@@ -316,7 +314,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         setState(() {
           searchMode = false;
         });
-      }, colorButtonColor, " もどる ");
+      }, Colors.redAccent, " もどる ");
     } else if (target.syllabusID != null && target.syllabusID != "") {
       if (viewMode == 0) {
         return const SizedBox();
@@ -325,7 +323,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           setState(() {
             viewMode = 0;
           });
-        }, colorButtonColor, " もどる ");
+        }, Colors.redAccent, " もどる ");
       }
     } else {
       return const SizedBox();
@@ -338,50 +336,64 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       credit != null ? credit.toString() : "？";
     String criteria = 
       target.criteria ?? "？";
+    Color iconColor = BLUEGREY;
 
     return Column(children: [
+      
+      const SizedBox(height: 10),
+    
       containerModel(
         Row(children: [
           SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          Icon(Icons.access_time, color: colorButtonColor),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          Text(
-            "${target.weekday!.text}曜日 ${target.period!.period}限",
-            style: const TextStyle(
-              fontSize: 17,
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-              child: Text(
-            "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
-            style: const TextStyle(fontSize: null, color: Colors.grey),
-            overflow: TextOverflow.clip,
-          )),
-        ])
+          textFieldModel("授業名を入力…", classNameController, FontWeight.normal, 20.0,
+          (value) async {
+            int id = target.id!;
+            //＠ここに授業名変更関数を登録！！！
+            await MyCourse.updateCourseName(id, value);
+            widget.setTimetableState(() {});
+          }),
+        ]),
       ),
 
-      containerModel(
-        Row(children: [
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-          Icon(Icons.group, color: colorButtonColor),
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
-          classRoomSelector(context, target)
-        ])
-      ),
+      if(!widget.isOndemand)
+        containerModel(
+          Row(children: [
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
+            Icon(Icons.location_on, color: iconColor),
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+            classRoomSelector(context, target)
+          ])
+        ),
 
       containerModel(
         Row(children: [
           SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          Icon(Icons.sticky_note_2, color: colorButtonColor),
+          Icon(Icons.sticky_note_2, color: iconColor),
           SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           textFieldModel("メモを入力…", memoController, FontWeight.normal, null,
               (value) async {
             int id = target.id!;
-            //＠ここに教室のアップデート関数！！！
+            //＠ここにメモのアップデート関数！！！
             await MyCourse.updateMemo(id, value);
             widget.setTimetableState(() {});
           })
+        ])
+      ),
+      
+      containerModel(
+        Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Icon(Icons.class_, color: iconColor),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+          textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
+            (value) async {
+              int id = target.id!;
+              MyCourse newMyCourse = widget.target;
+              newMyCourse.subjectClassification = classificationController.text;
+              await MyCourse.updateMyCourse(id,newMyCourse);
+              widget.setTimetableState(() {});
+            }
+          )
         ])
       ),
 
@@ -392,29 +404,25 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:18)),
             SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          //   const Text("評価基準",style: TextStyle(color:Colors.grey,fontSize: 17)),
-          //   SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          //   Expanded(
-          //     child:Text(criteria,style:const TextStyle(fontSize: 17)))
+            const Spacer(),
+            viewModeSwitch(),
+            GestureDetector(
+              child: const Icon(Icons.delete,
+                  color: Colors.grey),
+              onTap: () async {
+                int id = target.id!;
+                await showConfirmDeleteDialog(
+                  context,
+                  target.courseName,
+                  ()async{ 
+                    //＠ここに削除実行関数！！！
+                    await MyCourse.deleteMyCourse(id);
+                    widget.setTimetableState(() {});
+                    Navigator.pop(context);
+                });
+            }),
           ])
       ),
-      
-      containerModel(
-        Row(children: [
-          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          Icon(Icons.class_, color: colorButtonColor),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-          textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
-              (value) async {
-                int id = target.id!;
-                MyCourse newMyCourse = widget.target;
-                newMyCourse.subjectClassification = classificationController.text;
-                await MyCourse.updateMyCourse(id,newMyCourse);
-                widget.setTimetableState(() {});
-          })
-        ])
-      ),
-    const SizedBox(height: 2),
 
     ]);
   }
@@ -515,15 +523,12 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     return Expanded(
         child: Material(
         color: Colors.transparent,
-      child: TextField(
+      child: CupertinoTextField(
           controller: controller,
           maxLines: null,
+          textInputAction: TextInputAction.done,
           keyboardType: TextInputType.multiline,
-          decoration: InputDecoration.collapsed(
-              fillColor: Colors.transparent,
-              filled: true,
-              border: InputBorder.none,
-              hintText: hintText),
+          placeholder: hintText,
           style: TextStyle(
               fontSize: fontSize, color: Colors.black, fontWeight: weight),
           onChanged: onChanged),
@@ -533,10 +538,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget relatedTasks() {
     if (widget.taskList.isNotEmpty) {
       return Column(children: [
-        space,
+        const Divider(),
         Row(
           children: [
-            const SizedBox(width: 5 ),
+            const SizedBox(width: 5),
             Text("課題",
                 style: titleStyle),
             const Spacer(),
@@ -546,7 +551,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ),
         Container(
             decoration: roundedBoxdecoration(radiusType: 2),
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.symmetric(horizontal: 5),
             child: Column(children: [
               const SizedBox(height: 2),
@@ -623,6 +628,26 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                       ])))
         ]));
   }
+
+  Widget attendanceRecord(){
+    return Column(children:[
+      const Divider(),
+      Row(children:[
+      Text(" 出欠  ",
+          style: titleStyle)]),
+      const SizedBox(height:7),
+      Padding(
+        padding:const EdgeInsets.symmetric(horizontal: 10),
+        child:AttendMenuPanel(
+          courseData: widget.target,
+          setTimetableState:
+              widget.setTimetableState,
+          backgroundColor: BACKGROUND_COLOR
+        )
+      ),
+    ]);
+  }
+
 }
 
   Widget colorSettingButton(BuildContext context,StateSetter setState,Color currentColor,Function(String) onChanged){
@@ -638,9 +663,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         }
       },
       child:Container(
-        width: 23,
-        height: 23,
-        margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+        width: 24,
+        height: 24,
+        margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 5),
         decoration:BoxDecoration(
           color:Colors.white,
           border: Border.all(
@@ -689,7 +714,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
   Widget containerModel(Widget child){
     return Container(
-      decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+      decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: Colors.transparent),
       margin:const EdgeInsets.symmetric(vertical: 1),
       padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
       child: child,

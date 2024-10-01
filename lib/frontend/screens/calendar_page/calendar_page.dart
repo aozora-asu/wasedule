@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
@@ -520,7 +521,7 @@ class _CalendarState extends ConsumerState<Calendar> {
     return FloatingActionButton(
         heroTag: "calendar_2",
         backgroundColor: MAIN_COLOR,
-        child: Icon(Icons.ios_share, color: FORGROUND_COLOR),
+        child: Icon(CupertinoIcons.camera, color: FORGROUND_COLOR),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
