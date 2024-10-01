@@ -554,7 +554,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                       Row(children: [
                         Transform.scale(
                           scale: 1.1,
-                          child: CupertinoCheckbox(
+                          child: 
+                          CupertinoCheckbox(
                             value: isChosen,
                             onChanged: (value) {
                               var chosenTaskIdList =

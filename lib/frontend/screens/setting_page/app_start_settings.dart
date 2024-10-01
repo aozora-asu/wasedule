@@ -25,7 +25,7 @@ class _AppStartSettingPageState extends ConsumerState<AppStartSettingPage>{
           SettingsSection(
             title:Text("起動後表示画面"),
               tiles: <SettingsTile>[
-                SettingsTile(
+                SettingsTile.navigation(
                   title: initScreenSettings(),
                   description: Text("アプリを起動して最初に表示される画面を設定します。"),
                 ),

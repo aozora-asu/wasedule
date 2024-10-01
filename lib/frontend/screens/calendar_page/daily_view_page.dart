@@ -348,7 +348,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             borderRadius: BorderRadius.circular(12.0),
           ),
           child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 5),
             Row(children: [
               const SizedBox(
@@ -358,11 +358,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   onTap: () => switchToEditMode(targetKey, index),
                   child: dateTimeData),
               const SizedBox(width: 15),
-              GestureDetector(
+              Expanded(
+                child:GestureDetector(
                   onTap: () => switchToEditMode(targetKey, index),
                   child: tagChip(
-                      targetDayData.elementAt(index)["tagID"] ?? "", ref)),
-              const Spacer(),
+                      targetDayData.elementAt(index)["tagID"] ?? "", ref))
+              ),
             ]),
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               GestureDetector(

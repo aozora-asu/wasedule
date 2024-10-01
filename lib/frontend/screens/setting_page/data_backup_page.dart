@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/colors.dart';
 import '../../assist_files/size_config.dart';
@@ -114,7 +115,13 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
 
   Widget backUpUploadButton() {
     return buttonModelWithChild(() async {
-      String? id = await backup();
+      String? id;
+
+      if (context.mounted) {
+        LoadingDialog.show(context); // 表示
+        id = await backup();
+        LoadingDialog.hide(context);
+      }
 
       if (id == null) {
         showBackupFailDialogue("バックアップが失敗しました。");
@@ -284,7 +291,14 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
               String id = idController.text;
               if (id.isNotEmpty) {
                 //ここにバックアップの実行処理を書き込む（ダウンロード）
-                bool isBackupSuccess = await recoveryBackup(id);
+                bool isBackupSuccess = false;
+
+                if (context.mounted) {
+                  LoadingDialog.show(context); // 表示
+                  isBackupSuccess = await recoveryBackup(id);
+                  LoadingDialog.hide(context);
+                }
+
                 Navigator.pop(context);
                 if (isBackupSuccess) {
                   showDownloadDoneDialogue("データが復元されました！");

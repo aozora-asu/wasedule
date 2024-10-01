@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/calendarpage_config_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class CalendarSettingPage extends ConsumerStatefulWidget{

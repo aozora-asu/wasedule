@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/gpt_handler/calendar_gpt_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/chatGPT_result_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -144,7 +146,7 @@ class _AddEventButtonState extends ConsumerState {
   Widget build(BuildContext context) {
     String additionalHinttext = "";
     if(isExtend){
-      additionalHinttext = "例：来週金曜 13時から19時までバイト";
+      additionalHinttext = "\n例：来週金曜 13時から19時までバイト";
     }
 
     return Container(
@@ -172,7 +174,7 @@ class _AddEventButtonState extends ConsumerState {
             borderRadius: BorderRadius.circular(10)
           ),
           child: TextField(
-            maxLength: isExtend ? 100 : null,
+            maxLength: isExtend ? 400 : null,
             controller:chatGPTcontroller,
             maxLines: isExtend ? 11 : 1,
             decoration: InputDecoration(
@@ -187,8 +189,7 @@ class _AddEventButtonState extends ConsumerState {
             },
             onTapOutside: (event) {
               setState(() {
-                
-
+                FocusScope.of(context).unfocus();
               });
             },
             onChanged: (value) {
@@ -241,7 +242,7 @@ class _AddEventButtonState extends ConsumerState {
           child:const SizedBox(
             width: 30,
             height: 40,
-            child: Icon(Icons.cancel_outlined,color: Colors.white,)),
+            child: Icon(CupertinoIcons.chevron_down,color: Colors.white,)),
       ),
 
       GestureDetector(
@@ -265,7 +266,13 @@ class _AddEventButtonState extends ConsumerState {
               const  snackBar = SnackBar(content: Text('10文字以上で入力してください。'));   
               ScaffoldMessenger.of(context).showSnackBar(snackBar);          
             } else {
-              newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
+              
+              if (context.mounted) {
+                LoadingDialog.show(context); // 表示
+                newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
+                LoadingDialog.hide(context); // 非表示
+              }
+              
               if(newScheduleList.isNotEmpty){
                 await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context);
                 chatGPTcontroller.clear();
@@ -973,3 +980,4 @@ double listViewHeight(double itemHeight, int itemLength) {
       return itemHeight * 5;
   }
 }
+

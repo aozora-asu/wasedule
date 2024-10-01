@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/backend/firebase/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -284,10 +285,10 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
     ]));
   }
 
-  void showDownloadConfirmDialogue(String depName, String alphabet) {
-    showDialog(
+ Future<void> showDownloadConfirmDialogue(String depName, String alphabet) async {
+    await showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('$depNameの年間行事予定をカレンダーに追加しますか？'),
           actions: <Widget>[
@@ -295,34 +296,39 @@ class _UnivSchedulePageState extends ConsumerState<UnivSchedulePage> {
                 alignment: Alignment.centerLeft,
                 child: Text("ダウンロードを行うと、カレンダーにデータが追加されます。")),
             const SizedBox(height: 10),
+            
             buttonModelWithChild(() async {
-              Navigator.pop(context);
-              String currentYear =
-                  Term.whenSchoolYear(DateTime.now()).toString();
-              String nextYear =
-                  (Term.whenSchoolYear(DateTime.now()) + 1).toString();
 
-              bool isScheduleDownloadSuccess = await importAcademicCalendar(
-                  "${alphabet}_${currentYear}_$nextYear");
+                String currentYear =
+                    Term.whenSchoolYear(DateTime.now()).toString();
+                String nextYear =
+                    (Term.whenSchoolYear(DateTime.now()) + 1).toString();
+                bool isScheduleDownloadSuccess = false;
 
-              if (isScheduleDownloadSuccess) {
-                showDownloadDoneDialogue("データがダウンロードされました！");
-                ref.read(taskDataProvider).isRenewed = true;
-                ref.read(calendarDataProvider.notifier).state = CalendarData();
-                while (ref.read(taskDataProvider).isRenewed != false) {
-                  await Future.delayed(const Duration(microseconds: 1));
+                if (dialogContext.mounted) {
+                  LoadingDialog.show(dialogContext); // 表示
+                  isScheduleDownloadSuccess = await importAcademicCalendar(
+                    "${alphabet}_${currentYear}_$nextYear");
+                  LoadingDialog.hide(dialogContext);
                 }
-              } else {
-                showDownloadFailDialogue("ダウンロードに失敗しました");
-              }
-            },
+                Navigator.pop(context);
+
+                if (isScheduleDownloadSuccess) {
+                  showDownloadDoneDialogue("データがダウンロードされました！");
+                  ref.read(taskDataProvider).isRenewed = true;
+                } else {
+                  showDownloadFailDialogue("ダウンロードに失敗しました");
+                }
+              },
                 MAIN_COLOR,
                 Row(children: [
                   const SizedBox(width: 20),
                   Icon(Icons.downloading_outlined, color: FORGROUND_COLOR),
                   const SizedBox(width: 20),
                   Text("ダウンロード実行", style: TextStyle(color: FORGROUND_COLOR))
-                ]))
+              ])
+            )
+
           ],
         );
       },

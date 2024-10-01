@@ -638,20 +638,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         }
       },
       child:Container(
-        width: 25,
-        height: 25,
+        width: 23,
+        height: 23,
         margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 10),
         decoration:BoxDecoration(
-          color:buttonColor,
+          color:Colors.white,
+          border: Border.all(
+            color: buttonColor,
+            width: 6
+          ),
           shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 1,
-              offset: const Offset(0, 1),
-            ),
-          ]
         )
       )
     );
