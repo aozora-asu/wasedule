@@ -15,6 +15,7 @@ dependencies:
   percent_indicator: ^4.0.1
   expandable: ^5.0.1
   url_launcher: ^6.2.4 #
+  table_calendar: ^3.1.2
   syncfusion_flutter_datepicker: ^25.2.4
 
   share_plus: ^9.0.0
@@ -22,6 +23,7 @@ dependencies:
   screenshot: ^3.0.0
   keyboard_actions: ^4.2.0
   nholiday_jp: ^1.0.2
+  holiday_jp: ^0.0.8
   introduction_screen: ^3.1.12
   shared_preferences: ^2.2.3 #
   toggle_switch: ^2.3.0
@@ -105,7 +107,9 @@ flutter_icons:
 flutter:
   assets:
     - lib/assets/eye_catch/eyecatch.png
-    - lib/assets/eye_catch/eyecatch_white.png
+    - lib/assets/eye_catch/eyecatch_calendar_white.png
+    - lib/assets/eye_catch/eyecatch_task_white.png
+    - lib/assets/eye_catch/eyecatch_timetable_white.png
     - lib/assets/eye_catch/app_logo.png
     - lib/assets/eye_catch/wase_map_logo.png
     - lib/assets/eye_catch/wase_map_logo_transparent.png

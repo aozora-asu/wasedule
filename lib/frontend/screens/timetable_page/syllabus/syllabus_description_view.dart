@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_webview.dart';

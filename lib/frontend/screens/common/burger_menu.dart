@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../assist_files/size_config.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
@@ -87,6 +87,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     color: itemColor,
                     isLogoWhite: true,
                     subTitle: "早稲田から、落単をなくしたい。",
+                    logotype: switchLogotype(currentIndex),
                   )),
               const Spacer(),
             ])),
@@ -130,6 +131,19 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
       },
       itemCount: returnSubPage(ref)[currentIndex]!.length,
     );
+  }
+
+  AppLogoType switchLogotype(index){
+    switch(index){
+      case 1:
+        return AppLogoType.timetable;
+      case 2:
+        return AppLogoType.calendar;
+      case 3:
+        return AppLogoType.task;
+      default:
+        return AppLogoType.task;
+    } 
   }
 
   Widget subMenuPanel(

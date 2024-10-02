@@ -314,3 +314,22 @@ class DashedLinePainter extends CustomPainter {
     return false;
   }
 }
+
+class ModalSheetHeader extends StatelessWidget{
+  @override 
+  Widget build(BuildContext context){
+    return GestureDetector(
+      onTap: (){
+        Navigator.pop(context);
+      },
+      child: const SizedBox(
+        height: 30,
+        child: Row(children: [
+          Spacer(),
+          Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
+          Spacer(),
+        ]),
+      ),
+    );
+  }
+}

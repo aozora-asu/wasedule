@@ -9,7 +9,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requ
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
@@ -194,7 +194,7 @@ void initCellWidth() {
   Widget timetableShareButton(BuildContext context) {
     return FloatingActionButton(
         heroTag: "timetable_2",
-        backgroundColor: BLUEGREY,
+        backgroundColor: MAIN_COLOR,
         child: Icon(CupertinoIcons.camera, color: FORGROUND_COLOR),
         onPressed: () async {
           setState(() {
@@ -311,11 +311,11 @@ void initCellWidth() {
     if (currentQuarter == Term.springQuarter ||
         currentQuarter == Term.summerQuarter) {
       quaterName = "   春   ";
-      quaterColor = const Color.fromARGB(255, 255, 159, 191);
+      quaterColor = BLUEGREY; //const Color.fromARGB(255, 255, 159, 191);
       buttonQuarter = Term.springQuarter;
     } else {
       quaterName = "   秋   ";
-      quaterColor = const Color.fromARGB(255, 231, 85, 0);
+      quaterColor = BLUEGREY; //const Color.fromARGB(255, 231, 85, 0);
       buttonQuarter = Term.fallQuarter;
     }
     return buttonModel(() {
@@ -330,11 +330,11 @@ void initCellWidth() {
     if (currentQuarter == Term.springQuarter ||
         currentQuarter == Term.summerQuarter) {
       quaterName = "   夏   ";
-      quaterColor = Colors.blueAccent;
+      quaterColor = BLUEGREY; //Colors.blueAccent;
       buttonQuarter = Term.summerQuarter;
     } else {
       quaterName = "   冬   ";
-      quaterColor = Colors.cyan;
+      quaterColor = BLUEGREY; //Colors.cyan;
       buttonQuarter = Term.winterQuarter;
     }
     return buttonModel(() {
@@ -562,7 +562,12 @@ Widget pageHeader(){
             child:Row(children:[
               Padding(
                 padding:const EdgeInsets.symmetric(horizontal: 10),
-                child:LogoAndTitle(size: 5,isLogoWhite: true,color: Colors.white)),
+                child:LogoAndTitle(
+                  size: 5,
+                  isLogoWhite: true,
+                  color: Colors.white,
+                  logotype: AppLogoType.timetable)
+              ),
               const Spacer(),
               Text(
                 "$thisYear年  ${currentSemester.text}・${currentQuarter.text}",

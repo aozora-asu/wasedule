@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_metaInfo_db_handler.dart';
 import 'package:flutter_calandar_app/backend/firebase/firebase_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
@@ -556,7 +556,7 @@ class _DataUploadPageState extends ConsumerState<DataUploadPage> {
         } else {
           Widget listChild = Column(children: [
             const SizedBox(height: 4),
-            Row(children: [validTagChip(tag)]),
+            Row(children: [validTagChip(tag,false)]),
             Row(children: [
               Text(id),
             ]),

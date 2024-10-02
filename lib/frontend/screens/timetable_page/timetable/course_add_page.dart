@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -85,19 +85,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                           CrossAxisAlignment.start,
                                       children: [
 
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.pop(context);
-                                          },
-                                          child: const SizedBox(
-                                            height: 30,
-                                            child: Row(children: [
-                                              Spacer(),
-                                              Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
-                                              Spacer(),
-                                            ]),
-                                          ),
-                                        ),
+                                        ModalSheetHeader(),
 
                                         SyllabusSearchDialog(
                                             radiusType: 1,

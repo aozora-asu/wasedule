@@ -5,7 +5,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -280,10 +280,20 @@ class _TimelineState extends ConsumerState<Timeline>{
   }
 
   Widget dayObject(DateTime targetDay){
-    final formattedDate = DateFormat('M月d日(E)', 'ja_JP').format(targetDay);
+    String formattedDate = DateFormat('M月d日(E)', 'ja_JP').format(targetDay);
     int fromToday = targetDay.difference(now).inDays;
     DaylyData targetDayData = getDaylyData(targetDay);
     bool hasData = targetDayData.hasData();
+
+    if(targetDay.year == now.year
+      && targetDay.month == now.month 
+      && targetDay.day == now.day){
+      formattedDate = "きょう";
+    }else if(targetDay.year == now.year
+      && targetDay.month == now.month 
+      && targetDay.day == now.day +1){
+      formattedDate = "あす";
+    }
 
     return hasData ?
     Column(children: [

@@ -169,6 +169,7 @@ class CodeSharePageState extends ConsumerState<CodeSharePage> {
                         Row(children: [
                           const Spacer(),
                           LogoAndTitle(
+                              logotype: AppLogoType.calendar,
                               size: SizeConfig.blockSizeHorizontal! * 1.5),
                         ])
                       ])

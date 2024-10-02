@@ -694,6 +694,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  holiday_jp:
+    dependency: "direct main"
+    description:
+      name: holiday_jp
+      sha256: "84eba0872edac93971f707979d3bff78e648322d47a2ab19d830ab646cd5c6ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   home_widget:
     dependency: "direct main"
     description:
@@ -1254,6 +1262,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  simple_gesture_detector:
+    dependency: transitive
+    description:
+      name: simple_gesture_detector
+      sha256: ba2cd5af24ff20a0b8d609cec3f40e5b0744d2a71804a2616ae086b9c19d19a3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1363,6 +1379,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0+2"
+  table_calendar:
+    dependency: "direct main"
+    description:
+      name: table_calendar
+      sha256: "4ca32b2fc919452c9974abd4c6ea611a63e33b9e4f0b8c38dba3ac1f4a6549d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
   term_glyph:
     dependency: transitive
     description:

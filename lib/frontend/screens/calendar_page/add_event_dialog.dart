@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/gpt_handler/calendar_gpt_handler.dart';
@@ -145,8 +147,16 @@ class _AddEventButtonState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     String additionalHinttext = "";
+    int random = Random().nextInt(5);
     if(isExtend){
-      additionalHinttext = "\n例：来週金曜 13時から19時までバイト";
+      switch(random){
+        case 0: additionalHinttext = "\n例：来週金曜 13時から19時までバイト";
+        case 1: additionalHinttext = "\n例：１０月　毎週水曜日17時から20時までバイト";
+        case 2: additionalHinttext = "\n例：(メール)\n丸丸商事　採用担当です。\n\nこのたび当社では会社説明会を開催する運びとなりました。\n\n 4月23日 18:00~20:00 菱友ガーデンビル１３F";
+        case 3: additionalHinttext = "\n例：今月13日と14日で愛媛旅行";
+        case 4: additionalHinttext = "\n例：今月13日と24日、30日の夕方19時から飲み会";
+      }
+
     }
 
     return Container(
@@ -266,7 +276,7 @@ class _AddEventButtonState extends ConsumerState {
               const  snackBar = SnackBar(content: Text('10文字以上で入力してください。'));   
               ScaffoldMessenger.of(context).showSnackBar(snackBar);          
             } else {
-              
+
               if (context.mounted) {
                 LoadingDialog.show(context); // 表示
                 newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
@@ -274,8 +284,10 @@ class _AddEventButtonState extends ConsumerState {
               }
               
               if(newScheduleList.isNotEmpty){
-                await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context);
-                chatGPTcontroller.clear();
+                bool isSubmitted = await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context,ref);
+                if(isSubmitted){
+                  chatGPTcontroller.clear();
+                }
               }
             }
             

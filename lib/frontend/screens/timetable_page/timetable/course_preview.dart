@@ -8,7 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/sy
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -70,10 +70,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               : const ScrollPhysics(),
           reverse: true,
           child: Padding(
-              padding: EdgeInsets.only(bottom: bottomSpace / 2),
+              padding: EdgeInsets.only(bottom: bottomSpace),
               child: ConstrainedBox(
                   constraints: BoxConstraints(
-                      minHeight: SizeConfig.blockSizeVertical! *80,
+                      minHeight: SizeConfig.blockSizeVertical! *30,
                       maxHeight:  SizeConfig.blockSizeVertical! *80),
                   child:SingleChildScrollView(
                           physics: viewMode == 1
@@ -90,19 +90,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
 
-                                    GestureDetector(
-                                      onTap: (){
-                                        Navigator.pop(context);
-                                      },
-                                      child: const SizedBox(
-                                        height: 30,
-                                        child: Row(children: [
-                                          Spacer(),
-                                          Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
-                                          Spacer(),
-                                        ]),
-                                      ),
-                                    ),
+                                    ModalSheetHeader(),
 
                                     switchSearchMode(),
                                     relatedTasks(),
@@ -645,6 +633,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           backgroundColor: BACKGROUND_COLOR
         )
       ),
+      const SizedBox(height:15)
     ]);
   }
 

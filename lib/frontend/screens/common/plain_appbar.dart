@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
@@ -18,10 +18,12 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   late bool backButton;
   late int? pageNum;
+  late AppLogoType? logotype;
 
   CustomAppBar({
     required this.backButton,
     this.pageNum,
+    this.logotype,
     super.key
   });
 
@@ -43,10 +45,13 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
       }
     }
     SizeConfig().init(context);
+
     Widget appBarContent = const SizedBox();
     if(!backButton){
       appBarContent = const AppBarThumbNail();
     }
+
+    AppLogoType type = logotype ?? AppLogoType.task;
 
 
     return AppBar(
@@ -65,6 +70,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
                 color:contentColor,
                 isLogoWhite: isLogoWhite,
                 subTitle: "早稲田から、落単をなくしたい。",
+                logotype: type,
               )
             ),
             const Spacer(),

@@ -4,7 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
@@ -417,7 +417,7 @@ class _CalendarState extends ConsumerState<Calendar> {
               ),
             ),
           ),
-          showOnlyScreenShot(LogoAndTitle(size: 7)),
+          showOnlyScreenShot(LogoAndTitle(size: 7,logotype: AppLogoType.calendar,)),
           const SizedBox(width: 10)
         ]),
         doNotContainScreenShot(

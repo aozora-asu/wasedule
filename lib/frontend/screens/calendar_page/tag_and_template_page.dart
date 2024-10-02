@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -1137,7 +1137,7 @@ String? returnTagId(String id, WidgetRef ref) {
   }
 }
 
-Widget tagChip(String? tagID, WidgetRef ref) {
+Widget tagChip(String? tagID, WidgetRef ref,{editMode = false}) {
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
   if (tagID == "" || tagID == null) {
@@ -1145,14 +1145,14 @@ Widget tagChip(String? tagID, WidgetRef ref) {
   } else {
     for (var data in tagMap) {
       if (data["tagID"] == tagID) {
-        return validTagChip(data);
+        return validTagChip(data,editMode);
       }
     }
     return invalidTagChip();
   }
 }
 
-Widget validTagChip(Map data) {
+Widget validTagChip(Map data,bool isEditMode) {
   var color = data["color"];
   if (color.runtimeType == int) {
     color = intToColor(color);
@@ -1166,8 +1166,9 @@ Widget validTagChip(Map data) {
       Expanded(
         child:Text(
           "${data["title"]}",
-          style: const TextStyle(
-            color: BLUEGREY, fontSize: null, overflow: TextOverflow.ellipsis),
+          style: TextStyle(
+            color: isEditMode ? Colors.blue : BLUEGREY,
+            fontSize: null, overflow: TextOverflow.ellipsis),
       )),
     ]),
   );

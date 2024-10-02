@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/data_loader.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';
@@ -255,8 +255,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget scheduleListBody(targetKey) {
     final data = ref.read(calendarDataProvider);
     List targetDayData = data.sortedDataByDay[targetKey] ?? [];
-    DateTime targetDay = DateTime.parse(targetKey);
-    DateTime now = DateTime.now();
     List<Map<DateTime, Widget>> mixedDataByTime = [];
 
     //まずは予定データの生成
@@ -266,7 +264,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         key = DateFormat("HH:mm")
             .parse(targetDayData.elementAt(index)["startTime"]);
       }
-
       Widget value = const SizedBox();
       TextStyle dateTimeStyle = const TextStyle(
           color: Colors.grey, fontSize: 15, fontWeight: FontWeight.bold);
@@ -519,8 +516,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                             ])),
                       ),
                       const SizedBox(width: 15, height: 40),
-                      tagEmptyFlag(ref, tagEditButton(index, targetDayData)),
-                      const Spacer(),
+                      Expanded(
+                        child:tagEmptyFlag(ref, tagEditButton(index, targetDayData)),
+                      )
                     ]),
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -853,40 +851,22 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget tagEditButton(index, targetDayData) {
     Widget tagObject = Container(
       height: 25,
-      decoration: BoxDecoration(
-        color: Colors.grey[400],
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey[400]!,
-              spreadRadius: 1,
-              blurRadius: 0,
-              offset: const Offset(0, 0)),
-        ],
-      ),
       padding: const EdgeInsets.only(right: 15, left: 5),
-      child: Row(children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey[300],
-          ),
-        ),
-        const Text(
-          "  + タグを追加…",
+      child: const Row(children: [
+        Icon(CupertinoIcons.tag_fill,color:Colors.blue,size: 20,),
+        Text(
+          " タグを追加…",
           style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
+              color: Colors.blue,
+              fontWeight: FontWeight.normal,
+              fontSize: 18,
               overflow: TextOverflow.ellipsis),
         ),
       ]),
     );
 
     if (tagIDController != "" && tagIDController != null) {
-      tagObject = tagChip(tagIDController ?? "", ref);
+      tagObject = tagChip(tagIDController ?? "", ref, editMode: targetDayData.elementAt(index)["id"] == editingSchedule);
     }
 
     return GestureDetector(
