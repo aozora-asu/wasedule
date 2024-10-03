@@ -23,6 +23,7 @@ class _AppStartSettingPageState extends ConsumerState<AppStartSettingPage>{
   bool isShowTimelineSchedule = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineSchedule);
   bool isShowTimelineCourse = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineCourse);
   bool isShowTimelineTask = SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTimelineTask);
+  bool showAttendDialogAutomatically = SharepreferenceHandler().getValue(SharepreferenceKeys.showAttendDialogAutomatically);
 
     return SettingsList(
         platform: DevicePlatform.iOS,
@@ -50,7 +51,6 @@ class _AppStartSettingPageState extends ConsumerState<AppStartSettingPage>{
                   },
                   leading: Icon(Icons.schedule),
                   title: Text("タイムラインの自動表示"),
-                  description: Text("アプリを起動して表示されるタイムラインの設定です。"),
                 ),
 
                 SettingsTile.switchTile(
@@ -90,6 +90,22 @@ class _AppStartSettingPageState extends ConsumerState<AppStartSettingPage>{
                   description: Text("タイムラインに表示するコンテンツの設定です。"),
                 ),
 
+              ]),
+          SettingsSection(
+            title:Text("出欠記録"),
+              tiles: <SettingsTile>[
+                SettingsTile.switchTile(
+                  title: Text("出欠記録の自動表示"),
+                  initialValue: showAttendDialogAutomatically,
+                  activeSwitchColor: Colors.blue,
+                  onToggle: (value){
+                    setState(() {
+                      SharepreferenceHandler().setValue(
+                        SharepreferenceKeys.showAttendDialogAutomatically, value);
+                    });
+                  },
+                  description: Text("授業期間中、出席記録ウィンドウを自動で表示させます。"),
+                ),
               ]),
             ]);
   }

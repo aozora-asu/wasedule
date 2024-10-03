@@ -98,7 +98,7 @@ class SharepreferenceKeys {
 
   //課題ページ関連
   static const isShowDayWithoutTask =
-      SharepreferenceKeys._(key: "isShowDayWithoutTask", defaultValue: true);
+      SharepreferenceKeys._(key: "isShowDayWithoutTask", defaultValue: false);
   static const isShowTaskCalendarLine =
       SharepreferenceKeys._(key: "isShowTaskCalendarLine", defaultValue: true);
 

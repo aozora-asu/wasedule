@@ -38,12 +38,15 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   Map<int,double> _heights = {};
   bool _isVisible = true;
 
+  double selectorWidth  = SizeConfig.blockSizeHorizontal! *72.5;
+  String indicatorText = "";
+
   @override
   void initState() {
     super.initState();
     _taskScrollController = ScrollController();
     _calendarScrollController = ScrollController();
-
+    _calendarScrollController.addListener(_calendarScrollListener);
     // コントローラ1のスクロールをコントローラ2に反映
     // _calendarScrollController.addListener(() {
     //   if (_calendarScrollController.offset != _taskScrollController.offset) {
@@ -59,6 +62,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     // });
 
     _taskScrollController.addListener(() {
+
       if (_taskScrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         // 下方向にスクロールしたとき
@@ -82,6 +86,17 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     // 各アイテムに対して GlobalKey を作成
     _keys = List.generate(_range, (index) => GlobalKey());
 
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_){
+        jumpToIndex(_getTodayIndex());
+      }
+    );
+
+    String yearText =DateFormat("yyyy年").format(findLastSunday());
+    String monthText = DateFormat("M月").format(findLastSunday());
+    indicatorText = yearText + monthText;
+
   }
 
   // 各要素の高さを取得
@@ -97,8 +112,28 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   DateTime _getDateFromIndex(int index) {
-    final DateTime startDate = DateTime(now.year,now.month,now.day,0,0,0,0,0);
+    final DateTime startDate = findLastSunday();
     return startDate.add(Duration(days: index));
+  }
+
+  int _getTodayIndex() {
+    final DateTime lastSunday = findLastSunday();
+    final DateTime today = DateTime(now.year,now.month,now.day,0,0,0,0,0);
+    Duration fromSunday = today.difference(lastSunday);
+    return fromSunday.inDays;
+  }
+
+  DateTime findLastSunday() {
+    DateTime today = DateTime(now.year,now.month,now.day,0,0,0,0,0);
+    // 今日の曜日 (0: Sunday, 1: Monday, ..., 6: Saturday)
+    int weekday = today.weekday;
+    // DateTimeのweekdayでは、Sundayが7 (週の最後)なので、扱いを調整
+    int daysToSubtract = (weekday % 7); // 日曜日の分の日数を引く
+    return today.subtract(Duration(days: daysToSubtract));
+  }
+
+  void _calendarScrollListener() {
+    setState((){});
   }
 
   @override
@@ -114,7 +149,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     bool isShowTaskCalendarLine = 
       SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTaskCalendarLine);
 
-    return Stack(children: [
+    return Scaffold(
+     backgroundColor: BACKGROUND_COLOR,
+     body: Stack(children: [
       Column(children: [
         Expanded(
           child: ListView.builder(
@@ -165,11 +202,23 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
         )
       ]),
       executeDeleteButton(),
-      if(isShowTaskCalendarLine)
-        Align(
-          alignment: const Alignment(0, 1),
-          child:dateSelector()),
-     ]
+     ]),
+     floatingActionButton: AnimatedOpacity(
+            opacity: _isVisible ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 600),
+            child:Container(
+              margin: EdgeInsets.only(
+                bottom: isShowTaskCalendarLine ? 0 : 0),
+                child: Row(children:[
+                  const Spacer(),
+                  if(isShowTaskCalendarLine)
+                    dateSelector(),
+                  const SizedBox(width: 10),
+                  AddDataCardButton(setosute: setState),          
+                ])  
+          )
+        )
+
     );
   }
 
@@ -633,109 +682,127 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     return controller.text.isNotEmpty;
   }
 
+
+
   Widget dateSelector(){
-    return AnimatedOpacity(
-      opacity: _isVisible ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 300),
-      child: Container(
-      margin:const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+    String _indiText = indicatorText;
+
+    return Container(
+      width: selectorWidth + 10,
+      height: 65,
+      padding:const EdgeInsets.symmetric(vertical: 0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color:  BACKGROUND_COLOR,
+        borderRadius: BorderRadius.circular(20),
+        color: PALE_MAIN_COLOR,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 2,
-            blurRadius: 2,
-            offset: const Offset(0, 0),
+            blurRadius: 3,
+            offset: const Offset(0, 3),
           ),
-        ],
+        ]
       ),
-      height:85,
-      child:ListView.separated(
-          controller: _calendarScrollController,
-          primary: false,
-          itemBuilder:(context,index){
-            DateTime date = _getDateFromIndex(index);
-            DateTime now = DateTime.now();
-            bool isToday = 
-                date.year == now.year && 
-                date.month == now.month &&
-                date.day == now.day;
-            
-            String yearText =DateFormat("yyyy年").format(date);
-            String monthText = DateFormat("M月").format(date);
-            String indicatorText = "";
+      child: Column(children:[
+        Container(
+          alignment:const Alignment(-0.9,0),
+          child: Text(_indiText,
+            style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:14),
+          ),
+        ),
+        Expanded(child:
+          Container(
+            margin:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
+            width: selectorWidth,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color:  BACKGROUND_COLOR,
+            ),
+            child:ListView.separated(
+                controller: _calendarScrollController,
+                physics: const PageScrollPhysics(),
+                primary: false,
+                itemBuilder:(context,index){
+                  DateTime targetSunday = findLastSunday().add(Duration(days: (index * 7))); 
+                  String yearText =DateFormat("yyyy年").format(targetSunday.subtract(const Duration(days:7)));
+                  String monthText = DateFormat("M月").format(targetSunday.subtract(const Duration(days:7)));
+                  indicatorText = yearText + monthText;
 
-            if(index == 0 || date.day == 1){
-              indicatorText = yearText;
-            }else if(index == 1 || date.day == 2){
-              indicatorText = monthText;
-            }
+                  return weekCalendarLine(targetSunday, index * 7);
+                },
+                separatorBuilder: (context,index){
+                  return const SizedBox();
+                },
+                scrollDirection: Axis.horizontal,
+                itemCount: _range,
+              )
+            )
+          ),
+          const SizedBox(height:6)
+      ])
+    );
+  }
 
-            Color barColor = BLUEGREY;
-            if(date.weekday == 6){
-              barColor = Colors.blue!;
-            }else if(date.weekday == 7){
-              barColor = Colors.red;
-            }
-            if(isToday){
-              barColor = Colors.orange;
-            }
-
-            List dailyData = widget.sortedData[date] ?? [];
-
-            return GestureDetector(
-              onTap:(){
-                jumpToIndex(index);
-              },
-              child:Stack(
-                alignment:const Alignment(1,-0.2),
-                children:[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding:const EdgeInsets.symmetric(horizontal:0),
-                    child:Column(children: [
-                      Container(
-                        color: FORGROUND_COLOR,
-                        height:25,
-                        width: 55,
-                        child:Text(indicatorText,
-                        style:const TextStyle(
-                          color: BLUEGREY,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold))),
-                      Container(height:3,width: 55,color:barColor),
-                      // Text("${date.month.toString()} /       ",
-                      //     style:const TextStyle(fontSize: 10,fontWeight: FontWeight.normal,color: Colors.grey)),
-                      const Spacer(),
-                      Text(DateFormat("E","ja_jp").format(date),
-                        style:const TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.grey)),
-                      const SizedBox(height: 5),
-                      Text(date.day.toString(),
-                        style:const TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 2),
-                      Container(height: 5),
-                    ]),
-                  ),
-                  lengthBadge(dailyData.length,10.0,true)
-              ])
-            );
-          },
-          separatorBuilder: (context,index){
-            // return const VerticalDivider(
-            //   width: 1,indent: 10,endIndent: 10);
-            return const SizedBox();
-          },
-          scrollDirection: Axis.horizontal,
-          itemCount: _range,
-        )
+  Widget weekCalendarLine(DateTime startDay,int startIndex){
+    return SizedBox(
+      width: selectorWidth,
+      child:ListView.builder(
+        itemBuilder: (context,index){
+          int dayIndex = startIndex + index;
+          DateTime targetDate = startDay.add(Duration(days:index));
+          return dailyCalendarObject(targetDate, dayIndex);
+        },
+        itemCount: 7,
+        shrinkWrap: true,
+        physics:const NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
       )
+    );
+  }
+
+  Widget dailyCalendarObject(DateTime date,int index){
+    double widthParDay = selectorWidth / 7;
+    List dailyData = widget.sortedData[date] ?? [];
+    Color bgColor = Colors.transparent;
+    Color weekDayColor = Colors.grey;
+    Color dayColor = Colors.black;
+
+    if(date == DateTime(now.year,now.month,now.day,0,0,0,0,0)){
+      bgColor = Colors.red;
+      weekDayColor = Colors.white;
+      dayColor = Colors.white;
+    }else if(date.weekday == 6){
+      weekDayColor = Colors.blue;
+    }else if(date.weekday == 7){
+      weekDayColor = Colors.red;
+    }
+
+    return GestureDetector(
+      onTap:(){
+        jumpToIndex(index);
+      },
+      child:Stack(
+        alignment:const Alignment(0.8,-1),
+        children:[
+          Container(
+            decoration: BoxDecoration(
+              color: bgColor,
+              shape: BoxShape.circle
+            ),
+            width: widthParDay,
+            child:Column(children: [
+              Text(DateFormat("E","ja_jp").format(date),
+                style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: weekDayColor)),
+              Text(date.day.toString(),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: dayColor)),
+              const SizedBox(height: 1)
+            ]),
+          ),
+          lengthBadge(dailyData.length,10.0,true)
+      ])
     );
   }
 
