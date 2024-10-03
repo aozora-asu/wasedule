@@ -6,6 +6,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/app_start_settings.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/calendar_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/setting_page/moodle_link_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/notify_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/support_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/task_setting.dart';
@@ -100,6 +101,21 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 }),
           ],
         ),
+
+        SettingsSection(
+          title: Text("アカウント設定"),
+          tiles: <SettingsTile>[
+            SettingsTile.navigation(
+                leading:
+                    const Icon(Icons.backup),
+                title: Text("バックアップ"),
+                trailing: NavIcon(),
+                onPressed:  (context) {
+                  movePage(SettingPages.backUp);
+                }),
+          ],
+        ),
+
         SettingsSection(
           title: const Text("ページ設定"),
           tiles: <SettingsTile>[
@@ -123,19 +139,6 @@ class _MyWidgetState extends ConsumerState<MyWidget> {
                 trailing: NavIcon(),
                 onPressed: (context) {
                   movePage(SettingPages.calendar);
-                }),
-          ],
-        ),
-        SettingsSection(
-          title: Text("アカウント設定"),
-          tiles: <SettingsTile>[
-            SettingsTile.navigation(
-                leading:
-                    const Icon(Icons.backup),
-                title: Text("バックアップ"),
-                trailing: NavIcon(),
-                onPressed:  (context) {
-                  movePage(SettingPages.backUp);
                 }),
           ],
         ),
@@ -177,6 +180,7 @@ enum SettingPages{
   timetable,
   calendar,
   backUp,
+  moodleLink,
   others,
 }
 
@@ -288,7 +292,13 @@ class _MainContentsState extends ConsumerState<MainContents> {
           appBar: appBar, 
             body:const DataBackupPage()
         );
-      
+
+      case SettingPages.moodleLink:
+        return Scaffold(
+          appBar: appBar, 
+            body:const MoodleSettingPage()
+        );
+
       default:
         return Scaffold(
           appBar: appBar, 

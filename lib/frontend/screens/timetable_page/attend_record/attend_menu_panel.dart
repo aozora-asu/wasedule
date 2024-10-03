@@ -2,7 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -45,7 +45,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
     return GestureDetector(
         onTap: () {},
         child: Container(
-            decoration: roundedBoxdecoration(radiusType: 3,backgroundColor: widget.backgroundColor),
+            decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: widget.backgroundColor),
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
             margin: const EdgeInsets.symmetric(horizontal:5),
             child: Column(

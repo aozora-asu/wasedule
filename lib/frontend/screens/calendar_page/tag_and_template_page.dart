@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
@@ -1137,7 +1137,7 @@ String? returnTagId(String id, WidgetRef ref) {
   }
 }
 
-Widget tagChip(String? tagID, WidgetRef ref) {
+Widget tagChip(String? tagID, WidgetRef ref,{editMode = false}) {
   final data = ref.read(calendarDataProvider);
   List tagMap = data.tagData;
   if (tagID == "" || tagID == null) {
@@ -1145,79 +1145,45 @@ Widget tagChip(String? tagID, WidgetRef ref) {
   } else {
     for (var data in tagMap) {
       if (data["tagID"] == tagID) {
-        return validTagChip(data);
+        return validTagChip(data,editMode);
       }
     }
     return invalidTagChip();
   }
 }
 
-Widget validTagChip(Map data) {
+Widget validTagChip(Map data,bool isEditMode) {
   var color = data["color"];
   if (color.runtimeType == int) {
     color = intToColor(color);
   }
 
   return Container(
-    height: 25,
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: [
-        BoxShadow(
-            color: Colors.grey[700]!,
-            spreadRadius: 1,
-            blurRadius: 0,
-            offset: const Offset(0, 0)),
-      ],
-    ),
+    height: 20,
     padding: const EdgeInsets.only(right: 15, left: 5),
     child: Row(children: [
-      Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey[700],
-        ),
-      ),
-      Text(
-        "  ${truncateString(data["title"])}",
-        style: const TextStyle(
-            color: Colors.white, fontSize: 15, overflow: TextOverflow.ellipsis),
-      ),
+      Icon(CupertinoIcons.tag_fill,color: color,size: 15),
+      Expanded(
+        child:Text(
+          "${data["title"]}",
+          style: TextStyle(
+            color: isEditMode ? Colors.blue : BLUEGREY,
+            fontSize: null, overflow: TextOverflow.ellipsis),
+      )),
     ]),
   );
 }
 
 Widget invalidTagChip() {
   return Container(
-    height: 25,
-    decoration: BoxDecoration(
-      color: Colors.grey,
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: [
-        BoxShadow(
-            color: Colors.grey[700]!,
-            spreadRadius: 1,
-            blurRadius: 0,
-            offset: const Offset(0, 0)),
-      ],
-    ),
+    height: 20,
     padding: const EdgeInsets.only(right: 15, left: 5),
-    child: Row(children: [
-      Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey[700],
-        ),
-      ),
-      const Text(
+    child:const Row(children: [
+      Icon(CupertinoIcons.tag_fill,color:Colors.red,size: 15),
+      Text(
         " ! 無効なタグ",
         style: TextStyle(
-            color: Colors.white, fontSize: 15, overflow: TextOverflow.ellipsis),
+            color: Colors.red, fontSize: 15, overflow: TextOverflow.ellipsis),
       ),
     ]),
   );

@@ -1,8 +1,12 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/gpt_handler/calendar_gpt_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/chatGPT_result_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/loading.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_template_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_page.dart';
@@ -143,8 +147,16 @@ class _AddEventButtonState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     String additionalHinttext = "";
+    int random = Random().nextInt(5);
     if(isExtend){
-      additionalHinttext = "例：来週金曜 13時から19時までバイト";
+      switch(random){
+        case 0: additionalHinttext = "\n例：来週金曜 13時から19時までバイト";
+        case 1: additionalHinttext = "\n例：１０月　毎週水曜日17時から20時までバイト";
+        case 2: additionalHinttext = "\n例：(メール)\n丸丸商事　採用担当です。\n\nこのたび当社では会社説明会を開催する運びとなりました。\n\n 4月23日 18:00~20:00 菱友ガーデンビル１３F";
+        case 3: additionalHinttext = "\n例：今月13日と14日で愛媛旅行";
+        case 4: additionalHinttext = "\n例：今月13日と24日、30日の夕方19時から飲み会";
+      }
+
     }
 
     return Container(
@@ -172,7 +184,7 @@ class _AddEventButtonState extends ConsumerState {
             borderRadius: BorderRadius.circular(10)
           ),
           child: TextField(
-            maxLength: isExtend ? 100 : null,
+            maxLength: isExtend ? 400 : null,
             controller:chatGPTcontroller,
             maxLines: isExtend ? 11 : 1,
             decoration: InputDecoration(
@@ -187,8 +199,7 @@ class _AddEventButtonState extends ConsumerState {
             },
             onTapOutside: (event) {
               setState(() {
-                
-
+                FocusScope.of(context).unfocus();
               });
             },
             onChanged: (value) {
@@ -241,7 +252,7 @@ class _AddEventButtonState extends ConsumerState {
           child:const SizedBox(
             width: 30,
             height: 40,
-            child: Icon(Icons.cancel_outlined,color: Colors.white,)),
+            child: Icon(CupertinoIcons.chevron_down,color: Colors.white,)),
       ),
 
       GestureDetector(
@@ -265,10 +276,18 @@ class _AddEventButtonState extends ConsumerState {
               const  snackBar = SnackBar(content: Text('10文字以上で入力してください。'));   
               ScaffoldMessenger.of(context).showSnackBar(snackBar);          
             } else {
-              newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
+
+              if (context.mounted) {
+                LoadingDialog.show(context); // 表示
+                newScheduleList = await CalendarGptHandler().textToMap(chatGPTcontroller.text,context) ?? [];
+                LoadingDialog.hide(context); // 非表示
+              }
+              
               if(newScheduleList.isNotEmpty){
-                await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context);
-                chatGPTcontroller.clear();
+                bool isSubmitted = await ScheduleCandidatesFromGPT(classCandidateList:newScheduleList).dialog(context,ref);
+                if(isSubmitted){
+                  chatGPTcontroller.clear();
+                }
               }
             }
             
@@ -973,3 +992,4 @@ double listViewHeight(double itemHeight, int itemLength) {
       return itemHeight * 5;
   }
 }
+

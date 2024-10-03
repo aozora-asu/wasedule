@@ -1,9 +1,10 @@
 import 'package:expandable/expandable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_search_dialog.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -67,11 +68,11 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
               interactive: true,
               thickness: 5,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: bottomSpace / 2),
+                  padding: EdgeInsets.only(bottom: bottomSpace),
                   child: ConstrainedBox(
                       constraints: BoxConstraints(
-                          minHeight: viewportConstraints.maxHeight,
-                          maxHeight: viewportConstraints.maxHeight),
+                          minHeight: SizeConfig.blockSizeVertical! *80,
+                          maxHeight: SizeConfig.blockSizeVertical! *80),
                       child: Center(
                           child: SingleChildScrollView(
                               child: Padding(
@@ -83,11 +84,9 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text("時間割に新規追加...",
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold)),
+
+                                        ModalSheetHeader(),
+
                                         SyllabusSearchDialog(
                                             radiusType: 1,
                                             gakki: widget.semester,

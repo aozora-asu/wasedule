@@ -254,7 +254,7 @@ Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin =
   return GestureDetector(
       onTap:onTap,
       child: Container(
-        decoration: roundedBoxdecoration(backgroundColor: Colors.grey[300]),
+        decoration: roundedBoxdecoration(backgroundColor: darken(FORGROUND_COLOR,0.06)),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
         margin: EdgeInsets.symmetric(vertical: 4,horizontal: horizontalMargin),
         child: Text(
@@ -312,5 +312,24 @@ class DashedLinePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
+  }
+}
+
+class ModalSheetHeader extends StatelessWidget{
+  @override 
+  Widget build(BuildContext context){
+    return GestureDetector(
+      onTap: (){
+        Navigator.pop(context);
+      },
+      child: const SizedBox(
+        height: 30,
+        child: Row(children: [
+          Spacer(),
+          Icon(CupertinoIcons.chevron_compact_down,size: 40,color: Colors.grey,),
+          Spacer(),
+        ]),
+      ),
+    );
   }
 }

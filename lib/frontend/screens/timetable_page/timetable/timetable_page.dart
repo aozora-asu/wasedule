@@ -4,19 +4,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
-import 'package:flutter_calandar_app/frontend/screens/setting_page/setting_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requiredcredits_stats.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/logo_and_title.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_add_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_preview.dart';
-import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/ondemand_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -197,7 +195,7 @@ void initCellWidth() {
     return FloatingActionButton(
         heroTag: "timetable_2",
         backgroundColor: MAIN_COLOR,
-        child: Icon(Icons.ios_share, color: FORGROUND_COLOR),
+        child: Icon(CupertinoIcons.camera, color: FORGROUND_COLOR),
         onPressed: () async {
           setState(() {
             isScreenShotBeingTaken = true;
@@ -313,11 +311,11 @@ void initCellWidth() {
     if (currentQuarter == Term.springQuarter ||
         currentQuarter == Term.summerQuarter) {
       quaterName = "   春   ";
-      quaterColor = const Color.fromARGB(255, 255, 159, 191);
+      quaterColor = BLUEGREY; //const Color.fromARGB(255, 255, 159, 191);
       buttonQuarter = Term.springQuarter;
     } else {
       quaterName = "   秋   ";
-      quaterColor = const Color.fromARGB(255, 231, 85, 0);
+      quaterColor = BLUEGREY; //const Color.fromARGB(255, 231, 85, 0);
       buttonQuarter = Term.fallQuarter;
     }
     return buttonModel(() {
@@ -332,11 +330,11 @@ void initCellWidth() {
     if (currentQuarter == Term.springQuarter ||
         currentQuarter == Term.summerQuarter) {
       quaterName = "   夏   ";
-      quaterColor = Colors.blueAccent;
+      quaterColor = BLUEGREY; //Colors.blueAccent;
       buttonQuarter = Term.summerQuarter;
     } else {
       quaterName = "   冬   ";
-      quaterColor = Colors.cyan;
+      quaterColor = BLUEGREY; //Colors.cyan;
       buttonQuarter = Term.winterQuarter;
     }
     return buttonModel(() {
@@ -564,7 +562,12 @@ Widget pageHeader(){
             child:Row(children:[
               Padding(
                 padding:const EdgeInsets.symmetric(horizontal: 10),
-                child:LogoAndTitle(size: 5,isLogoWhite: true,color: Colors.white)),
+                child:LogoAndTitle(
+                  size: 5,
+                  isLogoWhite: true,
+                  color: Colors.white,
+                  logotype: AppLogoType.timetable)
+              ),
               const Spacer(),
               Text(
                 "$thisYear年  ${currentSemester.text}・${currentQuarter.text}",
@@ -808,9 +811,13 @@ Widget pageHeader(){
             scrollDirection: Axis.vertical,
             itemBuilder: ((context, index) {
               Color bgColor = FORGROUND_COLOR;
-              Widget cellContents = GestureDetector(onTap: () {
-                showDialog(
+              Widget cellContents = GestureDetector(
+              onTap: () async{
+                await showModalBottomSheet(
                     context: context,
+                    isDismissible: true,
+                    isScrollControlled: true,
+                    backgroundColor: FORGROUND_COLOR,
                     builder: (BuildContext context) {
                       return CourseAddPage(
                         year: thisYear,
@@ -1192,13 +1199,17 @@ Widget pageHeader(){
           child: InkWell(
               onTap: () async{
                 isSelectedlistGenerated = false;
-                await showDialog(
+                await showModalBottomSheet(
                     context: context,
+                    isDismissible: true,
+                    isScrollControlled: true,
+                    backgroundColor: FORGROUND_COLOR,
                     builder: (BuildContext context) {
                       return CoursePreview(
                         target: targetData,
                         setTimetableState: setState,
                         taskList: taskList,
+                        isOndemand: false,
                       );
                     });
               },
@@ -1300,14 +1311,18 @@ Widget pageHeader(){
     Color bgColor = cellBackGroundColor(taskLength, colorning).withOpacity(0.7);
 
     return GestureDetector(
-        onTap: () {
-          showDialog(
+        onTap: () async{
+          await showModalBottomSheet(
               context: context,
+              isDismissible: true,
+              isScrollControlled: true,
+              backgroundColor: FORGROUND_COLOR,
               builder: (BuildContext context) {
-                return OndemandPreview(
+                return CoursePreview(
                   target: target,
                   setTimetableState: setState,
                   taskList: taskList,
+                  isOndemand: true,
                 );
               });
         },
@@ -1349,9 +1364,12 @@ Widget pageHeader(){
     Color bgColor = FORGROUND_COLOR;
     return doNotContainScreenShot(
       GestureDetector(
-        onTap: () {
-          showDialog(
+        onTap: () async{
+          await showModalBottomSheet(
               context: context,
+              isDismissible: true,
+              isScrollControlled: true,
+              backgroundColor: FORGROUND_COLOR,
               builder: (BuildContext context) {
                 return CourseAddPage(
                   setTimetableState: setState,

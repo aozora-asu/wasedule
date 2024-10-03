@@ -58,7 +58,7 @@ class CalendarGptHandler {
       try{
         resultMap = jsonDecode(resultText ?? "[]");
       } catch (error){
-        SnackBar snackBar = SnackBar(content: Text("" + (resultText ?? "不明なエラー")));
+        SnackBar snackBar = SnackBar(content: Text("変換できませんでした：\n" + (resultText ?? "不明なエラー")));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         print("Error sending message: $error");
       }

@@ -157,7 +157,7 @@ class _FadingImageState extends ConsumerState<FadingImage>
             child: FadeTransition(
               opacity: _animation,
               child: Image.asset(
-                'lib/assets/eye_catch/eyecatch_white.png',
+                'lib/assets/eye_catch/eyecatch_calendar_white.png',
                 height: 200,
                 width: 200,
               ),

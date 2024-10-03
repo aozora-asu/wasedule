@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_data_manager.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -93,8 +93,8 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
                 return TaskInputForm(setosute: widget.setosute);
               });
         },
-        foregroundColor: Colors.white,
-        backgroundColor: PALE_MAIN_COLOR,
+        foregroundColor: FORGROUND_COLOR,
+        backgroundColor: BLUEGREY,
         child: const Icon(Icons.add),
       ),
     );
