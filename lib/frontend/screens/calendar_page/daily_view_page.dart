@@ -224,9 +224,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     ref.watch(calendarDataProvider);
     String targetKey =
         "${widget.target.year}-${widget.target.month.toString().padLeft(2, "0")}-${widget.target.day.toString().padLeft(2, "0")}";
+    List<MyCourse> targetDayList = tableData.targetDateClasses(widget.target);
+
 
     if (data.sortedDataByDay[targetKey] == null &&
-        tableData.currentSemesterClasses[widget.target.weekday] == null) {
+        targetDayList.isEmpty) {
       return GestureDetector(
           onTap: () async {
             await addEmptyData();
@@ -247,6 +249,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               height: SizeConfig.blockSizeHorizontal! * 5,
             ),
           ]));
+
     } else {
       return scheduleListBody(targetKey);
     }
@@ -335,32 +338,26 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     List targetDayData = data.sortedDataByDay[targetKey];
 
     return Column(children: [
-      const Divider(
-        height: 2,
-        thickness: 2,
-      ),
       Container(
-          width: SizeConfig.blockSizeHorizontal! * 95,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+          margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 5),
             Row(children: [
               const SizedBox(
                 width: 10,
               ),
-              GestureDetector(
+              Expanded(
+                  child:GestureDetector(
                   onTap: () => switchToEditMode(targetKey, index),
                   child: dateTimeData),
-              const SizedBox(width: 15),
-              Expanded(
-                child:GestureDetector(
-                  onTap: () => switchToEditMode(targetKey, index),
-                  child: tagChip(
-                      targetDayData.elementAt(index)["tagID"] ?? "", ref))
               ),
+              Expanded(
+                  child:GestureDetector(
+                    onTap: () => switchToEditMode(targetKey, index),
+                    child: tagChip(
+                        targetDayData.elementAt(index)["tagID"] ?? "", ref))
+              )
             ]),
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               GestureDetector(
@@ -481,10 +478,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     return GestureDetector(
         onTap: () {},
         child: Column(children: [
-          const Divider(
-            height: 2,
-            thickness: 2,
-          ),
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               decoration: BoxDecoration(
@@ -668,19 +661,13 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               });
         },
         child: Column(children: [
-          const Divider(
-            height: 2,
-            thickness: 2,
-          ),
           Container(
-              width: SizeConfig.blockSizeHorizontal! * 95,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
+            decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+            margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
+            padding:const EdgeInsets.symmetric(vertical: 5,horizontal:0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 5),
                     Row(children: [
                       const SizedBox(
                         width: 10,
@@ -690,19 +677,19 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               color: Colors.grey,
                               fontSize: 15,
                               fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const Spacer(),
                       const Icon(Icons.school, color: MAIN_COLOR, size: 20),
                       const SizedBox(
-                        width: 5,
+                        width: 10,
                       ),
                       Text("${classData.weekday!.text}曜日の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
                               fontWeight: FontWeight.normal)),
-                      const Spacer(),
+                      const SizedBox(
+                        width: 10,
+                      ),
                     ]),
                     Row(children: [
                       Expanded(

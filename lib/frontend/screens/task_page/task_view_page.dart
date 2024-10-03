@@ -147,15 +147,6 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ]),
           pageHeader()
         ]),
-        floatingActionButton: AnimatedOpacity(
-          opacity: _isFabVisible ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 600),
-          child:Container(
-            margin: EdgeInsets.only(
-              bottom: isShowTaskCalendarLine ? 80 : 0),
-            child:  AddDataCardButton(setosute: setState),          
-          )
-        )
       );
   }
 

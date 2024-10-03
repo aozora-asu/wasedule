@@ -94,7 +94,7 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
               });
         },
         foregroundColor: FORGROUND_COLOR,
-        backgroundColor: BLUEGREY,
+        backgroundColor: MAIN_COLOR,
         child: const Icon(Icons.add),
       ),
     );
