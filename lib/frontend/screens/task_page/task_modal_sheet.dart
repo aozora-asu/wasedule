@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/ui_components.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/hyper_link_text_controller.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_button.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
@@ -49,8 +51,15 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     summaryController =
         TextEditingController(text: targetData["summary"] ?? "");
     titleController = TextEditingController(text: targetData["title"] ?? "");
-    descriptionController =
-        TextEditingController(text: targetData["description"] ?? "");
+    if (!kReleaseMode) {
+      descriptionController = TextEditingController(
+        text: targetData["description"] ?? "",
+      );
+    } else {
+      descriptionController = LinkedTextEditingController(
+        text: targetData["description"] ?? "",
+      );
+    }
 
     // if(prefs.getString(targetData["id"].toString()) != null){
     //   taskDraft = prefs.getString(targetData["id"].toString())!;
@@ -119,9 +128,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   ),
                                 ),
                                 style: const TextStyle(
-                                    fontSize:
-                                        20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                                 onSubmitted: (value) {
                                   TaskDatabaseHelper().updateSummary(id, value);
 
@@ -151,9 +158,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   ),
                                 ),
                                 style: const TextStyle(
-                                    fontSize:
-                                        20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                                 onSubmitted: (value) {
                                   TaskDatabaseHelper().updateTitle(id, value);
                                   final list =
@@ -200,7 +205,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                           .format(dtEnd),
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize:20)),
+                                          fontSize: 20)),
                                 )),
                             textFieldModel(
                               "タスクの詳細",
@@ -286,8 +291,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                       setState(() {});
                                     },
                                     controller: taskDraftController,
-                                    style:const TextStyle(
-                                      fontSize:20,
+                                    style: const TextStyle(
+                                      fontSize: 20,
                                     ),
                                     decoration: const InputDecoration(
                                       hintText: "(課題の下書きをここに作成…)",
@@ -350,26 +355,24 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                 ))),
         menuBar(),
       ]),
-        Container(
-          decoration: BoxDecoration(
-            color: BACKGROUND_COLOR,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
+      Container(
+        decoration: BoxDecoration(
+          color: BACKGROUND_COLOR,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-          padding:const EdgeInsets.symmetric(horizontal: 20),
-          alignment: Alignment.center,
-          height: 50,
-          child: Text(
-                (targetData["summary"] ?? "(詳細なし)") + " の詳細",
-                overflow: TextOverflow.ellipsis,
-                style:const TextStyle(
-                    color: BLUEGREY,
-                    fontSize:30,
-                    fontWeight: FontWeight.bold),
-              ),
-          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        alignment: Alignment.center,
+        height: 50,
+        child: Text(
+          (targetData["summary"] ?? "(詳細なし)") + " の詳細",
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+              color: BLUEGREY, fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ),
     ]);
   }
 
@@ -462,10 +465,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
         alignment: Alignment.centerLeft,
         child: Text(
           text,
-          style:const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.normal,
-              color: Colors.grey),
+          style: const TextStyle(
+              fontSize: 20, fontWeight: FontWeight.normal, color: Colors.grey),
         ),
       ),
     ]);
