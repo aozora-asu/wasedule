@@ -142,7 +142,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
       case 3:
         return AppLogoType.task;
       default:
-        return AppLogoType.task;
+        return AppLogoType.calendar;
     } 
   }
 

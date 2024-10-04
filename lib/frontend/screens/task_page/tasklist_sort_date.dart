@@ -30,7 +30,7 @@ class TaskListByDtEnd extends ConsumerStatefulWidget {
 }
 
 class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
-  final int _range = 1461;
+  late int _range;
   final DateTime now = DateTime.now();
   late ScrollController _taskScrollController;
   late ScrollController _calendarScrollController;
@@ -38,12 +38,17 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   Map<int,double> _heights = {};
   bool _isVisible = true;
 
-  double selectorWidth  = SizeConfig.blockSizeHorizontal! *72.5;
-  String indicatorText = "";
+  double selectorWidth  = SizeConfig.blockSizeHorizontal! *75;
+  double indicatorWidth = 45;
+  String indicatorTextYear = "";
+  String indicatorTextMonth = "";
 
   @override
   void initState() {
     super.initState();
+  
+    _setMaxday();
+
     _taskScrollController = ScrollController();
     _calendarScrollController = ScrollController();
     _calendarScrollController.addListener(_calendarScrollListener);
@@ -93,9 +98,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       }
     );
 
-    String yearText =DateFormat("yyyy年").format(findLastSunday());
-    String monthText = DateFormat("M月").format(findLastSunday());
-    indicatorText = yearText + monthText;
+    String yearText =DateFormat("yyyy").format(findLastSunday());
+    String monthText = DateFormat("M").format(findLastSunday());
+    indicatorTextYear = yearText;
+    indicatorTextMonth = monthText;
 
   }
 
@@ -136,6 +142,17 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
     setState((){});
   }
 
+  void _setMaxday(){
+    List<DateTime> dateList = widget.sortedData.keys.toList();
+    int maxDayFromToday = 0;
+    for(var targetDay in dateList){
+      if(targetDay.difference(findLastSunday()).inDays > maxDayFromToday){
+        maxDayFromToday = targetDay.difference(findLastSunday()).inDays;
+      }
+    }
+    _range = maxDayFromToday + 30;
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -148,6 +165,8 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       SharepreferenceHandler().getValue(SharepreferenceKeys.isShowDayWithoutTask);
     bool isShowTaskCalendarLine = 
       SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTaskCalendarLine);
+
+      _setMaxday();
 
     return Scaffold(
      backgroundColor: BACKGROUND_COLOR,
@@ -208,7 +227,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
             duration: const Duration(milliseconds: 600),
             child:Container(
               margin: EdgeInsets.only(
-                bottom: isShowTaskCalendarLine ? 0 : 0),
+                bottom: _isVisible ? 0 : 1000),
                 child: Row(children:[
                   const Spacer(),
                   if(isShowTaskCalendarLine)
@@ -282,16 +301,19 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                         ),
                       ]),
                       GestureDetector(
-                        onTap: (){
+                        onTap: () async{
                           final inputForm = ref.read(inputFormProvider);
                           inputForm.clearContents();
-                          showDialog(
+                          await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return TaskInputForm(
                                 initDate: date,
                                 setosute: setState);
-                            });
+                          });
+                          setState(() {
+                            _setMaxday();
+                          });
                         },
                         child:Container(
                           padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
@@ -685,12 +707,13 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
 
 
   Widget dateSelector(){
-    String _indiText = indicatorText;
+    String _indiTextYear = indicatorTextYear;
+    String _indiTextMonth = indicatorTextMonth;
 
     return Container(
-      width: selectorWidth + 10,
-      height: 65,
-      padding:const EdgeInsets.symmetric(vertical: 0),
+      width: selectorWidth,
+      height: 55,
+      padding:const EdgeInsets.symmetric(vertical: 0,horizontal: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: PALE_MAIN_COLOR,
@@ -703,20 +726,30 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
           ),
         ]
       ),
-      child: Column(children:[
+      child: Row(children:[
         Container(
-          alignment:const Alignment(-0.9,0),
-          child: Text(_indiText,
-            style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:14),
-          ),
+          width: indicatorWidth - 15,
+          alignment: Alignment.centerLeft,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+          children:[
+            Text(_indiTextYear,
+              style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:11)
+            ),
+            Text(_indiTextMonth,
+              style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:18),
+            ),
+          ])
         ),
         Expanded(child:
           Container(
-            margin:const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
-            width: selectorWidth,
+            margin:const EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+            width: selectorWidth - indicatorWidth,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color:  BACKGROUND_COLOR,
+              border: Border.all(width: 0.15)
             ),
             child:ListView.separated(
                 controller: _calendarScrollController,
@@ -724,9 +757,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 primary: false,
                 itemBuilder:(context,index){
                   DateTime targetSunday = findLastSunday().add(Duration(days: (index * 7))); 
-                  String yearText =DateFormat("yyyy年").format(targetSunday.subtract(const Duration(days:7)));
-                  String monthText = DateFormat("M月").format(targetSunday.subtract(const Duration(days:7)));
-                  indicatorText = yearText + monthText;
+                  String yearText =DateFormat("yyyy").format(targetSunday.subtract(const Duration(days:7)));
+                  String monthText = DateFormat("M").format(targetSunday.subtract(const Duration(days:7)));
+                  indicatorTextYear = yearText;
+                  indicatorTextMonth = monthText;
 
                   return weekCalendarLine(targetSunday, index * 7);
                 },
@@ -738,14 +772,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               )
             )
           ),
-          const SizedBox(height:6)
+          const SizedBox(width: 5),
       ])
     );
   }
 
   Widget weekCalendarLine(DateTime startDay,int startIndex){
     return SizedBox(
-      width: selectorWidth,
+      width: selectorWidth - indicatorWidth - 0.3,
       child:ListView.builder(
         itemBuilder: (context,index){
           int dayIndex = startIndex + index;
@@ -761,14 +795,14 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
   }
 
   Widget dailyCalendarObject(DateTime date,int index){
-    double widthParDay = selectorWidth / 7;
+    double widthParDay = (selectorWidth - indicatorWidth) / 7;
     List dailyData = widget.sortedData[date] ?? [];
     Color bgColor = Colors.transparent;
     Color weekDayColor = Colors.grey;
     Color dayColor = Colors.black;
 
     if(date == DateTime(now.year,now.month,now.day,0,0,0,0,0)){
-      bgColor = Colors.red;
+      bgColor = MAIN_COLOR;
       weekDayColor = Colors.white;
       dayColor = Colors.white;
     }else if(date.weekday == 6){
@@ -790,7 +824,9 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
               shape: BoxShape.circle
             ),
             width: widthParDay,
-            child:Column(children: [
+            child:Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               Text(DateFormat("E","ja_jp").format(date),
                 style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: weekDayColor)),
               Text(date.day.toString(),
@@ -798,7 +834,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: dayColor)),
-              const SizedBox(height: 1)
             ]),
           ),
           lengthBadge(dailyData.length,10.0,true)

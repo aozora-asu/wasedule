@@ -51,7 +51,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
       appBarContent = const AppBarThumbNail();
     }
 
-    AppLogoType type = logotype ?? AppLogoType.task;
+    AppLogoType type = logotype ?? AppLogoType.calendar;
 
 
     return AppBar(

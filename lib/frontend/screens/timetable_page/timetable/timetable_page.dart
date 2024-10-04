@@ -183,10 +183,7 @@ void initCellWidth() {
        AnimatedOpacity(
         opacity: _isFabVisible ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 600),
-        child:Container(
-          margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 12),
           child: timetableShareButton(context),
-         ) 
        )
     );
   }
@@ -594,7 +591,6 @@ Widget pageHeader(){
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height:5),
               doNotContainScreenShot(const SizedBox(height:5)),
               generateWeekThumbnail(),
               SizedBox(
@@ -877,10 +873,10 @@ Widget pageHeader(){
                 }
               }
 
-              Color lineColor = Colors.transparent;
-              double lineWidth = 0;
+              Color lineColor = BACKGROUND_COLOR;
+              double lineWidth = 1;
               DateTime now = DateTime.now();
-              double minRadius = 0;
+              double minRadius = 3.5;
 
               if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
                       Lesson.atPeriod(index + 1)!.end) &&
@@ -895,7 +891,7 @@ Widget pageHeader(){
                   width: SizeConfig.blockSizeHorizontal! * cellWidth,
                   height: SizeConfig.blockSizeVertical! * cellHeight,
                   decoration: BoxDecoration(
-                      color: (weekDay + index).isEven ? lighten(bgColor,0.025) : darken(bgColor,0.025),
+                      color: (weekDay ).isEven ? lighten(bgColor,0.015) : darken(bgColor,0.015),
                       border: Border.all(
                         color: lineColor,
                         width: lineWidth,

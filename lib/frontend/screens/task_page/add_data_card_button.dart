@@ -85,9 +85,9 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
     return SizedBox(
       child: FloatingActionButton(
         heroTag: "task_1",
-        onPressed: () {
+        onPressed: () async{
           inputForm.clearContents();
-          showDialog(
+          await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return TaskInputForm(setosute: widget.setosute);
@@ -315,6 +315,7 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                   height: 15,
                 ),
                 DateTimePickerFormField(
+                    initDateTime: widget.initDate,
                     controller: inputForm.dtEndController,
                     labelText: '③締め切り日時(２４時間表示)*',
                     labelColor: requiredColour(inputForm.dtEndController.text)),
@@ -379,7 +380,8 @@ class TaskInputFormState extends ConsumerState<TaskInputForm> {
                       inputForm.clearContents();
                       ref.read(calendarDataProvider.notifier).state =
                           CalendarData();
-
+                      
+                      widget.setosute((){});
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
@@ -739,9 +741,11 @@ class DateTimePickerFormField extends ConsumerWidget {
   final TextEditingController controller;
   final String labelText;
   final Color? labelColor;
+  DateTime? initDateTime;
 
   DateTimePickerFormField(
       {super.key,
+      this.initDateTime,
       required this.controller,
       required this.labelText,
       required this.labelColor});
@@ -752,7 +756,7 @@ class DateTimePickerFormField extends ConsumerWidget {
   Future<void> selectDateAndTime(BuildContext context, WidgetRef ref) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate:initDateTime ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -773,12 +777,12 @@ class DateTimePickerFormField extends ConsumerWidget {
       },
     );
     if (pickedDate != null) {
-      DateTime now = DateTime.now();
+      DateTime now = initDateTime ?? DateTime.now();
       TimeOfDay? pickedTime = TimeOfDay.fromDateTime(
           await DatePicker.showTimePicker(context,
                   showTitleActions: true,
                   showSecondsColumn: false,
-                  currentTime: DateTime.now(),
+                  currentTime:initDateTime ?? DateTime.now(),
                   locale: LocaleType.jp) ??
               DateTime(now.year, now.month, now.day, 23, 59));
 
@@ -816,8 +820,8 @@ class DateTimePickerFormField extends ConsumerWidget {
           width: SizeConfig.blockSizeHorizontal! * 90,
           height: 60,
           child: InkWell(
-            onTap: () {
-              selectDateAndTime(context, ref);
+            onTap: () async{
+              await selectDateAndTime(context, ref);
             },
             child: IgnorePointer(
               child: TextFormField(

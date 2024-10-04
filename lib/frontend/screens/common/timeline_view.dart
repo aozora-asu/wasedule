@@ -284,15 +284,18 @@ class _TimelineState extends ConsumerState<Timeline>{
     int fromToday = targetDay.difference(now).inDays;
     DaylyData targetDayData = getDaylyData(targetDay);
     bool hasData = targetDayData.hasData();
+    bool hideDaysleft = false;
 
     if(targetDay.year == now.year
       && targetDay.month == now.month 
       && targetDay.day == now.day){
-      formattedDate = "きょう";
+        formattedDate = "きょう";
+        hideDaysleft = true;
     }else if(targetDay.year == now.year
       && targetDay.month == now.month 
       && targetDay.day == now.day +1){
-      formattedDate = "あす";
+        formattedDate = "あす";
+        hideDaysleft = true;
     }
 
     return hasData ?
@@ -304,8 +307,9 @@ class _TimelineState extends ConsumerState<Timeline>{
           Text(formattedDate,
             style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20,color:BLUEGREY)),
           const Spacer(),
-          Text("  $fromToday 日後",
-            style: const TextStyle(fontSize:13,color:Colors.grey,fontWeight:FontWeight.bold)),
+          if(!hideDaysleft)
+            Text("  ${fromToday + 1} 日後",
+              style: const TextStyle(fontSize:13,color:Colors.grey,fontWeight:FontWeight.bold)),
           const SizedBox(width: 5),
         ]),
         ListView.builder(
@@ -316,7 +320,8 @@ class _TimelineState extends ConsumerState<Timeline>{
           itemCount: targetDayData.integratedData(ref).length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),),
-        const SizedBox(height:15),
+        const Divider(height:15),
+        
     ])
     : const SizedBox();
   }

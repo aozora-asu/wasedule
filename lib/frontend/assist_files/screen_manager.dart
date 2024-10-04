@@ -76,7 +76,7 @@ class _AppPageState extends ConsumerState<AppPage> {
       physics = const ScrollPhysics();
     } else if (_currentIndex == 1) {
       isExtendBody = true;
-      isExtendBottom = true;
+      isExtendBottom = false;
       physics = const ScrollPhysics();
     } else if (_currentIndex == 2) {
       isExtendBody = false;
