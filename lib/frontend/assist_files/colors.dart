@@ -10,7 +10,7 @@ const PALE_MAIN_COLOR = Color.fromARGB(255, 184, 113, 113);
 
 
 Color BACKGROUND_COLOR = const Color.fromRGBO(255, 255, 255, 1);
-Color FORGROUND_COLOR = const Color.fromRGBO(238, 238, 238, 1); //(244, 245, 247, 1);
+Color FORGROUND_COLOR = const Color(0xFFF2F2F7); //Color.fromRGBO(238, 238, 238, 1);
 
 
 const BLACK = Color.fromRGBO(17,17,17,1); //(51,51,51,1);
@@ -47,7 +47,7 @@ Color darken(Color color, [double amount = 0.1]) {
 
 void switchThemeColor(String theme){
   if(theme == "grey"){
-    BACKGROUND_COLOR = const Color.fromRGBO(238, 238, 238, 1);
+    BACKGROUND_COLOR = const Color(0xFFF2F2F7);
     FORGROUND_COLOR = const Color.fromRGBO(255, 255, 255, 1);
   } else if (theme == "yellow"){
     BACKGROUND_COLOR = const Color.fromRGBO(238, 239, 151, 1);

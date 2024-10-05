@@ -1157,7 +1157,6 @@ Widget pageHeader(){
             timeTableData.currentSemesterClasses[weekDay]!, period))
         .classRoom;
     int taskLength = taskList.length;
-
     Widget classRoomView = const SizedBox();
     if (classRoom != null && classRoom != "" && classRoom != "-" && classRoom != " ") {
       classRoomView = Container(

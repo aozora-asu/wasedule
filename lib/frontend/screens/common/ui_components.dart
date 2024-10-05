@@ -254,7 +254,7 @@ Widget simpleSmallButton(String text,Function() onTap,{double horizontalMargin =
   return GestureDetector(
       onTap:onTap,
       child: Container(
-        decoration: roundedBoxdecoration(backgroundColor: darken(FORGROUND_COLOR,0.06)),
+        decoration: roundedBoxdecoration(backgroundColor: darken(FORGROUND_COLOR,0.05)),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
         margin: EdgeInsets.symmetric(vertical: 4,horizontal: horizontalMargin),
         child: Text(
