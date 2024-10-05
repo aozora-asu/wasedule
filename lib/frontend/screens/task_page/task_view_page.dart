@@ -147,6 +147,7 @@ class TaskViewPageState extends ConsumerState<TaskViewPage> {
           ]),
           pageHeader()
         ]),
+       floatingActionButton: AddDataCardButton(setosute: setState,heroTag: "task_1",),
       );
   }
 

@@ -68,10 +68,12 @@ class InputForm {
 
 class AddDataCardButton extends ConsumerStatefulWidget {
   late StateSetter setosute;
+  late String heroTag;
 
   AddDataCardButton({
       super.key,
       required this.setosute,
+      required this.heroTag
     });
 
   @override
@@ -84,7 +86,7 @@ class AddDataCardButtonState extends ConsumerState<AddDataCardButton> {
     final inputForm = ref.watch(inputFormProvider);
     return SizedBox(
       child: FloatingActionButton(
-        heroTag: "task_1",
+        heroTag: widget.heroTag,
         onPressed: () async{
           inputForm.clearContents();
           await showDialog(

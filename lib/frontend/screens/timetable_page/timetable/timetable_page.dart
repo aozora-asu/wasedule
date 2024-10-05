@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/code_share_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/timetable_setting.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/credit/requiredcredits_stats.dart';
@@ -1498,8 +1499,8 @@ Widget pageHeader(){
                   width: 25,
                   child:Text(numOfCredits.toString(),style: smallBlackChar)),
                 GestureDetector(
-                  onTap:(){
-                    showClassificationContentDialog
+                  onTap:()async{
+                    await showClassificationContentDialog
                       (classificationName,sortedCourseByClassification.values.elementAt(index));
                   },
                   child:const Icon(Icons.more_horiz,color:Colors.grey),
@@ -1520,8 +1521,10 @@ Widget pageHeader(){
     ]);
   }
 
-  void showClassificationContentDialog(String? classificationName,List<MyCourse> courseList){
-    showDialog(
+  Color colorSettingsColor = Colors.red;
+
+  Future<void> showClassificationContentDialog(String? classificationName,List<MyCourse> courseList) async{
+    await showDialog(
       context: context,
       builder: (context){
         return AlertDialog(
@@ -1529,35 +1532,51 @@ Widget pageHeader(){
           title: Text("'${classificationName ?? "分類なし"}' の内訳",
             style:const TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
             content: SingleChildScrollView(
-            child: SizedBox(
-              width: double.maxFinite,
-              child:  ListView.builder(
-              itemBuilder: (context,index){
-                return GestureDetector(
-                  onTap:(){
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context)=>
-                    //     CoursePreview(
-                    //       target:courseList.elementAt(index),
-                    //       setTimetableState: setState,
-                    //       taskList: const []));
-                  },
-                  child:Container(
-                    decoration: roundedBoxdecoration(
-                      radiusType: 2,backgroundColor: BACKGROUND_COLOR),
-                    margin:const EdgeInsets.symmetric(vertical:1,horizontal: 5),
-                    padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
-                    child: Text(courseList.elementAt(index).courseName,
-                      style:const TextStyle(fontWeight: FontWeight.bold))
-                  )
-                );
-            },
-            shrinkWrap: true,
-            physics:const NeverScrollableScrollPhysics(),
-            itemCount: courseList.length,
-              )
-            )
+              child: SizedBox(
+                width: double.maxFinite,
+                child: Column(children:[
+
+                  ListView.builder(
+                  itemBuilder: (context,index){
+                    return GestureDetector(
+                      onTap:(){
+                      },
+                      child:Container(
+                        decoration: roundedBoxdecoration(
+                          radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+                        margin:const EdgeInsets.symmetric(vertical:1,horizontal: 5),
+                        padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
+                        child: Text(courseList.elementAt(index).courseName,
+                          style:const TextStyle(fontWeight: FontWeight.bold))
+                      )
+                    );
+                },
+                shrinkWrap: true,
+                physics:const NeverScrollableScrollPhysics(),
+                itemCount: courseList.length,
+              ),
+
+              // const SizedBox(height: 10),
+  
+              // Row(children: [
+              //   const Text("この科目群を一括で着色：",
+              //     style:TextStyle(color:Colors.grey,fontSize:12)),
+              //   colorSettingButton(
+              //     context,
+              //     setState,
+              //     colorSettingsColor,
+              //     (value) async{
+              //       for(var course in courseList){
+              //         int id = course.id!;
+              //         await MyCourse.updateColor(id,value);
+              //       }
+              //       setState((){});
+              //     }
+              //   )
+              // ])
+
+             ])
+            ),
           ),
           actions: [
             okButton(context,700.0)

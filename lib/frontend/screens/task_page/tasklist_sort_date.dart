@@ -167,6 +167,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       SharepreferenceHandler().getValue(SharepreferenceKeys.isShowTaskCalendarLine);
 
       _setMaxday();
+      _keys = List.generate(_range, (index) => GlobalKey());
 
     return Scaffold(
      backgroundColor: BACKGROUND_COLOR,
@@ -198,15 +199,6 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: BACKGROUND_COLOR,
-                  // boxShadow: [
-                  //   if(sortedData.containsKey(date) || isShowDayWithoutTask )
-                  //     BoxShadow(
-                  //       color: Colors.black.withOpacity(0.1),
-                  //       spreadRadius: 1,
-                  //       blurRadius: 1,
-                  //       offset: const Offset(0, 0),
-                  //     ),
-                  // ],
                 ),
                 margin: EdgeInsets.symmetric(
                   horizontal:5,
@@ -233,7 +225,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                   if(isShowTaskCalendarLine)
                     dateSelector(),
                   const SizedBox(width: 10),
-                  AddDataCardButton(setosute: setState),          
+                  AddDataCardButton(setosute: setState,heroTag: "task_2",),
                 ])  
           )
         )
