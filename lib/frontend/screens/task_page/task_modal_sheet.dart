@@ -1,3 +1,5 @@
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,12 +14,15 @@ import 'package:flutter_calandar_app/frontend/screens/task_page/add_data_card_bu
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_data_manager.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:intl/intl.dart';
-import "../../../backend/DB/handler/task_db_handler.dart";
+import 'package:toggle_switch/toggle_switch.dart';
 
 Future<void> bottomSheet(context, targetData, setState) async {
   showModalBottomSheet(
       isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: false,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
@@ -45,6 +50,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   late TextEditingController descriptionController = TextEditingController();
   late TextEditingController taskDraftController = TextEditingController();
   late String taskDraft = "";
+  late bool moodleMode;
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +77,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     }
 
     taskDraftController = TextEditingController(text: taskDraft);
+    moodleMode = false;
   }
 
   @override
@@ -77,25 +85,32 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     SizeConfig().init(context);
     Map targetData = widget.targetData;
     StateSetter setosute = widget.setosute;
+    final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
+
 
     DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
     int id = targetData["id"];
-    String? pageID = targetData["pageID"];
-    Widget dividerModel = const Divider(height: 1);
     int height = (SizeConfig.blockSizeVertical! * 100).round();
+    String? pageID = targetData["pageID"];
 
-    double bottomMargin = 10;
-    if (isEditing) {
-      bottomMargin = 50;
-    }
-
-    return Stack(children: [
-      Stack(alignment: Alignment.bottomCenter, children: [
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+          reverse: true,
+          child: Scrollbar(
+            interactive: true,
+            thickness: 5,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: bottomSpace),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: SizeConfig.blockSizeVertical! *20,
+                  maxHeight: SizeConfig.blockSizeVertical! *90),
+                  child:
         Container(
-            height: SizeConfig.blockSizeVertical! * 85,
             margin: const EdgeInsets.only(top: 0),
             decoration: BoxDecoration(
-              color: BACKGROUND_COLOR,
+              color: FORGROUND_COLOR,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -103,278 +118,210 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
             ),
             child: SingleChildScrollView(
                 primary: false,
-                child: Scrollbar(
+                physics: moodleMode ?
+                  const NeverScrollableScrollPhysics():
+                  const ScrollPhysics(),
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 70,
-                      ),
+                      ModalSheetHeader(),
+
+                      moodleModeSwitch(),
+
+                      if(!moodleMode)
                       Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Column(children: [
-                            textFieldModel(
-                              "タスク名",
-                              1,
-                              TextField(
-                                controller: summaryController,
-                                maxLines: null,
-                                textInputAction: TextInputAction.done,
-                                decoration: const InputDecoration.collapsed(
-                                  hintText: "タスク名を入力…",
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                                onSubmitted: (value) {
-                                  TaskDatabaseHelper().updateSummary(id, value);
+                            Row(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                             children:[
 
-                                  final list =
-                                      ref.read(taskDataProvider).taskDataList;
-                                  final newList = [...list];
-                                  ref.read(taskDataProvider.notifier).state =
-                                      TaskData();
-                                  ref.read(taskDataProvider).isRenewed = true;
-                                  setosute(() {});
-                                },
-                              ),
-                            ),
-                            textFieldModel(
-                              "カテゴリ",
-                              2,
-                              TextField(
-                                controller: titleController,
-                                maxLines: 1,
-                                decoration: const InputDecoration.collapsed(
-                                  hintText: "カテゴリを入力...",
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                                onSubmitted: (value) {
-                                  TaskDatabaseHelper().updateTitle(id, value);
-                                  final list =
-                                      ref.read(taskDataProvider).taskDataList;
-                                  final newList = [...list];
-                                  ref.read(taskDataProvider.notifier).state =
-                                      TaskData();
-                                  ref.read(taskDataProvider).isRenewed = true;
-                                  setosute(() {});
-                                },
-                              ),
-                            ),
-                            textFieldModel(
-                                "締切日時",
-                                2,
-                                GestureDetector(
-                                  onTap: () async {
-                                    TextEditingController controller =
-                                        TextEditingController();
-                                    await DateTimePickerFormField(
-                                      controller: controller,
-                                      labelText: "",
-                                      labelColor: MAIN_COLOR,
-                                    ).selectDateAndTime(context, ref);
-                                    DateTime changedDateTime =
-                                        DateTime.parse(controller.text);
-                                    int changedDateTimeSinceEpoch =
-                                        changedDateTime.millisecondsSinceEpoch;
+                              Expanded(child:
+                                textFieldModel(
+                                  "タスク名",1,summaryController,
+                                  (value) {
+                                      TaskDatabaseHelper().updateSummary(id, value);
 
-                                    await TaskDatabaseHelper().updateDtEnd(
-                                        id, changedDateTimeSinceEpoch);
-
-                                    final list =
-                                        ref.read(taskDataProvider).taskDataList;
-                                    final newList = [...list];
-                                    ref.read(taskDataProvider.notifier).state =
-                                        TaskData();
-                                    ref.read(taskDataProvider).isRenewed = true;
-                                    setState(() {});
-                                    Navigator.pop(context);
+                                      final list =
+                                          ref.read(taskDataProvider).taskDataList;
+                                      final newList = [...list];
+                                      ref.read(taskDataProvider.notifier).state =
+                                          TaskData();
+                                      ref.read(taskDataProvider).isRenewed = true;
+                                      setosute(() {});
                                   },
-                                  child: Text(
-                                      DateFormat("yyyy年MM月dd日  HH時mm分")
-                                          .format(dtEnd),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20)),
-                                )),
-                            textFieldModel(
-                              "タスクの詳細",
-                              2,
-                              TextField(
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                //textInputAction: TextInputAction.done,
-                                onChanged: (value) {
-                                  TaskDatabaseHelper()
-                                      .updateDescription(id, value);
-
-                                  final list =
-                                      ref.read(taskDataProvider).taskDataList;
-                                  final newList = [...list];
-                                  ref.read(taskDataProvider.notifier).state =
-                                      TaskData();
-                                  ref.read(taskDataProvider).isRenewed = true;
-                                  setState(() {});
-                                },
-                                controller: descriptionController,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                ),
-                                decoration: const InputDecoration(
-                                  hintText: "(タスクの詳細やメモを入力…)",
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.normal,
-                                  ),
                                 ),
                               ),
-                            ),
+
+                              GestureDetector(
+                                onTap:() async {
+                                  await showConfirmDeleteDialog(
+                                    context,summaryController.text,
+                                    ()async{
+                                      await TaskDatabaseHelper().unDisplay(id);
+                                      setState(() {});
+                                      final list =
+                                          ref.read(taskDataProvider).taskDataList;
+                                      List<Map<String, dynamic>> newList = [...list];
+                                      ref.read(taskDataProvider.notifier).state =
+                                          TaskData(taskDataList: newList);
+                                      ref.read(taskDataProvider).isRenewed = true;
+                                      ref
+                                          .read(taskDataProvider)
+                                          .sortDataByDtEnd(list);
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    });
+                                },
+                                child: const Icon(
+                                    Icons.delete,
+                                    color: Colors.grey
+                                ),
+                              ),
+
+                            ]),
+
                             textFieldModel(
-                              "タスクの削除",
-                              2,
-                              buttonModelWithChild(() async {
-                                TaskDatabaseHelper().unDisplay(id);
-                                setState(() {});
+                              "カテゴリ",2,titleController,
+                              (value) {
+                                TaskDatabaseHelper().updateTitle(id, value);
                                 final list =
                                     ref.read(taskDataProvider).taskDataList;
-                                List<Map<String, dynamic>> newList = [...list];
+                                final newList = [...list];
                                 ref.read(taskDataProvider.notifier).state =
-                                    TaskData(taskDataList: newList);
+                                    TaskData();
                                 ref.read(taskDataProvider).isRenewed = true;
-                                ref
-                                    .read(taskDataProvider)
-                                    .sortDataByDtEnd(list);
+                                setosute(() {});
+                              },
+                            ),
+
+                            textFieldModel(
+                              "タスクの詳細",2,descriptionController,
+                              weight: FontWeight.normal,
+                              (value) {
+                                TaskDatabaseHelper()
+                                    .updateDescription(id, value);
+
+                                final list =
+                                    ref.read(taskDataProvider).taskDataList;
+                                final newList = [...list];
+                                ref.read(taskDataProvider.notifier).state =
+                                    TaskData();
+                                ref.read(taskDataProvider).isRenewed = true;
+                                setState(() {});
+                              },
+                            ),
+
+                            const SizedBox(height: 5),
+                            indexModel("締め切り"),
+                            GestureDetector(
+                              child: Text(
+                                  DateFormat("yyyy年MM月dd日  HH時mm分")
+                                      .format(dtEnd),
+                                 style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 20)),
+                              onTap: () async {
+                                TextEditingController controller =
+                                    TextEditingController();
+                                await DateTimePickerFormField(
+                                  controller: controller,
+                                  labelText: "",
+                                  labelColor: MAIN_COLOR,
+                                ).selectDateAndTime(context, ref);
+                                DateTime changedDateTime =
+                                    DateTime.parse(controller.text);
+                                int changedDateTimeSinceEpoch =
+                                    changedDateTime.millisecondsSinceEpoch;
+
+                                await TaskDatabaseHelper().updateDtEnd(
+                                    id, changedDateTimeSinceEpoch);
+
+                                final list =
+                                    ref.read(taskDataProvider).taskDataList;
+                                final newList = [...list];
+                                ref.read(taskDataProvider.notifier).state =
+                                    TaskData();
+                                ref.read(taskDataProvider).isRenewed = true;
                                 setState(() {});
                                 Navigator.pop(context);
                               },
-                                  Colors.red,
-                                  Row(
-                                    children: [
-                                      const Spacer(),
-                                      Icon(Icons.delete,
-                                          color: FORGROUND_COLOR),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        "削除",
-                                        style: TextStyle(
-                                            color: FORGROUND_COLOR,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const Spacer()
-                                    ],
-                                  )),
                             ),
+
+                            const Divider(height: 30),
+
+                          ])
+                      ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Column(children: [
                             textFieldModel(
-                                "課題の下書き",
-                                3,
-                                Column(children: [
-                                  TextField(
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: null,
-                                    //textInputAction: TextInputAction.done,
-                                    onChanged: (value) async {
+                                "課題の下書き",3,taskDraftController,
+                                (value) async {
                                       await TaskDatabaseHelper().updateMemo(
                                           id, taskDraftController.text);
 
                                       setState(() {});
+                              },
+                            ),
+                                
+                             Row(children: [
+
+                                Text(
+                                  "文字数：${countJapaneseAlphabetNumericCharacters(taskDraftController.text)}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: BLUEGREY),
+                                ),
+                                const Spacer(),
+                                GestureDetector(
+                                    onTap: () {
+                                      Clipboard.setData(ClipboardData(
+                                          text: taskDraftController.text));
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          backgroundColor: FORGROUND_COLOR,
+                                          content: const Text(
+                                            "テキストがクリップボードにコピーされました。",
+                                            style: TextStyle(
+                                                color: BLUEGREY,
+                                                fontWeight:
+                                                    FontWeight.bold),
+                                          ),
+                                        ),
+                                      );
                                     },
-                                    controller: taskDraftController,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      hintText: "(課題の下書きをここに作成…)",
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(children: [
-                                    Text(
-                                      "文字数：${countJapaneseAlphabetNumericCharacters(taskDraftController.text)}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: BLUEGREY),
-                                    ),
-                                    const Spacer(),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: taskDraftController.text));
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              backgroundColor: FORGROUND_COLOR,
-                                              content: const Text(
-                                                "テキストがクリップボードにコピーされました。",
-                                                style: TextStyle(
-                                                    color: BLUEGREY,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: const Row(children: [
-                                          Icon(Icons.copy, color: BLUEGREY),
-                                          Text("コピー",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: BLUEGREY))
-                                        ])),
+                                    child: const Row(children: [
+                                      Icon(Icons.copy, color: BLUEGREY),
+                                      Text("コピー",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: BLUEGREY))
                                   ])
-                                ])),
-                            const SizedBox(height: 20),
-                            webView(pageID, height),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              height:
-                                  SizeConfig.blockSizeVertical! * bottomMargin,
-                            ),
-                          ])),
-                    ],
+                                ),
+                              ])
+
+                          ])
+                        ),
+
+                        const SizedBox(height: 20),
+                        if(moodleMode)
+                          webView(pageID, height),
+                        const SizedBox(
+                          height:40,
+                        ),
+                      ])
+                    ),
                   ),
-                ))),
-        menuBar(),
-      ]),
-      Container(
-        decoration: BoxDecoration(
-          color: BACKGROUND_COLOR,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        alignment: Alignment.center,
-        height: 50,
-        child: Text(
-          (targetData["summary"] ?? "(詳細なし)") + " の詳細",
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-              color: BLUEGREY, fontSize: 30, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ]);
+                
+
+        )
+      )
+     )
+    );
+   });
   }
 
   bool isEditing = false;
@@ -382,16 +329,12 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   Widget webView(String? pageID, int height) {
     if (pageID != null) {
       return Column(children: [
-        indexModel("■ Moodle ページビュー"),
-        SizedBox(
-          height: SizeConfig.blockSizeVertical! * 1,
-        ),
+        indexModel("  Moodle ページビュー"),
         Container(
             width: SizeConfig.blockSizeHorizontal! * 100,
-            height: SizeConfig.blockSizeVertical! * 75,
-            decoration: BoxDecoration(border: Border.all()),
-            child: SingleChildScrollView(
-              child: SizedBox(
+            height: SizeConfig.blockSizeVertical! * 60,
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+            child: SizedBox(
                   width: SizeConfig.blockSizeHorizontal! * 100,
                   height: SizeConfig.blockSizeVertical! * height,
                   child: InAppWebView(
@@ -418,13 +361,44 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                       setState(() {});
                     },
                   )),
-            )),
+            ),
+            menuBar()
       ]);
     } else {
-      return SizedBox(
-        height: SizeConfig.blockSizeVertical! * 50,
-      );
+      return const SizedBox();
     }
+  }
+
+  Widget moodleModeSwitch(){
+    return 
+    FlutterToggleTab
+        (height: 30,
+          width: SizeConfig.blockSizeHorizontal! *24,
+          borderRadius: 5,
+          selectedIndex: moodleMode ? 1 : 0,
+          selectedTextStyle:const TextStyle(
+            color: Colors.white,
+            fontSize: 15
+          ),
+          unSelectedTextStyle:const TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+          ),
+          labels: const ["課題概要","Moodle"],
+          selectedBackgroundColors: const [BLUEGREY,BLUEGREY],
+          selectedLabelIndex: (index) {
+            setState(() {
+              if(moodleMode){
+                moodleMode = false;
+              }else{
+                moodleMode = true;
+              }
+            });
+          },
+          marginSelected:const EdgeInsets.symmetric(horizontal: 2,vertical:3),
+          isScroll: true,
+          isShadowEnable: false,
+    );
   }
 
   int countJapaneseAlphabetNumericCharacters(String input) {
@@ -448,14 +422,31 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
     return japaneseCount + alphabetCount + numericCount;
   }
 
-  Widget textFieldModel(String title, int type, Widget child) {
+  Widget textFieldModel(
+    String title,
+    int type,
+    TextEditingController controller,
+    Function(String)onChanged,
+    {FontWeight weight = FontWeight.bold}
+  ){
     return Container(
-      decoration: roundedBoxdecoration(radiusType: type),
       margin: const EdgeInsets.symmetric(vertical: 1),
-      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [indexModel(title), child],
+        children: [
+          const SizedBox(height: 5),
+          indexModel(title),
+          CupertinoTextField(
+            controller: controller,
+            maxLines: null,
+            textInputAction: TextInputAction.done,
+            style: TextStyle(
+                fontSize: 16, fontWeight: weight),
+            onSubmitted: (value) async{
+              await onChanged(value);
+            }
+          )
+        ],
       ),
     );
   }
@@ -467,7 +458,7 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
         child: Text(
           text,
           style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.normal, color: Colors.grey),
+              fontSize: 14, fontWeight: FontWeight.normal, color: Colors.grey),
         ),
       ),
     ]);

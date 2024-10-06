@@ -615,9 +615,7 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                     ),
                     child: Column(children: [
                       Row(children: [
-                        Transform.scale(
-                          scale: 1.1,
-                          child: 
+
                           CupertinoCheckbox(
                             value: isChosen,
                             onChanged: (value) {
@@ -640,8 +638,10 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
                                 //ref.read(taskDataProvider.notifier).state;
                                 ref.read(taskDataProvider).manageIsButton();
                               });
-                            })
+                            }
                           ),
+
+                          
                         Expanded(
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
