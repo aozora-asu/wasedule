@@ -37,7 +37,7 @@ dependencies:
   flutter_map_animations: ^0.7.0
   rate_my_app: ^2.2.0
   liquid_pull_to_refresh: ^3.0.1
-
+  flutter_toggle_tab: ^1.4.1
 
   flutter_localizations:
     sdk: flutter
