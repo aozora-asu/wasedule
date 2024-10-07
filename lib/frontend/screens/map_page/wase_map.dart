@@ -73,7 +73,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
       0: ["3", "6", "7", "8", "10", "11", "14", "15", "16"],
       1: ["31", "32", "33", "34", "36", "38"],
       2: ["52", "53", "54", "56", "57", "60", "61", "63"],
-      3: ["100", "101"]
+      3: ["100", "101"],
+      4: ["79"]
     };
   }
 
@@ -113,6 +114,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   markerPin("14"),
                   libraryPin("toyama_library"),
                   foodPin("toyama_food"),
+                  studentHallPin(),
+                  trainingGymPin(),
                   markerPin("31"),
                   markerPin("32"),
                   markerPin("33"),
@@ -130,6 +133,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   markerPin("61"),
                   markerPin("60"),
                   markerPin("63"),
+                  markerPin("79"),
                   foodPin("tokorozawa_food"),
                   libraryPin("tokorozawa_library"),
                   markerPin("100"),
@@ -202,6 +206,15 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                 .animatedZoomTo(initMapZoom["tokorozawa"]!);
             setState(() {});
           }, buttonColor(3), "   所沢   "),
+          buttonModel(() async {
+            sharepreferenceHandler.setValue(
+                SharepreferenceKeys.initCampusNum, 4);
+            await _animatedMapController.animateTo(
+                dest: campusLocations["higashi_fushimi"]);
+            await _animatedMapController
+                .animatedZoomTo(initMapZoom["higashi_fushimi"]!);
+            setState(() {});
+          }, buttonColor(4), "  東伏見  "),
         ]),
       ]))
     ]);
@@ -301,8 +314,36 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
     );
   }
 
-  void showDetailButtomSheet(String location) {
-    showModalBottomSheet<void>(
+  Marker studentHallPin() {
+    return Marker(
+      width: 45.0,
+      height: 45.0,
+      point: buildingLocations["student_hall"]!,
+      child: GestureDetector(
+          onTap: () {
+            otherFacilityButtomSheet("student_hall");
+          },
+          child: Image.asset('lib/assets/map_images/student_hall_pin.png')),
+      rotate: true,
+    );
+  }
+
+    Marker trainingGymPin() {
+    return Marker(
+      width: 45.0,
+      height: 45.0,
+      point: buildingLocations["training_gym"]!,
+      child: GestureDetector(
+          onTap: () {
+            otherFacilityButtomSheet("training_gym");
+          },
+          child: Image.asset('lib/assets/map_images/training_gym_pin.png')),
+      rotate: true,
+    );
+  }
+
+  Future<void> showDetailButtomSheet(String location) async{
+    await showModalBottomSheet<void>(
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
@@ -917,6 +958,114 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
               ]));
         });
   }
+
+  void otherFacilityButtomSheet(String location) {
+    String buildingName = "";
+    Image pinImage = Image.asset('lib/assets/map_images/student_hall.png');
+    Color color1 = Colors.lightBlue;
+    Color color2 = Colors.blue;
+
+    switch (location) {
+      case "student_hall":
+        buildingName = "学生会館";
+        color1 = Colors.lightGreen;
+        color2 = Colors.green;
+        pinImage = Image.asset('lib/assets/map_images/student_hall_pin.png');
+        break;
+      case "training_gym":
+        buildingName = "トレーニングジム";
+        color1 = Colors.lightBlue;
+        color2 = Colors.blue;
+        pinImage = Image.asset('lib/assets/map_images/training_gym_pin.png');
+        break;
+      default:
+        buildingName = "不明な施設";
+        break;
+    }
+
+    int height = (SizeConfig.blockSizeVertical! * 100).round();
+    showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        enableDrag: false,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (context) {
+          return Container(
+              height: SizeConfig.blockSizeVertical! * 75,
+              decoration: BoxDecoration(
+                color: FORGROUND_COLOR,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
+              ),
+              margin: const EdgeInsets.only(top: 20),
+              child: Column(children: [
+                Container(
+                    height: SizeConfig.blockSizeVertical! * 6,
+                    width: SizeConfig.blockSizeHorizontal! * 100,
+                    decoration: BoxDecoration(
+                      gradient: gradationDecoration(
+                          color1: color1, color2: color2),
+                      color: FORGROUND_COLOR,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                    ),
+                    child: Row(children: [
+                      SizedBox(width: SizeConfig.safeBlockHorizontal! * 3),
+                      pinImage,
+                      Text(" $buildingName",
+                          style: TextStyle(
+                              fontSize: SizeConfig.blockSizeVertical! * 3,
+                              fontWeight: FontWeight.bold,
+                              color: FORGROUND_COLOR))
+                    ])),
+                Expanded(
+                    child: Stack(children: [
+                  Container(
+                      color: FORGROUND_COLOR.withOpacity(0.6),
+                      child: Container(
+                        width: SizeConfig.blockSizeHorizontal! * 100,
+                        height: SizeConfig.blockSizeVertical! * 75,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey)),
+                        child: SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 100,
+                            height: SizeConfig.blockSizeVertical! * height,
+                            child: InAppWebView(
+                              key: mapWebViewKey,
+                              onConsoleMessage:
+                                  (controller, consoleMessage) async {
+                                print(consoleMessage.message);
+                              },
+                              initialUrlRequest: URLRequest(
+                                  url: WebUri(
+                                      webLinks[location]!)),
+                              onWebViewCreated: (controller) {
+                                mapWebViewController = controller;
+                              },
+                              onLoadStop: (a, b) async {
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
+                                    100;
+                                setState(() { });
+                              },
+                              onContentSizeChanged: (a, b, c) async {
+                                height = await mapWebViewController
+                                        .getContentHeight() ??
+                                    100;
+                                setState(() {});
+                              },
+                            )),
+                      )),
+                ]))
+              ]));
+        });
+  }
+
 }
 
 class SearchEmptyClassrooms extends StatefulWidget {
@@ -935,12 +1084,13 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
   late int weekday;
   late int period;
   late Future<List<String>> futureVacantRooms;
+  DateTime now = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    weekday = 0;
-    period = 0;
+    weekday = now.weekday != 7 ? now.weekday - 1 : 5;
+    period = Lesson.whenPeriod(now) != null ? Lesson.whenPeriod(now)!.period : 0;
     futureVacantRooms = fetchVacantRooms(widget.location, weekday, period);
   }
 

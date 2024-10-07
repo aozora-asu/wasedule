@@ -7,6 +7,7 @@ Map<String, LatLng> campusLocations = const {
   "toyama": LatLng(35.70562816868803, 139.7176382479536),
   "nishi_waseda": LatLng(35.70604328321409, 139.70671670575553),
   "tokorozawa": LatLng(35.78696579219986, 139.39954205621635),
+  "higashi_fushimi" : LatLng(35.726727900743775, 139.56373149563657),
 };
 
 Map<String, double> initMapZoom = const {
@@ -14,6 +15,7 @@ Map<String, double> initMapZoom = const {
   "toyama": 17.2,
   "nishi_waseda": 16.75,
   "tokorozawa": 16,
+  "higashi_fushimi": 16.25,
 };
 
 Map<String, LatLng> buildingLocations = const {
@@ -37,6 +39,8 @@ Map<String, LatLng> buildingLocations = const {
   "38": LatLng(35.705410811083695, 139.71885914410385),
   "toyama_library": LatLng(35.70511867745611, 139.71871750748542),
   "toyama_food": LatLng(35.70542144323193, 139.71858283951815),
+  "student_hall" : LatLng(35.70613012934406, 139.71671659730686),
+  "training_gym" : LatLng(35.70589395907948, 139.71639545916818),
   "52": LatLng(35.705637188098656, 139.70709957841908),
   "53": LatLng(35.70563507207901, 139.70751912052745),
   "54": LatLng(35.70564142013665, 139.70788393977944),
@@ -48,6 +52,7 @@ Map<String, LatLng> buildingLocations = const {
   "rikou_library": LatLng(35.70602782207398, 139.70674367727975),
   "rikou_food": LatLng(35.706287268366445, 139.70799168375845),
   "rikou_food_63": LatLng(35.70613476708157, 139.70544846698553),
+  "79" : LatLng(35.727718026563025, 139.5643581585824),
   "100": LatLng(35.78526683441956, 139.39946516174751),
   "101": LatLng(35.78866719695889, 139.39950043751176),
   "tokorozawa_library": LatLng(35.78520285349271, 139.39840174340995),
@@ -83,6 +88,7 @@ Map<String, AssetImage> buildingImages = const {
   "61": AssetImage('lib/assets/map_images/waseda_building_61.jpg'),
   "63": AssetImage('lib/assets/map_images/waseda_building_63.jpg'),
   "rikou_library": AssetImage('lib/assets/map_images/waseda_rikou_library.jpg'),
+  "79": AssetImage('lib/assets/map_images/waseda_building_21.png'),
   "100": AssetImage('lib/assets/map_images/waseda_building_21.png'),
   "101": AssetImage('lib/assets/map_images/waseda_building_21.png'),
   "tokorozawa_library":
@@ -94,7 +100,8 @@ Map<int, List<String>> campusID2buildingsList() {
     0: ["3", "6", "7", "8", "10", "11", "14", "15", "16"],
     1: ["31", "32", "33", "34", "36", "38"],
     2: ["52", "53", "54", "56", "57", "60", "61", "63"],
-    3: ["100", "101"]
+    3: ["100", "101"],
+    4: ["79"]
   };
 }
 
@@ -109,4 +116,6 @@ Map<String, String> webLinks = {
   "rikou_food": "https://www.wcoop.ne.jp/schedule/schedule_",
   "rikou_food_63": "https://www.wcoop.ne.jp/schedule/schedule_",
   "tokorozawa_food": "https://www.wcoop.ne.jp/schedule/schedule_",
-};
+  "student_hall" : "https://www.waseda.jp/inst/student/facility/studentcenter/about",
+  "training_gym" : "https://www.waseda.jp/inst/student/facility/training",
+  };
