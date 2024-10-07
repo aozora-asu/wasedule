@@ -39,6 +39,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   TextEditingController classificationController = TextEditingController();
   late int viewMode;
   late bool searchMode;
+  late List<Map<String,dynamic>> taskList = [];
 
   Widget dividerModel = const Divider(height: 2);
   TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 17,fontWeight: FontWeight.normal);
@@ -48,6 +49,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   void initState() {
     super.initState();
     MyCourse target = widget.target;
+    taskList = widget.taskList;
     memoController.text = target.memo ?? "";
     classRoomController.text = target.classRoom;
     classNameController.text = target.courseName;
@@ -61,6 +63,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 0);
+    print(taskList);
  
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
@@ -524,7 +527,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget relatedTasks() {
-    if (widget.taskList.isNotEmpty) {
+    if (taskList.isNotEmpty) {
       return Column(children: [
         const Divider(),
         Row(
@@ -533,7 +536,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
             Text("課題",
                 style: titleStyle),
             const Spacer(),
-            lengthBadge(widget.taskList.length, 17.5, false),
+            lengthBadge(taskList.length, 17.5, false),
             const SizedBox(width: 10),
           ],
         ),
@@ -545,12 +548,12 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               const SizedBox(height: 2),
               ListView.separated(
                 itemBuilder: (context, index) {
-                  return taskListChild(widget.taskList.elementAt(index));
+                  return taskListChild(taskList.elementAt(index));
                 },
                 separatorBuilder: (context, index) {
                   return const SizedBox(height: 2);
                 },
-                itemCount: widget.taskList.length,
+                itemCount: taskList.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
               )
@@ -582,7 +585,25 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     String remainingTimeInString = formatDuration(remainingTime);
     return GestureDetector(
         onTap: () async {
-          await bottomSheet(context, target, widget.setTimetableState);
+          await bottomSheet(
+            context,
+            target,
+            widget.setTimetableState,
+            onChanged: (newData){
+              int index = targetTaskIndex(newData);
+              setState(() {
+                taskList = 
+                  List.from(
+                    List.from(taskList)..removeAt(index)
+                  )..insert(index,newData);
+              });
+            },
+            onDeleted: (targetData){
+              setState(() {
+                taskList = List.from(taskList)..removeAt(targetTaskIndex(targetData));
+              });
+            }
+          );
         },
         child: Row(children: [
           Column(children: [
@@ -635,6 +656,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       ),
       const SizedBox(height:15)
     ]);
+  }
+
+  int targetTaskIndex(Map<String,dynamic> target){
+    int result = 0;
+    for(int i = 0; i < taskList.length; i++){
+      if(target["id"] == taskList.elementAt(i)["id"]){
+        result = i;
+      }
+    }
+    return result;
   }
 
 }
@@ -708,4 +739,5 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
       child: child,
     );
+
   }

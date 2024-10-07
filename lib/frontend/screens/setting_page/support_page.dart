@@ -97,7 +97,7 @@ class _SnsLinkPageState extends State<SnsLinkPage> {
                   ]
                 ),
               SettingsSection(
-                  title: Text("SPETIAL THANKS"),
+                  title: Text("SPECIAL THANKS"),
                   tiles: <SettingsTile>[
                     SettingsTile(
                       title: specialThanks(),

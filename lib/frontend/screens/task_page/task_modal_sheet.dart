@@ -18,7 +18,8 @@ import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:intl/intl.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-Future<void> bottomSheet(context, targetData, setState) async {
+Future<void> bottomSheet(context, targetData, setState,
+ {Function(Map<String,dynamic>)? onChanged,Function(Map<String,dynamic>)? onDeleted}) async {
   showModalBottomSheet(
       isScrollControlled: true,
       isDismissible: true,
@@ -26,16 +27,25 @@ Future<void> bottomSheet(context, targetData, setState) async {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return TaskModalSheet(targetData: targetData, setosute: setState);
+        return TaskModalSheet(
+          targetData: targetData,
+          setosute: setState,
+          onChanged: onChanged,
+          onDeleted: onDeleted,
+          );
       });
 }
 
 class TaskModalSheet extends ConsumerStatefulWidget {
   Map<String, dynamic> targetData;
   StateSetter setosute;
+  Function(Map<String,dynamic>)? onChanged;
+  Function(Map<String,dynamic>)? onDeleted;
 
   TaskModalSheet({
     super.key,
+    this.onChanged,
+    this.onDeleted,
     required this.targetData,
     required this.setosute,
   });
@@ -51,11 +61,12 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   late TextEditingController taskDraftController = TextEditingController();
   late String taskDraft = "";
   late bool moodleMode;
+  late Map<String,dynamic> targetData;
 
   @override
   void initState() {
     super.initState();
-    Map targetData = widget.targetData;
+    targetData = widget.targetData;
     summaryController =
         TextEditingController(text: targetData["summary"] ?? "");
     titleController = TextEditingController(text: targetData["title"] ?? "");
@@ -83,10 +94,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    Map targetData = widget.targetData;
     StateSetter setosute = widget.setosute;
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
-
 
     DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(targetData["dtEnd"]);
     int id = targetData["id"];
@@ -148,6 +157,13 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                           TaskData();
                                       ref.read(taskDataProvider).isRenewed = true;
                                       setosute(() {});
+                                      if(widget.onChanged != null){
+                                        Map<String,dynamic> newMap = {
+                                          ...targetData, // 既存のマップをスプレッド構文でコピー
+                                          'summary': value, // 置き換えたい項目を指定
+                                        };
+                                        widget.onChanged!(newMap);
+                                      }
                                   },
                                 ),
                               ),
@@ -158,7 +174,6 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     context,summaryController.text,
                                     ()async{
                                       await TaskDatabaseHelper().unDisplay(id);
-                                      setState(() {});
                                       final list =
                                           ref.read(taskDataProvider).taskDataList;
                                       List<Map<String, dynamic>> newList = [...list];
@@ -169,6 +184,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                           .read(taskDataProvider)
                                           .sortDataByDtEnd(list);
                                       setState(() {});
+                                      if(widget.onDeleted != null){
+                                        widget.onDeleted!(widget.targetData);
+                                      }
                                       Navigator.pop(context);
                                     });
                                 },
@@ -182,8 +200,8 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
 
                             textFieldModel(
                               "カテゴリ",2,titleController,
-                              (value) {
-                                TaskDatabaseHelper().updateTitle(id, value);
+                              (value) async{
+                                await TaskDatabaseHelper().updateTitle(id, value);
                                 final list =
                                     ref.read(taskDataProvider).taskDataList;
                                 final newList = [...list];
@@ -191,6 +209,9 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     TaskData();
                                 ref.read(taskDataProvider).isRenewed = true;
                                 setosute(() {});
+                                if(widget.onDeleted != null){
+                                  widget.onDeleted!(widget.targetData);
+                                }
                               },
                             ),
 
@@ -230,12 +251,13 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                   labelColor: MAIN_COLOR,
                                 ).selectDateAndTime(context, ref);
                                 DateTime changedDateTime =
-                                    DateTime.parse(controller.text);
+                                    DateTime.tryParse(controller.text) ?? dtEnd;
                                 int changedDateTimeSinceEpoch =
                                     changedDateTime.millisecondsSinceEpoch;
 
                                 await TaskDatabaseHelper().updateDtEnd(
                                     id, changedDateTimeSinceEpoch);
+                                
 
                                 final list =
                                     ref.read(taskDataProvider).taskDataList;
@@ -243,8 +265,15 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                 ref.read(taskDataProvider.notifier).state =
                                     TaskData();
                                 ref.read(taskDataProvider).isRenewed = true;
+                                Map<String,dynamic> newMap = {
+                                  ...targetData,
+                                  'dtEnd': changedDateTime.millisecondsSinceEpoch
+                                };
+                                targetData = newMap;
+                                if(widget.onChanged != null){
+                                  widget.onChanged!(newMap);
+                                }
                                 setState(() {});
-                                Navigator.pop(context);
                               },
                             ),
 

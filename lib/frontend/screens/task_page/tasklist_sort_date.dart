@@ -603,7 +603,11 @@ class _TaskListByDtEndState extends ConsumerState<TaskListByDtEnd> {
       Expanded(
           child: InkWell(
               onTap: () async {
-                await bottomSheet(context, targetData, setState);
+                await bottomSheet(
+                  context,
+                  targetData,
+                  setState,
+                );
               },
               child: Container(
                   padding: boxInset,

@@ -649,8 +649,11 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     return GestureDetector(
         onTap: () async {
-          await showDialog(
+         await showModalBottomSheet(
               context: context,
+              isDismissible: true,
+              isScrollControlled: true,
+              backgroundColor: FORGROUND_COLOR,
               builder: (BuildContext context) {
                 return CoursePreview(
                   target: classData,
