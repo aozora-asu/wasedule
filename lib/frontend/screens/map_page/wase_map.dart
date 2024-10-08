@@ -538,24 +538,6 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    const Text("現在の空き教室",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                            color: BLUEGREY)),
-                    Container(
-                        width: SizeConfig.blockSizeHorizontal! * 100,
-                        padding: const EdgeInsets.all(7.5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(7.0),
-                            gradient: gradationDecoration()),
-                        child: Text(searchResult,
-                            style: TextStyle(
-                              color: FORGROUND_COLOR,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ))),
-                    const SizedBox(height: 20),
                     SearchEmptyClassrooms(location: location),
                     const SizedBox(height: 30),
                     buttonModel(() async {
@@ -961,6 +943,8 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
 
   void otherFacilityButtomSheet(String location) {
     String buildingName = "";
+    String anc = "";
+
     Image pinImage = Image.asset('lib/assets/map_images/student_hall.png');
     Color color1 = Colors.lightBlue;
     Color color2 = Colors.blue;
@@ -977,6 +961,7 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
         color1 = Colors.lightBlue;
         color2 = Colors.blue;
         pinImage = Image.asset('lib/assets/map_images/training_gym_pin.png');
+        anc = "#anc_8";
         break;
       default:
         buildingName = "不明な施設";
@@ -1051,6 +1036,16 @@ class _WasedaMapPageState extends ConsumerState<WasedaMapPage>
                                 height = await mapWebViewController
                                         .getContentHeight() ??
                                     100;
+                                if (location == "training_gym") {
+                                  String javascriptCode = """
+                                                     const element = document.querySelector('a[href="$anc"]');
+                                                      if (element) {
+                                                        element.click();
+                                                      }
+                                                        """;
+                                  await mapWebViewController.evaluateJavascript(
+                                      source: javascriptCode);
+                                }
                                 setState(() { });
                               },
                               onContentSizeChanged: (a, b, c) async {
@@ -1090,7 +1085,7 @@ class _SearchEmptyClassroomsState extends State<SearchEmptyClassrooms> {
   void initState() {
     super.initState();
     weekday = now.weekday != 7 ? now.weekday - 1 : 5;
-    period = Lesson.whenPeriod(now) != null ? Lesson.whenPeriod(now)!.period : 0;
+    period = (Lesson.whenPeriod(now) != null ? Lesson.whenPeriod(now)!.period : 1) - 1;
     futureVacantRooms = fetchVacantRooms(widget.location, weekday, period);
   }
 
