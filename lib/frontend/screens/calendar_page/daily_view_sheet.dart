@@ -67,21 +67,45 @@ class InputForm {
   }
 }
 
-class DailyViewPage extends ConsumerStatefulWidget {
+class DailyViewSheet extends ConsumerStatefulWidget {
   DateTime target;
 
-  DailyViewPage({super.key, required this.target});
+  DailyViewSheet({super.key, required this.target});
 
   @override
-  DailyViewPageState createState() => DailyViewPageState();
+  DailyViewSheetState createState() => DailyViewSheetState();
 }
 
-class DailyViewPageState extends ConsumerState<DailyViewPage> {
+class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
+  late DateTime target;
+  
+  @override
+  void initState(){
+    super.initState();
+    target = widget.target;
+  }
+
+  void increaseDate(){
+    editingSchedule = null;
+    setState((){
+      target = target.add(const Duration(days:1));
+      print(target);
+    });
+  }
+
+  void decreaseDate(){
+    editingSchedule = null;
+    setState((){
+      target = target.subtract(const Duration(days:1));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
     ref.watch(taskDataProvider);
-    return GestureDetector(onTap: () async {
+    return GestureDetector(
+      onTap: () async {
       if (editingSchedule == null) {
         Navigator.pop(context);
       } else {
@@ -100,7 +124,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           });
         }
       }
-    }, child: LayoutBuilder(
+    }, 
+    child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
           reverse: true,
@@ -108,9 +133,9 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
               padding: EdgeInsets.only(bottom: bottomSpace / 2),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                    minHeight: viewportConstraints.maxHeight,
-                    maxHeight: viewportConstraints.maxHeight),
-                child: Center(child: pageBody()),
+                    minHeight: SizeConfig.blockSizeVertical! *40,
+                    maxHeight: SizeConfig.blockSizeVertical! *70),
+                child: pageBody(),
               )));
     }));
   }
@@ -118,45 +143,41 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   Widget pageBody() {
     return SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, top: 40),
+      padding: const EdgeInsets.only(left: 0, right: 0),
       child: Column(children: [
+        ModalSheetHeader(),
         Container(
             decoration: roundedBoxdecoration(),
             child: Column(children: [
-              Container(
-                height: 40,
-                color: Colors.redAccent,
-                child: Row(
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(width: 10),
-                    calendarIcon(Colors.white, 25),
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          " ${widget.target.year}/${widget.target.month}",
+                          DateFormat("yyyy/M","ja_jp").format(target),
                           style: const TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white),
+                              color: Colors.grey),
                         )),
                     const Spacer(),
                     buttonModel(() {
-                      showAttendanceDialog(context, widget.target, ref, true);
-                    }, MAIN_COLOR, "この日の出欠記録",
+                      showAttendanceDialog(context, target, ref, true);
+                    }, BLUEGREY, "この日の出欠記録",
                         verticalpadding: 5, horizontalPadding: 15),
                     const SizedBox(width: 5)
                   ],
-                ),
               ),
               Row(
                 children: [
                   Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        " ${widget.target.day}", //+ weekDayEng(widget.target.weekday),
+                        DateFormat(" d (E)","ja_jp").format(target),
                         style: const TextStyle(
-                            fontSize: 60,
+                            fontSize: 35,
                             fontWeight: FontWeight.w700,
                             color: Colors.black),
                       )),
@@ -168,6 +189,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         backgroundColor: Colors.redAccent,
+                        padding:const EdgeInsets.symmetric(vertical: 0,horizontal:20)
                       ),
                       child: const Icon(
                         Icons.add,
@@ -175,45 +197,34 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                       )),
                 ],
               ),
+              const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                //width: SizeConfig.blockSizeHorizontal! * 90,
                 child: listView(),
               ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal! * 90,
-                height: 10,
-              ),
-            ])),
-        const SizedBox(height: 10),
-        const SizedBox(height: 10),
-        Container(
-            decoration: BoxDecoration(
-                color: BACKGROUND_COLOR,
-                borderRadius: BorderRadius.circular(30)),
-            child: Column(children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Row(children: [
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
-                  taskIcon(Colors.grey, 25),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-                  const Text(
-                    'この日が期限の課題',
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: BLUEGREY,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
-                  taskListLength(23.0),
-                ]),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),
-              taskDataList(),
-            ]))
-      ]),
-    ));
+             ])
+            ),
+
+            const Divider(),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(children: [
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 4),
+                const Text(
+                  'この日が期限の課題',
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: BLUEGREY,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
+                taskListLength(18.0),
+              ]),
+            ),
+            taskDataList(),
+          ])
+        )
+      );
   }
 
   int? editingSchedule;
@@ -223,8 +234,8 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     final data = ref.read(calendarDataProvider);
     ref.watch(calendarDataProvider);
     String targetKey =
-        "${widget.target.year}-${widget.target.month.toString().padLeft(2, "0")}-${widget.target.day.toString().padLeft(2, "0")}";
-    List<MyCourse> targetDayList = tableData.targetDateClasses(widget.target);
+        "${target.year}-${target.month.toString().padLeft(2, "0")}-${target.day.toString().padLeft(2, "0")}";
+    List<MyCourse> targetDayList = tableData.targetDateClasses(target);
 
 
     if (data.sortedDataByDay[targetKey] == null &&
@@ -234,10 +245,6 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
             await addEmptyData();
           },
           child: Column(children: [
-            const Divider(
-              height: 2,
-              thickness: 2,
-            ),
             SizedBox(
               height: SizeConfig.blockSizeHorizontal! * 8,
             ),
@@ -300,7 +307,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
 
     //予定データが生成されたところに時間割データを混ぜる
     final timeTable = ref.read(timeTableProvider);
-    List<MyCourse> targetDayList = timeTable.targetDateClasses(widget.target);
+    List<MyCourse> targetDayList = timeTable.targetDateClasses(target);
 
     for (int i = 0; i < targetDayList.length; i++) {
       MyCourse targetClass = targetDayList.elementAt(i);
@@ -323,13 +330,17 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     List<Map<DateTime, dynamic>> sortedList =
         sortMapsByFirstKey(mixedDataByTime);
 
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return sortedList.elementAt(index).values.first;
-      },
-      itemCount: sortedList.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+        child:ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return sortedList.elementAt(index).values.first;
+        },
+        itemCount: sortedList.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+      )
     );
   }
 
@@ -352,11 +363,15 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   onTap: () => switchToEditMode(targetKey, index),
                   child: dateTimeData),
               ),
-              Expanded(
-                  child:GestureDetector(
-                    onTap: () => switchToEditMode(targetKey, index),
-                    child: tagChip(
-                        targetDayData.elementAt(index)["tagID"] ?? "", ref))
+              Container(
+                constraints: BoxConstraints(
+                   maxWidth: SizeConfig.blockSizeHorizontal! *60
+                ),
+                alignment: Alignment.centerRight,
+                child:GestureDetector(
+                  onTap: () => switchToEditMode(targetKey, index),
+                  child: tagChip(
+                      targetDayData.elementAt(index)["tagID"] ?? "", ref))
               )
             ]),
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -448,7 +463,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           },
           child: const Row(children: [
             Icon(
-              Icons.tag,
+              CupertinoIcons.tag,
             ),
             SizedBox(width: 5),
             Text('一括削除'),
@@ -481,6 +496,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
           Container(
               width: SizeConfig.blockSizeHorizontal! * 95,
               decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Column(
@@ -521,12 +537,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                   const EdgeInsets.symmetric(horizontal: 2.5),
                               width: SizeConfig.blockSizeHorizontal! * 75,
                               child: Material(
-                                child: TextField(
+                                color: Colors.transparent,
+                                child: CupertinoTextField(
                                   controller: titleController,
                                   maxLines: null,
                                   textInputAction: TextInputAction.done,
-                                  decoration: const InputDecoration(
-                                      hintText: "予定名を入力…"),
+                                  placeholder: "予定名を入力...",
                                   // overflow: TextOverflow.clip,
                                   style: const TextStyle(
                                       color: Colors.black,
@@ -604,12 +620,12 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                               },
                               child: buttonIcon)
                         ]),
-                    const SizedBox(height: 5),
                     Container(
                       width: SizeConfig.blockSizeHorizontal! * 95,
                       padding: const EdgeInsets.all(3),
+                      margin: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: BACKGROUND_COLOR,
+                        color: FORGROUND_COLOR,
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: SizedBox(
@@ -707,8 +723,10 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold),
                               ))),
-                      SizedBox(
-                        width: 80,
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: SizeConfig.blockSizeHorizontal! *30
+                        ),
                         child:Text(
                           classData.classRoom,
                           overflow: TextOverflow.clip,
@@ -988,7 +1006,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
   }
 
   Future<void> addEmptyData() async {
-    String startDate = DateFormat('yyyy-MM-dd').format(widget.target);
+    String startDate = DateFormat('yyyy-MM-dd').format(target);
     Map<String, dynamic> schedule = {
       "subject": "",
       "startDate": startDate,
@@ -1030,7 +1048,7 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
         ),
         padding: EdgeInsets.all(fontSize / 3),
         child: Text(
-          (sortedData[widget.target]?.length ?? 0).toString(),
+          (sortedData[target]?.length ?? 0).toString(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -1043,19 +1061,28 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
     Map<DateTime, List<Map<String, dynamic>>> sortedData =
         taskData.sortDataByDtEnd(taskData.taskDataList);
 
-    if (sortedData.keys.contains(widget.target)) {
+    if (sortedData.keys.contains(target)) {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           Widget dateTimeData = Container();
           dateTimeData = Text(
-            sortedData[widget.target]!.elementAt(index)["title"],
+            sortedData[target]!.elementAt(index)["title"],
             style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12.5,
                 fontWeight: FontWeight.bold),
           );
           DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(
-              sortedData[widget.target]!.elementAt(index)["dtEnd"]);
+              sortedData[target]!.elementAt(index)["dtEnd"]);
+
+          int radiusType = 2;
+          if(index == 0 && index+1 == sortedData[target]!.length){
+            radiusType = 0;
+          }else if(index == 0){
+            radiusType = 1;
+          }else if(index + 1 == sortedData[target]!.length){
+            radiusType = 3;
+          }
 
           return Column(children: [
             Row(children: [
@@ -1083,15 +1110,16 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   child: Container(
                     width: SizeConfig.blockSizeHorizontal! * 80,
                     padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 20),
-                    decoration: BoxDecoration(
-                        color: FORGROUND_COLOR,
-                        borderRadius: BorderRadius.circular(25)),
+                        vertical: 10, horizontal: 15),
+                    decoration: roundedBoxdecoration(
+                      backgroundColor:BACKGROUND_COLOR,
+                      radiusType: radiusType
+                    ),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            sortedData[widget.target]!
+                            sortedData[target]!
                                     .elementAt(index)["summary"] ??
                                 "(詳細なし)",
                             style: const TextStyle(
@@ -1104,30 +1132,27 @@ class DailyViewPageState extends ConsumerState<DailyViewPage> {
                   )),
               const Spacer(),
             ]),
-            const SizedBox(height: 15)
+            const SizedBox(height: 2)
           ]);
         },
-        itemCount: sortedData[widget.target]!.length,
+        itemCount: sortedData[target]!.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       );
     } else {
-      return Column(children: [
-        SizedBox(
-          height: SizeConfig.blockSizeHorizontal! * 4,
-        ),
-        const Text(
+      return const Column(children: [
+        SizedBox(height: 50),
+        Text(
           "課題はありません。",
           style: TextStyle(fontSize: 20, color: Colors.grey),
         ),
-        SizedBox(
-          height: SizeConfig.blockSizeHorizontal! * 6,
-        ),
+        SizedBox(height: 50),
       ]);
     }
   }
 
   String errorCause = "";
+
   bool isConflict(String start, String end) {
     errorCause = "";
     if (returnTagIsBeit(

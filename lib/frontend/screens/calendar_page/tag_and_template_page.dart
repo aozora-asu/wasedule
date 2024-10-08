@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/schedule_template_db_handler.dart';
 import 'package:flutter_calandar_app/backend/DB/handler/tag_db_handler.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
-import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/calendar_page/daily_view_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/tutorials.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/add_event_dialog.dart';

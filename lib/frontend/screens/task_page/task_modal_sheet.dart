@@ -24,7 +24,7 @@ Future<void> bottomSheet(context, targetData, setState,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: FORGROUND_COLOR,
       context: context,
       builder: (context) {
         return TaskModalSheet(

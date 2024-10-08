@@ -285,17 +285,23 @@ class _TimelineState extends ConsumerState<Timeline>{
     DaylyData targetDayData = getDaylyData(targetDay);
     bool hasData = targetDayData.hasData();
     bool hideDaysleft = false;
+    double fontSize = 20.0;
+    double bottomSpace = 0;
 
     if(targetDay.year == now.year
       && targetDay.month == now.month 
       && targetDay.day == now.day){
         formattedDate = "きょう";
+        fontSize = 35.0;
         hideDaysleft = true;
+        bottomSpace = 10;
     }else if(targetDay.year == now.year
       && targetDay.month == now.month 
       && targetDay.day == now.day +1){
         formattedDate = "あす";
+        fontSize = 30.0;
         hideDaysleft = true;
+        bottomSpace = 5;
     }
 
     return hasData ?
@@ -305,7 +311,7 @@ class _TimelineState extends ConsumerState<Timeline>{
        children:[
           const SizedBox(width: 5),
           Text(formattedDate,
-            style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20,color:BLUEGREY)),
+            style:TextStyle(fontWeight: FontWeight.bold,fontSize:fontSize,color:BLUEGREY)),
           const Spacer(),
           if(!hideDaysleft)
             Text("  ${fromToday + 1} 日後",
@@ -320,6 +326,7 @@ class _TimelineState extends ConsumerState<Timeline>{
           itemCount: targetDayData.integratedData(ref).length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),),
+        SizedBox(height:bottomSpace),
         const Divider(height:15),
         
     ])
@@ -490,9 +497,18 @@ class DaylyData{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
         Row(children: [
-          listIcon(Icons.school,MAIN_COLOR),
-          Text(" 授業",style:smallChar),
-          const Spacer()
+          Expanded(child:
+            Row(children:[
+              listIcon(Icons.school,MAIN_COLOR),
+              Text(" 授業",style:smallChar),
+            ])
+          ),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: SizeConfig.blockSizeHorizontal! *50
+            ),
+            child:Text(courseData.classRoom,style:smallChar,overflow: TextOverflow.ellipsis)
+          ),
         ]),
         Text(courseData.courseName,style:largeChar)
       ]),
