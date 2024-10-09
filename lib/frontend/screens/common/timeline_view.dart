@@ -292,9 +292,9 @@ class _TimelineState extends ConsumerState<Timeline>{
       && targetDay.month == now.month 
       && targetDay.day == now.day){
         formattedDate = "きょう";
-        fontSize = 35.0;
+        fontSize = 30.0;
         hideDaysleft = true;
-        bottomSpace = 10;
+        bottomSpace = 5;
     }else if(targetDay.year == now.year
       && targetDay.month == now.month 
       && targetDay.day == now.day +1){

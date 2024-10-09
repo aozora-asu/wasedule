@@ -298,6 +298,62 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
             }));
   }
 
+
+  Future<void> showAttendMenuPanel(MyCourse courseData, int absentNum) async {
+    TextStyle grey = const TextStyle(color: Colors.grey);
+    Widget header = Container(
+      margin:const EdgeInsets.symmetric(horizontal: 5),
+      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+      decoration: dialogHeader(),
+      child: Column(
+        children:[
+          Row(children:[
+            Expanded(
+              child:Text(courseData.courseName,
+                overflow: TextOverflow.clip,
+                style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
+            GestureDetector(
+              onTap:()=> Navigator.pop(context),
+              child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
+          ]),
+          //const Divider(height: 10),
+          Row(children: [
+            Text("残り欠席数(残機) ${(courseData.remainAbsent! - absentNum).toString()}回 / ",
+                style: grey),
+            Text("欠席可能数 ${courseData.remainAbsent.toString()}回", style: grey),
+          ]),
+      ])
+    );
+
+    await showDialog(
+      context: context,
+      builder: (context){
+        return Container(
+          margin:const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              const Spacer(),
+              Stack(
+                alignment:const  Alignment(0,-0.98),
+                children:[
+                Column(children:[
+                  header,
+                  AttendMenuPanel(
+                    courseData: courseData,
+                    setTimetableState: setState,
+                    backgroundColor: BACKGROUND_COLOR),
+                ]),
+                header
+              ]),
+              const Spacer(),
+            ]
+          )
+        );
+      });
+
+  }
+}
+
   Widget attendStatsIndicator(MyCourse courseData, List attendRecordList) {
     int attendNum = 0;
     int lateNum = 0;
@@ -364,57 +420,3 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
                   fontWeight: FontWeight.bold, color: Colors.white))),
     );
   }
-
-  Future<void> showAttendMenuPanel(MyCourse courseData, int absentNum) async {
-    TextStyle grey = const TextStyle(color: Colors.grey);
-    Widget header = Container(
-      margin:const EdgeInsets.symmetric(horizontal: 5),
-      padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-      decoration: dialogHeader(),
-      child: Column(
-        children:[
-          Row(children:[
-            Expanded(
-              child:Text(courseData.courseName,
-                overflow: TextOverflow.clip,
-                style:const TextStyle(fontSize:23,fontWeight: FontWeight.bold,))),
-            GestureDetector(
-              onTap:()=> Navigator.pop(context),
-              child:const Icon(Icons.cancel_rounded,size:20,color:Colors.red,))
-          ]),
-          //const Divider(height: 10),
-          Row(children: [
-            Text("残り欠席数(残機) ${(courseData.remainAbsent! - absentNum).toString()}回 / ",
-                style: grey),
-            Text("欠席可能数 ${courseData.remainAbsent.toString()}回", style: grey),
-          ]),
-      ])
-    );
-
-    await showDialog(
-      context: context,
-      builder: (context){
-        return Container(
-          margin:const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const Spacer(),
-              Stack(
-                alignment:const  Alignment(0,-0.98),
-                children:[
-                Column(children:[
-                  header,
-                  AttendMenuPanel(
-                    courseData: courseData,
-                    setTimetableState: setState),
-                ]),
-                header
-              ]),
-              const Spacer(),
-            ]
-          )
-        );
-      });
-
-  }
-}
