@@ -4,6 +4,7 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/ui_components.dart';
 import 'package:flutter_calandar_app/frontend/screens/common/attendance_dialog.dart';
+import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_record/attend_stats_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/to_do_page/todo_assist_files/size_config.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +47,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
         onTap: () {},
         child: Container(
             decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: widget.backgroundColor),
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
             margin: const EdgeInsets.symmetric(horizontal:5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, 
@@ -61,7 +62,6 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
 
   Widget attendSettingsPanel() {
     return Column(children:[
-      const Divider(),
       const Text("設定",
               style: TextStyle(fontSize: 20, color: Colors.grey)),
       remainingAbsentSetting(),
@@ -238,20 +238,6 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
                 const Spacer(),
                 addRecordButton(),
                 const SizedBox(width:5),
-                GestureDetector(
-                  onTap: (){
-                    setState(() {
-                      if(isExpandSettingPanel){
-                        isExpandSettingPanel = false;
-                      }else{
-                        isExpandSettingPanel = true;
-                      }
-                    });
-                  },
-                  child:Icon(
-                    isExpandSettingPanel ? Icons.close :  Icons.settings,
-                    size:20,color:Colors.grey)
-                )
               ]),
             ]),
             collapsed: const SizedBox(),
@@ -268,7 +254,7 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null || snapshot.data!.isEmpty) {
-              return const SizedBox();
+              return attendRecordList([]);
             } else {
               return attendRecordList(snapshot.data!);
             }
@@ -281,18 +267,42 @@ class _AttendMenuPanelState extends ConsumerState<AttendMenuPanel> {
   Widget attendRecordList(List attendRecordList) {
     return 
     Column(children:[
-      const Divider(),
-      ListView.separated(
-        itemCount: attendRecordList.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return attendRecordListPanel(attendRecordList.elementAt(index));
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(height: 1);
-        },
-      )
+
+      Container(
+        decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: FORGROUND_COLOR),
+        padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 6),
+        child:Row(children:[
+          attendStatsIndicator(widget.courseData, attendRecordList),
+          const Spacer(),
+          GestureDetector(
+            onTap: (){
+              setState(() {
+                if(isExpandSettingPanel){
+                  isExpandSettingPanel = false;
+                }else{
+                  isExpandSettingPanel = true;
+                }
+              });
+            },
+            child:Icon(
+              isExpandSettingPanel ? Icons.close :  Icons.settings,
+              size:20,color:Colors.grey)
+          )
+        ])
+      ),
+
+      if(!isExpandSettingPanel)
+        ListView.separated(
+          itemCount: attendRecordList.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return attendRecordListPanel(attendRecordList.elementAt(index));
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(height: 1);
+          },
+        )
     ]);
   }
 
