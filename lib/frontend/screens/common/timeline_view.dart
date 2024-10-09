@@ -318,6 +318,7 @@ class _TimelineState extends ConsumerState<Timeline>{
               style: const TextStyle(fontSize:13,color:Colors.grey,fontWeight:FontWeight.bold)),
           const SizedBox(width: 5),
         ]),
+        SizedBox(height:bottomSpace),
         ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 0),
           itemBuilder:(context,index){

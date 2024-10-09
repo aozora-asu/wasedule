@@ -209,8 +209,13 @@ class _TaskModalSheetState extends ConsumerState<TaskModalSheet> {
                                     TaskData();
                                 ref.read(taskDataProvider).isRenewed = true;
                                 setosute(() {});
-                                if(widget.onDeleted != null){
-                                  widget.onDeleted!(widget.targetData);
+                                Map<String,dynamic> newMap = {
+                                  ...targetData,
+                                  'title': value
+                                };
+                                targetData = newMap;
+                                if(widget.onChanged != null){
+                                  widget.onChanged!(newMap);
                                 }
                               },
                             ),

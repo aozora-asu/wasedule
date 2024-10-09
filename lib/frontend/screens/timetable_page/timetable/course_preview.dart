@@ -556,8 +556,9 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                 itemCount: taskList.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-              )
-            ]))
+              ),
+            ])
+          ),
       ]);
     } else {
       return const SizedBox();
@@ -633,9 +634,12 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                           target["summary"],
                           style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
-                        )
-                      ])))
-        ]));
+                        ),
+                      ])
+                    )
+                  )
+        ])
+      );
   }
 
   Widget attendanceRecord(){

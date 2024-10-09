@@ -14,6 +14,7 @@ import 'package:flutter_calandar_app/frontend/screens/calendar_page/calendar_dat
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/screens/calendar_page/tag_and_template_page.dart';
+import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/course_preview.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/timetable/timetable_data_manager.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
@@ -1062,26 +1063,38 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
         taskData.sortDataByDtEnd(taskData.taskDataList);
 
     if (sortedData.keys.contains(target)) {
-      return ListView.builder(
+      List targetList = sortedData[target]!;
+      return Column(children:[
+       ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           Widget dateTimeData = Container();
           dateTimeData = Text(
-            sortedData[target]!.elementAt(index)["title"],
+            targetList!.elementAt(index)["title"],
             style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12.5,
                 fontWeight: FontWeight.bold),
           );
           DateTime dtEnd = DateTime.fromMillisecondsSinceEpoch(
-              sortedData[target]!.elementAt(index)["dtEnd"]);
+              targetList.elementAt(index)["dtEnd"]);
 
           int radiusType = 2;
-          if(index == 0 && index+1 == sortedData[target]!.length){
+          if(index == 0 && index+1 == targetList.length){
             radiusType = 0;
           }else if(index == 0){
             radiusType = 1;
-          }else if(index + 1 == sortedData[target]!.length){
+          }else if(index + 1 == targetList.length){
             radiusType = 3;
+          }
+
+          int targetTaskIndex(Map<String,dynamic> target){
+            int result = 0;
+            for(int i = 0; i < targetList.length; i++){
+              if(target["id"] == targetList.elementAt(i)["id"]){
+                result = i;
+              }
+            }
+            return result;
           }
 
           return Column(children: [
@@ -1095,17 +1108,25 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
               const Spacer(),
               GestureDetector(
                   onTap: () async {
-                    // await bottomSheet(context,sortedData[widget.target]!.elementAt(index),setState);
-                    // ref.read(taskDataProvider).isRenewed = true;
-                    // ref
-                    //     .read(calendarDataProvider.notifier)
-                    //     .state = CalendarData();
-                    // while (
-                    //     ref.read(taskDataProvider).isRenewed !=
-                    //         false) {
-                    //   await Future.delayed(
-                    ///       const Duration(microseconds: 1));
-                    // }
+                    await bottomSheet(
+                      context,
+                      targetList.elementAt(index),
+                      setState,
+                      onChanged: (newData){
+                        int index = targetTaskIndex(newData);
+                        setState(() {
+                          targetList = 
+                            List.from(
+                              List.from(targetList)..removeAt(index)
+                            )..insert(index,newData);
+                        });
+                      },
+                      onDeleted: (targetData){
+                        setState(() {
+                          targetList = List.from(targetList)..removeAt(targetTaskIndex(targetData));
+                        });
+                      }
+                    );
                   },
                   child: Container(
                     width: SizeConfig.blockSizeHorizontal! * 80,
@@ -1138,7 +1159,9 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
         itemCount: sortedData[target]!.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-      );
+      ),
+      const SizedBox(height:18)
+      ]);
     } else {
       return const Column(children: [
         SizedBox(height: 50),

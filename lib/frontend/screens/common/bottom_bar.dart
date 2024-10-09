@@ -31,7 +31,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         //border:const Border(top:BorderSide(color:PALE_MAIN_COLOR,width: 4.5)),
         color: FORGROUND_COLOR,
         borderRadius:const BorderRadius.all(Radius.circular(0)),
-        ),
+      ),
       child:BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onItemTapped,

@@ -46,8 +46,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   void initState() {
     super.initState();
     requestQuery = SyllabusRequestQuery(
-        keyword: SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryKeyword),
+        keyword: null,
         kamoku: SharepreferenceHandler()
             .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku),
         p_gakki: widget.gakki,
@@ -70,6 +69,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsFullYear);
     isGraduateSchool = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.recentSyllabusQueryIsGraduateSchool);
+
     updateQuery(requestQuery);
   }
 
@@ -79,13 +79,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     } else {
       newQuery.p_gakki = widget.gakki;
     }
-    newQuery.p_gakubu = Department.byValue(SharepreferenceHandler()
-        .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
-    newQuery.subjectClassification = SubjectClassification.byKeyAndValue(
-        SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
-        SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.recentSyllabusQueryDepartmentValue));
 
     setState(() {
       requestQuery = newQuery;
@@ -151,6 +144,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             const Spacer(),
           ]),
           const Divider(),
+
           Row(
             children: [
               SizedBox(
@@ -167,9 +161,11 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 departmentPicker(requestQuery.p_gakubu),
             ],
           ),
+
           const SizedBox(height: 5),
           subjectClassificationPicker(searchConditionTextStyle),
           const SizedBox(height: 5),
+
           Row(
             children: [
               SizedBox(
@@ -192,6 +188,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
           const SizedBox(height: 5),
           Row(
             children: [
+
               SizedBox(
                 child: Text(
                   "オープン科目",
@@ -208,6 +205,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         requestQuery.p_open);
                     updateQuery(requestQuery);
                   }),
+
               SizedBox(
                 child: Text(
                   "通年",
@@ -224,6 +222,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         isFullYear);
                     updateQuery(requestQuery);
                   }),
+
               SizedBox(
                 child: Text(
                   "大学院等",
@@ -235,7 +234,6 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   value: isGraduateSchool,
                   onChanged: (value) {
                     requestQuery.p_gakubu = null;
-
                     SharepreferenceHandler().setValue(
                         SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
                         requestQuery.p_gakubu?.value);
@@ -245,6 +243,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                         isGraduateSchool);
                     updateQuery(requestQuery);
                   })
+
             ],
           ),
           const Divider(),
@@ -389,9 +388,9 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
             SharepreferenceHandler().setValue(
                 SharepreferenceKeys.recentSyllabusQueryKeya,
                 requestQuery.subjectClassification?.p_keya);
-            SharepreferenceHandler().setValue(
-                SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
-                requestQuery.subjectClassification?.parentDepartmentID);
+            // SharepreferenceHandler().setValue(
+            //     SharepreferenceKeys.recentSyllabusQueryDepartmentValue,
+            //     requestQuery.subjectClassification?.parentDepartmentID);
             updateQuery(requestQuery);
           },
         ))
