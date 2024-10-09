@@ -38,7 +38,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
   late SyllabusRequestQuery requestQuery;
   late bool isFullYear;
   late bool isGraduateSchool;
-  TextEditingController keywordController = TextEditingController();
+  TextEditingController kamokuController = TextEditingController();
 
   final BehaviorSubject<SyllabusRequestQuery> _querySubject =
       BehaviorSubject<SyllabusRequestQuery>();
@@ -62,7 +62,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                 .getValue(SharepreferenceKeys.recentSyllabusQueryKeya),
             SharepreferenceHandler().getValue(
                 SharepreferenceKeys.recentSyllabusQueryDepartmentValue)));
-    keywordController.text = SharepreferenceHandler()
+    kamokuController.text = SharepreferenceHandler()
             .getValue(SharepreferenceKeys.recentSyllabusQueryKamoku) ??
         "";
     isFullYear = SharepreferenceHandler()
@@ -176,19 +176,22 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              searchTextField(keywordController, (value) {
-                requestQuery.kamoku = value;
-                SharepreferenceHandler().setValue(
-                    SharepreferenceKeys.recentSyllabusQueryKamoku,
-                    requestQuery.kamoku);
-                updateQuery(requestQuery);
-              }),
-            ],
-          ),
+              searchTextField(
+                kamokuController,
+                (value) {
+                  requestQuery.kamoku = value;
+                  SharepreferenceHandler().setValue(
+                      SharepreferenceKeys.recentSyllabusQueryKamoku,
+                      requestQuery.kamoku);
+                  updateQuery(requestQuery);
+                }
+              ),
+          ]),
+
           const SizedBox(height: 5),
+
           Row(
             children: [
-
               SizedBox(
                 child: Text(
                   "オープン科目",
@@ -260,9 +263,7 @@ class _SyllabusSearchDialogState extends ConsumerState<SyllabusSearchDialog> {
     return Expanded(
         child: CupertinoTextField(
       controller: controller,
-      onChanged: (value) {
-        //updateQuery(requestQuery);
-      },
+      onChanged: (value) {},
       onSubmitted: (value) {
         onSubmitted(value);
       },

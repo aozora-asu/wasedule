@@ -1140,7 +1140,7 @@ Widget pageHeader(){
 
   Widget timeTableCellsChild(
       int weekDay, int period, List<Map<String, dynamic>> taskList) {
-    double fontSize = SizeConfig.blockSizeVertical! * 1.2;
+    double fontSize = SizeConfig.blockSizeVertical! * 1.1;
     final timeTableData = ref.read(timeTableProvider);
     Color bgColor = hexToColor(timeTableData.currentSemesterClasses[weekDay]!
         .elementAt(returnIndexFromPeriod(

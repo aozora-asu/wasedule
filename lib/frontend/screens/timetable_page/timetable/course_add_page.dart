@@ -88,13 +88,13 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                                         ModalSheetHeader(),
 
                                         SyllabusSearchDialog(
-                                            radiusType: 1,
-                                            gakki: widget.semester,
-                                            jigen: widget.period,
-                                            youbi: widget.weekDay,
-                                            gakubu: null,
-                                            setTimetableState: widget.setTimetableState
-                                            ),
+                                          radiusType: 1,
+                                          gakki: widget.semester,
+                                          jigen: widget.period,
+                                          youbi: widget.weekDay,
+                                          setTimetableState: widget.setTimetableState
+                                        ),
+
                                         const SizedBox(height: 2),
                                         courseInfo(),
                                       ]))))))));
