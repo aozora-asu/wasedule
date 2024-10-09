@@ -3,7 +3,6 @@ import 'package:flutter_calandar_app/backend/DB/isar_collection/vacant_room.dart
 import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 
-
 import "classRoom.dart";
 
 import "../DB/handler/my_course_db.dart";
@@ -122,8 +121,11 @@ List<Map<String, int?>> _extractDayAndPeriod(String input) {
       } else {
         weekday = null;
       }
-      result.add({'weekday': weekday, 'period': int.tryParse(match.group(2)!)});
-      result.add({'weekday': weekday, 'period': int.tryParse(match.group(3)!)});
+      for (int i = int.parse(match.group(2)!);
+          i <= int.parse(match.group(3)!);
+          i++) {
+        result.add({'weekday': weekday, 'period': i});
+      }
     }
   }
 
