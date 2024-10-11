@@ -349,60 +349,73 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
     final data = ref.read(calendarDataProvider);
     List targetDayData = data.sortedDataByDay[targetKey];
 
-    return Column(children: [
-      Container(
-          decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
-          margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const SizedBox(height: 5),
-            Row(children: [
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                  child:GestureDetector(
-                  onTap: () => switchToEditMode(targetKey, index),
-                  child: dateTimeData),
-              ),
+    return Container(
+        decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+        margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
+        child:IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children:[
+            if(targetDayData.elementAt(index)["tagID"] != null &&
+               targetDayData.elementAt(index)["tagID"] != "")
               Container(
-                constraints: BoxConstraints(
-                   maxWidth: SizeConfig.blockSizeHorizontal! *60
-                ),
-                alignment: Alignment.centerRight,
-                child:GestureDetector(
-                  onTap: () => switchToEditMode(targetKey, index),
-                  child: tagChip(
-                      targetDayData.elementAt(index)["tagID"] ?? "", ref))
-              )
-            ]),
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              GestureDetector(
-                onTap: () => switchToEditMode(targetKey, index),
-                child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    width: SizeConfig.blockSizeHorizontal! * 75,
-                    child: Text(
-                      data.sortedDataByDay[targetKey]
-                          .elementAt(index)["subject"],
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold),
-                    )),
+                width: 8,
+                color: returnTagColor(targetDayData.elementAt(index)["tagID"], ref),
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => switchToEditMode(targetKey, index),
-                child: const Icon(
-                  Icons.edit,
-                  color: Colors.grey,
-                  size: 30,
-                ),
-              )
-            ])
-          ])),
-    ]);
+            Expanded(
+              child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const SizedBox(height: 5),
+                Row(children: [
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child:GestureDetector(
+                      onTap: () => switchToEditMode(targetKey, index),
+                      child: dateTimeData),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: SizeConfig.blockSizeHorizontal! *60
+                    ),
+                    alignment: Alignment.centerRight,
+                    child:GestureDetector(
+                      onTap: () => switchToEditMode(targetKey, index),
+                      child: tagChip(
+                          targetDayData.elementAt(index)["tagID"] ?? "", ref))
+                  )
+                ]),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  GestureDetector(
+                    onTap: () => switchToEditMode(targetKey, index),
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        width: SizeConfig.blockSizeHorizontal! * 75,
+                        child: Text(
+                          data.sortedDataByDay[targetKey]
+                              .elementAt(index)["subject"],
+                          overflow: TextOverflow.clip,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => switchToEditMode(targetKey, index),
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                  )
+                ])
+              ])
+            ),
+          ])
+        )
+    );
   }
 
   void switchToEditMode(targetKey, index) {
@@ -680,18 +693,24 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
                 );
               });
         },
-        child: Column(children: [
+  child:Container(
+    decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
+    margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
+    child: IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children:[
           Container(
-            decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),
-            margin:const EdgeInsets.symmetric(vertical: 2,horizontal:0),
-            padding:const EdgeInsets.symmetric(vertical: 5,horizontal:0),
-              child: Column(
+            width: 8,
+            color: MAIN_COLOR),
+      Expanded(
+        child:Column(children: [
+              Container(
+                padding:const EdgeInsets.symmetric(vertical: 5,horizontal:7),
+                child:Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
                       Text("$startTime~$endTime",
                           style: const TextStyle(
                               color: Colors.grey,
@@ -738,8 +757,14 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
                         )
                       ),
                     ])
-                  ])),
-        ]));
+                  ]),
+                )
+              ])
+            )
+          ])
+        )
+      )
+    );
   }
 
   Future<void> timeBottomSheet() async {

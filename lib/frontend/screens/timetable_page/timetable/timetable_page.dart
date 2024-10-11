@@ -775,12 +775,14 @@ Widget pageHeader(){
   }
 
   Color cellBackGroundColor(int taskCount, Color color) {
-    Color bgColor;
-    if (taskCount <= 8) {
-      bgColor = increaseRed(color, amount: 30 * taskCount);
-    } else {
-      bgColor = increaseRed(color, amount: 255);
-    }
+    Color bgColor = color;
+
+    // if (taskCount <= 8) {
+    //   bgColor = increaseRed(color, amount: 30 * taskCount);
+    // } else {
+    //   bgColor = increaseRed(color, amount: 255);
+    // }
+
     return bgColor;
   }
 
@@ -1159,19 +1161,31 @@ Widget pageHeader(){
         .classRoom;
     int taskLength = taskList.length;
     Widget classRoomView = const SizedBox();
+
     if (classRoom != null && classRoom != "" && classRoom != "-" && classRoom != " ") {
-      classRoomView = Container(
+      classRoomView = 
+        Container(
           decoration: BoxDecoration(
-              color: FORGROUND_COLOR,
-              borderRadius: const BorderRadius.all(Radius.circular(2))),
-          child: Text(
-            classRoom,
-            style: TextStyle(
-              fontSize: fontSize,
+              color: Colors.black.withOpacity(0.25),
+              borderRadius: const BorderRadius.all(Radius.circular(4))
+          ),
+          child: Row(children:[
+            Expanded(
+              child:Center(
+                child:Text(
+                  classRoom,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white
+                  ),
+                  overflow: TextOverflow.visible,
+                  maxLines: 2,
+                )
+              )
             ),
-            overflow: TextOverflow.visible,
-            maxLines: 2,
-          ));
+          ])
+        );
     }
     return 
       Container(
