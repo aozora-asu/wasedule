@@ -277,7 +277,7 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
       }
       Widget value = const SizedBox();
       TextStyle dateTimeStyle = const TextStyle(
-          color: Colors.grey, fontSize: 15, fontWeight: FontWeight.bold);
+          color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold);
       if (targetDayData.elementAt(index)["id"] == editingSchedule) {
         dateTimeStyle = const TextStyle(
             color: Colors.black, fontSize: 15, fontWeight: FontWeight.normal);
@@ -397,7 +397,7 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 17,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold),
                         )),
                   ),
@@ -714,33 +714,30 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
                       Text("$startTime~$endTime",
                           style: const TextStyle(
                               color: Colors.grey,
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold)),
                       const Spacer(),
                       const Icon(Icons.school, color: MAIN_COLOR, size: 20),
                       const SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       Text("${classData.weekday!.text}曜日の授業",
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12.5,
                               fontWeight: FontWeight.normal)),
-                      const SizedBox(
-                        width: 10,
-                      ),
                     ]),
                     Row(children: [
                       Expanded(
                           child: Container(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                                  const EdgeInsets.symmetric(horizontal: 0.0),
                               child: Text(
                                 classData.courseName,
                                 overflow: TextOverflow.clip,
                                 style: const TextStyle(
                                     color: Colors.black,
-                                    fontSize: 17,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.bold),
                               ))),
                       Container(
@@ -752,7 +749,7 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
                               color: Colors.grey,
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold),
                         )
                       ),

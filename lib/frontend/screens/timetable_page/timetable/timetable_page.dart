@@ -1166,7 +1166,7 @@ Widget pageHeader(){
       classRoomView = 
         Container(
           decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.white.withOpacity(0.75),
               borderRadius: const BorderRadius.all(Radius.circular(4))
           ),
           child: Row(children:[
@@ -1177,7 +1177,7 @@ Widget pageHeader(){
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white
+                    color: BLACK
                   ),
                   overflow: TextOverflow.visible,
                   maxLines: 2,
