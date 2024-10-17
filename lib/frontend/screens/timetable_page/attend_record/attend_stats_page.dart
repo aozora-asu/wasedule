@@ -264,7 +264,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
   Widget remainingAbesentView(int absentNum) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
           color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
@@ -358,8 +358,9 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
     int attendNum = 0;
     int lateNum = 0;
     int absentNum = 0;
-    TextStyle bold = const TextStyle(fontWeight: FontWeight.bold);
-    TextStyle grey = const TextStyle(color: Colors.grey);
+    double fontSize = 23;
+    TextStyle bold = TextStyle(fontWeight: FontWeight.bold,fontSize:fontSize);
+    TextStyle grey = TextStyle(color: Colors.grey,fontSize:fontSize);
     TextStyle absentTextStyle = grey;
 
     for (int i = 0; i < attendRecordList.length; i++) {
@@ -376,23 +377,23 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
     if (absentNum > 0) {
       absentTextStyle =
-          const TextStyle(fontWeight: FontWeight.bold, color: Colors.red);
+        TextStyle(fontWeight: FontWeight.bold, color: Colors.red,fontSize:fontSize);
     }
 
     return Column(children: [
       Row(children: [
-        Text("授業 ${courseData.classNum.toString()} 回中  "),
-        attendStatusIcon(AttendStatus.attend),
+        Text("授業 ${courseData.classNum.toString()} 回中  ",),
+        attendStatusIcon(AttendStatus.attend, attendNum == 0),
         Text("${attendNum.toString()} ", style: attendNum > 0 ? bold : grey),
-        attendStatusIcon(AttendStatus.late),
+        attendStatusIcon(AttendStatus.late, lateNum == 0),
         Text("${lateNum.toString()} ", style: lateNum > 0 ? bold : grey),
-        attendStatusIcon(AttendStatus.absent),
+        attendStatusIcon(AttendStatus.absent, absentNum == 0),
         Text("${absentNum.toString()} ", style: absentTextStyle),
       ]),
     ]);
   }
 
-  Widget attendStatusIcon(AttendStatus status) {
+  Widget attendStatusIcon(AttendStatus status,bool isGrey) {
     String iconText;
     Color iconColor;
     if (status == AttendStatus.attend) {
@@ -409,6 +410,10 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
       iconColor = Colors.transparent;
     }
 
+    if(isGrey){
+      iconColor = Colors.grey;
+    }
+
     return Container(
       decoration: BoxDecoration(
           color: iconColor, borderRadius: BorderRadius.circular(5)),
@@ -417,6 +422,7 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
       child: Center(
           child: Text(iconText,
               style: const TextStyle(
+                fontSize: 18,
                   fontWeight: FontWeight.bold, color: Colors.white))),
     );
   }

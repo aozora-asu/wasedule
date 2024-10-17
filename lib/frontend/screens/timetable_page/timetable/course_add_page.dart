@@ -71,18 +71,14 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
                   padding: EdgeInsets.only(bottom: bottomSpace),
                   child: ConstrainedBox(
                       constraints: BoxConstraints(
-                          minHeight: SizeConfig.blockSizeVertical! *80,
-                          maxHeight: SizeConfig.blockSizeVertical! *80),
-                      child: Center(
-                          child: SingleChildScrollView(
-                              child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  child: Column(
+                          minHeight: SizeConfig.blockSizeVertical! *88,
+                          maxHeight: SizeConfig.blockSizeVertical! *88),
+                      child: SingleChildScrollView(
+                              child:  Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       children: [
 
                                         ModalSheetHeader(),
@@ -97,7 +93,7 @@ class _CourseAddPageState extends ConsumerState<CourseAddPage> {
 
                                         const SizedBox(height: 2),
                                         courseInfo(),
-                                      ]))))))));
+                                      ]))))));
     }));
   }
 

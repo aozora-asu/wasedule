@@ -679,19 +679,12 @@ class DailyViewSheetState extends ConsumerState<DailyViewSheet> {
 
     return GestureDetector(
         onTap: () async {
-         await showModalBottomSheet(
-              context: context,
-              isDismissible: true,
-              isScrollControlled: true,
-              backgroundColor: FORGROUND_COLOR,
-              builder: (BuildContext context) {
-                return CoursePreview(
+         await CoursePreview(
                   target: classData,
                   setTimetableState: setState,
                   taskList: const [],
                   isOndemand: false,
-                );
-              });
+                ).showModal(context);
         },
   child:Container(
     decoration:roundedBoxdecoration(radiusType: 2,backgroundColor: BACKGROUND_COLOR),

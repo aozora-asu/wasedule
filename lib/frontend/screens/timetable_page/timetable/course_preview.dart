@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/bottom_bar.dart';
+import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/attend_record/attend_menu_panel.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_description_view.dart';
 import 'package:flutter_calandar_app/frontend/screens/timetable_page/syllabus/syllabus_search_dialog.dart';
@@ -13,13 +15,20 @@ import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
 import 'package:flutter_calandar_app/frontend/screens/task_page/task_modal_sheet.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:intl/intl.dart';
+
+enum CoursePreviewType{
+  page,
+  modal,
+}
 
 class CoursePreview extends ConsumerStatefulWidget {
   late MyCourse target;
   late StateSetter setTimetableState;
   late List<Map<String, dynamic>> taskList;
   late bool isOndemand;
+  late CoursePreviewType? type;
 
   CoursePreview(
       {super.key,
@@ -27,7 +36,49 @@ class CoursePreview extends ConsumerStatefulWidget {
       required this.setTimetableState,
       required this.taskList,
       required this.isOndemand,
+      this.type
       });
+
+  Future<void> showModal(BuildContext context)async{
+    final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
+    type = CoursePreviewType.modal;
+
+    await showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: FORGROUND_COLOR,
+      builder: (BuildContext context) {
+        return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+      return SingleChildScrollView(
+          // physics: viewMode == 1
+          //     ? const NeverScrollableScrollPhysics()
+          //     : const ScrollPhysics(),
+          reverse: true,
+          child: Padding(
+              padding: EdgeInsets.only(bottom: bottomSpace),
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: SizeConfig.blockSizeVertical! *30,
+                      maxHeight:  SizeConfig.blockSizeVertical! *70),
+                  child:this)
+                )
+              );
+            }
+          );
+        }
+      );
+  }
+
+  Future<void> showPage(BuildContext context) async{
+    type = CoursePreviewType.page;
+
+    Navigator.push(context,
+      MaterialPageRoute(
+        builder: (context)=> this));
+  }
+
   @override
   _CoursePreviewState createState() => _CoursePreviewState();
 }
@@ -40,9 +91,10 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   late int viewMode;
   late bool searchMode;
   late List<Map<String,dynamic>> taskList = [];
+  late int pageIndex;
 
   Widget dividerModel = const Divider(height: 2);
-  TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 17,fontWeight: FontWeight.normal);
+  TextStyle titleStyle = const TextStyle(color:Colors.grey, fontSize: 20,fontWeight: FontWeight.normal);
   late Color colorButtonColor;
 
   @override
@@ -55,83 +107,132 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     classNameController.text = target.courseName;
     classificationController.text = target.subjectClassification ?? "";
     viewMode = 0;
+    pageIndex = 0;
     searchMode = false;
     colorButtonColor = widget.target.color.toColor() ?? Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
-    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 0);
-    print(taskList);
- 
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints viewportConstraints) {
-      return SingleChildScrollView(
-          physics: viewMode == 1
-              ? const NeverScrollableScrollPhysics()
-              : const ScrollPhysics(),
-          reverse: true,
-          child: Padding(
-              padding: EdgeInsets.only(bottom: bottomSpace),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minHeight: SizeConfig.blockSizeVertical! *30,
-                      maxHeight:  SizeConfig.blockSizeVertical! *80),
-                  child:SingleChildScrollView(
-                          physics: viewMode == 1
-                              ? const NeverScrollableScrollPhysics()
-                              : const ScrollPhysics(),
-                          child: Padding(
-                              padding: padding,
-                              child: Container(
-                                
-                                decoration: roundedBoxdecoration(
-                                  backgroundColor: FORGROUND_COLOR,
-                                ),
-                                child:Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
+    if(widget.type == CoursePreviewType.page){
+      return Scaffold(
+        backgroundColor: FORGROUND_COLOR,
+        appBar: CustomAppBar(
+          backButton: true,
+          title: appbarHeader(),
+        ),
+        body: contentBody(),
+        bottomNavigationBar: customBottomBar(
+          context,
+          1, 
+          (index){
+            if(index == 1){
+              Navigator.pop(context);
+            }
+          },
+          setState,
+          Colors.transparent),
+      );
+    }else{
+      return contentBody();
+    }
+  }
 
-                                    ModalSheetHeader(),
+  Widget appbarHeader() {
+    MyCourse target = widget.target;
+    return
+     Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
 
-                                    switchSearchMode(),
-                                    relatedTasks(),
+        if(widget.isOndemand)
+          const Text("OD/その他",
+             style: TextStyle(
+              fontSize: 20,
+              color:Colors.white,
+              fontWeight: FontWeight.bold))
+        else
+          Text("${target.weekday!.text}曜 ${target.period!.period}限",
+            style: const TextStyle(
+              fontSize: 20,
+              color:Colors.white,
+              fontWeight: FontWeight.bold)),
 
-                                    if(!widget.isOndemand)
-                                      attendanceRecord(),
-                                  ])
-                                )
-                              )
-                            )
-                          )
-                        )
-                      
-                    );
-      }
+        const SizedBox(width: 10),
+
+
+        Text(
+          "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
+          style: const TextStyle(fontSize: 17, color: Colors.grey),
+          overflow: TextOverflow.clip,
+        ),
+
+      ]);
+  }
+
+  Widget pageModeSwitch(){
+    return Container(
+      padding:const EdgeInsets.only(top: 7),
+      child:FlutterToggleTab
+        (height: 30,
+          width: SizeConfig.blockSizeHorizontal! *24,
+          borderRadius: 5,
+          selectedIndex: pageIndex,
+          selectedTextStyle:const TextStyle(
+            color: Colors.white,
+            fontSize: 15
+          ),
+          unSelectedTextStyle:const TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+          ),
+          labels: const ["概要","出欠","詳細情報"],
+          selectedBackgroundColors: const [BLUEGREY,BLUEGREY,BLUEGREY],
+          selectedLabelIndex: (index) {
+            setState(() {
+              pageIndex = index;
+            });
+          },
+          marginSelected:const EdgeInsets.symmetric(horizontal: 2,vertical:3),
+          isScroll: true,
+          isShadowEnable: false,
+        )
     );
   }
 
-  Widget switchSearchMode() {
-    Widget header = GestureDetector(
-        onTap: () {},
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          margin: const EdgeInsets.symmetric(horizontal: 0),
-          decoration: roundedBoxdecoration(radiusType: 1),
-          child: Row(children: [
-            const Icon(Icons.search, color: Colors.blue),
-            const Text(" シラバス検索",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const Spacer(),
-            descriptionModeSwitch()
-          ]),
-        ));
+  Widget contentBody(){
+    return SingleChildScrollView(
+        physics: pageIndex == 2
+            ? const NeverScrollableScrollPhysics()
+            : const ScrollPhysics(),
+            child: Container(
+              
+              decoration: roundedBoxdecoration(
+                backgroundColor: FORGROUND_COLOR,
+              ),
+              child:Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if(widget.type == CoursePreviewType.modal)
+                    ModalSheetHeader(),
+                  pageModeSwitch(),
 
-    if (searchMode) {
+                  if(pageIndex == 0)
+                    courseInfo(),
+                  if(pageIndex == 0)
+                    relatedTasks(),
+                  if(pageIndex == 1)
+                    attendanceRecord(),
+                  if(pageIndex == 2)
+                    syllabusPageViewBuilder(widget.target)
+                ])
+              )
+          );
+  }
+
+
+  Widget searchPage() {
+
       return 
         Column(children: [
-          header,
           if(!widget.isOndemand)
             SyllabusSearchDialog(
                 radiusType: 2,
@@ -152,33 +253,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
                 setTimetableState: widget.setTimetableState)
         ]);
 
-    } else {
-      return courseInfo();
-    }
   }
 
   Widget courseInfo() {
     MyCourse target = widget.target;
     Widget header = Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0),
+      margin: const EdgeInsets.only(top:5),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
 
-        const SizedBox(width: 5),
-
-        colorSettingButton(
-          context,
-          setState,
-          colorButtonColor,
-          (newColor) async{
-            int id = widget.target.id!;
-            await MyCourse.updateColor(id,newColor);
-            widget.setTimetableState(() {});
-            colorButtonColor = newColor.toColor()!;
-            setState(() {});
-        }), 
-
-        const SizedBox(width: 5),
+        const SizedBox(width: 10),
 
         if(widget.isOndemand)
           const Text("OD/その他",
@@ -200,8 +284,6 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
           overflow: TextOverflow.clip,
         )),
 
-        searchModeSwitch(),
-        descriptionModeSwitch(),
         const SizedBox(width: 5)
       ]),
     );
@@ -211,13 +293,14 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         onTap: () {},
         child: 
           Column(children: [
-            header,
+            if(widget.type == CoursePreviewType.modal)
+              header,
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Padding(
                     padding: const EdgeInsets.only(
                         left: 0, right: 0, top: 5, bottom: 10),
-                    child: switchViewMode(dividerModel, target),          
+                    child: summaryContent(dividerModel, target),          
               )
             )
           ])
@@ -225,15 +308,8 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
 
-  Widget switchViewMode(dividerModel, MyCourse target) {
-    if (viewMode == 0) {
-      return summaryContent(dividerModel, target);
-    } else {
-      return syllabusPageViewBuilder(target);
-    }
-  }
-
   Widget syllabusPageViewBuilder(MyCourse target){
+    if(target.syllabusID != null){
     return FutureBuilder(
       future: SyllabusRequestQuery.getSingleSyllabusInfo(target.syllabusID!),
       builder: (conetext,snapshot){
@@ -243,16 +319,16 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
               color:Colors.blueAccent)
             );
         }else if(snapshot.hasData){
-      return Container(
-          decoration: BoxDecoration(
-            color:FORGROUND_COLOR,
-            border: const Border(bottom: BorderSide(color: Colors.grey))
-          ),
-          height: SizeConfig.blockSizeVertical! * 70,
-          width: SizeConfig.blockSizeHorizontal! * 100,
-          child: SyllabusDescriptonView(
-              showHeader: false,
-              syllabusQuery: snapshot.data!));
+          return Container(
+              decoration: BoxDecoration(
+                color:FORGROUND_COLOR,
+                border: const Border(bottom: BorderSide(color: Colors.grey))
+              ),
+              height: SizeConfig.blockSizeVertical! * 72.5,
+              width: SizeConfig.blockSizeHorizontal! * 100,
+              child: SyllabusDescriptonView(
+                  showHeader: false,
+                  syllabusQuery: snapshot.data!));
         }else{
           return const Center(
             child:CircularProgressIndicator(
@@ -261,65 +337,18 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         }
         
       });
-  }
-
-  Widget viewModeSwitch() {
-    MyCourse target = widget.target;
-    if (target.syllabusID != null && target.syllabusID != "") {
-      if (viewMode == 0) {
-        return TextButton(
-        onPressed: () {
-          setState(() {
-            viewMode = 1;
-          });
-        },
-        child:const Text(" 授業の詳細... "));
-      } else {
-        return const SizedBox();
-      }
-    } else {
-      return const SizedBox();
+    }else{
+      return const SizedBox(
+        height: 200,
+        child:Center(
+          child:Text("シラバス情報がありません。",
+            style: TextStyle(color:Colors.grey,fontSize: 20),
+      )));
     }
   }
 
-  Widget searchModeSwitch() {
-    if (!searchMode && viewMode == 0) {
-      return GestureDetector(
-        onTap:() {
-        setState(() {
-          searchMode = true;
-        });
-      },
-      child:const Icon(
-          CupertinoIcons.search,color: Colors.blue,size: 30),
-      );
-    } else {
-      return const SizedBox();
-    }
-  }
 
-  Widget descriptionModeSwitch() {
-    MyCourse target = widget.target;
-    if (searchMode) {
-      return buttonModel(() {
-        setState(() {
-          searchMode = false;
-        });
-      }, Colors.redAccent, " もどる ");
-    } else if (target.syllabusID != null && target.syllabusID != "") {
-      if (viewMode == 0) {
-        return const SizedBox();
-      } else {
-        return buttonModel(() {
-          setState(() {
-            viewMode = 0;
-          });
-        }, Colors.redAccent, " もどる ");
-      }
-    } else {
-      return const SizedBox();
-    }
-  }
+
 
   Widget summaryContent(dividerModel, MyCourse target) {
     int? credit = target.credit;
@@ -328,6 +357,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
     String criteria = 
       target.criteria ?? "？";
     Color iconColor = BLUEGREY;
+    Widget vertDivider = const VerticalDivider();
 
     return Column(children: [
       
@@ -336,7 +366,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       containerModel(
         Row(children: [
           SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          textFieldModel("授業名を入力…", classNameController, FontWeight.normal, 20.0,
+          textFieldModel("授業名を入力…", classNameController, FontWeight.bold, 23.0,
           (value) async {
             int id = target.id!;
             //＠ここに授業名変更関数を登録！！！
@@ -350,7 +380,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         containerModel(
           Row(children: [
             SizedBox(width: SizeConfig.blockSizeHorizontal! * 1),
-            Icon(Icons.location_on, color: iconColor),
+            Icon(CupertinoIcons.map_pin, color: iconColor),
             SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
             classRoomSelector(context, target)
           ])
@@ -359,7 +389,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       containerModel(
         Row(children: [
           SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          Icon(Icons.sticky_note_2, color: iconColor),
+          Icon(CupertinoIcons.doc_text, color: iconColor),
           SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           textFieldModel("メモを入力…", memoController, FontWeight.normal, null,
               (value) async {
@@ -374,7 +404,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
       containerModel(
         Row(children: [
           SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          Icon(Icons.class_, color: iconColor),
+          Icon(CupertinoIcons.info, color: iconColor),
           SizedBox(width: MediaQuery.of(context).size.width * 0.03),
           textFieldModel("科目の分類を入力…", classificationController, FontWeight.normal, null,
             (value) async {
@@ -388,32 +418,59 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         ])
       ),
 
+      const SizedBox(height: 10),
+
       containerModel(
-          Row(children: [
+        Container(
+          height: 30,
+          child:Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
             SizedBox(width: MediaQuery.of(context).size.width * 0.01),
             const Text("単位数",style: TextStyle(color:Colors.grey,fontSize: null),),
             SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-            Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:18)),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            Text(creditString,style:const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
             const Spacer(),
-            viewModeSwitch(),
+            vertDivider,
+            const Spacer(),
+            const Text("色",style: TextStyle(color:Colors.grey,fontSize: null)),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+            colorSettingButton(
+              context,
+              setState,
+              colorButtonColor,
+              (newColor) async{
+                int id = widget.target.id!;
+                await MyCourse.updateColor(id,newColor);
+                widget.setTimetableState(() {});
+                colorButtonColor = newColor.toColor()!;
+                setState(() {});
+            }),
+            const Spacer(),
+            vertDivider,
+            const Spacer(),
+            const Text("削除",style: TextStyle(color:Colors.grey,fontSize: null)),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             GestureDetector(
-              child: const Icon(Icons.delete,
+              child: const Icon(CupertinoIcons.delete_solid,
                   color: Colors.grey),
               onTap: () async {
                 int id = target.id!;
                 await showConfirmDeleteDialog(
                   context,
                   target.courseName,
-                  ()async{ 
+                  ()async{
                     //＠ここに削除実行関数！！！
                     await MyCourse.deleteMyCourse(id);
                     widget.setTimetableState(() {});
                     Navigator.pop(context);
-                });
+                  });
             }),
           ])
+        )
       ),
+
+      const SizedBox(height: 10),
 
     ]);
   }
@@ -428,7 +485,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
     if (classRooms.length <= 2) {
       return textFieldModel(
-          "教室を入力…", classRoomController, FontWeight.bold, null, (value) async {
+          "教室を入力…", classRoomController, FontWeight.normal, null, (value) async {
         id = target.id!;
         //＠ここに教室のアップデート関数！！！
         await MyCourse.updateClassRoom(id, value);
@@ -532,12 +589,12 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
         const Divider(),
         Row(
           children: [
-            const SizedBox(width: 5),
+            const SizedBox(width: 15),
             Text("課題",
                 style: titleStyle),
             const Spacer(),
             lengthBadge(taskList.length, 17.5, false),
-            const SizedBox(width: 10),
+            const SizedBox(width: 15),
           ],
         ),
         Container(
@@ -643,23 +700,32 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   }
 
   Widget attendanceRecord(){
-    return Column(children:[
-      const Divider(),
-      Row(children:[
-      Text(" 出欠  ",
-          style: titleStyle)]),
-      const SizedBox(height:7),
-      Padding(
-        padding:const EdgeInsets.symmetric(horizontal: 10),
-        child:AttendMenuPanel(
-          courseData: widget.target,
-          setTimetableState:
-              widget.setTimetableState,
-          backgroundColor: BACKGROUND_COLOR
-        )
-      ),
-      const SizedBox(height:15)
-    ]);
+    if(widget.isOndemand){
+      return const SizedBox(
+        height: 200,
+        child:Center(
+          child:Text("オンデマンド授業:\n出欠情報はありません。",
+            style: TextStyle(color:Colors.grey,fontSize: 20),
+      )));
+    }else{
+      return MediaQuery.removePadding(
+        context: context,
+        removeBottom: true,
+        child: Column(children:[
+            const SizedBox(height:7),
+            Padding(
+              padding:const EdgeInsets.symmetric(horizontal: 10),
+              child:AttendMenuPanel(
+                courseData: widget.target,
+                setTimetableState:
+                    widget.setTimetableState,
+                backgroundColor: FORGROUND_COLOR
+              )
+            ),
+            const SizedBox(height:15)
+          ])
+      );
+    }
   }
 
   int targetTaskIndex(Map<String,dynamic> target){
@@ -739,7 +805,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
   Widget containerModel(Widget child){
     return Container(
       decoration: roundedBoxdecoration(radiusType: 2,backgroundColor: Colors.transparent),
-      margin:const EdgeInsets.symmetric(vertical: 1),
+      margin:const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 5),
       child: child,
     );

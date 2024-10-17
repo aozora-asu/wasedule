@@ -1209,19 +1209,12 @@ Widget pageHeader(){
           child: InkWell(
               onTap: () async{
                 isSelectedlistGenerated = false;
-                await showModalBottomSheet(
-                    context: context,
-                    isDismissible: true,
-                    isScrollControlled: true,
-                    backgroundColor: FORGROUND_COLOR,
-                    builder: (BuildContext context) {
-                      return CoursePreview(
+                await CoursePreview(
                         target: targetData,
                         setTimetableState: setState,
                         taskList: taskList,
                         isOndemand: false,
-                      );
-                    });
+                      ).showPage(context);
               },
             child: Column(children: [
               Row(
@@ -1322,19 +1315,12 @@ Widget pageHeader(){
 
     return GestureDetector(
         onTap: () async{
-          await showModalBottomSheet(
-              context: context,
-              isDismissible: true,
-              isScrollControlled: true,
-              backgroundColor: FORGROUND_COLOR,
-              builder: (BuildContext context) {
-                return CoursePreview(
+          await  CoursePreview(
                   target: target,
                   setTimetableState: setState,
                   taskList: taskList,
                   isOndemand: true,
-                );
-              });
+                ).showPage(context);
         },
         child: 
           Container(
