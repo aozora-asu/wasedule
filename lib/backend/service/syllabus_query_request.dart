@@ -254,8 +254,7 @@ class SyllabusRequestQuery {
         Uri.parse(syllabusURL),
       );
       final Document document = html_parser.parse(response.body);
-      List<Element> cMblocks =
-          document.getElementById("cEdit")?.children ?? [];
+      List<Element> cMblocks = document.getElementById("cEdit")?.children ?? [];
       Element courseInfo = cMblocks.first;
       Element syllabusInfo = cMblocks[1];
       List<Element> courseTrElements =

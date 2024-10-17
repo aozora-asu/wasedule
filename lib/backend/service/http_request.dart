@@ -85,23 +85,3 @@ Future<List<Map<String, dynamic>>> getTaskFromHttp(String urlString) async {
 
   return tasks;
 }
-
-
-
-//@return [{
-// 						"SUMMARY":"#1 アンケート (アンケート開始)",
-// 						"DESCRIPTION":"#1 アンケート",
-// 						"DTEND":20231022035900000Z,
-// 						"CATEGORIES":"素数の魅力と暗号理論　０２(20239S0200010202)"
-// 						},{
-// 						"SUMMARY":"#2 アンケート (アンケート開始)",
-// 						"DESCRIPTION":"#2 アンケート",
-// 						"DTEND":20231023000000000Z,
-// 						"CATEGORIES":"素数の魅力と暗号理論　０２(20239S0200010202)"
-// 						},{
-// 						"SUMMARY":"質問申請フォーム/Question Application Form (アンケート開始)",
-// 						"DESCRIPTION":"質問申請フォーム/Question Application Form",
-// 						"DTEND":20231005050000000Z,
-// 						"CATEGORIES":"グローバルエデュケーションセンター情報対面指導室/Global Education Center IT Personal Tut"
-// 						},
-// 						]

@@ -75,13 +75,13 @@ class SyllabusQueryResult {
 
   Future<void> resisterMyCourseDB() async {
     List<Map<String, dynamic>> semesterAndWeekdayAndPerid =
-        _extractDayAndPeriod(semesterAndWeekdayAndPeriod);
+        extractDayAndPeriod(semesterAndWeekdayAndPeriod);
     MyCourse myCourse;
     for (var time in semesterAndWeekdayAndPerid) {
       myCourse = MyCourse(
           attendCount: null,
           classRoom: classRoom,
-          color: "#F79428",
+          color: "#F6BFBC",
           courseName: courseName,
           memo: null,
           pageID: syllabusID,
@@ -103,7 +103,7 @@ class SyllabusQueryResult {
   }
 }
 
-List<Map<String, int?>> _extractDayAndPeriod(String input) {
+List<Map<String, int?>> extractDayAndPeriod(String input) {
   // 「月3時限」タイプの抽出
   RegExp pattern1 = RegExp(r'([月火水木金土日])(\d)時限');
   // 「月3-4」タイプの抽出
@@ -183,7 +183,7 @@ Future<void> resisterVacantRoomList(String buildingNum) async {
       for (var trElement in trElements) {
         final tdElements = trElement.querySelectorAll("td");
         periodAndDateList =
-            _extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
+            extractDayAndPeriod(zenkaku2hankaku(tdElements[6].text));
         semester = Term.byText(tdElements[5].text);
 
         if (semester != null) {
@@ -277,7 +277,7 @@ Future<List<MyCourse>?> getMyCourse(MoodleCourse moodleCourse) async {
 
   if (syllabusQueryResult != null) {
     List<Map<String, dynamic>> semesterAndWeekdayAndPerid =
-        _extractDayAndPeriod(syllabusQueryResult.semesterAndWeekdayAndPeriod);
+        extractDayAndPeriod(syllabusQueryResult.semesterAndWeekdayAndPeriod);
     for (var time in semesterAndWeekdayAndPerid) {
       MyCourse myCourse = MyCourse(
           attendCount: null,

@@ -12,7 +12,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/services.dart';
 import "backend/DB/sharepreference.dart";
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

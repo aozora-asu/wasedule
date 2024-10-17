@@ -1,3 +1,7 @@
+import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
+import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
+import 'package:flutter_calandar_app/static/constant.dart';
 import 'package:flutter_calandar_app/static/converter.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'dart:async';
@@ -8,6 +12,7 @@ import "../../frontend/screens/common/eyecatch_page.dart";
 import "../DB/handler/my_grade_db.dart";
 import 'package:flutter/services.dart'; // MethodChannelを使用するために追加
 import "../DB/sharepreference.dart";
+import 'package:html/dom.dart' as dom;
 
 void getMyGrade(String str, List<MajorClass> list) async {
   if (list.isEmpty) return;
@@ -222,15 +227,16 @@ Future<void> methodChannel(MethodCall call) async {
 
     // JSON 文字列を JSON オブジェクトに変換
     Map<String, dynamic> jsonData = json.decode(jsonString);
-    navigateBasedOnURL(jsonData);
+    _navigateBasedOnURL(jsonData);
   }
 }
 
 // URLに基づいて画面を遷移させるロジックを実装する関数
-void navigateBasedOnURL(Map<String, dynamic> jsonData) {
+void _navigateBasedOnURL(Map<String, dynamic> jsonData) {
   // 例: JSON オブジェクトの "type" フィールドに基づいて遷移先を決定
   if (jsonData['type'] == 'shared_content') {
     // 共有されたコンテンツがある場合、特定の画面に遷移
+    _getMyCourseFromWeb(jsonData["data"]["html"]);
     navigatorKey.currentState?.pushReplacement(
       MaterialPageRoute(
         builder: (_) => AppPage(initIndex: 1),
@@ -243,5 +249,46 @@ void navigateBasedOnURL(Map<String, dynamic> jsonData) {
         builder: (_) => AppPage(initIndex: 2),
       ),
     );
+  }
+}
+
+void _getMyCourseFromWeb(String htmlString) async {
+  dom.Document document = html_parser.parse(htmlString);
+  final trElements = document.querySelectorAll("table > tbody > tr");
+  final syllabusURLs = [];
+  for (var tr in trElements) {
+    final tdElements = tr.querySelectorAll("td");
+    if (tdElements.isEmpty) continue;
+    if (!tdElements.last.text.contains(RegExp(r'決定|Registered'))) continue;
+    final a = tr.querySelector("a")!.attributes["href"];
+    if (a == null) continue;
+    SyllabusQueryResult syllabusQueryResult =
+        await SyllabusRequestQuery.getSingleSyllabusInfo(a);
+    List<Map<String, dynamic>> semesterAndWeekdayAndPerid =
+        extractDayAndPeriod(syllabusQueryResult.semesterAndWeekdayAndPeriod);
+    for (var time in semesterAndWeekdayAndPerid) {
+      MyCourse myCourse = MyCourse(
+          attendCount: null,
+          classNum: null,
+          memo: null,
+          remainAbsent: null,
+          classRoom: syllabusQueryResult.classRoom,
+          color: "",
+          courseName: syllabusQueryResult.courseName,
+          pageID: null,
+          period:
+              time["period"] != null ? Lesson.atPeriod(time["period"]) : null,
+          semester:
+              Term.byText(syllabusQueryResult.semesterAndWeekdayAndPeriod),
+          syllabusID: syllabusQueryResult.syllabusID,
+          weekday: time["weekday"] != null
+              ? DayOfWeek.weekAt(time["weekday"])
+              : null,
+          year: syllabusQueryResult.year,
+          criteria: syllabusQueryResult.criteria,
+          subjectClassification: syllabusQueryResult.subjectClassification,
+          credit: syllabusQueryResult.credit);
+      await myCourse.resisterDB();
+    }
   }
 }

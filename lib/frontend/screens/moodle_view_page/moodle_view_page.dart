@@ -35,7 +35,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
   late InAppWebViewController webViewController;
   double progress = 0;
 
-  static const String moodleUrl = "https://wsdmoodle.waseda.jp/my/";
+  static const String moodleUrl = "https://wsdmoodle.waseda.jp/my/courses.php";
   static const String moodleLoginUrl =
       "https://wsdmoodle.waseda.jp/login/index.php";
   // static const String courseRegistrationUrl =
