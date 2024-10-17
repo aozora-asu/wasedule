@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/backend/DB/sharepreference.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
@@ -94,7 +95,7 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
         actions:[
           timeLineButton(Colors.white, context),
           InkWell(
-            child: const Icon(Icons.settings,
+            child: const Icon(CupertinoIcons.settings,
                 color: Colors.white),
             onTap: () {
               Navigator.push(
@@ -245,31 +246,31 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Map<int, List<Widget>> returnSubPage(ref) {
     Map<int, List<Widget>> subPageTabs = {
       0: [
-        subMenuPanel(ref, icon: Icons.location_on, subIndex: 0, title: "わせまっぷ"),
+        subMenuPanel(ref, icon: CupertinoIcons.map_pin, subIndex: 0, title: "わせまっぷ"),
         space(80.0),
       ],
       1: [
-        subMenuPanel(ref, icon: Icons.grid_on, subIndex: 0, title: "時間割"),
+        subMenuPanel(ref, icon: CupertinoIcons.rectangle_grid_3x2, subIndex: 0, title: "時間割"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.search, subIndex: 1, title: "シラバス"),
+        subMenuPanel(ref, icon: CupertinoIcons.search, subIndex: 1, title: "シラバス"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.abc_sharp, subIndex: 2, title: "単位"),
+        subMenuPanel(ref, icon: Icons.abc, subIndex: 2, title: "単位"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.cut, subIndex: 3, title: "出欠"),
+        subMenuPanel(ref, icon: CupertinoIcons.scissors, subIndex: 3, title: "出欠"),
         space(20.0),
       ],
       2: [
-        subMenuPanel(ref, icon: Icons.calendar_month, subIndex: 0, title: "予定"),
+        subMenuPanel(ref, icon: CupertinoIcons.calendar, subIndex: 0, title: "予定"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.groups, subIndex: 1, title: "シェア"),
+        subMenuPanel(ref, icon: CupertinoIcons.person_2_fill, subIndex: 1, title: "シェア"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.school, subIndex: 2, title: "大学暦"),
+        subMenuPanel(ref, icon: CupertinoIcons.book_fill, subIndex: 2, title: "大学暦"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.currency_yen, subIndex: 3, title: "バイト"),
+        subMenuPanel(ref, icon: CupertinoIcons.money_yen, subIndex: 3, title: "バイト"),
         space(20.0),
       ],
       3: [
-        subMenuPanel(ref, icon: Icons.check, subIndex: 0, title: "課題"),
+        subMenuPanel(ref, icon: CupertinoIcons.check_mark, subIndex: 0, title: "課題"),
         indexBar(),
         subMenuPanel(ref,
             icon: Icons.close,
@@ -277,17 +278,17 @@ class MenuAppBar extends ConsumerWidget implements PreferredSizeWidget {
             title: "期限切れ",
             showExpiredTasks: true),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.delete, subIndex: 2, title: "削除済み"),
+        subMenuPanel(ref, icon: CupertinoIcons.delete, subIndex: 2, title: "削除済み"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.edit, subIndex: 3, title: "学習記録"),
+        subMenuPanel(ref, icon: CupertinoIcons.pencil, subIndex: 3, title: "学習記録"),
         space(20.00),
       ],
       4: [
-        subMenuPanel(ref, icon: Icons.language, subIndex: 0, title: "Moodle"),
+        subMenuPanel(ref, icon: CupertinoIcons.globe, subIndex: 0, title: "Moodle"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.language, subIndex: 1, title: "MyWaseda"),
+        subMenuPanel(ref, icon: CupertinoIcons.globe, subIndex: 1, title: "MyWaseda"),
         indexBar(),
-        subMenuPanel(ref, icon: Icons.language, subIndex: 2, title: "成績照会"),
+        subMenuPanel(ref, icon: CupertinoIcons.globe, subIndex: 2, title: "成績照会"),
         space(60.0),
       ],
     };
@@ -320,7 +321,7 @@ void showFeedBackDialog(BuildContext context) {
 Widget popupMenuButton(color, context) {
   return IconButton(
     color: FORGROUND_COLOR,
-    icon: Icon(Icons.menu_rounded, color: color),
+    icon: Icon(CupertinoIcons.line_horizontal_3, color: color),
     onPressed: () {
       Scaffold.of(context).openEndDrawer();
     },
@@ -330,7 +331,7 @@ Widget popupMenuButton(color, context) {
 Widget timeLineButton(color, context) {
   return IconButton(
     color: FORGROUND_COLOR,
-    icon: Icon(Icons.schedule, color: color),
+    icon: Icon(CupertinoIcons.clock, color: color),
     onPressed: () {
       Scaffold.of(context).openDrawer();
     },

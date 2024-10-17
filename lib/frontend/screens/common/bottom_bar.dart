@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
@@ -7,9 +8,9 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
       BuildContext context,
       int currentIndex,
       ValueChanged<int> onItemTapped,
-      StateSetter setosute
+      StateSetter setosute,
+      [Color unSelectedColor = Colors.grey]
     ) {
-    Color unSelectedColor = Colors.grey;
     Color selectedColor = BLUEGREY;
     SizeConfig().init(context);
 
@@ -28,7 +29,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
             offset: const Offset(0, -1)
           )
         ],
-        //border:const Border(top:BorderSide(color:PALE_MAIN_COLOR,width: 4.5)),
+        border:const Border(top:BorderSide(color:Colors.white,width: 0.75)),
         color: FORGROUND_COLOR,
         borderRadius:const BorderRadius.all(Radius.circular(0)),
       ),
@@ -45,27 +46,27 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         unselectedLabelStyle: TextStyle(color: unSelectedColor),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
+            icon: Icon(CupertinoIcons.map_pin),
             label: 'わせまっぷ',
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.grid_on),
+            icon: Icon(CupertinoIcons.rectangle_grid_3x2),
             label: '授業',
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(CupertinoIcons.calendar),
             label: 'カレンダー',
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.check),
+            icon: Icon(CupertinoIcons.check_mark),
             label: '課題',
             backgroundColor:Colors.transparent
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.language),
+            icon: Icon(CupertinoIcons.globe),
             label: 'Web',
             backgroundColor:Colors.transparent
           ),

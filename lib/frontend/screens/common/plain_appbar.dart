@@ -19,11 +19,13 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
   late bool backButton;
   late int? pageNum;
   late AppLogoType? logotype;
+  late Widget? title;
 
   CustomAppBar({
     required this.backButton,
     this.pageNum,
     this.logotype,
+    this.title,
     super.key
   });
 
@@ -58,7 +60,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget{
         backgroundColor:MAIN_COLOR.withOpacity(0.95),
         
         elevation: 2,
-        title: Row(children: <Widget>[
+        title: title ??
+          Row(children: <Widget>[
             GestureDetector(
               onTap:(){
                 if(Platform.isIOS){
