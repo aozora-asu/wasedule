@@ -177,7 +177,16 @@ class Term {
   }
 
   static int whenSchoolYear(DateTime dateTime) {
-    return DateTime(dateTime.year, dateTime.month - 4, dateTime.day).year;
+    int adjustedMonth = dateTime.month - 4;
+    int year = dateTime.year;
+
+    if (adjustedMonth <= 0) {
+      // 月が0以下になる場合、前年に戻し、月を12ヶ月に調整
+      year -= 1;
+      adjustedMonth += 12;
+    }
+
+    return DateTime(year, adjustedMonth, dateTime.day).year;
   }
 }
 
