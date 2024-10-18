@@ -427,9 +427,11 @@ Widget pageHeader(){
             simpleSmallButton(
               "授業の自動取得",
             () async {
-              await showMoodleRegisterGuide(
-                  context, false, MoodleRegisterGuideType.timetable);
-              widget.moveToMoodlePage(4);
+              await selectCourseFetchModeDialog(
+                context,
+                (){widget.moveToMoodlePage(4);}
+              );
+              
             }),
             const Spacer(),
           ])

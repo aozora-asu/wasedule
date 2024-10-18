@@ -8,6 +8,7 @@ import 'package:flutter_calandar_app/frontend/screens/common/plain_appbar.dart';
 import 'package:flutter_calandar_app/frontend/screens/setting_page/data_backup_page.dart';
 import 'package:flutter_calandar_app/frontend/screens/moodle_view_page/moodle_view_page.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import "../../../backend/DB/sharepreference.dart";
 
 class IntroPage extends StatefulWidget {
@@ -219,6 +220,74 @@ class _IntroPageState extends State<IntroPage> {
 
 }
 
+  Future<void> selectCourseFetchModeDialog(BuildContext context,Function pageChange) async{
+    TextStyle guideStyle =const TextStyle(color:Colors.grey,fontSize: 13);
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:const Text("時間割データを取得しましょう！"),
+          actions: <Widget>[
+            Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
+                Text("アプリ内",style: guideStyle),
+                buttonModel((){
+                  showMoodleRegisterGuide(
+                    context,
+                    false,
+                    MoodleRegisterGuideType.timetable,
+                    (){Navigator.pop(context);
+                       pageChange();}
+                  );
+                },Colors.orange,"Moodleから取得"),
+                const SizedBox(height: 10),
+                Text("外部サイトへ",style: guideStyle),
+                buttonModel((){
+                  Navigator.pop(context);
+                  fetchCourseFromOutsideGuide(context);
+                }, Colors.lightBlue[200]!,"科目登録画面から取得")
+            ]),
+          ],
+        );
+      },
+    );
+
+  }
+
+  Future<void> fetchCourseFromOutsideGuide(context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text("科目登録画面から時間割を取得しましょう！"),
+          actions: <Widget>[
+            Column(children: [
+              SizedBox(
+                  width: 150,
+                  child: Image.asset(
+                      'lib/assets/tutorial_images/alternative_course_register.png')),
+              const Text("\n MyWasedaの「成績紹介・科目登録画面」から「科目登録」画面を開きます。次に画面下部のボタンから共有メニューを開いて本アプリのアイコンを選択してください。\n"),
+                buttonModel(()async{
+                  Navigator.pop(context);
+                  const url =
+                      'https://coursereg.waseda.jp/portal/simpleportal.php?HID_P14=JA';
+                  if (await canLaunchUrl(Uri.parse(url))) {
+                    await launchUrl(Uri.parse(url),
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    // エラーハンドリング
+                    if (context.mounted) Navigator.of(context).pop();
+                  }
+                }, Colors.lightBlue[200]!,"科目登録画面へ　＞＞")
+            ]),
+          ],
+        );
+      },
+    );
+  }
+
   enum MoodleRegisterGuideType {
     notAvailableAndroid,
     task,
@@ -227,10 +296,22 @@ class _IntroPageState extends State<IntroPage> {
   }
 
   Future<void> showMoodleRegisterGuide(
-   BuildContext context,bool istutorial,MoodleRegisterGuideType dialogType) {
+    BuildContext context,
+    bool istutorial,
+    MoodleRegisterGuideType dialogType,
+    [Function? onPressed]
+  ) async {
     String guideText = "";
     String titleText = "";
-    Widget button = okButton(context,1500.0);
+    Widget button = okButton(
+      context,
+      1500.0,
+      (){
+        if(onPressed != null){
+          onPressed();
+        }
+      }
+    );
 
     if(dialogType == MoodleRegisterGuideType.task){
       titleText = "課題の自動取得を設定しましょう。";
@@ -277,7 +358,7 @@ class _IntroPageState extends State<IntroPage> {
 
     }
 
-    return showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -293,6 +374,8 @@ class _IntroPageState extends State<IntroPage> {
         );
       },
     );
+
+
   }
 
 class IntroLastPage extends StatefulWidget {

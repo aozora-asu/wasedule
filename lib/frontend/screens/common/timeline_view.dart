@@ -66,7 +66,7 @@ class TimelineDrawer extends ConsumerWidget {
             decoration:const BoxDecoration(
               color: MAIN_COLOR,
           )),
-        Timeline()
+        const Timeline()
       ])
     );
   }

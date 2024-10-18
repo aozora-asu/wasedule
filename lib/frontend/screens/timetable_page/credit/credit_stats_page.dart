@@ -201,8 +201,11 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           buttonModel(() async {
             if(Platform.isIOS){
               await showMoodleRegisterGuide(
-                  context, false, MoodleRegisterGuideType.credit);
-              widget.moveToMyWaseda();
+                context,
+                false,
+                MoodleRegisterGuideType.credit,
+                (){widget.moveToMyWaseda();}
+              );
             }else{
               await showMoodleRegisterGuide(
                   context, false, MoodleRegisterGuideType.notAvailableAndroid);

@@ -42,9 +42,12 @@ Widget buttonModelWithChild(
   );
 }
 
-Widget okButton(context, width) {
+Widget okButton(context, width,[Function? onPressed]) {
   return buttonModelWithChild(
     () {
+      if(onPressed != null){
+        onPressed();
+      }
       Navigator.of(context).pop();
     },
     MAIN_COLOR,

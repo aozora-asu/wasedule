@@ -131,6 +131,7 @@ flutter:
     - lib/assets/tutorial_images/timetable_introduction.png
     - lib/assets/tutorial_images/moodle_introduction.png
     - lib/assets/tutorial_images/more_introduction.png
+    - lib/assets/tutorial_images/alternative_course_register.png
 
     - lib/assets/map_images/location_pin.png
     - lib/assets/map_images/location_pin_notempty.png
