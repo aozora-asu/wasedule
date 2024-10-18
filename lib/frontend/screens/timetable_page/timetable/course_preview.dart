@@ -74,9 +74,16 @@ class CoursePreview extends ConsumerStatefulWidget {
   Future<void> showPage(BuildContext context) async{
     type = CoursePreviewType.page;
 
-    Navigator.push(context,
-      MaterialPageRoute(
-        builder: (context)=> this));
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+          this,
+        transitionDuration: Duration.zero, // アニメーションの時間を0秒に設定
+        reverseTransitionDuration: Duration.zero, // 戻る際も0秒
+      ),
+    );
+
   }
 
   @override
@@ -161,7 +168,7 @@ class _CoursePreviewState extends ConsumerState<CoursePreview> {
 
         Text(
           "${target.year} ${target.semester?.fullText ?? Term.fullYear.fullText}",
-          style: const TextStyle(fontSize: 17, color: Colors.grey),
+          style: const TextStyle(fontSize: 15, color: Colors.grey),
           overflow: TextOverflow.clip,
         ),
 

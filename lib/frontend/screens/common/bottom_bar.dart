@@ -33,6 +33,10 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         color: FORGROUND_COLOR,
         borderRadius:const BorderRadius.all(Radius.circular(0)),
       ),
+      child:Theme(
+        data: ThemeData(
+          splashColor: Colors.transparent,
+        ),
       child:BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onItemTapped,
@@ -79,6 +83,7 @@ import 'package:flutter_calandar_app/frontend/assist_files/size_config.dart';
         selectedFontSize: 9, 
         unselectedFontSize:0,
       )
+     )
     );
   }
 
