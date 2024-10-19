@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_calandar_app/frontend/assist_files/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calandar_app/frontend/assist_files/screen_manager.dart';
@@ -244,8 +246,17 @@ class _IntroPageState extends State<IntroPage> {
                 const SizedBox(height: 10),
                 Text("外部サイトへ",style: guideStyle),
                 buttonModel((){
-                  Navigator.pop(context);
-                  fetchCourseFromOutsideGuide(context);
+                  if(Platform.isAndroid){
+                    showMoodleRegisterGuide(
+                      context,
+                      false,
+                      MoodleRegisterGuideType.notAvailableAndroid,
+                      (){Navigator.pop(context);}
+                    );
+                  }else{
+                    Navigator.pop(context);
+                    fetchCourseFromOutsideGuide(context);
+                  }
                 }, Colors.lightBlue[200]!,"科目登録画面から取得")
             ]),
           ],

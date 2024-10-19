@@ -45,10 +45,10 @@ Widget buttonModelWithChild(
 Widget okButton(context, width,[Function? onPressed]) {
   return buttonModelWithChild(
     () {
+      Navigator.of(context).pop();
       if(onPressed != null){
         onPressed();
       }
-      Navigator.of(context).pop();
     },
     MAIN_COLOR,
     SizedBox(
