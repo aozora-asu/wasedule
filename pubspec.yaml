@@ -2,7 +2,7 @@ name: flutter_calandar_app
 description: A new Flutter project.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 17.1.1+25   #Androidのバージョン名＋バージョンコード
+version: 17.2.0+26   #Androidのバージョン名＋バージョンコード
 
 environment:
   sdk: ^3.1.0
