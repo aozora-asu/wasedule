@@ -56,13 +56,12 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
   double cellsRadius = 5.0;
   double separatorHeight = 0;
 
-
   @override
   void initState() {
     super.initState();
     initTargetSem();
     now = DateTime.now();
-    NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
+    //NextCourseHomeWidget().updateNextCourse(); // アプリ起動時にデータを更新
     isScreenShotBeingTaken = false;
 
     selectedCreditsSum = 0;
@@ -77,116 +76,112 @@ class _TimeTablePageState extends ConsumerState<TimeTablePage> {
 
       if (userDepartment == null && mounted) {
         await showUserDepartmentSettingDialog(context);
-      }else if (mounted) {
+      } else if (mounted) {
         await showAttendanceDialog(context, now, ref);
       }
     });
   }
 
-void initCellWidth() {
-  tableRowLength = 5;
+  void initCellWidth() {
+    tableRowLength = 5;
 
-  if (isShowSaturday) {
-    tableRowLength += 1;
-  }
-  if (isOndemandTableSide) {
-    tableRowLength += 1;
-  }
+    if (isShowSaturday) {
+      tableRowLength += 1;
+    }
+    if (isOndemandTableSide) {
+      tableRowLength += 1;
+    }
 
-  switch (tableRowLength) {
-    case 5:
-      cellWidth = 18.35;
-      break;
-    case 6:
-      cellWidth = 15.25;
-      break;
-    case 7:
-      cellWidth = 13.15;
-      break;
-    default:
-      cellWidth = 15;
-      break;
-  }
+    switch (tableRowLength) {
+      case 5:
+        cellWidth = 18.35;
+        break;
+      case 6:
+        cellWidth = 15.25;
+        break;
+      case 7:
+        cellWidth = 13.15;
+        break;
+      default:
+        cellWidth = 15;
+        break;
+    }
 
-  setState(() {});
-}
+    setState(() {});
+  }
 
   void _onScroll() {
     // スクロールの方向に応じてFABを表示・非表示にする
-    if (pageScrollController.position.userScrollDirection == ScrollDirection.reverse) {
+    if (pageScrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
       // 下方向にスクロールした場合
       if (_isFabVisible) {
         setState(() {
-          _isFabVisible = false;  // FABを非表示
+          _isFabVisible = false; // FABを非表示
         });
       }
-    } else if (pageScrollController.position.userScrollDirection == ScrollDirection.forward) {
+    } else if (pageScrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
       // 上方向にスクロールした場合
       if (!_isFabVisible) {
         setState(() {
-          _isFabVisible = true;  // FABを表示
+          _isFabVisible = true; // FABを表示
         });
       }
     }
   }
 
   BoxDecoration floatingButtonDecorartion =
-      BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ]);
+      BoxDecoration(borderRadius: BorderRadius.circular(30), boxShadow: [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.2),
+      spreadRadius: 2,
+      blurRadius: 5,
+      offset: const Offset(0, 3),
+    ),
+  ]);
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    isShowSaturday = SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.isShowSaturday);
+    isShowSaturday =
+        SharepreferenceHandler().getValue(SharepreferenceKeys.isShowSaturday);
     isOndemandTableSide = SharepreferenceHandler()
-            .getValue(SharepreferenceKeys.isOndemandTableSide);
+        .getValue(SharepreferenceKeys.isOndemandTableSide);
 
     initCellWidth();
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      body: CustomScrollView(
-        controller: pageScrollController,
-        slivers: <Widget>[
-          SliverAppBar(
-            // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
-            floating: true,
-            pinned: false,
-            snap: false,
-            collapsedHeight: 80,
-            expandedHeight: 80,
-            // AppBar の拡張部分 (スクロール時に表示される)
-            flexibleSpace: pageHeader(),
-          ),
-           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Column(children:[
-                  timeTable(),
-                  const SizedBox(height:100)
-                ]);
-              },
-              // リストアイテムの数
-              childCount: 1,
-            ),
-          ),
-        ]),
-      floatingActionButton:           
-       AnimatedOpacity(
-        opacity: _isFabVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 600),
+        backgroundColor: BACKGROUND_COLOR,
+        body: CustomScrollView(
+            controller: pageScrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
+                floating: true,
+                pinned: false,
+                snap: false,
+                collapsedHeight: 80,
+                expandedHeight: 80,
+                // AppBar の拡張部分 (スクロール時に表示される)
+                flexibleSpace: pageHeader(),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return Column(
+                        children: [timeTable(), const SizedBox(height: 100)]);
+                  },
+                  // リストアイテムの数
+                  childCount: 1,
+                ),
+              ),
+            ]),
+        floatingActionButton: AnimatedOpacity(
+          opacity: _isFabVisible ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 600),
           child: timetableShareButton(context),
-       )
-    );
+        ));
   }
 
   Widget timetableShareButton(BuildContext context) {
@@ -255,22 +250,21 @@ void initCellWidth() {
     }
   }
 
-  int initMaxPeriod(){
+  int initMaxPeriod() {
     int maxPeriod = SharepreferenceHandler()
         .getValue(SharepreferenceKeys.tableColumnLength);
 
     final tableData = ref.read(timeTableProvider);
-    for(int weekDay = 1; weekDay < 7; weekDay++){
-      List<MyCourse> dailyList = tableData.currentSemesterClasses[weekDay] ?? [];
-      
-      for(var course in dailyList){
+    for (int weekDay = 1; weekDay < 7; weekDay++) {
+      List<MyCourse> dailyList =
+          tableData.currentSemesterClasses[weekDay] ?? [];
 
-        if(course.period != null){
-          if(course.period!.period > maxPeriod){
-              maxPeriod = course.period!.period;
+      for (var course in dailyList) {
+        if (course.period != null) {
+          if (course.period!.period > maxPeriod) {
+            maxPeriod = course.period!.period;
           }
         }
-
       }
     }
     return maxPeriod;
@@ -368,81 +362,64 @@ void initCellWidth() {
     }
   }
 
-Widget pageHeader(){
-  return Container(
-    decoration: BoxDecoration(
-      color:FORGROUND_COLOR,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          spreadRadius: 2,
-          blurRadius: 2,
-          offset: const Offset(0, 0),
-        ),
-      ]
-    ),
-    child:Column(children:[
-      Row(children: [
-        IconButton(
-            onPressed: () {
-              setState(() {
-                isSelectedlistGenerated = false;
-                decreasePgNumber();
-              });
-            },
-            icon: const Icon(Icons.arrow_back_ios),
-            iconSize: 20,
-            color: BLUEGREY),
-        Text(
-          "$thisYear年  ${currentSemester.text}",
-          style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: BLUEGREY),
-        ),
-        IconButton(
-            onPressed: () {
-              setState(() {
-                isSelectedlistGenerated = false;
-                increasePgNumber();
-              });
-            },
-            icon: const Icon(Icons.arrow_forward_ios),
-            iconSize: 20,
-            color: BLUEGREY),
-        const Spacer(),
-        doNotContainScreenShot(springFallQuarterButton()),
-        doNotContainScreenShot(summerWinterQuarterButton()),
-        const SizedBox(width: 7.5),
-      ]),
-
-        doNotContainScreenShot(
-          Row(children:[
+  Widget pageHeader() {
+    return Container(
+        decoration: BoxDecoration(color: FORGROUND_COLOR, boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 2,
+            offset: const Offset(0, 0),
+          ),
+        ]),
+        child: Column(children: [
+          Row(children: [
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    isSelectedlistGenerated = false;
+                    decreasePgNumber();
+                  });
+                },
+                icon: const Icon(Icons.arrow_back_ios),
+                iconSize: 20,
+                color: BLUEGREY),
+            Text(
+              "$thisYear年  ${currentSemester.text}",
+              style: const TextStyle(
+                  fontSize: 17, fontWeight: FontWeight.w700, color: BLUEGREY),
+            ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    isSelectedlistGenerated = false;
+                    increasePgNumber();
+                  });
+                },
+                icon: const Icon(Icons.arrow_forward_ios),
+                iconSize: 20,
+                color: BLUEGREY),
+            const Spacer(),
+            doNotContainScreenShot(springFallQuarterButton()),
+            doNotContainScreenShot(summerWinterQuarterButton()),
+            const SizedBox(width: 7.5),
+          ]),
+          doNotContainScreenShot(Row(children: [
             const SizedBox(width: 5),
-            simpleSmallButton(
-              "今日の出欠",
-              () async{
-                await showAttendanceDialog(context, DateTime.now(), ref, true);
-              }),
-            simpleSmallButton(
-              "授業の自動取得",
-            () async {
-              await selectCourseFetchModeDialog(
-                context,
-                (){widget.moveToMoodlePage(4);}
-              );
-              
+            simpleSmallButton("今日の出欠", () async {
+              await showAttendanceDialog(context, DateTime.now(), ref, true);
+            }),
+            simpleSmallButton("授業の自動取得", () async {
+              await selectCourseFetchModeDialog(context, () {
+                widget.moveToMoodlePage(4);
+              });
             }),
             const Spacer(),
-          ])
-        ),
-      
+          ])),
+        ]));
+  }
 
-    ])
-  );
-}
-
-  Future<List<MyCourse>?> loadData() async{
+  Future<List<MyCourse>?> loadData() async {
     await ref.read(timeTableProvider).getData();
     List<MyCourse>? result = await MyCourse.getAllMyCourse();
     return result;
@@ -455,7 +432,7 @@ Widget pageHeader(){
             decoration: switchDecoration(),
             child: Column(children: [
               FutureBuilder(
-                  future:loadData(),
+                  future: loadData(),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return timeTableBody();
@@ -554,69 +531,56 @@ Widget pageHeader(){
     double _tableRowLength = tableRowLength;
     int maxPeriod = initMaxPeriod();
 
-    return Column(
-      children: [
-        showOnlyScreenShot(
-          Container(
-            color: MAIN_COLOR,
-            child:Row(children:[
-              Padding(
-                padding:const EdgeInsets.symmetric(horizontal: 10),
-                child:LogoAndTitle(
-                  size: 5,
-                  isLogoWhite: true,
-                  color: Colors.white,
-                  logotype: AppLogoType.timetable)
-              ),
-              const Spacer(),
-              Text(
-                "$thisYear年  ${currentSemester.text}・${currentQuarter.text}",
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white),
-              ),
-              const SizedBox(width: 15),
-            ]))
-          ),
-        showOnlyScreenShot(
-          const Divider(
-            height: 3,
-            thickness: 3,
-            color: PALE_MAIN_COLOR,
-            indent:0,
-            endIndent:0)
-          ),
-        Row(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-          generatePerirodColumn(maxPeriod),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              doNotContainScreenShot(const SizedBox(height:5)),
-              generateWeekThumbnail(),
-              SizedBox(
-                  width: SizeConfig.blockSizeHorizontal! * _cellWidth * _tableRowLength,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      timetableCells(1,maxPeriod),
-                      timetableCells(2,maxPeriod),
-                      timetableCells(3,maxPeriod),
-                      timetableCells(4,maxPeriod),
-                      timetableCells(5,maxPeriod),
-                      if(isShowSaturday)
-                        timetableCells(6,maxPeriod),
-                      if(isOndemandTableSide)
-                        generateOndemandColumn()
-              ])
-             ),
-             const SizedBox(height:10),
-          ])
+    return Column(children: [
+      showOnlyScreenShot(Container(
+          color: MAIN_COLOR,
+          child: Row(children: [
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: LogoAndTitle(
+                    size: 5,
+                    isLogoWhite: true,
+                    color: Colors.white,
+                    logotype: AppLogoType.timetable)),
+            const Spacer(),
+            Text(
+              "$thisYear年  ${currentSemester.text}・${currentQuarter.text}",
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white),
+            ),
+            const SizedBox(width: 15),
+          ]))),
+      showOnlyScreenShot(const Divider(
+          height: 3,
+          thickness: 3,
+          color: PALE_MAIN_COLOR,
+          indent: 0,
+          endIndent: 0)),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        generatePerirodColumn(maxPeriod),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          doNotContainScreenShot(const SizedBox(height: 5)),
+          generateWeekThumbnail(),
+          SizedBox(
+              width: SizeConfig.blockSizeHorizontal! *
+                  _cellWidth *
+                  _tableRowLength,
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                timetableCells(1, maxPeriod),
+                timetableCells(2, maxPeriod),
+                timetableCells(3, maxPeriod),
+                timetableCells(4, maxPeriod),
+                timetableCells(5, maxPeriod),
+                if (isShowSaturday) timetableCells(6, maxPeriod),
+                if (isOndemandTableSide) generateOndemandColumn()
+              ])),
+          const SizedBox(height: 10),
+        ])
       ]),
-
-      if(!isOndemandTableSide)
+      if (!isOndemandTableSide)
         const Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -624,42 +588,41 @@ Widget pageHeader(){
               style: TextStyle(
                   fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY),
             )),
-      if(!isOndemandTableSide)
+      if (!isOndemandTableSide)
         SizedBox(
             height: SizeConfig.blockSizeVertical! * cellHeight,
             child: generateOndemandRow()),
-      
-      doNotContainScreenShot(
-        Column(children:[
-          if(!isOndemandTableSide)
-            const SizedBox(height: 30),
-          Row(children:[
-            const Text("   登録単位数",
+      doNotContainScreenShot(Column(children: [
+        if (!isOndemandTableSide) const SizedBox(height: 30),
+        Row(children: [
+          const Text("   登録単位数",
               style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY)),
-            const Spacer(),
-            if(selectedCreditsSum != 0) 
-              const Text("選択中の単位数合計： ",style:TextStyle(color:Colors.grey)),
-            if(selectedCreditsSum != 0) 
-              Text(selectedCreditsSum.toString(),
-                style:const TextStyle(color:Colors.black,fontWeight:FontWeight.bold,fontSize: 20)),
-            const SizedBox(width: 15)
-          ]),
-          timetableCreditsView(),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 3,
-          )
-        ])
-      )
+                  fontSize: 20, fontWeight: FontWeight.w700, color: BLUEGREY)),
+          const Spacer(),
+          if (selectedCreditsSum != 0)
+            const Text("選択中の単位数合計： ", style: TextStyle(color: Colors.grey)),
+          if (selectedCreditsSum != 0)
+            Text(selectedCreditsSum.toString(),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20)),
+          const SizedBox(width: 15)
+        ]),
+        timetableCreditsView(),
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 3,
+        )
+      ]))
     ]);
   }
 
   Widget generateWeekThumbnail() {
     List<String> days = ["月", "火", "水", "木", "金"];
-    if(isShowSaturday){
+    if (isShowSaturday) {
       days.add("土");
     }
-    if(isOndemandTableSide){
+    if (isOndemandTableSide) {
       days.add("OD他");
     }
     return SizedBox(
@@ -696,14 +659,14 @@ Widget pageHeader(){
     double fontSize = 7.5;
 
     return Expanded(
-      child:Column(children: [
-        SizedBox(
-          height: SizeConfig.blockSizeVertical! * 2.5,
-        ),
-        MediaQuery.removePadding(
+        child: Column(children: [
+      SizedBox(
+        height: SizeConfig.blockSizeVertical! * 2.5,
+      ),
+      MediaQuery.removePadding(
           context: context,
           removeBottom: true,
-          child:ListView.separated(
+          child: ListView.separated(
             itemBuilder: (context, index) {
               Color bgColor = BACKGROUND_COLOR;
               Color fontColor = BLUEGREY;
@@ -748,7 +711,9 @@ Widget pageHeader(){
                           ])));
             },
             separatorBuilder: (context, index) {
-              Widget resultinging = SizedBox(height: separatorHeight,);
+              Widget resultinging = SizedBox(
+                height: separatorHeight,
+              );
               DateTime now = DateTime.now();
               Color bgColor = BACKGROUND_COLOR;
 
@@ -770,10 +735,8 @@ Widget pageHeader(){
             itemCount: maxPeriod,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-          )
-        )
-      ])
-    );
+          ))
+    ]));
   }
 
   Color cellBackGroundColor(int taskCount, Color color) {
@@ -803,162 +766,167 @@ Widget pageHeader(){
     return SizedBox(
         width: SizeConfig.blockSizeHorizontal! * cellWidth,
         child: MediaQuery.removePadding(
-          context: context,
-          removeBottom: true,
-          child:ListView.separated(
-            shrinkWrap: true,
-            itemCount: maxPeriod,
-            physics: const NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            itemBuilder: ((context, index) {
-              Color bgColor = FORGROUND_COLOR;
-              Widget cellContents = GestureDetector(
-              onTap: () async{
-                await showModalBottomSheet(
-                    context: context,
-                    isDismissible: true,
-                    isScrollControlled: true,
-                    backgroundColor: FORGROUND_COLOR,
-                    builder: (BuildContext context) {
-                      return CourseAddPage(
-                        year: thisYear,
-                        semester: currentSemester,
-                        weekDay: DayOfWeek.weekAt(weekDay),
-                        period: Lesson.atPeriod(index + 1),
-                        setTimetableState: setState,
-                      );
-                    });
-              });
-
-              if (tableData.currentSemesterClasses.containsKey(weekDay) &&
-                  returnExistingPeriod(tableData.currentSemesterClasses[weekDay]!)
-                      .contains(index + 1) &&
-                  tableData.currentSemesterClasses[weekDay]
-                          ?.elementAt(returnIndexFromPeriod(
-                              tableData.currentSemesterClasses[weekDay]!,
-                              index + 1))
-                          .year ==
-                      thisYear) {
-                if (tableData.currentSemesterClasses[weekDay]
-                            ?.elementAt(returnIndexFromPeriod(
-                                tableData.currentSemesterClasses[weekDay]!,
-                                index + 1))
-                            .semester ==
-                        currentQuarter ||
-                    tableData.currentSemesterClasses[weekDay]
-                            ?.elementAt(returnIndexFromPeriod(
-                                tableData.currentSemesterClasses[weekDay]!,
-                                index + 1))
-                            .semester ==
-                        currentSemester ||
-                    tableData.currentSemesterClasses[weekDay]
-                            ?.elementAt(returnIndexFromPeriod(
-                                tableData.currentSemesterClasses[weekDay]!,
-                                index + 1))
-                            .semester ==
-                        Term.fullYear) {
-                  cellContents = FutureBuilder(
-                      future: TaskDatabaseHelper().getTaskListByCourseName(
-                          tableData.currentSemesterClasses[weekDay]
-                                  ?.elementAt(returnIndexFromPeriod(
-                                      tableData.currentSemesterClasses[weekDay]!,
-                                      index + 1))
-                                  .courseName ??
-                              ""),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return timeTableCellsChild(weekDay, index + 1, []);
-                        } else if (snapshot.hasData) {
-                          return timeTableCellsChild(
-                              weekDay, index + 1, snapshot.data!);
-                        } else {
-                          return timeTableCellsChild(weekDay, index + 1, []);
-                        }
+            context: context,
+            removeBottom: true,
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: maxPeriod,
+              physics: const NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemBuilder: ((context, index) {
+                Color bgColor = FORGROUND_COLOR;
+                Widget cellContents = GestureDetector(onTap: () async {
+                  await showModalBottomSheet(
+                      context: context,
+                      isDismissible: true,
+                      isScrollControlled: true,
+                      backgroundColor: FORGROUND_COLOR,
+                      builder: (BuildContext context) {
+                        return CourseAddPage(
+                          year: thisYear,
+                          semester: currentSemester,
+                          weekDay: DayOfWeek.weekAt(weekDay),
+                          period: Lesson.atPeriod(index + 1),
+                          setTimetableState: setState,
+                        );
                       });
+                });
+
+                if (tableData.currentSemesterClasses.containsKey(weekDay) &&
+                    returnExistingPeriod(
+                            tableData.currentSemesterClasses[weekDay]!)
+                        .contains(index + 1) &&
+                    tableData.currentSemesterClasses[weekDay]
+                            ?.elementAt(returnIndexFromPeriod(
+                                tableData.currentSemesterClasses[weekDay]!,
+                                index + 1))
+                            .year ==
+                        thisYear) {
+                  if (tableData.currentSemesterClasses[weekDay]
+                              ?.elementAt(returnIndexFromPeriod(
+                                  tableData.currentSemesterClasses[weekDay]!,
+                                  index + 1))
+                              .semester ==
+                          currentQuarter ||
+                      tableData.currentSemesterClasses[weekDay]
+                              ?.elementAt(returnIndexFromPeriod(
+                                  tableData.currentSemesterClasses[weekDay]!,
+                                  index + 1))
+                              .semester ==
+                          currentSemester ||
+                      tableData.currentSemesterClasses[weekDay]
+                              ?.elementAt(returnIndexFromPeriod(
+                                  tableData.currentSemesterClasses[weekDay]!,
+                                  index + 1))
+                              .semester ==
+                          Term.fullYear) {
+                    cellContents = FutureBuilder(
+                        future: TaskDatabaseHelper().getTaskListByCourseName(
+                            tableData.currentSemesterClasses[weekDay]
+                                    ?.elementAt(returnIndexFromPeriod(
+                                        tableData
+                                            .currentSemesterClasses[weekDay]!,
+                                        index + 1))
+                                    .courseName ??
+                                ""),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return timeTableCellsChild(weekDay, index + 1, []);
+                          } else if (snapshot.hasData) {
+                            return timeTableCellsChild(
+                                weekDay, index + 1, snapshot.data!);
+                          } else {
+                            return timeTableCellsChild(weekDay, index + 1, []);
+                          }
+                        });
+                  }
                 }
-              }
 
-              Color lineColor = BACKGROUND_COLOR;
-              double lineWidth = 1;
-              DateTime now = DateTime.now();
-              double minRadius = 3.5;
+                Color lineColor = BACKGROUND_COLOR;
+                double lineWidth = 1;
+                DateTime now = DateTime.now();
+                double minRadius = 3.5;
 
-              if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
-                      Lesson.atPeriod(index + 1)!.end) &&
-                  now.weekday == weekDay &&
-                  weekDay <= 6) {
-                lineWidth = 4;
-                lineColor = PALE_MAIN_COLOR;
-              }
-              int maxWeekday = isShowSaturday ? 6 : 5;
+                if (isBetween(now, Lesson.atPeriod(index + 1)!.start,
+                        Lesson.atPeriod(index + 1)!.end) &&
+                    now.weekday == weekDay &&
+                    weekDay <= 6) {
+                  lineWidth = 4;
+                  lineColor = PALE_MAIN_COLOR;
+                }
+                int maxWeekday = isShowSaturday ? 6 : 5;
 
-              return Container(
-                  width: SizeConfig.blockSizeHorizontal! * cellWidth,
-                  height: SizeConfig.blockSizeVertical! * cellHeight,
-                  decoration: BoxDecoration(
-                      color: (weekDay ).isEven ? lighten(bgColor,0.015) : darken(bgColor,0.015),
-                      border: Border.all(
-                        color: lineColor,
-                        width: lineWidth,
-                      ),
-                      borderRadius: BorderRadius.only(
-                        topLeft: weekDay == 1 && (index == 2 || index == 0)? 
-                          Radius.circular(cellsRadius *2) : 
-                          Radius.circular(minRadius),
-                        bottomLeft: weekDay == 1 && (index == 1 || index == maxPeriod -1)? 
-                          Radius.circular(cellsRadius*2) : 
-                          Radius.circular(minRadius),
-                        topRight: weekDay == maxWeekday && (index == 2 || index == 0)? 
-                          Radius.circular(cellsRadius*2) : 
-                          Radius.circular(minRadius),
-                        bottomRight: weekDay == maxWeekday && (index == 1 || index == maxPeriod -1)? 
-                          Radius.circular(cellsRadius*2) : 
-                          Radius.circular(minRadius),
-                      )),
-                  child: cellContents);
-            }),
-            separatorBuilder: (context, index) {
-              Widget resultinging = SizedBox(height: separatorHeight);
-              DateTime now = DateTime.now();
-              Color bgColor = BACKGROUND_COLOR;
-              Color fontColor = BLUEGREY;
+                return Container(
+                    width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                    height: SizeConfig.blockSizeVertical! * cellHeight,
+                    decoration: BoxDecoration(
+                        color: (weekDay).isEven
+                            ? lighten(bgColor, 0.015)
+                            : darken(bgColor, 0.015),
+                        border: Border.all(
+                          color: lineColor,
+                          width: lineWidth,
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: weekDay == 1 && (index == 2 || index == 0)
+                              ? Radius.circular(cellsRadius * 2)
+                              : Radius.circular(minRadius),
+                          bottomLeft: weekDay == 1 &&
+                                  (index == 1 || index == maxPeriod - 1)
+                              ? Radius.circular(cellsRadius * 2)
+                              : Radius.circular(minRadius),
+                          topRight: weekDay == maxWeekday &&
+                                  (index == 2 || index == 0)
+                              ? Radius.circular(cellsRadius * 2)
+                              : Radius.circular(minRadius),
+                          bottomRight: weekDay == maxWeekday &&
+                                  (index == 1 || index == maxPeriod - 1)
+                              ? Radius.circular(cellsRadius * 2)
+                              : Radius.circular(minRadius),
+                        )),
+                    child: cellContents);
+              }),
+              separatorBuilder: (context, index) {
+                Widget resultinging = SizedBox(height: separatorHeight);
+                DateTime now = DateTime.now();
+                Color bgColor = BACKGROUND_COLOR;
+                Color fontColor = BLUEGREY;
 
-              if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
-                bgColor = PALE_MAIN_COLOR;
-                fontColor = Colors.white;
-              }
-              String childText = "";
-              if (weekDay == 2) {
-                childText = "昼";
-              }
-              if (weekDay == 3) {
-                childText = "休";
-              }
-              if (weekDay == 4) {
-                childText = "み";
-              }
+                if (isBetween(now, Lesson.second.end, Lesson.third.start)) {
+                  bgColor = PALE_MAIN_COLOR;
+                  fontColor = Colors.white;
+                }
+                String childText = "";
+                if (weekDay == 2) {
+                  childText = "昼";
+                }
+                if (weekDay == 3) {
+                  childText = "休";
+                }
+                if (weekDay == 4) {
+                  childText = "み";
+                }
 
-              if (index == 1) {
-                resultinging = Container(
-                    height: 3,
-                    color: bgColor,
-                    child:const Column(children: [
-                      const Spacer(),
-                      // Text(
-                      //   childText,
-                      //   style: TextStyle(
-                      //       color: fontColor,
-                      //       fontSize: 12,
-                      //       fontWeight: FontWeight.bold),
-                      // ),
-                      const Spacer(),
-                    ]));
-              }
-              return resultinging;
-            },
-          )
-        )
-    );
+                if (index == 1) {
+                  resultinging = Container(
+                      height: 3,
+                      color: bgColor,
+                      child: const Column(children: [
+                        const Spacer(),
+                        // Text(
+                        //   childText,
+                        //   style: TextStyle(
+                        //       color: fontColor,
+                        //       fontSize: 12,
+                        //       fontWeight: FontWeight.bold),
+                        // ),
+                        const Spacer(),
+                      ]));
+                }
+                return resultinging;
+              },
+            )));
   }
 
   Widget generateOndemandRow() {
@@ -968,71 +936,70 @@ Widget pageHeader(){
       listLength = tableData.sortedDataByWeekDay[7]!.length;
     }
 
-    return Row(children:[
-      SizedBox(width:SizeConfig.blockSizeHorizontal! * cellWidth * 0.5),
-      Expanded(child:
-        ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: listLength + 1,
-          itemBuilder: (context, index) {
-            Widget child = const SizedBox();
-            if (index == listLength) {
-              child = ondemandAddCell();
-              return child;
-            } else {
-              bool isThisYear = 
-                tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
-                  thisYear;
+    return Row(children: [
+      SizedBox(width: SizeConfig.blockSizeHorizontal! * cellWidth * 0.5),
+      Expanded(
+        child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: listLength + 1,
+            itemBuilder: (context, index) {
+              Widget child = const SizedBox();
+              if (index == listLength) {
+                child = ondemandAddCell();
+                return child;
+              } else {
+                bool isThisYear =
+                    tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
+                        thisYear;
 
-              if ((tableData.sortedDataByWeekDay[7]
-                          ?.elementAt(index)
-                          .semester
-                          ?.value ==
-                      currentQuarter.value &&
-                      isThisYear) ||
-                  (tableData.sortedDataByWeekDay[7]
-                          ?.elementAt(index)
-                          .semester
-                          ?.value ==
-                      "full_year" && 
-                    isThisYear)||
-                  (tableData.sortedDataByWeekDay[7]
-                              ?.elementAt(index)
-                              .semester
-                              ?.value ==
-                          currentSemester.value &&
-                          isThisYear)
-                      ) {
-                child = Container(
-                    height: SizeConfig.blockSizeVertical! * cellHeight,
-                    width: SizeConfig.blockSizeHorizontal! * cellWidth,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: BACKGROUND_COLOR,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(cellsRadius)),
-                    child: FutureBuilder(
-                        future: TaskDatabaseHelper().getTaskListByCourseName(
-                            tableData.sortedDataByWeekDay[7]
-                                    ?.elementAt(index)
-                                    .courseName ??
-                                ""),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ondemandCellsChild(index, []);
-                          } else if (snapshot.hasData) {
-                            return ondemandCellsChild(index, snapshot.data!);
-                          } else {
-                            return ondemandCellsChild(index, []);
-                          }
-                        }));
+                if ((tableData.sortedDataByWeekDay[7]
+                                ?.elementAt(index)
+                                .semester
+                                ?.value ==
+                            currentQuarter.value &&
+                        isThisYear) ||
+                    (tableData.sortedDataByWeekDay[7]
+                                ?.elementAt(index)
+                                .semester
+                                ?.value ==
+                            "full_year" &&
+                        isThisYear) ||
+                    (tableData.sortedDataByWeekDay[7]
+                                ?.elementAt(index)
+                                .semester
+                                ?.value ==
+                            currentSemester.value &&
+                        isThisYear)) {
+                  child = Container(
+                      height: SizeConfig.blockSizeVertical! * cellHeight,
+                      width: SizeConfig.blockSizeHorizontal! * cellWidth,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: BACKGROUND_COLOR,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(cellsRadius)),
+                      child: FutureBuilder(
+                          future: TaskDatabaseHelper().getTaskListByCourseName(
+                              tableData.sortedDataByWeekDay[7]
+                                      ?.elementAt(index)
+                                      .courseName ??
+                                  ""),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return ondemandCellsChild(index, []);
+                            } else if (snapshot.hasData) {
+                              return ondemandCellsChild(index, snapshot.data!);
+                            } else {
+                              return ondemandCellsChild(index, []);
+                            }
+                          }));
+                }
+                return child;
               }
-              return child;
-            }
-          }),
+            }),
       )
     ]);
   }
@@ -1045,8 +1012,8 @@ Widget pageHeader(){
     }
 
     return SizedBox(
-        width: SizeConfig.blockSizeHorizontal! *cellWidth,
-        child:ListView.separated(
+        width: SizeConfig.blockSizeHorizontal! * cellWidth,
+        child: ListView.separated(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           itemCount: listLength + 1,
@@ -1057,29 +1024,28 @@ Widget pageHeader(){
               child = ondemandAddCell();
               return child;
             } else {
-              bool isThisYear = 
-                tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
-                  thisYear;
+              bool isThisYear =
+                  tableData.sortedDataByWeekDay[7]?.elementAt(index).year ==
+                      thisYear;
 
               if ((tableData.sortedDataByWeekDay[7]
-                          ?.elementAt(index)
-                          .semester
-                          ?.value ==
-                      currentQuarter.value &&
+                              ?.elementAt(index)
+                              .semester
+                              ?.value ==
+                          currentQuarter.value &&
                       isThisYear) ||
                   (tableData.sortedDataByWeekDay[7]
-                          ?.elementAt(index)
-                          .semester
-                          ?.value ==
-                      "full_year" && 
-                    isThisYear)||
+                              ?.elementAt(index)
+                              .semester
+                              ?.value ==
+                          "full_year" &&
+                      isThisYear) ||
                   (tableData.sortedDataByWeekDay[7]
                               ?.elementAt(index)
                               .semester
                               ?.value ==
                           currentSemester.value &&
-                          isThisYear)
-                      ) {
+                      isThisYear)) {
                 child = Container(
                     height: SizeConfig.blockSizeVertical! * cellHeight,
                     width: SizeConfig.blockSizeHorizontal! * cellWidth,
@@ -1111,17 +1077,15 @@ Widget pageHeader(){
           },
           separatorBuilder: (context, index) {
             Widget resultinging = const SizedBox();
-              // if (index == 1) {
-              //   resultinging = Container(
-              //       color:Colors.amberAccent,
-              //       height: 3,
-              //   );
-              // }
-              return resultinging;
+            // if (index == 1) {
+            //   resultinging = Container(
+            //       color:Colors.amberAccent,
+            //       height: 3,
+            //   );
+            // }
+            return resultinging;
           },
-        )
-        
-      );
+        ));
   }
 
   List<int> returnExistingPeriod(List<MyCourse> target) {
@@ -1164,84 +1128,72 @@ Widget pageHeader(){
     int taskLength = taskList.length;
     Widget classRoomView = const SizedBox();
 
-    if (classRoom != null && classRoom != "" && classRoom != "-" && classRoom != " ") {
-      classRoomView = 
-        Container(
+    if (classRoom != null &&
+        classRoom != "" &&
+        classRoom != "-" &&
+        classRoom != " ") {
+      classRoomView = Container(
           decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.75),
-              borderRadius: const BorderRadius.all(Radius.circular(4))
-          ),
-          child: Row(children:[
+              borderRadius: const BorderRadius.all(Radius.circular(4))),
+          child: Row(children: [
             Expanded(
-              child:Center(
-                child:Text(
-                  classRoom,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
-                    color: BLACK
-                  ),
-                  overflow: TextOverflow.visible,
-                  maxLines: 2,
-                )
-              )
-            ),
-          ])
-        );
+                child: Center(
+                    child: Text(
+              classRoom,
+              style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: BLACK),
+              overflow: TextOverflow.visible,
+              maxLines: 2,
+            ))),
+          ]));
     }
-    return 
-      Container(
-          width: SizeConfig.blockSizeHorizontal! * cellWidth,
-          decoration: BoxDecoration(
-              color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.6),
-              borderRadius: BorderRadius.circular(cellsRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: const Offset(0, 0),
-                ),
-              ],
-              border: Border.all(width: 0.6,color:Colors.grey)
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 3),
-          margin: const EdgeInsets.all(1),
-
-          child: InkWell(
-              onTap: () async{
-                isSelectedlistGenerated = false;
-                await CoursePreview(
-                        target: targetData,
-                        setTimetableState: setState,
-                        taskList: taskList,
-                        isOndemand: false,
-                      ).showPage(context);
-              },
+    return Container(
+        width: SizeConfig.blockSizeHorizontal! * cellWidth,
+        decoration: BoxDecoration(
+            color: cellBackGroundColor(taskLength, bgColor).withOpacity(0.6),
+            borderRadius: BorderRadius.circular(cellsRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 2,
+                offset: const Offset(0, 0),
+              ),
+            ],
+            border: Border.all(width: 0.6, color: Colors.grey)),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        margin: const EdgeInsets.all(1),
+        child: InkWell(
+            onTap: () async {
+              isSelectedlistGenerated = false;
+              await CoursePreview(
+                target: targetData,
+                setTimetableState: setState,
+                taskList: taskList,
+                isOndemand: false,
+              ).showPage(context);
+            },
             child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
-                  doNotContainScreenShot(
-                    Padding(
-                      padding:const EdgeInsets.symmetric(vertical: 2),
-                      child:absentBadgeBuilder(targetData))
-                  ),
-                  doNotContainScreenShot(lengthBadge(taskLength, fontSize, true)),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                doNotContainScreenShot(Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: absentBadgeBuilder(targetData))),
+                doNotContainScreenShot(lengthBadge(taskLength, fontSize, true)),
               ]),
               Expanded(
                   child: Center(
                       child: Text(
                 className,
-                style: TextStyle(
-                    fontSize: fontSize, overflow: TextOverflow.clip),
+                style:
+                    TextStyle(fontSize: fontSize, overflow: TextOverflow.clip),
                 maxLines: null,
               ))),
               classRoomView,
               const SizedBox(height: 3),
-            ])
-          )
-        );
+            ])));
   }
 
   Widget absentBadgeBuilder(MyCourse targetData) {
@@ -1291,8 +1243,7 @@ Widget pageHeader(){
       return Container(
         decoration: BoxDecoration(
             color: backGroundColor,
-            borderRadius:
-                const BorderRadius.all( Radius.circular(5))),
+            borderRadius: const BorderRadius.all(Radius.circular(5))),
         child: Text(
           " 欠席 $absentNum", // + "/" + remainAbsent.toString(),
           style: TextStyle(
@@ -1316,78 +1267,73 @@ Widget pageHeader(){
     Color bgColor = cellBackGroundColor(taskLength, colorning).withOpacity(0.7);
 
     return GestureDetector(
-        onTap: () async{
-          await  CoursePreview(
-                  target: target,
-                  setTimetableState: setState,
-                  taskList: taskList,
-                  isOndemand: true,
-                ).showPage(context);
-        },
-        child: 
-          Container(
-            decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(cellsRadius),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              border: Border.all(width: 0.6,color:Colors.grey)
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child:
-              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                doNotContainScreenShot(Align(
-                  alignment: const Alignment(-1, -1),
-                  child: lengthBadge(taskLength, fontSize, true))),
-                Expanded(
-                    child: Center(
-                  child: Text(className,
-                    style: TextStyle(
-                        fontSize: fontSize, overflow: TextOverflow.ellipsis),
-                    maxLines: 4),
-              ))
-            ]),
-          ),
-
-        );
+      onTap: () async {
+        await CoursePreview(
+          target: target,
+          setTimetableState: setState,
+          taskList: taskList,
+          isOndemand: true,
+        ).showPage(context);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(cellsRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 0),
+              ),
+            ],
+            border: Border.all(width: 0.6, color: Colors.grey)),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+          doNotContainScreenShot(Align(
+              alignment: const Alignment(-1, -1),
+              child: lengthBadge(taskLength, fontSize, true))),
+          Expanded(
+              child: Center(
+            child: Text(className,
+                style: TextStyle(
+                    fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                maxLines: 4),
+          ))
+        ]),
+      ),
+    );
   }
 
   Widget ondemandAddCell() {
     Color bgColor = FORGROUND_COLOR;
-    return doNotContainScreenShot(
-      GestureDetector(
-        onTap: () async{
-          await showModalBottomSheet(
-              context: context,
-              isDismissible: true,
-              isScrollControlled: true,
-              backgroundColor: FORGROUND_COLOR,
-              builder: (BuildContext context) {
-                return CourseAddPage(
-                  setTimetableState: setState,
-                  year:thisYear,
-                  semester:currentSemester,
-                  weekDay: DayOfWeek.anotherday,
-                  period: Lesson.ondemand,
-                );
-              });
-        },
-        child: Container(
-            height: SizeConfig.blockSizeVertical! * cellHeight,
-            width: SizeConfig.blockSizeHorizontal! * cellWidth,
-            margin:const EdgeInsets.symmetric(horizontal: 3,vertical: 2),
-            decoration: BoxDecoration(
-                color: bgColor, borderRadius: BorderRadius.circular(cellsRadius)),
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child: const Center(
-                child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
-      ));
+    return doNotContainScreenShot(GestureDetector(
+      onTap: () async {
+        await showModalBottomSheet(
+            context: context,
+            isDismissible: true,
+            isScrollControlled: true,
+            backgroundColor: FORGROUND_COLOR,
+            builder: (BuildContext context) {
+              return CourseAddPage(
+                setTimetableState: setState,
+                year: thisYear,
+                semester: currentSemester,
+                weekDay: DayOfWeek.anotherday,
+                period: Lesson.ondemand,
+              );
+            });
+      },
+      child: Container(
+          height: SizeConfig.blockSizeVertical! * cellHeight,
+          width: SizeConfig.blockSizeHorizontal! * cellWidth,
+          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+          decoration: BoxDecoration(
+              color: bgColor, borderRadius: BorderRadius.circular(cellsRadius)),
+          padding: const EdgeInsets.symmetric(horizontal: 3),
+          child: const Center(
+              child: Icon(Icons.add_rounded, size: 30, color: Colors.grey))),
+    ));
   }
 
   Color hexToColor(String hexColor) {
@@ -1407,183 +1353,189 @@ Widget pageHeader(){
     return Color.fromARGB(alpha, red, green, blue);
   }
 
-  Widget timetableCreditsView(){
+  Widget timetableCreditsView() {
     final timetable = ref.read(timeTableProvider);
-    List<MyCourse> classesList = timetable.targetSemesterClasses(currentSemester,thisYear);
+    List<MyCourse> classesList =
+        timetable.targetSemesterClasses(currentSemester, thisYear);
     int creditsTotalSum = timetable.creditsTotalSum(classesList);
-    Map<String?,List<MyCourse>> sortedCourseByClassification = timetable.sortDataByClassification(classesList);
-    Map<Term?,List<MyCourse>> sortedCourseByQuarter = timetable.sortDataByQuarter(classesList);
+    Map<String?, List<MyCourse>> sortedCourseByClassification =
+        timetable.sortDataByClassification(classesList);
+    Map<Term?, List<MyCourse>> sortedCourseByQuarter =
+        timetable.sortDataByQuarter(classesList);
 
-    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 20,vertical: 0);
+    EdgeInsets padding =
+        const EdgeInsets.symmetric(horizontal: 20, vertical: 0);
     EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 15, vertical: 1);
-    TextStyle smallGrayChar = const TextStyle(color: Colors.grey,fontSize:15);
-    TextStyle smallBlackChar = const TextStyle(color: Colors.black,fontSize:15);
-    TextStyle largeChar = const TextStyle(fontWeight: FontWeight.bold,fontSize:35);
+    TextStyle smallGrayChar = const TextStyle(color: Colors.grey, fontSize: 15);
+    TextStyle smallBlackChar =
+        const TextStyle(color: Colors.black, fontSize: 15);
+    TextStyle largeChar =
+        const TextStyle(fontWeight: FontWeight.bold, fontSize: 35);
 
-    return Column(
-      children:[
+    return Column(children: [
       Container(
         decoration: roundedBoxdecoration(radiusType: 1),
         padding: padding,
         margin: margin,
-        child:
-          Row(children:[
-            Text("この学期の単位数：",style: smallGrayChar),
-            const Spacer(),
-            Text(creditsTotalSum.toString(),style: largeChar),
-            const Spacer(),
-          ]),
+        child: Row(children: [
+          Text("この学期の単位数：", style: smallGrayChar),
+          const Spacer(),
+          Text(creditsTotalSum.toString(), style: largeChar),
+          const Spacer(),
+        ]),
       ),
-        Container(
+      Container(
           decoration: roundedBoxdecoration(radiusType: 2),
-          padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           margin: margin,
-          child: classesList.isNotEmpty ?
-            MediaQuery.removePadding(
-              context: context,
-              removeBottom: true,
-              child:ListView.builder(
-                    itemBuilder: (context,index){
-                      Term term = sortedCourseByQuarter.keys.elementAt(index) ?? Term.others;
+          child: classesList.isNotEmpty
+              ? MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      Term term = sortedCourseByQuarter.keys.elementAt(index) ??
+                          Term.others;
                       String termString = term.text;
                       int numOfCredits = 0;
-                      for(var course in sortedCourseByQuarter.values.elementAt(index)){
+                      for (var course
+                          in sortedCourseByQuarter.values.elementAt(index)) {
                         numOfCredits += course.credit ?? 0;
                       }
                       return Text("$termString : ${numOfCredits.toString()} 単位",
-                        style: smallGrayChar);
+                          style: smallGrayChar);
                     },
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: sortedCourseByQuarter.length,
-            )) : 
-            SizedBox(
-              height: 40,
-              child: Center(
-                child:Text("この学期の授業はまだありません。",style: smallGrayChar)))
-        ),
+                  ))
+              : SizedBox(
+                  height: 40,
+                  child: Center(
+                      child: Text("この学期の授業はまだありません。", style: smallGrayChar)))),
       MediaQuery.removePadding(
-        context: context,
-        removeBottom: true,
-        child:ListView.builder(
-          itemBuilder: (context, index) {
-            int numOfCredits = timetable.creditsTotalSum(sortedCourseByClassification.values.elementAt(index));
-            String classificationName = sortedCourseByClassification.keys.elementAt(index) ?? "分類なし";
-            if(!isSelectedlistGenerated)
-              {selectedCreditsSum = 0;
-              isSelectedList = List<bool>.filled(
-                sortedCourseByClassification.length + 
-                36,
-                false);}
-            isSelectedlistGenerated = true;
-            bool isSelected = isSelectedList.elementAt(index);
+          context: context,
+          removeBottom: true,
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              int numOfCredits = timetable.creditsTotalSum(
+                  sortedCourseByClassification.values.elementAt(index));
+              String classificationName =
+                  sortedCourseByClassification.keys.elementAt(index) ?? "分類なし";
+              if (!isSelectedlistGenerated) {
+                selectedCreditsSum = 0;
+                isSelectedList = List<bool>.filled(
+                    sortedCourseByClassification.length + 36, false);
+              }
+              isSelectedlistGenerated = true;
+              bool isSelected = isSelectedList.elementAt(index);
 
-            return Container(
-              decoration: roundedBoxdecoration(radiusType: 2),
-              padding: padding,
-              margin: margin,
-              child: Row(children:[
-                CupertinoCheckbox(
-                  value: isSelected,
-                  onChanged: (value){
-                    setState(() {
-                      isSelectedList[index] = value!;
-                      if (value) {
-                        selectedCreditsSum += numOfCredits;
-                      } else {
-                        selectedCreditsSum -= numOfCredits;
-                      }
-                    });
-                }),
-                Expanded(child:
-                  Text(classificationName,style: smallGrayChar,overflow: TextOverflow.clip)),
-                SizedBox(
-                  width: 25,
-                  child:Text(numOfCredits.toString(),style: smallBlackChar)),
-                GestureDetector(
-                  onTap:()async{
-                    await showClassificationContentDialog
-                      (classificationName,sortedCourseByClassification.values.elementAt(index));
-                  },
-                  child:const Icon(Icons.more_horiz,color:Colors.grey),
-                )
-              ]),
-            );
-          },
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: sortedCourseByClassification.length,
-      )),
+              return Container(
+                decoration: roundedBoxdecoration(radiusType: 2),
+                padding: padding,
+                margin: margin,
+                child: Row(children: [
+                  CupertinoCheckbox(
+                      value: isSelected,
+                      onChanged: (value) {
+                        setState(() {
+                          isSelectedList[index] = value!;
+                          if (value) {
+                            selectedCreditsSum += numOfCredits;
+                          } else {
+                            selectedCreditsSum -= numOfCredits;
+                          }
+                        });
+                      }),
+                  Expanded(
+                      child: Text(classificationName,
+                          style: smallGrayChar, overflow: TextOverflow.clip)),
+                  SizedBox(
+                      width: 25,
+                      child:
+                          Text(numOfCredits.toString(), style: smallBlackChar)),
+                  GestureDetector(
+                    onTap: () async {
+                      await showClassificationContentDialog(classificationName,
+                          sortedCourseByClassification.values.elementAt(index));
+                    },
+                    child: const Icon(Icons.more_horiz, color: Colors.grey),
+                  )
+                ]),
+              );
+            },
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: sortedCourseByClassification.length,
+          )),
       Container(
           decoration: roundedBoxdecoration(radiusType: 3),
-          padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           margin: margin,
-          child:const  RequiredCreditsStats()
-        ),
+          child: const RequiredCreditsStats()),
     ]);
   }
 
   Color colorSettingsColor = Colors.red;
 
-  Future<void> showClassificationContentDialog(String? classificationName,List<MyCourse> courseList) async{
+  Future<void> showClassificationContentDialog(
+      String? classificationName, List<MyCourse> courseList) async {
     await showDialog(
-      context: context,
-      builder: (context){
-        return AlertDialog(
-          backgroundColor: FORGROUND_COLOR,
-          title: Text("'${classificationName ?? "分類なし"}' の内訳",
-            style:const TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: FORGROUND_COLOR,
+            title: Text("'${classificationName ?? "分類なし"}' の内訳",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             content: SingleChildScrollView(
               child: SizedBox(
-                width: double.maxFinite,
-                child: Column(children:[
-
-                  ListView.builder(
-                  itemBuilder: (context,index){
-                    return GestureDetector(
-                      onTap:(){
+                  width: double.maxFinite,
+                  child: Column(children: [
+                    ListView.builder(
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                                decoration: roundedBoxdecoration(
+                                    radiusType: 2,
+                                    backgroundColor: BACKGROUND_COLOR),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 1, horizontal: 5),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                child: Text(
+                                    courseList.elementAt(index).courseName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold))));
                       },
-                      child:Container(
-                        decoration: roundedBoxdecoration(
-                          radiusType: 2,backgroundColor: BACKGROUND_COLOR),
-                        margin:const EdgeInsets.symmetric(vertical:1,horizontal: 5),
-                        padding:const EdgeInsets.symmetric(vertical:5,horizontal:10),
-                        child: Text(courseList.elementAt(index).courseName,
-                          style:const TextStyle(fontWeight: FontWeight.bold))
-                      )
-                    );
-                },
-                shrinkWrap: true,
-                physics:const NeverScrollableScrollPhysics(),
-                itemCount: courseList.length,
-              ),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: courseList.length,
+                    ),
 
-              // const SizedBox(height: 10),
-  
-              // Row(children: [
-              //   const Text("この科目群を一括で着色：",
-              //     style:TextStyle(color:Colors.grey,fontSize:12)),
-              //   colorSettingButton(
-              //     context,
-              //     setState,
-              //     colorSettingsColor,
-              //     (value) async{
-              //       for(var course in courseList){
-              //         int id = course.id!;
-              //         await MyCourse.updateColor(id,value);
-              //       }
-              //       setState((){});
-              //     }
-              //   )
-              // ])
+                    // const SizedBox(height: 10),
 
-             ])
+                    // Row(children: [
+                    //   const Text("この科目群を一括で着色：",
+                    //     style:TextStyle(color:Colors.grey,fontSize:12)),
+                    //   colorSettingButton(
+                    //     context,
+                    //     setState,
+                    //     colorSettingsColor,
+                    //     (value) async{
+                    //       for(var course in courseList){
+                    //         int id = course.id!;
+                    //         await MyCourse.updateColor(id,value);
+                    //       }
+                    //       setState((){});
+                    //     }
+                    //   )
+                    // ])
+                  ])),
             ),
-          ),
-          actions: [
-            okButton(context,700.0)
-          ],
-        );
-      });
+            actions: [okButton(context, 700.0)],
+          );
+        });
   }
 }

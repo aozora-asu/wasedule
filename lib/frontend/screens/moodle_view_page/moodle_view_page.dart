@@ -98,7 +98,7 @@ class _MoodleViewPageState extends ConsumerState<MoodleViewPage> {
                     }
 
                     await TaskDatabaseHelper().setpageID();
-                    await NextCourseHomeWidget().updateNextCourse();
+                    // await NextCourseHomeWidget().updateNextCourse();
                   }
                 }
                 javascriptCode = await rootBundle.loadString(

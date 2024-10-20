@@ -23,7 +23,7 @@ void main() async {
   isar = await IsarHandler().initIsar();
   pref = await SharepreferenceHandler().initSharepreference();
   await initializeDateFormatting();
-  NextCourseHomeWidget().updateNextCourse();
+
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setPreferredOrientations([

@@ -1,4 +1,5 @@
 import 'package:flutter_calandar_app/backend/DB/handler/my_course_db.dart';
+import 'package:flutter_calandar_app/backend/DB/handler/task_db_handler.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_request.dart';
 import 'package:flutter_calandar_app/backend/service/syllabus_query_result.dart';
 import 'package:flutter_calandar_app/static/constant.dart';
@@ -273,7 +274,7 @@ void _getMyCourseFromWeb(String htmlString) async {
           memo: null,
           remainAbsent: null,
           classRoom: syllabusQueryResult.classRoom,
-          color: "",
+          color: "#C0A2C7",
           courseName: syllabusQueryResult.courseName,
           pageID: null,
           period:
@@ -291,4 +292,5 @@ void _getMyCourseFromWeb(String htmlString) async {
       await myCourse.resisterDB();
     }
   }
+  await TaskDatabaseHelper().setpageID();
 }
