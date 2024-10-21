@@ -198,9 +198,10 @@ Widget cupertinoLikeDropDownListModel(
         child:DropdownButtonFormField(
           borderRadius: BorderRadius.circular(20),
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 0.0),
-            isDense: true,
-            border: InputBorder.none),
+              contentPadding: EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 0.0),
+              isDense: true,
+              border: InputBorder.none,
+            ),
             style:const  TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,

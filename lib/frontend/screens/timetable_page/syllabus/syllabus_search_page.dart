@@ -28,6 +28,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
   TextEditingController courseNameController = TextEditingController();
   TextEditingController teacherNameController = TextEditingController();
   Term? currentTerm = Term.whenSemester(DateTime.now());
+  late bool isPanelExpand;
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
     keyWordController.text = "";
     courseNameController.text = "";
     teacherNameController.text = "";
+    isPanelExpand = true;
 
     if (currentTerm == null) {
       if (DateTime.now().month <= 6) {
@@ -89,11 +91,14 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
 
   Widget searchWindow() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: Column(
         children: [
           ExpandablePanel(
-              controller: ExpandableController(initialExpanded: true),
+              theme:const  ExpandableThemeData(
+                hasIcon: false
+              ),
+              controller: ExpandableController(initialExpanded: isPanelExpand),
               header: searchHeader(),
               collapsed: const SizedBox(),
               expanded: searchConditionPanel()),
@@ -105,145 +110,177 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
   }
 
   Widget searchHeader() {
-    return const Row(children: [
-      Icon(Icons.search, color: BLUEGREY, size: 30),
-      SizedBox(
-        width: 5,
+    return Container(
+      padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+      decoration: BoxDecoration(color: FORGROUND_COLOR, boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 2,
+          offset: const Offset(0, 0),
+        )]
       ),
-      Text(
-        "シラバス検索",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 25,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
+      child: Row(children: [
+        const Icon(CupertinoIcons.search, color: BLUEGREY, size: 25),
+        const SizedBox(
+          width: 5,
         ),
-      ),
-      Spacer(),
-    ]);
+        const Text(
+          "シラバス検索",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18,
+            color: BLUEGREY,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap:(){
+            setState(() {
+              if(isPanelExpand){
+                isPanelExpand = false;
+              }else{
+                isPanelExpand = true;
+              }
+            });
+          },
+          child: Icon(
+            isPanelExpand ? 
+              CupertinoIcons.chevron_down : 
+              CupertinoIcons.chevron_up,
+            color: Colors.grey,
+            size: 30,
+          ),
+        ),
+        const SizedBox(width: 5)
+      ])
+    );
   }
 
   Widget searchConditionPanel() {
-    return Column(children: [
-      const Divider(),
-      Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              "学期\n曜日/時限",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+    return Padding(
+      padding:const EdgeInsets.symmetric(vertical:10,horizontal: 10),
+      child:Column(children: [
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                "学期\n曜日/時限",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          termPicker(),
-          const SizedBox(width: 2),
-          weekDayPicker(),
-          const SizedBox(width: 2),
-          periodPicker(),
-        ],
-      ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              "学部",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            termPicker(),
+            const SizedBox(width: 2),
+            weekDayPicker(),
+            const SizedBox(width: 2),
+            periodPicker(),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                "学部",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          if (isGraduateSchool)
-            graduateSchoolPicker(requestQuery.p_gakubu)
-          else
-            departmentPicker(requestQuery.p_gakubu),
-        ],
-      ),
-      const SizedBox(height: 5),
-      subjectClassificationPicker(searchConditionTextStyle),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              "キーワード",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            if (isGraduateSchool)
+              graduateSchoolPicker(requestQuery.p_gakubu)
+            else
+              departmentPicker(requestQuery.p_gakubu),
+          ],
+        ),
+        const SizedBox(height: 5),
+        subjectClassificationPicker(searchConditionTextStyle),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                "キーワード",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          searchTextField(keyWordController, (value) {
-            requestQuery.keyword = value;
-          }),
-        ],
-      ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              "科目名",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            searchTextField(keyWordController, (value) {
+              requestQuery.keyword = value;
+            }),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                "科目名",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          searchTextField(courseNameController, (value) {
-            requestQuery.kamoku = value;
-          }),
-        ],
-      ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              "教員名",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            searchTextField(courseNameController, (value) {
+              requestQuery.kamoku = value;
+            }),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                "教員名",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          searchTextField(teacherNameController, (value) {
-            requestQuery.kyoin = value;
-          }),
-        ],
-      ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          SizedBox(
-            child: Text(
-              "オープン科目",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            searchTextField(teacherNameController, (value) {
+              requestQuery.kyoin = value;
+            }),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            SizedBox(
+              child: Text(
+                "オープン科目",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          CupertinoCheckbox(
-              value: requestQuery.p_open,
-              onChanged: (value) {
-                requestQuery.p_open = value!;
-                updateQuery(requestQuery);
-              }),
-          SizedBox(
-            child: Text(
-              "大学院/その他",
-              style: searchConditionTextStyle,
-              textAlign: TextAlign.center,
+            CupertinoCheckbox(
+                value: requestQuery.p_open,
+                onChanged: (value) {
+                  requestQuery.p_open = value!;
+                  updateQuery(requestQuery);
+                }),
+            SizedBox(
+              child: Text(
+                "大学院/その他",
+                style: searchConditionTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          CupertinoCheckbox(
-              value: isGraduateSchool,
-              onChanged: (value) {
-                requestQuery.p_gakubu = null;
+            CupertinoCheckbox(
+                value: isGraduateSchool,
+                onChanged: (value) {
+                  requestQuery.p_gakubu = null;
 
-                isGraduateSchool = value!;
-                updateQuery(requestQuery);
-              })
-        ],
-      ),
-    ]);
+                  isGraduateSchool = value!;
+                  updateQuery(requestQuery);
+                })
+          ],
+        ),
+      ])
+    );
   }
 
   Widget searchTextField(
@@ -569,6 +606,7 @@ class _SyllabusSearchPageState extends State<SyllabusSearchPage> {
             decoration: roundedBoxdecoration(
                 radiusType: boxRadiusType, backgroundColor: FORGROUND_COLOR),
             padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [

@@ -102,18 +102,44 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
     generateCurrentCourseData();
     return Scaffold(
         backgroundColor: BACKGROUND_COLOR,
-        body: Column(children: [
-          header(),
-          const Divider(height:1,indent: 10,endIndent: 10,),
-          if (currentCourseDataList.isEmpty)
-            noCourseDataScreen()
-          else
-            semesterCourseList(),
+        body: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
+                floating: true,
+                pinned: false,
+                snap: false,
+                toolbarHeight: 50,
+                collapsedHeight: 50,
+                expandedHeight: 50,
+                // AppBar の拡張部分 (スクロール時に表示される)
+                flexibleSpace: header(),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    if (currentCourseDataList.isEmpty){
+                      return noCourseDataScreen();
+                    }else{
+                      return semesterCourseList();
+                    }
+                  },
+                  childCount: 1
+                ),
+              ),
         ]));
   }
 
   Widget header() {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(color: FORGROUND_COLOR, boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 2,
+          offset: const Offset(0, 0),
+        ),
+      ]),
       padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
       child:Row(children: [
         IconButton(
@@ -142,9 +168,9 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
         await showAttendanceDialog(context, now, ref, true);
         setState(() {});
       },
-      PALE_MAIN_COLOR,
+      BLUEGREY,
       "今日の出欠",
-      verticalpadding: 10,
+      verticalpadding: 5,
       horizontalPadding:30,
       ),
       const SizedBox(width: 10)
@@ -179,20 +205,23 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
   }
 
   Widget noCourseDataScreen() {
-    return const Expanded(
-        child: Center(
-            child: Text("この学期の授業データはありません。",
+    return const SizedBox(
+            height: 500,
+            child: Center(
+              child:Text("この学期の授業データはありません。",
                 style: TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.normal,
                     overflow: TextOverflow.clip,
-                    fontSize: 20))));
+                    fontSize: 20)
+                  )
+                )
+              );
   }
 
   Widget semesterCourseList() {
-    return Expanded(
-      child:Padding(
-        padding:const EdgeInsets.symmetric(horizontal: 10),
+    return Padding(
+        padding:const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
         child:ListView.separated(
           itemBuilder: (context,index){
             return courseListChild(currentCourseDataList.elementAt(index));
@@ -202,7 +231,8 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
           },
           itemCount: currentCourseDataList.length,
           shrinkWrap: true,
-          ))
+          physics: const NeverScrollableScrollPhysics(),
+          )
     );
   }
 
@@ -264,8 +294,8 @@ class _AttendStatsPageState extends ConsumerState<AttendStatsPage> {
 
   Widget remainingAbesentView(int absentNum) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
           color: BACKGROUND_COLOR, borderRadius: BorderRadius.circular(5)),
       child: Row(children: [

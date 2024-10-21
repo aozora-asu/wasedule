@@ -83,23 +83,28 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: BACKGROUND_COLOR,
-        body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(children: [
-              pageHeader(),
-              const Divider(height: 1),
-              Row(children: [
-                changeGPviewButton(),
-                const SizedBox(width: 5),
-                yearPicker(),
-                const SizedBox(width: 5),
-                termPicker(),
-              ]),
-              Expanded(
-                  child: ListView(children: [
-                individualDataListBuilder(),
-              ]))
-            ])));
+        body: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                // ピン留めオプション。true にすると AppBar はスクロールで画面上に固定される
+                floating: true,
+                pinned: false,
+                snap: false,
+                collapsedHeight: 80,
+                expandedHeight: 80,
+                // AppBar の拡張部分 (スクロール時に表示される)
+                flexibleSpace: pageHeader(),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return individualDataListBuilder();
+                  },
+                  childCount: 1
+                ),
+              ),
+            ])
+          );
   }
 
   Widget changeGPviewButton() {
@@ -114,7 +119,7 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           });
         },
         child: Container(
-          decoration: roundedBoxdecoration(),
+          decoration: roundedBoxdecoration(backgroundColor:Colors.grey[300]),
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
           margin: const EdgeInsets.symmetric(vertical: 4),
           child: Text(
@@ -181,42 +186,67 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
   }
 
   Widget pageHeader() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        child: Row(children: [
-          const Icon(Icons.abc, color: BLUEGREY, size: 30),
-          const SizedBox(
-            width: 5,
-          ),
-          const Text(
-            "単位情報",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 25,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+    return Container(
+      padding:const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+      decoration: BoxDecoration(color: FORGROUND_COLOR, boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 2,
+          offset: const Offset(0, 0),
+        ),
+      ]),
+      child:Column(
+        children:[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
+          child: Row(children: [
+            const Icon(Icons.abc, color: BLUEGREY, size: 30),
+            const SizedBox(
+              width: 5,
             ),
-          ),
-          const Spacer(),
-          buttonModel(() async {
-            if(Platform.isIOS){
-              await showMoodleRegisterGuide(
-                context,
-                false,
-                MoodleRegisterGuideType.credit,
-                (){widget.moveToMyWaseda();}
-              );
-            }else{
-              await showMoodleRegisterGuide(
-                  context, false, MoodleRegisterGuideType.notAvailableAndroid);
-            }
-          }, PALE_MAIN_COLOR, "データ取得",
-              verticalpadding: 10, horizontalPadding: 30),
-        ]));
+            const Text(
+              "単位情報",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 19,
+                color: BLUEGREY,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            buttonModel(() async {
+              if(Platform.isIOS){
+                await showMoodleRegisterGuide(
+                  context,
+                  false,
+                  MoodleRegisterGuideType.credit,
+                  (){widget.moveToMyWaseda();}
+                );
+              }else{
+                await showMoodleRegisterGuide(
+                    context, false, MoodleRegisterGuideType.notAvailableAndroid);
+              }
+            }, BLUEGREY, "データ取得",
+              verticalpadding: 5, horizontalPadding: 30),
+          ])
+        ),
+        const SizedBox(height: 2),
+        Row(children: [
+          changeGPviewButton(),
+          const SizedBox(width: 5),
+          yearPicker(),
+          const SizedBox(width: 5),
+          termPicker(),
+        ]),
+      ])
+    );
   }
 
   Widget individualDataListBuilder() {
-    return FutureBuilder(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: FutureBuilder(
         future: MyGradeDB.getMyCredit(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!.majorClass != []) {
@@ -226,7 +256,8 @@ class _CreditStatsPageState extends State<CreditStatsPage> {
           } else {
             return noGradeDataScreen();
           }
-        });
+        })
+      );
   }
 
   Widget noGradeDataScreen() {
